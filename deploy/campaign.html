@@ -108,9 +108,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
 
 <!-- Language switcher -->
 <div class="lang-bar">
-  <button class="active" onclick="setLang('es')">ES</button>
-  <button onclick="setLang('en')">EN</button>
-  <button onclick="setLang('pt')">PT</button>
+  <button class="active" onclick="setLang('es',true)">ES</button>
+  <button onclick="setLang('en',true)">EN</button>
+  <button onclick="setLang('pt',true)">PT</button>
   <span class="badge-more">+more</span>
 </div>
 
@@ -127,7 +127,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
   </div>
 
   <div class="question">
-    <h1><em data-t="q_what">What came first...</em><br><span data-t="q_chicken_egg">the chicken or the egg?</span></h1>
+    <h1><em data-t="q_what">Que fue primero...</em><br><span data-t="q_chicken_egg">la gallina o el huevo?</span></h1>
     <div class="dots">...</div>
   </div>
 
@@ -189,7 +189,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
 
   <div class="taglines">
     <div class="tagline" data-t="tl1">Ni la gallina ni el huevo. <strong>EGGlogU 360.</strong></div>
-    <div class="tagline" data-t="tl2">Before the chicken. Before the egg. <strong>EGGlogU 360.</strong></div>
+    <div class="tagline" data-t="tl2">Antes de la gallina. Antes del huevo. <strong>EGGlogU 360.</strong></div>
     <div class="tagline" data-t="tl3">La respuesta que la industria avicola estaba esperando.</div>
     <div class="tagline" data-t="tl4"><strong>EGGlogU 360</strong> — Nacimos primero.</div>
   </div>
@@ -266,7 +266,7 @@ pt:{
 }
 };
 let curLang='es';
-function setLang(l){
+function setLang(l,manual){
   curLang=l;
   document.querySelectorAll('.lang-bar button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l));
   document.querySelectorAll('[data-t]').forEach(el=>{
@@ -274,21 +274,20 @@ function setLang(l){
     if(v) el.innerHTML=v;
   });
   document.documentElement.lang=l;
-  localStorage.setItem('campaign_lang',l);
+  if(manual) localStorage.setItem('campaign_lang_manual',l);
 }
-// Auto-detect: 1) saved preference, 2) device/browser language, 3) fallback to 'en'
-function detectLang(){
-  const saved=localStorage.getItem('campaign_lang');
-  if(saved&&T[saved]) return saved;
+// Auto-detect device language, manual switch saves preference
+function detectDeviceLang(){
   const nav=navigator.language||navigator.userLanguage||'';
   const code=nav.split('-')[0].toLowerCase();
   if(T[code]) return code;
-  // Map common variants: es-MX, es-CL, es-AR → es | pt-BR → pt | en-US, en-GB → en
-  if(code==='es'||nav.startsWith('es')) return 'es';
-  if(code==='pt'||nav.startsWith('pt')) return 'pt';
+  if(nav.startsWith('es')) return 'es';
+  if(nav.startsWith('pt')) return 'pt';
   return 'en';
 }
-setLang(detectLang());
+// Use saved only if user manually switched, otherwise always use device lang
+const userChose=localStorage.getItem('campaign_lang_manual');
+setLang(userChose&&T[userChose]?userChose:detectDeviceLang());
 </script>
 </body>
 </html>
