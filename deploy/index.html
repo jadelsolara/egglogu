@@ -3,68 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>EGGlogU - Sistema Avicola 360</title>
+<title>EGGlogU 360 — Gestión Avícola Inteligente</title>
 <meta name="theme-color" content="#1A3C6E">
-<meta name="description" content="EGGlogU - Plataforma integral de gestion avicola. Control de produccion, sanidad, finanzas y operaciones en tiempo real.">
+<meta name="description" content="EGGlogU 360 — Plataforma integral de gestión avícola con IA. 14 módulos, predicciones ML, trazabilidad, bioseguridad y más. Desde $0/mes.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
-:root{--primary:#1A3C6E;--primary-light:#4A7AB5;--primary-dark:#0E2240;--secondary:#FF8F00;--accent:#2E7D32;--bg:#F5F5F5;--card:#FFF;--text:#212121;--text-light:#757575;--radius:8px}
+:root{--primary:#1A3C6E;--primary-light:#4A7AB5;--primary-dark:#0E2240;--secondary:#FF8F00;--accent:#2E7D32;--bg:#F8F9FA;--card:#FFF;--text:#212121;--text-light:#757575;--radius:10px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{text-decoration:none}
+.container{max-width:1140px;margin:0 auto;padding:0 24px}
 
 /* Navbar */
 .navbar{background:var(--primary-dark);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.navbar .brand{color:#fff;font-size:24px;font-weight:800;letter-spacing:2px;text-decoration:none}
-.navbar .brand small{font-size:10px;font-weight:400;opacity:.7;display:block;letter-spacing:3px}
-.navbar nav{display:flex;gap:24px;align-items:center}
-.navbar nav a{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.navbar .brand{color:#fff;font-size:22px;font-weight:800;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.navbar .brand .egg-icon{font-size:28px}
+.navbar .brand small{font-size:10px;font-weight:400;opacity:.7;display:block;letter-spacing:2px;margin-top:-2px}
+.navbar nav{display:flex;gap:28px;align-items:center}
+.navbar nav a{color:rgba(255,255,255,.8);font-size:14px;font-weight:500;transition:color .2s}
 .navbar nav a:hover{color:#fff}
 .nav-buttons{display:flex;gap:12px;align-items:center}
-.btn-login{padding:8px 20px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-login{padding:8px 20px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4);border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-login:hover{background:rgba(255,255,255,.1);border-color:#fff}
-.btn-cta{padding:10px 24px;background:var(--secondary);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .2s;display:inline-block}
-.btn-cta:hover{background:#E65100}
+.btn-cta{padding:10px 24px;background:var(--secondary);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-block}
+.btn-cta:hover{background:#E65100;transform:translateY(-1px)}
+.btn-cta-lg{padding:14px 32px;font-size:16px;border-radius:12px}
 
 /* Hero */
-.hero{background:linear-gradient(135deg,var(--primary-dark),var(--primary),var(--primary-light));padding:80px 40px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 50%,var(--primary-light) 100%);padding:100px 40px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
 .hero-content{position:relative;z-index:1;max-width:800px;margin:0 auto}
-.hero h1{color:#fff;font-size:48px;font-weight:800;margin-bottom:16px;line-height:1.2}
+.hero h1{color:#fff;font-size:52px;font-weight:800;margin-bottom:20px;line-height:1.15}
 .hero h1 span{color:var(--secondary)}
-.hero p{color:rgba(255,255,255,.85);font-size:20px;line-height:1.6;margin-bottom:32px;max-width:600px;margin-left:auto;margin-right:auto}
+.hero .hero-sub{color:rgba(255,255,255,.85);font-size:20px;line-height:1.7;margin-bottom:36px;max-width:620px;margin-left:auto;margin-right:auto}
 .hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.btn-outline{padding:10px 24px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-outline{padding:12px 28px;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
 .btn-outline:hover{background:rgba(255,255,255,.1);border-color:#fff}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:500;margin-bottom:20px;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.1)}
 
-/* Features */
-.features{padding:80px 40px;max-width:1100px;margin:0 auto}
-.features h2{text-align:center;font-size:32px;color:var(--primary-dark);margin-bottom:12px}
-.features .subtitle{text-align:center;color:var(--text-light);font-size:16px;margin-bottom:48px}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-.feature-card{background:var(--card);border-radius:12px;padding:32px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid #eee;transition:transform .2s,box-shadow .2s}
-.feature-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
-.feature-card .icon{font-size:40px;margin-bottom:16px}
-.feature-card h3{font-size:18px;color:var(--primary-dark);margin-bottom:8px}
-.feature-card p{color:var(--text-light);font-size:14px;line-height:1.6}
+/* Trust bar */
+.trust-bar{background:#fff;padding:24px 40px;border-bottom:1px solid #eee;text-align:center}
+.trust-bar p{color:var(--text-light);font-size:13px;font-weight:500;letter-spacing:.5px}
+.trust-bar .trust-items{display:flex;justify-content:center;gap:40px;margin-top:12px;flex-wrap:wrap}
+.trust-bar .trust-item{display:flex;align-items:center;gap:6px;color:var(--text);font-size:14px;font-weight:600}
+.trust-bar .trust-item .ti{font-size:20px}
+
+/* Sections */
+.section-title{text-align:center;font-size:34px;font-weight:800;color:var(--primary-dark);margin-bottom:12px}
+.section-subtitle{text-align:center;color:var(--text-light);font-size:16px;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto}
+
+/* Value Props */
+.value-props{padding:80px 24px;max-width:1140px;margin:0 auto}
+.vp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.vp-card{background:var(--card);border-radius:16px;padding:36px 28px;box-shadow:0 2px 16px rgba(0,0,0,.05);border:1px solid #eee;transition:transform .2s,box-shadow .2s}
+.vp-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.vp-card .vp-icon{font-size:44px;margin-bottom:16px}
+.vp-card h3{font-size:18px;font-weight:700;color:var(--primary-dark);margin-bottom:8px}
+.vp-card p{color:var(--text-light);font-size:14px;line-height:1.7}
+
+/* Modules grid */
+.modules{padding:80px 24px;background:#fff}
+.modules-inner{max-width:1140px;margin:0 auto}
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.mod-item{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--bg);border-radius:12px;border:1px solid #eee;transition:all .2s}
+.mod-item:hover{border-color:var(--primary-light);background:#fff;box-shadow:0 4px 12px rgba(26,60,110,.08)}
+.mod-item .mi{font-size:24px;flex-shrink:0}
+.mod-item div{display:flex;flex-direction:column}
+.mod-item strong{font-size:14px;color:var(--primary-dark)}
+.mod-item span{font-size:12px;color:var(--text-light)}
 
 /* Stats */
-.stats{background:var(--primary-dark);padding:60px 40px}
-.stats-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;text-align:center}
-.stat .number{font-size:42px;font-weight:800;color:var(--secondary)}
-.stat .label{color:rgba(255,255,255,.7);font-size:14px;margin-top:4px}
+.stats{background:var(--primary-dark);padding:64px 40px}
+.stats-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:24px;text-align:center}
+.stat .number{font-size:44px;font-weight:800;color:var(--secondary)}
+.stat .label{color:rgba(255,255,255,.7);font-size:13px;margin-top:4px}
+
+/* Comparison */
+.comparison{padding:80px 24px;max-width:900px;margin:0 auto}
+.comp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.comp-table th,.comp-table td{padding:14px 20px;text-align:center;font-size:14px;border-bottom:1px solid #f0f0f0}
+.comp-table th{background:var(--primary-dark);color:#fff;font-weight:600;font-size:13px}
+.comp-table th.hl{background:var(--secondary)}
+.comp-table td:first-child{text-align:left;font-weight:600;color:var(--text)}
+.comp-table td{color:var(--text-light)}
+.comp-table .yes{color:var(--accent);font-weight:700}
+.comp-table .no{color:#ccc}
+.comp-table .hl-col{background:rgba(255,143,0,.04);font-weight:600;color:var(--primary)}
 
 /* Pricing */
-.pricing{padding:80px 40px;max-width:1000px;margin:0 auto}
-.pricing h2{text-align:center;font-size:32px;color:var(--primary-dark);margin-bottom:48px}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
-.price-card{background:var(--card);border-radius:12px;padding:32px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:2px solid #eee;text-align:center;position:relative}
-.price-card.featured{border-color:var(--secondary)}
-.price-card.featured::before{content:'Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--secondary);color:#fff;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:600}
-.price-card h3{font-size:20px;color:var(--primary-dark);margin-bottom:8px}
-.price-card .price{font-size:36px;font-weight:800;color:var(--primary);margin:16px 0}
+.pricing{padding:80px 24px;background:#fff}
+.pricing-inner{max-width:1140px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:start}
+.price-card{background:var(--card);border-radius:16px;padding:32px 24px;box-shadow:0 2px 16px rgba(0,0,0,.05);border:2px solid #eee;text-align:center;position:relative;transition:transform .2s}
+.price-card:hover{transform:translateY(-4px)}
+.price-card.featured{border-color:var(--secondary);box-shadow:0 8px 32px rgba(255,143,0,.15)}
+.price-card.featured::before{content:'Mas Popular';position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--secondary);color:#fff;padding:5px 20px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.price-card h3{font-size:20px;color:var(--primary-dark);margin-bottom:4px;font-weight:700}
+.price-card .plan-desc{font-size:13px;color:var(--text-light);margin-bottom:16px}
+.price-card .price{font-size:40px;font-weight:800;color:var(--primary);margin:12px 0 4px}
 .price-card .price small{font-size:14px;font-weight:400;color:var(--text-light)}
-.price-card ul{list-style:none;text-align:left;margin:20px 0}
-.price-card ul li{padding:8px 0;font-size:14px;color:var(--text-light);border-bottom:1px solid #f0f0f0}
-.price-card ul li::before{content:'✓ ';color:var(--accent);font-weight:700}
+.price-card .price-note{font-size:12px;color:var(--text-light);margin-bottom:20px}
+.price-card ul{list-style:none;text-align:left;margin:16px 0 24px}
+.price-card ul li{padding:7px 0;font-size:13px;color:var(--text);border-bottom:1px solid #f5f5f5;display:flex;align-items:center;gap:8px}
+.price-card ul li .ck{color:var(--accent);font-weight:700;font-size:15px;flex-shrink:0}
+.price-card ul li.disabled{color:#bbb}
+.price-card ul li.disabled .ck{color:#ddd}
+.price-card .card-cta{width:100%;padding:12px;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.card-cta-primary{background:var(--secondary);color:#fff}.card-cta-primary:hover{background:#E65100}
+.card-cta-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}.card-cta-outline:hover{background:var(--primary);color:#fff}
+.card-cta-dark{background:var(--primary-dark);color:#fff}.card-cta-dark:hover{background:var(--primary)}
+.price-save{display:inline-block;background:#E8F5E9;color:var(--accent);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+
+/* FAQ */
+.faq{padding:80px 24px;max-width:800px;margin:0 auto}
+.faq-item{border-bottom:1px solid #eee;padding:20px 0}
+.faq-q{font-size:16px;font-weight:700;color:var(--primary-dark);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q::after{content:'+';font-size:24px;color:var(--text-light);transition:transform .2s}
+.faq-q.open::after{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;color:var(--text-light);font-size:14px;line-height:1.7}
+.faq-a.open{max-height:200px;padding-top:12px}
+
+/* CTA final */
+.final-cta{background:linear-gradient(135deg,var(--primary-dark),var(--primary));padding:80px 40px;text-align:center}
+.final-cta h2{color:#fff;font-size:36px;font-weight:800;margin-bottom:16px}
+.final-cta p{color:rgba(255,255,255,.8);font-size:18px;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+
+/* Footer */
+.footer{background:#0a1a30;color:rgba(255,255,255,.5);padding:40px;text-align:center;font-size:13px}
+.footer a{color:rgba(255,255,255,.7)}
 
 /* Login Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center}
@@ -74,7 +141,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .login-modal .close-btn{position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;color:var(--text-light);cursor:pointer}
 .login-modal .close-btn:hover{color:var(--text)}
 .login-modal .logo{text-align:center;margin-bottom:24px}
-.login-modal .logo h2{font-size:28px;color:var(--primary-dark);font-weight:800;letter-spacing:2px}
+.login-modal .logo h2{font-size:26px;color:var(--primary-dark);font-weight:800;letter-spacing:1px}
 .login-modal .logo p{color:var(--text-light);font-size:13px;margin-top:4px}
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
@@ -85,27 +152,37 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .login-error{display:none;background:#FFEBEE;color:#C62828;padding:10px 14px;border-radius:var(--radius);font-size:13px;margin-bottom:12px}
 .login-error.show{display:block}
 
-/* Footer */
-.footer{background:var(--primary-dark);color:rgba(255,255,255,.6);padding:40px;text-align:center;font-size:13px}
-.footer a{color:rgba(255,255,255,.8);text-decoration:none}
-
+@media(max-width:1024px){
+    .pricing-grid{grid-template-columns:repeat(2,1fr)}
+    .vp-grid{grid-template-columns:repeat(2,1fr)}
+    .stats-grid{grid-template-columns:repeat(3,1fr)}
+}
 @media(max-width:768px){
     .navbar{padding:0 16px}.navbar nav{display:none}
-    .hero{padding:60px 20px}.hero h1{font-size:32px}.hero p{font-size:16px}
-    .features,.pricing{padding:60px 20px}
-    .stats{padding:40px 20px}
+    .hero{padding:60px 20px}.hero h1{font-size:32px}.hero .hero-sub{font-size:16px}
+    .value-props,.modules,.pricing{padding:60px 16px}
+    .vp-grid{grid-template-columns:1fr}
+    .pricing-grid{grid-template-columns:1fr}
+    .stats{padding:40px 20px}.stats-grid{grid-template-columns:repeat(2,1fr)}
+    .comp-table{font-size:12px}.comp-table th,.comp-table td{padding:10px 8px}
     .login-modal{margin:20px;padding:28px}
+    .trust-bar .trust-items{gap:20px}
+    .mod-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+    .mod-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
 <header class="navbar">
-    <a href="#" class="brand">EGGlogU<small>Sistema Avicola 360</small></a>
+    <a href="#" class="brand"><span class="egg-icon">🥚</span><div>EGGlogU 360<small>Gestion Avicola Inteligente</small></div></a>
     <nav>
-        <a href="#features">Funciones</a>
-        <a href="#stats">Resultados</a>
+        <a href="#modulos">Modulos</a>
+        <a href="#comparativa">Comparativa</a>
         <a href="#pricing">Planes</a>
+        <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-buttons">
         <a href="#" class="btn-login" onclick="openLogin()">Iniciar Sesion</a>
@@ -113,88 +190,270 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     </div>
 </header>
 
+<!-- HERO -->
 <section class="hero">
     <div class="hero-content">
-        <h1>Gestion Avicola <span>Inteligente</span></h1>
-        <p>Controla produccion, sanidad, finanzas y operaciones de tu granja desde una sola plataforma. Funciona offline y sincroniza cuando hay conexion.</p>
+        <div class="hero-badge">14 modulos &middot; IA predictiva &middot; 100% offline</div>
+        <h1>Tu granja avicola,<br><span>bajo control total</span></h1>
+        <p class="hero-sub">Produccion, sanidad, finanzas, bioseguridad, trazabilidad y predicciones con IA. Todo en una plataforma que funciona sin internet.</p>
         <div class="hero-buttons">
-            <a href="#" class="btn-cta" onclick="openLogin()">Comenzar Gratis</a>
-            <a href="#features" class="btn-outline">Ver Funciones</a>
+            <a href="#" class="btn-cta btn-cta-lg" onclick="openLogin()">Comenzar Gratis</a>
+            <a href="#pricing" class="btn-outline">Ver Planes</a>
         </div>
     </div>
 </section>
 
-<section class="features" id="features">
-    <h2>Todo lo que necesitas</h2>
-    <p class="subtitle">11 modulos integrados para el control total de tu operacion avicola</p>
-    <div class="features-grid">
-        <div class="feature-card"><div class="icon">📊</div><h3>Produccion</h3><p>Registro diario por lote. Huevos por tamano, quiebres, mortalidad y curvas de produccion vs estandar de raza.</p></div>
-        <div class="feature-card"><div class="icon">💊</div><h3>Sanidad</h3><p>Vacunas, medicaciones, brotes y eventos de estres. Historial completo por lote con alertas automaticas.</p></div>
-        <div class="feature-card"><div class="icon">🌾</div><h3>Alimentacion</h3><p>Compras de alimento, consumo por lote y calculo automatico de conversion alimenticia (FCR).</p></div>
-        <div class="feature-card"><div class="icon">💰</div><h3>Finanzas</h3><p>Ingresos por venta, gastos operativos y cuentas por cobrar. Rentabilidad por lote en tiempo real.</p></div>
-        <div class="feature-card"><div class="icon">🌡️</div><h3>Ambiente</h3><p>Temperatura, humedad, amoniaco y luminosidad. Integracion IoT con MQTT y datos meteorologicos.</p></div>
-        <div class="feature-card"><div class="icon">📋</div><h3>Operaciones</h3><p>Checklist diario, bitacora de eventos y gestion de personal. Nada se pierde.</p></div>
-        <div class="feature-card"><div class="icon">👥</div><h3>Clientes</h3><p>Directorio de compradores con precios personalizados por tamano de huevo.</p></div>
-        <div class="feature-card"><div class="icon">📱</div><h3>Offline-First</h3><p>Funciona sin internet. Los datos se sincronizan automaticamente cuando hay conexion.</p></div>
-        <div class="feature-card"><div class="icon">🔐</div><h3>Multi-usuario</h3><p>Roles de Propietario, Administrador, Veterinario y Visor. Cada uno ve solo lo que necesita.</p></div>
+<!-- Trust bar -->
+<div class="trust-bar">
+    <div class="trust-items">
+        <div class="trust-item"><span class="ti">🔒</span> Datos encriptados</div>
+        <div class="trust-item"><span class="ti">📱</span> PWA instalable</div>
+        <div class="trust-item"><span class="ti">🌐</span> ES / EN / PT</div>
+        <div class="trust-item"><span class="ti">⚡</span> Sin instalacion</div>
+        <div class="trust-item"><span class="ti">🔄</span> Sync automatico</div>
+    </div>
+</div>
+
+<!-- VALUE PROPS -->
+<section class="value-props">
+    <h2 class="section-title">Por que EGGlogU 360</h2>
+    <p class="section-subtitle">La unica plataforma avicola que combina gestion operativa completa con inteligencia artificial predictiva</p>
+    <div class="vp-grid">
+        <div class="vp-card">
+            <div class="vp-icon">🧠</div>
+            <h3>IA que anticipa problemas</h3>
+            <p>Clasificador de riesgo de brote con 7 factores, pronostico de produccion con bandas de confianza y motor de recomendaciones automaticas.</p>
+        </div>
+        <div class="vp-card">
+            <div class="vp-icon">🛡️</div>
+            <h3>Bioseguridad real</h3>
+            <p>Registro de visitantes con alerta de contaminacion cruzada, zonas de riesgo, avistamiento de plagas y protocolos de desinfeccion.</p>
+        </div>
+        <div class="vp-card">
+            <div class="vp-icon">📦</div>
+            <h3>Trazabilidad completa</h3>
+            <p>Cada huevo rastreable desde el lote hasta el cliente. Codigos QR, lotes por bandeja, exportacion CSV y busqueda por lote.</p>
+        </div>
+        <div class="vp-card">
+            <div class="vp-icon">📊</div>
+            <h3>Analisis de rentabilidad</h3>
+            <p>Costo por huevo, FCR por lote, ingresos por tipo de huevo y canal de venta. Sabes exactamente donde ganas y donde pierdes.</p>
+        </div>
+        <div class="vp-card">
+            <div class="vp-icon">🌾</div>
+            <h3>Modo Campo</h3>
+            <p>Interfaz simplificada para registro rapido en galpon. Solo lo esencial: lote, huevos, muertes, fecha. Un boton, un registro.</p>
+        </div>
+        <div class="vp-card">
+            <div class="vp-icon">🩺</div>
+            <h3>Modo Veterinario</h3>
+            <p>Vista enfocada para visitas veterinarias: score de salud, brotes activos, FCR, vacunas pendientes y checklist de revision.</p>
+        </div>
     </div>
 </section>
 
+<!-- MODULES -->
+<section class="modules" id="modulos">
+    <div class="modules-inner">
+        <h2 class="section-title">14 modulos integrados</h2>
+        <p class="section-subtitle">Cada aspecto de tu operacion avicola cubierto en un solo lugar</p>
+        <div class="mod-grid">
+            <div class="mod-item"><span class="mi">📊</span><div><strong>Dashboard</strong><span>KPIs en tiempo real, alertas y recomendaciones IA</span></div></div>
+            <div class="mod-item"><span class="mi">🥚</span><div><strong>Produccion</strong><span>Registro diario por lote, tamano, tipo y canal</span></div></div>
+            <div class="mod-item"><span class="mi">🐔</span><div><strong>Lotes</strong><span>Ciclo de vida, curvas de raza, lifecycle completo</span></div></div>
+            <div class="mod-item"><span class="mi">💉</span><div><strong>Sanidad</strong><span>Vacunas, medicaciones, brotes y eventos de estres</span></div></div>
+            <div class="mod-item"><span class="mi">🌾</span><div><strong>Alimentacion</strong><span>Compras, consumo por lote y FCR automatico</span></div></div>
+            <div class="mod-item"><span class="mi">👥</span><div><strong>Clientes</strong><span>Directorio, precios por tamano, cuentas por cobrar</span></div></div>
+            <div class="mod-item"><span class="mi">💰</span><div><strong>Finanzas</strong><span>Ingresos, gastos, rentabilidad por lote</span></div></div>
+            <div class="mod-item"><span class="mi">📈</span><div><strong>Analisis</strong><span>Comparativa, estacionalidad, predicciones ML</span></div></div>
+            <div class="mod-item"><span class="mi">📋</span><div><strong>Operaciones</strong><span>Checklist, bitacora y gestion de personal</span></div></div>
+            <div class="mod-item"><span class="mi">🛡️</span><div><strong>Bioseguridad</strong><span>Visitantes, zonas, plagas y protocolos</span></div></div>
+            <div class="mod-item"><span class="mi">📦</span><div><strong>Trazabilidad</strong><span>Lotes de huevo, QR, trace de origen a cliente</span></div></div>
+            <div class="mod-item"><span class="mi">📅</span><div><strong>Planificacion</strong><span>Proyeccion de produccion y compromisos</span></div></div>
+            <div class="mod-item"><span class="mi">🌡️</span><div><strong>Ambiente</strong><span>IoT/MQTT, clima, THI y alertas automaticas</span></div></div>
+            <div class="mod-item"><span class="mi">⚙️</span><div><strong>Configuracion</strong><span>Temas, modo oscuro, accesibilidad, backup</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
 <section class="stats" id="stats">
     <div class="stats-grid">
-        <div class="stat"><div class="number">22+</div><div class="label">Tipos de Datos</div></div>
-        <div class="stat"><div class="number">11</div><div class="label">Modulos</div></div>
-        <div class="stat"><div class="number">4</div><div class="label">Roles de Acceso</div></div>
-        <div class="stat"><div class="number">100%</div><div class="label">Offline</div></div>
+        <div class="stat"><div class="number">14</div><div class="label">Modulos Integrados</div></div>
+        <div class="stat"><div class="number">3</div><div class="label">Idiomas (ES/EN/PT)</div></div>
+        <div class="stat"><div class="number">7</div><div class="label">Factores IA Predictiva</div></div>
+        <div class="stat"><div class="number">100%</div><div class="label">Offline-First</div></div>
+        <div class="stat"><div class="number">$0</div><div class="label">Para Empezar</div></div>
     </div>
 </section>
 
+<!-- COMPARISON TABLE -->
+<section class="comparison" id="comparativa">
+    <h2 class="section-title">Comparativa de mercado</h2>
+    <p class="section-subtitle">EGGlogU 360 vs las alternativas mas conocidas del mercado</p>
+    <table class="comp-table">
+        <thead>
+            <tr>
+                <th>Funcionalidad</th>
+                <th class="hl">EGGlogU 360</th>
+                <th>PoultryCare</th>
+                <th>Egg Trac</th>
+                <th>Farmbrite</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Produccion diaria por lote</td><td class="hl-col yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Sanidad (vacunas + brotes)</td><td class="hl-col yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>FCR automatico</td><td class="hl-col yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Finanzas + rentabilidad</td><td class="hl-col yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+            <tr><td>Bioseguridad</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Trazabilidad + QR</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Predicciones IA / ML</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Planificacion de produccion</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Modo Campo (galpon)</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Modo Veterinario</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>IoT / MQTT</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Offline-First (PWA)</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Modo Oscuro + Accesibilidad</td><td class="hl-col yes">&#10003;</td><td class="no">&#10007;</td><td class="no">&#10007;</td><td class="no">&#10007;</td></tr>
+            <tr><td>Multi-idioma (ES/EN/PT)</td><td class="hl-col yes">&#10003;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+            <tr>
+                <td><strong>Precio desde</strong></td>
+                <td class="hl-col" style="color:var(--accent);font-weight:800">$0/mes</td>
+                <td>$79/mes</td>
+                <td>$106/mes</td>
+                <td>$19/mes</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- PRICING -->
 <section class="pricing" id="pricing">
-    <h2>Planes</h2>
-    <div class="pricing-grid">
-        <div class="price-card">
-            <h3>Gratis</h3>
-            <div class="price">$0<small>/mes</small></div>
-            <ul>
-                <li>1 granja</li>
-                <li>2 lotes activos</li>
-                <li>1 usuario</li>
-                <li>Todos los modulos</li>
-                <li>Soporte por email</li>
-            </ul>
-            <a href="#" class="btn-cta" style="width:100%;text-align:center" onclick="openLogin()">Comenzar</a>
-        </div>
-        <div class="price-card featured">
-            <h3>Pro</h3>
-            <div class="price">$19<small>/mes</small></div>
-            <ul>
-                <li>Granjas ilimitadas</li>
-                <li>Lotes ilimitados</li>
-                <li>5 usuarios</li>
-                <li>Integracion IoT</li>
-                <li>Predicciones IA</li>
-                <li>Soporte prioritario</li>
-            </ul>
-            <a href="#" class="btn-cta" style="width:100%;text-align:center" onclick="openLogin()">Elegir Pro</a>
-        </div>
-        <div class="price-card">
-            <h3>Enterprise</h3>
-            <div class="price">Contacto<small></small></div>
-            <ul>
-                <li>Todo de Pro</li>
-                <li>Usuarios ilimitados</li>
-                <li>API dedicada</li>
-                <li>SSO / LDAP</li>
-                <li>Soporte 24/7</li>
-                <li>SLA garantizado</li>
-            </ul>
-            <a href="#" class="btn-cta" style="width:100%;text-align:center" onclick="openLogin()">Contactar</a>
+    <div class="pricing-inner">
+        <h2 class="section-title">Planes y precios</h2>
+        <p class="section-subtitle">Empieza gratis. Escala cuando lo necesites. Sin contratos ni sorpresas.</p>
+        <div class="pricing-grid">
+            <!-- GRATIS -->
+            <div class="price-card">
+                <h3>Gratis</h3>
+                <p class="plan-desc">Para granjas que inician</p>
+                <div class="price">$0<small>/mes</small></div>
+                <p class="price-note">Para siempre</p>
+                <ul>
+                    <li><span class="ck">&#10003;</span> 1 granja</li>
+                    <li><span class="ck">&#10003;</span> 2 lotes activos</li>
+                    <li><span class="ck">&#10003;</span> 1 usuario</li>
+                    <li><span class="ck">&#10003;</span> 8 modulos basicos</li>
+                    <li><span class="ck">&#10003;</span> Dashboard + alertas</li>
+                    <li><span class="ck">&#10003;</span> Offline-first</li>
+                    <li class="disabled"><span class="ck">&#10007;</span> Bioseguridad</li>
+                    <li class="disabled"><span class="ck">&#10007;</span> Trazabilidad</li>
+                    <li class="disabled"><span class="ck">&#10007;</span> Predicciones IA</li>
+                </ul>
+                <button class="card-cta card-cta-outline" onclick="openLogin()">Comenzar Gratis</button>
+            </div>
+            <!-- PROFESIONAL -->
+            <div class="price-card featured">
+                <h3>Profesional</h3>
+                <p class="plan-desc">Para granjas en crecimiento</p>
+                <div class="price">$29<small>/mes</small></div>
+                <p class="price-note">$290/ano <span class="price-save">Ahorra 17%</span></p>
+                <ul>
+                    <li><span class="ck">&#10003;</span> 3 granjas</li>
+                    <li><span class="ck">&#10003;</span> Lotes ilimitados</li>
+                    <li><span class="ck">&#10003;</span> 5 usuarios</li>
+                    <li><span class="ck">&#10003;</span> <strong>14 modulos completos</strong></li>
+                    <li><span class="ck">&#10003;</span> Bioseguridad + plagas</li>
+                    <li><span class="ck">&#10003;</span> Predicciones IA (7 factores)</li>
+                    <li><span class="ck">&#10003;</span> Trazabilidad + QR</li>
+                    <li><span class="ck">&#10003;</span> Planificacion de produccion</li>
+                    <li><span class="ck">&#10003;</span> Modo Campo + Vet</li>
+                    <li><span class="ck">&#10003;</span> Soporte prioritario</li>
+                </ul>
+                <button class="card-cta card-cta-primary" onclick="openLogin()">Elegir Profesional</button>
+            </div>
+            <!-- BUSINESS -->
+            <div class="price-card">
+                <h3>Business</h3>
+                <p class="plan-desc">Para operaciones comerciales</p>
+                <div class="price">$59<small>/mes</small></div>
+                <p class="price-note">$590/ano <span class="price-save">Ahorra 17%</span></p>
+                <ul>
+                    <li><span class="ck">&#10003;</span> Granjas ilimitadas</li>
+                    <li><span class="ck">&#10003;</span> Lotes ilimitados</li>
+                    <li><span class="ck">&#10003;</span> 20 usuarios</li>
+                    <li><span class="ck">&#10003;</span> <strong>Todo de Profesional</strong></li>
+                    <li><span class="ck">&#10003;</span> Integracion IoT / MQTT</li>
+                    <li><span class="ck">&#10003;</span> Tipos de huevo + canales</li>
+                    <li><span class="ck">&#10003;</span> Rentabilidad por segmento</li>
+                    <li><span class="ck">&#10003;</span> Exportacion CSV avanzada</li>
+                    <li><span class="ck">&#10003;</span> Soporte dedicado</li>
+                </ul>
+                <button class="card-cta card-cta-dark" onclick="openLogin()">Elegir Business</button>
+            </div>
+            <!-- ENTERPRISE -->
+            <div class="price-card">
+                <h3>Enterprise</h3>
+                <p class="plan-desc">Para integradores y corporativos</p>
+                <div class="price" style="font-size:28px">Contacto</div>
+                <p class="price-note">Precio a medida</p>
+                <ul>
+                    <li><span class="ck">&#10003;</span> <strong>Todo de Business</strong></li>
+                    <li><span class="ck">&#10003;</span> Usuarios ilimitados</li>
+                    <li><span class="ck">&#10003;</span> API dedicada</li>
+                    <li><span class="ck">&#10003;</span> SSO / LDAP</li>
+                    <li><span class="ck">&#10003;</span> Backend cloud privado</li>
+                    <li><span class="ck">&#10003;</span> Soporte 24/7</li>
+                    <li><span class="ck">&#10003;</span> SLA garantizado</li>
+                    <li><span class="ck">&#10003;</span> Onboarding personalizado</li>
+                    <li><span class="ck">&#10003;</span> Custom branding</li>
+                </ul>
+                <button class="card-cta card-cta-outline" onclick="openLogin()">Contactar Ventas</button>
+            </div>
         </div>
     </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+    <h2 class="section-title">Preguntas frecuentes</h2>
+    <div style="margin-top:40px">
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Funciona sin internet?</div>
+            <div class="faq-a">Si. EGGlogU 360 es una PWA offline-first. Todos los datos se guardan localmente en tu dispositivo. Cuando hay conexion, se sincronizan automaticamente con la nube.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Puedo migrar desde otra plataforma?</div>
+            <div class="faq-a">Si. Puedes importar datos via JSON desde cualquier sistema. Tambien puedes exportar toda tu data en cualquier momento. Tus datos siempre son tuyos.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Que incluye la IA predictiva?</div>
+            <div class="faq-a">Clasificador de riesgo de brote (7 factores con modelo sigmoide), pronostico de produccion con bandas de confianza (WMA + regresion), motor de recomendaciones automaticas y deteccion de anomalias por Z-score.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Puedo probarlo antes de pagar?</div>
+            <div class="faq-a">Si. El plan Gratis es permanente y no requiere tarjeta de credito. Puedes usar 8 modulos sin limite de tiempo. Si necesitas mas, puedes subir a Profesional en cualquier momento.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Hay descuentos anuales?</div>
+            <div class="faq-a">Si. Pagando anual ahorras un 17% en los planes Profesional y Business. Ademas, ofrecemos descuentos para cooperativas y asociaciones avicolas.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Soporta multiples idiomas?</div>
+            <div class="faq-a">Si. La plataforma esta disponible en Espanol, Ingles y Portugues. Se puede cambiar el idioma en cualquier momento sin perder datos.</div>
+        </div>
+    </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+    <h2>Empieza a controlar tu granja hoy</h2>
+    <p>Sin tarjeta de credito. Sin compromisos. Plan gratis para siempre.</p>
+    <a href="#" class="btn-cta btn-cta-lg" onclick="openLogin()">Crear Cuenta Gratis</a>
 </section>
 
 <footer class="footer">
-    <p>&copy; 2026 EGGlogU. Todos los derechos reservados.</p>
+    <p>&copy; 2026 EGGlogU 360. Todos los derechos reservados.</p>
 </footer>
 
 <!-- Login Modal -->
@@ -202,7 +461,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="login-modal">
         <button class="close-btn" onclick="closeModal()">&times;</button>
         <div class="logo">
-            <h2>EGGlogU</h2>
+            <h2>🥚 EGGlogU 360</h2>
             <p>Ingresa a tu cuenta</p>
         </div>
         <div class="login-error" id="loginError">Usuario o contrasena incorrectos</div>
@@ -243,6 +502,10 @@ function handleLogin(e){
     }else{
         document.getElementById('loginError').classList.add('show');
     }
+}
+function toggleFaq(el){
+    el.classList.toggle('open');
+    el.nextElementSibling.classList.toggle('open');
 }
 </script>
 </body>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>What came first? | EGGlogU 360</title>
+<meta name="theme-color" content="#1E3A5F">
+<meta name="description" content="What came first, the chicken or the egg? Answer: EGGlogU 360 — Gestión Avícola Inteligente">
+<meta property="og:title" content="What came first, the chicken or the egg?">
+<meta property="og:description" content="Answer: EGGlogU 360 — La plataforma que nació antes que el problema.">
+<meta property="og:image" content="campaign-logo.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
+:root{--navy:#1E3A5F;--navy-deep:#0F2137;--orange:#F5A623;--red:#E74C3C;--white:#FFFFFF;--cream:#FFF8E1}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:var(--white);min-height:100vh;overflow-x:hidden}
+
+/* Phase 1: Teaser */
+.phase-teaser{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;background:radial-gradient(ellipse at center,#243B55 0%,var(--navy-deep) 70%)}
+.phase-teaser::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M20 10c-3 0-6 5-6 10s3 10 6 10 6-5 6-10-3-10-6-10z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+
+.question-mark{font-size:120px;opacity:.06;position:absolute;font-weight:900}
+.q1{top:10%;left:8%;transform:rotate(-15deg)}
+.q2{top:20%;right:12%;transform:rotate(20deg)}
+.q3{bottom:15%;left:15%;transform:rotate(10deg)}
+.q4{bottom:25%;right:8%;transform:rotate(-25deg)}
+
+.logo-container{margin-bottom:48px;position:relative;z-index:1}
+.logo-container img{width:280px;height:280px;border-radius:40px;box-shadow:0 20px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.logo-container img:hover{transform:scale(1.05) rotate(-2deg)}
+.logo-glow{position:absolute;inset:-20px;border-radius:60px;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 70%);z-index:-1;animation:glow 3s ease-in-out infinite alternate}
+@keyframes glow{0%{opacity:.5;transform:scale(.95)}100%{opacity:1;transform:scale(1.05)}}
+
+.question{position:relative;z-index:1}
+.question h1{font-size:clamp(28px,5vw,52px);font-weight:300;line-height:1.3;margin-bottom:12px;letter-spacing:-1px}
+.question h1 em{font-style:italic;color:rgba(255,255,255,.6)}
+.question .dots{font-size:40px;letter-spacing:8px;opacity:.4;margin:20px 0;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}}
+
+.answer-reveal{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal 1s ease-out 2.5s forwards}
+@keyframes reveal{to{opacity:1;transform:translateY(0)}}
+
+.answer-label{font-size:14px;text-transform:uppercase;letter-spacing:4px;color:rgba(255,255,255,.5);margin-bottom:16px;font-weight:600}
+.answer-brand{font-size:clamp(42px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1}
+.answer-brand .egg{color:var(--white)}
+.answer-brand .log{font-weight:300;color:rgba(255,255,255,.7)}
+.answer-brand .u{color:var(--white)}
+.answer-360{font-size:clamp(24px,4vw,48px);font-weight:800;color:var(--orange);letter-spacing:6px;margin-top:4px}
+.answer-tagline{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.6);margin-top:20px;font-weight:300;font-style:italic}
+
+/* Divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);margin:0}
+
+/* Phase 2: The Pitch */
+.phase-pitch{padding:80px 24px;text-align:center;background:var(--navy)}
+.pitch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;max-width:960px;margin:48px auto 0}
+.pitch-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px 24px;transition:all .3s}
+.pitch-card:hover{background:rgba(255,255,255,.08);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.2)}
+.pitch-icon{font-size:40px;margin-bottom:16px}
+.pitch-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.pitch-card p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6}
+
+.section-title{font-size:clamp(22px,3.5vw,36px);font-weight:800;margin-bottom:8px}
+.section-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,.5);font-weight:300}
+
+/* Phase 3: CTA */
+.phase-cta{padding:80px 24px;text-align:center;background:linear-gradient(135deg,var(--navy-deep) 0%,#243B55 100%);position:relative}
+.taglines{display:flex;flex-direction:column;gap:16px;max-width:600px;margin:40px auto 48px;align-items:center}
+.tagline{font-size:clamp(16px,2.5vw,22px);padding:12px 28px;border-radius:40px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-weight:300;transition:all .3s;cursor:default}
+.tagline:hover{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);color:var(--orange)}
+.tagline strong{font-weight:700;color:var(--orange)}
+
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.btn-main{padding:16px 40px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-main:hover{background:#FFB84D;transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,166,35,.3)}
+.btn-ghost{padding:16px 40px;background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.3);border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.05)}
+
+/* Footer */
+.footer{padding:32px 24px;text-align:center;background:var(--navy-deep);border-top:1px solid rgba(255,255,255,.05)}
+.footer p{font-size:13px;color:rgba(255,255,255,.3)}
+.footer a{color:var(--orange);text-decoration:none}
+
+/* Social share cards */
+.share-strip{display:flex;gap:12px;justify-content:center;margin-top:32px}
+.share-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .2s;text-decoration:none;color:#fff}
+.share-btn:hover{background:var(--orange);border-color:var(--orange);color:var(--navy-deep);transform:scale(1.1)}
+
+/* Language switcher */
+.lang-bar{position:fixed;top:16px;right:16px;z-index:200;display:flex;gap:6px;align-items:center;background:rgba(15,33,55,.85);backdrop-filter:blur(8px);padding:6px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.1)}
+.lang-bar button{padding:5px 14px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
+.lang-bar button.active{background:#fff;color:var(--navy-deep);border-color:#fff}
+.lang-bar button:hover:not(.active){background:rgba(255,255,255,.1);color:#fff}
+.lang-bar .badge-more{font-size:10px;color:var(--orange);font-weight:500;padding:0 4px}
+
+@media(max-width:600px){
+  .logo-container img{width:200px;height:200px;border-radius:30px}
+  .question-mark{font-size:80px}
+  .phase-teaser{padding:32px 20px}
+  .phase-pitch,.phase-cta{padding:60px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Language switcher -->
+<div class="lang-bar">
+  <button class="active" onclick="setLang('es')">ES</button>
+  <button onclick="setLang('en')">EN</button>
+  <button onclick="setLang('pt')">PT</button>
+  <span class="badge-more">+more</span>
+</div>
+
+<!-- PHASE 1: THE QUESTION -->
+<section class="phase-teaser">
+  <span class="question-mark q1">?</span>
+  <span class="question-mark q2">?</span>
+  <span class="question-mark q3">?</span>
+  <span class="question-mark q4">?</span>
+
+  <div class="logo-container">
+    <img src="campaign-logo.webp" alt="Chicken inside an egg — EGGlogU 360">
+    <div class="logo-glow"></div>
+  </div>
+
+  <div class="question">
+    <h1><em data-t="q_what">What came first...</em><br><span data-t="q_chicken_egg">the chicken or the egg?</span></h1>
+    <div class="dots">...</div>
+  </div>
+
+  <div class="answer-reveal">
+    <div class="answer-brand">
+      <span class="egg">EGG</span><span class="log">log</span><span class="u">U</span>
+    </div>
+    <div class="answer-360">360</div>
+    <div class="answer-tagline" data-t="tagline_main">La plataforma que nacio antes que el problema.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PHASE 2: WHY US -->
+<section class="phase-pitch">
+  <div class="section-title" data-t="pitch_title">Ni la gallina ni el huevo.</div>
+  <div class="section-sub" data-t="pitch_sub">Nosotros llegamos primero.</div>
+
+  <div class="pitch-grid">
+    <div class="pitch-card">
+      <div class="pitch-icon">🧠</div>
+      <h3 data-t="card1_t">IA Predictiva</h3>
+      <p data-t="card1_p">Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">🛡️</div>
+      <h3 data-t="card2_t">Bioseguridad Total</h3>
+      <p data-t="card2_p">Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">📦</div>
+      <h3 data-t="card3_t">Trazabilidad Completa</h3>
+      <p data-t="card3_p">Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">📊</div>
+      <h3 data-t="card4_t">14 Modulos Integrados</h3>
+      <p data-t="card4_p">Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, planificacion y mas. Todo en una sola plataforma.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">🌾</div>
+      <h3 data-t="card5_t">Modo Campo</h3>
+      <p data-t="card5_p">Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">💰</div>
+      <h3 data-t="card6_t">Desde $0/mes</h3>
+      <p data-t="card6_p">Plan gratuito para siempre. Profesional desde $29/mes — fraccion de lo que cobra la competencia por menos funcionalidad.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PHASE 3: THE PUNCHLINE CTA -->
+<section class="phase-cta">
+  <div class="section-title" data-t="cta_title">La eterna pregunta, resuelta.</div>
+
+  <div class="taglines">
+    <div class="tagline" data-t="tl1">Ni la gallina ni el huevo. <strong>EGGlogU 360.</strong></div>
+    <div class="tagline" data-t="tl2">Before the chicken. Before the egg. <strong>EGGlogU 360.</strong></div>
+    <div class="tagline" data-t="tl3">La respuesta que la industria avicola estaba esperando.</div>
+    <div class="tagline" data-t="tl4"><strong>EGGlogU 360</strong> — Nacimos primero.</div>
+  </div>
+
+  <div class="cta-buttons">
+    <a href="/app" class="btn-main" data-t="btn_start">Comenzar Gratis</a>
+    <a href="/" class="btn-ghost" data-t="btn_plans">Ver Planes y Precios</a>
+  </div>
+
+  <div class="share-strip">
+    <a class="share-btn" title="Share on X" href="https://twitter.com/intent/tweet?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A&url=https://egglogu.com/campaign" target="_blank">𝕏</a>
+    <a class="share-btn" title="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://egglogu.com/campaign" target="_blank">in</a>
+    <a class="share-btn" title="Share on WhatsApp" href="https://wa.me/?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A%20https://egglogu.com/campaign" target="_blank">💬</a>
+    <a class="share-btn" title="Copy link" onclick="navigator.clipboard.writeText('https://egglogu.com/campaign');this.textContent='✓';setTimeout(()=>this.textContent='🔗',2000)" href="javascript:void(0)">🔗</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>&copy; 2025 <a href="/">EGGlogU 360</a> — Gestion Avicola Inteligente</p>
+</footer>
+
+<script>
+const T={
+es:{
+  q_what:'Que fue primero...',q_chicken_egg:'la gallina o el huevo?',answer_label:'Respuesta',
+  tagline_main:'La plataforma que nacio antes que el problema.',
+  pitch_title:'Ni la gallina ni el huevo.',pitch_sub:'Nosotros llegamos primero.',
+  card1_t:'IA Predictiva',card1_p:'Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.',
+  card2_t:'Bioseguridad Total',card2_p:'Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.',
+  card3_t:'Trazabilidad Completa',card3_p:'Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.',
+  card4_t:'14 Modulos Integrados',card4_p:'Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, planificacion y mas. Todo en una sola plataforma.',
+  card5_t:'Modo Campo',card5_p:'Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.',
+  card6_t:'Desde $0/mes',card6_p:'Plan gratuito para siempre. Profesional desde $29/mes — fraccion de lo que cobra la competencia por menos funcionalidad.',
+  cta_title:'La eterna pregunta, resuelta.',
+  tl1:'Ni la gallina ni el huevo. <strong>EGGlogU 360.</strong>',
+  tl2:'Antes de la gallina. Antes del huevo. <strong>EGGlogU 360.</strong>',
+  tl3:'La respuesta que la industria avicola estaba esperando.',
+  tl4:'<strong>EGGlogU 360</strong> — Nacimos primero.',
+  btn_start:'Comenzar Gratis',btn_plans:'Ver Planes y Precios'
+},
+en:{
+  q_what:'What came first...',q_chicken_egg:'the chicken or the egg?',answer_label:'Answer',
+  tagline_main:'The platform that was born before the problem.',
+  pitch_title:'Neither the chicken nor the egg.',pitch_sub:'We got here first.',
+  card1_t:'Predictive AI',card1_p:'Outbreak risk classifier, forecasting with confidence bands, and automatic recommendations before the problem occurs.',
+  card2_t:'Total Biosecurity',card2_p:'Visitor control, risk zones, pest sightings, and disinfection protocols. Real-time Pest Score.',
+  card3_t:'Full Traceability',card3_p:'From batch to client. Every egg tracked with QR: farm, house, flock, date, FCR, health score.',
+  card4_t:'14 Integrated Modules',card4_p:'Production, health, feed, environment, vaccines, clients, finances, planning and more. All in one platform.',
+  card5_t:'Field Mode',card5_p:'Simplified interface for daily use. One button, log eggs, done. Designed to use with work boots on.',
+  card6_t:'From $0/month',card6_p:'Free plan forever. Professional from $29/mo — a fraction of what competitors charge for less functionality.',
+  cta_title:'The eternal question, answered.',
+  tl1:'Neither the chicken nor the egg. <strong>EGGlogU 360.</strong>',
+  tl2:'Before the chicken. Before the egg. <strong>EGGlogU 360.</strong>',
+  tl3:'The answer the poultry industry was waiting for.',
+  tl4:'<strong>EGGlogU 360</strong> — We were born first.',
+  btn_start:'Start Free',btn_plans:'See Plans & Pricing'
+},
+pt:{
+  q_what:'O que veio primeiro...',q_chicken_egg:'a galinha ou o ovo?',answer_label:'Resposta',
+  tagline_main:'A plataforma que nasceu antes do problema.',
+  pitch_title:'Nem a galinha nem o ovo.',pitch_sub:'Nos chegamos primeiro.',
+  card1_t:'IA Preditiva',card1_p:'Classificador de risco de surtos, previsao com bandas de confianca, e recomendacoes automaticas antes que o problema ocorra.',
+  card2_t:'Biosseguranca Total',card2_p:'Controle de visitantes, zonas de risco, avistamentos de pragas, e protocolos de desinfeccao. Pest Score em tempo real.',
+  card3_t:'Rastreabilidade Completa',card3_p:'Do lote ao cliente. Cada ovo rastreado com QR: granja, galpao, lote, data, FCR, health score.',
+  card4_t:'14 Modulos Integrados',card4_p:'Producao, saude, alimentacao, ambiente, vacinas, clientes, financas, planejamento e mais. Tudo em uma so plataforma.',
+  card5_t:'Modo Campo',card5_p:'Interface simplificada para o dia a dia. Um botao, registrar ovos, pronto. Projetado para usar com botas de trabalho.',
+  card6_t:'Desde $0/mes',card6_p:'Plano gratuito para sempre. Profissional desde $29/mes — fracao do que a concorrencia cobra por menos funcionalidade.',
+  cta_title:'A eterna pergunta, respondida.',
+  tl1:'Nem a galinha nem o ovo. <strong>EGGlogU 360.</strong>',
+  tl2:'Antes da galinha. Antes do ovo. <strong>EGGlogU 360.</strong>',
+  tl3:'A resposta que a industria avicola estava esperando.',
+  tl4:'<strong>EGGlogU 360</strong> — Nascemos primeiro.',
+  btn_start:'Comecar Gratis',btn_plans:'Ver Planos e Precos'
+}
+};
+let curLang='es';
+function setLang(l){
+  curLang=l;
+  document.querySelectorAll('.lang-bar button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l));
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t'),v=T[l]&&T[l][k];
+    if(v) el.innerHTML=v;
+  });
+  document.documentElement.lang=l;
+  localStorage.setItem('campaign_lang',l);
+}
+// Auto-detect
+const saved=localStorage.getItem('campaign_lang');
+if(saved&&T[saved]) setLang(saved);
+</script>
+</body>
+</html>

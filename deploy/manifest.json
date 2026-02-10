@@ -1,11 +1,11 @@
 {
-  "name": "EGGlogU - Poultry Management",
-  "short_name": "EGGlogU",
+  "name": "EGGlogU 360 — Gestión Avícola Inteligente",
+  "short_name": "EGGlogU 360",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1A3C6E",
-  "description": "Complete poultry farm management system with production tracking, health management, feed optimization, IoT sensors, weather integration, and predictive analytics.",
+  "description": "EGGlogU 360 — Plataforma integral de gestión avícola con IA. 14 módulos, predicciones ML, trazabilidad, bioseguridad, planificación y más.",
   "icons": [
     {
       "src": "icons/icon-192.png",
