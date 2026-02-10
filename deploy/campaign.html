@@ -276,9 +276,19 @@ function setLang(l){
   document.documentElement.lang=l;
   localStorage.setItem('campaign_lang',l);
 }
-// Auto-detect
-const saved=localStorage.getItem('campaign_lang');
-if(saved&&T[saved]) setLang(saved);
+// Auto-detect: 1) saved preference, 2) device/browser language, 3) fallback to 'en'
+function detectLang(){
+  const saved=localStorage.getItem('campaign_lang');
+  if(saved&&T[saved]) return saved;
+  const nav=navigator.language||navigator.userLanguage||'';
+  const code=nav.split('-')[0].toLowerCase();
+  if(T[code]) return code;
+  // Map common variants: es-MX, es-CL, es-AR → es | pt-BR → pt | en-US, en-GB → en
+  if(code==='es'||nav.startsWith('es')) return 'es';
+  if(code==='pt'||nav.startsWith('pt')) return 'pt';
+  return 'en';
+}
+setLang(detectLang());
 </script>
 </body>
 </html>
