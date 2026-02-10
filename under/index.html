@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EGGlogU - En Construccion</title>
+<meta name="theme-color" content="#1A3C6E">
+<meta name="description" content="EGGlogU - Sistema Avicola 360. Proximamente disponible.">
+<style>
+:root{--primary:#1A3C6E;--primary-light:#4A7AB5;--primary-dark:#0E2240;--secondary:#FF8F00;--accent:#2E7D32;--bg:#F5F5F5;--card:#FFF;--text:#212121;--text-light:#757575;--radius:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.bg-pattern{position:fixed;inset:0;background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 50%,var(--primary-light) 100%);z-index:0}
+.bg-pattern::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.container{position:relative;z-index:1;text-align:center;padding:40px 20px;max-width:600px;width:100%}
+.logo{font-size:48px;font-weight:800;color:#fff;letter-spacing:3px;margin-bottom:4px;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+.logo small{display:block;font-size:12px;font-weight:400;letter-spacing:4px;opacity:.7;margin-top:4px}
+.egg-icon{font-size:80px;margin:30px 0;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 10px 20px rgba(0,0,0,.3))}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.card{background:rgba(255,255,255,.12);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:40px 30px;margin:20px 0}
+h1{color:#fff;font-size:28px;font-weight:700;margin-bottom:12px}
+p{color:rgba(255,255,255,.8);font-size:16px;line-height:1.6}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-top:30px}
+.feature{background:rgba(255,255,255,.08);border-radius:12px;padding:20px 12px;border:1px solid rgba(255,255,255,.1);transition:transform .2s}
+.feature:hover{transform:translateY(-4px)}
+.feature .icon{font-size:28px;margin-bottom:8px}
+.feature .label{color:rgba(255,255,255,.9);font-size:13px;font-weight:600}
+.progress-section{margin-top:30px}
+.progress-bar{background:rgba(255,255,255,.15);border-radius:20px;height:8px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--secondary),#FFB74D);width:35%;animation:progress-pulse 2s ease-in-out infinite}
+@keyframes progress-pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.progress-text{color:rgba(255,255,255,.6);font-size:13px}
+.notify-form{margin-top:30px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.notify-form input{padding:12px 20px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;border-radius:var(--radius);font-size:14px;width:260px;outline:none;transition:border-color .2s}
+.notify-form input::placeholder{color:rgba(255,255,255,.4)}
+.notify-form input:focus{border-color:var(--secondary)}
+.notify-form button{padding:12px 24px;background:var(--secondary);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+.notify-form button:hover{background:#E65100}
+.footer{margin-top:40px;color:rgba(255,255,255,.4);font-size:12px}
+@media(max-width:480px){.logo{font-size:36px}h1{font-size:22px}.card{padding:24px 16px}.features{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="container">
+    <div class="logo">EGGlogU<small>Sistema Avicola 360</small></div>
+    <div class="egg-icon">🥚</div>
+    <div class="card">
+        <h1>En Construccion</h1>
+        <p>Estamos trabajando en algo increible. La plataforma mas completa para la gestion avicola estara disponible pronto.</p>
+        <div class="features">
+            <div class="feature"><div class="icon">📊</div><div class="label">Produccion</div></div>
+            <div class="feature"><div class="icon">💊</div><div class="label">Sanidad</div></div>
+            <div class="feature"><div class="icon">💰</div><div class="label">Finanzas</div></div>
+            <div class="feature"><div class="icon">📱</div><div class="label">Offline-First</div></div>
+        </div>
+        <div class="progress-section">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <div class="progress-text">Progreso estimado: 35%</div>
+        </div>
+    </div>
+    <div class="footer">&copy; 2026 EGGlogU. Todos los derechos reservados.</div>
+</div>
+</body>
+</html>
