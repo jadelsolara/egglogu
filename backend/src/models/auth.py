@@ -1,7 +1,9 @@
 import enum
 import uuid
+from datetime import datetime
+from typing import Optional
 
-from sqlalchemy import String, Boolean, ForeignKey
+from sqlalchemy import DateTime, String, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
@@ -36,5 +38,11 @@ class User(TimestampMixin, Base):
     role: Mapped[Role] = mapped_column(default=Role.viewer)
     organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    verification_token: Mapped[Optional[str]] = mapped_column(String(200), default=None)
+    reset_token: Mapped[Optional[str]] = mapped_column(String(200), default=None)
+    reset_token_expires: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
 
     organization: Mapped[Organization] = relationship(back_populates="users")

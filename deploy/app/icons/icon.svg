@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="80" fill="#1A3C6E"/>
-  <ellipse cx="256" cy="280" rx="110" ry="140" fill="#FFFFFF"/>
-  <ellipse cx="256" cy="260" rx="90" ry="115" fill="#FFF8E1"/>
-  <ellipse cx="256" cy="250" rx="50" ry="55" fill="#FF8F00"/>
-  <text x="256" y="470" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="72" fill="#FFFFFF">EGGlogU</text>
-</svg>

@@ -1,8 +1,26 @@
 import uuid
 from datetime import date, datetime
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
+
+
+class EggTypeEnum(str, Enum):
+    conventional = "conventional"
+    free_range = "free_range"
+    organic = "organic"
+    pasture_raised = "pasture_raised"
+    decorative = "decorative"
+
+
+class MarketChannelEnum(str, Enum):
+    wholesale = "wholesale"
+    supermarket = "supermarket"
+    restaurant = "restaurant"
+    direct = "direct"
+    export = "export"
+    pasteurized = "pasteurized"
 
 
 class DailyProductionCreate(BaseModel):
@@ -17,6 +35,8 @@ class DailyProductionCreate(BaseModel):
     deaths: int = 0
     egg_mass_g: Optional[float] = None
     water_liters: Optional[float] = None
+    egg_type: Optional[EggTypeEnum] = None
+    market_channel: Optional[MarketChannelEnum] = None
     notes: Optional[str] = None
 
 
@@ -30,6 +50,8 @@ class DailyProductionUpdate(BaseModel):
     deaths: Optional[int] = None
     egg_mass_g: Optional[float] = None
     water_liters: Optional[float] = None
+    egg_type: Optional[EggTypeEnum] = None
+    market_channel: Optional[MarketChannelEnum] = None
     notes: Optional[str] = None
 
 
@@ -46,6 +68,8 @@ class DailyProductionRead(BaseModel):
     deaths: int
     egg_mass_g: Optional[float]
     water_liters: Optional[float]
+    egg_type: Optional[str]
+    market_channel: Optional[str]
     notes: Optional[str]
     created_at: datetime
     updated_at: datetime

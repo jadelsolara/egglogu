@@ -33,6 +33,24 @@ class UserRead(BaseModel):
     role: str
     organization_id: uuid.UUID
     is_active: bool
+    email_verified: bool
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
+
+class VerifyEmailRequest(BaseModel):
+    token: str
+
+
+class MessageResponse(BaseModel):
+    message: str

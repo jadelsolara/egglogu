@@ -10,3 +10,7 @@ from src.models.finance import Income, Expense, Receivable  # noqa: F401
 from src.models.environment import EnvironmentReading, IoTReading, WeatherCache  # noqa: F401
 from src.models.operations import ChecklistItem, LogbookEntry, Personnel  # noqa: F401
 from src.models.analytics import KPISnapshot, Prediction  # noqa: F401
+from src.models.biosecurity import BiosecurityVisitor, BiosecurityZone, PestSighting, BiosecurityProtocol  # noqa: F401
+from src.models.traceability import TraceabilityBatch  # noqa: F401
+from src.models.planning import ProductionPlan  # noqa: F401
+from src.models.subscription import Subscription  # noqa: F401
