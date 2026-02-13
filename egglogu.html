@@ -443,7 +443,7 @@ function todayStr(){return new Date().toISOString().substring(0,10);}
 
 // ============ DATA MODEL ============
 const DEFAULT_DATA={
-farm:{name:'Mi Granja',location:'',capacity:500,currency:'$',lat:null,lng:null,owmApiKey:'',mqttBroker:'',mqttUser:'',mqttPass:'',mqttTopicPrefix:'egglogu/'},
+farm:{name:'Mi Granja',location:'',capacity:500,currency:'$',lat:null,lng:null,owmApiKey:'',mqttBroker:'',mqttUser:'',mqttPass:'',mqttTopicPrefix:'egglogu/',houses:[],routes:[],suppliers:[]},
 flocks:[],dailyProduction:[],vaccines:[],medications:[],outbreaks:[],
 feed:{purchases:[],consumption:[]},clients:[],
 finances:{income:[],expenses:[],receivables:[]},
@@ -494,6 +494,53 @@ const BREED_CURVES={
 'otra':[8,28,55,78,88,92,93,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40],
 'generic':[8,28,55,78,88,92,93,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60,59,58,57,56,55,54,53,52,51,50,49,48,47,46,45,44,43,42,41,40]
 };
+// ============ CATALOGS — "Selecciona, no escribas" ============
+const CATALOGS={
+feedTypes:[
+{id:'inicio',name:'Inicio (0-6 sem)',protein:'20-22%',stage:'cria'},
+{id:'crecimiento',name:'Crecimiento (6-12 sem)',protein:'18-19%',stage:'recria'},
+{id:'desarrollo',name:'Desarrollo (12-16 sem)',protein:'15-16%',stage:'recria'},
+{id:'pre-postura',name:'Pre-postura (16-18 sem)',protein:'17-18%',stage:'recria'},
+{id:'postura-1',name:'Postura Fase 1 (18-45 sem)',protein:'17-18%',stage:'produccion'},
+{id:'postura-2',name:'Postura Fase 2 (45-65 sem)',protein:'16-17%',stage:'produccion'},
+{id:'postura-3',name:'Postura Fase 3 (65+ sem)',protein:'15-16%',stage:'produccion'},
+],
+deathCauses:['Enfermedad','Depredador','Golpe de calor','Asfixia','Canibalismo','Prolapso','Edad/Natural','Accidente','Desconocida'],
+diseases:['Newcastle','Gumboro (IBD)','Bronquitis Infecciosa','Coccidiosis','Marek','Salmonelosis','Coriza Infecciosa','Viruela Aviar','Influenza Aviar','Micoplasmosis','Laringotraqueítis','Colibacilosis','Aspergilosis','Histomoniasis'],
+medications:[
+{name:'Enrofloxacina',type:'antibiotico',withdrawal:7},
+{name:'Amoxicilina',type:'antibiotico',withdrawal:5},
+{name:'Toltrazuril',type:'anticoccidial',withdrawal:14},
+{name:'Ivermectina',type:'antiparasitario',withdrawal:14},
+{name:'Tilosina',type:'antibiotico',withdrawal:5},
+{name:'Oxitetraciclina',type:'antibiotico',withdrawal:7},
+{name:'Vitamina AD3E',type:'suplemento',withdrawal:0},
+{name:'Electrolitos',type:'suplemento',withdrawal:0},
+],
+personnelRoles:['Administrador','Técnico Avícola','Galponero','Recolector','Veterinario','Chofer/Repartidor','Limpieza','Mantenimiento'],
+visitorPurposes:['Entrega de alimento','Servicio técnico','Inspección sanitaria','Retiro de huevos','Visita veterinaria','Mantenimiento','Otro'],
+ventilationLevels:['Natural','Baja','Media','Alta','Túnel'],
+bioProtocols:['Desinfección de galpón','Pediluvio','Control de roedores','Fumigación','Limpieza de bebederos','Limpieza de comederos','Desratización','Vacío sanitario'],
+expenseDescriptions:{
+feed:['Alimento postura','Alimento cría','Suplementos','Aditivos'],
+vaccines:['Vacuna Newcastle','Vacuna Gumboro','Vacuna Marek','Otra vacuna'],
+transport:['Distribución huevos','Retiro alimento','Traslado aves'],
+labor:['Sueldos','Horas extra','Bonos'],
+infrastructure:['Reparación galpón','Equipamiento','Nidales','Bebederos'],
+other:['Servicios básicos','Asesoría','Varios'],
+},
+};
+// ============ CATALOG HELPERS ============
+function supplierSelect(sel){const D=loadData();const sups=D.farm.suppliers||[];let h='<option value="">--</option>';sups.forEach(s=>{h+=`<option value="${s.name}"${s.name===sel?' selected':''}>${s.name}</option>`;});h+='<option value="__new__">+ Nuevo proveedor</option>';return h;}
+function houseSelect(sel){const D=loadData();const houses=D.farm.houses||[];let h='<option value="">--</option>';houses.forEach(ho=>{h+=`<option value="${ho.name}"${ho.name===sel?' selected':''}>${ho.name}</option>`;});return h;}
+function rackSelect(houseName,sel){const D=loadData();const houses=D.farm.houses||[];const house=houses.find(h=>h.name===houseName);let h='<option value="">--</option>';if(house&&house.racks){house.racks.forEach(r=>{h+=`<option value="${r.name}"${r.name===sel?' selected':''}>${r.name}</option>`;});}return h;}
+function routeSelect(sel){const D=loadData();const routes=D.farm.routes||[];let h='<option value="">--</option>';routes.forEach(r=>{h+=`<option value="${r.name}"${r.name===sel?' selected':''}>${r.name}</option>`;});return h;}
+function catalogSelect(items,sel,addOther=true){let h='<option value="">--</option>';items.forEach(item=>{const v=typeof item==='string'?item:item.name||item.id;const lbl=typeof item==='string'?item:item.name;h+=`<option value="${v}"${v===sel?' selected':''}>${lbl}</option>`;});if(addOther)h+='<option value="__other__">Otra...</option>';return h;}
+function feedTypeSelect(sel,flockId){const D=loadData();let suggested='';if(flockId){const f=D.flocks.find(x=>x.id===flockId);if(f){const stage=flockLifecycleStage(f);if(stage)suggested=stage.id;}}let h='<option value="">--</option>';CATALOGS.feedTypes.forEach(ft=>{const isSuggested=ft.stage===suggested;h+=`<option value="${ft.id}"${ft.id===sel?' selected':''}>${ft.name}${isSuggested?' ★':''}</option>`;});h+='<option value="__other__">Otro...</option>';return h;}
+function onMedSelect(){const sel=$('m-name');if(!sel)return;const med=CATALOGS.medications.find(m=>m.name===sel.value);const wd=$('m-wd');if(med&&wd&&!wd.value)wd.value=med.withdrawal;}
+function onExpenseCatChange(){const cat=$('fe-cat')?.value;const descEl=$('fe-desc');if(!descEl||!cat)return;const opts=CATALOGS.expenseDescriptions[cat]||[];descEl.innerHTML=catalogSelect(opts,descEl.value,true);}
+function onHouseChange(){const house=$('tb-house')?.value;const rackEl=$('tb-rack');if(!rackEl)return;rackEl.innerHTML=rackSelect(house,rackEl.value);}
+function onProdFlockChange(){const fid=$('p-flock')?.value;const shellEl=$('p-shell');if(!fid||!shellEl)return;const D=loadData();const f=D.flocks.find(x=>x.id===fid);if(f){const b=COMMERCIAL_BREEDS.find(x=>x.id===f.breed);if(b&&b.eggColor){const colorMap={'Blanco':'blanco','Marrón':'marron','Marrón oscuro':'marron','Crema':'crema','Azul/Verde':'crema','Verde oliva':'crema'};shellEl.value=colorMap[b.eggColor]||'';}}}
 function loadData(){
 if(DATA)return DATA;
 try{const r=localStorage.getItem('egglogu_data');
@@ -510,6 +557,10 @@ if(!DATA.farm.mqttBroker)DATA.farm.mqttBroker='';
 if(!DATA.farm.mqttUser)DATA.farm.mqttUser='';
 if(!DATA.farm.mqttPass)DATA.farm.mqttPass='';
 if(!DATA.farm.mqttTopicPrefix)DATA.farm.mqttTopicPrefix='egglogu/';
+// v4 migrations — farm config expansion
+if(!DATA.farm.houses)DATA.farm.houses=[];
+if(!DATA.farm.routes)DATA.farm.routes=[];
+if(!DATA.farm.suppliers)DATA.farm.suppliers=[];
 // v3 migrations
 if(!DATA.biosecurity)DATA.biosecurity={visitors:[],zones:[],pestSightings:[],protocols:[]};
 if(!DATA.biosecurity.visitors)DATA.biosecurity.visitors=[];
@@ -773,7 +824,7 @@ ${COMMERCIAL_BREEDS.map(b=>`<option value="${b.id}"${(f&&(f.breed===b.id||f.targ
 <option value="descarte"${f&&f.status==='descarte'?' selected':''}>${t('flock_status_descarte')}</option></select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('flock_birthdate')}</label><input type="date" id="f-birth" value="${f?f.birthDate:''}"></div>
 <div class="form-group"><label>${t('flock_purchase_date')}</label><input type="date" id="f-purchase" value="${f?f.purchaseDate:''}"></div></div>
-<div class="form-row"><div class="form-group"><label>${t('flock_supplier')}</label><input id="f-supplier" value="${f?f.supplier:''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('flock_supplier')}</label><select id="f-supplier">${supplierSelect(f?f.supplier:'')}</select></div>
 <div class="form-group"><label>${t('flock_cost')}</label><input type="number" id="f-cost" value="${f?f.cost:''}"></div></div>
 <div class="form-group"><label>${t('flock_notes')}</label><textarea id="f-notes">${f?f.notes||'':''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
@@ -841,7 +892,7 @@ function showProdForm(id){
 const D=loadData();const p=id?D.dailyProduction.find(x=>x.id===id):null;
 openModal(p?t('edit'):t('prod_add'),`
 <div class="form-row"><div class="form-group"><label>${t('prod_date')}</label><input type="date" id="p-date" value="${p?p.date:todayStr()}"></div>
-<div class="form-group"><label>${t('prod_flock')}</label><select id="p-flock">${flockSelect(p?p.flockId:'')}</select></div></div>
+<div class="form-group"><label>${t('prod_flock')}</label><select id="p-flock" onchange="onProdFlockChange()">${flockSelect(p?p.flockId:'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('prod_eggs')}</label><input type="number" id="p-eggs" value="${p?p.eggsCollected:''}" min="0"></div>
 <div class="form-group"><label>${t('prod_broken')}</label><input type="number" id="p-broken" value="${p?p.eggsBroken||'':''}" min="0"></div></div>
 <div class="form-row-3"><div class="form-group"><label>${t('prod_size_s')}</label><input type="number" id="p-s" value="${p?p.eggsS||'':''}" min="0"></div>
@@ -868,10 +919,11 @@ openModal(p?t('edit'):t('prod_add'),`
 <option value="direct"${p&&p.marketChannel==='direct'?' selected':''}>${t('prod_market_direct')}</option>
 <option value="export"${p&&p.marketChannel==='export'?' selected':''}>${t('prod_market_export')}</option>
 <option value="pasteurized"${p&&p.marketChannel==='pasteurized'?' selected':''}>${t('prod_market_pasteurized')}</option></select></div></div>
-<div class="form-group"><label>${t('prod_death_cause')}</label><input id="p-cause" value="${p?p.deathCause||'':''}"></div>
+<div class="form-group"><label>${t('prod_death_cause')}</label><select id="p-cause">${catalogSelect(CATALOGS.deathCauses,p?p.deathCause||'':'')}</select></div>
 <div class="form-group"><label>${t('notes')}</label><textarea id="p-notes">${p?p.notes||'':''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveProd('${id||''}')">${t('save')}</button></div>`);
+if(!p)setTimeout(onProdFlockChange,50);
 }
 function saveProd(id){
 const D=loadData();const o={date:$('p-date').value,flockId:$('p-flock').value,
@@ -946,8 +998,14 @@ function showVaccineForm(id){
 const D=loadData();const v=id?D.vaccines.find(x=>x.id===id):null;
 openModal(v?t('edit'):t('vac_add'),`
 <div class="form-row"><div class="form-group"><label>${t('prod_flock')}</label><select id="v-flock">${flockSelect(v?v.flockId:'')}</select></div>
-<div class="form-group"><label>${t('vac_vaccine')}</label><input id="v-name" value="${v?v.vaccineName:''}"></div></div>
-<div class="form-row"><div class="form-group"><label>${t('vac_route')}</label><input id="v-route" value="${v?t(v.route):''}"></div>
+<div class="form-group"><label>${t('vac_vaccine')}</label><select id="v-name">${catalogSelect(VACCINE_SCHEDULE.map(vs=>vs.name),v?v.vaccineName:'')}</select></div></div>
+<div class="form-row"><div class="form-group"><label>${t('vac_route')}</label><select id="v-route">
+<option value="">--</option>
+<option value="vac_route_injection"${v&&v.route==='vac_route_injection'?' selected':''}>${t('vac_route_injection')}</option>
+<option value="vac_route_ocular"${v&&v.route==='vac_route_ocular'?' selected':''}>${t('vac_route_ocular')}</option>
+<option value="vac_route_water"${v&&v.route==='vac_route_water'?' selected':''}>${t('vac_route_water')}</option>
+<option value="vac_route_wing"${v&&v.route==='vac_route_wing'?' selected':''}>${t('vac_route_wing')}</option>
+</select></div>
 <div class="form-group"><label>${t('vac_batch')}</label><input id="v-batch" value="${v?v.batchNumber:''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('vac_scheduled')}</label><input type="date" id="v-sched" value="${v?v.scheduledDate:''}"></div>
 <div class="form-group"><label>${t('vac_applied')}</label><input type="date" id="v-applied" value="${v?v.appliedDate:''}"></div></div>
@@ -992,8 +1050,8 @@ function showMedForm(id){
 const D=loadData();const m=id?D.medications.find(x=>x.id===id):null;
 openModal(m?t('edit'):t('med_add'),`
 <div class="form-row"><div class="form-group"><label>${t('prod_flock')}</label><select id="m-flock">${flockSelect(m?m.flockId:'')}</select></div>
-<div class="form-group"><label>${t('med_name')}</label><input id="m-name" value="${m?m.name:''}"></div></div>
-<div class="form-row"><div class="form-group"><label>${t('med_reason')}</label><input id="m-reason" value="${m?m.reason||'':''}"></div>
+<div class="form-group"><label>${t('med_name')}</label><select id="m-name" onchange="onMedSelect()">${catalogSelect(CATALOGS.medications,m?m.name:'')}</select></div></div>
+<div class="form-row"><div class="form-group"><label>${t('med_reason')}</label><select id="m-reason">${catalogSelect(CATALOGS.diseases,m?m.reason||'':'')}</select></div>
 <div class="form-group"><label>${t('med_dosage')}</label><input id="m-dosage" value="${m?m.dosage||'':''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('med_start')}</label><input type="date" id="m-start" value="${m?m.startDate:''}"></div>
 <div class="form-group"><label>${t('med_end')}</label><input type="date" id="m-end" value="${m?m.endDate:''}"></div></div>
@@ -1033,7 +1091,7 @@ function showOutbreakForm(id){
 const D=loadData();const o=id?D.outbreaks.find(x=>x.id===id):null;
 openModal(o?t('edit'):t('out_add'),`
 <div class="form-row"><div class="form-group"><label>${t('prod_flock')}</label><select id="o-flock">${flockSelect(o?o.flockId:'')}</select></div>
-<div class="form-group"><label>${t('out_disease')}</label><input id="o-disease" value="${o?o.disease:''}"></div></div>
+<div class="form-group"><label>${t('out_disease')}</label><select id="o-disease">${catalogSelect(CATALOGS.diseases,o?o.disease:'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('out_start')}</label><input type="date" id="o-start" value="${o?o.startDate:todayStr()}"></div>
 <div class="form-group"><label>${t('out_end')}</label><input type="date" id="o-end" value="${o?o.endDate||'':''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('out_affected')}</label><input type="number" id="o-affected" value="${o?o.affected||'':''}" min="0"></div>
@@ -1105,10 +1163,10 @@ function showFeedPurchaseForm(id){
 const D=loadData();const p=id?D.feed.purchases.find(x=>x.id===id):null;
 openModal(p?t('edit'):t('feed_add_purchase'),`
 <div class="form-row"><div class="form-group"><label>${t('date')}</label><input type="date" id="fp-date" value="${p?p.date:todayStr()}"></div>
-<div class="form-group"><label>${t('feed_type')}</label><input id="fp-type" value="${p?p.type||'':''}" placeholder="${t('feed_type_placeholder')}"></div></div>
+<div class="form-group"><label>${t('feed_type')}</label><select id="fp-type">${feedTypeSelect(p?p.type||'':'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('feed_qty')}</label><input type="number" id="fp-qty" value="${p?p.quantityKg:''}" step="0.1" min="0"></div>
 <div class="form-group"><label>${t('feed_cost')}</label><input type="number" id="fp-cost" value="${p?p.cost:''}" min="0"></div></div>
-<div class="form-group"><label>${t('feed_supplier')}</label><input id="fp-sup" value="${p?p.supplier||'':''}"></div>
+<div class="form-group"><label>${t('feed_supplier')}</label><select id="fp-sup">${supplierSelect(p?p.supplier||'':'')}</select></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveFeedPurchase('${id||''}')">${t('save')}</button></div>`);
 }
@@ -1141,7 +1199,7 @@ openModal(c?t('edit'):t('feed_add_consumption'),`
 <div class="form-row"><div class="form-group"><label>${t('date')}</label><input type="date" id="fc-date" value="${c?c.date:todayStr()}"></div>
 <div class="form-group"><label>${t('feed_flock')}</label><select id="fc-flock">${flockSelect(c?c.flockId:'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('feed_qty')}</label><input type="number" id="fc-qty" value="${c?c.quantityKg:''}" step="0.1" min="0"></div>
-<div class="form-group"><label>${t('feed_type')}</label><input id="fc-type" value="${c?c.type||'':''}" placeholder="${t('feed_type_placeholder')}"></div></div>
+<div class="form-group"><label>${t('feed_type')}</label><select id="fc-type">${feedTypeSelect(c?c.type||'':'',c?c.flockId:'')}</select></div></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveFeedCons('${id||''}')">${t('save')}</button></div>`);
 }
@@ -1181,7 +1239,7 @@ openModal(c?t('edit'):t('cli_add'),`
 <div class="form-row"><div class="form-group"><label>${t('name')}</label><input id="cl-name" value="${c?c.name:''}"></div>
 <div class="form-group"><label>${t('phone')}</label><input id="cl-phone" value="${c?c.phone||'':''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('email')}</label><input id="cl-email" value="${c?c.email||'':''}"></div>
-<div class="form-group"><label>${t('cli_route')}</label><input id="cl-route" value="${c?c.route||'':''}"></div></div>
+<div class="form-group"><label>${t('cli_route')}</label><select id="cl-route">${routeSelect(c?c.route||'':'')}</select></div></div>
 <div class="form-group"><label>${t('address')}</label><input id="cl-addr" value="${c?c.address||'':''}"></div>
 <p style="font-weight:600;margin:12px 0 8px">${t('cli_price')} (${currency()}/huevo)</p>
 <div class="form-row-3"><div class="form-group"><label>S</label><input type="number" id="cl-ps" value="${c?c.priceS||'':''}" step="1" min="0"></div>
@@ -1285,8 +1343,8 @@ const D=loadData();const e=id?D.finances.expenses.find(x=>x.id===id):null;
 const cats=['feed','vaccines','transport','labor','infrastructure','other'];
 openModal(e?t('edit'):t('fin_add_expense'),`
 <div class="form-row"><div class="form-group"><label>${t('date')}</label><input type="date" id="fe-date" value="${e?e.date:todayStr()}"></div>
-<div class="form-group"><label>${t('fin_category')}</label><select id="fe-cat">${cats.map(c=>`<option value="${c}"${e&&e.category===c?' selected':''}>${t('fin_cat_'+c)}</option>`).join('')}</select></div></div>
-<div class="form-row"><div class="form-group"><label>${t('fin_description')}</label><input id="fe-desc" value="${e?e.description||'':''}"></div>
+<div class="form-group"><label>${t('fin_category')}</label><select id="fe-cat" onchange="onExpenseCatChange()">${cats.map(c=>`<option value="${c}"${e&&e.category===c?' selected':''}>${t('fin_cat_'+c)}</option>`).join('')}</select></div></div>
+<div class="form-row"><div class="form-group"><label>${t('fin_description')}</label><select id="fe-desc">${catalogSelect(CATALOGS.expenseDescriptions[e?e.category:'feed']||CATALOGS.expenseDescriptions.feed,e?e.description||'':'')}</select></div>
 <div class="form-group"><label>${t('fin_amount')}</label><input type="number" id="fe-amt" value="${e?e.amount:''}" min="0"></div></div>
 <div class="form-group"><label>${t('notes')}</label><textarea id="fe-notes">${e?e.notes||'':''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
@@ -1609,7 +1667,7 @@ function showPersonnelForm(id){
 const D=loadData();const p=id?D.personnel.find(x=>x.id===id):null;
 openModal(p?t('edit'):t('ops_per_add'),`
 <div class="form-row"><div class="form-group"><label>${t('ops_per_name')}</label><input id="pe-name" value="${p?p.name:''}"></div>
-<div class="form-group"><label>${t('ops_per_role')}</label><input id="pe-role" value="${p?p.role||'':''}"></div></div>
+<div class="form-group"><label>${t('ops_per_role')}</label><select id="pe-role">${catalogSelect(CATALOGS.personnelRoles,p?p.role||'':'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('ops_per_salary')}</label><input type="number" id="pe-salary" value="${p?p.salary||'':''}" min="0"></div>
 <div class="form-group"><label>${t('ops_per_start')}</label><input type="date" id="pe-start" value="${p?p.startDate||'':''}"></div></div>
 <div class="form-group"><label>${t('ops_per_active')}</label><select id="pe-active">
@@ -1720,7 +1778,7 @@ openModal(e?t('edit'):t('env_add'),`
 <div class="form-group"><label>${t('env_humidity')}</label><input type="number" id="en-hum" value="${e?e.humidity||'':''}" step="1" min="0" max="100"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('env_light')}</label><input type="number" id="en-light" value="${e?e.lightHours||'':''}" step="0.5" min="0" max="24"></div>
 <div class="form-group"><label>${t('env_ammonia')} (ppm)</label><input type="number" id="en-ammonia" value="${e?e.ammoniaLevel||'':''}" step="0.1" min="0"></div></div>
-<div class="form-group"><label>${t('env_ventilation')}</label><input id="en-vent" value="${e?e.ventilation||'':''}"></div>
+<div class="form-group"><label>${t('env_ventilation')}</label><select id="en-vent">${catalogSelect(CATALOGS.ventilationLevels,e?e.ventilation||'':'',false)}</select></div>
 <div class="form-group"><label>${t('notes')}</label><textarea id="en-notes">${e?e.notes||'':''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveEnv('${id||''}')">${t('save')}</button></div>`);
@@ -2239,12 +2297,16 @@ openModal(v?t('edit'):t('bio_add_visitor'),`
 <div class="form-row"><div class="form-group"><label>${t('date')}</label><input type="date" id="bv-date" value="${v?v.date:todayStr()}"></div>
 <div class="form-group"><label>${t('bio_visitor_name')}</label><input id="bv-name" value="${v?v.name:''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_visitor_company')}</label><input id="bv-company" value="${v?v.company||'':''}"></div>
-<div class="form-group"><label>${t('bio_visitor_purpose')}</label><input id="bv-purpose" value="${v?v.purpose||'':''}"></div></div>
+<div class="form-group"><label>${t('bio_visitor_purpose')}</label><select id="bv-purpose">${catalogSelect(CATALOGS.visitorPurposes,v?v.purpose||'':'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_visitor_zone')}</label><select id="bv-zone"><option value="">--</option>${zoneOpts}</select></div>
 <div class="form-group"><label>${t('bio_visitor_plate')}</label><input id="bv-plate" value="${v?v.vehiclePlate||'':''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_visitor_disinfected')}</label><select id="bv-disinf">
 <option value="true"${v&&v.disinfected?' selected':''}>✅</option><option value="false"${v&&!v.disinfected?' selected':''}>❌</option></select></div>
-<div class="form-group"><label>${t('bio_visitor_from_farm')}</label><input id="bv-farm" value="${v?v.fromFarmId||'':''}"></div></div>
+<div class="form-group"><label>${t('bio_visitor_from_farm')}</label><select id="bv-farm">
+<option value="">--</option>
+<option value="internal"${v&&v.fromFarmId==='internal'?' selected':''}>${D.farm.name||'Mi Granja'} (interna)</option>
+<option value="external"${v&&v.fromFarmId==='external'?' selected':(!v?' selected':'')}>Externa</option>
+</select></div></div>
 <div class="form-group"><label>${t('bio_visitor_from_health')}</label><select id="bv-health">
 <option value="healthy"${v&&v.fromFarmHealth==='healthy'?' selected':''}>✅ Healthy</option>
 <option value="outbreak"${v&&v.fromFarmHealth==='outbreak'?' selected':''}>⚠️ Outbreak</option>
@@ -2338,7 +2400,11 @@ openModal(p?t('edit'):t('bio_add_pest'),`
 <option value="fly"${p&&p.type==='fly'?' selected':''}>${t('bio_pest_fly')}</option>
 <option value="wild_bird"${p&&p.type==='wild_bird'?' selected':''}>${t('bio_pest_wild_bird')}</option>
 <option value="other"${p&&p.type==='other'?' selected':''}>${t('bio_pest_other')}</option></select></div></div>
-<div class="form-row"><div class="form-group"><label>${t('bio_pest_location')}</label><input id="bp-loc" value="${p?p.location||'':''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('bio_pest_location')}</label><select id="bp-loc">
+<option value="">--</option>
+${D.biosecurity.zones.map(z=>`<option value="${z.name}"${p&&p.location===z.name?' selected':''}>${z.name}</option>`).join('')}
+<option value="__other__">Otra...</option>
+</select></div>
 <div class="form-group"><label>${t('bio_pest_severity')} (1-5)</label><input type="number" id="bp-sev" value="${p?p.severity||3:3}" min="1" max="5"></div></div>
 <div class="form-group"><label>${t('bio_pest_action')}</label><textarea id="bp-action">${p?p.action||'':''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
@@ -2378,7 +2444,7 @@ return h+'</div></div>';
 function showBioProtocolForm(id){
 const D=loadData();const p=id?D.biosecurity.protocols.find(x=>x.id===id):null;
 openModal(p?t('edit'):t('bio_add_protocol'),`
-<div class="form-row"><div class="form-group"><label>${t('bio_protocol_name')}</label><input id="bpr-name" value="${p?p.name:''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('bio_protocol_name')}</label><select id="bpr-name">${catalogSelect(CATALOGS.bioProtocols,p?p.name:'')}</select></div>
 <div class="form-group"><label>${t('bio_protocol_frequency')}</label><select id="bpr-freq">
 <option value="daily"${p&&p.frequency==='daily'?' selected':''}>${t('bio_protocol_daily')}</option>
 <option value="weekly"${p&&p.frequency==='weekly'?' selected':''}>${t('bio_protocol_weekly')}</option>
@@ -2435,8 +2501,8 @@ const D=loadData();const b=id?D.traceability.batches.find(x=>x.id===id):null;
 openModal(b?t('edit'):t('trace_add'),`
 <div class="form-row"><div class="form-group"><label>${t('date')}</label><input type="date" id="tb-date" value="${b?b.date:todayStr()}"></div>
 <div class="form-group"><label>${t('prod_flock')}</label><select id="tb-flock">${flockSelect(b?b.flockId:'')}</select></div></div>
-<div class="form-row"><div class="form-group"><label>${t('trace_house')}</label><input id="tb-house" value="${b?b.house||'':''}"></div>
-<div class="form-group"><label>${t('trace_rack')}</label><input id="tb-rack" value="${b?b.rackNumber||'':''}"></div></div>
+<div class="form-row"><div class="form-group"><label>${t('trace_house')}</label><select id="tb-house" onchange="onHouseChange()">${houseSelect(b?b.house||'':'')}</select></div>
+<div class="form-group"><label>${t('trace_rack')}</label><select id="tb-rack">${rackSelect(b?b.house||'':'',b?b.rackNumber||'':'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('trace_box_count')}</label><input type="number" id="tb-boxes" value="${b?b.boxCount||'':''}" min="1"></div>
 <div class="form-group"><label>${t('trace_eggs_per_box')}</label><input type="number" id="tb-epb" value="${b?b.eggsPerBox||30:30}" min="1"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('prod_egg_type')}</label><select id="tb-type">
