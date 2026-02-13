@@ -200,9 +200,16 @@ body.font-small{font-size:13px}body.font-normal{font-size:15px}body.font-large{f
 <button onclick="toggleVetMode()" id="btn-vet" class="mode-btn" aria-label="Toggle Vet Mode">🩺 <span data-t="nav_vet_mode">Modo Vet</span></button>
 </div>
 <div class="lang-toggle">
-<button onclick="switchLang('es')" id="btn-es" class="active">ES</button>
-<button onclick="switchLang('en')" id="btn-en">EN</button>
-<button onclick="switchLang('pt')" id="btn-pt">PT</button>
+<select id="langSelect" onchange="switchLang(this.value)" style="padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:0.85rem;cursor:pointer;">
+<option value="es">🇨🇱 Español</option>
+<option value="en">🇺🇸 English</option>
+<option value="pt">🇧🇷 Português</option>
+<option value="fr">🇫🇷 Français</option>
+<option value="de">🇩🇪 Deutsch</option>
+<option value="it">🇮🇹 Italiano</option>
+<option value="ja">🇯🇵 日本語</option>
+<option value="zh">🇨🇳 中文</option>
+</select>
 </div>
 </aside>
 <main class="main-content" role="main" aria-label="Content">
@@ -434,9 +441,9 @@ let DATA=null;let CHARTS={};let currentSection='dashboard';
 let currentSanidadTab='vaccines';let currentFinanceTab='income';let currentOpsTab='checklist';
 const $=id=>document.getElementById(id);
 function t(k){return(T[LANG]&&T[LANG][k])||(T.es&&T.es[k])||k;}
-function fmtNum(n,d=0){const loc=LANG==='es'?'es-CL':LANG==='pt'?'pt-BR':'en-US';return Number(n||0).toLocaleString(loc,{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtNum(n,d=0){return Number(n||0).toLocaleString(locale(),{minimumFractionDigits:d,maximumFractionDigits:d});}
 function fmtMoney(n){return currency()+fmtNum(n,0);}
-function fmtDate(d){if(!d)return'-';const loc=LANG==='es'?'es-CL':LANG==='pt'?'pt-BR':'en-US';return new Date(d+'T12:00:00').toLocaleDateString(loc);}
+function fmtDate(d){if(!d)return'-';return new Date(d+'T12:00:00').toLocaleDateString(locale());}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 function currency(){return(DATA||loadData()).farm.currency||'$';}
 function todayStr(){return new Date().toISOString().substring(0,10);}
@@ -530,13 +537,188 @@ infrastructure:['Reparación galpón','Equipamiento','Nidales','Bebederos'],
 other:['Servicios básicos','Asesoría','Varios'],
 },
 };
+// ============ CATALOG TRANSLATIONS (WALTZ engine) ============
+const CATALOG_T={
+en:{
+// deathCauses
+'Enfermedad':'Disease','Depredador':'Predator','Golpe de calor':'Heat stroke','Asfixia':'Suffocation','Canibalismo':'Cannibalism','Prolapso':'Prolapse','Edad/Natural':'Age/Natural','Accidente':'Accident','Desconocida':'Unknown',
+// diseases
+'Newcastle':'Newcastle','Gumboro (IBD)':'Gumboro (IBD)','Bronquitis Infecciosa':'Infectious Bronchitis','Coccidiosis':'Coccidiosis','Marek':'Marek','Salmonelosis':'Salmonellosis','Coriza Infecciosa':'Infectious Coryza','Viruela Aviar':'Fowl Pox','Influenza Aviar':'Avian Influenza','Micoplasmosis':'Mycoplasmosis','Laringotraqueítis':'Laryngotracheitis','Colibacilosis':'Colibacillosis','Aspergilosis':'Aspergillosis','Histomoniasis':'Histomoniasis',
+// medications
+'Enrofloxacina':'Enrofloxacin','Amoxicilina':'Amoxicillin','Toltrazuril':'Toltrazuril','Ivermectina':'Ivermectin','Tilosina':'Tylosin','Oxitetraciclina':'Oxytetracycline','Vitamina AD3E':'Vitamin AD3E','Electrolitos':'Electrolytes',
+// personnelRoles
+'Administrador':'Administrator','Técnico Avícola':'Poultry Technician','Galponero':'House Keeper','Recolector':'Collector','Veterinario':'Veterinarian','Chofer/Repartidor':'Driver/Delivery','Limpieza':'Cleaning','Mantenimiento':'Maintenance',
+// feedTypes
+'Inicio (0-6 sem)':'Starter (0-6 wk)','Crecimiento (6-12 sem)':'Grower (6-12 wk)','Desarrollo (12-16 sem)':'Developer (12-16 wk)','Pre-postura (16-18 sem)':'Pre-lay (16-18 wk)','Postura Fase 1 (18-45 sem)':'Layer Phase 1 (18-45 wk)','Postura Fase 2 (45-65 sem)':'Layer Phase 2 (45-65 wk)','Postura Fase 3 (65+ sem)':'Layer Phase 3 (65+ wk)',
+// visitorPurposes
+'Entrega de alimento':'Feed delivery','Servicio técnico':'Technical service','Inspección sanitaria':'Health inspection','Retiro de huevos':'Egg pickup','Visita veterinaria':'Veterinary visit','Mantenimiento':'Maintenance','Otro':'Other',
+// ventilationLevels
+'Natural':'Natural','Baja':'Low','Media':'Medium','Alta':'High','Túnel':'Tunnel',
+// bioProtocols
+'Desinfección de galpón':'House disinfection','Pediluvio':'Footbath','Control de roedores':'Rodent control','Fumigación':'Fumigation','Limpieza de bebederos':'Waterer cleaning','Limpieza de comederos':'Feeder cleaning','Desratización':'Deratization','Vacío sanitario':'Sanitary void',
+// expenseDescriptions
+'Alimento postura':'Layer feed','Alimento cría':'Starter feed','Suplementos':'Supplements','Aditivos':'Additives','Vacuna Newcastle':'Newcastle vaccine','Vacuna Gumboro':'Gumboro vaccine','Vacuna Marek':'Marek vaccine','Otra vacuna':'Other vaccine','Distribución huevos':'Egg distribution','Retiro alimento':'Feed pickup','Traslado aves':'Bird transfer','Sueldos':'Wages','Horas extra':'Overtime','Bonos':'Bonuses','Reparación galpón':'House repair','Equipamiento':'Equipment','Nidales':'Nest boxes','Bebederos':'Waterers','Servicios básicos':'Utilities','Asesoría':'Consulting','Varios':'Miscellaneous',
+// VACCINE_SCHEDULE names
+'Newcastle + Bronquitis Infecciosa':'Newcastle + Infectious Bronchitis','Newcastle refuerzo':'Newcastle booster','Viruela Aviar':'Fowl Pox','Encefalomielitis Aviar':'Avian Encephalomyelitis','Coriza Infecciosa':'Infectious Coryza','Salmonella':'Salmonella','Newcastle + BI pre-postura':'Newcastle + IB pre-lay',
+// COMMERCIAL_BREEDS notes
+'Más usada mundialmente, excelente FCR':'Most used worldwide, excellent FCR','Híbrida líder global, muy dócil':'Global leading hybrid, very docile','Excelente en climas cálidos':'Excellent in warm climates','Huevo mediano, alta persistencia':'Medium egg, high persistence','Muy popular en LATAM/Europa':'Very popular in LATAM/Europe','Similar a ISA, muy productiva':'Similar to ISA, very productive','Híbrida de rápida producción':'Fast production hybrid','Blanca eficiente, buena en calor':'Efficient white, good in heat','Robusta, doble propósito':'Robust, dual purpose','Resistente, récord histórico 364 huevos/año':'Resistant, historic record 364 eggs/year','Buena conversión, adaptable':'Good conversion, adaptable','Familiar, huevos constantes':'Family-friendly, consistent eggs','Huevo azul, nicho premium':'Blue egg, premium niche','Originaria de Chile, huevo verde-azulado':'Native to Chile, blue-green egg','Huevo color chocolate oscuro, nicho gourmet':'Dark chocolate colored egg, gourmet niche','Raza no listada, usa curva genérica':'Unlisted breed, uses generic curve'
+},
+pt:{
+// deathCauses
+'Enfermedad':'Doença','Depredador':'Predador','Golpe de calor':'Golpe de calor','Asfixia':'Asfixia','Canibalismo':'Canibalismo','Prolapso':'Prolapso','Edad/Natural':'Idade/Natural','Accidente':'Acidente','Desconocida':'Desconhecida',
+// diseases
+'Newcastle':'Newcastle','Gumboro (IBD)':'Gumboro (IBD)','Bronquitis Infecciosa':'Bronquite Infecciosa','Coccidiosis':'Coccidiose','Marek':'Marek','Salmonelosis':'Salmonelose','Coriza Infecciosa':'Coriza Infecciosa','Viruela Aviar':'Varíola Aviária','Influenza Aviar':'Influenza Aviária','Micoplasmosis':'Micoplasmose','Laringotraqueítis':'Laringotraqueíte','Colibacilosis':'Colibacilose','Aspergilosis':'Aspergilose','Histomoniasis':'Histomoníase',
+// medications
+'Enrofloxacina':'Enrofloxacina','Amoxicilina':'Amoxicilina','Toltrazuril':'Toltrazuril','Ivermectina':'Ivermectina','Tilosina':'Tilosina','Oxitetraciclina':'Oxitetraciclina','Vitamina AD3E':'Vitamina AD3E','Electrolitos':'Eletrólitos',
+// personnelRoles
+'Administrador':'Administrador','Técnico Avícola':'Técnico Avícola','Galponero':'Granjeiro','Recolector':'Coletor','Veterinario':'Veterinário','Chofer/Repartidor':'Motorista/Entregador','Limpieza':'Limpeza','Mantenimiento':'Manutenção',
+// feedTypes
+'Inicio (0-6 sem)':'Inicial (0-6 sem)','Crecimiento (6-12 sem)':'Crescimento (6-12 sem)','Desarrollo (12-16 sem)':'Desenvolvimento (12-16 sem)','Pre-postura (16-18 sem)':'Pré-postura (16-18 sem)','Postura Fase 1 (18-45 sem)':'Postura Fase 1 (18-45 sem)','Postura Fase 2 (45-65 sem)':'Postura Fase 2 (45-65 sem)','Postura Fase 3 (65+ sem)':'Postura Fase 3 (65+ sem)',
+// visitorPurposes
+'Entrega de alimento':'Entrega de ração','Servicio técnico':'Serviço técnico','Inspección sanitaria':'Inspeção sanitária','Retiro de huevos':'Retirada de ovos','Visita veterinaria':'Visita veterinária','Mantenimiento':'Manutenção','Otro':'Outro',
+// ventilationLevels
+'Natural':'Natural','Baja':'Baixa','Media':'Média','Alta':'Alta','Túnel':'Túnel',
+// bioProtocols
+'Desinfección de galpón':'Desinfecção do galpão','Pediluvio':'Pedilúvio','Control de roedores':'Controle de roedores','Fumigación':'Fumigação','Limpieza de bebederos':'Limpeza de bebedouros','Limpieza de comederos':'Limpeza de comedouros','Desratización':'Desratização','Vacío sanitario':'Vazio sanitário',
+// expenseDescriptions
+'Alimento postura':'Ração postura','Alimento cría':'Ração inicial','Suplementos':'Suplementos','Aditivos':'Aditivos','Vacuna Newcastle':'Vacina Newcastle','Vacuna Gumboro':'Vacina Gumboro','Vacuna Marek':'Vacina Marek','Otra vacuna':'Outra vacina','Distribución huevos':'Distribuição de ovos','Retiro alimento':'Retirada de ração','Traslado aves':'Transferência de aves','Sueldos':'Salários','Horas extra':'Horas extras','Bonos':'Bônus','Reparación galpón':'Reparo do galpão','Equipamiento':'Equipamentos','Nidales':'Ninhos','Bebederos':'Bebedouros','Servicios básicos':'Serviços básicos','Asesoría':'Consultoria','Varios':'Diversos',
+// VACCINE_SCHEDULE names
+'Newcastle + Bronquitis Infecciosa':'Newcastle + Bronquite Infecciosa','Newcastle refuerzo':'Newcastle reforço','Viruela Aviar':'Varíola Aviária','Encefalomielitis Aviar':'Encefalomielite Aviária','Coriza Infecciosa':'Coriza Infecciosa','Salmonella':'Salmonella','Newcastle + BI pre-postura':'Newcastle + BI pré-postura',
+// COMMERCIAL_BREEDS notes
+'Más usada mundialmente, excelente FCR':'Mais usada mundialmente, excelente FCR','Híbrida líder global, muy dócil':'Híbrida líder global, muito dócil','Excelente en climas cálidos':'Excelente em climas quentes','Huevo mediano, alta persistencia':'Ovo médio, alta persistência','Muy popular en LATAM/Europa':'Muito popular na LATAM/Europa','Similar a ISA, muy productiva':'Similar à ISA, muito produtiva','Híbrida de rápida producción':'Híbrida de produção rápida','Blanca eficiente, buena en calor':'Branca eficiente, boa no calor','Robusta, doble propósito':'Robusta, duplo propósito','Resistente, récord histórico 364 huevos/año':'Resistente, recorde histórico 364 ovos/ano','Buena conversión, adaptable':'Boa conversão, adaptável','Familiar, huevos constantes':'Familiar, ovos constantes','Huevo azul, nicho premium':'Ovo azul, nicho premium','Originaria de Chile, huevo verde-azulado':'Originária do Chile, ovo verde-azulado','Huevo color chocolate oscuro, nicho gourmet':'Ovo cor chocolate escuro, nicho gourmet','Raza no listada, usa curva genérica':'Raça não listada, usa curva genérica'
+},
+fr:{
+// deathCauses
+'Enfermedad':'Maladie','Depredador':'Prédateur','Golpe de calor':'Coup de chaleur','Asfixia':'Asphyxie','Canibalismo':'Cannibalisme','Prolapso':'Prolapsus','Edad/Natural':'Âge/Naturel','Accidente':'Accident','Desconocida':'Inconnue',
+// diseases
+'Newcastle':'Newcastle','Gumboro (IBD)':'Gumboro (IBD)','Bronquitis Infecciosa':'Bronchite infectieuse','Coccidiosis':'Coccidiose','Marek':'Marek','Salmonelosis':'Salmonellose','Coriza Infecciosa':'Coryza infectieux','Viruela Aviar':'Variole aviaire','Influenza Aviar':'Influenza aviaire','Micoplasmosis':'Mycoplasmose','Laringotraqueítis':'Laryngotrachéite','Colibacilosis':'Colibacillose','Aspergilosis':'Aspergillose','Histomoniasis':'Histomonose',
+// medications
+'Enrofloxacina':'Enrofloxacine','Amoxicilina':'Amoxicilline','Toltrazuril':'Toltrazuril','Ivermectina':'Ivermectine','Tilosina':'Tylosine','Oxitetraciclina':'Oxytétracycline','Vitamina AD3E':'Vitamine AD3E','Electrolitos':'Électrolytes',
+// personnelRoles
+'Administrador':'Administrateur','Técnico Avícola':'Technicien avicole','Galponero':'Gardien de poulailler','Recolector':'Collecteur','Veterinario':'Vétérinaire','Chofer/Repartidor':'Chauffeur/Livreur','Limpieza':'Nettoyage','Mantenimiento':'Maintenance',
+// feedTypes
+'Inicio (0-6 sem)':'Démarrage (0-6 sem)','Crecimiento (6-12 sem)':'Croissance (6-12 sem)','Desarrollo (12-16 sem)':'Développement (12-16 sem)','Pre-postura (16-18 sem)':'Pré-ponte (16-18 sem)','Postura Fase 1 (18-45 sem)':'Ponte Phase 1 (18-45 sem)','Postura Fase 2 (45-65 sem)':'Ponte Phase 2 (45-65 sem)','Postura Fase 3 (65+ sem)':'Ponte Phase 3 (65+ sem)',
+// visitorPurposes
+'Entrega de alimento':'Livraison aliment','Servicio técnico':'Service technique','Inspección sanitaria':'Inspection sanitaire','Retiro de huevos':'Collecte des œufs','Visita veterinaria':'Visite vétérinaire','Mantenimiento':'Maintenance','Otro':'Autre',
+// ventilationLevels
+'Natural':'Naturelle','Baja':'Faible','Media':'Moyenne','Alta':'Forte','Túnel':'Tunnel',
+// bioProtocols
+'Desinfección de galpón':'Désinfection du poulailler','Pediluvio':'Pédiluve','Control de roedores':'Contrôle des rongeurs','Fumigación':'Fumigation','Limpieza de bebederos':'Nettoyage abreuvoirs','Limpieza de comederos':'Nettoyage mangeoires','Desratización':'Dératisation','Vacío sanitario':'Vide sanitaire',
+// expenseDescriptions
+'Alimento postura':'Aliment ponte','Alimento cría':'Aliment démarrage','Suplementos':'Suppléments','Aditivos':'Additifs','Vacuna Newcastle':'Vaccin Newcastle','Vacuna Gumboro':'Vaccin Gumboro','Vacuna Marek':'Vaccin Marek','Otra vacuna':'Autre vaccin','Distribución huevos':'Distribution œufs','Retiro alimento':'Retrait aliment','Traslado aves':'Transfert volailles','Sueldos':'Salaires','Horas extra':'Heures sup.','Bonos':'Primes','Reparación galpón':'Réparation poulailler','Equipamiento':'Équipement','Nidales':'Pondoirs','Bebederos':'Abreuvoirs','Servicios básicos':'Services publics','Asesoría':'Conseil','Varios':'Divers',
+// VACCINE_SCHEDULE names
+'Newcastle + Bronquitis Infecciosa':'Newcastle + Bronchite infectieuse','Newcastle refuerzo':'Newcastle rappel','Viruela Aviar':'Variole aviaire','Encefalomielitis Aviar':'Encéphalomyélite aviaire','Coriza Infecciosa':'Coryza infectieux','Salmonella':'Salmonelle','Newcastle + BI pre-postura':'Newcastle + BI pré-ponte',
+// COMMERCIAL_BREEDS notes
+'Más usada mundialmente, excelente FCR':'Plus utilisée mondialement, excellent FCR','Híbrida líder global, muy dócil':'Hybride leader mondial, très docile','Excelente en climas cálidos':'Excellente en climats chauds','Huevo mediano, alta persistencia':'Œuf moyen, haute persistance','Muy popular en LATAM/Europa':'Très populaire en LATAM/Europe','Similar a ISA, muy productiva':'Similaire à ISA, très productive','Híbrida de rápida producción':'Hybride à production rapide','Blanca eficiente, buena en calor':'Blanche efficace, bonne en chaleur','Robusta, doble propósito':'Robuste, double usage','Resistente, récord histórico 364 huevos/año':'Résistante, record historique 364 œufs/an','Buena conversión, adaptable':'Bonne conversion, adaptable','Familiar, huevos constantes':'Familiale, œufs constants','Huevo azul, nicho premium':'Œuf bleu, niche premium','Originaria de Chile, huevo verde-azulado':'Originaire du Chili, œuf bleu-vert','Huevo color chocolate oscuro, nicho gourmet':'Œuf chocolat foncé, niche gourmet','Raza no listada, usa curva genérica':'Race non listée, courbe générique'
+},
+de:{
+// deathCauses
+'Enfermedad':'Krankheit','Depredador':'Raubtier','Golpe de calor':'Hitzschlag','Asfixia':'Erstickung','Canibalismo':'Kannibalismus','Prolapso':'Prolaps','Edad/Natural':'Alter/Natürlich','Accidente':'Unfall','Desconocida':'Unbekannt',
+// diseases
+'Newcastle':'Newcastle','Gumboro (IBD)':'Gumboro (IBD)','Bronquitis Infecciosa':'Infektiöse Bronchitis','Coccidiosis':'Kokzidiose','Marek':'Marek','Salmonelosis':'Salmonellose','Coriza Infecciosa':'Infektiöser Schnupfen','Viruela Aviar':'Geflügelpocken','Influenza Aviar':'Geflügelgrippe','Micoplasmosis':'Mykoplasmose','Laringotraqueítis':'Laryngotracheitis','Colibacilosis':'Kolibazillose','Aspergilosis':'Aspergillose','Histomoniasis':'Histomonose',
+// medications
+'Enrofloxacina':'Enrofloxacin','Amoxicilina':'Amoxicillin','Toltrazuril':'Toltrazuril','Ivermectina':'Ivermectin','Tilosina':'Tylosin','Oxitetraciclina':'Oxytetracyclin','Vitamina AD3E':'Vitamin AD3E','Electrolitos':'Elektrolyte',
+// personnelRoles
+'Administrador':'Verwalter','Técnico Avícola':'Geflügeltechniker','Galponero':'Stallwart','Recolector':'Sammler','Veterinario':'Tierarzt','Chofer/Repartidor':'Fahrer/Lieferant','Limpieza':'Reinigung','Mantenimiento':'Wartung',
+// feedTypes
+'Inicio (0-6 sem)':'Starter (0-6 Wo)','Crecimiento (6-12 sem)':'Wachstum (6-12 Wo)','Desarrollo (12-16 sem)':'Entwicklung (12-16 Wo)','Pre-postura (16-18 sem)':'Vorlegephase (16-18 Wo)','Postura Fase 1 (18-45 sem)':'Legephase 1 (18-45 Wo)','Postura Fase 2 (45-65 sem)':'Legephase 2 (45-65 Wo)','Postura Fase 3 (65+ sem)':'Legephase 3 (65+ Wo)',
+// visitorPurposes
+'Entrega de alimento':'Futterlieferung','Servicio técnico':'Technischer Service','Inspección sanitaria':'Gesundheitskontrolle','Retiro de huevos':'Eiersammlung','Visita veterinaria':'Tierarztbesuch','Mantenimiento':'Wartung','Otro':'Andere',
+// ventilationLevels
+'Natural':'Natürlich','Baja':'Niedrig','Media':'Mittel','Alta':'Hoch','Túnel':'Tunnel',
+// bioProtocols
+'Desinfección de galpón':'Stalldesinfektion','Pediluvio':'Klauenbad','Control de roedores':'Nagetierbekämpfung','Fumigación':'Begasung','Limpieza de bebederos':'Tränkenreinigung','Limpieza de comederos':'Futtertrogreinigung','Desratización':'Rattenbekämpfung','Vacío sanitario':'Hygienepause',
+// expenseDescriptions
+'Alimento postura':'Legefutter','Alimento cría':'Aufzuchtfutter','Suplementos':'Ergänzungen','Aditivos':'Zusätze','Vacuna Newcastle':'Newcastle-Impfstoff','Vacuna Gumboro':'Gumboro-Impfstoff','Vacuna Marek':'Marek-Impfstoff','Otra vacuna':'Anderer Impfstoff','Distribución huevos':'Eierverteilung','Retiro alimento':'Futterabholung','Traslado aves':'Geflügeltransport','Sueldos':'Gehälter','Horas extra':'Überstunden','Bonos':'Boni','Reparación galpón':'Stallreparatur','Equipamiento':'Ausrüstung','Nidales':'Legenester','Bebederos':'Tränken','Servicios básicos':'Grundversorgung','Asesoría':'Beratung','Varios':'Sonstiges',
+// VACCINE_SCHEDULE names
+'Newcastle + Bronquitis Infecciosa':'Newcastle + Infektiöse Bronchitis','Newcastle refuerzo':'Newcastle Auffrischung','Viruela Aviar':'Geflügelpocken','Encefalomielitis Aviar':'Aviäre Enzephalomyelitis','Coriza Infecciosa':'Infektiöser Schnupfen','Salmonella':'Salmonelle','Newcastle + BI pre-postura':'Newcastle + IB Vorlegephase',
+// COMMERCIAL_BREEDS notes
+'Más usada mundialmente, excelente FCR':'Weltweit am meisten genutzt, exzellenter FCR','Híbrida líder global, muy dócil':'Weltweit führende Hybride, sehr zahm','Excelente en climas cálidos':'Hervorragend in warmen Klimazonen','Huevo mediano, alta persistencia':'Mittleres Ei, hohe Persistenz','Muy popular en LATAM/Europa':'Sehr beliebt in LATAM/Europa','Similar a ISA, muy productiva':'Ähnlich wie ISA, sehr produktiv','Híbrida de rápida producción':'Schnelle Produktionshybride','Blanca eficiente, buena en calor':'Effiziente Weiße, gut bei Hitze','Robusta, doble propósito':'Robust, Zweinutzung','Resistente, récord histórico 364 huevos/año':'Widerstandsfähig, historischer Rekord 364 Eier/Jahr','Buena conversión, adaptable':'Gute Verwertung, anpassungsfähig','Familiar, huevos constantes':'Familienfreundlich, konstante Eier','Huevo azul, nicho premium':'Blaues Ei, Premium-Nische','Originaria de Chile, huevo verde-azulado':'Aus Chile, blaugrünes Ei','Huevo color chocolate oscuro, nicho gourmet':'Dunkelschokoladenfarbenes Ei, Gourmet-Nische','Raza no listada, usa curva genérica':'Nicht gelistete Rasse, generische Kurve'
+},
+it:{
+// deathCauses
+'Enfermedad':'Malattia','Depredador':'Predatore','Golpe de calor':'Colpo di calore','Asfixia':'Asfissia','Canibalismo':'Cannibalismo','Prolapso':'Prolasso','Edad/Natural':'Età/Naturale','Accidente':'Incidente','Desconocida':'Sconosciuta',
+// diseases
+'Newcastle':'Newcastle','Gumboro (IBD)':'Gumboro (IBD)','Bronquitis Infecciosa':'Bronchite infettiva','Coccidiosis':'Coccidiosi','Marek':'Marek','Salmonelosis':'Salmonellosi','Coriza Infecciosa':'Corizza infettiva','Viruela Aviar':'Vaiolo aviare','Influenza Aviar':'Influenza aviaria','Micoplasmosis':'Micoplasmosi','Laringotraqueítis':'Laringotracheite','Colibacilosis':'Colibacillosi','Aspergilosis':'Aspergillosi','Histomoniasis':'Istomonosi',
+// medications
+'Enrofloxacina':'Enrofloxacina','Amoxicilina':'Amoxicillina','Toltrazuril':'Toltrazuril','Ivermectina':'Ivermectina','Tilosina':'Tilosina','Oxitetraciclina':'Ossitetraciclina','Vitamina AD3E':'Vitamina AD3E','Electrolitos':'Elettroliti',
+// personnelRoles
+'Administrador':'Amministratore','Técnico Avícola':'Tecnico avicolo','Galponero':'Addetto pollaio','Recolector':'Raccoglitore','Veterinario':'Veterinario','Chofer/Repartidor':'Autista/Fattorino','Limpieza':'Pulizia','Mantenimiento':'Manutenzione',
+// feedTypes
+'Inicio (0-6 sem)':'Avviamento (0-6 sett)','Crecimiento (6-12 sem)':'Crescita (6-12 sett)','Desarrollo (12-16 sem)':'Sviluppo (12-16 sett)','Pre-postura (16-18 sem)':'Pre-deposizione (16-18 sett)','Postura Fase 1 (18-45 sem)':'Deposizione Fase 1 (18-45 sett)','Postura Fase 2 (45-65 sem)':'Deposizione Fase 2 (45-65 sett)','Postura Fase 3 (65+ sem)':'Deposizione Fase 3 (65+ sett)',
+// visitorPurposes
+'Entrega de alimento':'Consegna mangime','Servicio técnico':'Servizio tecnico','Inspección sanitaria':'Ispezione sanitaria','Retiro de huevos':'Ritiro uova','Visita veterinaria':'Visita veterinaria','Mantenimiento':'Manutenzione','Otro':'Altro',
+// ventilationLevels
+'Natural':'Naturale','Baja':'Bassa','Media':'Media','Alta':'Alta','Túnel':'Tunnel',
+// bioProtocols
+'Desinfección de galpón':'Disinfezione pollaio','Pediluvio':'Pediluvio','Control de roedores':'Controllo roditori','Fumigación':'Fumigazione','Limpieza de bebederos':'Pulizia abbeveratoi','Limpieza de comederos':'Pulizia mangiatoie','Desratización':'Derattizzazione','Vacío sanitario':'Vuoto sanitario',
+// expenseDescriptions
+'Alimento postura':'Mangime ovaiole','Alimento cría':'Mangime avviamento','Suplementos':'Integratori','Aditivos':'Additivi','Vacuna Newcastle':'Vaccino Newcastle','Vacuna Gumboro':'Vaccino Gumboro','Vacuna Marek':'Vaccino Marek','Otra vacuna':'Altro vaccino','Distribución huevos':'Distribuzione uova','Retiro alimento':'Ritiro mangime','Traslado aves':'Trasferimento volatili','Sueldos':'Stipendi','Horas extra':'Straordinari','Bonos':'Bonus','Reparación galpón':'Riparazione pollaio','Equipamiento':'Attrezzature','Nidales':'Nidi','Bebederos':'Abbeveratoi','Servicios básicos':'Utenze','Asesoría':'Consulenza','Varios':'Vari',
+// VACCINE_SCHEDULE names
+'Newcastle + Bronquitis Infecciosa':'Newcastle + Bronchite infettiva','Newcastle refuerzo':'Newcastle richiamo','Viruela Aviar':'Vaiolo aviare','Encefalomielitis Aviar':'Encefalomielite aviaria','Coriza Infecciosa':'Corizza infettiva','Salmonella':'Salmonella','Newcastle + BI pre-postura':'Newcastle + BI pre-deposizione',
+// COMMERCIAL_BREEDS notes
+'Más usada mundialmente, excelente FCR':'Più usata al mondo, eccellente FCR','Híbrida líder global, muy dócil':'Ibrida leader globale, molto docile','Excelente en climas cálidos':'Eccellente nei climi caldi','Huevo mediano, alta persistencia':'Uovo medio, alta persistenza','Muy popular en LATAM/Europa':'Molto popolare in LATAM/Europa','Similar a ISA, muy productiva':'Simile a ISA, molto produttiva','Híbrida de rápida producción':'Ibrida a produzione rapida','Blanca eficiente, buena en calor':'Bianca efficiente, buona al caldo','Robusta, doble propósito':'Robusta, duplice attitudine','Resistente, récord histórico 364 huevos/año':'Resistente, record storico 364 uova/anno','Buena conversión, adaptable':'Buona conversione, adattabile','Familiar, huevos constantes':'Familiare, uova costanti','Huevo azul, nicho premium':'Uovo blu, nicchia premium','Originaria de Chile, huevo verde-azulado':'Originaria del Cile, uovo verde-azzurro','Huevo color chocolate oscuro, nicho gourmet':'Uovo cioccolato scuro, nicchia gourmet','Raza no listada, usa curva genérica':'Razza non elencata, curva generica'
+},
+ja:{
+// deathCauses
+'Enfermedad':'疾病','Depredador':'捕食者','Golpe de calor':'熱中症','Asfixia':'窒息','Canibalismo':'共食い','Prolapso':'脱肛','Edad/Natural':'老齢/自然死','Accidente':'事故','Desconocida':'不明',
+// diseases
+'Newcastle':'ニューカッスル','Gumboro (IBD)':'ガンボロ (IBD)','Bronquitis Infecciosa':'伝染性気管支炎','Coccidiosis':'コクシジウム症','Marek':'マレック','Salmonelosis':'サルモネラ症','Coriza Infecciosa':'伝染性コリーザ','Viruela Aviar':'鶏痘','Influenza Aviar':'鳥インフルエンザ','Micoplasmosis':'マイコプラズマ症','Laringotraqueítis':'伝染性喉頭気管炎','Colibacilosis':'大腸菌症','Aspergilosis':'アスペルギルス症','Histomoniasis':'ヒストモナス症',
+// medications
+'Enrofloxacina':'エンロフロキサシン','Amoxicilina':'アモキシシリン','Toltrazuril':'トルトラズリル','Ivermectina':'イベルメクチン','Tilosina':'タイロシン','Oxitetraciclina':'オキシテトラサイクリン','Vitamina AD3E':'ビタミンAD3E','Electrolitos':'電解質',
+// personnelRoles
+'Administrador':'管理者','Técnico Avícola':'養鶏技術者','Galponero':'鶏舎管理者','Recolector':'集卵者','Veterinario':'獣医師','Chofer/Repartidor':'運転手/配達員','Limpieza':'清掃','Mantenimiento':'保守',
+// feedTypes
+'Inicio (0-6 sem)':'スターター (0-6週)','Crecimiento (6-12 sem)':'成長期 (6-12週)','Desarrollo (12-16 sem)':'育成期 (12-16週)','Pre-postura (16-18 sem)':'産卵前期 (16-18週)','Postura Fase 1 (18-45 sem)':'産卵期1 (18-45週)','Postura Fase 2 (45-65 sem)':'産卵期2 (45-65週)','Postura Fase 3 (65+ sem)':'産卵期3 (65週以上)',
+// visitorPurposes
+'Entrega de alimento':'飼料配達','Servicio técnico':'技術サービス','Inspección sanitaria':'衛生検査','Retiro de huevos':'集卵','Visita veterinaria':'獣医訪問','Mantenimiento':'保守','Otro':'その他',
+// ventilationLevels
+'Natural':'自然','Baja':'低','Media':'中','Alta':'高','Túnel':'トンネル',
+// bioProtocols
+'Desinfección de galpón':'鶏舎消毒','Pediluvio':'踏込消毒槽','Control de roedores':'ネズミ駆除','Fumigación':'燻蒸消毒','Limpieza de bebederos':'給水器清掃','Limpieza de comederos':'給餌器清掃','Desratización':'駆鼠','Vacío sanitario':'衛生空白期間',
+// expenseDescriptions
+'Alimento postura':'産卵飼料','Alimento cría':'育雛飼料','Suplementos':'サプリメント','Aditivos':'添加物','Vacuna Newcastle':'ニューカッスルワクチン','Vacuna Gumboro':'ガンボロワクチン','Vacuna Marek':'マレックワクチン','Otra vacuna':'その他ワクチン','Distribución huevos':'鶏卵配送','Retiro alimento':'飼料回収','Traslado aves':'家禽移送','Sueldos':'給与','Horas extra':'残業代','Bonos':'賞与','Reparación galpón':'鶏舎修繕','Equipamiento':'設備','Nidales':'産卵箱','Bebederos':'給水器','Servicios básicos':'光熱費','Asesoría':'コンサルティング','Varios':'雑費',
+// VACCINE_SCHEDULE names
+'Newcastle + Bronquitis Infecciosa':'ニューカッスル + 伝染性気管支炎','Newcastle refuerzo':'ニューカッスル追加接種','Viruela Aviar':'鶏痘','Encefalomielitis Aviar':'鶏脳脊髄炎','Coriza Infecciosa':'伝染性コリーザ','Salmonella':'サルモネラ','Newcastle + BI pre-postura':'ニューカッスル + BI 産卵前',
+// COMMERCIAL_BREEDS notes
+'Más usada mundialmente, excelente FCR':'世界で最も使用、優れたFCR','Híbrida líder global, muy dócil':'世界的リーダーのハイブリッド、非常に温順','Excelente en climas cálidos':'暖かい気候に最適','Huevo mediano, alta persistencia':'中卵、高い持続性','Muy popular en LATAM/Europa':'中南米/ヨーロッパで非常に人気','Similar a ISA, muy productiva':'ISAに類似、非常に生産的','Híbrida de rápida producción':'高速生産ハイブリッド','Blanca eficiente, buena en calor':'効率的な白色種、暑さに強い','Robusta, doble propósito':'丈夫、兼用種','Resistente, récord histórico 364 huevos/año':'強健、歴史的記録364卵/年','Buena conversión, adaptable':'良い飼料効率、適応性あり','Familiar, huevos constantes':'家庭向き、安定した産卵','Huevo azul, nicho premium':'青い卵、プレミアムニッチ','Originaria de Chile, huevo verde-azulado':'チリ原産、青緑の卵','Huevo color chocolate oscuro, nicho gourmet':'ダークチョコレート色の卵、グルメニッチ','Raza no listada, usa curva genérica':'未登録品種、一般曲線使用'
+},
+zh:{
+// deathCauses
+'Enfermedad':'疾病','Depredador':'捕食者','Golpe de calor':'中暑','Asfixia':'窒息','Canibalismo':'啄食癖','Prolapso':'脱肛','Edad/Natural':'老龄/自然死亡','Accidente':'事故','Desconocida':'不明',
+// diseases
+'Newcastle':'新城疫','Gumboro (IBD)':'法氏囊病 (IBD)','Bronquitis Infecciosa':'传染性支气管炎','Coccidiosis':'球虫病','Marek':'马立克','Salmonelosis':'沙门氏菌病','Coriza Infecciosa':'传染性鼻炎','Viruela Aviar':'禽痘','Influenza Aviar':'禽流感','Micoplasmosis':'支原体病','Laringotraqueítis':'传染性喉气管炎','Colibacilosis':'大肠杆菌病','Aspergilosis':'曲霉菌病','Histomoniasis':'组织滴虫病',
+// medications
+'Enrofloxacina':'恩诺沙星','Amoxicilina':'阿莫西林','Toltrazuril':'妥曲珠利','Ivermectina':'伊维菌素','Tilosina':'泰乐菌素','Oxitetraciclina':'土霉素','Vitamina AD3E':'维生素AD3E','Electrolitos':'电解质',
+// personnelRoles
+'Administrador':'管理员','Técnico Avícola':'家禽技术员','Galponero':'鸡舍管理员','Recolector':'收蛋员','Veterinario':'兽医','Chofer/Repartidor':'司机/配送员','Limpieza':'清洁','Mantenimiento':'维护',
+// feedTypes
+'Inicio (0-6 sem)':'开食料 (0-6周)','Crecimiento (6-12 sem)':'生长料 (6-12周)','Desarrollo (12-16 sem)':'育成料 (12-16周)','Pre-postura (16-18 sem)':'预产料 (16-18周)','Postura Fase 1 (18-45 sem)':'产蛋期1 (18-45周)','Postura Fase 2 (45-65 sem)':'产蛋期2 (45-65周)','Postura Fase 3 (65+ sem)':'产蛋期3 (65周以上)',
+// visitorPurposes
+'Entrega de alimento':'饲料配送','Servicio técnico':'技术服务','Inspección sanitaria':'卫生检查','Retiro de huevos':'收蛋','Visita veterinaria':'兽医访问','Mantenimiento':'维护','Otro':'其他',
+// ventilationLevels
+'Natural':'自然','Baja':'低','Media':'中','Alta':'高','Túnel':'隧道式',
+// bioProtocols
+'Desinfección de galpón':'鸡舍消毒','Pediluvio':'脚踏消毒池','Control de roedores':'灭鼠','Fumigación':'熏蒸消毒','Limpieza de bebederos':'饮水器清洁','Limpieza de comederos':'料槽清洁','Desratización':'灭鼠处理','Vacío sanitario':'空舍期',
+// expenseDescriptions
+'Alimento postura':'产蛋饲料','Alimento cría':'育雏饲料','Suplementos':'补充剂','Aditivos':'添加剂','Vacuna Newcastle':'新城疫疫苗','Vacuna Gumboro':'法氏囊疫苗','Vacuna Marek':'马立克疫苗','Otra vacuna':'其他疫苗','Distribución huevos':'鸡蛋配送','Retiro alimento':'饲料回收','Traslado aves':'家禽转运','Sueldos':'工资','Horas extra':'加班费','Bonos':'奖金','Reparación galpón':'鸡舍维修','Equipamiento':'设备','Nidales':'产蛋箱','Bebederos':'饮水器','Servicios básicos':'水电费','Asesoría':'咨询','Varios':'杂项',
+// VACCINE_SCHEDULE names
+'Newcastle + Bronquitis Infecciosa':'新城疫 + 传染性支气管炎','Newcastle refuerzo':'新城疫加强','Viruela Aviar':'禽痘','Encefalomielitis Aviar':'禽脑脊髓炎','Coriza Infecciosa':'传染性鼻炎','Salmonella':'沙门氏菌','Newcastle + BI pre-postura':'新城疫 + 传支 产前',
+// COMMERCIAL_BREEDS notes
+'Más usada mundialmente, excelente FCR':'全球使用最广，优秀FCR','Híbrida líder global, muy dócil':'全球领先杂交品种，非常温顺','Excelente en climas cálidos':'适合炎热气候','Huevo mediano, alta persistencia':'中等蛋重，高持续性','Muy popular en LATAM/Europa':'在拉美/欧洲非常流行','Similar a ISA, muy productiva':'类似ISA，生产力强','Híbrida de rápida producción':'快速生产杂交种','Blanca eficiente, buena en calor':'高效白壳种，耐热','Robusta, doble propósito':'强健，兼用型','Resistente, récord histórico 364 huevos/año':'抗病力强，历史记录364蛋/年','Buena conversión, adaptable':'饲料转化好，适应性强','Familiar, huevos constantes':'家庭适用，产蛋稳定','Huevo azul, nicho premium':'蓝壳蛋，高端市场','Originaria de Chile, huevo verde-azulado':'原产智利，蓝绿壳蛋','Huevo color chocolate oscuro, nicho gourmet':'深巧克力色蛋，美食市场','Raza no listada, usa curva genérica':'未列出品种，使用通用曲线'
+}
+};
+function tc(str){if(LANG==='es'||!CATALOG_T[LANG])return str;return CATALOG_T[LANG][str]||str;}
+// ============ LOCALE MAP (WALTZ engine) ============
+const LOCALE_MAP={es:'es-CL',en:'en-US',pt:'pt-BR',fr:'fr-FR',de:'de-DE',it:'it-IT',ja:'ja-JP',zh:'zh-CN',ko:'ko-KR',ar:'ar-SA',hi:'hi-IN',ru:'ru-RU'};
+function locale(){return LOCALE_MAP[LANG]||'en-US';}
 // ============ CATALOG HELPERS ============
 function supplierSelect(sel){const D=loadData();const sups=D.farm.suppliers||[];let h='<option value="">--</option>';sups.forEach(s=>{h+=`<option value="${s.name}"${s.name===sel?' selected':''}>${s.name}</option>`;});h+='<option value="__new__">+ Nuevo proveedor</option>';return h;}
 function houseSelect(sel){const D=loadData();const houses=D.farm.houses||[];let h='<option value="">--</option>';houses.forEach(ho=>{h+=`<option value="${ho.name}"${ho.name===sel?' selected':''}>${ho.name}</option>`;});return h;}
 function rackSelect(houseName,sel){const D=loadData();const houses=D.farm.houses||[];const house=houses.find(h=>h.name===houseName);let h='<option value="">--</option>';if(house&&house.racks){house.racks.forEach(r=>{h+=`<option value="${r.name}"${r.name===sel?' selected':''}>${r.name}</option>`;});}return h;}
 function routeSelect(sel){const D=loadData();const routes=D.farm.routes||[];let h='<option value="">--</option>';routes.forEach(r=>{h+=`<option value="${r.name}"${r.name===sel?' selected':''}>${r.name}</option>`;});return h;}
-function catalogSelect(items,sel,addOther=true){let h='<option value="">--</option>';items.forEach(item=>{const v=typeof item==='string'?item:item.name||item.id;const lbl=typeof item==='string'?item:item.name;h+=`<option value="${v}"${v===sel?' selected':''}>${lbl}</option>`;});if(addOther)h+='<option value="__other__">Otra...</option>';return h;}
-function feedTypeSelect(sel,flockId){const D=loadData();let suggested='';if(flockId){const f=D.flocks.find(x=>x.id===flockId);if(f){const stage=flockLifecycleStage(f);if(stage)suggested=stage.id;}}let h='<option value="">--</option>';CATALOGS.feedTypes.forEach(ft=>{const isSuggested=ft.stage===suggested;h+=`<option value="${ft.id}"${ft.id===sel?' selected':''}>${ft.name}${isSuggested?' ★':''}</option>`;});h+='<option value="__other__">Otro...</option>';return h;}
+function catalogSelect(items,sel,addOther=true){let h='<option value="">--</option>';items.forEach(item=>{const v=typeof item==='string'?item:item.name||item.id;const lbl=typeof item==='string'?item:item.name;h+=`<option value="${v}"${v===sel?' selected':''}>${tc(lbl)}</option>`;});if(addOther)h+='<option value="__other__">Otra...</option>';return h;}
+function feedTypeSelect(sel,flockId){const D=loadData();let suggested='';if(flockId){const f=D.flocks.find(x=>x.id===flockId);if(f){const stage=flockLifecycleStage(f);if(stage)suggested=stage.id;}}let h='<option value="">--</option>';CATALOGS.feedTypes.forEach(ft=>{const isSuggested=ft.stage===suggested;h+=`<option value="${ft.id}"${ft.id===sel?' selected':''}>${tc(ft.name)}${isSuggested?' ★':''}</option>`;});h+='<option value="__other__">Otro...</option>';return h;}
 function onMedSelect(){const sel=$('m-name');if(!sel)return;const med=CATALOGS.medications.find(m=>m.name===sel.value);const wd=$('m-wd');if(med&&wd&&!wd.value)wd.value=med.withdrawal;}
 function onExpenseCatChange(){const cat=$('fe-cat')?.value;const descEl=$('fe-desc');if(!descEl||!cat)return;const opts=CATALOGS.expenseDescriptions[cat]||[];descEl.innerHTML=catalogSelect(opts,descEl.value,true);}
 function onHouseChange(){const house=$('tb-house')?.value;const rackEl=$('tb-rack');if(!rackEl)return;rackEl.innerHTML=rackSelect(house,rackEl.value);}
@@ -670,7 +852,7 @@ function openModal(title,body){$('modal-title').textContent=title;$('modal-body'
 function closeModal(){$('modal-overlay').classList.remove('open');}
 function toast(msg,err=false){const e=$('toast');e.textContent=msg;e.className='toast show'+(err?' error':'');setTimeout(()=>e.className='toast',3000);}
 function emptyState(icon,msg,btn,act){let h=`<div class="empty-state"><div class="empty-icon">${icon}</div><p>${msg}</p>`;if(btn)h+=`<button class="btn btn-primary" onclick="${act}">${btn}</button>`;return h+'</div>';}
-function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);$('btn-es').classList.toggle('active',l==='es');$('btn-en').classList.toggle('active',l==='en');$('btn-pt').classList.toggle('active',l==='pt');document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
+function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);const ls=$('langSelect');if(ls)ls.value=l;document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
 function flockSelect(sel,all=false){const D=loadData();let h=all?`<option value="">${t('all')}</option>`:'<option value="">--</option>';D.flocks.forEach(f=>{h+=`<option value="${f.id}"${f.id===sel?' selected':''}>${f.name}</option>`;});return h;}
 function clientSelect(sel){const D=loadData();let h='<option value="">--</option>';D.clients.forEach(c=>{h+=`<option value="${c.id}"${c.id===sel?' selected':''}>${c.name}</option>`;});return h;}
 function destroyCharts(){Object.values(CHARTS).forEach(c=>{try{c.destroy();}catch(e){}});CHARTS={};}
@@ -1496,7 +1678,7 @@ return h;
 function renderAnaSeasonality(D){
 const months={};D.dailyProduction.forEach(p=>{const m=p.date?.substring(5,7);if(!m)return;if(!months[m])months[m]={eggs:0,days:new Set()};months[m].eggs+=(p.eggsCollected||0);months[m].days.add(p.date);});
 if(!Object.keys(months).length)return emptyState('📅',t('no_data'));
-const mNames=LANG==='es'?['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']:LANG==='pt'?['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const mNames=Array.from({length:12},(_,i)=>new Date(2024,i,1).toLocaleDateString(locale(),{month:'short'}));
 let h='<div class="card"><h3>'+t('ana_seasonality')+'</h3><div class="chart-container"><canvas id="chart-season"></canvas></div></div>';
 h+='<div class="card"><div class="table-wrap"><table><thead><tr><th>'+t('fin_month')+'</th><th>'+t('prod_eggs')+'</th><th>'+t('avg_per_day')+'</th></tr></thead><tbody>';
 for(let i=1;i<=12;i++){const k=String(i).padStart(2,'0');const d=months[k];
@@ -2758,7 +2940,7 @@ const l7prod=D.dailyProduction.sort((a,b)=>b.date.localeCompare(a.date)).slice(0
 const l7deaths=l7prod.reduce((s,p)=>s+(p.deaths||0),0);
 const deathRate=hens>0?(l7deaths/hens*100):0;
 const mortFactor=Math.min(1,deathRate/10);
-factors.push({name:LANG==='en'?'Mortality':'Mortalidad',weight:0.25,value:mortFactor,detail:fmtNum(deathRate,2)+'%'});
+factors.push({name:tc('Mortalidad')||t('kpi_mortality')||'Mortality',weight:0.25,value:mortFactor,detail:fmtNum(deathRate,2)+'%'});
 // 2. FCR deterioration (0.15)
 const d30=new Date();d30.setDate(d30.getDate()-30);const d30s=d30.toISOString().substring(0,10);
 const f30=D.feed.consumption.filter(c=>c.date>=d30s);const e30=D.dailyProduction.filter(p=>p.date>=d30s);
@@ -2779,20 +2961,20 @@ const points=l7prod.map((p,i)=>[i,p.eggsCollected||0]);
 const reg=ss.linearRegression(points);
 prodFactor=reg.m<0?Math.min(1,Math.abs(reg.m)/10):0;
 }
-factors.push({name:LANG==='en'?'Production drop':'Caída producción',weight:0.20,value:prodFactor,detail:''});
+factors.push({name:t('pred_drop_risk')||'Production drop',weight:0.20,value:prodFactor,detail:''});
 // 5. Active outbreaks (0.10)
 const activeOut=D.outbreaks.filter(o=>o.status==='active').length;
 const outFactor=Math.min(1,activeOut/3);
-factors.push({name:LANG==='en'?'Active outbreaks':'Brotes activos',weight:0.10,value:outFactor,detail:activeOut.toString()});
+factors.push({name:t('out_active')||'Active outbreaks',weight:0.10,value:outFactor,detail:activeOut.toString()});
 // 6. Vaccination gaps (0.10)
 const today=todayStr();const overdueVac=D.vaccines.filter(v=>v.status!=='applied'&&v.scheduledDate<today).length;
 const vacFactor=Math.min(1,overdueVac/5);
-factors.push({name:LANG==='en'?'Vaccine gaps':'Vacunas atrasadas',weight:0.10,value:vacFactor,detail:overdueVac.toString()});
+factors.push({name:t('vac_overdue')||'Vaccine gaps',weight:0.10,value:vacFactor,detail:overdueVac.toString()});
 // 7. Stress events (0.05)
 const d7=new Date();d7.setDate(d7.getDate()-7);const d7s=d7.toISOString().substring(0,10);
 const recentStress=D.stressEvents.filter(e=>e.date>=d7s).length;
 const stressFactor=Math.min(1,recentStress/3);
-factors.push({name:LANG==='en'?'Recent stress':'Estrés reciente',weight:0.05,value:stressFactor,detail:recentStress.toString()});
+factors.push({name:t('stress_title')||'Recent stress',weight:0.05,value:stressFactor,detail:recentStress.toString()});
 // Compute probability via sigmoid
 const z=factors.reduce((s,f)=>s+f.weight*f.value*6,0)-2;
 const probability=1/(1+Math.exp(-z));
@@ -2905,7 +3087,7 @@ const D=loadData();
 if(D.settings.fontScale&&D.settings.fontScale!=='normal')applyFontScale(D.settings.fontScale);
 if(D.settings.darkMode)document.body.classList.add('dark-mode');
 applyCampoMode(D);
-switchLang(LANG);nav('dashboard');}
+const ls=$('langSelect');if(ls)ls.value=LANG;switchLang(LANG);nav('dashboard');}
 window.addEventListener('DOMContentLoaded',init);
 // ============ SERVICE WORKER ============
 if('serviceWorker' in navigator){
