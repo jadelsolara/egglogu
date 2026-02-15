@@ -7,14 +7,16 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1A3C6E">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.openweathermap.org wss: ws:; worker-src 'self'">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/mqtt@5.14.1/dist/mqtt.min.js"></script>
-<script src="https://unpkg.com/simple-statistics@7.8.8/dist/simple-statistics.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script defer src="https://unpkg.com/mqtt@5.14.1/dist/mqtt.min.js"></script>
+<script defer src="https://unpkg.com/simple-statistics@7.8.8/dist/simple-statistics.min.js"></script>
 <style>
 :root{--primary:#1A3C6E;--primary-light:#4A7AB5;--primary-dark:#0E2240;--secondary:#FF8F00;--accent:#2E7D32;--danger:#C62828;--danger-light:#EF5350;--warning:#F9A825;--success:#2E7D32;--bg:#F5F5F5;--card:#FFF;--text:#212121;--text-light:#757575;--sidebar-bg:#0E2240;--sidebar-width:240px;--border:#E0E0E0;--radius:8px;--primary-hover:rgba(26,60,110,.04);--primary-ring:rgba(26,60,110,.15);--primary-fill:rgba(26,60,110,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -173,10 +175,70 @@ body.dark-mode .card{background:#2D2D2D}
 .qr-display{padding:12px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);font-family:monospace;word-break:break-all;text-align:center;font-size:11px}
 /* Font scale */
 body.font-small{font-size:13px}body.font-normal{font-size:15px}body.font-large{font-size:18px}body.font-xlarge{font-size:21px}
+/* Field validation errors */
+.field-error{border-color:var(--danger)!important;box-shadow:0 0 0 2px rgba(198,40,40,.2)!important}
+.field-error-msg{color:var(--danger);font-size:11px;margin-top:2px}
+/* Confirm dialog */
+.confirm-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:10001;opacity:0;pointer-events:none;transition:opacity .2s}
+.confirm-overlay.open{opacity:1;pointer-events:auto}
+.confirm-box{background:var(--card);border-radius:var(--radius);padding:24px;max-width:400px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2);text-align:center}
+.confirm-box h4{margin-bottom:8px;font-size:18px;color:var(--text)}
+.confirm-box p{margin-bottom:20px;color:var(--text-light);font-size:14px}
+.confirm-box .confirm-btns{display:flex;gap:10px;justify-content:center}
+.confirm-box .confirm-btns button{padding:8px 24px;border-radius:var(--radius);border:none;font-size:14px;font-weight:600;cursor:pointer}
+.confirm-box .btn-confirm-yes{background:var(--danger);color:#fff}.confirm-box .btn-confirm-no{background:var(--border);color:var(--text)}
+body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
+/* Login screen */
+.login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#0E2240 0%,#1A3C6E 50%,#2A5CAE 100%);display:flex;align-items:center;justify-content:center;z-index:20000}
+.login-screen.hidden{display:none}
+.login-card{background:#fff;border-radius:16px;padding:40px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+.login-card .login-logo{margin-bottom:20px}
+.login-card h2{color:var(--primary);margin-bottom:4px;font-size:22px}
+.login-card .login-subtitle{color:#757575;font-size:13px;margin-bottom:24px}
+.login-card input{width:100%;padding:12px 16px;border:1px solid #E0E0E0;border-radius:var(--radius);font-size:15px;margin-bottom:12px;transition:border-color .2s}
+.login-card input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-ring)}
+.login-card .login-btn{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:600;cursor:pointer;margin-top:8px;transition:background .2s}
+.login-card .login-btn:hover{background:var(--primary-dark)}
+.login-card .login-error{color:var(--danger);font-size:13px;margin-top:8px;min-height:20px}
+.login-card .login-setup{background:var(--border);font-size:12px;padding:8px;border-radius:6px;margin-top:16px;color:#555}
+/* Skip to content (accessibility) */
+.skip-link{position:absolute;top:-40px;left:0;background:var(--primary);color:#fff;padding:8px 16px;z-index:30000;border-radius:0 0 var(--radius) 0;transition:top .2s}
+.skip-link:focus{top:0}
+/* Screen reader only */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Loading spinner */
+.loading-spinner{display:flex;align-items:center;justify-content:center;padding:40px}
+.loading-spinner::after{content:'';width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<div class="app">
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<!-- Login Screen -->
+<div class="login-screen" id="login-screen" role="form" aria-label="Login">
+<div class="login-card">
+<div class="login-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="width:56px;height:56px"><rect width="32" height="32" rx="6" fill="#1E3A5F"/><path d="M16,3.5 C13,3.5 9.5,8 9.5,14.5 C9.5,19.5 12,24 16,24 C20,24 22.5,19.5 22.5,14.5 C22.5,8 19,3.5 16,3.5Z" fill="#FFF"/><path d="M10.8,17 Q12,14.5 14.5,13.5 Q16,13 17,13.2 Q19,13.8 21,16 Q22,17.5 22,19.5 Q22,22 19.5,23 C17.5,24 13,23.5 11.5,21.5 Q10.5,19.5 10.8,17Z" fill="#F5A623"/><circle cx="15.5" cy="9" r="1.5" fill="#FFF"/><circle cx="15.5" cy="9" r="1" fill="#2C3E50"/></svg></div>
+<h2>EGGlogU 360</h2>
+<p class="login-subtitle" data-t="login_subtitle">Ingrese sus credenciales</p>
+<input type="text" id="login-user" placeholder="Usuario" autocomplete="username" aria-label="Username">
+<input type="password" id="login-pass" placeholder="Password" autocomplete="current-password" aria-label="Password" onkeydown="if(event.key==='Enter')doLogin()">
+<button class="login-btn" onclick="doLogin()" aria-label="Login">Entrar</button>
+<div class="login-error" id="login-error" role="alert" aria-live="polite"></div>
+<div class="login-setup" id="login-setup-msg"></div>
+</div>
+</div>
+<!-- Confirm dialog -->
+<div class="confirm-overlay" id="confirm-overlay" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+<div class="confirm-box">
+<h4 id="confirm-title"></h4>
+<p id="confirm-msg"></p>
+<div class="confirm-btns">
+<button class="btn-confirm-no confirm-btn-cancel" onclick="confirmNo()" data-t="cancel" aria-label="Cancel">Cancelar</button>
+<button class="btn-confirm-yes" onclick="confirmYes()" data-t="delete" aria-label="Confirm delete">Eliminar</button>
+</div>
+</div>
+</div>
+<div class="app" id="app-container">
 <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
 <div class="sidebar-logo" aria-label="EGGlogU 360"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="width:36px;height:36px;vertical-align:middle;margin-right:4px;border-radius:6px"><rect width="32" height="32" rx="6" fill="#1E3A5F"/><path d="M16,3.5 C13,3.5 9.5,8 9.5,14.5 C9.5,19.5 12,24 16,24 C20,24 22.5,19.5 22.5,14.5 C22.5,8 19,3.5 16,3.5Z" fill="#FFF"/><path d="M10.8,17 Q12,14.5 14.5,13.5 Q16,13 17,13.2 Q19,13.8 21,16 Q22,17.5 22,19.5 Q22,22 19.5,23 C17.5,24 13,23.5 11.5,21.5 Q10.5,19.5 10.8,17Z" fill="#F5A623"/><path d="M12,21 Q13,20 14,21 Q15,20 16,21 Q17,20 18,21 Q19,20 20,21 Q20.5,22 19,22.5 Q16,24 13,22.5 Q12,22 12,21Z" fill="#E8912D"/><path d="M13.5,13.8 Q13,11.5 13.2,9.5 Q13.5,7.5 15,6.8 Q16.3,6 17.5,6.8 Q18.5,7.5 18.5,9.5 Q18.5,11 17.5,13 Q17,13.5 16,13.5Z" fill="#F5A623"/><path d="M15,6.8 Q14.3,5 15.3,4.5 Q15.8,4.2 16,4.8 Q16.3,3.8 17,4.2 Q18,3.6 18.3,4.5 Q18.8,5.2 17.8,6.5 Q17,7 16,6.5Z" fill="#E74C3C"/><path d="M12.8,10 L11.2,10.7 L12.8,11.2Z" fill="#E8912D"/><path d="M13.3,11.5 Q13.8,12.5 13.4,13.2 Q13,13.3 12.8,12.8 Q12.5,12 13.3,11.5Z" fill="#E74C3C"/><circle cx="15.5" cy="9" r="1.5" fill="#FFF"/><circle cx="15.5" cy="9" r="1" fill="#2C3E50"/><circle cx="15.8" cy="8.7" r=".4" fill="#FFF"/></svg> EGGlogU <span style="color:#FF8F00;font-size:16px">360</span><small data-t="sidebar_subtitle">Gestión Avícola Inteligente</small></div>
 <nav id="main-nav" role="menubar" aria-label="Modules">
@@ -211,23 +273,26 @@ body.font-small{font-size:13px}body.font-normal{font-size:15px}body.font-large{f
 <option value="zh">🇨🇳 中文</option>
 </select>
 </div>
+<div style="padding:8px 12px;margin-top:auto">
+<button onclick="doLogout()" class="mode-btn" style="width:100%;background:rgba(198,40,40,.3);border-color:rgba(198,40,40,.4)" aria-label="Logout">&#x1F6AA; <span data-t="logout">Cerrar sesión</span></button>
+</div>
 </aside>
-<main class="main-content" role="main" aria-label="Content">
+<main class="main-content" id="main-content" role="main" aria-label="Content">
 <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
-<div id="sec-dashboard" class="section active"></div>
-<div id="sec-produccion" class="section"></div>
-<div id="sec-lotes" class="section"></div>
-<div id="sec-sanidad" class="section"></div>
-<div id="sec-alimento" class="section"></div>
-<div id="sec-clientes" class="section"></div>
-<div id="sec-finanzas" class="section"></div>
-<div id="sec-analisis" class="section"></div>
-<div id="sec-operaciones" class="section"></div>
-<div id="sec-bioseguridad" class="section"></div>
-<div id="sec-trazabilidad" class="section"></div>
-<div id="sec-planificacion" class="section"></div>
-<div id="sec-ambiente" class="section"></div>
-<div id="sec-config" class="section"></div>
+<div id="sec-dashboard" class="section active" role="region" aria-label="Dashboard"></div>
+<div id="sec-produccion" class="section" role="region" aria-label="Production"></div>
+<div id="sec-lotes" class="section" role="region" aria-label="Flocks"></div>
+<div id="sec-sanidad" class="section" role="region" aria-label="Health"></div>
+<div id="sec-alimento" class="section" role="region" aria-label="Feed"></div>
+<div id="sec-clientes" class="section" role="region" aria-label="Clients"></div>
+<div id="sec-finanzas" class="section" role="region" aria-label="Finance"></div>
+<div id="sec-analisis" class="section" role="region" aria-label="Analytics"></div>
+<div id="sec-operaciones" class="section" role="region" aria-label="Operations"></div>
+<div id="sec-bioseguridad" class="section" role="region" aria-label="Biosecurity"></div>
+<div id="sec-trazabilidad" class="section" role="region" aria-label="Traceability"></div>
+<div id="sec-planificacion" class="section" role="region" aria-label="Planning"></div>
+<div id="sec-ambiente" class="section" role="region" aria-label="Environment"></div>
+<div id="sec-config" class="section" role="region" aria-label="Settings"></div>
 </main>
 </div>
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -236,8 +301,17 @@ body.font-small{font-size:13px}body.font-normal{font-size:15px}body.font-large{f
 <div class="modal-body" id="modal-body"></div>
 </div>
 </div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <script>
+// ============ GLOBAL ERROR HANDLER ============
+window.onerror = function(msg, src, line, col, err) {
+  console.error('[EGGlogU Error]', msg, src, line, col);
+  return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('[EGGlogU Promise]', e.reason);
+});
+
 // ============ TRANSLATIONS ============
 const T={es:{
 save:'Guardar',cancel:'Cancelar',delete:'Eliminar',edit:'Editar',add:'Agregar',close:'Cerrar',actions:'Acciones',date:'Fecha',notes:'Notas',name:'Nombre',phone:'Teléfono',email:'Email',address:'Dirección',confirm_delete:'¿Eliminar este registro?',no_data:'No hay datos registrados',total:'Total',all:'Todos',loading:'Cargando',search:'Buscar',from:'Desde',to:'Hasta',status:'Estado',export_csv:'Exportar CSV',today:'Hoy',active:'Activo',inactive:'Inactivo',
@@ -297,7 +371,8 @@ cfg_font_size:'Tamaño Texto',cfg_font_small:'Pequeño',cfg_font_normal:'Normal'
 // ML/Intelligence
 pred_outbreak_risk:'Riesgo de Brote',pred_outbreak_high:'Alto Riesgo',pred_outbreak_medium:'Riesgo Medio',pred_outbreak_low:'Bajo Riesgo',pred_outbreak_factor:'Factor',pred_outbreak_weight:'Peso',pred_outbreak_value:'Valor',pred_probability:'Probabilidad',pred_factors:'Factores',pred_recommendations:'Recomendaciones',pred_confidence:'Confianza',pred_forecast_7d:'7 días',pred_forecast_14d:'14 días',pred_ensemble:'Pronóstico Conjunto',pred_forecast_upper:'Banda Superior',pred_forecast_lower:'Banda Inferior',
 ana_segment_profit:'Rentabilidad por Segmento',cfg_accessibility:'Accesibilidad',
-rec_title:'Recomendaciones',rec_dismiss:'Descartar',rec_check_diet:'Revisar dieta / diseño de alimentación / descartar enfermedad',rec_check_env:'Verificar ambiente / enfermedad / estrés inmediatamente',rec_below_curve:'Producción bajo estándar — revisar estrés, luz, alimentación',rec_buy_feed:'Programar compra de alimento',rec_record_env:'Registrar condiciones ambientales',rec_disinfect:'Ejecutar protocolo de desinfección zona',rec_heat_plan:'Estrés calórico prolongado — activar plan de enfriamiento',rec_lab_samples:'Llevar muestras al laboratorio',rec_ventilation:'Aumentar ventilación, verificar agua fresca'
+rec_title:'Recomendaciones',rec_dismiss:'Descartar',rec_check_diet:'Revisar dieta / diseño de alimentación / descartar enfermedad',rec_check_env:'Verificar ambiente / enfermedad / estrés inmediatamente',rec_below_curve:'Producción bajo estándar — revisar estrés, luz, alimentación',rec_buy_feed:'Programar compra de alimento',rec_record_env:'Registrar condiciones ambientales',rec_disinfect:'Ejecutar protocolo de desinfección zona',rec_heat_plan:'Estrés calórico prolongado — activar plan de enfriamiento',rec_lab_samples:'Llevar muestras al laboratorio',rec_ventilation:'Aumentar ventilación, verificar agua fresca',
+auth_welcome:'Cuenta creada. Bienvenido!',auth_error:'Credenciales incorrectas',auth_first_run:'Primera vez: ingrese usuario y contraseña para crear su cuenta.',login_subtitle:'Ingrese sus credenciales',logout:'Cerrar sesión',required:'Campo obligatorio',invalid_email:'Email inválido',invalid_phone:'Teléfono inválido',must_be_number:'Debe ser un número',invalid_date:'Fecha inválida',invalid_format:'Formato inválido',min_length:'Largo mínimo',max_length:'Largo máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Error de red',error_unexpected:'Error inesperado',error_loading:'Error al cargar'
 },en:{
 save:'Save',cancel:'Cancel',delete:'Delete',edit:'Edit',add:'Add',close:'Close',actions:'Actions',date:'Date',notes:'Notes',name:'Name',phone:'Phone',email:'Email',address:'Address',confirm_delete:'Delete this record?',no_data:'No data recorded',total:'Total',all:'All',loading:'Loading',search:'Search',from:'From',to:'To',status:'Status',export_csv:'Export CSV',today:'Today',active:'Active',inactive:'Inactive',
 nav_dashboard:'Dashboard',nav_production:'Production',nav_flocks:'Flocks',nav_health:'Health',nav_feed:'Feed',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analysis',nav_operations:'Operations',nav_environment:'Environment',nav_config:'Settings',
@@ -349,7 +424,8 @@ nav_campo_mode:'Campo Mode',nav_vet_mode:'Vet Mode',campo_today:'TODAY',campo_qu
 cfg_font_size:'Text Size',cfg_font_small:'Small',cfg_font_normal:'Normal',cfg_font_large:'Large',cfg_font_xlarge:'Extra Large',cfg_dark_mode:'Dark Mode',cfg_theme_dark:'Dark',
 pred_outbreak_risk:'Outbreak Risk',pred_outbreak_high:'High Risk',pred_outbreak_medium:'Medium Risk',pred_outbreak_low:'Low Risk',pred_outbreak_factor:'Factor',pred_outbreak_weight:'Weight',pred_outbreak_value:'Value',pred_probability:'Probability',pred_factors:'Factors',pred_recommendations:'Recommendations',pred_confidence:'Confidence',pred_forecast_7d:'7 days',pred_forecast_14d:'14 days',pred_ensemble:'Ensemble Forecast',pred_forecast_upper:'Upper Band',pred_forecast_lower:'Lower Band',
 ana_segment_profit:'Profitability by Segment',cfg_accessibility:'Accessibility',
-rec_title:'Recommendations',rec_dismiss:'Dismiss',rec_check_diet:'Check diet / feed design / rule out disease',rec_check_env:'Check environment / disease / stress immediately',rec_below_curve:'Below standard production — check stress, light, feed',rec_buy_feed:'Schedule feed purchase',rec_record_env:'Record environmental conditions',rec_disinfect:'Execute disinfection protocol zone',rec_heat_plan:'Prolonged heat stress — activate cooling plan',rec_lab_samples:'Take samples to laboratory',rec_ventilation:'Increase ventilation, check fresh water'
+rec_title:'Recommendations',rec_dismiss:'Dismiss',rec_check_diet:'Check diet / feed design / rule out disease',rec_check_env:'Check environment / disease / stress immediately',rec_below_curve:'Below standard production — check stress, light, feed',rec_buy_feed:'Schedule feed purchase',rec_record_env:'Record environmental conditions',rec_disinfect:'Execute disinfection protocol zone',rec_heat_plan:'Prolonged heat stress — activate cooling plan',rec_lab_samples:'Take samples to laboratory',rec_ventilation:'Increase ventilation, check fresh water',
+auth_welcome:'Account created. Welcome!',auth_error:'Invalid credentials',auth_first_run:'First time: enter username and password to create your account.',login_subtitle:'Enter your credentials',logout:'Logout',required:'Required field',invalid_email:'Invalid email',invalid_phone:'Invalid phone',must_be_number:'Must be a number',invalid_date:'Invalid date',invalid_format:'Invalid format',min_length:'Min length',max_length:'Max length',min_value:'Min value',max_value:'Max value',error_network:'Network error',error_unexpected:'Unexpected error',error_loading:'Loading error'
 },pt:{
 save:'Salvar',cancel:'Cancelar',delete:'Excluir',edit:'Editar',add:'Adicionar',close:'Fechar',actions:'Ações',date:'Data',notes:'Observações',name:'Nome',phone:'Telefone',email:'Email',address:'Endereço',confirm_delete:'Excluir este registro?',no_data:'Nenhum dado registrado',total:'Total',all:'Todos',loading:'Carregando',search:'Buscar',from:'De',to:'Até',status:'Status',export_csv:'Exportar CSV',today:'Hoje',active:'Ativo',inactive:'Inativo',
 nav_dashboard:'Dashboard',nav_production:'Produção',nav_flocks:'Lotes',nav_health:'Sanidade',nav_feed:'Alimentação',nav_clients:'Clientes',nav_finances:'Finanças',nav_analysis:'Análise',nav_operations:'Operações',nav_environment:'Ambiente',nav_config:'Configuração',
@@ -401,7 +477,8 @@ nav_campo_mode:'Modo Campo',nav_vet_mode:'Modo Vet',campo_today:'HOJE',campo_qui
 cfg_font_size:'Tamanho do Texto',cfg_font_small:'Pequeno',cfg_font_normal:'Normal',cfg_font_large:'Grande',cfg_font_xlarge:'Extra Grande',cfg_dark_mode:'Modo Escuro',cfg_theme_dark:'Escuro',
 pred_outbreak_risk:'Risco de Surto',pred_outbreak_high:'Alto Risco',pred_outbreak_medium:'Risco Médio',pred_outbreak_low:'Baixo Risco',pred_outbreak_factor:'Fator',pred_outbreak_weight:'Peso',pred_outbreak_value:'Valor',pred_probability:'Probabilidade',pred_factors:'Fatores',pred_recommendations:'Recomendações',pred_confidence:'Confiança',pred_forecast_7d:'7 dias',pred_forecast_14d:'14 dias',pred_ensemble:'Previsão Conjunta',pred_forecast_upper:'Banda Superior',pred_forecast_lower:'Banda Inferior',
 ana_segment_profit:'Rentabilidade por Segmento',cfg_accessibility:'Acessibilidade',
-rec_title:'Recomendações',rec_dismiss:'Descartar',rec_check_diet:'Verificar dieta / formulação de ração / descartar doença',rec_check_env:'Verificar ambiente / doença / estresse imediatamente',rec_below_curve:'Produção abaixo do padrão — verificar estresse, luz, alimentação',rec_buy_feed:'Programar compra de ração',rec_record_env:'Registrar condições ambientais',rec_disinfect:'Executar protocolo de desinfecção zona',rec_heat_plan:'Estresse térmico prolongado — ativar plano de resfriamento',rec_lab_samples:'Levar amostras ao laboratório',rec_ventilation:'Aumentar ventilação, verificar água fresca'
+rec_title:'Recomendações',rec_dismiss:'Descartar',rec_check_diet:'Verificar dieta / formulação de ração / descartar doença',rec_check_env:'Verificar ambiente / doença / estresse imediatamente',rec_below_curve:'Produção abaixo do padrão — verificar estresse, luz, alimentação',rec_buy_feed:'Programar compra de ração',rec_record_env:'Registrar condições ambientais',rec_disinfect:'Executar protocolo de desinfecção zona',rec_heat_plan:'Estresse térmico prolongado — ativar plano de resfriamento',rec_lab_samples:'Levar amostras ao laboratório',rec_ventilation:'Aumentar ventilação, verificar água fresca',
+auth_welcome:'Conta criada. Bem-vindo!',auth_error:'Credenciais inválidas',auth_first_run:'Primeira vez: insira usuário e senha para criar sua conta.',login_subtitle:'Insira suas credenciais',logout:'Sair',required:'Campo obrigatório',invalid_email:'Email inválido',invalid_phone:'Telefone inválido',must_be_number:'Deve ser um número',invalid_date:'Data inválida',invalid_format:'Formato inválido',min_length:'Comprimento mínimo',max_length:'Comprimento máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Erro de rede',error_unexpected:'Erro inesperado',error_loading:'Erro ao carregar'
 },
 fr:{
 save:'Enregistrer',cancel:'Annuler',delete:'Supprimer',edit:'Modifier',add:'Ajouter',close:'Fermer',actions:'Actions',date:'Date',notes:'Notes',name:'Nom',phone:'Téléphone',email:'E-mail',address:'Adresse',confirm_delete:'Supprimer cet enregistrement ?',no_data:'Aucune donnée enregistrée',total:'Total',all:'Tout',loading:'Chargement',search:'Rechercher',from:'Du',to:'Au',status:'Statut',export_csv:'Exporter CSV',today:'Aujourd\'hui',active:'Actif',inactive:'Inactif',
@@ -454,7 +531,8 @@ nav_campo_mode:'Mode terrain',nav_vet_mode:'Mode vétérinaire',campo_today:'AUJ
 cfg_font_size:'Taille du texte',cfg_font_small:'Petit',cfg_font_normal:'Normal',cfg_font_large:'Grand',cfg_font_xlarge:'Très grand',cfg_dark_mode:'Mode sombre',cfg_theme_dark:'Sombre',
 pred_outbreak_risk:'Risque d\'épidémie',pred_outbreak_high:'Risque élevé',pred_outbreak_medium:'Risque moyen',pred_outbreak_low:'Risque faible',pred_outbreak_factor:'Facteur',pred_outbreak_weight:'Poids',pred_outbreak_value:'Valeur',pred_probability:'Probabilité',pred_factors:'Facteurs',pred_recommendations:'Recommandations',pred_confidence:'Confiance',pred_forecast_7d:'7 jours',pred_forecast_14d:'14 jours',pred_ensemble:'Prévision d\'ensemble',pred_forecast_upper:'Bande supérieure',pred_forecast_lower:'Bande inférieure',
 ana_segment_profit:'Rentabilité par segment',cfg_accessibility:'Accessibilité',
-rec_title:'Recommandations',rec_dismiss:'Ignorer',rec_check_diet:'Vérifier l\'alimentation / formulation / exclure une maladie',rec_check_env:'Vérifier environnement / maladie / stress immédiatement',rec_below_curve:'En dessous de la courbe standard — vérifier stress, lumière, aliment',rec_buy_feed:'Planifier l\'achat d\'aliment',rec_record_env:'Enregistrer les conditions environnementales',rec_disinfect:'Exécuter le protocole de désinfection de la zone',rec_heat_plan:'Stress thermique prolongé — activer le plan de refroidissement',rec_lab_samples:'Envoyer des échantillons au laboratoire',rec_ventilation:'Augmenter la ventilation, vérifier l\'eau fraîche'
+rec_title:'Recommandations',rec_dismiss:'Ignorer',rec_check_diet:'Vérifier l\'alimentation / formulation / exclure une maladie',rec_check_env:'Vérifier environnement / maladie / stress immédiatement',rec_below_curve:'En dessous de la courbe standard — vérifier stress, lumière, aliment',rec_buy_feed:'Planifier l\'achat d\'aliment',rec_record_env:'Enregistrer les conditions environnementales',rec_disinfect:'Exécuter le protocole de désinfection de la zone',rec_heat_plan:'Stress thermique prolongé — activer le plan de refroidissement',rec_lab_samples:'Envoyer des échantillons au laboratoire',rec_ventilation:'Augmenter la ventilation, vérifier l\'eau fraîche',
+auth_welcome:'Compte créé. Bienvenue!',auth_error:'Identifiants incorrects',auth_first_run:'Première fois: entrez un nom d\'utilisateur et un mot de passe pour créer votre compte.',login_subtitle:'Entrez vos identifiants',logout:'Déconnexion',required:'Champ obligatoire',invalid_email:'Email invalide',invalid_phone:'Téléphone invalide',must_be_number:'Doit être un nombre',invalid_date:'Date invalide',invalid_format:'Format invalide',min_length:'Longueur min',max_length:'Longueur max',min_value:'Valeur min',max_value:'Valeur max',error_network:'Erreur réseau',error_unexpected:'Erreur inattendue',error_loading:'Erreur de chargement'
 },
 de:{
 save:'Speichern',cancel:'Abbrechen',delete:'Löschen',edit:'Bearbeiten',add:'Hinzufügen',close:'Schließen',actions:'Aktionen',date:'Datum',notes:'Notizen',name:'Name',phone:'Telefon',email:'E-Mail',address:'Adresse',confirm_delete:'Diesen Eintrag löschen?',no_data:'Keine Daten erfasst',total:'Gesamt',all:'Alle',loading:'Laden',search:'Suche',from:'Von',to:'Bis',status:'Status',export_csv:'CSV exportieren',today:'Heute',active:'Aktiv',inactive:'Inaktiv',
@@ -507,7 +585,8 @@ nav_campo_mode:'Feldmodus',nav_vet_mode:'Tierarztmodus',campo_today:'HEUTE',camp
 cfg_font_size:'Schriftgröße',cfg_font_small:'Klein',cfg_font_normal:'Normal',cfg_font_large:'Groß',cfg_font_xlarge:'Sehr groß',cfg_dark_mode:'Dunkelmodus',cfg_theme_dark:'Dunkel',
 pred_outbreak_risk:'Ausbruchsrisiko',pred_outbreak_high:'Hohes Risiko',pred_outbreak_medium:'Mittleres Risiko',pred_outbreak_low:'Niedriges Risiko',pred_outbreak_factor:'Faktor',pred_outbreak_weight:'Gewichtung',pred_outbreak_value:'Wert',pred_probability:'Wahrscheinlichkeit',pred_factors:'Faktoren',pred_recommendations:'Empfehlungen',pred_confidence:'Konfidenz',pred_forecast_7d:'7 Tage',pred_forecast_14d:'14 Tage',pred_ensemble:'Ensemble-Prognose',pred_forecast_upper:'Oberes Band',pred_forecast_lower:'Unteres Band',
 ana_segment_profit:'Rentabilität nach Segment',cfg_accessibility:'Barrierefreiheit',
-rec_title:'Empfehlungen',rec_dismiss:'Verwerfen',rec_check_diet:'Futter / Futterrezeptur prüfen / Krankheit ausschließen',rec_check_env:'Umwelt / Krankheit / Stress sofort prüfen',rec_below_curve:'Unter Standardproduktion — Stress, Licht, Futter prüfen',rec_buy_feed:'Futterkauf planen',rec_record_env:'Umweltbedingungen erfassen',rec_disinfect:'Desinfektionsprotokoll Zone ausführen',rec_heat_plan:'Anhaltender Hitzestress — Kühlungsplan aktivieren',rec_lab_samples:'Proben ins Labor bringen',rec_ventilation:'Belüftung erhöhen, Frischwasser kontrollieren'
+rec_title:'Empfehlungen',rec_dismiss:'Verwerfen',rec_check_diet:'Futter / Futterrezeptur prüfen / Krankheit ausschließen',rec_check_env:'Umwelt / Krankheit / Stress sofort prüfen',rec_below_curve:'Unter Standardproduktion — Stress, Licht, Futter prüfen',rec_buy_feed:'Futterkauf planen',rec_record_env:'Umweltbedingungen erfassen',rec_disinfect:'Desinfektionsprotokoll Zone ausführen',rec_heat_plan:'Anhaltender Hitzestress — Kühlungsplan aktivieren',rec_lab_samples:'Proben ins Labor bringen',rec_ventilation:'Belüftung erhöhen, Frischwasser kontrollieren',
+auth_welcome:'Konto erstellt. Willkommen!',auth_error:'Ungültige Anmeldedaten',auth_first_run:'Erstmalig: Benutzernamen und Passwort eingeben, um Ihr Konto zu erstellen.',login_subtitle:'Geben Sie Ihre Anmeldedaten ein',logout:'Abmelden',required:'Pflichtfeld',invalid_email:'Ungültige E-Mail',invalid_phone:'Ungültige Telefonnummer',must_be_number:'Muss eine Zahl sein',invalid_date:'Ungültiges Datum',invalid_format:'Ungültiges Format',min_length:'Mindestlänge',max_length:'Maximale Länge',min_value:'Mindestwert',max_value:'Maximalwert',error_network:'Netzwerkfehler',error_unexpected:'Unerwarteter Fehler',error_loading:'Ladefehler'
 },
 it:{
 save:'Salva',cancel:'Annulla',delete:'Elimina',edit:'Modifica',add:'Aggiungi',close:'Chiudi',actions:'Azioni',date:'Data',notes:'Note',name:'Nome',phone:'Telefono',email:'Email',address:'Indirizzo',confirm_delete:'Eliminare questo record?',no_data:'Nessun dato registrato',total:'Totale',all:'Tutti',loading:'Caricamento',search:'Cerca',from:'Da',to:'A',status:'Stato',export_csv:'Esporta CSV',today:'Oggi',active:'Attivo',inactive:'Inattivo',
@@ -560,7 +639,8 @@ nav_campo_mode:'Modalità Campo',nav_vet_mode:'Modalità Veterinario',campo_toda
 cfg_font_size:'Dimensione Testo',cfg_font_small:'Piccolo',cfg_font_normal:'Normale',cfg_font_large:'Grande',cfg_font_xlarge:'Extra Grande',cfg_dark_mode:'Modalità Scura',cfg_theme_dark:'Scuro',
 pred_outbreak_risk:'Rischio Focolaio',pred_outbreak_high:'Rischio Alto',pred_outbreak_medium:'Rischio Medio',pred_outbreak_low:'Rischio Basso',pred_outbreak_factor:'Fattore',pred_outbreak_weight:'Peso',pred_outbreak_value:'Valore',pred_probability:'Probabilità',pred_factors:'Fattori',pred_recommendations:'Raccomandazioni',pred_confidence:'Affidabilità',pred_forecast_7d:'7 giorni',pred_forecast_14d:'14 giorni',pred_ensemble:'Previsione Combinata',pred_forecast_upper:'Banda Superiore',pred_forecast_lower:'Banda Inferiore',
 ana_segment_profit:'Redditività per Segmento',cfg_accessibility:'Accessibilità',
-rec_title:'Raccomandazioni',rec_dismiss:'Ignora',rec_check_diet:'Controllare dieta / formulazione mangime / escludere malattia',rec_check_env:'Controllare ambiente / malattia / stress immediatamente',rec_below_curve:'Sotto la produzione standard — controllare stress, luce, mangime',rec_buy_feed:'Programmare acquisto mangime',rec_record_env:'Registrare condizioni ambientali',rec_disinfect:'Eseguire protocollo di disinfezione zona',rec_heat_plan:'Stress da calore prolungato — attivare piano di raffreddamento',rec_lab_samples:'Inviare campioni al laboratorio',rec_ventilation:'Aumentare ventilazione, controllare acqua fresca'
+rec_title:'Raccomandazioni',rec_dismiss:'Ignora',rec_check_diet:'Controllare dieta / formulazione mangime / escludere malattia',rec_check_env:'Controllare ambiente / malattia / stress immediatamente',rec_below_curve:'Sotto la produzione standard — controllare stress, luce, mangime',rec_buy_feed:'Programmare acquisto mangime',rec_record_env:'Registrare condizioni ambientali',rec_disinfect:'Eseguire protocollo di disinfezione zona',rec_heat_plan:'Stress da calore prolungato — attivare piano di raffreddamento',rec_lab_samples:'Inviare campioni al laboratorio',rec_ventilation:'Aumentare ventilazione, controllare acqua fresca',
+auth_welcome:'Account creato. Benvenuto!',auth_error:'Credenziali non valide',auth_first_run:'Prima volta: inserisci nome utente e password per creare il tuo account.',login_subtitle:'Inserisci le tue credenziali',logout:'Esci',required:'Campo obbligatorio',invalid_email:'Email non valida',invalid_phone:'Telefono non valido',must_be_number:'Deve essere un numero',invalid_date:'Data non valida',invalid_format:'Formato non valido',min_length:'Lunghezza minima',max_length:'Lunghezza massima',min_value:'Valore minimo',max_value:'Valore massimo',error_network:'Errore di rete',error_unexpected:'Errore imprevisto',error_loading:'Errore di caricamento'
 },
 ja:{
 save:'保存',cancel:'キャンセル',delete:'削除',edit:'編集',add:'追加',close:'閉じる',actions:'操作',date:'日付',notes:'メモ',name:'名前',phone:'電話',email:'メール',address:'住所',confirm_delete:'このレコードを削除しますか？',no_data:'データがありません',total:'合計',all:'すべて',loading:'読み込み中',search:'検索',from:'開始',to:'終了',status:'ステータス',export_csv:'CSV出力',today:'今日',active:'有効',inactive:'無効',
@@ -613,7 +693,8 @@ nav_campo_mode:'フィールドモード',nav_vet_mode:'獣医モード',campo_t
 cfg_font_size:'文字サイズ',cfg_font_small:'小',cfg_font_normal:'標準',cfg_font_large:'大',cfg_font_xlarge:'特大',cfg_dark_mode:'ダークモード',cfg_theme_dark:'ダーク',
 pred_outbreak_risk:'疾病発生リスク',pred_outbreak_high:'高リスク',pred_outbreak_medium:'中リスク',pred_outbreak_low:'低リスク',pred_outbreak_factor:'要因',pred_outbreak_weight:'重み',pred_outbreak_value:'値',pred_probability:'確率',pred_factors:'要因',pred_recommendations:'推奨事項',pred_confidence:'信頼度',pred_forecast_7d:'7日間',pred_forecast_14d:'14日間',pred_ensemble:'アンサンブル予測',pred_forecast_upper:'上限バンド',pred_forecast_lower:'下限バンド',
 ana_segment_profit:'セグメント別収益性',cfg_accessibility:'アクセシビリティ',
-rec_title:'推奨事項',rec_dismiss:'非表示にする',rec_check_diet:'飼料設計を確認・疾病の可能性を除外',rec_check_env:'環境・疾病・ストレスを直ちに確認',rec_below_curve:'標準産卵曲線を下回っています — ストレス・照明・飼料を確認',rec_buy_feed:'飼料の購入を計画してください',rec_record_env:'環境条件を記録してください',rec_disinfect:'ゾーンの消毒プロトコルを実施してください',rec_heat_plan:'長期間の熱ストレス — 冷却計画を実施してください',rec_lab_samples:'検体を検査機関に提出してください',rec_ventilation:'換気を強化し、新鮮な飲水を確認してください'
+rec_title:'推奨事項',rec_dismiss:'非表示にする',rec_check_diet:'飼料設計を確認・疾病の可能性を除外',rec_check_env:'環境・疾病・ストレスを直ちに確認',rec_below_curve:'標準産卵曲線を下回っています — ストレス・照明・飼料を確認',rec_buy_feed:'飼料の購入を計画してください',rec_record_env:'環境条件を記録してください',rec_disinfect:'ゾーンの消毒プロトコルを実施してください',rec_heat_plan:'長期間の熱ストレス — 冷却計画を実施してください',rec_lab_samples:'検体を検査機関に提出してください',rec_ventilation:'換気を強化し、新鮮な飲水を確認してください',
+auth_welcome:'アカウントが作成されました。ようこそ！',auth_error:'認証情報が正しくありません',auth_first_run:'初回：ユーザー名とパスワードを入力してアカウントを作成してください。',login_subtitle:'認証情報を入力してください',logout:'ログアウト',required:'必須項目',invalid_email:'無効なメールアドレス',invalid_phone:'無効な電話番号',must_be_number:'数値を入力してください',invalid_date:'無効な日付',invalid_format:'無効な形式',min_length:'最小長',max_length:'最大長',min_value:'最小値',max_value:'最大値',error_network:'ネットワークエラー',error_unexpected:'予期しないエラー',error_loading:'読み込みエラー'
 },
 zh:{
 save:'保存',cancel:'取消',delete:'删除',edit:'编辑',add:'添加',close:'关闭',actions:'操作',date:'日期',notes:'备注',name:'名称',phone:'电话',email:'邮箱',address:'地址',confirm_delete:'确定删除此记录？',no_data:'暂无数据',total:'合计',all:'全部',loading:'加载中',search:'搜索',from:'从',to:'至',status:'状态',export_csv:'导出CSV',today:'今天',active:'活跃',inactive:'停用',
@@ -666,7 +747,8 @@ nav_campo_mode:'现场模式',nav_vet_mode:'兽医模式',campo_today:'今日',c
 cfg_font_size:'字体大小',cfg_font_small:'小',cfg_font_normal:'正常',cfg_font_large:'大',cfg_font_xlarge:'特大',cfg_dark_mode:'深色模式',cfg_theme_dark:'深色',
 pred_outbreak_risk:'疫情风险',pred_outbreak_high:'高风险',pred_outbreak_medium:'中风险',pred_outbreak_low:'低风险',pred_outbreak_factor:'因素',pred_outbreak_weight:'权重',pred_outbreak_value:'数值',pred_probability:'概率',pred_factors:'因素',pred_recommendations:'建议',pred_confidence:'置信度',pred_forecast_7d:'7天',pred_forecast_14d:'14天',pred_ensemble:'集成预测',pred_forecast_upper:'上限带',pred_forecast_lower:'下限带',
 ana_segment_profit:'按细分盈利分析',cfg_accessibility:'无障碍',
-rec_title:'建议',rec_dismiss:'忽略',rec_check_diet:'检查日粮/饲料配方/排除疾病',rec_check_env:'立即检查环境/疾病/应激',rec_below_curve:'低于标准产蛋曲线 - 检查应激、光照、饲料',rec_buy_feed:'安排饲料采购',rec_record_env:'记录环境条件',rec_disinfect:'执行区域消毒规程',rec_heat_plan:'持续热应激 - 启动降温方案',rec_lab_samples:'采集样本送检',rec_ventilation:'加强通风，检查饮水供应'
+rec_title:'建议',rec_dismiss:'忽略',rec_check_diet:'检查日粮/饲料配方/排除疾病',rec_check_env:'立即检查环境/疾病/应激',rec_below_curve:'低于标准产蛋曲线 - 检查应激、光照、饲料',rec_buy_feed:'安排饲料采购',rec_record_env:'记录环境条件',rec_disinfect:'执行区域消毒规程',rec_heat_plan:'持续热应激 - 启动降温方案',rec_lab_samples:'采集样本送检',rec_ventilation:'加强通风，检查饮水供应',
+auth_welcome:'账户已创建。欢迎！',auth_error:'凭据不正确',auth_first_run:'首次使用：输入用户名和密码以创建您的账户。',login_subtitle:'请输入您的凭据',logout:'退出登录',required:'必填项',invalid_email:'无效的邮箱',invalid_phone:'无效的电话号码',must_be_number:'必须是数字',invalid_date:'无效的日期',invalid_format:'无效的格式',min_length:'最小长度',max_length:'最大长度',min_value:'最小值',max_value:'最大值',error_network:'网络错误',error_unexpected:'意外错误',error_loading:'加载错误'
 }};
 
 // ============ LIFECYCLE ROADMAP ============
@@ -712,6 +794,153 @@ function fmtDate(d){if(!d)return'-';return new Date(d+'T12:00:00').toLocaleDateS
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 function currency(){return(DATA||loadData()).farm.currency||'$';}
 function todayStr(){return new Date().toISOString().substring(0,10);}
+
+// ============ SECURITY: XSS Prevention ============
+function sanitizeHTML(str){
+if(typeof str!=='string')return String(str||'');
+const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
+return str.replace(/[&<>"']/g,c=>map[c]);
+}
+function escapeAttr(str){return sanitizeHTML(String(str||''));}
+function safeHTML(tpl,...vals){return tpl.reduce((out,s,i)=>out+s+(i<vals.length?sanitizeHTML(String(vals[i])):''),'');}
+
+// ============ SECURITY: Input Validation ============
+function validateInput(value,rules={}){
+const errors=[];
+const v=typeof value==='string'?value.trim():value;
+if(rules.required&&(v===''||v===null||v===undefined))errors.push(t('required')||'Required');
+if(rules.minLength&&typeof v==='string'&&v.length<rules.minLength)errors.push((t('min_length')||'Min length')+': '+rules.minLength);
+if(rules.maxLength&&typeof v==='string'&&v.length>rules.maxLength)errors.push((t('max_length')||'Max length')+': '+rules.maxLength);
+if(rules.min!==undefined&&Number(v)<rules.min)errors.push((t('min_value')||'Min')+': '+rules.min);
+if(rules.max!==undefined&&Number(v)>rules.max)errors.push((t('max_value')||'Max')+': '+rules.max);
+if(rules.pattern&&!rules.pattern.test(v))errors.push(rules.patternMsg||(t('invalid_format')||'Invalid format'));
+if(rules.email&&v&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))errors.push(t('invalid_email')||'Invalid email');
+if(rules.phone&&v&&!/^[+\d\s\-()]{6,20}$/.test(v))errors.push(t('invalid_phone')||'Invalid phone');
+if(rules.numeric&&v!==''&&isNaN(Number(v)))errors.push(t('must_be_number')||'Must be a number');
+if(rules.date&&v&&isNaN(Date.parse(v)))errors.push(t('invalid_date')||'Invalid date');
+return{valid:errors.length===0,errors};
+}
+function validateForm(fields){
+const allErrors={};let valid=true;
+for(const[name,{value,rules}]of Object.entries(fields)){
+const result=validateInput(value,rules);
+if(!result.valid){allErrors[name]=result.errors;valid=false;}
+}
+return{valid,errors:allErrors};
+}
+function showFieldError(fieldId,msg){
+const el=$(fieldId);if(!el)return;
+el.classList.add('field-error');
+let errEl=el.parentElement?.querySelector('.field-error-msg');
+if(!errEl){errEl=document.createElement('div');errEl.className='field-error-msg';el.parentElement?.appendChild(errEl);}
+errEl.textContent=msg;
+}
+function clearFieldErrors(){
+document.querySelectorAll('.field-error').forEach(el=>el.classList.remove('field-error'));
+document.querySelectorAll('.field-error-msg').forEach(el=>el.remove());
+}
+
+// ============ UX: Custom Confirm Dialog ============
+let _confirmResolve=null;
+function showConfirm(msg){
+return new Promise(resolve=>{
+_confirmResolve=resolve;
+$('confirm-title').textContent=t('confirm_delete')||'Confirm';
+$('confirm-msg').textContent=msg;
+$('confirm-overlay').classList.add('open');
+});
+}
+function confirmYes(){$('confirm-overlay').classList.remove('open');if(_confirmResolve){_confirmResolve(true);_confirmResolve=null;}}
+function confirmNo(){$('confirm-overlay').classList.remove('open');if(_confirmResolve){_confirmResolve(false);_confirmResolve=null;}}
+
+// ============ SECURITY: Authentication ============
+const AUTH_KEY='egglogu_auth';
+const AUTH_SESSION='egglogu_session';
+async function hashPassword(pwd, salt) {
+  if (!salt) {
+    salt = crypto.getRandomValues(new Uint8Array(16));
+    salt = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  const enc = new TextEncoder().encode(salt + pwd);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return { hash, salt };
+}
+function isFirstRun(){return!localStorage.getItem(AUTH_KEY);}
+function isAuthenticated(){return sessionStorage.getItem(AUTH_SESSION)==='true';}
+const loginAttempts = { count: 0, lockUntil: 0 };
+async function doLogin(){
+const user=$('login-user')?.value?.trim();
+const pass=$('login-pass')?.value;
+const errEl=$('login-error');
+if (Date.now() < loginAttempts.lockUntil) {
+  const mins = Math.ceil((loginAttempts.lockUntil - Date.now()) / 60000);
+  errEl.textContent = t('login_locked') || `Account locked. Try again in ${mins} minute(s).`;
+  return;
+}
+if(!user||!pass){errEl.textContent=t('required')||'Required';return;}
+if(isFirstRun()){
+// First time setup — create credentials with salt
+const { hash, salt } = await hashPassword(pass);
+localStorage.setItem(AUTH_KEY,JSON.stringify({user:user,hash:hash,salt:salt}));
+sessionStorage.setItem(AUTH_SESSION,'true');
+$('login-screen').classList.add('hidden');
+init();
+toast(t('auth_welcome')||'Cuenta creada. Bienvenido!');
+loginAttempts.count = 0;
+return;
+}
+const stored=JSON.parse(localStorage.getItem(AUTH_KEY));
+let match = false;
+if (stored.salt) {
+  // New salted format
+  const { hash } = await hashPassword(pass, stored.salt);
+  match = (stored.user === user && stored.hash === hash);
+} else {
+  // Legacy unsalted format — verify with raw SHA-256 then migrate
+  const enc = new TextEncoder().encode(pass);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  const legacyHash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  if (stored.user === user && stored.hash === legacyHash) {
+    // Migrate to salted format
+    const { hash: newHash, salt: newSalt } = await hashPassword(pass);
+    localStorage.setItem(AUTH_KEY, JSON.stringify({ user: user, hash: newHash, salt: newSalt }));
+    match = true;
+  }
+}
+if(match){
+sessionStorage.setItem(AUTH_SESSION,'true');
+$('login-screen').classList.add('hidden');
+loginAttempts.count = 0;
+init();
+}else{
+errEl.textContent=t('auth_error')||'Credenciales incorrectas';
+$('login-pass').value='';
+loginAttempts.count++;
+if (loginAttempts.count >= 5) {
+  loginAttempts.lockUntil = Date.now() + 5 * 60000;
+  loginAttempts.count = 0;
+}
+}
+}
+function doLogout(){
+sessionStorage.removeItem(AUTH_SESSION);
+location.reload();
+}
+function checkAuth(){
+if(isAuthenticated()){
+$('login-screen').classList.add('hidden');
+return true;
+}
+$('login-screen').classList.remove('hidden');
+// Show first-run setup message
+if(isFirstRun()){
+const msg=$('login-setup-msg');
+if(msg)msg.textContent=t('auth_first_run')||'Primera vez: ingrese usuario y contraseña para crear su cuenta.';
+}
+$('login-user')?.focus();
+return false;
+}
 
 // ============ DATA MODEL ============
 const DEFAULT_DATA={
@@ -978,11 +1207,11 @@ function tc(str){if(LANG==='es'||!CATALOG_T[LANG])return str;return CATALOG_T[LA
 const LOCALE_MAP={es:'es-CL',en:'en-US',pt:'pt-BR',fr:'fr-FR',de:'de-DE',it:'it-IT',ja:'ja-JP',zh:'zh-CN',ko:'ko-KR',ar:'ar-SA',hi:'hi-IN',ru:'ru-RU'};
 function locale(){return LOCALE_MAP[LANG]||'en-US';}
 // ============ CATALOG HELPERS ============
-function supplierSelect(sel){const D=loadData();const sups=D.farm.suppliers||[];let h='<option value="">--</option>';sups.forEach(s=>{h+=`<option value="${s.name}"${s.name===sel?' selected':''}>${s.name}</option>`;});h+='<option value="__new__">+ Nuevo proveedor</option>';return h;}
-function houseSelect(sel){const D=loadData();const houses=D.farm.houses||[];let h='<option value="">--</option>';houses.forEach(ho=>{h+=`<option value="${ho.name}"${ho.name===sel?' selected':''}>${ho.name}</option>`;});return h;}
-function rackSelect(houseName,sel){const D=loadData();const houses=D.farm.houses||[];const house=houses.find(h=>h.name===houseName);let h='<option value="">--</option>';if(house&&house.racks){house.racks.forEach(r=>{h+=`<option value="${r.name}"${r.name===sel?' selected':''}>${r.name}</option>`;});}return h;}
-function routeSelect(sel){const D=loadData();const routes=D.farm.routes||[];let h='<option value="">--</option>';routes.forEach(r=>{h+=`<option value="${r.name}"${r.name===sel?' selected':''}>${r.name}</option>`;});return h;}
-function catalogSelect(items,sel,addOther=true){let h='<option value="">--</option>';items.forEach(item=>{const v=typeof item==='string'?item:item.name||item.id;const lbl=typeof item==='string'?item:item.name;h+=`<option value="${v}"${v===sel?' selected':''}>${tc(lbl)}</option>`;});if(addOther)h+='<option value="__other__">Otra...</option>';return h;}
+function supplierSelect(sel){const D=loadData();const sups=D.farm.suppliers||[];let h='<option value="">--</option>';sups.forEach(s=>{h+=`<option value="${escapeAttr(s.name)}"${s.name===sel?' selected':''}>${sanitizeHTML(s.name)}</option>`;});h+='<option value="__new__">+ Nuevo proveedor</option>';return h;}
+function houseSelect(sel){const D=loadData();const houses=D.farm.houses||[];let h='<option value="">--</option>';houses.forEach(ho=>{h+=`<option value="${escapeAttr(ho.name)}"${ho.name===sel?' selected':''}>${sanitizeHTML(ho.name)}</option>`;});return h;}
+function rackSelect(houseName,sel){const D=loadData();const houses=D.farm.houses||[];const house=houses.find(h=>h.name===houseName);let h='<option value="">--</option>';if(house&&house.racks){house.racks.forEach(r=>{h+=`<option value="${escapeAttr(r.name)}"${r.name===sel?' selected':''}>${sanitizeHTML(r.name)}</option>`;});}return h;}
+function routeSelect(sel){const D=loadData();const routes=D.farm.routes||[];let h='<option value="">--</option>';routes.forEach(r=>{h+=`<option value="${escapeAttr(r.name)}"${r.name===sel?' selected':''}>${sanitizeHTML(r.name)}</option>`;});return h;}
+function catalogSelect(items,sel,addOther=true){let h='<option value="">--</option>';items.forEach(item=>{const v=typeof item==='string'?item:item.name||item.id;const lbl=typeof item==='string'?item:item.name;h+=`<option value="${escapeAttr(v)}"${v===sel?' selected':''}>${sanitizeHTML(tc(lbl))}</option>`;});if(addOther)h+='<option value="__other__">Otra...</option>';return h;}
 function feedTypeSelect(sel,flockId){const D=loadData();let suggested='';if(flockId){const f=D.flocks.find(x=>x.id===flockId);if(f){const stage=flockLifecycleStage(f);if(stage)suggested=stage.id;}}let h='<option value="">--</option>';CATALOGS.feedTypes.forEach(ft=>{const isSuggested=ft.stage===suggested;h+=`<option value="${ft.id}"${ft.id===sel?' selected':''}>${tc(ft.name)}${isSuggested?' ★':''}</option>`;});h+='<option value="__other__">Otro...</option>';return h;}
 function onMedSelect(){const sel=$('m-name');if(!sel)return;const med=CATALOGS.medications.find(m=>m.name===sel.value);const wd=$('m-wd');if(med&&wd&&!wd.value)wd.value=med.withdrawal;}
 function onExpenseCatChange(){const cat=$('fe-cat')?.value;const descEl=$('fe-desc');if(!descEl||!cat)return;const opts=CATALOGS.expenseDescriptions[cat]||[];descEl.innerHTML=catalogSelect(opts,descEl.value,true);}
@@ -1104,22 +1333,29 @@ saveData(D);
 }
 
 // ============ UI HELPERS ============
+const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','trazabilidad']);
 function nav(section){
 currentSection=section;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
 $('sec-'+section).classList.add('active');
 document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',a.dataset.section===section));
 $('sidebar').classList.remove('open');
 const R={dashboard:renderDashboard,produccion:renderProduction,lotes:renderFlocks,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,config:renderConfig};
-if(R[section])R[section]();
+if(R[section]){
+if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);});}
+else{R[section]();postRenderA11y(section);}
 }
+}
+function postRenderA11y(section){setTimeout(()=>{const sec=$('sec-'+section);if(sec)sec.querySelectorAll('thead th').forEach(th=>{if(!th.getAttribute('scope'))th.setAttribute('scope','col');});},50);}
 function toggleSidebar(){$('sidebar').classList.toggle('open');}
-function openModal(title,body){$('modal-title').textContent=title;$('modal-body').innerHTML=body;$('modal-overlay').classList.add('open');}
-function closeModal(){$('modal-overlay').classList.remove('open');}
+let _modalTrigger=null;
+function openModal(title,body){_modalTrigger=document.activeElement;$('modal-title').textContent=title;$('modal-body').innerHTML=body;$('modal-overlay').classList.add('open');
+setTimeout(()=>{const first=$('modal-overlay').querySelector('input,select,textarea,button');if(first)first.focus();},50);}
+function closeModal(){$('modal-overlay').classList.remove('open');if(_modalTrigger&&_modalTrigger.focus)_modalTrigger.focus();_modalTrigger=null;}
 function toast(msg,err=false){const e=$('toast');e.textContent=msg;e.className='toast show'+(err?' error':'');setTimeout(()=>e.className='toast',3000);}
-function emptyState(icon,msg,btn,act){let h=`<div class="empty-state"><div class="empty-icon">${icon}</div><p>${msg}</p>`;if(btn)h+=`<button class="btn btn-primary" onclick="${act}">${btn}</button>`;return h+'</div>';}
-function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);const ls=$('langSelect');if(ls)ls.value=l;document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
-function flockSelect(sel,all=false){const D=loadData();let h=all?`<option value="">${t('all')}</option>`:'<option value="">--</option>';D.flocks.forEach(f=>{h+=`<option value="${f.id}"${f.id===sel?' selected':''}>${f.name}</option>`;});return h;}
-function clientSelect(sel){const D=loadData();let h='<option value="">--</option>';D.clients.forEach(c=>{h+=`<option value="${c.id}"${c.id===sel?' selected':''}>${c.name}</option>`;});return h;}
+function emptyState(icon,msg,btn,act){let h=`<div class="empty-state"><div class="empty-icon">${sanitizeHTML(icon)}</div><p>${sanitizeHTML(msg)}</p>`;if(btn)h+=`<button class="btn btn-primary" onclick="${escapeAttr(act)}">${sanitizeHTML(btn)}</button>`;return h+'</div>';}
+function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);document.documentElement.lang=l;const ls=$('langSelect');if(ls)ls.value=l;document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
+function flockSelect(sel,all=false){const D=loadData();let h=all?`<option value="">${t('all')}</option>`:'<option value="">--</option>';D.flocks.forEach(f=>{h+=`<option value="${escapeAttr(f.id)}"${f.id===sel?' selected':''}>${sanitizeHTML(f.name)}</option>`;});return h;}
+function clientSelect(sel){const D=loadData();let h='<option value="">--</option>';D.clients.forEach(c=>{h+=`<option value="${escapeAttr(c.id)}"${c.id===sel?' selected':''}>${sanitizeHTML(c.name)}</option>`;});return h;}
 function destroyCharts(){Object.values(CHARTS).forEach(c=>{try{c.destroy();}catch(e){}});CHARTS={};}
 
 // ============ ALERTS ============
@@ -1145,7 +1381,7 @@ if(next.toISOString().substring(0,10)<today)alerts.push({type:'warning',icon:'�
 const unresolved=D.biosecurity.pestSightings.filter(p=>!p.resolved).length;
 if(unresolved>0)alerts.push({type:'warning',icon:'🐀',msg:`${t('alert_bio_pests')}: ${unresolved}`});
 const recentCross=D.biosecurity.visitors.filter(v=>v.fromFarmHealth==='outbreak'&&v.date>=new Date(Date.now()-7*86400000).toISOString().substring(0,10));
-if(recentCross.length)alerts.push({type:'danger',icon:'⚠️',msg:`${t('alert_bio_cross')}: ${recentCross.map(v=>v.name).join(', ')}`});
+if(recentCross.length)alerts.push({type:'danger',icon:'⚠️',msg:`${t('alert_bio_cross')}: ${recentCross.map(v=>sanitizeHTML(v.name)).join(', ')}`});
 }
 return alerts;
 }
@@ -1158,7 +1394,7 @@ if(D.settings.vetMode){showVetDashboard();return;}
 const today=todayStr();const snap=computeKpiSnapshot();
 const prevSnap=D.kpiSnapshots.length>0?D.kpiSnapshots[D.kpiSnapshots.length-1]:null;
 const alerts=getAlerts(D);
-let h=`<div class="page-header"><h2>${t('dash_title')}</h2><div class="btn-group"><button class="btn btn-secondary" onclick="saveKpiSnapshot()">${t('dash_snapshot')}</button><span>${D.farm.name}</span></div></div><div class="kpi-grid">`;
+let h=`<div class="page-header"><h2>${t('dash_title')}</h2><div class="btn-group"><button class="btn btn-secondary" onclick="saveKpiSnapshot()">${t('dash_snapshot')}</button><span>${sanitizeHTML(D.farm.name)}</span></div></div><div class="kpi-grid">`;
 h+=kpi(t('kpi_today'),fmtNum(snap.eggsToday),'','')+kpi(t('kpi_henday'),fmtNum(snap.henDay,1)+'%',fmtNum(snap.activeHens)+' '+t('kpi_active_hens').toLowerCase()+(prevSnap?snapshotDelta(snap.henDay,prevSnap.henDay):''),snap.henDay<50?'danger':snap.henDay<70?'warning':'');
 h+=kpi(t('kpi_fcr'),snap.fcr>0?fmtNum(snap.fcr,2):'-',t('fcr_unit')+(prevSnap?snapshotDelta(-snap.fcr,-prevSnap.fcr):''),snap.fcr>3?'danger':snap.fcr>2.5?'warning':'');
 h+=kpi(t('kpi_mortality'),fmtNum(snap.mortality,1)+'%',''+(prevSnap?snapshotDelta(-snap.mortality,-prevSnap.mortality):''),snap.mortality>5?'danger':snap.mortality>3?'warning':'');
@@ -1167,7 +1403,7 @@ h+=kpi(t('kpi_income_net'),fmtMoney(snap.netIncome),today.substring(0,7)+(prevSn
 h+=kpi(t('kpi_active_hens'),fmtNum(snap.activeHens),snap.totalFlocks+' '+t('kpi_active_flocks').toLowerCase());
 h+=kpi(t('kpi_alerts'),alerts.length.toString(),alerts.length>0?'⚠':'✓',alerts.length>0?'warning':'');
 h+='</div>';
-if(alerts.length){h+=`<div class="card"><h3>${t('dash_alerts')}</h3>`;alerts.forEach(a=>{h+=`<div class="alert-card alert-${a.type}">${a.icon} ${a.msg}</div>`;});h+='</div>';}
+if(alerts.length){h+=`<div class="card"><h3>${t('dash_alerts')}</h3>`;alerts.forEach(a=>{h+=`<div class="alert-card alert-${sanitizeHTML(a.type)}">${sanitizeHTML(a.icon)} ${a.msg}</div>`;});h+='</div>';}
 // Recommendations
 const recs=getRecommendations(D);
 if(recs.length){h+=`<div class="rec-card"><h3>💡 ${t('rec_title')}</h3>`;
@@ -1212,20 +1448,20 @@ h+=`<th>${t('flock_name')}</th><th>${t('flock_breed')}</th><th>${t('flock_count'
 h+='</tr></thead><tbody>';
 D.flocks.forEach(f=>{const age=flockAge(f);const cur=activeHensByFlock(f.id);const hs=healthScore(f.id);const lc=flockLifecycleStage(f);
 const bi=breedInfo(f.breed||f.targetCurve);
-h+=`<tr><td><strong>${f.name}</strong></td><td>${breedName(f.breed||f.targetCurve)}${bi&&bi.eggColor!=='-'?'<br><small style="color:var(--text-light)">'+bi.eggColor+'</small>':''}</td><td>${fmtNum(f.count)}</td><td>${fmtNum(cur)}</td>
+h+=`<tr><td><strong>${sanitizeHTML(f.name)}</strong></td><td>${sanitizeHTML(breedName(f.breed||f.targetCurve))}${bi&&bi.eggColor!=='-'?'<br><small style="color:var(--text-light)">'+sanitizeHTML(bi.eggColor)+'</small>':''}</td><td>${fmtNum(f.count)}</td><td>${fmtNum(cur)}</td>
 <td>${age.weeks} ${t('flock_weeks')} (${age.days} ${t('flock_days')})</td>
 <td><span style="background:${lc.color};padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600">${lc.icon} ${t(lc.key)}</span></td>
 <td>${statusBadge(f.status)}</td><td>${healthBadge(hs)}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFlockForm('${f.id}')">${t('edit')}</button>
-<button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="showFlockRoadmap('${f.id}')">${t('flock_roadmap')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteFlock('${f.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFlockForm('${escapeAttr(f.id)}')">${t('edit')}</button>
+<button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="showFlockRoadmap('${escapeAttr(f.id)}')">${t('flock_roadmap')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteFlock('${escapeAttr(f.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';}
 $('sec-lotes').innerHTML=h;
 }
 function showFlockRoadmap(fid){
 const D=loadData();const f=D.flocks.find(x=>x.id===fid);if(!f)return;
 const age=flockAge(f);const currentLC=flockLifecycleStage(f);
-let h=`<h3 style="margin-bottom:8px">${f.name} — ${t('flock_lifecycle')}</h3>
+let h=`<h3 style="margin-bottom:8px">${sanitizeHTML(f.name)} — ${t('flock_lifecycle')}</h3>
 <p style="color:var(--text-light);margin-bottom:16px">${t('flock_age')}: ${age.weeks} ${t('flock_weeks')} | ${t('lc_current_stage')}: ${currentLC.icon} ${t(currentLC.key)}</p>`;
 h+='<div class="lifecycle-bar">';
 const totalWeeks=80;
@@ -1246,14 +1482,14 @@ h+=`<div class="lifecycle-card" style="background:${l.color};${isCurrent?'box-sh
 // Vaccine timeline for this flock
 const vaccines=D.vaccines.filter(v=>v.flockId===fid).sort((a,b)=>a.scheduledDate.localeCompare(b.scheduledDate));
 if(vaccines.length){h+=`<h3 style="margin-top:16px">${t('san_vaccines')}</h3><div class="table-wrap" style="margin-top:8px"><table><thead><tr><th>${t('vac_vaccine')}</th><th>${t('vac_scheduled')}</th><th>${t('vac_route')}</th><th>${t('status')}</th></tr></thead><tbody>`;
-vaccines.forEach(v=>{h+=`<tr><td>${v.vaccineName}</td><td>${fmtDate(v.scheduledDate)}</td><td>${t(v.route)}</td><td>${statusBadge(v.status==='applied'?'applied':v.scheduledDate<todayStr()?'overdue':'pending')}</td></tr>`;});
+vaccines.forEach(v=>{h+=`<tr><td>${sanitizeHTML(v.vaccineName)}</td><td>${fmtDate(v.scheduledDate)}</td><td>${t(v.route)}</td><td>${statusBadge(v.status==='applied'?'applied':v.scheduledDate<todayStr()?'overdue':'pending')}</td></tr>`;});
 h+='</tbody></table></div>';}
-openModal(t('flock_lifecycle')+' — '+f.name,h);
+openModal(t('flock_lifecycle')+' — '+sanitizeHTML(f.name),h);
 }
 function showFlockForm(id){
 const D=loadData();const f=id?D.flocks.find(x=>x.id===id):null;
 openModal(f?t('flock_edit'):t('flock_add'),`
-<div class="form-row"><div class="form-group"><label>${t('flock_name')}</label><input id="f-name" value="${f?f.name:''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('flock_name')}</label><input id="f-name" value="${f?escapeAttr(f.name):''}"></div>
 <div class="form-group"><label>${t('flock_breed')}</label><select id="f-breed" onchange="onBreedSelect()">
 ${COMMERCIAL_BREEDS.map(b=>`<option value="${b.id}"${(f&&(f.breed===b.id||f.targetCurve===b.id))?' selected':''}>${b.name}${b.type!=='-'?' ('+b.type+')':''}</option>`).join('')}
 </select></div></div>
@@ -1273,7 +1509,7 @@ ${COMMERCIAL_BREEDS.map(b=>`<option value="${b.id}"${(f&&(f.breed===b.id||f.targ
 <div class="form-group"><label>${t('flock_purchase_date')}</label><input type="date" id="f-purchase" value="${f?f.purchaseDate:''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('flock_supplier')}</label><select id="f-supplier">${supplierSelect(f?f.supplier:'')}</select></div>
 <div class="form-group"><label>${t('flock_cost')}</label><input type="number" id="f-cost" value="${f?f.cost:''}"></div></div>
-<div class="form-group"><label>${t('flock_notes')}</label><textarea id="f-notes">${f?f.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('flock_notes')}</label><textarea id="f-notes">${f?escapeAttr(f.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveFlock('${id||''}')">${t('save')}</button></div>`);
 setTimeout(onBreedSelect,50);
@@ -1285,23 +1521,25 @@ const sel=$('f-breed');if(!sel)return;const bid=sel.value;
 const b=COMMERCIAL_BREEDS.find(x=>x.id===bid);
 const info=$('breed-info');const ec=$('f-egg-color');
 if(b&&b.type!=='-'){
-info.innerHTML=`<strong>${b.name}</strong> — ${b.eggsYear} huevos/año · Peso: ${b.eggWeight} · FCR: ${b.fcr}<br><span style="color:var(--text-secondary,#666)">${b.notes}</span>`;
+info.innerHTML=`<strong>${sanitizeHTML(b.name)}</strong> — ${sanitizeHTML(String(b.eggsYear))} huevos/año · Peso: ${sanitizeHTML(String(b.eggWeight))} · FCR: ${sanitizeHTML(String(b.fcr))}<br><span style="color:var(--text-secondary,#666)">${sanitizeHTML(b.notes)}</span>`;
 info.style.display='block';if(ec)ec.value=b.eggColor;
 }else{info.innerHTML='';info.style.display='none';if(ec)ec.value='';}
 }
 function saveFlock(id){
+clearFieldErrors();
 const D=loadData();const breedId=$('f-breed').value;
 const o={name:$('f-name').value,breed:breedId,count:parseInt($('f-count').value)||0,
 status:$('f-status').value,housingType:$('f-housing')?.value||'floor',targetCurve:breedId,
 birthDate:$('f-birth').value,purchaseDate:$('f-purchase').value,
 supplier:$('f-supplier').value,cost:parseFloat($('f-cost').value)||0,notes:$('f-notes').value};
-if(!o.name){toast(t('flock_name'),true);return;}
+const v=validateForm({'f-name':{value:o.name,rules:{required:true,maxLength:100}},'f-count':{value:$('f-count').value,rules:{required:true,numeric:true,min:1}},'f-birth':{value:o.birthDate,rules:{required:true,date:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.flocks.findIndex(f=>f.id===id);if(i>=0)D.flocks[i]={...D.flocks[i],...o};}
 else{o.id=genId();D.flocks.push(o);if(o.birthDate)generateVaccineCalendar(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderFlocks();
 }
-function deleteFlock(id){
-if(!confirm(t('confirm_delete')))return;const D=loadData();
+async function deleteFlock(id){
+if(!await showConfirm(t('confirm_delete')))return;const D=loadData();
 D.flocks=D.flocks.filter(f=>f.id!==id);D.dailyProduction=D.dailyProduction.filter(p=>p.flockId!==id);
 D.vaccines=D.vaccines.filter(v=>v.flockId!==id);D.medications=D.medications.filter(m=>m.flockId!==id);
 D.outbreaks=D.outbreaks.filter(o=>o.flockId!==id);D.feed.consumption=D.feed.consumption.filter(c=>c.flockId!==id);
@@ -1327,12 +1565,12 @@ h+='</tr></thead><tbody>';
 recs.forEach(p=>{const f=D.flocks.find(x=>x.id===p.flockId);
 const etype=p.eggType?t('prod_type_'+p.eggType):'-';
 const mchan=p.marketChannel?t('prod_market_'+p.marketChannel):'-';
-h+=`<tr><td>${fmtDate(p.date)}</td><td>${f?f.name:'-'}</td><td><strong>${fmtNum(p.eggsCollected)}</strong></td>
+h+=`<tr><td>${fmtDate(p.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td><td><strong>${fmtNum(p.eggsCollected)}</strong></td>
 <td>${[p.eggsS||0,p.eggsM||0,p.eggsL||0,p.eggsXL||0,p.eggsJumbo||0].join('/')}</td>
 <td>${etype}</td><td>${mchan}</td>
 <td>${fmtNum(p.eggsBroken||0)}</td><td>${p.deaths?'<span style="color:var(--danger)">'+p.deaths+'</span>':'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showProdForm('${p.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteProd('${p.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showProdForm('${escapeAttr(p.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteProd('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';const w=$('prod-table');if(w)w.innerHTML=h;
 }
 function showProdForm(id){
@@ -1367,12 +1605,13 @@ openModal(p?t('edit'):t('prod_add'),`
 <option value="export"${p&&p.marketChannel==='export'?' selected':''}>${t('prod_market_export')}</option>
 <option value="pasteurized"${p&&p.marketChannel==='pasteurized'?' selected':''}>${t('prod_market_pasteurized')}</option></select></div></div>
 <div class="form-group"><label>${t('prod_death_cause')}</label><select id="p-cause">${catalogSelect(CATALOGS.deathCauses,p?p.deathCause||'':'')}</select></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="p-notes">${p?p.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="p-notes">${p?escapeAttr(p.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveProd('${id||''}')">${t('save')}</button></div>`);
 if(!p)setTimeout(onProdFlockChange,50);
 }
 function saveProd(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('p-date').value,flockId:$('p-flock').value,
 eggsCollected:parseInt($('p-eggs').value)||0,eggsBroken:parseInt($('p-broken').value)||0,
 eggsS:parseInt($('p-s').value)||0,eggsM:parseInt($('p-m').value)||0,eggsL:parseInt($('p-l').value)||0,
@@ -1381,12 +1620,13 @@ shellColor:$('p-shell').value,yolkScore:parseInt($('p-yolk').value)||0,
 deaths:parseInt($('p-deaths').value)||0,deathCause:$('p-cause').value,
 eggType:$('p-etype')?.value||'conventional',marketChannel:$('p-market')?.value||'wholesale',
 notes:$('p-notes').value};
-if(!o.date||!o.flockId){toast(t('required'),true);return;}
+const v=validateForm({'p-date':{value:o.date,rules:{required:true,date:true}},'p-flock':{value:o.flockId,rules:{required:true}},'p-eggs':{value:$('p-eggs').value,rules:{required:true,numeric:true,min:0}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.dailyProduction.findIndex(p=>p.id===id);if(i>=0)D.dailyProduction[i]={...D.dailyProduction[i],...o};}
 else{o.id=genId();D.dailyProduction.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderProduction();
 }
-function deleteProd(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.dailyProduction=D.dailyProduction.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderProduction();}
+async function deleteProd(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.dailyProduction=D.dailyProduction.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderProduction();}
 
 // === SANIDAD MODULE ===
 function renderSanidad(){
@@ -1419,19 +1659,19 @@ h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('prod_flock')}</th><th>${t('vac_vaccine')}</th><th>${t('vac_route')}</th><th>${t('vac_scheduled')}</th><th>${t('vac_applied')}</th><th>${t('vac_batch')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
 vacs.forEach(v=>{const f=D.flocks.find(x=>x.id===v.flockId);
-h+=`<tr><td>${f?f.name:'-'}</td><td>${v.vaccineName}</td><td>${v.route?t(v.route):'-'}</td><td>${fmtDate(v.scheduledDate)}</td>
-<td>${v.appliedDate?fmtDate(v.appliedDate):'-'}</td><td>${v.batchNumber||'-'}</td>
+h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(v.vaccineName)}</td><td>${v.route?t(v.route):'-'}</td><td>${fmtDate(v.scheduledDate)}</td>
+<td>${v.appliedDate?fmtDate(v.appliedDate):'-'}</td><td>${sanitizeHTML(v.batchNumber||'-')}</td>
 <td>${statusBadge(v.effectiveStatus)}</td>
-<td><div class="btn-group">${v.effectiveStatus!=='applied'?`<button class="btn btn-primary btn-sm" onclick="markVaccineApplied('${v.id}')">${t('vac_mark_applied')}</button>`:''}
-<button class="btn btn-secondary btn-sm" onclick="showVaccineForm('${v.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteVaccine('${v.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group">${v.effectiveStatus!=='applied'?`<button class="btn btn-primary btn-sm" onclick="markVaccineApplied('${escapeAttr(v.id)}')">${t('vac_mark_applied')}</button>`:''}
+<button class="btn btn-secondary btn-sm" onclick="showVaccineForm('${escapeAttr(v.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteVaccine('${escapeAttr(v.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showGenVaccines(){
 const D=loadData();const flocks=D.flocks.filter(f=>f.birthDate&&f.status!=='descarte');
 if(!flocks.length){toast(t('no_flocks_birthdate'),true);return;}
 let body=`<p>${t('vac_select_flocks')}</p>`;
-flocks.forEach(f=>{body+=`<div class="checklist-item"><input type="checkbox" id="gv-${f.id}" checked><span>${f.name} (${fmtDate(f.birthDate)})</span></div>`;});
+flocks.forEach(f=>{body+=`<div class="checklist-item"><input type="checkbox" id="gv-${escapeAttr(f.id)}" checked><span>${sanitizeHTML(f.name)} (${fmtDate(f.birthDate)})</span></div>`;});
 body+=`<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="doGenVaccines()">${t('vac_generate')}</button></div>`;
 openModal(t('vac_generate'),body);
@@ -1453,18 +1693,20 @@ openModal(v?t('edit'):t('vac_add'),`
 <option value="vac_route_water"${v&&v.route==='vac_route_water'?' selected':''}>${t('vac_route_water')}</option>
 <option value="vac_route_wing"${v&&v.route==='vac_route_wing'?' selected':''}>${t('vac_route_wing')}</option>
 </select></div>
-<div class="form-group"><label>${t('vac_batch')}</label><input id="v-batch" value="${v?v.batchNumber:''}"></div></div>
+<div class="form-group"><label>${t('vac_batch')}</label><input id="v-batch" value="${v?escapeAttr(v.batchNumber):''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('vac_scheduled')}</label><input type="date" id="v-sched" value="${v?v.scheduledDate:''}"></div>
 <div class="form-group"><label>${t('vac_applied')}</label><input type="date" id="v-applied" value="${v?v.appliedDate:''}"></div></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="v-notes">${v?v.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="v-notes">${v?escapeAttr(v.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveVaccine('${id||''}')">${t('save')}</button></div>`);
 }
 function saveVaccine(id){
+clearFieldErrors();
 const D=loadData();const o={flockId:$('v-flock').value,vaccineName:$('v-name').value,route:$('v-route').value,
 batchNumber:$('v-batch').value,scheduledDate:$('v-sched').value,appliedDate:$('v-applied').value,
 notes:$('v-notes').value,status:$('v-applied').value?'applied':'pending'};
-if(!o.vaccineName){toast(t('required'),true);return;}
+const v=validateForm({'v-flock':{value:o.flockId,rules:{required:true}},'v-name':{value:o.vaccineName,rules:{required:true}},'v-sched':{value:o.scheduledDate,rules:{required:true,date:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.vaccines.findIndex(v=>v.id===id);if(i>=0)D.vaccines[i]={...D.vaccines[i],...o};}
 else{o.id=genId();D.vaccines.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderSanidad();
@@ -1473,7 +1715,7 @@ function markVaccineApplied(id){
 const D=loadData();const v=D.vaccines.find(x=>x.id===id);if(!v)return;
 v.appliedDate=todayStr();v.status='applied';saveData(D);toast(t('cfg_saved'));renderSanidad();
 }
-function deleteVaccine(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.vaccines=D.vaccines.filter(v=>v.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
+async function deleteVaccine(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.vaccines=D.vaccines.filter(v=>v.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
 
 function renderMedicationsTab(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('med_title')}</h3>
@@ -1485,12 +1727,12 @@ h+=`<th>${t('prod_flock')}</th><th>${t('med_name')}</th><th>${t('med_reason')}</
 h+='</tr></thead><tbody>';
 D.medications.forEach(m=>{const f=D.flocks.find(x=>x.id===m.flockId);
 const inWD=m.withdrawalEnd&&m.withdrawalEnd>=today;
-h+=`<tr><td>${f?f.name:'-'}</td><td>${m.name}</td><td>${m.reason||'-'}</td><td>${m.dosage||'-'}</td>
+h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(m.name)}</td><td>${sanitizeHTML(m.reason||'-')}</td><td>${sanitizeHTML(m.dosage||'-')}</td>
 <td>${fmtDate(m.startDate)}</td><td>${fmtDate(m.endDate)}</td><td>${m.withdrawalDays||'-'}</td>
 <td>${fmtDate(m.withdrawalEnd)}</td>
 <td>${inWD?'<span class="badge badge-warning">'+t('med_in_withdrawal')+'</span>':'<span class="badge badge-success">OK</span>'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showMedForm('${m.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteMed('${m.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showMedForm('${escapeAttr(m.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteMed('${escapeAttr(m.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showMedForm(id){
@@ -1499,25 +1741,27 @@ openModal(m?t('edit'):t('med_add'),`
 <div class="form-row"><div class="form-group"><label>${t('prod_flock')}</label><select id="m-flock">${flockSelect(m?m.flockId:'')}</select></div>
 <div class="form-group"><label>${t('med_name')}</label><select id="m-name" onchange="onMedSelect()">${catalogSelect(CATALOGS.medications,m?m.name:'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('med_reason')}</label><select id="m-reason">${catalogSelect(CATALOGS.diseases,m?m.reason||'':'')}</select></div>
-<div class="form-group"><label>${t('med_dosage')}</label><input id="m-dosage" value="${m?m.dosage||'':''}"></div></div>
+<div class="form-group"><label>${t('med_dosage')}</label><input id="m-dosage" value="${m?escapeAttr(m.dosage||''):''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('med_start')}</label><input type="date" id="m-start" value="${m?m.startDate:''}"></div>
 <div class="form-group"><label>${t('med_end')}</label><input type="date" id="m-end" value="${m?m.endDate:''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('med_withdrawal')}</label><input type="number" id="m-wd" value="${m?m.withdrawalDays||'':''}" min="0"></div>
-<div class="form-group"><label>${t('notes')}</label><input id="m-notes" value="${m?m.notes||'':''}"></div></div>
+<div class="form-group"><label>${t('notes')}</label><input id="m-notes" value="${m?escapeAttr(m.notes||''):''}"></div></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveMed('${id||''}')">${t('save')}</button></div>`);
 }
 function saveMed(id){
+clearFieldErrors();
 const D=loadData();const o={flockId:$('m-flock').value,name:$('m-name').value,reason:$('m-reason').value,
 dosage:$('m-dosage').value,startDate:$('m-start').value,endDate:$('m-end').value,
 withdrawalDays:parseInt($('m-wd').value)||0,notes:$('m-notes').value};
-if(!o.name){toast(t('required'),true);return;}
+const v=validateForm({'m-flock':{value:o.flockId,rules:{required:true}},'m-name':{value:o.name,rules:{required:true}},'m-start':{value:o.startDate,rules:{required:true,date:true}},'m-dosage':{value:o.dosage,rules:{required:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(o.endDate&&o.withdrawalDays){const d=new Date(o.endDate+'T12:00:00');d.setDate(d.getDate()+o.withdrawalDays);o.withdrawalEnd=d.toISOString().substring(0,10);}else{o.withdrawalEnd='';}
 if(id){const i=D.medications.findIndex(m=>m.id===id);if(i>=0)D.medications[i]={...D.medications[i],...o};}
 else{o.id=genId();D.medications.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderSanidad();
 }
-function deleteMed(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.medications=D.medications.filter(m=>m.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
+async function deleteMed(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.medications=D.medications.filter(m=>m.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
 
 function renderOutbreaksTab(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('out_title')}</h3>
@@ -1527,11 +1771,11 @@ h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('prod_flock')}</th><th>${t('out_disease')}</th><th>${t('out_start')}</th><th>${t('out_end')}</th><th>${t('out_affected')}</th><th>${t('out_deaths')}</th><th>${t('out_loss')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
 D.outbreaks.forEach(o=>{const f=D.flocks.find(x=>x.id===o.flockId);
-h+=`<tr><td>${f?f.name:'-'}</td><td>${o.disease}</td><td>${fmtDate(o.startDate)}</td><td>${fmtDate(o.endDate)}</td>
+h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(o.disease)}</td><td>${fmtDate(o.startDate)}</td><td>${fmtDate(o.endDate)}</td>
 <td>${fmtNum(o.affected||0)}</td><td>${o.deaths?'<span style="color:var(--danger)">'+o.deaths+'</span>':'-'}</td>
 <td>${fmtMoney(o.economicLoss||0)}</td><td>${statusBadge(o.status)}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showOutbreakForm('${o.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteOutbreak('${o.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showOutbreakForm('${escapeAttr(o.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteOutbreak('${escapeAttr(o.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showOutbreakForm(id){
@@ -1548,22 +1792,24 @@ openModal(o?t('edit'):t('out_add'),`
 <option value="active"${o&&o.status==='active'?' selected':''}>${t('out_active')}</option>
 <option value="controlled"${o&&o.status==='controlled'?' selected':''}>${t('out_controlled')}</option>
 <option value="resolved"${o&&o.status==='resolved'?' selected':''}>${t('out_resolved')}</option></select></div></div>
-<div class="form-group"><label>${t('out_symptoms')}</label><textarea id="o-symptoms">${o?o.symptoms||'':''}</textarea></div>
-<div class="form-group"><label>${t('out_treatment')}</label><textarea id="o-treatment">${o?o.treatment||'':''}</textarea></div>
+<div class="form-group"><label>${t('out_symptoms')}</label><textarea id="o-symptoms">${o?escapeAttr(o.symptoms||''):''}</textarea></div>
+<div class="form-group"><label>${t('out_treatment')}</label><textarea id="o-treatment">${o?escapeAttr(o.treatment||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveOutbreak('${id||''}')">${t('save')}</button></div>`);
 }
 function saveOutbreak(id){
+clearFieldErrors();
 const D=loadData();const o={flockId:$('o-flock').value,disease:$('o-disease').value,startDate:$('o-start').value,
 endDate:$('o-end').value,affected:parseInt($('o-affected').value)||0,deaths:parseInt($('o-deaths').value)||0,
 economicLoss:parseFloat($('o-loss').value)||0,status:$('o-status').value,
 symptoms:$('o-symptoms').value,treatment:$('o-treatment').value};
-if(!o.disease){toast(t('required'),true);return;}
+const v=validateForm({'o-flock':{value:o.flockId,rules:{required:true}},'o-disease':{value:o.disease,rules:{required:true}},'o-start':{value:o.startDate,rules:{required:true,date:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.outbreaks.findIndex(x=>x.id===id);if(i>=0)D.outbreaks[i]={...D.outbreaks[i],...o};}
 else{o.id=genId();D.outbreaks.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderSanidad();
 }
-function deleteOutbreak(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.outbreaks=D.outbreaks.filter(o=>o.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
+async function deleteOutbreak(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.outbreaks=D.outbreaks.filter(o=>o.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
 // === END SANIDAD ===
 
 // === FEED MODULE ===
@@ -1600,10 +1846,10 @@ h+=`<th>${t('date')}</th><th>${t('feed_type')}</th><th>${t('feed_qty')}</th><th>
 h+='</tr></thead><tbody>';
 D.feed.purchases.sort((a,b)=>b.date.localeCompare(a.date)).forEach(p=>{
 const ppkg=p.quantityKg>0?(p.cost/p.quantityKg):0;
-h+=`<tr><td>${fmtDate(p.date)}</td><td>${p.type||'-'}</td><td>${fmtNum(p.quantityKg,1)}</td>
-<td>${fmtMoney(p.cost)}</td><td>${fmtMoney(ppkg)}</td><td>${p.supplier||'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedPurchaseForm('${p.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteFeedPurchase('${p.id}')">${t('delete')}</button></div></td></tr>`;});
+h+=`<tr><td>${fmtDate(p.date)}</td><td>${sanitizeHTML(p.type||'-')}</td><td>${fmtNum(p.quantityKg,1)}</td>
+<td>${fmtMoney(p.cost)}</td><td>${fmtMoney(ppkg)}</td><td>${sanitizeHTML(p.supplier||'-')}</td>
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedPurchaseForm('${escapeAttr(p.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteFeedPurchase('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showFeedPurchaseForm(id){
@@ -1618,14 +1864,16 @@ openModal(p?t('edit'):t('feed_add_purchase'),`
 <button class="btn btn-primary" onclick="saveFeedPurchase('${id||''}')">${t('save')}</button></div>`);
 }
 function saveFeedPurchase(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('fp-date').value,type:$('fp-type').value,
 quantityKg:parseFloat($('fp-qty').value)||0,cost:parseFloat($('fp-cost').value)||0,supplier:$('fp-sup').value};
-if(!o.date){toast(t('required'),true);return;}
+const v=validateForm({'fp-date':{value:o.date,rules:{required:true,date:true}},'fp-type':{value:o.type,rules:{required:true}},'fp-qty':{value:$('fp-qty').value,rules:{required:true,numeric:true,min:0.1}},'fp-cost':{value:$('fp-cost').value,rules:{required:true,numeric:true,min:0}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.feed.purchases.findIndex(p=>p.id===id);if(i>=0)D.feed.purchases[i]={...D.feed.purchases[i],...o};}
 else{o.id=genId();D.feed.purchases.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderFeed();
 }
-function deleteFeedPurchase(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.feed.purchases=D.feed.purchases.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderFeed();}
+async function deleteFeedPurchase(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.feed.purchases=D.feed.purchases.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderFeed();}
 
 function renderFeedConsumption(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('feed_consumption')}</h3>
@@ -1635,9 +1883,9 @@ h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('date')}</th><th>${t('feed_flock')}</th><th>${t('feed_qty')}</th><th>${t('feed_type')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
 D.feed.consumption.sort((a,b)=>b.date.localeCompare(a.date)).forEach(c=>{const f=D.flocks.find(x=>x.id===c.flockId);
-h+=`<tr><td>${fmtDate(c.date)}</td><td>${f?f.name:'-'}</td><td>${fmtNum(c.quantityKg,1)} kg</td><td>${c.type||'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedConsForm('${c.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteFeedCons('${c.id}')">${t('delete')}</button></div></td></tr>`;});
+h+=`<tr><td>${fmtDate(c.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td><td>${fmtNum(c.quantityKg,1)} kg</td><td>${sanitizeHTML(c.type||'-')}</td>
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedConsForm('${escapeAttr(c.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteFeedCons('${escapeAttr(c.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showFeedConsForm(id){
@@ -1651,14 +1899,16 @@ openModal(c?t('edit'):t('feed_add_consumption'),`
 <button class="btn btn-primary" onclick="saveFeedCons('${id||''}')">${t('save')}</button></div>`);
 }
 function saveFeedCons(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('fc-date').value,flockId:$('fc-flock').value,
 quantityKg:parseFloat($('fc-qty').value)||0,type:$('fc-type').value};
-if(!o.date||!o.flockId){toast(t('required'),true);return;}
+const v=validateForm({'fc-date':{value:o.date,rules:{required:true,date:true}},'fc-flock':{value:o.flockId,rules:{required:true}},'fc-qty':{value:$('fc-qty').value,rules:{required:true,numeric:true,min:0.1}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.feed.consumption.findIndex(c=>c.id===id);if(i>=0)D.feed.consumption[i]={...D.feed.consumption[i],...o};}
 else{o.id=genId();D.feed.consumption.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderFeed();
 }
-function deleteFeedCons(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.feed.consumption=D.feed.consumption.filter(c=>c.id!==id);saveData(D);toast(t('cfg_saved'));renderFeed();}
+async function deleteFeedCons(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.feed.consumption=D.feed.consumption.filter(c=>c.id!==id);saveData(D);toast(t('cfg_saved'));renderFeed();}
 // === END FEED ===
 
 // === CLIENTS MODULE ===
@@ -1673,42 +1923,44 @@ h+=`<th>${t('name')}</th><th>${t('phone')}</th><th>${t('email')}</th><th>${t('cl
 h+='</tr></thead><tbody>';
 D.clients.forEach(c=>{
 const prices=[c.priceS||'-',c.priceM||'-',c.priceL||'-',c.priceXL||'-',c.priceJumbo||'-'].join(' / ');
-h+=`<tr><td><strong>${c.name}</strong></td><td>${c.phone||'-'}</td><td>${c.email||'-'}</td><td>${c.route||'-'}</td>
-<td>${prices}</td><td>${c.notes||'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showClientForm('${c.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">${t('delete')}</button></div></td></tr>`;});
+h+=`<tr><td><strong>${sanitizeHTML(c.name)}</strong></td><td>${sanitizeHTML(c.phone||'-')}</td><td>${sanitizeHTML(c.email||'-')}</td><td>${sanitizeHTML(c.route||'-')}</td>
+<td>${sanitizeHTML(prices)}</td><td>${sanitizeHTML(c.notes||'-')}</td>
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showClientForm('${escapeAttr(c.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteClient('${escapeAttr(c.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';}
 $('sec-clientes').innerHTML=h;
 }
 function showClientForm(id){
 const D=loadData();const c=id?D.clients.find(x=>x.id===id):null;
 openModal(c?t('edit'):t('cli_add'),`
-<div class="form-row"><div class="form-group"><label>${t('name')}</label><input id="cl-name" value="${c?c.name:''}"></div>
-<div class="form-group"><label>${t('phone')}</label><input id="cl-phone" value="${c?c.phone||'':''}"></div></div>
-<div class="form-row"><div class="form-group"><label>${t('email')}</label><input id="cl-email" value="${c?c.email||'':''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('name')}</label><input id="cl-name" value="${c?escapeAttr(c.name):''}"></div>
+<div class="form-group"><label>${t('phone')}</label><input id="cl-phone" value="${c?escapeAttr(c.phone||''):''}"></div></div>
+<div class="form-row"><div class="form-group"><label>${t('email')}</label><input id="cl-email" value="${c?escapeAttr(c.email||''):''}"></div>
 <div class="form-group"><label>${t('cli_route')}</label><select id="cl-route">${routeSelect(c?c.route||'':'')}</select></div></div>
-<div class="form-group"><label>${t('address')}</label><input id="cl-addr" value="${c?c.address||'':''}"></div>
+<div class="form-group"><label>${t('address')}</label><input id="cl-addr" value="${c?escapeAttr(c.address||''):''}"></div>
 <p style="font-weight:600;margin:12px 0 8px">${t('cli_price')} (${currency()}/huevo)</p>
 <div class="form-row-3"><div class="form-group"><label>S</label><input type="number" id="cl-ps" value="${c?c.priceS||'':''}" step="1" min="0"></div>
 <div class="form-group"><label>M</label><input type="number" id="cl-pm" value="${c?c.priceM||'':''}" step="1" min="0"></div>
 <div class="form-group"><label>L</label><input type="number" id="cl-pl" value="${c?c.priceL||'':''}" step="1" min="0"></div></div>
 <div class="form-row"><div class="form-group"><label>XL</label><input type="number" id="cl-pxl" value="${c?c.priceXL||'':''}" step="1" min="0"></div>
 <div class="form-group"><label>Jumbo</label><input type="number" id="cl-pj" value="${c?c.priceJumbo||'':''}" step="1" min="0"></div></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="cl-notes">${c?c.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="cl-notes">${c?escapeAttr(c.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveClient('${id||''}')">${t('save')}</button></div>`);
 }
 function saveClient(id){
+clearFieldErrors();
 const D=loadData();const o={name:$('cl-name').value,phone:$('cl-phone').value,email:$('cl-email').value,
 route:$('cl-route').value,address:$('cl-addr').value,
 priceS:parseFloat($('cl-ps').value)||0,priceM:parseFloat($('cl-pm').value)||0,priceL:parseFloat($('cl-pl').value)||0,
 priceXL:parseFloat($('cl-pxl').value)||0,priceJumbo:parseFloat($('cl-pj').value)||0,notes:$('cl-notes').value};
-if(!o.name){toast(t('required'),true);return;}
+const v=validateForm({'cl-name':{value:o.name,rules:{required:true,maxLength:100}},'cl-email':{value:o.email,rules:{email:true}},'cl-phone':{value:o.phone,rules:{phone:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.clients.findIndex(c=>c.id===id);if(i>=0)D.clients[i]={...D.clients[i],...o};}
 else{o.id=genId();D.clients.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderClients();
 }
-function deleteClient(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.clients=D.clients.filter(c=>c.id!==id);saveData(D);toast(t('cfg_saved'));renderClients();}
+async function deleteClient(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.clients=D.clients.filter(c=>c.id!==id);saveData(D);toast(t('cfg_saved'));renderClients();}
 // === END CLIENTS ===
 
 // === FINANCES MODULE ===
@@ -1736,10 +1988,10 @@ h+=`<th>${t('date')}</th><th>${t('fin_type')}</th><th>${t('fin_qty')}</th><th>${
 h+='</tr></thead><tbody>';
 D.finances.income.sort((a,b)=>b.date.localeCompare(a.date)).forEach(i=>{
 const cl=D.clients.find(c=>c.id===i.clientId);const amt=(i.quantity||0)*(i.unitPrice||0)||(i.amount||0);
-h+=`<tr><td>${fmtDate(i.date)}</td><td>${t('fin_type_'+i.type)||i.type||'-'}</td><td>${fmtNum(i.quantity||0)}</td>
-<td>${fmtMoney(i.unitPrice||0)}</td><td><strong>${fmtMoney(amt)}</strong></td><td>${cl?cl.name:i.clientName||'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showIncomeForm('${i.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteIncome('${i.id}')">${t('delete')}</button></div></td></tr>`;});
+h+=`<tr><td>${fmtDate(i.date)}</td><td>${t('fin_type_'+i.type)||sanitizeHTML(i.type||'-')}</td><td>${fmtNum(i.quantity||0)}</td>
+<td>${fmtMoney(i.unitPrice||0)}</td><td><strong>${fmtMoney(amt)}</strong></td><td>${cl?sanitizeHTML(cl.name):sanitizeHTML(i.clientName||'-')}</td>
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showIncomeForm('${escapeAttr(i.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteIncome('${escapeAttr(i.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showIncomeForm(id){
@@ -1754,20 +2006,22 @@ openModal(i?t('edit'):t('fin_add_income'),`
 <div class="form-row"><div class="form-group"><label>${t('fin_qty')}</label><input type="number" id="fi-qty" value="${i?i.quantity||'':''}" min="0"></div>
 <div class="form-group"><label>${t('fin_unit_price')}</label><input type="number" id="fi-price" value="${i?i.unitPrice||'':''}" min="0"></div></div>
 <div class="form-group"><label>${t('fin_client')}</label><select id="fi-client">${clientSelect(i?i.clientId:'')}</select></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="fi-notes">${i?i.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="fi-notes">${i?escapeAttr(i.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveIncome('${id||''}')">${t('save')}</button></div>`);
 }
 function saveIncome(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('fi-date').value,type:$('fi-type').value,
 quantity:parseInt($('fi-qty').value)||0,unitPrice:parseFloat($('fi-price').value)||0,
 clientId:$('fi-client').value,notes:$('fi-notes').value};
-if(!o.date){toast(t('required'),true);return;}
+const v=validateForm({'fi-date':{value:o.date,rules:{required:true,date:true}},'fi-qty':{value:$('fi-qty').value,rules:{required:true,numeric:true,min:1}},'fi-price':{value:$('fi-price').value,rules:{required:true,numeric:true,min:0}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.finances.income.findIndex(x=>x.id===id);if(i>=0)D.finances.income[i]={...D.finances.income[i],...o};}
 else{o.id=genId();D.finances.income.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderFinances();
 }
-function deleteIncome(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.finances.income=D.finances.income.filter(i=>i.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
+async function deleteIncome(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.finances.income=D.finances.income.filter(i=>i.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
 
 function renderFinExpenses(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_expenses')}</h3>
@@ -1779,10 +2033,10 @@ h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('date')}</th><th>${t('fin_category')}</th><th>${t('fin_description')}</th><th>${t('fin_amount')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
 D.finances.expenses.sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
-h+=`<tr><td>${fmtDate(e.date)}</td><td>${t('fin_cat_'+e.category)||e.category||'-'}</td><td>${e.description||'-'}</td>
+h+=`<tr><td>${fmtDate(e.date)}</td><td>${t('fin_cat_'+e.category)||sanitizeHTML(e.category||'-')}</td><td>${sanitizeHTML(e.description||'-')}</td>
 <td><strong>${fmtMoney(e.amount)}</strong></td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showExpenseForm('${e.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteExpense('${e.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showExpenseForm('${escapeAttr(e.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteExpense('${escapeAttr(e.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showExpenseForm(id){
@@ -1793,19 +2047,21 @@ openModal(e?t('edit'):t('fin_add_expense'),`
 <div class="form-group"><label>${t('fin_category')}</label><select id="fe-cat" onchange="onExpenseCatChange()">${cats.map(c=>`<option value="${c}"${e&&e.category===c?' selected':''}>${t('fin_cat_'+c)}</option>`).join('')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('fin_description')}</label><select id="fe-desc">${catalogSelect(CATALOGS.expenseDescriptions[e?e.category:'feed']||CATALOGS.expenseDescriptions.feed,e?e.description||'':'')}</select></div>
 <div class="form-group"><label>${t('fin_amount')}</label><input type="number" id="fe-amt" value="${e?e.amount:''}" min="0"></div></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="fe-notes">${e?e.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="fe-notes">${e?escapeAttr(e.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveExpense('${id||''}')">${t('save')}</button></div>`);
 }
 function saveExpense(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('fe-date').value,category:$('fe-cat').value,
 description:$('fe-desc').value,amount:parseFloat($('fe-amt').value)||0,notes:$('fe-notes').value};
-if(!o.date){toast(t('required'),true);return;}
+const v=validateForm({'fe-date':{value:o.date,rules:{required:true,date:true}},'fe-cat':{value:o.category,rules:{required:true}},'fe-amt':{value:$('fe-amt').value,rules:{required:true,numeric:true,min:0}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.finances.expenses.findIndex(e=>e.id===id);if(i>=0)D.finances.expenses[i]={...D.finances.expenses[i],...o};}
 else{o.id=genId();D.finances.expenses.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderFinances();
 }
-function deleteExpense(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.finances.expenses=D.finances.expenses.filter(e=>e.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
+async function deleteExpense(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.finances.expenses=D.finances.expenses.filter(e=>e.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
 
 function renderFinReceivables(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_receivables')}</h3>
@@ -1818,11 +2074,11 @@ h+=`<th>${t('date')}</th><th>${t('fin_client')}</th><th>${t('fin_description')}<
 h+='</tr></thead><tbody>';
 D.finances.receivables.sort((a,b)=>b.date.localeCompare(a.date)).forEach(r=>{
 const cl=D.clients.find(c=>c.id===r.clientId);
-h+=`<tr><td>${fmtDate(r.date)}</td><td>${cl?cl.name:r.clientName||'-'}</td><td>${r.description||'-'}</td>
+h+=`<tr><td>${fmtDate(r.date)}</td><td>${cl?sanitizeHTML(cl.name):sanitizeHTML(r.clientName||'-')}</td><td>${sanitizeHTML(r.description||'-')}</td>
 <td><strong>${fmtMoney(r.amount)}</strong></td><td>${fmtDate(r.dueDate)}</td>
-<td><input type="checkbox" ${r.paid?'checked':''} onchange="toggleReceivablePaid('${r.id}',this.checked)"></td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showReceivableForm('${r.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteReceivable('${r.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><input type="checkbox" ${r.paid?'checked':''} onchange="toggleReceivablePaid('${escapeAttr(r.id)}',this.checked)"></td>
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showReceivableForm('${escapeAttr(r.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteReceivable('${escapeAttr(r.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';return h;
 }
 function showReceivableForm(id){
@@ -1832,20 +2088,22 @@ openModal(r?t('edit'):t('fin_add_receivable'),`
 <div class="form-group"><label>${t('fin_due_date')}</label><input type="date" id="fr-due" value="${r?r.dueDate||'':''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('fin_client')}</label><select id="fr-client">${clientSelect(r?r.clientId:'')}</select></div>
 <div class="form-group"><label>${t('fin_amount')}</label><input type="number" id="fr-amt" value="${r?r.amount:''}" min="0"></div></div>
-<div class="form-group"><label>${t('fin_description')}</label><input id="fr-desc" value="${r?r.description||'':''}"></div>
+<div class="form-group"><label>${t('fin_description')}</label><input id="fr-desc" value="${r?escapeAttr(r.description||''):''}"></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveReceivable('${id||''}')">${t('save')}</button></div>`);
 }
 function saveReceivable(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('fr-date').value,dueDate:$('fr-due').value,clientId:$('fr-client').value,
 amount:parseFloat($('fr-amt').value)||0,description:$('fr-desc').value,paid:false};
-if(!o.date){toast(t('required'),true);return;}
+const v=validateForm({'fr-date':{value:o.date,rules:{required:true,date:true}},'fr-client':{value:o.clientId,rules:{required:true}},'fr-amt':{value:$('fr-amt').value,rules:{required:true,numeric:true,min:0}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.finances.receivables.findIndex(r=>r.id===id);if(i>=0){o.paid=D.finances.receivables[i].paid;D.finances.receivables[i]={...D.finances.receivables[i],...o};}}
 else{o.id=genId();D.finances.receivables.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderFinances();
 }
 function toggleReceivablePaid(id,paid){const D=loadData();const r=D.finances.receivables.find(x=>x.id===id);if(r){r.paid=paid;saveData(D);}}
-function deleteReceivable(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.finances.receivables=D.finances.receivables.filter(r=>r.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
+async function deleteReceivable(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.finances.receivables=D.finances.receivables.filter(r=>r.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
 
 function renderFinSummary(D){
 const mo=todayStr().substring(0,7);
@@ -1930,13 +2188,13 @@ return{f,cur,hd,fcr,mort,hs};
 });
 stats.sort((a,b)=>b.hd-a.hd);
 stats.forEach(s=>{
-h+=`<tr><td><strong>${s.f.name}</strong></td><td>${fmtNum(s.f.count)}</td><td>${fmtNum(s.cur)}</td>
+h+=`<tr><td><strong>${sanitizeHTML(s.f.name)}</strong></td><td>${fmtNum(s.f.count)}</td><td>${fmtNum(s.cur)}</td>
 <td style="color:${s.hd>=80?'var(--success)':s.hd>=60?'var(--warning)':'var(--danger)'}">${fmtNum(s.hd,1)}%</td>
 <td>${s.fcr>0?fmtNum(s.fcr,2):'-'}</td><td>${fmtNum(s.mort,1)}%</td><td>${healthBadge(s.hs)}</td></tr>`;});
 h+='</tbody></table></div></div>';
 if(stats.length>=2){
-h+=`<div class="kpi-grid">${kpi(t('ana_best_flock'),stats[0].f.name,'Hen-Day: '+fmtNum(stats[0].hd,1)+'%')}`;
-h+=kpi(t('ana_worst_flock'),stats[stats.length-1].f.name,'Hen-Day: '+fmtNum(stats[stats.length-1].hd,1)+'%','danger');
+h+=`<div class="kpi-grid">${kpi(t('ana_best_flock'),sanitizeHTML(stats[0].f.name),'Hen-Day: '+fmtNum(stats[0].hd,1)+'%')}`;
+h+=kpi(t('ana_worst_flock'),sanitizeHTML(stats[stats.length-1].f.name),'Hen-Day: '+fmtNum(stats[stats.length-1].hd,1)+'%','danger');
 h+='</div>';}
 return h;
 }
@@ -1968,7 +2226,7 @@ const price=D.feed.purchases.length>0?D.feed.purchases.reduce((s,p)=>s+(p.cost||
 return s+(c.quantityKg||0)*price;},0);
 const inc=eggs*(D.finances.income.length>0?D.finances.income.reduce((s,i)=>s+(i.unitPrice||0),0)/D.finances.income.length:0);
 const net=inc-feedCost-(f.cost||0);const cpe=eggs>0?(feedCost+(f.cost||0))/eggs:0;
-h+=`<tr><td><strong>${f.name}</strong></td><td>${fmtNum(eggs)}</td><td style="color:var(--success)">${fmtMoney(inc)}</td>
+h+=`<tr><td><strong>${sanitizeHTML(f.name)}</strong></td><td>${fmtNum(eggs)}</td><td style="color:var(--success)">${fmtMoney(inc)}</td>
 <td style="color:var(--danger)">${fmtMoney(feedCost+(f.cost||0))}</td>
 <td style="font-weight:700;color:${net<0?'var(--danger)':'var(--success)'}">${fmtMoney(net)}</td><td>${fmtMoney(cpe)}</td></tr>`;});
 h+='</tbody></table></div></div>';
@@ -2040,8 +2298,8 @@ const done=todayItems.filter(c=>c.done).length;const total=todayItems.length;
 let h=`<div class="kpi-grid">${kpi(t('ops_done'),done+'/'+total,total>0?fmtNum(done/total*100,0)+'%':'',done===total&&total>0?'':'warning')}</div>`;
 h+=`<div class="card"><h3>${t('ops_checklist')} — ${fmtDate(today)}</h3>`;
 todayItems.forEach(c=>{
-h+=`<div class="checklist-item${c.done?' done':''}"><input type="checkbox" ${c.done?'checked':''} onchange="toggleCheck('${c.id}',this.checked)"><span>${t(c.task)}</span>
-<button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteCheck('${c.id}')">✕</button></div>`;});
+h+=`<div class="checklist-item${c.done?' done':''}"><input type="checkbox" ${c.done?'checked':''} onchange="toggleCheck('${escapeAttr(c.id)}',this.checked)"><span>${t(c.task)||sanitizeHTML(c.task)}</span>
+<button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="deleteCheck('${escapeAttr(c.id)}')">✕</button></div>`;});
 h+=`<div style="margin-top:12px;display:flex;gap:8px"><input id="new-task" placeholder="${t('ops_task')}" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius)">
 <button class="btn btn-primary btn-sm" onclick="addCheckTask()">${t('add')}</button></div></div>`;
 // History
@@ -2068,10 +2326,10 @@ let logs=D.logbook.sort((a,b)=>b.date.localeCompare(a.date));
 if(selCat)logs=logs.filter(l=>l.category===selCat);
 h+='<div class="card">';
 logs.forEach(l=>{
-h+=`<div class="alert-card alert-info" style="flex-wrap:wrap"><div style="flex:1"><strong>${fmtDate(l.date)}</strong> — <span class="badge badge-info">${t('ops_log_cat_'+l.category)||l.category}</span>
-<p style="margin-top:4px">${l.entry}</p></div>
-<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showLogForm('${l.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteLog('${l.id}')">${t('delete')}</button></div></div>`;});
+h+=`<div class="alert-card alert-info" style="flex-wrap:wrap"><div style="flex:1"><strong>${fmtDate(l.date)}</strong> — <span class="badge badge-info">${t('ops_log_cat_'+l.category)||sanitizeHTML(l.category)}</span>
+<p style="margin-top:4px">${sanitizeHTML(l.entry)}</p></div>
+<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showLogForm('${escapeAttr(l.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteLog('${escapeAttr(l.id)}')">${t('delete')}</button></div></div>`;});
 h+='</div>';return h;
 }
 function showLogForm(id){
@@ -2080,18 +2338,20 @@ const cats=['general','health','production','maintenance','observation'];
 openModal(l?t('edit'):t('ops_log_add'),`
 <div class="form-row"><div class="form-group"><label>${t('date')}</label><input type="date" id="lg-date" value="${l?l.date:todayStr()}"></div>
 <div class="form-group"><label>${t('ops_log_category')}</label><select id="lg-cat">${cats.map(c=>`<option value="${c}"${l&&l.category===c?' selected':''}>${t('ops_log_cat_'+c)}</option>`).join('')}</select></div></div>
-<div class="form-group"><label>${t('ops_log_entry')}</label><textarea id="lg-entry" rows="4">${l?l.entry||'':''}</textarea></div>
+<div class="form-group"><label>${t('ops_log_entry')}</label><textarea id="lg-entry" rows="4">${l?escapeAttr(l.entry||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveLog('${id||''}')">${t('save')}</button></div>`);
 }
 function saveLog(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('lg-date').value,category:$('lg-cat').value,entry:$('lg-entry').value};
-if(!o.entry){toast(t('required'),true);return;}
+const v=validateForm({'lg-date':{value:o.date,rules:{required:true,date:true}},'lg-cat':{value:o.category,rules:{required:true}},'lg-entry':{value:o.entry,rules:{required:true,maxLength:2000}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.logbook.findIndex(l=>l.id===id);if(i>=0)D.logbook[i]={...D.logbook[i],...o};}
 else{o.id=genId();D.logbook.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderOperations();
 }
-function deleteLog(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.logbook=D.logbook.filter(l=>l.id!==id);saveData(D);toast(t('cfg_saved'));renderOperations();}
+async function deleteLog(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.logbook=D.logbook.filter(l=>l.id!==id);saveData(D);toast(t('cfg_saved'));renderOperations();}
 
 function renderOpsPersonnel(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('ops_personnel')}</h3>
@@ -2101,10 +2361,10 @@ h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('ops_per_name')}</th><th>${t('ops_per_role')}</th><th>${t('ops_per_salary')}</th><th>${t('ops_per_start')}</th><th>${t('ops_per_active')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
 D.personnel.forEach(p=>{
-h+=`<tr><td><strong>${p.name}</strong></td><td>${p.role||'-'}</td><td>${fmtMoney(p.salary||0)}</td><td>${fmtDate(p.startDate)}</td>
+h+=`<tr><td><strong>${sanitizeHTML(p.name)}</strong></td><td>${sanitizeHTML(p.role||'-')}</td><td>${fmtMoney(p.salary||0)}</td><td>${fmtDate(p.startDate)}</td>
 <td>${p.active?'<span class="badge badge-success">'+t('active')+'</span>':'<span class="badge badge-secondary">'+t('inactive')+'</span>'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showPersonnelForm('${p.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deletePersonnel('${p.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showPersonnelForm('${escapeAttr(p.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deletePersonnel('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';
 const totalSalary=D.personnel.filter(p=>p.active).reduce((s,p)=>s+(p.salary||0),0);
 h+=`<div class="kpi-grid">${kpi(t('total_salaries'),fmtMoney(totalSalary),D.personnel.filter(p=>p.active).length+' '+t('active').toLowerCase())}</div>`;
@@ -2113,27 +2373,29 @@ return h;
 function showPersonnelForm(id){
 const D=loadData();const p=id?D.personnel.find(x=>x.id===id):null;
 openModal(p?t('edit'):t('ops_per_add'),`
-<div class="form-row"><div class="form-group"><label>${t('ops_per_name')}</label><input id="pe-name" value="${p?p.name:''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('ops_per_name')}</label><input id="pe-name" value="${p?escapeAttr(p.name):''}"></div>
 <div class="form-group"><label>${t('ops_per_role')}</label><select id="pe-role">${catalogSelect(CATALOGS.personnelRoles,p?p.role||'':'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('ops_per_salary')}</label><input type="number" id="pe-salary" value="${p?p.salary||'':''}" min="0"></div>
 <div class="form-group"><label>${t('ops_per_start')}</label><input type="date" id="pe-start" value="${p?p.startDate||'':''}"></div></div>
 <div class="form-group"><label>${t('ops_per_active')}</label><select id="pe-active">
 <option value="1"${!p||p.active?' selected':''}>${t('active')}</option>
 <option value="0"${p&&!p.active?' selected':''}>${t('inactive')}</option></select></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="pe-notes">${p?p.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="pe-notes">${p?escapeAttr(p.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="savePersonnel('${id||''}')">${t('save')}</button></div>`);
 }
 function savePersonnel(id){
+clearFieldErrors();
 const D=loadData();const o={name:$('pe-name').value,role:$('pe-role').value,
 salary:parseFloat($('pe-salary').value)||0,startDate:$('pe-start').value,
 active:$('pe-active').value==='1',notes:$('pe-notes').value};
-if(!o.name){toast(t('required'),true);return;}
+const v=validateForm({'pe-name':{value:o.name,rules:{required:true,maxLength:100}},'pe-role':{value:o.role,rules:{required:true}},'pe-salary':{value:$('pe-salary').value,rules:{numeric:true,min:0}},'pe-start':{value:o.startDate,rules:{required:true,date:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.personnel.findIndex(p=>p.id===id);if(i>=0)D.personnel[i]={...D.personnel[i],...o};}
 else{o.id=genId();D.personnel.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderOperations();
 }
-function deletePersonnel(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.personnel=D.personnel.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderOperations();}
+async function deletePersonnel(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.personnel=D.personnel.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderOperations();}
 // === END OPERATIONS ===
 
 // === ENVIRONMENT MODULE ===
@@ -2178,9 +2440,9 @@ const thi=(e.temperature&&e.humidity)?calcTHI(e.temperature,e.humidity):null;
 h+=`<tr><td>${fmtDate(e.date)}</td><td style="color:${tOk?'var(--success)':'var(--danger)'}">${e.temperature||'-'}°C</td>
 <td style="color:${hOk?'var(--success)':'var(--warning)'}">${e.humidity||'-'}%</td>
 <td>${e.lightHours||'-'} hrs</td><td>${e.ammoniaLevel||'-'} ppm</td>
-<td>${thi?thi.toFixed(1):'-'}</td><td>${e.notes||'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showEnvForm('${e.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteEnv('${e.id}')">${t('delete')}</button></div></td></tr>`;});
+<td>${thi?thi.toFixed(1):'-'}</td><td>${sanitizeHTML(e.notes||'-')}</td>
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showEnvForm('${escapeAttr(e.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteEnv('${escapeAttr(e.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';}
 return h;
 }
@@ -2213,7 +2475,7 @@ h+=`<th>${t('date')}</th><th>${t('env_temp')}</th><th>${t('env_humidity')}</th><
 D.environment.sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
 const thi=(e.temperature&&e.humidity)?calcTHI(e.temperature,e.humidity):null;
 h+=`<tr><td>${fmtDate(e.date)}</td><td>${e.temperature||'-'}°C</td><td>${e.humidity||'-'}%</td>
-<td>${e.lightHours||'-'} hrs</td><td>${e.ammoniaLevel||'-'} ppm</td><td>${thi?thi.toFixed(1):'-'}</td><td>${e.notes||'-'}</td></tr>`;});
+<td>${e.lightHours||'-'} hrs</td><td>${e.ammoniaLevel||'-'} ppm</td><td>${thi?thi.toFixed(1):'-'}</td><td>${sanitizeHTML(e.notes||'-')}</td></tr>`;});
 h+='</tbody></table></div></div>';
 return h;
 }
@@ -2226,21 +2488,23 @@ openModal(e?t('edit'):t('env_add'),`
 <div class="form-row"><div class="form-group"><label>${t('env_light')}</label><input type="number" id="en-light" value="${e?e.lightHours||'':''}" step="0.5" min="0" max="24"></div>
 <div class="form-group"><label>${t('env_ammonia')} (ppm)</label><input type="number" id="en-ammonia" value="${e?e.ammoniaLevel||'':''}" step="0.1" min="0"></div></div>
 <div class="form-group"><label>${t('env_ventilation')}</label><select id="en-vent">${catalogSelect(CATALOGS.ventilationLevels,e?e.ventilation||'':'',false)}</select></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="en-notes">${e?e.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="en-notes">${e?escapeAttr(e.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveEnv('${id||''}')">${t('save')}</button></div>`);
 }
 function saveEnv(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('en-date').value,temperature:parseFloat($('en-temp').value)||null,
 humidity:parseFloat($('en-hum').value)||null,lightHours:parseFloat($('en-light').value)||null,
 ammoniaLevel:parseFloat($('en-ammonia')?.value)||null,
 ventilation:$('en-vent').value,notes:$('en-notes').value};
-if(!o.date){toast(t('required'),true);return;}
+const v=validateForm({'en-date':{value:o.date,rules:{required:true,date:true}},'en-temp':{value:$('en-temp').value,rules:{numeric:true}},'en-hum':{value:$('en-hum').value,rules:{numeric:true,min:0,max:100}},'en-light':{value:$('en-light').value,rules:{numeric:true,min:0,max:24}},'en-ammonia':{value:$('en-ammonia')?.value||'',rules:{numeric:true,min:0}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.environment.findIndex(e=>e.id===id);if(i>=0)D.environment[i]={...D.environment[i],...o};}
 else{o.id=genId();D.environment.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderEnvironment();
 }
-function deleteEnv(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.environment=D.environment.filter(e=>e.id!==id);saveData(D);toast(t('cfg_saved'));renderEnvironment();}
+async function deleteEnv(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.environment=D.environment.filter(e=>e.id!==id);saveData(D);toast(t('cfg_saved'));renderEnvironment();}
 // === END ENVIRONMENT ===
 
 // === CONFIG MODULE ===
@@ -2265,10 +2529,10 @@ ${['small','normal','large','xlarge'].map(s=>`<button class="btn btn-sm${curScal
 </div></div>`;
 // Farm info
 h+=`<div class="card"><h3>${t('cfg_farm')}</h3>
-<div class="form-row"><div class="form-group"><label>${t('cfg_farm_name')}</label><input id="cfg-name" value="${D.farm.name||''}"></div>
-<div class="form-group"><label>${t('cfg_location')}</label><input id="cfg-loc" value="${D.farm.location||''}"></div></div>
+<div class="form-row"><div class="form-group"><label>${t('cfg_farm_name')}</label><input id="cfg-name" value="${escapeAttr(D.farm.name||'')}"></div>
+<div class="form-group"><label>${t('cfg_location')}</label><input id="cfg-loc" value="${escapeAttr(D.farm.location||'')}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('cfg_capacity')}</label><input type="number" id="cfg-cap" value="${D.farm.capacity||''}" min="0"></div>
-<div class="form-group"><label>${t('cfg_currency')}</label><input id="cfg-cur" value="${D.farm.currency||'$'}" maxlength="5"></div></div>
+<div class="form-group"><label>${t('cfg_currency')}</label><input id="cfg-cur" value="${escapeAttr(D.farm.currency||'$')}" maxlength="5"></div></div>
 <button class="btn btn-primary" onclick="saveConfig()">${t('save')}</button></div>`;
 // Geolocation
 h+=`<div class="card"><h3>${t('geo_set_location')}</h3>
@@ -2276,15 +2540,15 @@ h+=`<div class="card"><h3>${t('geo_set_location')}</h3>
 <button class="btn btn-secondary" onclick="showGeoModal()">${t('geo_set_location')}</button></div>`;
 // Weather API
 h+=`<div class="card"><h3>${t('weather_title')} (OpenWeatherMap)</h3>
-<div class="form-row"><div class="form-group"><label>API Key</label><input id="cfg-owm" value="${D.farm.owmApiKey||''}"></div>
+<div class="form-row"><div class="form-group"><label>API Key</label><input id="cfg-owm" value="${escapeAttr(D.farm.owmApiKey||'')}"></div>
 <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn btn-secondary" onclick="testWeatherApi()">Test</button></div></div>
 <button class="btn btn-primary" onclick="saveWeatherConfig()">${t('save')}</button></div>`;
 // MQTT / IoT
 h+=`<div class="card"><h3>${t('iot_title')} (MQTT)</h3>
-<div class="form-group"><label>${t('iot_broker')} (wss://)</label><input id="cfg-mqtt-broker" value="${D.farm.mqttBroker||''}" placeholder="wss://broker.example.com:8084/mqtt"></div>
-<div class="form-row"><div class="form-group"><label>${t('cfg_farm_name')} (user)</label><input id="cfg-mqtt-user" value="${D.farm.mqttUser||''}"></div>
-<div class="form-group"><label>Password</label><input type="password" id="cfg-mqtt-pass" value="${D.farm.mqttPass||''}"></div></div>
-<div class="form-group"><label>Topic Prefix</label><input id="cfg-mqtt-prefix" value="${D.farm.mqttTopicPrefix||'egglogu/'}"></div>
+<div class="form-group"><label>${t('iot_broker')} (wss://)</label><input id="cfg-mqtt-broker" value="${escapeAttr(D.farm.mqttBroker||'')}" placeholder="wss://broker.example.com:8084/mqtt"></div>
+<div class="form-row"><div class="form-group"><label>${t('cfg_farm_name')} (user)</label><input id="cfg-mqtt-user" value="${escapeAttr(D.farm.mqttUser||'')}"></div>
+<div class="form-group"><label>Password</label><input type="password" id="cfg-mqtt-pass" value="${escapeAttr(D.farm.mqttPass||'')}"></div></div>
+<div class="form-group"><label>Topic Prefix</label><input id="cfg-mqtt-prefix" value="${escapeAttr(D.farm.mqttTopicPrefix||'egglogu/')}"></div>
 <button class="btn btn-primary" onclick="saveMqttConfig()">${t('save')}</button></div>`;
 // Alert thresholds
 h+=`<div class="card"><h3>${t('cfg_alerts')}</h3>
@@ -2338,23 +2602,25 @@ const file=e.target.files[0];if(!file)return;
 const reader=new FileReader();reader.onload=function(ev){
 try{const d=JSON.parse(ev.target.result);
 DATA=d;saveData(d);toast(t('cfg_imported'));nav('config');
-}catch(err){toast(t('error_prefix')+': '+err.message,true);}};
+}catch(err){toast((t('error_unexpected')||'Error')+': '+sanitizeHTML(err.message),true);}};
 reader.readAsText(file);e.target.value='';
 }
-function resetData(){
-if(!confirm(t('cfg_reset_confirm')))return;if(!confirm(t('final_warning')))return;
+async function resetData(){
+if(!await showConfirm(t('cfg_reset_confirm')))return;if(!await showConfirm(t('final_warning')))return;
 localStorage.removeItem('egglogu_data');DATA=null;loadData();toast(t('cfg_reset_done'));nav('dashboard');
 }
 // === END CONFIG ===
 
 // ============ WEATHER API (OpenWeatherMap) ============
 let weatherTimer=null;
-function fetchWeather(){
+async function fetchWeather(){
 const D=loadData();if(!D.farm.owmApiKey||D.farm.lat===null||D.farm.lng===null)return;
 const cached=D.weatherCache.find(w=>Date.now()-w.ts<1800000);
 if(cached){renderWeatherWidget(cached);return;}
-fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${D.farm.lat}&lon=${D.farm.lng}&appid=${D.farm.owmApiKey}&units=metric`)
-.then(r=>r.json()).then(d=>{
+try{
+const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${encodeURIComponent(D.farm.lat)}&lon=${encodeURIComponent(D.farm.lng)}&appid=${encodeURIComponent(D.farm.owmApiKey)}&units=metric`);
+if(!r.ok)throw new Error('HTTP '+r.status);
+const d=await r.json();
 if(d.cod&&d.cod!==200)return;
 const w={ts:Date.now(),temp:d.main.temp,humidity:d.main.humidity,wind:d.wind.speed,
 desc:d.weather[0].description,icon:d.weather[0].icon,feelsLike:d.main.feels_like};
@@ -2362,19 +2628,21 @@ D.weatherCache.push(w);if(D.weatherCache.length>48)D.weatherCache=D.weatherCache
 saveData(D);renderWeatherWidget(w);
 const thi=calcTHI(w.temp,w.humidity);
 if(thi>28)autoStressEvent(D,'heat',Math.min(5,Math.round((thi-28)/2)+1),`THI=${thi.toFixed(1)}, T=${w.temp}°C, H=${w.humidity}%`);
-}).catch(()=>{});
+}catch(e){console.warn('Weather fetch error:',e.message);const el=document.getElementById('weather-widget');if(el)el.innerHTML='<div style="padding:8px;color:var(--text-light);font-size:13px">'+sanitizeHTML(t('error_network'))+'</div>';}
 }
-function fetchForecast(){
-const D=loadData();if(!D.farm.owmApiKey||D.farm.lat===null||D.farm.lng===null)return Promise.resolve([]);
-return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${D.farm.lat}&lon=${D.farm.lng}&appid=${D.farm.owmApiKey}&units=metric`)
-.then(r=>r.json()).then(d=>{
+async function fetchForecast(){
+const D=loadData();if(!D.farm.owmApiKey||D.farm.lat===null||D.farm.lng===null)return[];
+try{
+const r=await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${encodeURIComponent(D.farm.lat)}&lon=${encodeURIComponent(D.farm.lng)}&appid=${encodeURIComponent(D.farm.owmApiKey)}&units=metric`);
+if(!r.ok)throw new Error('HTTP '+r.status);
+const d=await r.json();
 if(!d.list)return[];
 const days={};d.list.forEach(f=>{const day=f.dt_txt.substring(0,10);if(!days[day])days[day]={temps:[],hums:[],icon:f.weather[0].icon,desc:f.weather[0].description};
 days[day].temps.push(f.main.temp);days[day].hums.push(f.main.humidity);});
 return Object.entries(days).slice(0,3).map(([date,v])=>({date,
 tempMin:Math.min(...v.temps),tempMax:Math.max(...v.temps),
 humidity:Math.round(v.hums.reduce((a,b)=>a+b,0)/v.hums.length),icon:v.icon,desc:v.desc}));
-}).catch(()=>[]);
+}catch(e){console.warn('Forecast fetch error:',e.message);return[];}
 }
 function calcTHI(t,h){return(1.8*t+32)-(0.55-0.0055*h)*(1.8*t-26);}
 function renderWeatherWidget(w){
@@ -2393,12 +2661,14 @@ ${kpi('THI',thi.toFixed(1),thi>28?t('weather_heat_alert'):'OK',thiClass)}
 <div style="font-size:11px;color:var(--text-light);margin-top:4px">${t('weather_last_update')}: ${new Date(w.ts).toLocaleTimeString()}</div>
 </div>`;
 }
-function testWeatherApi(){
+async function testWeatherApi(){
 const key=$('cfg-owm')?.value;if(!key){toast(t('required'),true);return;}
 const D=loadData();const lat=D.farm.lat||0;const lng=D.farm.lng||0;
-fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${key}&units=metric`)
-.then(r=>r.json()).then(d=>{if(d.cod===200)toast('API OK: '+d.main.temp+'°C');else toast('Error: '+(d.message||'unknown'),true);})
-.catch(e=>toast('Error: '+e.message,true));
+try{
+const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&appid=${encodeURIComponent(key)}&units=metric`);
+const d=await r.json();
+if(d.cod===200)toast('API OK: '+d.main.temp+'°C');else toast('Error: '+sanitizeHTML(d.message||'unknown'),true);
+}catch(e){toast(t('error_network')+': '+sanitizeHTML(e.message),true);}
 }
 
 // ============ GEOLOCATION & MAP (Leaflet) ============
@@ -2452,7 +2722,7 @@ mqttClient.subscribe(D.farm.mqttTopicPrefix+'sensors/#');updateMqttStatus();toas
 mqttClient.on('message',(topic,payload)=>{onMqttMessage(topic,payload);});
 mqttClient.on('error',()=>{mqttConnected=false;updateMqttStatus();});
 mqttClient.on('close',()=>{mqttConnected=false;updateMqttStatus();});
-}catch(e){toast('MQTT Error: '+e.message,true);}
+}catch(e){toast('MQTT Error: '+sanitizeHTML(e.message),true);}
 }
 function disconnectMQTT(){
 if(mqttClient){mqttClient.end();mqttClient=null;}mqttConnected=false;updateMqttStatus();toast(t('iot_disconnect'));
@@ -2629,10 +2899,10 @@ h+=`<div class="stress-event" style="border-left:4px solid ${sColor}">
 <strong>${fmtDate(ev.date)}</strong>
 <span class="badge badge-${ev.severity>=4?'danger':ev.severity>=3?'warning':'info'}">${t('stress_'+ev.type)||ev.type} (${ev.severity}/5)</span>
 </div>
-<p style="margin:4px 0">${ev.description}</p>
-<div style="font-size:12px;color:var(--text-light)">${f?f.name:t('all')} | ${t('prod_title')}: <span style="color:${impact<0?'var(--danger)':'var(--success)'}">${impact>0?'+':''}${fmtNum(impact,1)}%</span></div>
-<div class="btn-group" style="margin-top:4px"><button class="btn btn-secondary btn-sm" onclick="showStressForm('${ev.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteStress('${ev.id}')">${t('delete')}</button></div></div>`;
+<p style="margin:4px 0">${sanitizeHTML(ev.description)}</p>
+<div style="font-size:12px;color:var(--text-light)">${f?sanitizeHTML(f.name):t('all')} | ${t('prod_title')}: <span style="color:${impact<0?'var(--danger)':'var(--success)'}">${impact>0?'+':''}${fmtNum(impact,1)}%</span></div>
+<div class="btn-group" style="margin-top:4px"><button class="btn btn-secondary btn-sm" onclick="showStressForm('${escapeAttr(ev.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteStress('${escapeAttr(ev.id)}')">${t('delete')}</button></div></div>`;
 });
 h+='</div></div>';
 return h;
@@ -2645,19 +2915,21 @@ openModal(ev?t('edit'):t('stress_title'),`
 <div class="form-group"><label>${t('stress_type')}</label><select id="st-type">${types.map(ty=>`<option value="${ty}"${ev&&ev.type===ty?' selected':''}>${t('stress_'+ty)||ty}</option>`).join('')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('stress_severity')} (1-5)</label><input type="number" id="st-sev" value="${ev?ev.severity:3}" min="1" max="5"></div>
 <div class="form-group"><label>${t('prod_flock')}</label><select id="st-flock">${flockSelect(ev?ev.flockId:'',true)}</select></div></div>
-<div class="form-group"><label>${t('fin_description')}</label><textarea id="st-desc">${ev?ev.description||'':''}</textarea></div>
+<div class="form-group"><label>${t('fin_description')}</label><textarea id="st-desc">${ev?escapeAttr(ev.description||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveStress('${id||''}')">${t('save')}</button></div>`);
 }
 function saveStress(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('st-date').value,type:$('st-type').value,
 severity:parseInt($('st-sev').value)||3,flockId:$('st-flock').value,description:$('st-desc').value};
-if(!o.date){toast(t('required'),true);return;}
+const v=validateForm({'st-date':{value:o.date,rules:{required:true,date:true}},'st-type':{value:o.type,rules:{required:true}},'st-sev':{value:$('st-sev').value,rules:{required:true,numeric:true,min:1,max:5}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.stressEvents.findIndex(e=>e.id===id);if(i>=0)D.stressEvents[i]={...D.stressEvents[i],...o};}
 else{o.id=genId();D.stressEvents.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderSanidad();
 }
-function deleteStress(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.stressEvents=D.stressEvents.filter(e=>e.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
+async function deleteStress(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.stressEvents=D.stressEvents.filter(e=>e.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
 function autoStressEvent(D,type,severity,desc){
 const today=todayStr();
 if(D.stressEvents.find(e=>e.date===today&&e.type===type))return;
@@ -2730,49 +3002,51 @@ h+=`<div class="table-wrap"><table><thead><tr><th>${t('date')}</th><th>${t('bio_
 bio.visitors.sort((a,b)=>b.date.localeCompare(a.date)).forEach(v=>{
 const crossRisk=v.fromFarmHealth&&v.fromFarmHealth!=='healthy';
 h+=`<tr${crossRisk?' style="background:#FFF3E0"':''}>
-<td>${fmtDate(v.date)}</td><td>${v.name}${crossRisk?' <span title="'+t('bio_cross_risk')+'" style="color:var(--danger)">⚠️</span>':''}</td>
-<td>${v.company||'-'}</td><td>${v.purpose||'-'}</td><td>${v.zone||'-'}</td><td>${v.vehiclePlate||'-'}</td>
+<td>${fmtDate(v.date)}</td><td>${sanitizeHTML(v.name)}${crossRisk?' <span title="'+t('bio_cross_risk')+'" style="color:var(--danger)">⚠️</span>':''}</td>
+<td>${sanitizeHTML(v.company||'-')}</td><td>${sanitizeHTML(v.purpose||'-')}</td><td>${sanitizeHTML(v.zone||'-')}</td><td>${sanitizeHTML(v.vehiclePlate||'-')}</td>
 <td>${v.disinfected?'✅':'❌'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBioVisitorForm('${v.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteBioVisitor('${v.id}')">${t('delete')}</button></div></td></tr>`;});
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBioVisitorForm('${escapeAttr(v.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteBioVisitor('${escapeAttr(v.id)}')">${t('delete')}</button></div></td></tr>`;});
 return h+'</tbody></table></div></div>';
 }
 function showBioVisitorForm(id){
 const D=loadData();const v=id?D.biosecurity.visitors.find(x=>x.id===id):null;
-const zoneOpts=D.biosecurity.zones.map(z=>`<option value="${z.name}"${v&&v.zone===z.name?' selected':''}>${z.name}</option>`).join('');
+const zoneOpts=D.biosecurity.zones.map(z=>`<option value="${escapeAttr(z.name)}"${v&&v.zone===z.name?' selected':''}>${sanitizeHTML(z.name)}</option>`).join('');
 openModal(v?t('edit'):t('bio_add_visitor'),`
 <div class="form-row"><div class="form-group"><label>${t('date')}</label><input type="date" id="bv-date" value="${v?v.date:todayStr()}"></div>
-<div class="form-group"><label>${t('bio_visitor_name')}</label><input id="bv-name" value="${v?v.name:''}"></div></div>
-<div class="form-row"><div class="form-group"><label>${t('bio_visitor_company')}</label><input id="bv-company" value="${v?v.company||'':''}"></div>
+<div class="form-group"><label>${t('bio_visitor_name')}</label><input id="bv-name" value="${v?escapeAttr(v.name):''}"></div></div>
+<div class="form-row"><div class="form-group"><label>${t('bio_visitor_company')}</label><input id="bv-company" value="${v?escapeAttr(v.company||''):''}"></div>
 <div class="form-group"><label>${t('bio_visitor_purpose')}</label><select id="bv-purpose">${catalogSelect(CATALOGS.visitorPurposes,v?v.purpose||'':'')}</select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_visitor_zone')}</label><select id="bv-zone"><option value="">--</option>${zoneOpts}</select></div>
-<div class="form-group"><label>${t('bio_visitor_plate')}</label><input id="bv-plate" value="${v?v.vehiclePlate||'':''}"></div></div>
+<div class="form-group"><label>${t('bio_visitor_plate')}</label><input id="bv-plate" value="${v?escapeAttr(v.vehiclePlate||''):''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_visitor_disinfected')}</label><select id="bv-disinf">
 <option value="true"${v&&v.disinfected?' selected':''}>✅</option><option value="false"${v&&!v.disinfected?' selected':''}>❌</option></select></div>
 <div class="form-group"><label>${t('bio_visitor_from_farm')}</label><select id="bv-farm">
 <option value="">--</option>
-<option value="internal"${v&&v.fromFarmId==='internal'?' selected':''}>${D.farm.name||'Mi Granja'} (interna)</option>
+<option value="internal"${v&&v.fromFarmId==='internal'?' selected':''}>${escapeAttr(D.farm.name||'Mi Granja')} (interna)</option>
 <option value="external"${v&&v.fromFarmId==='external'?' selected':(!v?' selected':'')}>Externa</option>
 </select></div></div>
 <div class="form-group"><label>${t('bio_visitor_from_health')}</label><select id="bv-health">
 <option value="healthy"${v&&v.fromFarmHealth==='healthy'?' selected':''}>✅ Healthy</option>
 <option value="outbreak"${v&&v.fromFarmHealth==='outbreak'?' selected':''}>⚠️ Outbreak</option>
 <option value="unknown"${v&&v.fromFarmHealth==='unknown'?' selected':''}>❓ Unknown</option></select></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="bv-notes">${v?v.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="bv-notes">${v?escapeAttr(v.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveBioVisitor('${id||''}')">${t('save')}</button></div>`);
 }
 function saveBioVisitor(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('bv-date').value,name:$('bv-name').value,company:$('bv-company').value,
 purpose:$('bv-purpose').value,zone:$('bv-zone').value,vehiclePlate:$('bv-plate').value,
 disinfected:$('bv-disinf').value==='true',fromFarmId:$('bv-farm').value,
 fromFarmHealth:$('bv-health').value,notes:$('bv-notes').value};
-if(!o.date||!o.name){toast(t('required'),true);return;}
+const v=validateForm({'bv-date':{value:o.date,rules:{required:true,date:true}},'bv-name':{value:o.name,rules:{required:true,maxLength:100}},'bv-company':{value:o.company,rules:{maxLength:100}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.biosecurity.visitors.findIndex(v=>v.id===id);if(i>=0)D.biosecurity.visitors[i]={...D.biosecurity.visitors[i],...o};}
 else{o.id=genId();D.biosecurity.visitors.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderBiosecurity();
 }
-function deleteBioVisitor(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.visitors=D.biosecurity.visitors.filter(v=>v.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
+async function deleteBioVisitor(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.visitors=D.biosecurity.visitors.filter(v=>v.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
 
 function renderBioZones(D){
 const bio=D.biosecurity;const today=todayStr();
@@ -2784,38 +3058,40 @@ bio.zones.forEach(z=>{
 const overdue=z.lastDisinfection&&z.frequencyDays&&(()=>{const n=new Date(z.lastDisinfection+'T12:00:00');n.setDate(n.getDate()+z.frequencyDays);return n.toISOString().substring(0,10)<today;})();
 h+=`<div class="card" style="border-left:4px solid ${z.riskLevel==='red'?'#F44336':z.riskLevel==='yellow'?'#FFC107':'#4CAF50'}">
 <div style="display:flex;justify-content:space-between;align-items:center">
-<h4>${z.name}</h4><span class="risk-badge risk-${z.riskLevel}">${t('bio_risk_'+z.riskLevel)}</span></div>
+<h4>${sanitizeHTML(z.name)}</h4><span class="risk-badge risk-${z.riskLevel}">${t('bio_risk_'+z.riskLevel)}</span></div>
 <p style="font-size:13px;color:var(--text-light)">${t('bio_zone_last_disinfection')}: ${z.lastDisinfection?fmtDate(z.lastDisinfection):'-'}
 ${overdue?' <span style="color:var(--danger);font-weight:700">'+t('bio_protocol_overdue')+'</span>':''}</p>
 <p style="font-size:13px;color:var(--text-light)">${t('bio_zone_frequency')}: ${z.frequencyDays||'-'} ${t('flock_days')}</p>
-${z.notes?'<p style="font-size:12px">'+z.notes+'</p>':''}
-<div class="btn-group" style="margin-top:8px"><button class="btn btn-secondary btn-sm" onclick="showBioZoneForm('${z.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteBioZone('${z.id}')">${t('delete')}</button></div></div>`;});
+${z.notes?'<p style="font-size:12px">'+sanitizeHTML(z.notes)+'</p>':''}
+<div class="btn-group" style="margin-top:8px"><button class="btn btn-secondary btn-sm" onclick="showBioZoneForm('${escapeAttr(z.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteBioZone('${escapeAttr(z.id)}')">${t('delete')}</button></div></div>`;});
 return h+'</div></div>';
 }
 function showBioZoneForm(id){
 const D=loadData();const z=id?D.biosecurity.zones.find(x=>x.id===id):null;
 openModal(z?t('edit'):t('bio_add_zone'),`
-<div class="form-row"><div class="form-group"><label>${t('bio_zone_name')}</label><input id="bz-name" value="${z?z.name:''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('bio_zone_name')}</label><input id="bz-name" value="${z?escapeAttr(z.name):''}"></div>
 <div class="form-group"><label>${t('bio_zone_risk')}</label><select id="bz-risk">
 <option value="green"${z&&z.riskLevel==='green'?' selected':''}>${t('bio_risk_green')}</option>
 <option value="yellow"${z&&z.riskLevel==='yellow'?' selected':''}>${t('bio_risk_yellow')}</option>
 <option value="red"${z&&z.riskLevel==='red'?' selected':''}>${t('bio_risk_red')}</option></select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_zone_last_disinfection')}</label><input type="date" id="bz-last" value="${z?z.lastDisinfection||'':''}"></div>
 <div class="form-group"><label>${t('bio_zone_frequency')}</label><input type="number" id="bz-freq" value="${z?z.frequencyDays||'':''}" min="1"></div></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="bz-notes">${z?z.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="bz-notes">${z?escapeAttr(z.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveBioZone('${id||''}')">${t('save')}</button></div>`);
 }
 function saveBioZone(id){
+clearFieldErrors();
 const D=loadData();const o={name:$('bz-name').value,riskLevel:$('bz-risk').value,
 lastDisinfection:$('bz-last').value,frequencyDays:parseInt($('bz-freq').value)||0,notes:$('bz-notes').value};
-if(!o.name){toast(t('required'),true);return;}
+const v=validateForm({'bz-name':{value:o.name,rules:{required:true,maxLength:100}},'bz-risk':{value:o.riskLevel,rules:{required:true}},'bz-freq':{value:$('bz-freq').value,rules:{numeric:true,min:1}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.biosecurity.zones.findIndex(z=>z.id===id);if(i>=0)D.biosecurity.zones[i]={...D.biosecurity.zones[i],...o};}
 else{o.id=genId();D.biosecurity.zones.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderBiosecurity();
 }
-function deleteBioZone(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.zones=D.biosecurity.zones.filter(z=>z.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
+async function deleteBioZone(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.zones=D.biosecurity.zones.filter(z=>z.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
 
 function renderBioPests(D){
 const bio=D.biosecurity;
@@ -2830,12 +3106,12 @@ h+=`<div class="stress-event" style="border-left:4px solid ${sColor}">
 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
 <strong>${fmtDate(p.date)} ${typeIcon} ${t('bio_pest_'+p.type)||p.type}</strong>
 <span>${p.resolved?'✅ '+t('bio_pest_resolved'):'❌ '+t('active')}</span></div>
-<p style="margin:4px 0">${t('bio_pest_location')}: ${p.location||'-'} | ${t('bio_pest_severity')}: ${'⭐'.repeat(p.severity||1)}</p>
-${p.action?'<p style="font-size:12px;color:var(--text-light)">'+t('bio_pest_action')+': '+p.action+'</p>':''}
+<p style="margin:4px 0">${t('bio_pest_location')}: ${sanitizeHTML(p.location||'-')} | ${t('bio_pest_severity')}: ${'⭐'.repeat(p.severity||1)}</p>
+${p.action?'<p style="font-size:12px;color:var(--text-light)">'+t('bio_pest_action')+': '+sanitizeHTML(p.action)+'</p>':''}
 <div class="btn-group" style="margin-top:4px">
-${!p.resolved?'<button class="btn btn-primary btn-sm" onclick="resolveBioPest(\''+p.id+'\')">✅ '+t('bio_pest_resolved')+'</button>':''}
-<button class="btn btn-secondary btn-sm" onclick="showBioPestForm('${p.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteBioPest('${p.id}')">${t('delete')}</button></div></div>`;});
+${!p.resolved?'<button class="btn btn-primary btn-sm" onclick="resolveBioPest(\''+escapeAttr(p.id)+'\')">✅ '+t('bio_pest_resolved')+'</button>':''}
+<button class="btn btn-secondary btn-sm" onclick="showBioPestForm('${escapeAttr(p.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteBioPest('${escapeAttr(p.id)}')">${t('delete')}</button></div></div>`;});
 return h+'</div></div>';
 }
 function showBioPestForm(id){
@@ -2849,25 +3125,27 @@ openModal(p?t('edit'):t('bio_add_pest'),`
 <option value="other"${p&&p.type==='other'?' selected':''}>${t('bio_pest_other')}</option></select></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_pest_location')}</label><select id="bp-loc">
 <option value="">--</option>
-${D.biosecurity.zones.map(z=>`<option value="${z.name}"${p&&p.location===z.name?' selected':''}>${z.name}</option>`).join('')}
+${D.biosecurity.zones.map(z=>`<option value="${escapeAttr(z.name)}"${p&&p.location===z.name?' selected':''}>${sanitizeHTML(z.name)}</option>`).join('')}
 <option value="__other__">Otra...</option>
 </select></div>
 <div class="form-group"><label>${t('bio_pest_severity')} (1-5)</label><input type="number" id="bp-sev" value="${p?p.severity||3:3}" min="1" max="5"></div></div>
-<div class="form-group"><label>${t('bio_pest_action')}</label><textarea id="bp-action">${p?p.action||'':''}</textarea></div>
+<div class="form-group"><label>${t('bio_pest_action')}</label><textarea id="bp-action">${p?escapeAttr(p.action||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveBioPest('${id||''}')">${t('save')}</button></div>`);
 }
 function saveBioPest(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('bp-date').value,type:$('bp-type').value,
 location:$('bp-loc').value,severity:parseInt($('bp-sev').value)||3,action:$('bp-action').value,resolved:false};
-if(!o.date){toast(t('required'),true);return;}
+const v=validateForm({'bp-date':{value:o.date,rules:{required:true,date:true}},'bp-type':{value:o.type,rules:{required:true}},'bp-sev':{value:$('bp-sev').value,rules:{required:true,numeric:true,min:1,max:5}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.biosecurity.pestSightings.findIndex(p=>p.id===id);
 if(i>=0){o.resolved=D.biosecurity.pestSightings[i].resolved;D.biosecurity.pestSightings[i]={...D.biosecurity.pestSightings[i],...o};}}
 else{o.id=genId();D.biosecurity.pestSightings.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderBiosecurity();
 }
 function resolveBioPest(id){const D=loadData();const p=D.biosecurity.pestSightings.find(x=>x.id===id);if(p){p.resolved=true;saveData(D);toast(t('cfg_saved'));renderBiosecurity();}}
-function deleteBioPest(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.pestSightings=D.biosecurity.pestSightings.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
+async function deleteBioPest(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.pestSightings=D.biosecurity.pestSightings.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
 
 function renderBioProtocols(D){
 const bio=D.biosecurity;const today=todayStr();
@@ -2879,13 +3157,13 @@ bio.protocols.forEach(p=>{
 const freqDays={daily:1,weekly:7,monthly:30}[p.frequency]||7;
 const overdue=p.lastCompleted&&(()=>{const n=new Date(p.lastCompleted+'T12:00:00');n.setDate(n.getDate()+freqDays);return n.toISOString().substring(0,10)<today;})();
 h+=`<div class="card" style="border-top:3px solid ${overdue?'var(--danger)':'var(--primary)'}">
-<h4>${p.name}</h4>
+<h4>${sanitizeHTML(p.name)}</h4>
 <p style="font-size:13px;color:var(--text-light)">${t('bio_protocol_frequency')}: ${t('bio_protocol_'+p.frequency)} | ${t('bio_protocol_last')}: ${p.lastCompleted?fmtDate(p.lastCompleted):'-'}
 ${overdue?' <span style="color:var(--danger);font-weight:700">'+t('bio_protocol_overdue')+'</span>':''}</p>`;
-if(p.items&&p.items.length){h+='<ul style="font-size:13px;margin:8px 0">';p.items.forEach(it=>{h+=`<li>${it}</li>`;});h+='</ul>';}
-h+=`<div class="btn-group"><button class="btn btn-primary btn-sm" onclick="completeBioProtocol('${p.id}')">✅ ${t('bio_protocol_complete')}</button>
-<button class="btn btn-secondary btn-sm" onclick="showBioProtocolForm('${p.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteBioProtocol('${p.id}')">${t('delete')}</button></div></div>`;});
+if(p.items&&p.items.length){h+='<ul style="font-size:13px;margin:8px 0">';p.items.forEach(it=>{h+=`<li>${sanitizeHTML(it)}</li>`;});h+='</ul>';}
+h+=`<div class="btn-group"><button class="btn btn-primary btn-sm" onclick="completeBioProtocol('${escapeAttr(p.id)}')">✅ ${t('bio_protocol_complete')}</button>
+<button class="btn btn-secondary btn-sm" onclick="showBioProtocolForm('${escapeAttr(p.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteBioProtocol('${escapeAttr(p.id)}')">${t('delete')}</button></div></div>`;});
 return h+'</div></div>';
 }
 function showBioProtocolForm(id){
@@ -2897,21 +3175,23 @@ openModal(p?t('edit'):t('bio_add_protocol'),`
 <option value="weekly"${p&&p.frequency==='weekly'?' selected':''}>${t('bio_protocol_weekly')}</option>
 <option value="monthly"${p&&p.frequency==='monthly'?' selected':''}>${t('bio_protocol_monthly')}</option></select></div></div>
 <div class="form-group"><label>${t('bio_protocol_items')} (${t('notes')}: uno por línea)</label>
-<textarea id="bpr-items" rows="5">${p&&p.items?p.items.join('\n'):''}</textarea></div>
+<textarea id="bpr-items" rows="5">${p&&p.items?escapeAttr(p.items.join('\n')):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveBioProtocol('${id||''}')">${t('save')}</button></div>`);
 }
 function saveBioProtocol(id){
+clearFieldErrors();
 const D=loadData();const o={name:$('bpr-name').value,frequency:$('bpr-freq').value,
 items:$('bpr-items').value.split('\n').map(s=>s.trim()).filter(Boolean),lastCompleted:null};
-if(!o.name){toast(t('required'),true);return;}
+const v=validateForm({'bpr-name':{value:o.name,rules:{required:true}},'bpr-freq':{value:o.frequency,rules:{required:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.biosecurity.protocols.findIndex(p=>p.id===id);
 if(i>=0){o.lastCompleted=D.biosecurity.protocols[i].lastCompleted;D.biosecurity.protocols[i]={...D.biosecurity.protocols[i],...o};}}
 else{o.id=genId();D.biosecurity.protocols.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderBiosecurity();
 }
 function completeBioProtocol(id){const D=loadData();const p=D.biosecurity.protocols.find(x=>x.id===id);if(p){p.lastCompleted=todayStr();saveData(D);toast(t('cfg_saved'));renderBiosecurity();}}
-function deleteBioProtocol(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.protocols=D.biosecurity.protocols.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
+async function deleteBioProtocol(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.protocols=D.biosecurity.protocols.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
 
 // ============ EGG TRACEABILITY MODULE ============
 function renderTraceability(){
@@ -2934,13 +3214,13 @@ let h=`<div class="card"><div class="table-wrap"><table><thead><tr>
 </tr></thead><tbody>`;
 batches.sort((a,b)=>b.date.localeCompare(a.date)).forEach(b=>{
 const f=D.flocks.find(x=>x.id===b.flockId);const c=D.clients.find(x=>x.id===b.clientId);
-h+=`<tr><td><code>${b.id.substring(0,8)}</code></td><td>${fmtDate(b.date)}</td><td>${f?f.name:'-'}</td>
-<td>${b.house||'-'}</td><td>${b.rackNumber||'-'}</td><td>${fmtNum(b.boxCount)}</td><td>${fmtNum(b.eggsPerBox)}</td>
-<td>${b.eggType?t('prod_type_'+b.eggType)||b.eggType:'-'}</td>
-<td>${c?c.name:'-'}</td><td>${b.deliveryDate?fmtDate(b.deliveryDate):'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBatchTrace('${b.id}')" title="${t('trace_origin')}">🔍</button>
-<button class="btn btn-secondary btn-sm" onclick="showBatchForm('${b.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteBatch('${b.id}')">${t('delete')}</button></div></td></tr>`;});
+h+=`<tr><td><code>${sanitizeHTML(b.id.substring(0,8))}</code></td><td>${fmtDate(b.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td>
+<td>${sanitizeHTML(b.house||'-')}</td><td>${sanitizeHTML(b.rackNumber||'-')}</td><td>${fmtNum(b.boxCount)}</td><td>${fmtNum(b.eggsPerBox)}</td>
+<td>${b.eggType?t('prod_type_'+b.eggType)||sanitizeHTML(b.eggType):'-'}</td>
+<td>${c?sanitizeHTML(c.name):'-'}</td><td>${b.deliveryDate?fmtDate(b.deliveryDate):'-'}</td>
+<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBatchTrace('${escapeAttr(b.id)}')" title="${t('trace_origin')}">🔍</button>
+<button class="btn btn-secondary btn-sm" onclick="showBatchForm('${escapeAttr(b.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteBatch('${escapeAttr(b.id)}')">${t('delete')}</button></div></td></tr>`;});
 return h+'</tbody></table></div></div>';
 }
 function showBatchForm(id){
@@ -2960,21 +3240,23 @@ openModal(b?t('edit'):t('trace_add'),`
 <option value="decorative"${b&&b.eggType==='decorative'?' selected':''}>${t('prod_type_decorative')}</option></select></div>
 <div class="form-group"><label>${t('fin_client')}</label><select id="tb-client">${clientSelect(b?b.clientId:'')}</select></div></div>
 <div class="form-group"><label>${t('trace_delivery')}</label><input type="date" id="tb-delivery" value="${b?b.deliveryDate||'':''}"></div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="tb-notes">${b?b.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="tb-notes">${b?escapeAttr(b.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveBatch('${id||''}')">${t('save')}</button></div>`);
 }
 function saveBatch(id){
+clearFieldErrors();
 const D=loadData();const o={date:$('tb-date').value,flockId:$('tb-flock').value,house:$('tb-house').value,
 rackNumber:$('tb-rack').value,boxCount:parseInt($('tb-boxes').value)||0,eggsPerBox:parseInt($('tb-epb').value)||30,
 eggType:$('tb-type').value,clientId:$('tb-client').value,deliveryDate:$('tb-delivery').value,notes:$('tb-notes').value};
-if(!o.date||!o.flockId){toast(t('required'),true);return;}
+const v=validateForm({'tb-date':{value:o.date,rules:{required:true,date:true}},'tb-flock':{value:o.flockId,rules:{required:true}},'tb-boxes':{value:$('tb-boxes').value,rules:{required:true,numeric:true,min:1}},'tb-epb':{value:$('tb-epb').value,rules:{required:true,numeric:true,min:1}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 o.qrCode=`EGGLOGU|BATCH:${id||genId()}|FLOCK:${o.flockId}|DATE:${o.date}|HOUSE:${o.house}|TYPE:${o.eggType}`;
 if(id){const i=D.traceability.batches.findIndex(b=>b.id===id);if(i>=0)D.traceability.batches[i]={...D.traceability.batches[i],...o};}
 else{o.id=genId();o.qrCode=o.qrCode.replace('BATCH:'+o.id,'BATCH:'+o.id);D.traceability.batches.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderTraceability();
 }
-function deleteBatch(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.traceability.batches=D.traceability.batches.filter(b=>b.id!==id);saveData(D);toast(t('cfg_saved'));renderTraceability();}
+async function deleteBatch(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.traceability.batches=D.traceability.batches.filter(b=>b.id!==id);saveData(D);toast(t('cfg_saved'));renderTraceability();}
 function showBatchTrace(id){
 const D=loadData();const b=D.traceability.batches.find(x=>x.id===id);if(!b)return;
 const f=D.flocks.find(x=>x.id===b.flockId);const c=D.clients.find(x=>x.id===b.clientId);
@@ -2985,12 +3267,12 @@ const hs=f?computeFlockHealthScore(f.id,D):'N/A';
 openModal('🔍 '+t('trace_origin'),`
 <div class="card" style="margin:0"><h4>${t('trace_batch_id')}: ${b.id.substring(0,8)}</h4>
 <div class="stat-row"><span class="stat-label">${t('trace_house')}</span><span class="stat-value">${b.house||'-'}</span></div>
-<div class="stat-row"><span class="stat-label">${t('prod_flock')}</span><span class="stat-value">${f?f.name+' ('+breed+')':'-'}</span></div>
+<div class="stat-row"><span class="stat-label">${t('prod_flock')}</span><span class="stat-value">${f?sanitizeHTML(f.name)+' ('+sanitizeHTML(breed)+')':'-'}</span></div>
 <div class="stat-row"><span class="stat-label">${t('date')}</span><span class="stat-value">${fmtDate(b.date)}</span></div>
 <div class="stat-row"><span class="stat-label">${t('flock_health')}</span><span class="stat-value">${hs}</span></div>
-<div class="stat-row"><span class="stat-label">${t('prod_egg_type')}</span><span class="stat-value">${t('prod_type_'+b.eggType)||b.eggType}</span></div>
-<div class="stat-row"><span class="stat-label">${t('fin_client')}</span><span class="stat-value">${c?c.name:'-'}</span></div>
-<hr><div class="qr-display">${b.qrCode||'N/A'}</div>
+<div class="stat-row"><span class="stat-label">${t('prod_egg_type')}</span><span class="stat-value">${t('prod_type_'+b.eggType)||sanitizeHTML(b.eggType)}</span></div>
+<div class="stat-row"><span class="stat-label">${t('fin_client')}</span><span class="stat-value">${c?sanitizeHTML(c.name):'-'}</span></div>
+<hr><div class="qr-display">${sanitizeHTML(b.qrCode||'N/A')}</div>
 </div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('close')}</button></div>`);
 }
 function computeFlockHealthScore(fid,D){
@@ -3030,20 +3312,20 @@ const statusColor=pct>=100?'var(--success)':pct>=80?'var(--warning)':'var(--dang
 const statusText=pct>=100?t('plan_on_track'):pct>=80?t('plan_behind'):t('plan_behind');
 const c=D.clients.find(x=>x.id===p.clientId);
 h+=`<div class="card" style="border-top:3px solid ${statusColor}">
-<div style="display:flex;justify-content:space-between;align-items:center"><h3>${p.name}</h3>
+<div style="display:flex;justify-content:space-between;align-items:center"><h3>${sanitizeHTML(p.name)}</h3>
 <span style="color:${statusColor};font-weight:700">${fmtNum(pct,0)}%</span></div>
-<p style="font-size:13px;color:var(--text-light)">${t('plan_target_date')}: ${fmtDate(p.targetDate)}${c?' | '+c.name:''}</p>
+<p style="font-size:13px;color:var(--text-light)">${t('plan_target_date')}: ${fmtDate(p.targetDate)}${c?' | '+sanitizeHTML(c.name):''}</p>
 <div class="stat-row"><span class="stat-label">${t('plan_eggs_needed')}</span><span class="stat-value">${fmtNum(p.eggsNeeded)}</span></div>
 <div class="stat-row"><span class="stat-label">${t('plan_expected')}</span><span class="stat-value">${fmtNum(totalExpected)}</span></div>
 <div class="stat-row"><span class="stat-label">${t('plan_gap')}</span><span class="stat-value" style="color:${statusColor}">${gap>0?'+':''}${fmtNum(gap)} (${statusText})</span></div>`;
 if(p.flockAllocations&&p.flockAllocations.length){
 h+=`<div style="margin-top:8px;font-size:12px">`;
 p.flockAllocations.forEach(a=>{const fl=D.flocks.find(x=>x.id===a.flockId);
-h+=`<div class="stat-row"><span class="stat-label">${fl?fl.name:'?'}</span><span class="stat-value">${fmtNum(a.expectedEggs)} ${t('eggs_unit')}</span></div>`;});
+h+=`<div class="stat-row"><span class="stat-label">${fl?sanitizeHTML(fl.name):'?'}</span><span class="stat-value">${fmtNum(a.expectedEggs)} ${t('eggs_unit')}</span></div>`;});
 h+='</div>';}
 h+=`<div class="btn-group" style="margin-top:12px">
-<button class="btn btn-secondary btn-sm" onclick="showPlanForm('${p.id}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deletePlan('${p.id}')">${t('delete')}</button></div></div>`;});
+<button class="btn btn-secondary btn-sm" onclick="showPlanForm('${escapeAttr(p.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deletePlan('${escapeAttr(p.id)}')">${t('delete')}</button></div></div>`;});
 h+='</div>';
 $('sec-planificacion').innerHTML=h;
 }
@@ -3073,29 +3355,31 @@ const D=loadData();const p=id?D.productionPlans.find(x=>x.id===id):null;
 let flockChecks='';D.flocks.filter(f=>f.status!=='descarte').forEach(f=>{
 const alloc=p?p.flockAllocations?.find(a=>a.flockId===f.id):null;
 const est=estimateProduction(D,f.id,todayStr(),p?p.targetDate:new Date(Date.now()+30*86400000).toISOString().substring(0,10));
-flockChecks+=`<div class="form-row" style="align-items:center"><label><input type="checkbox" class="plan-flock" value="${f.id}"${alloc?' checked':''}> ${f.name}</label>
+flockChecks+=`<div class="form-row" style="align-items:center"><label><input type="checkbox" class="plan-flock" value="${escapeAttr(f.id)}"${alloc?' checked':''}> ${sanitizeHTML(f.name)}</label>
 <span style="font-size:12px;color:var(--text-light)">${t('plan_estimate')}: ~${fmtNum(est)}</span></div>`;});
 openModal(p?t('edit'):t('plan_add'),`
-<div class="form-row"><div class="form-group"><label>${t('plan_name')}</label><input id="pl-name" value="${p?p.name:''}"></div>
+<div class="form-row"><div class="form-group"><label>${t('plan_name')}</label><input id="pl-name" value="${p?escapeAttr(p.name):''}"></div>
 <div class="form-group"><label>${t('plan_target_date')}</label><input type="date" id="pl-date" value="${p?p.targetDate:''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('plan_eggs_needed')}</label><input type="number" id="pl-eggs" value="${p?p.eggsNeeded:''}" min="0"></div>
 <div class="form-group"><label>${t('fin_client')}</label><select id="pl-client">${clientSelect(p?p.clientId:'')}</select></div></div>
 <div class="form-group"><label>${t('plan_allocations')}</label>${flockChecks}</div>
-<div class="form-group"><label>${t('notes')}</label><textarea id="pl-notes">${p?p.notes||'':''}</textarea></div>
+<div class="form-group"><label>${t('notes')}</label><textarea id="pl-notes">${p?escapeAttr(p.notes||''):''}</textarea></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="savePlan('${id||''}')">${t('save')}</button></div>`);
 }
 function savePlan(id){
+clearFieldErrors();
 const D=loadData();const checks=document.querySelectorAll('.plan-flock:checked');
 const allocs=Array.from(checks).map(c=>({flockId:c.value,expectedEggs:estimateProduction(D,c.value,todayStr(),$('pl-date').value)}));
 const o={name:$('pl-name').value,targetDate:$('pl-date').value,eggsNeeded:parseInt($('pl-eggs').value)||0,
 clientId:$('pl-client').value,notes:$('pl-notes').value,flockAllocations:allocs};
-if(!o.name||!o.targetDate){toast(t('required'),true);return;}
+const v=validateForm({'pl-name':{value:o.name,rules:{required:true,maxLength:100}},'pl-date':{value:o.targetDate,rules:{required:true,date:true}},'pl-eggs':{value:$('pl-eggs').value,rules:{numeric:true,min:0}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.productionPlans.findIndex(p=>p.id===id);if(i>=0)D.productionPlans[i]={...D.productionPlans[i],...o};}
 else{o.id=genId();D.productionPlans.push(o);}
 saveData(D);closeModal();toast(t('cfg_saved'));renderPlanning();
 }
-function deletePlan(id){if(!confirm(t('confirm_delete')))return;const D=loadData();D.productionPlans=D.productionPlans.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderPlanning();}
+async function deletePlan(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.productionPlans=D.productionPlans.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderPlanning();}
 
 // ============ CAMPO MODE ============
 function toggleCampoMode(){
@@ -3125,7 +3409,7 @@ h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi
 h+=`</div>`;
 h+=`<button class="campo-btn-big" onclick="showCampoQuickEntry()">📝 ${t('campo_today')}</button>`;
 if(alerts.length){h+=`<div class="card" style="margin-top:16px"><h3>${t('dash_alerts')}</h3>`;
-alerts.forEach(a=>{h+=`<div class="alert-card alert-${a.type}">${a.icon} ${a.msg}</div>`;});h+='</div>';}
+alerts.forEach(a=>{h+=`<div class="alert-card alert-${sanitizeHTML(a.type)}">${sanitizeHTML(a.icon)} ${a.msg}</div>`;});h+='</div>';}
 return h;
 }
 function showCampoQuickEntry(){
@@ -3177,20 +3461,20 @@ h+=kpi(t('out_title'),outbreaks.length.toString(),outbreaks.length?t('out_active
 h+=kpi(t('vac_title'),pendingVac.length.toString(),t('vac_pending'),'');
 h+=`</div>`;
 if(outbreaks.length){h+=`<div class="card"><h4>🦠 ${t('out_title')}</h4>`;
-outbreaks.forEach(o=>{h+=`<div class="alert-card alert-danger">${o.disease} - ${fmtDate(o.startDate)} | ${o.treatment||'-'}</div>`;});h+='</div>';}
+outbreaks.forEach(o=>{h+=`<div class="alert-card alert-danger">${sanitizeHTML(o.disease)} - ${fmtDate(o.startDate)} | ${sanitizeHTML(o.treatment||'-')}</div>`;});h+='</div>';}
 if(lastEnv){h+=`<div class="card"><h4>🌡️ ${t('env_title')}</h4>
 <p>${t('env_temp')}: ${lastEnv.temperature||'-'}°C | ${t('env_humidity')}: ${lastEnv.humidity||'-'}%</p></div>`;}
 if(pendingVac.length){h+=`<div class="card"><h4>💉 ${t('vac_title')}</h4>`;
-pendingVac.forEach(v=>{h+=`<div class="alert-card alert-${v.scheduledDate<todayStr()?'danger':'warning'}">${v.vaccineName} - ${fmtDate(v.scheduledDate)} (${v.scheduledDate<todayStr()?t('vac_overdue'):t('vac_pending')})</div>`;});h+='</div>';}
+pendingVac.forEach(v=>{h+=`<div class="alert-card alert-${v.scheduledDate<todayStr()?'danger':'warning'}">${sanitizeHTML(v.vaccineName)} - ${fmtDate(v.scheduledDate)} (${v.scheduledDate<todayStr()?t('vac_overdue'):t('vac_pending')})</div>`;});h+='</div>';}
 // Cross-contamination check from biosecurity visitors
 const recentVisitors=D.biosecurity.visitors.filter(v=>v.fromFarmHealth==='outbreak'&&v.date>=new Date(Date.now()-7*86400000).toISOString().substring(0,10));
-if(recentVisitors.length){h+=`<div class="alert-card alert-danger">${t('bio_cross_risk')}: ${recentVisitors.map(v=>v.name).join(', ')}</div>`;}
+if(recentVisitors.length){h+=`<div class="alert-card alert-danger">${t('bio_cross_risk')}: ${recentVisitors.map(v=>sanitizeHTML(v.name)).join(', ')}</div>`;}
 $('vet-content').innerHTML=h;
 }
 function vetAction(type){
 const D=loadData();const fid=$('vet-flock')?.value||'';const f=D.flocks.find(x=>x.id===fid);
 const note=type==='visit'?t('vet_visit'):type==='vaccines'?t('vet_vaccines'):t('vet_pending');
-D.logbook.push({id:genId(),date:todayStr(),entry:'🩺 '+note+(f?' - '+f.name:''),category:'health'});
+D.logbook.push({id:genId(),date:todayStr(),entry:'🩺 '+note+(f?' - '+sanitizeHTML(f.name):''),category:'health'});
 // Auto-create biosecurity visitor record
 D.biosecurity.visitors.push({id:genId(),date:todayStr(),name:'Veterinario',company:'',purpose:note,zone:'',vehiclePlate:'',disinfected:true,fromFarmId:'',fromFarmHealth:'healthy',notes:''});
 saveData(D);toast(t('cfg_saved'));
@@ -3346,13 +3630,32 @@ if(on){applyTheme('dark');localStorage.setItem('egglogu_theme','dark');}
 }
 
 // ============ INIT ============
-function init(){DATA=null;loadData();const savedTheme=localStorage.getItem('egglogu_theme');if(savedTheme&&THEMES[savedTheme])applyTheme(savedTheme);
+function init(){
+// Auth gate — must authenticate before loading app
+if(!checkAuth())return;
+DATA=null;loadData();const savedTheme=localStorage.getItem('egglogu_theme');if(savedTheme&&THEMES[savedTheme])applyTheme(savedTheme);
 // Apply saved settings
 const D=loadData();
 if(D.settings.fontScale&&D.settings.fontScale!=='normal')applyFontScale(D.settings.fontScale);
 if(D.settings.darkMode)document.body.classList.add('dark-mode');
 applyCampoMode(D);
-const ls=$('langSelect');if(ls)ls.value=LANG;switchLang(LANG);nav('dashboard');}
+const ls=$('langSelect');if(ls)ls.value=LANG;switchLang(LANG);nav('dashboard');
+// Keyboard navigation for sidebar
+document.querySelectorAll('#main-nav a').forEach(a=>{a.setAttribute('tabindex','0');a.setAttribute('role','menuitem');a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();a.click();}});});
+// Escape key closes modal/confirm dialogs
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){
+if($('confirm-overlay')?.classList.contains('show')){const cBtn=$('confirm-overlay').querySelector('.confirm-btn-cancel');if(cBtn)cBtn.click();}
+else if($('modal-overlay')?.classList.contains('open'))closeModal();
+}});
+// Focus trap within modal
+document.addEventListener('keydown',e=>{if(e.key!=='Tab')return;
+const modal=$('modal-overlay');if(!modal||!modal.classList.contains('open'))return;
+const focusable=modal.querySelectorAll('input,select,textarea,button,[tabindex]:not([tabindex="-1"])');
+if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];
+if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+});
+}
 window.addEventListener('DOMContentLoaded',init);
 // ============ SERVICE WORKER ============
 if('serviceWorker' in navigator){

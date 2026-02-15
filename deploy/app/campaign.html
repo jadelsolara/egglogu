@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>What came first? | EGGlogU 360</title>
+<meta name="theme-color" content="#1E3A5F">
+<meta name="description" content="What came first, the chicken or the egg? Answer: EGGlogU 360 — Gestión Avícola Inteligente">
+<meta property="og:title" content="What came first, the chicken or the egg?">
+<meta property="og:description" content="Answer: EGGlogU 360 — La plataforma que nació antes que el problema.">
+<meta property="og:image" content="campaign-logo.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
+:root{--navy:#1E3A5F;--navy-deep:#0F2137;--orange:#F5A623;--red:#E74C3C;--white:#FFFFFF;--cream:#FFF8E1}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:var(--white);min-height:100vh;overflow-x:hidden}
+
+/* Phase 1: Teaser */
+.phase-teaser{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;background:radial-gradient(ellipse at center,#243B55 0%,var(--navy-deep) 70%)}
+.phase-teaser::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M20 10c-3 0-6 5-6 10s3 10 6 10 6-5 6-10-3-10-6-10z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+
+.question-mark{font-size:120px;opacity:.06;position:absolute;font-weight:900}
+.q1{top:10%;left:8%;transform:rotate(-15deg)}
+.q2{top:20%;right:12%;transform:rotate(20deg)}
+.q3{bottom:15%;left:15%;transform:rotate(10deg)}
+.q4{bottom:25%;right:8%;transform:rotate(-25deg)}
+
+.logo-container{margin-bottom:48px;position:relative;z-index:1}
+.logo-container img{width:280px;height:280px;border-radius:40px;box-shadow:0 20px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.logo-container img:hover{transform:scale(1.05) rotate(-2deg)}
+.logo-glow{position:absolute;inset:-20px;border-radius:60px;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 70%);z-index:-1;animation:glow 3s ease-in-out infinite alternate}
+@keyframes glow{0%{opacity:.5;transform:scale(.95)}100%{opacity:1;transform:scale(1.05)}}
+
+.question{position:relative;z-index:1}
+.question h1{font-size:clamp(28px,5vw,52px);font-weight:300;line-height:1.3;margin-bottom:12px;letter-spacing:-1px}
+.question h1 em{font-style:italic;color:rgba(255,255,255,.6)}
+.question .dots{font-size:40px;letter-spacing:8px;opacity:.4;margin:20px 0;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}}
+
+.answer-reveal{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal 1s ease-out 2.5s forwards}
+@keyframes reveal{to{opacity:1;transform:translateY(0)}}
+
+.answer-label{font-size:14px;text-transform:uppercase;letter-spacing:4px;color:rgba(255,255,255,.5);margin-bottom:16px;font-weight:600}
+.answer-brand{font-size:clamp(42px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1}
+.answer-brand .egg{color:var(--white)}
+.answer-brand .log{font-weight:300;color:rgba(255,255,255,.7)}
+.answer-brand .u{color:var(--white)}
+.answer-360{font-size:clamp(24px,4vw,48px);font-weight:800;color:var(--orange);letter-spacing:6px;margin-top:4px}
+.answer-tagline{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.6);margin-top:20px;font-weight:300;font-style:italic}
+
+/* Divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);margin:0}
+
+/* Phase 2: The Pitch */
+.phase-pitch{padding:80px 24px;text-align:center;background:var(--navy)}
+.pitch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;max-width:960px;margin:48px auto 0}
+.pitch-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px 24px;transition:all .3s}
+.pitch-card:hover{background:rgba(255,255,255,.08);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.2)}
+.pitch-icon{font-size:40px;margin-bottom:16px}
+.pitch-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.pitch-card p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6}
+
+.section-title{font-size:clamp(22px,3.5vw,36px);font-weight:800;margin-bottom:8px}
+.section-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,.5);font-weight:300}
+
+/* Phase 3: CTA */
+.phase-cta{padding:80px 24px;text-align:center;background:linear-gradient(135deg,var(--navy-deep) 0%,#243B55 100%);position:relative}
+.taglines{display:flex;flex-direction:column;gap:16px;max-width:600px;margin:40px auto 48px;align-items:center}
+.tagline{font-size:clamp(16px,2.5vw,22px);padding:12px 28px;border-radius:40px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-weight:300;transition:all .3s;cursor:default}
+.tagline:hover{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);color:var(--orange)}
+.tagline strong{font-weight:700;color:var(--orange)}
+
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.btn-main{padding:16px 40px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-main:hover{background:#FFB84D;transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,166,35,.3)}
+.btn-ghost{padding:16px 40px;background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.3);border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.05)}
+
+/* Footer */
+.footer{padding:32px 24px;text-align:center;background:var(--navy-deep);border-top:1px solid rgba(255,255,255,.05)}
+.footer p{font-size:13px;color:rgba(255,255,255,.3)}
+.footer a{color:var(--orange);text-decoration:none}
+
+/* Social share cards */
+.share-strip{display:flex;gap:12px;justify-content:center;margin-top:32px}
+.share-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .2s;text-decoration:none;color:#fff}
+.share-btn:hover{background:var(--orange);border-color:var(--orange);color:var(--navy-deep);transform:scale(1.1)}
+
+/* Language switcher */
+.lang-bar{position:fixed;top:16px;right:16px;z-index:200;display:flex;gap:6px;align-items:center;background:rgba(15,33,55,.85);backdrop-filter:blur(8px);padding:6px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.1)}
+.lang-bar button{padding:5px 14px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
+.lang-bar button.active{background:#fff;color:var(--navy-deep);border-color:#fff}
+.lang-bar button:hover:not(.active){background:rgba(255,255,255,.1);color:#fff}
+.lang-bar .badge-more{font-size:10px;color:var(--orange);font-weight:500;padding:0 4px}
+
+@media(max-width:600px){
+  .logo-container img{width:200px;height:200px;border-radius:30px}
+  .question-mark{font-size:80px}
+  .phase-teaser{padding:32px 20px}
+  .phase-pitch,.phase-cta{padding:60px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Language switcher -->
+<div class="lang-bar">
+  <button class="active" onclick="setLang('es',true)">ES</button>
+  <button onclick="setLang('en',true)">EN</button>
+  <button onclick="setLang('pt',true)">PT</button>
+  <button onclick="setLang('fr',true)">FR</button>
+  <button onclick="setLang('de',true)">DE</button>
+  <button onclick="setLang('zh',true)">ZH</button>
+  <button onclick="setLang('hi',true)">HI</button>
+  <button onclick="setLang('ar',true)">AR</button>
+</div>
+
+<!-- PHASE 1: THE QUESTION -->
+<section class="phase-teaser">
+  <span class="question-mark q1">?</span>
+  <span class="question-mark q2">?</span>
+  <span class="question-mark q3">?</span>
+  <span class="question-mark q4">?</span>
+
+  <div class="logo-container">
+    <img src="campaign-logo.webp" alt="Chicken inside an egg — EGGlogU 360">
+    <div class="logo-glow"></div>
+  </div>
+
+  <div class="question">
+    <h1><em data-t="q_what">Que fue primero...</em><br><span data-t="q_chicken_egg">la gallina o el huevo?</span></h1>
+    <div class="dots">...</div>
+  </div>
+
+  <div class="answer-reveal">
+    <div class="answer-brand">
+      <span class="egg">EGG</span><span class="log">log</span><span class="u">U</span>
+    </div>
+    <div class="answer-360">360</div>
+    <div class="answer-tagline" data-t="tagline_main">La plataforma que nacio antes que el problema.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PHASE 2: WHY US -->
+<section class="phase-pitch">
+  <div class="section-title" data-t="pitch_title">Ni la gallina ni el huevo.</div>
+  <div class="section-sub" data-t="pitch_sub">Nosotros llegamos primero.</div>
+
+  <div class="pitch-grid">
+    <div class="pitch-card">
+      <div class="pitch-icon">🧠</div>
+      <h3 data-t="card1_t">IA Predictiva</h3>
+      <p data-t="card1_p">Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">🛡️</div>
+      <h3 data-t="card2_t">Bioseguridad Total</h3>
+      <p data-t="card2_p">Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">📦</div>
+      <h3 data-t="card3_t">Trazabilidad Completa</h3>
+      <p data-t="card3_p">Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">📊</div>
+      <h3 data-t="card4_t">14 Modulos Integrados</h3>
+      <p data-t="card4_p">Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, planificacion y mas. Todo en una sola plataforma.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">🌾</div>
+      <h3 data-t="card5_t">Modo Campo</h3>
+      <p data-t="card5_p">Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.</p>
+    </div>
+    <div class="pitch-card">
+      <div class="pitch-icon">💰</div>
+      <h3 data-t="card6_t">Desde $0/mes</h3>
+      <p data-t="card6_p">Plan gratuito para siempre. Profesional desde $29/mes — fraccion de lo que cobra la competencia por menos funcionalidad.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PHASE 3: THE PUNCHLINE CTA -->
+<section class="phase-cta">
+  <div class="section-title" data-t="cta_title">La eterna pregunta, resuelta.</div>
+
+  <div class="taglines">
+    <div class="tagline" data-t="tl1">Ni la gallina ni el huevo. <strong>EGGlogU 360.</strong></div>
+    <div class="tagline" data-t="tl2">Antes de la gallina. Antes del huevo. <strong>EGGlogU 360.</strong></div>
+    <div class="tagline" data-t="tl3">La respuesta que la industria avicola estaba esperando.</div>
+    <div class="tagline" data-t="tl4"><strong>EGGlogU 360</strong> — Nacimos primero.</div>
+  </div>
+
+  <div class="cta-buttons">
+    <a href="/app" class="btn-main" data-t="btn_start">Comenzar Gratis</a>
+    <a href="/" class="btn-ghost" data-t="btn_plans">Ver Planes y Precios</a>
+  </div>
+
+  <div class="share-strip">
+    <a class="share-btn" title="Share on X" href="https://twitter.com/intent/tweet?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A&url=https://egglogu.com/campaign" target="_blank">𝕏</a>
+    <a class="share-btn" title="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://egglogu.com/campaign" target="_blank">in</a>
+    <a class="share-btn" title="Share on WhatsApp" href="https://wa.me/?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A%20https://egglogu.com/campaign" target="_blank">💬</a>
+    <a class="share-btn" title="Copy link" onclick="navigator.clipboard.writeText('https://egglogu.com/campaign');this.textContent='✓';setTimeout(()=>this.textContent='🔗',2000)" href="javascript:void(0)">🔗</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>&copy; 2025 <a href="/">EGGlogU 360</a> — Gestion Avicola Inteligente</p>
+</footer>
+
+<script>
+const T={
+es:{
+  q_what:'Que fue primero...',q_chicken_egg:'la gallina o el huevo?',answer_label:'Respuesta',
+  tagline_main:'La plataforma que nacio antes que el problema.',
+  pitch_title:'Ni la gallina ni el huevo.',pitch_sub:'Nosotros llegamos primero.',
+  card1_t:'IA Predictiva',card1_p:'Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.',
+  card2_t:'Bioseguridad Total',card2_p:'Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.',
+  card3_t:'Trazabilidad Completa',card3_p:'Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.',
+  card4_t:'14 Modulos Integrados',card4_p:'Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, planificacion y mas. Todo en una sola plataforma.',
+  card5_t:'Modo Campo',card5_p:'Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.',
+  card6_t:'Desde $0/mes',card6_p:'Plan gratuito para siempre. Profesional desde $29/mes — fraccion de lo que cobra la competencia por menos funcionalidad.',
+  cta_title:'La eterna pregunta, resuelta.',
+  tl1:'Ni la gallina ni el huevo. <strong>EGGlogU 360.</strong>',
+  tl2:'Antes de la gallina. Antes del huevo. <strong>EGGlogU 360.</strong>',
+  tl3:'La respuesta que la industria avicola estaba esperando.',
+  tl4:'<strong>EGGlogU 360</strong> — Nacimos primero.',
+  btn_start:'Comenzar Gratis',btn_plans:'Ver Planes y Precios'
+},
+en:{
+  q_what:'What came first...',q_chicken_egg:'the chicken or the egg?',answer_label:'Answer',
+  tagline_main:'The platform that was born before the problem.',
+  pitch_title:'Neither the chicken nor the egg.',pitch_sub:'We got here first.',
+  card1_t:'Predictive AI',card1_p:'Outbreak risk classifier, forecasting with confidence bands, and automatic recommendations before the problem occurs.',
+  card2_t:'Total Biosecurity',card2_p:'Visitor control, risk zones, pest sightings, and disinfection protocols. Real-time Pest Score.',
+  card3_t:'Full Traceability',card3_p:'From batch to client. Every egg tracked with QR: farm, house, flock, date, FCR, health score.',
+  card4_t:'14 Integrated Modules',card4_p:'Production, health, feed, environment, vaccines, clients, finances, planning and more. All in one platform.',
+  card5_t:'Field Mode',card5_p:'Simplified interface for daily use. One button, log eggs, done. Designed to use with work boots on.',
+  card6_t:'From $0/month',card6_p:'Free plan forever. Professional from $29/mo — a fraction of what competitors charge for less functionality.',
+  cta_title:'The eternal question, answered.',
+  tl1:'Neither the chicken nor the egg. <strong>EGGlogU 360.</strong>',
+  tl2:'Before the chicken. Before the egg. <strong>EGGlogU 360.</strong>',
+  tl3:'The answer the poultry industry was waiting for.',
+  tl4:'<strong>EGGlogU 360</strong> — We were born first.',
+  btn_start:'Start Free',btn_plans:'See Plans & Pricing'
+},
+pt:{
+  q_what:'O que veio primeiro...',q_chicken_egg:'a galinha ou o ovo?',answer_label:'Resposta',
+  tagline_main:'A plataforma que nasceu antes do problema.',
+  pitch_title:'Nem a galinha nem o ovo.',pitch_sub:'Nos chegamos primeiro.',
+  card1_t:'IA Preditiva',card1_p:'Classificador de risco de surtos, previsao com bandas de confianca, e recomendacoes automaticas antes que o problema ocorra.',
+  card2_t:'Biosseguranca Total',card2_p:'Controle de visitantes, zonas de risco, avistamentos de pragas, e protocolos de desinfeccao. Pest Score em tempo real.',
+  card3_t:'Rastreabilidade Completa',card3_p:'Do lote ao cliente. Cada ovo rastreado com QR: granja, galpao, lote, data, FCR, health score.',
+  card4_t:'14 Modulos Integrados',card4_p:'Producao, saude, alimentacao, ambiente, vacinas, clientes, financas, planejamento e mais. Tudo em uma so plataforma.',
+  card5_t:'Modo Campo',card5_p:'Interface simplificada para o dia a dia. Um botao, registrar ovos, pronto. Projetado para usar com botas de trabalho.',
+  card6_t:'Desde $0/mes',card6_p:'Plano gratuito para sempre. Profissional desde $29/mes — fracao do que a concorrencia cobra por menos funcionalidade.',
+  cta_title:'A eterna pergunta, respondida.',
+  tl1:'Nem a galinha nem o ovo. <strong>EGGlogU 360.</strong>',
+  tl2:'Antes da galinha. Antes do ovo. <strong>EGGlogU 360.</strong>',
+  tl3:'A resposta que a industria avicola estava esperando.',
+  tl4:'<strong>EGGlogU 360</strong> — Nascemos primeiro.',
+  btn_start:'Comecar Gratis',btn_plans:'Ver Planos e Precos'
+},
+fr:{
+  q_what:'Qui est arrivé en premier...',q_chicken_egg:'la poule ou l\'œuf ?',answer_label:'Réponse',
+  tagline_main:'La plateforme qui est née avant le problème.',
+  pitch_title:'Ni la poule ni l\'œuf.',pitch_sub:'Nous sommes arrivés en premier.',
+  card1_t:'IA Prédictive',card1_p:'Classificateur de risque d\'épidémies, prévisions avec bandes de confiance, et recommandations automatiques avant que le problème ne survienne.',
+  card2_t:'Biosécurité Totale',card2_p:'Contrôle visiteurs, zones à risque, observations de nuisibles, et protocoles de désinfection. Score Nuisibles en temps réel.',
+  card3_t:'Traçabilité Complète',card3_p:'Du lot au client. Chaque œuf tracé avec QR : ferme, poulailler, lot, date, FCR, score santé.',
+  card4_t:'14 Modules Intégrés',card4_p:'Production, santé, alimentation, environnement, vaccins, clients, finances, planification et plus. Tout sur une seule plateforme.',
+  card5_t:'Mode Terrain',card5_p:'Interface simplifiée pour le quotidien. Un bouton, enregistrer les œufs, terminé. Conçu pour être utilisé avec des bottes de travail.',
+  card6_t:'À partir de 0$/mois',card6_p:'Plan gratuit pour toujours. Professionnel à partir de 29$/mois — fraction de ce que facture la concurrence pour moins de fonctionnalités.',
+  cta_title:'L\'éternelle question, résolue.',
+  tl1:'Ni la poule ni l\'œuf. <strong>EGGlogU 360.</strong>',
+  tl2:'Avant la poule. Avant l\'œuf. <strong>EGGlogU 360.</strong>',
+  tl3:'La réponse que l\'industrie avicole attendait.',
+  tl4:'<strong>EGGlogU 360</strong> — Nous sommes nés en premier.',
+  btn_start:'Commencer Gratuitement',btn_plans:'Voir Plans et Prix'
+},
+de:{
+  q_what:'Was war zuerst da...',q_chicken_egg:'die Henne oder das Ei?',answer_label:'Antwort',
+  tagline_main:'Die Plattform, die vor dem Problem geboren wurde.',
+  pitch_title:'Weder die Henne noch das Ei.',pitch_sub:'Wir kamen zuerst.',
+  card1_t:'Prädiktive KI',card1_p:'Ausbruchsrisiko-Klassifikator, Prognosen mit Konfidenzbändern, und automatische Empfehlungen bevor das Problem auftritt.',
+  card2_t:'Totale Biosicherheit',card2_p:'Besucherkontrolle, Risikozonen, Schädlingssichtungen, und Desinfektionsprotokolle. Schädlings-Score in Echtzeit.',
+  card3_t:'Vollständige Rückverfolgbarkeit',card3_p:'Von der Charge zum Kunden. Jedes Ei mit QR verfolgt: Betrieb, Stall, Herde, Datum, FCR, Gesundheits-Score.',
+  card4_t:'14 Integrierte Module',card4_p:'Produktion, Gesundheit, Fütterung, Umgebung, Impfungen, Kunden, Finanzen, Planung und mehr. Alles auf einer Plattform.',
+  card5_t:'Feld-Modus',card5_p:'Vereinfachte Oberfläche für den Alltag. Ein Knopf, Eier erfassen, fertig. Für die Nutzung mit Arbeitsstiefeln entwickelt.',
+  card6_t:'Ab $0/Monat',card6_p:'Kostenloser Plan für immer. Professional ab $29/Monat — Bruchteil dessen, was Wettbewerber für weniger Funktionalität verlangen.',
+  cta_title:'Die ewige Frage, gelöst.',
+  tl1:'Weder die Henne noch das Ei. <strong>EGGlogU 360.</strong>',
+  tl2:'Vor der Henne. Vor dem Ei. <strong>EGGlogU 360.</strong>',
+  tl3:'Die Antwort, auf die die Geflügelindustrie wartete.',
+  tl4:'<strong>EGGlogU 360</strong> — Wir wurden zuerst geboren.',
+  btn_start:'Kostenlos Beginnen',btn_plans:'Pläne und Preise Ansehen'
+},
+zh:{
+  q_what:'到底是谁先来的……',q_chicken_egg:'先有鸡还是先有蛋？',answer_label:'答案',
+  tagline_main:'比问题更早诞生的平台。',
+  pitch_title:'不是鸡，也不是蛋。',pitch_sub:'我们先到了。',
+  card1_t:'AI 预测',card1_p:'疫情风险分类器、带置信区间的预测、以及在问题发生之前的自动建议。',
+  card2_t:'全面生物安全',card2_p:'访客管理、风险区域、害虫目击记录和消毒规程。实时害虫评分。',
+  card3_t:'完整可追溯性',card3_p:'从批次到客户。每颗蛋通过 QR 追踪：农场、鸡舍、批次、日期、FCR、健康评分。',
+  card4_t:'14个集成模块',card4_p:'生产、健康、饲喂、环境、疫苗、客户、财务、规划等。一个平台搞定一切。',
+  card5_t:'田间模式',card5_p:'日常简化界面。一个按钮，记录鸡蛋，完成。专为穿着工作靴使用而设计。',
+  card6_t:'$0/月起',card6_p:'永久免费计划。专业版仅需 $29/月 — 竞争对手功能更少却收费更高。',
+  cta_title:'永恒之问，已有答案。',
+  tl1:'不是鸡，也不是蛋。<strong>EGGlogU 360。</strong>',
+  tl2:'先于鸡。先于蛋。<strong>EGGlogU 360。</strong>',
+  tl3:'家禽行业一直在等待的答案。',
+  tl4:'<strong>EGGlogU 360</strong> — 我们先诞生了。',
+  btn_start:'免费开始',btn_plans:'查看方案和价格'
+},
+hi:{
+  q_what:'पहले कौन आया…',q_chicken_egg:'मुर्गी या अंडा?',answer_label:'उत्तर',
+  tagline_main:'वह प्लेटफ़ॉर्म जो समस्या से पहले जन्मा।',
+  pitch_title:'न मुर्गी, न अंडा।',pitch_sub:'हम पहले आए।',
+  card1_t:'AI भविष्यवाणी',card1_p:'प्रकोप जोखिम वर्गीकरण, विश्वास बैंड के साथ पूर्वानुमान, और समस्या होने से पहले स्वचालित सिफ़ारिशें।',
+  card2_t:'संपूर्ण जैव सुरक्षा',card2_p:'आगंतुक नियंत्रण, जोखिम क्षेत्र, कीट दृश्य और कीटाणुशोधन प्रोटोकॉल। रीयल-टाइम कीट स्कोर।',
+  card3_t:'पूर्ण ट्रेसेबिलिटी',card3_p:'बैच से ग्राहक तक। हर अंडा QR से ट्रैक: फार्म, शेड, बैच, तिथि, FCR, स्वास्थ्य स्कोर।',
+  card4_t:'14 एकीकृत मॉड्यूल',card4_p:'उत्पादन, स्वास्थ्य, आहार, पर्यावरण, टीके, ग्राहक, वित्त, योजना और बहुत कुछ। सब एक ही प्लेटफ़ॉर्म पर।',
+  card5_t:'फ़ील्ड मोड',card5_p:'दैनिक कार्य के लिए सरल इंटरफ़ेस। एक बटन, अंडे दर्ज करें, बस। काम के जूतों में उपयोग के लिए डिज़ाइन किया गया।',
+  card6_t:'$0/महीने से',card6_p:'हमेशा के लिए मुफ़्त योजना। प्रोफ़ेशनल $29/महीने से — प्रतिस्पर्धी कम सुविधाओं के लिए अधिक शुल्क लेते हैं।',
+  cta_title:'शाश्वत प्रश्न, हल हो गया।',
+  tl1:'न मुर्गी, न अंडा। <strong>EGGlogU 360।</strong>',
+  tl2:'मुर्गी से पहले। अंडे से पहले। <strong>EGGlogU 360।</strong>',
+  tl3:'वह उत्तर जिसकी पोल्ट्री उद्योग प्रतीक्षा कर रहा था।',
+  tl4:'<strong>EGGlogU 360</strong> — हम पहले जन्मे।',
+  btn_start:'मुफ़्त शुरू करें',btn_plans:'योजनाएं और मूल्य देखें'
+},
+ar:{
+  q_what:'ما الذي كان أولاً...',q_chicken_egg:'الدجاجة أم البيضة؟',answer_label:'الإجابة',
+  tagline_main:'المنصة التي ولدت قبل المشكلة.',
+  pitch_title:'لا الدجاجة ولا البيضة.',pitch_sub:'نحن وصلنا أولاً.',
+  card1_t:'ذكاء اصطناعي تنبؤي',card1_p:'مصنف خطر التفشي، التوقعات مع نطاقات الثقة، والتوصيات التلقائية قبل حدوث المشكلة.',
+  card2_t:'أمن حيوي كامل',card2_p:'مراقبة الزوار، مناطق الخطر، رصد الآفات، وبروتوكولات التعقيم. نتيجة الآفات في الوقت الفعلي.',
+  card3_t:'تتبع كامل',card3_p:'من الدفعة إلى العميل. كل بيضة متتبعة مع QR: المزرعة، الحظيرة، القطيع، التاريخ، FCR، نتيجة الصحة.',
+  card4_t:'14 وحدة متكاملة',card4_p:'الإنتاج، الصحة، التغذية، البيئة، اللقاحات، العملاء، المالية، التخطيط والمزيد. كل شيء في منصة واحدة.',
+  card5_t:'وضع الحقل',card5_p:'واجهة مبسطة للاستخدام اليومي. زر واحد، تسجيل البيض، انتهى. مصمم للاستخدام مع أحذية العمل.',
+  card6_t:'من $0/شهر',card6_p:'خطة مجانية للأبد. احترافي من $29/شهر — جزء بسيط مما تطلبه المنافسة مقابل وظائف أقل.',
+  cta_title:'السؤال الأزلي، تم حله.',
+  tl1:'لا الدجاجة ولا البيضة. <strong>EGGlogU 360.</strong>',
+  tl2:'قبل الدجاجة. قبل البيضة. <strong>EGGlogU 360.</strong>',
+  tl3:'الإجابة التي كانت صناعة الدواجن تنتظرها.',
+  tl4:'<strong>EGGlogU 360</strong> — ولدنا أولاً.',
+  btn_start:'ابدأ مجاناً',btn_plans:'عرض الخطط والأسعار'
+}
+};
+let curLang='es';
+function setLang(l,manual){
+  curLang=l;
+  document.querySelectorAll('.lang-bar button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l));
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t'),v=T[l]&&T[l][k];
+    if(v) el.innerHTML=v;
+  });
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  if(manual) localStorage.setItem('campaign_lang_manual',l);
+}
+// Auto-detect device language, manual switch saves preference
+function detectDeviceLang(){
+  const nav=navigator.language||navigator.userLanguage||'';
+  const code=nav.split('-')[0].toLowerCase();
+  if(T[code]) return code;
+  if(nav.startsWith('es')) return 'es';
+  if(nav.startsWith('pt')) return 'pt';
+  return 'en';
+}
+// Use saved only if user manually switched, otherwise always use device lang
+const userChose=localStorage.getItem('campaign_lang_manual');
+setLang(userChose&&T[userChose]?userChose:detectDeviceLang());
+</script>
+</body>
+</html>
