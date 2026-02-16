@@ -188,6 +188,23 @@ body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:#3
 body.dark-mode .modal{background:#2D2D2D;color:#E0E0E0}
 body.dark-mode .rec-card{background:#1A237E;border-color:#3949AB}
 body.dark-mode .card{background:#2D2D2D}
+/* Onboarding tutorial card */
+.onboarding-card{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-left:4px solid #1976D2;border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;position:relative;color:#1A237E}
+.onboarding-card .onboarding-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:1.05em;font-weight:700}
+.onboarding-card .onboarding-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:#1976D2;line-height:1;padding:4px}
+.onboarding-card .onboarding-close:hover{color:#0D47A1}
+.onboarding-card .onboarding-desc{margin-bottom:10px;font-size:.93em;line-height:1.5;color:#263238}
+.onboarding-card .onboarding-tips{margin:0 0 10px 0;padding-left:20px;font-size:.88em;line-height:1.6;color:#37474F}
+.onboarding-card .onboarding-tips li{margin-bottom:2px}
+.onboarding-card .onboarding-dismiss{display:flex;align-items:center;gap:6px;font-size:.82em;color:#455A64;cursor:pointer;user-select:none}
+.onboarding-card .onboarding-dismiss input{cursor:pointer}
+body.dark-mode .onboarding-card{background:linear-gradient(135deg,#1A237E,#283593);border-left-color:#5C6BC0;color:#E0E0E0}
+body.dark-mode .onboarding-card .onboarding-desc{color:#BDBDBD}
+body.dark-mode .onboarding-card .onboarding-tips{color:#B0BEC5}
+body.dark-mode .onboarding-card .onboarding-close{color:#7986CB}
+body.dark-mode .onboarding-card .onboarding-close:hover{color:#9FA8DA}
+body.dark-mode .onboarding-card .onboarding-dismiss{color:#90A4AE}
+@media(max-width:600px){.onboarding-card{padding:12px 14px}.onboarding-card .onboarding-header{font-size:.97em}}
 /* QR display */
 .qr-display{padding:12px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);font-family:monospace;word-break:break-all;text-align:center;font-size:11px}
 /* Font scale */
@@ -810,6 +827,74 @@ const LIFECYCLE=[
 {stage:'descarte',key:'lc_descarte',weekStart:80,weekEnd:999,color:'#BDBDBD',icon:'📦',feed:'-',temp:'-',prod:'-',milestones:'lc_mile_8'}
 ];
 
+// ============ ONBOARDING TUTORIALS ============
+const ONBOARDING={
+dashboard:{
+es:{title:'Dashboard',desc:'Aqui ves el resumen de tu granja: produccion del dia, tasa hen-day, mortalidad y alertas activas. Los KPIs se actualizan automaticamente con cada registro.',tips:['Haz clic en "Guardar Snapshot" para comparar KPIs entre periodos.','Las alertas rojas requieren atencion inmediata; las amarillas son preventivas.','El grafico de 30 dias te muestra la tendencia de produccion.']},
+en:{title:'Dashboard',desc:'Here you see your farm summary: daily production, hen-day rate, mortality and active alerts. KPIs update automatically with each record.',tips:['Click "Save Snapshot" to compare KPIs across periods.','Red alerts require immediate attention; yellow ones are preventive.','The 30-day chart shows your production trend.']}
+},
+produccion:{
+es:{title:'Produccion',desc:'Registra la recoleccion diaria de huevos por lote. Clasifica por tamano (S/M/L/XL/Jumbo) y registra huevos rotos, sucios y muertes del dia.',tips:['Registra la produccion todos los dias a la misma hora para datos consistentes.','La tasa hen-day se calcula automaticamente: huevos / gallinas activas x 100.','Puedes exportar los datos a CSV para analisis externo.']},
+en:{title:'Production',desc:'Record daily egg collection per flock. Classify by size (S/M/L/XL/Jumbo) and register broken, dirty eggs and daily deaths.',tips:['Record production every day at the same time for consistent data.','Hen-day rate is auto-calculated: eggs / active hens x 100.','You can export data to CSV for external analysis.']}
+},
+lotes:{
+es:{title:'Lotes',desc:'Administra tus lotes de gallinas. Cada lote tiene raza, edad, cantidad y curva de produccion. Visualiza el ciclo de vida completo desde cria hasta descarte.',tips:['Crea un lote por cada grupo de aves de la misma edad y raza.','El roadmap muestra en que etapa esta cada lote (cria, recria, postura, descarte).','Actualiza la cantidad cuando haya muertes o descartes.']},
+en:{title:'Flocks',desc:'Manage your hen flocks. Each flock has breed, age, count and production curve. View the full lifecycle from rearing to culling.',tips:['Create one flock per group of birds of the same age and breed.','The roadmap shows each flock stage (rearing, growing, laying, culling).','Update the count when there are deaths or culling.']}
+},
+sanidad:{
+es:{title:'Sanidad',desc:'Controla vacunaciones, medicaciones y brotes sanitarios. Registra calendarios de vacunas con recordatorios automaticos y periodos de retiro.',tips:['Programa las vacunas con anticipacion; el sistema te alerta dias antes.','Registra el periodo de retiro (carencia) al aplicar medicamentos.','Documenta cada brote con sintomas, tratamiento y resultado.']},
+en:{title:'Health',desc:'Control vaccinations, medications and health outbreaks. Record vaccine schedules with automatic reminders and withdrawal periods.',tips:['Schedule vaccines in advance; the system alerts you days before.','Record the withdrawal period when applying medications.','Document each outbreak with symptoms, treatment and outcome.']}
+},
+alimento:{
+es:{title:'Alimento',desc:'Gestiona compras y consumo de alimento. Controla el stock disponible, costos por kilo y calcula la conversion alimenticia (FCR) por lote.',tips:['Registra cada compra con proveedor, cantidad y costo.','El FCR ideal para ponedoras es entre 2.0 y 2.5.','La alerta de stock bajo se activa segun el minimo configurado en Ajustes.']},
+en:{title:'Feed',desc:'Manage feed purchases and consumption. Track available stock, cost per kilo and calculate feed conversion ratio (FCR) per flock.',tips:['Record each purchase with supplier, quantity and cost.','Ideal FCR for layers is between 2.0 and 2.5.','Low stock alert triggers based on the minimum set in Settings.']}
+},
+clientes:{
+es:{title:'Clientes',desc:'Registra tu cartera de clientes con datos de contacto, historial de compras y cuentas por cobrar. Asocia ventas directamente a cada cliente.',tips:['Agrega telefono y email para facilitar la comunicacion.','Revisa las cuentas por cobrar regularmente para mantener flujo de caja.','Puedes filtrar ventas por cliente en el modulo de Finanzas.']},
+en:{title:'Clients',desc:'Register your client portfolio with contact data, purchase history and accounts receivable. Link sales directly to each client.',tips:['Add phone and email for easy communication.','Review accounts receivable regularly to maintain cash flow.','You can filter sales by client in the Finances module.']}
+},
+inventario:{
+es:{title:'Inventario',desc:'Controla el inventario de insumos, equipos y materiales de tu granja. Registra entradas, salidas y niveles de stock con alertas de reposicion.',tips:['Categoriza los items: alimento, medicinas, equipos, empaques, etc.','Revisa el inventario semanalmente para evitar quiebres de stock.','Asocia costos de inventario para un calculo preciso de gastos.']},
+en:{title:'Inventory',desc:'Control the inventory of supplies, equipment and farm materials. Record entries, exits and stock levels with reorder alerts.',tips:['Categorize items: feed, medicine, equipment, packaging, etc.','Review inventory weekly to avoid stockouts.','Associate inventory costs for accurate expense tracking.']}
+},
+finanzas:{
+es:{title:'Finanzas',desc:'Registra ingresos por venta de huevos y gastos operativos. Calcula rentabilidad, costo por huevo y genera reportes financieros mensuales.',tips:['Registra cada venta con cliente, cantidad, precio y forma de pago.','El costo por huevo incluye alimento, sanidad e insumos automaticamente.','Revisa el balance mensual para detectar tendencias de rentabilidad.']},
+en:{title:'Finances',desc:'Record egg sale income and operating expenses. Calculate profitability, cost per egg and generate monthly financial reports.',tips:['Record each sale with client, quantity, price and payment method.','Cost per egg automatically includes feed, health and supplies.','Review monthly balance to detect profitability trends.']}
+},
+analisis:{
+es:{title:'Analisis',desc:'Visualiza graficos avanzados de produccion, mortalidad, consumo y finanzas. Compara periodos, detecta tendencias y recibe predicciones basadas en IA.',tips:['Usa los filtros de fecha para comparar periodos especificos.','El analisis de tendencia te ayuda a anticipar caidas de produccion.','Exporta graficos para incluirlos en reportes.']},
+en:{title:'Analysis',desc:'View advanced charts for production, mortality, consumption and finances. Compare periods, detect trends and receive AI-based predictions.',tips:['Use date filters to compare specific periods.','Trend analysis helps you anticipate production drops.','Export charts to include in reports.']}
+},
+operaciones:{
+es:{title:'Operaciones',desc:'Gestiona las tareas diarias de la granja con checklists, bitacora de actividades y control de personal. Asegura que nada se pase por alto.',tips:['Configura el checklist predeterminado en Ajustes para estandarizar rutinas.','Usa la bitacora para documentar eventos importantes del dia.','Asigna tareas al personal para distribuir responsabilidades.']},
+en:{title:'Operations',desc:'Manage daily farm tasks with checklists, activity logbook and personnel control. Ensure nothing gets overlooked.',tips:['Set up the default checklist in Settings to standardize routines.','Use the logbook to document important daily events.','Assign tasks to staff to distribute responsibilities.']}
+},
+bioseguridad:{
+es:{title:'Bioseguridad',desc:'Protege tu granja con protocolos de bioseguridad: control de visitantes, zonas de desinfeccion, avistamiento de plagas y protocolos sanitarios.',tips:['Registra cada visitante con origen y estado sanitario de su granja.','Programa desinfecciones periodicas por zona; el sistema alerta si se vencen.','Documenta avistamientos de plagas para analisis de patrones.']},
+en:{title:'Biosecurity',desc:'Protect your farm with biosecurity protocols: visitor control, disinfection zones, pest sightings and health protocols.',tips:['Register each visitor with origin and farm health status.','Schedule periodic disinfections per zone; the system alerts when overdue.','Document pest sightings for pattern analysis.']}
+},
+trazabilidad:{
+es:{title:'Trazabilidad',desc:'Rastrea el origen y destino de cada lote de huevos. Genera codigos de trazabilidad para cumplir normativas de seguridad alimentaria.',tips:['Cada lote de huevos se vincula al lote de gallinas que lo produjo.','Genera codigos QR para etiquetado rapido.','La trazabilidad completa te protege ante reclamos o retiros del mercado.']},
+en:{title:'Traceability',desc:'Track the origin and destination of each egg batch. Generate traceability codes to comply with food safety regulations.',tips:['Each egg batch links to the hen flock that produced it.','Generate QR codes for quick labeling.','Full traceability protects you against claims or market recalls.']}
+},
+planificacion:{
+es:{title:'Planificacion',desc:'Planifica la produccion futura: proyecciones de postura, necesidades de alimento, renovacion de lotes y metas de produccion por periodo.',tips:['Crea planes de produccion basados en la curva de postura de cada raza.','Planifica la compra de alimento con anticipacion segun el consumo proyectado.','Programa la renovacion de lotes antes de que la produccion caiga demasiado.']},
+en:{title:'Planning',desc:'Plan future production: laying projections, feed needs, flock renewal and production targets per period.',tips:['Create production plans based on each breed laying curve.','Plan feed purchases in advance based on projected consumption.','Schedule flock renewal before production drops too much.']}
+},
+ambiente:{
+es:{title:'Ambiente',desc:'Monitorea las condiciones ambientales del galpon: temperatura, humedad, iluminacion y calidad del aire. Detecta condiciones de estres termico.',tips:['La temperatura ideal para ponedoras es 18-24°C.','Registra lecturas al menos 2 veces al dia (manana y tarde).','Las alertas de estres termico te ayudan a prevenir caidas de produccion.']},
+en:{title:'Environment',desc:'Monitor henhouse environmental conditions: temperature, humidity, lighting and air quality. Detect heat stress conditions.',tips:['Ideal temperature for layers is 18-24°C (64-75°F).','Record readings at least twice daily (morning and afternoon).','Heat stress alerts help you prevent production drops.']}
+},
+config:{
+es:{title:'Configuracion',desc:'Personaliza tu granja: nombre, ubicacion, moneda, umbrales de alerta, temas visuales y gestion de usuarios. Exporta e importa datos de respaldo.',tips:['Configura los umbrales de alerta segun las condiciones de tu granja.','Exporta un respaldo JSON regularmente para no perder datos.','Ajusta el tamano de fuente y modo oscuro segun tu preferencia.']},
+en:{title:'Settings',desc:'Customize your farm: name, location, currency, alert thresholds, visual themes and user management. Export and import backup data.',tips:['Set alert thresholds according to your farm conditions.','Export a JSON backup regularly to avoid data loss.','Adjust font size and dark mode to your preference.']}
+},
+admin:{
+es:{title:'Admin SaaS',desc:'Panel de administracion avanzada para gestion multi-granja, metricas SaaS y configuracion del sistema. Solo visible para el rol de propietario.',tips:['Revisa las metricas de uso para optimizar el rendimiento.','Gestiona permisos de usuario desde aqui.','Monitorea el almacenamiento utilizado.']},
+en:{title:'Admin SaaS',desc:'Advanced administration panel for multi-farm management, SaaS metrics and system configuration. Only visible to the owner role.',tips:['Review usage metrics to optimize performance.','Manage user permissions from here.','Monitor storage usage.']}
+}
+};
+
 // ============ THEMES ============
 const THEMES={
 blue:{primary:'#1A3C6E','primary-light':'#4A7AB5','primary-dark':'#0E2240','sidebar-bg':'#0E2240',rgb:'26,60,110'},
@@ -1003,7 +1088,7 @@ traceability:{batches:[]},
 productionPlans:[],
 auditLog:[],
 users:[],pendingActivations:[],
-settings:{minFeedStock:50,maxMortality:5,alertDaysBefore:3,campoMode:false,vetMode:false,fontScale:'normal',darkMode:false,plan:{tier:'professional',baseCost:99,includedUsers:1,extraUserCost:2.99,billingCycle:'monthly',currency:'USD',startDate:'',upgradedAt:''},ownerEmail:'',
+settings:{minFeedStock:50,maxMortality:5,alertDaysBefore:3,campoMode:false,vetMode:false,fontScale:'normal',darkMode:false,dismissedTutorials:[],plan:{tier:'professional',baseCost:99,includedUsers:1,extraUserCost:2.99,billingCycle:'monthly',currency:'USD',startDate:'',upgradedAt:''},ownerEmail:'',
 taxRate:0,depreciationYears:5,assetValue:0,
 defaultChecklist:['chk_collect_eggs','chk_feed_birds','chk_check_water','chk_check_health','chk_cleaning','chk_record_temp']}
 };
@@ -1307,6 +1392,7 @@ if(DATA.settings.campoMode===undefined)DATA.settings.campoMode=false;
 if(DATA.settings.vetMode===undefined)DATA.settings.vetMode=false;
 if(!DATA.settings.fontScale)DATA.settings.fontScale='normal';
 if(DATA.settings.darkMode===undefined)DATA.settings.darkMode=false;
+if(!Array.isArray(DATA.settings.dismissedTutorials))DATA.settings.dismissedTutorials=[];
 }else{DATA=JSON.parse(JSON.stringify(DEFAULT_DATA));}
 }catch(e){DATA=JSON.parse(JSON.stringify(DEFAULT_DATA));}
 return DATA;
@@ -1809,6 +1895,42 @@ const lbl=grp.previousElementSibling;
 if(lbl&&!lbl.classList.contains('grp-open'))lbl.classList.add('grp-open');
 if(!grp.classList.contains('grp-open'))grp.classList.add('grp-open');
 }
+// ============ ONBOARDING TUTORIAL SYSTEM ============
+function renderOnboarding(section){
+const ob=ONBOARDING[section];if(!ob)return'';
+const D=loadData();
+if(!Array.isArray(D.settings.dismissedTutorials))D.settings.dismissedTutorials=[];
+if(D.settings.dismissedTutorials.includes(section))return'';
+const lang=LANG==='en'?'en':'es';
+const data=ob[lang]||ob.es;
+const lblDismiss=lang==='es'?'No mostrar de nuevo':'Don\'t show again';
+const lblTitle=lang==='es'?'Tutorial: ':'Tutorial: ';
+let tips='';
+if(data.tips&&data.tips.length){tips='<ul class="onboarding-tips">';data.tips.forEach(function(tip){tips+='<li>'+sanitizeHTML(tip)+'</li>';});tips+='</ul>';}
+return'<div class="onboarding-card" id="onboarding-'+sanitizeHTML(section)+'">'
++'<button class="onboarding-close" onclick="dismissTutorial(\''+escapeAttr(section)+'\',document.getElementById(\'onboarding-chk-'+escapeAttr(section)+'\').checked)" aria-label="Close" title="Close">&times;</button>'
++'<div class="onboarding-header"><span aria-hidden="true">&#128161;</span> '+sanitizeHTML(lblTitle+data.title)+'</div>'
++'<div class="onboarding-desc">'+sanitizeHTML(data.desc)+'</div>'
++tips
++'<label class="onboarding-dismiss"><input type="checkbox" id="onboarding-chk-'+escapeAttr(section)+'"> '+sanitizeHTML(lblDismiss)+'</label>'
++'</div>';
+}
+function dismissTutorial(section,permanent){
+var card=document.getElementById('onboarding-'+section);
+if(card)card.remove();
+if(permanent){var D=loadData();if(!Array.isArray(D.settings.dismissedTutorials))D.settings.dismissedTutorials=[];if(D.settings.dismissedTutorials.indexOf(section)===-1){D.settings.dismissedTutorials.push(section);saveData(D);}}
+}
+function resetTutorials(){
+var D=loadData();D.settings.dismissedTutorials=[];saveData(D);
+var msg=LANG==='en'?'All tutorials reactivated!':'Todos los tutoriales reactivados!';
+toast(msg);nav('config');
+}
+function _injectOnboarding(section){
+var sec=$('sec-'+section);if(!sec)return;
+var html=renderOnboarding(section);if(!html)return;
+var existing=document.getElementById('onboarding-'+section);if(existing)return;
+sec.insertAdjacentHTML('afterbegin',html);
+}
 function nav(section){
 currentSection=section;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
 $('sec-'+section).classList.add('active');
@@ -1817,8 +1939,8 @@ openNavGroupFor(section);
 $('sidebar').classList.remove('open');
 const R={dashboard:renderDashboard,produccion:renderProduction,lotes:renderFlocks,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,admin:renderAdmin,config:renderConfig};
 if(R[section]){
-if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);});}
-else{R[section]();postRenderA11y(section);}
+if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);_injectOnboarding(section);});}
+else{R[section]();postRenderA11y(section);_injectOnboarding(section);}
 }
 }
 function postRenderA11y(section){setTimeout(()=>{const sec=$('sec-'+section);if(sec)sec.querySelectorAll('thead th').forEach(th=>{if(!th.getAttribute('scope'))th.setAttribute('scope','col');});},50);}
@@ -3610,6 +3732,16 @@ h+=`<div class="card"><h3>${t('cfg_storage')||'Storage Usage'}</h3>
 <div style="background:var(--border);border-radius:8px;height:24px;overflow:hidden;margin-bottom:8px">
 <div style="background:${storagePct>80?'var(--danger)':storagePct>60?'var(--warning)':'var(--success)'};height:100%;width:${storagePct}%;border-radius:8px;transition:width .3s"></div></div>
 <p style="color:var(--text-light);font-size:13px">${(storageUsed/1024).toFixed(1)} KB / ${(storageMax/1024).toFixed(0)} KB (${storagePct.toFixed(1)}%)</p></div>`;
+// Tutorials reactivation card
+const _tutDismissed=(D.settings.dismissedTutorials||[]).length;
+const _tutLabel=LANG==='en'?'Tutorials':'Tutoriales';
+const _tutBtnLabel=LANG==='en'?'Reactivate all tutorials':'Reactivar todos los tutoriales';
+const _tutStatus=LANG==='en'?(_tutDismissed+' tutorial(s) dismissed'):(_tutDismissed+' tutorial(es) desactivado(s)');
+const _tutNone=LANG==='en'?'All tutorials are active.':'Todos los tutoriales estan activos.';
+h+=`<div class="card"><h3>&#128161; ${sanitizeHTML(_tutLabel)}</h3>`;
+if(_tutDismissed>0){h+=`<p style="color:var(--text-light);font-size:13px;margin-bottom:12px">${sanitizeHTML(_tutStatus)}</p><button class="btn btn-secondary" onclick="resetTutorials()">${sanitizeHTML(_tutBtnLabel)}</button>`;}
+else{h+=`<p style="color:var(--text-light);font-size:13px">${sanitizeHTML(_tutNone)}</p>`;}
+h+='</div>';
 // Data management
 h+=`<div class="card"><h3>${t('cfg_data')}</h3><div class="btn-group">
 <button class="btn btn-secondary" onclick="exportData()">${t('cfg_export')}</button>
@@ -5089,21 +5221,125 @@ if(on){applyTheme('dark');localStorage.setItem('egglogu_theme','dark');}
 // ============ PIN LOGIN (A8) ============
 function showPinLogin(){
 const D=loadData();if(!D.users.length)return false;// No users = skip PIN
+const isEs=(document.documentElement.lang||'es').startsWith('es');
 const appEl=document.querySelector('.app');if(appEl)appEl.style.display='none';
 const overlay=document.createElement('div');overlay.id='pin-login-overlay';
 overlay.style.cssText='position:fixed;inset:0;background:var(--sidebar-bg,#1a237e);display:flex;align-items:center;justify-content:center;z-index:9999;';
-let h='<div style="background:var(--card-bg,#fff);padding:32px;border-radius:16px;max-width:360px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)">';
+let h='<div style="max-width:360px;width:90%;">';
+// Back button above the card
+h+='<a href="index.html" style="display:inline-block;margin-bottom:16px;color:#fff;text-decoration:none;font-size:14px;opacity:0.85;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85">';
+h+='&#8592; '+(isEs?'Volver':'Back')+'</a>';
+// Login card
+h+='<div style="background:var(--card-bg,#fff);padding:32px;border-radius:16px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)">';
 h+='<h2 style="margin-bottom:4px">🥚 EGGlogU</h2><p style="color:var(--text-light);margin-bottom:20px">'+(t('pin_select_user')||'Select user')+'</p>';
 h+='<div class="form-group"><select id="pin-user" style="width:100%;padding:10px;font-size:16px;border-radius:var(--radius);border:1px solid var(--border)">';
 D.users.forEach(u=>{h+=`<option value="${escapeAttr(u.id)}">${sanitizeHTML(u.name)} (${u.role})</option>`;});
 h+='</select></div>';
 h+='<div class="form-group" style="margin-top:12px"><input type="password" id="pin-code" maxlength="4" placeholder="PIN (4 digits)" style="width:100%;padding:10px;font-size:20px;text-align:center;letter-spacing:8px;border-radius:var(--radius);border:1px solid var(--border)"></div>';
 h+='<button onclick="verifyPin()" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:8px">'+(t('pin_login')||'Login')+'</button>';
-h+='<p id="pin-error" style="color:var(--danger,red);margin-top:8px;display:none"></p></div>';
+// Sign Up button
+h+='<button onclick="showSignUp()" style="width:100%;padding:12px;background:transparent;color:var(--primary,#1a73e8);border:2px solid var(--primary,#1a73e8);border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:10px">'+(isEs?'Crear Cuenta':'Sign Up')+'</button>';
+// Forgot PIN link
+h+='<div style="margin-top:12px"><a href="javascript:void(0)" onclick="showForgotPin()" style="color:var(--text-light,#666);font-size:13px;text-decoration:underline;cursor:pointer">'+(isEs?'¿Olvidaste tu PIN?':'Forgot PIN?')+'</a></div>';
+h+='<p id="pin-error" style="color:var(--danger,red);margin-top:8px;display:none"></p>';
+h+='</div></div>';
 overlay.innerHTML=h;document.body.appendChild(overlay);
 $('pin-code')?.focus();
 $('pin-code')?.addEventListener('keydown',e=>{if(e.key==='Enter')verifyPin();});
 return true;
+}
+function showSignUp(){
+const isEs=(document.documentElement.lang||'es').startsWith('es');
+const overlay=$('pin-login-overlay');if(!overlay)return;
+let h='<div style="max-width:360px;width:90%;">';
+h+='<a href="javascript:void(0)" onclick="showPinLoginRefresh()" style="display:inline-block;margin-bottom:16px;color:#fff;text-decoration:none;font-size:14px;opacity:0.85;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85">';
+h+='&#8592; '+(isEs?'Volver al Login':'Back to Login')+'</a>';
+h+='<div style="background:var(--card-bg,#fff);padding:32px;border-radius:16px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)">';
+h+='<h2 style="margin-bottom:4px">🥚 EGGlogU</h2><p style="color:var(--text-light);margin-bottom:20px">'+(isEs?'Crear nueva cuenta':'Create new account')+'</p>';
+h+='<div class="form-group" style="margin-bottom:10px"><input type="text" id="signup-name" placeholder="'+(isEs?'Nombre completo':'Full name')+'" style="width:100%;padding:10px;font-size:15px;border-radius:var(--radius);border:1px solid var(--border)"></div>';
+h+='<div class="form-group" style="margin-bottom:10px"><input type="email" id="signup-email" placeholder="Email" style="width:100%;padding:10px;font-size:15px;border-radius:var(--radius);border:1px solid var(--border)"></div>';
+h+='<div class="form-group" style="margin-bottom:10px"><input type="password" id="signup-password" placeholder="'+(isEs?'Contraseña':'Password')+'" style="width:100%;padding:10px;font-size:15px;border-radius:var(--radius);border:1px solid var(--border)"></div>';
+h+='<div class="form-group" style="margin-bottom:10px"><input type="password" id="signup-confirm" placeholder="'+(isEs?'Confirmar contraseña':'Confirm password')+'" style="width:100%;padding:10px;font-size:15px;border-radius:var(--radius);border:1px solid var(--border)"></div>';
+h+='<button onclick="processSignUp()" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:8px">'+(isEs?'Crear Cuenta':'Create Account')+'</button>';
+h+='<p id="signup-error" style="color:var(--danger,red);margin-top:8px;display:none"></p>';
+h+='</div></div>';
+overlay.innerHTML=h;
+$('signup-name')?.focus();
+}
+function processSignUp(){
+const isEs=(document.documentElement.lang||'es').startsWith('es');
+const name=($('signup-name')?.value||'').trim();
+const email=($('signup-email')?.value||'').trim();
+const password=($('signup-password')?.value||'').trim();
+const confirm=($('signup-confirm')?.value||'').trim();
+const errEl=$('signup-error');
+if(!errEl)return;
+errEl.style.display='none';
+// Validation
+if(!name){errEl.textContent=isEs?'El nombre es obligatorio':'Name is required';errEl.style.display='block';return;}
+if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent=isEs?'Email inválido':'Invalid email';errEl.style.display='block';return;}
+if(password.length<4){errEl.textContent=isEs?'La contraseña debe tener al menos 4 caracteres':'Password must be at least 4 characters';errEl.style.display='block';return;}
+if(password!==confirm){errEl.textContent=isEs?'Las contraseñas no coinciden':'Passwords do not match';errEl.style.display='block';return;}
+const D=loadData();
+// Check if email already in use
+if(D.users.some(u=>u.email&&u.email.toLowerCase()===email.toLowerCase())){errEl.textContent=isEs?'Este email ya está registrado':'This email is already registered';errEl.style.display='block';return;}
+// Generate 4-digit PIN
+const pin=String(Math.floor(1000+Math.random()*9000));
+const newUser={id:genId(),name:name,email:email,role:'owner',pin:pin,password:password,status:'active',activatedAt:todayStr(),created:todayStr()};
+D.users.push(newUser);
+if(!D.settings.ownerEmail)D.settings.ownerEmail=email;
+saveData(D);
+logAudit('signup','auth','New user signup: '+name+' (owner)',null,{user:name,role:'owner',email:email});
+// Auto-login the new user
+_currentUser={name:newUser.name,role:newUser.role,id:newUser.id};
+const overlay=$('pin-login-overlay');if(overlay)overlay.remove();
+const appEl=document.querySelector('.app');if(appEl)appEl.style.display='';
+applyRoleNav();
+// Show PIN to the user
+const pinMsg=isEs?'Cuenta creada con éxito. Tu PIN de acceso es:':'Account created successfully. Your access PIN is:';
+setTimeout(()=>{openModal('🔑 PIN',`<div style="text-align:center"><p>${pinMsg}</p><div style="font-size:36px;font-weight:bold;letter-spacing:12px;color:var(--primary,#1a73e8);margin:16px 0">${pin}</div><p style="color:var(--text-light);font-size:13px">${isEs?'Anota este PIN, lo necesitarás para iniciar sesión.':'Write down this PIN, you will need it to log in.'}</p></div>`);},300);
+}
+function showPinLoginRefresh(){
+const overlay=$('pin-login-overlay');if(overlay)overlay.remove();
+const appEl=document.querySelector('.app');if(appEl)appEl.style.display='none';
+showPinLogin();
+}
+function showForgotPin(){
+const isEs=(document.documentElement.lang||'es').startsWith('es');
+const overlay=$('pin-login-overlay');if(!overlay)return;
+let h='<div style="max-width:360px;width:90%;">';
+h+='<a href="javascript:void(0)" onclick="showPinLoginRefresh()" style="display:inline-block;margin-bottom:16px;color:#fff;text-decoration:none;font-size:14px;opacity:0.85;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85">';
+h+='&#8592; '+(isEs?'Volver al Login':'Back to Login')+'</a>';
+h+='<div style="background:var(--card-bg,#fff);padding:32px;border-radius:16px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3)">';
+h+='<h2 style="margin-bottom:4px">🔑 '+(isEs?'Recuperar PIN':'Recover PIN')+'</h2>';
+h+='<p style="color:var(--text-light);margin-bottom:20px">'+(isEs?'Ingresa tu email para recuperar tu PIN':'Enter your email to recover your PIN')+'</p>';
+h+='<div class="form-group" style="margin-bottom:12px"><input type="email" id="forgot-email" placeholder="Email" style="width:100%;padding:10px;font-size:15px;border-radius:var(--radius);border:1px solid var(--border)"></div>';
+h+='<button onclick="processForgotPin()" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer">'+(isEs?'Recuperar PIN':'Recover PIN')+'</button>';
+h+='<p id="forgot-error" style="color:var(--danger,red);margin-top:8px;display:none"></p>';
+h+='<div id="forgot-result" style="display:none;margin-top:16px;padding:16px;background:var(--bg,#f5f5f5);border-radius:var(--radius)"></div>';
+h+='</div></div>';
+overlay.innerHTML=h;
+$('forgot-email')?.focus();
+$('forgot-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')processForgotPin();});
+}
+function processForgotPin(){
+const isEs=(document.documentElement.lang||'es').startsWith('es');
+const email=($('forgot-email')?.value||'').trim().toLowerCase();
+const errEl=$('forgot-error');
+const resEl=$('forgot-result');
+if(!errEl||!resEl)return;
+errEl.style.display='none';resEl.style.display='none';
+if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent=isEs?'Ingresa un email válido':'Enter a valid email';errEl.style.display='block';return;}
+const D=loadData();
+// Check ownerEmail in settings or user emails
+const matched=D.users.find(u=>(u.email||'').toLowerCase()===email);
+const ownerMatch=!matched&&D.settings.ownerEmail&&D.settings.ownerEmail.toLowerCase()===email?D.users.find(u=>u.role==='owner'):null;
+const user=matched||ownerMatch;
+if(!user){errEl.textContent=isEs?'No se encontró ninguna cuenta con ese email':'No account found with that email';errEl.style.display='block';return;}
+if(!user.pin){errEl.textContent=isEs?'Este usuario no tiene PIN configurado':'This user has no PIN configured';errEl.style.display='block';return;}
+resEl.innerHTML='<p style="font-size:13px;color:var(--text-light);margin-bottom:8px">'+(isEs?'Tu PIN es:':'Your PIN is:')+'</p><div style="font-size:36px;font-weight:bold;letter-spacing:12px;color:var(--primary,#1a73e8)">'+sanitizeHTML(user.pin)+'</div><p style="font-size:12px;color:var(--text-light);margin-top:8px">'+sanitizeHTML(user.name)+' ('+user.role+')</p>';
+resEl.style.display='block';
+logAudit('pin_recovery','auth','PIN recovery for: '+user.name,null,{email:email});
 }
 function verifyPin(){
 const D=loadData();const uid=$('pin-user')?.value;const pin=$('pin-code')?.value||'';
