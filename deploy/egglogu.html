@@ -39,10 +39,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .nav-group-links.grp-open{max-height:500px}
 
 .sidebar nav a i{font-style:normal;font-size:18px;width:24px;text-align:center}
-.lang-toggle{padding:12px 16px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;border-top:1px solid rgba(255,255,255,.15)}
-.lang-toggle button{padding:5px 12px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:4px;cursor:pointer;font-size:12px;font-weight:500;transition:all .2s}
-.lang-toggle button:hover{background:rgba(255,255,255,.15)}
-.lang-toggle button.active{background:#fff;color:var(--sidebar-bg);font-weight:700}
+.lang-collapse{border-top:1px solid rgba(255,255,255,.15);padding:0 16px}
+.lang-collapse-btn{width:100%;padding:10px 0;background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:space-between}
+.lang-collapse-btn:hover{color:#fff}
+.lang-collapse-btn::after{content:'▾';transition:transform .2s}
+.lang-collapse.open .lang-collapse-btn::after{transform:rotate(180deg)}
+.lang-grid{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.lang-collapse.open .lang-grid{max-height:200px}
+.lang-grid-inner{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:8px 0 12px}
+.lang-grid button{padding:4px 10px;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:4px;cursor:pointer;font-size:11px;font-weight:500;transition:all .2s;display:flex;align-items:center;gap:4px}
+.lang-grid button:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.7)}
+.lang-grid button.active{background:#fff;color:var(--sidebar-bg);font-weight:700;border-color:#fff}
 .hamburger{display:none;position:fixed;top:10px;left:10px;z-index:101;background:var(--primary);color:#fff;border:none;padding:8px 12px;border-radius:var(--radius);font-size:20px;cursor:pointer}
 .main-content{margin-left:var(--sidebar-width);flex:1;padding:20px 30px;min-height:100vh}
 .section{display:none}.section.active{display:block}
@@ -289,15 +296,18 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
 <button onclick="toggleCampoMode()" id="btn-campo" class="mode-btn" aria-label="Toggle Campo Mode">🌾 <span data-t="nav_campo_mode">Modo Campo</span></button>
 <button onclick="toggleVetMode()" id="btn-vet" class="mode-btn" aria-label="Toggle Vet Mode">🩺 <span data-t="nav_vet_mode">Modo Vet</span></button>
 </div>
-<div class="lang-toggle" id="langToggle">
-<button onclick="switchLang('es')" id="btn-es" class="active">ES</button>
-<button onclick="switchLang('en')" id="btn-en">EN</button>
-<button onclick="switchLang('pt')" id="btn-pt">PT</button>
-<button onclick="switchLang('fr')" id="btn-fr">FR</button>
-<button onclick="switchLang('de')" id="btn-de">DE</button>
-<button onclick="switchLang('it')" id="btn-it">IT</button>
-<button onclick="switchLang('ja')" id="btn-ja">JA</button>
-<button onclick="switchLang('zh')" id="btn-zh">ZH</button>
+<div class="lang-collapse" id="langToggle">
+<button class="lang-collapse-btn" onclick="this.parentElement.classList.toggle('open')">🌐 <span id="langCurrent">Español</span></button>
+<div class="lang-grid"><div class="lang-grid-inner">
+<button onclick="switchLang('es')" id="btn-es" class="active">🇨🇱 ES</button>
+<button onclick="switchLang('en')" id="btn-en">🇺🇸 EN</button>
+<button onclick="switchLang('pt')" id="btn-pt">🇧🇷 PT</button>
+<button onclick="switchLang('fr')" id="btn-fr">🇫🇷 FR</button>
+<button onclick="switchLang('de')" id="btn-de">🇩🇪 DE</button>
+<button onclick="switchLang('it')" id="btn-it">🇮🇹 IT</button>
+<button onclick="switchLang('ja')" id="btn-ja">🇯🇵 JA</button>
+<button onclick="switchLang('zh')" id="btn-zh">🇨🇳 ZH</button>
+</div></div>
 </div>
 <div style="padding:8px 12px;margin-top:auto">
 <button onclick="doLogout()" class="mode-btn" style="width:100%;background:rgba(198,40,40,.3);border-color:rgba(198,40,40,.4)" aria-label="Logout">&#x1F6AA; <span data-t="logout">Cerrar sesión</span></button>
@@ -1819,7 +1829,7 @@ setTimeout(()=>{const first=$('modal-overlay').querySelector('input,select,texta
 function closeModal(){$('modal-overlay').classList.remove('open');if(_modalTrigger&&_modalTrigger.focus)_modalTrigger.focus();_modalTrigger=null;_vengWarningsShown=false;}
 function toast(msg,err=false){const e=$('toast');e.textContent=msg;e.className='toast show'+(err?' error':'');setTimeout(()=>e.className='toast',3000);}
 function emptyState(icon,msg,btn,act){let h=`<div class="empty-state"><div class="empty-icon">${sanitizeHTML(icon)}</div><p>${sanitizeHTML(msg)}</p>`;if(btn)h+=`<button class="btn btn-primary" onclick="${escapeAttr(act)}">${sanitizeHTML(btn)}</button>`;return h+'</div>';}
-function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);document.documentElement.lang=l;const lt=$('langToggle');if(lt){lt.querySelectorAll('button').forEach(b=>{b.classList.toggle('active',b.id==='btn-'+l);});}document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
+function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);document.documentElement.lang=l;const lt=$('langToggle');if(lt){lt.querySelectorAll('.lang-grid button').forEach(b=>{b.classList.toggle('active',b.id==='btn-'+l);});const names={es:'Español',en:'English',pt:'Português',fr:'Français',de:'Deutsch',it:'Italiano',ja:'日本語',zh:'中文'};const lc=$('langCurrent');if(lc)lc.textContent=names[l]||l;lt.classList.remove('open');}document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
 function flockSelect(sel,all=false){const D=loadData();let h=all?`<option value="">${t('all')}</option>`:'<option value="">--</option>';D.flocks.forEach(f=>{h+=`<option value="${escapeAttr(f.id)}"${f.id===sel?' selected':''}>${sanitizeHTML(f.name)}</option>`;});return h;}
 function clientSelect(sel){const D=loadData();let h='<option value="">--</option>';D.clients.forEach(c=>{h+=`<option value="${escapeAttr(c.id)}"${c.id===sel?' selected':''}>${sanitizeHTML(c.name)}</option>`;});return h;}
 function destroyCharts(){Object.values(CHARTS).forEach(c=>{try{c.destroy();}catch(e){}});CHARTS={};}
