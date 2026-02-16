@@ -1,4 +1,4 @@
-const CACHE_NAME = 'egglogu-v3';
+const CACHE_NAME = 'egglogu-v4';
 const CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.7',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -8,6 +8,9 @@ const CDN_ASSETS = [
 ];
 const LOCAL_ASSETS = [
   './',
+  './egglogu.html',
+  './campaign.html',
+  './manual.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
