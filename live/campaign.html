@@ -69,24 +69,33 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
 
 /* Pricing */
 .phase-pricing{padding:80px 24px;text-align:center;background:var(--navy-deep)}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;max-width:1100px;margin:48px auto 0;align-items:start}
-.price-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px 24px;position:relative;transition:all .3s}
-.price-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.2)}
-.price-card.featured{border-color:var(--orange);background:rgba(245,166,35,.05)}
-.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:var(--navy-deep);font-size:12px;font-weight:700;padding:4px 16px;border-radius:20px;white-space:nowrap}
-.price-tier{font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;color:rgba(255,255,255,.7)}
-.price-amount{font-size:48px;font-weight:900;line-height:1;margin-bottom:8px}
-.price-currency{font-size:24px;font-weight:600;vertical-align:super}
-.price-period{font-size:16px;font-weight:400;color:rgba(255,255,255,.5)}
-.price-desc{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:20px}
-.price-features{list-style:none;text-align:left;margin-bottom:24px}
+.pricing-accordion{max-width:680px;margin:48px auto 0;text-align:left}
+.acc-item{border:1px solid rgba(255,255,255,.08);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:all .3s}
+.acc-item.featured{border-color:var(--orange)}
+.acc-item.open{background:rgba(255,255,255,.05)}
+.acc-item.open.featured{background:rgba(245,166,35,.05)}
+.acc-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;user-select:none;transition:background .2s}
+.acc-header:hover{background:rgba(255,255,255,.04)}
+.acc-h-left{display:flex;align-items:center;gap:16px}
+.acc-tier{font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.7)}
+.acc-item.featured .acc-tier{color:var(--orange)}
+.acc-price{font-size:28px;font-weight:900;line-height:1}
+.acc-price span{font-size:14px;font-weight:400;color:rgba(255,255,255,.5)}
+.acc-badge{background:var(--orange);color:var(--navy-deep);font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap}
+.acc-chevron{font-size:20px;color:rgba(255,255,255,.4);transition:transform .3s}
+.acc-item.open .acc-chevron{transform:rotate(180deg);color:var(--orange)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.acc-item.open .acc-body{max-height:500px}
+.acc-content{padding:0 24px 24px}
+.acc-desc{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:16px}
+.price-features{list-style:none;text-align:left;margin-bottom:20px}
 .price-features li{padding:6px 0;font-size:14px;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.05)}
 .price-features li::before{content:'\2713  ';color:var(--orange);font-weight:700}
-.btn-price{display:block;padding:12px;background:transparent;border:2px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;transition:all .2s;cursor:pointer}
+.btn-price{display:inline-block;padding:12px 28px;background:transparent;border:2px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;transition:all .2s;cursor:pointer}
 .btn-price:hover{border-color:#fff;background:rgba(255,255,255,.05)}
 .btn-price-main{background:var(--orange);border-color:var(--orange);color:var(--navy-deep)}
 .btn-price-main:hover{background:#FFB84D;border-color:#FFB84D}
-.pricing-note{max-width:720px;margin:28px auto 0;padding:16px 24px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:12px;font-size:14px;color:rgba(255,255,255,.8);line-height:1.6}
+.pricing-note{max-width:680px;margin:28px auto 0;padding:16px 24px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:12px;font-size:14px;color:rgba(255,255,255,.8);line-height:1.6}
 .pricing-note strong{color:var(--orange)}
 .contact-strip{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .btn-email{padding:14px 32px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
@@ -214,64 +223,80 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
   <div class="section-title" data-t="pricing_title">Planes y Precios</div>
   <div class="section-sub" data-t="pricing_sub">Sin contratos. Cancela cuando quieras. 14 dias de prueba completa.</div>
 
-  <div class="pricing-grid">
-    <div class="price-card">
-      <div class="price-tier" data-t="tier0_name">Hobbyist</div>
-      <div class="price-amount"><span class="price-currency">$</span>19<span class="price-period" data-t="price_mo">/mes</span></div>
-      <div class="price-desc" data-t="tier0_desc">Productor independiente</div>
-      <ul class="price-features">
-        <li data-t="t0f1">Hasta 2 lotes</li>
-        <li data-t="t0f2">1 usuario · +$4.99/extra</li>
-        <li data-t="t0f3">Produccion + Dashboard</li>
-        <li data-t="t0f4">Modo Campo</li>
-        <li data-t="t0f5">Funciona sin internet</li>
-      </ul>
-      <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
+  <div class="pricing-accordion" id="pricingAcc">
+    <div class="acc-item" data-acc="0">
+      <div class="acc-header" onclick="toggleAcc(0)">
+        <div class="acc-h-left"><span class="acc-tier" data-t="tier0_name">Hobbyist</span><span class="acc-price">$19<span data-t="price_mo">/mes</span></span></div>
+        <span class="acc-chevron">&#9662;</span>
+      </div>
+      <div class="acc-body"><div class="acc-content">
+        <div class="acc-desc" data-t="tier0_desc">Productor independiente</div>
+        <ul class="price-features">
+          <li data-t="t0f1">Hasta 2 lotes</li>
+          <li data-t="t0f2">1 usuario · +$4.99/extra</li>
+          <li data-t="t0f3">Produccion + Dashboard</li>
+          <li data-t="t0f4">Modo Campo</li>
+          <li data-t="t0f5">Funciona sin internet</li>
+        </ul>
+        <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
+      </div></div>
     </div>
 
-    <div class="price-card">
-      <div class="price-tier" data-t="tier1_name">Starter</div>
-      <div class="price-amount"><span class="price-currency">$</span>49<span class="price-period" data-t="price_mo">/mes</span></div>
-      <div class="price-desc" data-t="tier1_desc">Operacion comercial</div>
-      <ul class="price-features">
-        <li data-t="t1f1">Hasta 5 lotes</li>
-        <li data-t="t1f2">1 usuario · +$3.99/extra</li>
-        <li data-t="t1f3">Produccion + Alimentacion + Salud</li>
-        <li data-t="t1f4">Finanzas + Clientes</li>
-        <li data-t="t1f5">Modo Campo + Dashboard</li>
-      </ul>
-      <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
+    <div class="acc-item" data-acc="1">
+      <div class="acc-header" onclick="toggleAcc(1)">
+        <div class="acc-h-left"><span class="acc-tier" data-t="tier1_name">Starter</span><span class="acc-price">$49<span data-t="price_mo">/mes</span></span></div>
+        <span class="acc-chevron">&#9662;</span>
+      </div>
+      <div class="acc-body"><div class="acc-content">
+        <div class="acc-desc" data-t="tier1_desc">Operacion comercial</div>
+        <ul class="price-features">
+          <li data-t="t1f1">Hasta 5 lotes</li>
+          <li data-t="t1f2">1 usuario · +$3.99/extra</li>
+          <li data-t="t1f3">Produccion + Alimentacion + Salud</li>
+          <li data-t="t1f4">Finanzas + Clientes</li>
+          <li data-t="t1f5">Modo Campo + Dashboard</li>
+        </ul>
+        <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
+      </div></div>
     </div>
 
-    <div class="price-card featured">
-      <div class="price-badge" data-t="badge_pop">Mas Popular</div>
-      <div class="price-tier" data-t="tier2_name">Professional</div>
-      <div class="price-amount"><span class="price-currency">$</span>99<span class="price-period" data-t="price_mo">/mes</span></div>
-      <div class="price-desc" data-t="tier2_desc">Operacion completa con IA</div>
-      <ul class="price-features">
-        <li data-t="t2f1">Hasta 15 lotes</li>
-        <li data-t="t2f2">1 usuario · +$2.99/extra</li>
-        <li data-t="t2f3">20 modulos completos</li>
-        <li data-t="t2f4">IA predictiva + Analytics</li>
-        <li data-t="t2f5">Bioseguridad + Trazabilidad</li>
-        <li data-t="t2f6">Validacion Zero Tolerance</li>
-      </ul>
-      <a href="egglogu.html" class="btn-price btn-price-main" data-t="btn_trial">Probar 14 Dias</a>
+    <div class="acc-item featured open" data-acc="2">
+      <div class="acc-header" onclick="toggleAcc(2)">
+        <div class="acc-h-left"><span class="acc-tier" data-t="tier2_name">Professional</span><span class="acc-price">$99<span data-t="price_mo">/mes</span></span></div>
+        <span class="acc-badge" data-t="badge_pop">Mas Popular</span>
+        <span class="acc-chevron">&#9662;</span>
+      </div>
+      <div class="acc-body"><div class="acc-content">
+        <div class="acc-desc" data-t="tier2_desc">Operacion completa con IA</div>
+        <ul class="price-features">
+          <li data-t="t2f1">Hasta 15 lotes</li>
+          <li data-t="t2f2">1 usuario · +$2.99/extra</li>
+          <li data-t="t2f3">20 modulos completos</li>
+          <li data-t="t2f4">IA predictiva + Analytics</li>
+          <li data-t="t2f5">Bioseguridad + Trazabilidad</li>
+          <li data-t="t2f6">Validacion Zero Tolerance</li>
+        </ul>
+        <a href="egglogu.html" class="btn-price btn-price-main" data-t="btn_trial">Probar 14 Dias</a>
+      </div></div>
     </div>
 
-    <div class="price-card">
-      <div class="price-tier" data-t="tier3_name">Enterprise</div>
-      <div class="price-amount"><span class="price-currency">$</span>199<span class="price-period" data-t="price_mo">/mes</span></div>
-      <div class="price-desc" data-t="tier3_desc">Multi-granja, sin limites</div>
-      <ul class="price-features">
-        <li data-t="t3f1">Lotes ilimitados</li>
-        <li data-t="t3f2">1 usuario · +$2.49/extra (-50%)</li>
-        <li data-t="t3f3">Multi-granja centralizada</li>
-        <li data-t="t3f4">Todo en Professional +</li>
-        <li data-t="t3f5">Soporte dedicado 24/7</li>
-        <li data-t="t3f6">Onboarding personalizado</li>
-      </ul>
-      <a href="mailto:jadelsolara@pm.me?subject=EGGlogU%20Enterprise" class="btn-price" data-t="btn_contact">Contactar</a>
+    <div class="acc-item" data-acc="3">
+      <div class="acc-header" onclick="toggleAcc(3)">
+        <div class="acc-h-left"><span class="acc-tier" data-t="tier3_name">Enterprise</span><span class="acc-price">$199<span data-t="price_mo">/mes</span></span></div>
+        <span class="acc-chevron">&#9662;</span>
+      </div>
+      <div class="acc-body"><div class="acc-content">
+        <div class="acc-desc" data-t="tier3_desc">Multi-granja, sin limites</div>
+        <ul class="price-features">
+          <li data-t="t3f1">Lotes ilimitados</li>
+          <li data-t="t3f2">1 usuario · +$2.49/extra (-50%)</li>
+          <li data-t="t3f3">Multi-granja centralizada</li>
+          <li data-t="t3f4">Todo en Professional +</li>
+          <li data-t="t3f5">Soporte dedicado 24/7</li>
+          <li data-t="t3f6">Onboarding personalizado</li>
+        </ul>
+        <a href="mailto:jadelsolara@pm.me?subject=EGGlogU%20Enterprise" class="btn-price" data-t="btn_contact">Contactar</a>
+      </div></div>
     </div>
   </div>
 
@@ -494,6 +519,12 @@ function setLang(l,manual){
   document.documentElement.lang=l;
   document.documentElement.dir=l==='ar'?'rtl':'ltr';
   if(manual) localStorage.setItem('campaign_lang_manual',l);
+}
+function toggleAcc(n){
+  document.querySelectorAll('.acc-item').forEach(el=>{
+    if(+el.dataset.acc===n) el.classList.toggle('open');
+    else el.classList.remove('open');
+  });
 }
 // Auto-detect device language, manual switch saves preference
 function detectDeviceLang(){
