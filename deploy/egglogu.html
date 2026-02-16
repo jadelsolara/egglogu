@@ -333,14 +333,22 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <script>
-// ============ GLOBAL ERROR HANDLER ============
+// ============ GLOBAL ERROR HANDLER + BUG REPORTER ============
+const _bugErrors=[];const _BUG_ERROR_CAP=50;
 window.onerror = function(msg, src, line, col, err) {
   console.error('[EGGlogU Error]', msg, src, line, col);
+  _bugErrors.push({ts:new Date().toISOString(),type:'error',msg:String(msg),src:String(src||'').split('/').pop(),line,col,stack:err?.stack?.substring(0,300)||'',section:typeof currentSection!=='undefined'?currentSection:'?'});
+  if(_bugErrors.length>_BUG_ERROR_CAP)_bugErrors.shift();
+  _bugUpdateBadge();
   return false;
 };
 window.addEventListener('unhandledrejection', function(e) {
   console.error('[EGGlogU Promise]', e.reason);
+  _bugErrors.push({ts:new Date().toISOString(),type:'promise',msg:String(e.reason?.message||e.reason||'Unknown rejection').substring(0,200),src:'',line:0,col:0,stack:e.reason?.stack?.substring(0,300)||'',section:typeof currentSection!=='undefined'?currentSection:'?'});
+  if(_bugErrors.length>_BUG_ERROR_CAP)_bugErrors.shift();
+  _bugUpdateBadge();
 });
+function _bugUpdateBadge(){const b=document.getElementById('bug-badge');if(b){b.textContent=_bugErrors.length;b.style.display=_bugErrors.length?'flex':'none';}}
 
 // ============ TRANSLATIONS ============
 const T={es:{
@@ -3199,8 +3207,8 @@ const audit=D.auditLog||[];
 const cur=plan.currency||'USD';
 
 // i18n labels inline (avoids editing 8 language blocks for 40+ keys)
-const L={es:{title:'Admin SaaS',plan_overview:'Resumen del Plan',current_plan:'Plan Actual',monthly_cost:'Costo Mensual',max_flocks:'Lotes Máx.',included_users:'Usuarios Incluidos',extra_cost:'Costo Extra/Usuario',billing:'Ciclo Facturación',user_kpis:'KPIs de Usuarios',total_users:'Total Usuarios',active_users:'Usuarios Activos',inactive_users:'Inactivos',by_role:'Por Rol',activation_kpis:'KPIs de Activación',activation_rate:'Tasa Activación',avg_time_activate:'Tiempo Promedio Activación',pending_activations:'Activaciones Pendientes',churn_kpis:'KPIs de Churn',monthly_churn:'Churn Mensual',retention:'Retención',deactivated_30d:'Desactivados (30d)',revenue_kpis:'KPIs de Revenue',mrr:'MRR (Ingreso Mensual Recurrente)',base_revenue:'Revenue Base',extra_user_revenue:'Revenue Usuarios Extra',total_mrr:'MRR Total',user_table:'Tabla de Usuarios',name:'Nombre',email:'Email',role:'Rol',status:'Estado',since:'Desde',actions:'Acciones',active:'Activo',inactive:'Inactivo',pending:'Pendiente',no_users:'No hay usuarios registrados',upgrade_plan:'Cambiar Plan',upgrade:'Upgrade',current:'(Actual)',audit_recent:'Actividad Reciente',no_audit:'Sin registros de auditoría',deactivate:'Desactivar',activate:'Activar',days:'días',confirm_deactivate:'¿Desactivar este usuario?',confirm_activate:'¿Reactivar este usuario?',plan_changed:'Plan actualizado exitosamente',user_toggled:'Estado del usuario actualizado'},
-en:{title:'SaaS Admin',plan_overview:'Plan Overview',current_plan:'Current Plan',monthly_cost:'Monthly Cost',max_flocks:'Max Flocks',included_users:'Included Users',extra_cost:'Extra User Cost',billing:'Billing Cycle',user_kpis:'User KPIs',total_users:'Total Users',active_users:'Active Users',inactive_users:'Inactive',by_role:'By Role',activation_kpis:'Activation KPIs',activation_rate:'Activation Rate',avg_time_activate:'Avg. Time to Activate',pending_activations:'Pending Activations',churn_kpis:'Churn KPIs',monthly_churn:'Monthly Churn',retention:'Retention',deactivated_30d:'Deactivated (30d)',revenue_kpis:'Revenue KPIs',mrr:'MRR (Monthly Recurring Revenue)',base_revenue:'Base Revenue',extra_user_revenue:'Extra User Revenue',total_mrr:'Total MRR',user_table:'User Table',name:'Name',email:'Email',role:'Role',status:'Status',since:'Since',actions:'Actions',active:'Active',inactive:'Inactive',pending:'Pending',no_users:'No registered users',upgrade_plan:'Change Plan',upgrade:'Upgrade',current:'(Current)',audit_recent:'Recent Activity',no_audit:'No audit records',deactivate:'Deactivate',activate:'Activate',days:'days',confirm_deactivate:'Deactivate this user?',confirm_activate:'Reactivate this user?',plan_changed:'Plan updated successfully',user_toggled:'User status updated'}};
+const L={es:{title:'Admin SaaS',plan_overview:'Resumen del Plan',current_plan:'Plan Actual',monthly_cost:'Costo Mensual',max_flocks:'Lotes Máx.',included_users:'Usuarios Incluidos',extra_cost:'Costo Extra/Usuario',billing:'Ciclo Facturación',user_kpis:'KPIs de Usuarios',total_users:'Total Usuarios',active_users:'Usuarios Activos',inactive_users:'Inactivos',by_role:'Por Rol',activation_kpis:'KPIs de Activación',activation_rate:'Tasa Activación',avg_time_activate:'Tiempo Promedio Activación',pending_activations:'Activaciones Pendientes',churn_kpis:'KPIs de Churn',monthly_churn:'Churn Mensual',retention:'Retención',deactivated_30d:'Desactivados (30d)',revenue_kpis:'KPIs de Revenue',mrr:'MRR (Ingreso Mensual Recurrente)',base_revenue:'Revenue Base',extra_user_revenue:'Revenue Usuarios Extra',total_mrr:'MRR Total',user_table:'Tabla de Usuarios',name:'Nombre',email:'Email',role:'Rol',status:'Estado',since:'Desde',actions:'Acciones',active:'Activo',inactive:'Inactivo',pending:'Pendiente',no_users:'No hay usuarios registrados',upgrade_plan:'Cambiar Plan',upgrade:'Upgrade',current:'(Actual)',audit_recent:'Actividad Reciente',no_audit:'Sin registros de auditoría',deactivate:'Desactivar',activate:'Activar',days:'días',confirm_deactivate:'¿Desactivar este usuario?',confirm_activate:'¿Reactivar este usuario?',plan_changed:'Plan actualizado exitosamente',user_toggled:'Estado del usuario actualizado',add_user:'Agregar Usuario',delete_user:'Eliminar',billing_title:'Facturación y Pagos',billing_next:'Próxima Facturación',billing_cycle:'Ciclo',billing_base:'Cargo Base',billing_extra:'Usuarios Extra',billing_total:'Total por Ciclo',billing_ledger:'Historial de Cobros',billing_type:'Tipo',billing_desc:'Descripción',billing_amount:'Monto',billing_monthly:'Cobro mensual',billing_activation_charge:'Cargo proporcional activación',billing_deactivation_credit:'Crédito desactivación',billing_auto_note:'Sistema autogestionable — los cobros y créditos se calculan automáticamente según activaciones/desactivaciones de usuarios. No se requiere intervención manual.'},
+en:{title:'SaaS Admin',plan_overview:'Plan Overview',current_plan:'Current Plan',monthly_cost:'Monthly Cost',max_flocks:'Max Flocks',included_users:'Included Users',extra_cost:'Extra User Cost',billing:'Billing Cycle',user_kpis:'User KPIs',total_users:'Total Users',active_users:'Active Users',inactive_users:'Inactive',by_role:'By Role',activation_kpis:'Activation KPIs',activation_rate:'Activation Rate',avg_time_activate:'Avg. Time to Activate',pending_activations:'Pending Activations',churn_kpis:'Churn KPIs',monthly_churn:'Monthly Churn',retention:'Retention',deactivated_30d:'Deactivated (30d)',revenue_kpis:'Revenue KPIs',mrr:'MRR (Monthly Recurring Revenue)',base_revenue:'Base Revenue',extra_user_revenue:'Extra User Revenue',total_mrr:'Total MRR',user_table:'User Table',name:'Name',email:'Email',role:'Role',status:'Status',since:'Since',actions:'Actions',active:'Active',inactive:'Inactive',pending:'Pending',no_users:'No registered users',upgrade_plan:'Change Plan',upgrade:'Upgrade',current:'(Current)',audit_recent:'Recent Activity',no_audit:'No audit records',deactivate:'Deactivate',activate:'Activate',days:'days',confirm_deactivate:'Deactivate this user?',confirm_activate:'Reactivate this user?',plan_changed:'Plan updated successfully',user_toggled:'User status updated',add_user:'Add User',delete_user:'Delete',billing_title:'Billing & Payments',billing_next:'Next Billing',billing_cycle:'Cycle',billing_base:'Base Charge',billing_extra:'Extra Users',billing_total:'Total per Cycle',billing_ledger:'Payment History',billing_type:'Type',billing_desc:'Description',billing_amount:'Amount',billing_monthly:'Monthly charge',billing_activation_charge:'Proportional activation charge',billing_deactivation_credit:'Deactivation credit',billing_auto_note:'Self-managed system — charges and credits are calculated automatically based on user activations/deactivations. No manual intervention required.'}};
 const lang=document.documentElement.lang||'es';
 const lbl=L[lang]||L[Object.keys(L).find(k=>lang.startsWith(k))]||L.es;
 
@@ -3290,34 +3298,93 @@ h+=`<div class="card"><h3>💰 ${lbl.revenue_kpis}</h3>
 
 h+=`</div>`;
 
-// User Table
-h+=`<div class="card" style="margin-bottom:16px"><h3>📊 ${lbl.user_table}</h3>`;
+// User Table with Add/Delete buttons
+h+=`<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+<h3 style="margin:0">📊 ${lbl.user_table}</h3>
+<button class="btn btn-primary btn-sm" onclick="showUserForm()" style="font-size:0.85rem">➕ ${lbl.add_user}</button>
+</div>`;
 if(users.length===0){
 h+=`<p style="color:var(--text-muted);text-align:center;padding:24px">${lbl.no_users}</p>`;
 }else{
 h+=`<div style="overflow-x:auto"><table class="data-table" style="width:100%;margin-top:12px"><thead><tr>
-<th>${lbl.name}</th><th>${lbl.email}</th><th>${lbl.role}</th><th>${lbl.status}</th><th>${lbl.since}</th><th>${lbl.actions}</th>
+<th>${lbl.name}</th><th>${lbl.email}</th><th>${lbl.role}</th><th>${lbl.status}</th><th>${lbl.since}</th><th style="min-width:180px">${lbl.actions}</th>
 </tr></thead><tbody>`;
 users.forEach(u=>{
 const statusColor=u.status==='active'?'#4caf50':u.status==='pending'?'#ff9800':'#f44336';
 const statusText=u.status==='active'?lbl.active:u.status==='pending'?lbl.pending:lbl.inactive;
 const since=u.activatedAt||u.createdAt||'—';
 const sinceStr=since!=='—'?new Date(since).toLocaleDateString():since;
+const isOwnerSelf=u.role==='owner'&&u.id===_currentUser?.id;
 const toggleBtn=u.status==='active'
-?`<button class="btn btn-sm" style="background:#f44336;font-size:0.75rem" onclick="toggleUserStatus('${u.id}','deactivate')">${lbl.deactivate}</button>`
-:`<button class="btn btn-sm" style="background:#4caf50;font-size:0.75rem" onclick="toggleUserStatus('${u.id}','activate')">${lbl.activate}</button>`;
+?`<button class="btn btn-sm" style="background:#f44336;font-size:0.72rem;padding:3px 8px" onclick="deactivateUser('${u.id}')"${isOwnerSelf?' disabled title="No se puede desactivar al dueño actual"':''}>${lbl.deactivate}</button>`
+:u.status==='inactive'||u.status==='expired'||u.status==='deactivated'
+?`<button class="btn btn-sm" style="background:#4caf50;font-size:0.72rem;padding:3px 8px" onclick="reactivateUser('${u.id}')">${lbl.activate}</button>`
+:u.status==='pending'
+?`<button class="btn btn-sm" style="background:#ff9800;font-size:0.72rem;padding:3px 8px" onclick="resendActivation('${u.id}')">📧</button>`:'';
+const deleteBtn=u.status!=='active'&&!isOwnerSelf
+?`<button class="btn btn-sm" style="background:#b71c1c;font-size:0.72rem;padding:3px 8px;margin-left:4px" onclick="removeUser('${u.id}')">${lbl.delete_user}</button>`:'';
+const editBtn=`<button class="btn btn-sm" style="background:var(--primary);font-size:0.72rem;padding:3px 8px;margin-left:4px" onclick="showUserForm('${u.id}')">✏</button>`;
 h+=`<tr>
-<td><strong>${sanitizeHTML(u.name||'—')}</strong></td>
-<td>${sanitizeHTML(u.email||'—')}</td>
+<td><strong>${sanitizeHTML(u.name||'—')}</strong>${u.isExtra?'<span style="font-size:0.65rem;background:var(--warning);color:#000;padding:1px 5px;border-radius:8px;margin-left:4px">EXTRA</span>':''}</td>
+<td>${sanitizeHTML(u.email||u.workerId||'—')}</td>
 <td><span style="text-transform:capitalize">${u.role||'—'}</span></td>
 <td><span style="color:${statusColor};font-weight:600">● ${statusText}</span></td>
 <td>${sinceStr}</td>
-<td>${toggleBtn}</td>
+<td style="white-space:nowrap">${toggleBtn}${editBtn}${deleteBtn}</td>
 </tr>`;
 });
 h+=`</tbody></table></div>`;
 }
 h+=`</div>`;
+
+// Billing & Payments (self-managed)
+const billingCycle=plan.billingCycle||'monthly';
+const nextBilling=getNextBillingDate(billingCycle);
+const extraUsersActive=activeUsers.filter(u=>u.isExtra);
+const totalExtraCharge=Math.round(extraUsersActive.length*tierInfo.extraUserCost*100)/100;
+const totalMonthlyCharge=Math.round((tierInfo.baseCost+totalExtraCharge)*100)/100;
+
+h+=`<div class="card" style="margin-bottom:16px"><h3>💳 ${lbl.billing_title}</h3>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:12px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+<div><div style="font-size:0.75rem;color:var(--text-muted)">${lbl.billing_next}</div><div style="font-weight:700;font-size:1.1rem">${nextBilling}</div></div>
+<div><div style="font-size:0.75rem;color:var(--text-muted)">${lbl.billing_cycle}</div><div style="font-weight:700;font-size:1.1rem;text-transform:capitalize">${billingCycle}</div></div>
+<div><div style="font-size:0.75rem;color:var(--text-muted)">${lbl.billing_base}</div><div style="font-weight:700;font-size:1.1rem">$${tierInfo.baseCost.toFixed(2)}</div></div>
+<div><div style="font-size:0.75rem;color:var(--text-muted)">${lbl.billing_extra} (${extraUsersActive.length})</div><div style="font-weight:700;font-size:1.1rem">$${totalExtraCharge.toFixed(2)}</div></div>
+<div style="border:2px solid var(--primary);border-radius:8px;padding:8px"><div style="font-size:0.75rem;color:var(--text-muted)">${lbl.billing_total}</div><div style="font-weight:900;font-size:1.3rem;color:var(--primary)">$${totalMonthlyCharge.toFixed(2)}</div></div>
+</div></div>`;
+
+// Payment Ledger (auto-generated from user billing data)
+const ledger=[];
+users.forEach(u=>{
+if(u.firstCharge&&u.activatedAt){ledger.push({date:u.activatedAt,type:'charge',desc:lbl.billing_activation_charge+': '+u.name+(u.isExtra?' (extra)':''),amount:u.firstCharge});}
+if(u.deactivatedAt&&u.isExtra){ledger.push({date:u.deactivatedAt,type:'credit',desc:lbl.billing_deactivation_credit+': '+u.name,amount:Math.round(tierInfo.extraUserCost*0.3*100)/100});}
+});
+// Add recurring monthly charges based on history
+const months=new Set();
+D.kpiSnapshots?.forEach(k=>{if(k.date)months.add(k.date.substring(0,7));});
+months.forEach(m=>{
+const activeInMonth=users.filter(u=>u.activatedAt&&u.activatedAt.substring(0,7)<=m&&(!u.deactivatedAt||u.deactivatedAt.substring(0,7)>=m));
+const extraInMonth=Math.max(0,activeInMonth.length-tierInfo.includedUsers);
+ledger.push({date:m+'-01',type:'charge',desc:lbl.billing_monthly+' — '+tierInfo.name+' + '+extraInMonth+' extra',amount:Math.round((tierInfo.baseCost+extraInMonth*tierInfo.extraUserCost)*100)/100});
+});
+ledger.sort((a,b)=>b.date.localeCompare(a.date));
+
+if(ledger.length>0){
+h+=`<div style="margin-top:12px"><h4 style="font-size:0.9rem;margin-bottom:8px">📜 ${lbl.billing_ledger}</h4>
+<div style="overflow-x:auto;max-height:250px;overflow-y:auto"><table class="data-table" style="width:100%;font-size:0.85rem"><thead><tr>
+<th>${lbl.date||'Fecha'}</th><th>${lbl.billing_type}</th><th>${lbl.billing_desc}</th><th style="text-align:right">${lbl.billing_amount}</th>
+</tr></thead><tbody>`;
+ledger.slice(0,30).forEach(l=>{
+const color=l.type==='charge'?'#f44336':'#4caf50';
+const sign=l.type==='charge'?'-':'+';
+h+=`<tr><td style="white-space:nowrap">${l.date}</td><td style="color:${color};font-weight:600;text-transform:capitalize">${l.type}</td>
+<td>${sanitizeHTML(l.desc)}</td><td style="text-align:right;font-weight:600;color:${color}">${sign}$${l.amount.toFixed(2)}</td></tr>`;
+});
+h+=`</tbody></table></div></div>`;
+}
+h+=`<div style="margin-top:12px;padding:10px;background:rgba(76,175,80,.08);border-radius:var(--radius);font-size:0.8rem;color:var(--text-muted)">
+🤖 ${lbl.billing_auto_note}</div></div>`;
 
 // Recent Audit Activity
 h+=`<div class="card"><h3>📝 ${lbl.audit_recent}</h3>`;
@@ -3383,16 +3450,13 @@ renderAdmin();
 }
 
 function toggleUserStatus(userId,action){
-const D=loadData();
-const u=D.users.find(x=>x.id===userId);
-if(!u)return;
-const isDeactivate=action==='deactivate';
-if(isDeactivate){u.status='deactivated';u.deactivatedAt=new Date().toISOString();u.deactivatedBy=_currentUser?.name||'owner';}
-else{u.status='active';u.activatedAt=new Date().toISOString();u.deactivatedAt=null;u.deactivatedBy=null;}
-saveData(D);
-if(typeof logAudit==='function')logAudit(action,'admin',`User ${u.name} ${action}d`);
-renderAdmin();
+// Route through secure 4-layer functions
+if(action==='deactivate')deactivateUser(userId);
+else reactivateUser(userId);
 }
+
+// Helper: refresh correct section after user management operations
+function refreshUserSection(){if(currentSection==='admin')renderAdmin();else renderConfig();}
 
 // === CONFIG MODULE ===
 function renderConfig(){
@@ -3636,7 +3700,7 @@ if(o.pin&&(o.pin.length!==4||!/^\d{4}$/.test(o.pin))){toast('PIN debe ser 4 díg
 if(id){
 const i=D.users.findIndex(u=>u.id===id);
 if(i>=0){logAudit('update','users','Edit user: '+o.name,D.users[i],o);D.users[i]={...D.users[i],...o};}
-saveData(D);closeModal();toast(t('cfg_saved'));renderConfig();
+saveData(D);closeModal();toast(t('cfg_saved'));refreshUserSection();
 }else{
 // New user → trigger 4-layer activation flow
 closeModal();
@@ -3709,7 +3773,7 @@ userObj.firstCharge=Math.round((plan.extraUserCost/daysInCycle)*remainingDays*10
 userObj.nextBillingDate=getNextBillingDate(plan.billingCycle);
 }
 logAudit('activation_direct','users','Worker activated directly: '+userObj.name+' ('+userObj.workerId+')',null,{user:userObj.name,workerId:userObj.workerId,isExtra,confirmedBy:_currentUser.name});
-saveData(D);toast('✅ '+userObj.name+' ('+userObj.workerId+') activado');renderConfig();
+saveData(D);toast('✅ '+userObj.name+' ('+userObj.workerId+') activado');refreshUserSection();
 window._pendingActivation=null;
 }
 // LAYER 2: Email confirmation to owner
@@ -3764,7 +3828,7 @@ ${costLine}
 ✅ Confirmar Activación</button>
 </div>
 <p style="font-size:11px;color:var(--text-light);text-align:center">Este enlace expira en 24 horas. Si no solicitó esto, ignore este mensaje.</p>
-<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal();renderConfig()">Cerrar (confirmar después)</button></div>`);
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal();refreshUserSection()">Cerrar (confirmar después)</button></div>`);
 window._pendingActivation=null;
 }
 // LAYER 2b: Confirm activation (simulates email link click)
@@ -3805,7 +3869,7 @@ logAudit('activation_confirmed','users','User activated: '+user.name+' — confi
 {status:'pending'},{status:'active',activatedAt:user.activatedAt,confirmedBy:user.confirmedBy});
 saveData(D);closeModal();
 toast('✅ '+user.name+' activado correctamente');
-renderConfig();
+refreshUserSection();
 }
 // LAYER 3 helper: Next billing date
 function getNextBillingDate(cycle){
@@ -3841,7 +3905,7 @@ const u=D.users.find(x=>x.id===id);if(!u)return;
 const before={status:u.status,activatedAt:u.activatedAt};
 u.status='inactive';u.deactivatedAt=new Date().toISOString().split('T')[0];u.deactivatedBy=_currentUser.name;
 logAudit('deactivation','users','User deactivated: '+u.name+' by '+_currentUser.name,before,{status:'inactive',deactivatedAt:u.deactivatedAt});
-saveData(D);closeModal();toast(u.name+' desactivado');renderConfig();
+saveData(D);closeModal();toast(u.name+' desactivado');refreshUserSection();
 }
 // Auto-deactivation check (LAYER 4) — runs on app load
 function checkBillingCycleDeactivations(){
@@ -3898,7 +3962,7 @@ if(!await showConfirm('¿Eliminar permanentemente a '+u.name+'? Esta acción no 
 logAudit('delete','users','Permanently removed user: '+u.name,u,null);
 D.users=D.users.filter(x=>x.id!==id);
 if(D.pendingActivations)D.pendingActivations=D.pendingActivations.filter(p=>p.userId!==id);
-saveData(D);toast(u.name+' eliminado');renderConfig();
+saveData(D);toast(u.name+' eliminado');refreshUserSection();
 }
 // Backup list loader (A7)
 async function loadBackupList(){
@@ -5095,6 +5159,193 @@ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.foc
 });
 }
 window.addEventListener('DOMContentLoaded',init);
+
+// ============ BUG REPORTER WIDGET ============
+(function(){
+const STORAGE_KEY='egglogu_bugs';
+function loadBugs(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch(e){return[];}}
+function saveBugs(b){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(b.slice(-100)));}catch(e){}}
+
+function injectBugWidget(){
+// Floating button
+const fab=document.createElement('div');
+fab.id='bug-fab';
+fab.innerHTML=`<span style="font-size:20px">🐛</span><span id="bug-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#f44336;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center">0</span>`;
+fab.style.cssText='position:fixed;bottom:20px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(244,67,54,.4);z-index:99999;transition:transform .2s,box-shadow .2s;user-select:none';
+fab.onmouseenter=()=>{fab.style.transform='scale(1.12)';fab.style.boxShadow='0 6px 24px rgba(244,67,54,.5)';};
+fab.onmouseleave=()=>{fab.style.transform='scale(1)';fab.style.boxShadow='0 4px 16px rgba(244,67,54,.4)';};
+fab.onclick=toggleBugPanel;
+document.body.appendChild(fab);
+_bugUpdateBadge();
+
+// Panel
+const panel=document.createElement('div');
+panel.id='bug-panel';
+panel.style.cssText='position:fixed;bottom:80px;right:20px;width:380px;max-height:80vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
+document.body.appendChild(panel);
+}
+
+function toggleBugPanel(){
+const p=document.getElementById('bug-panel');
+if(!p)return;
+if(p.style.display==='flex'){p.style.display='none';return;}
+p.style.display='flex';
+renderBugPanel();
+}
+
+function renderBugPanel(){
+const p=document.getElementById('bug-panel');if(!p)return;
+const bugs=loadBugs();
+const section=typeof currentSection!=='undefined'?currentSection:'?';
+const user=typeof _currentUser!=='undefined'&&_currentUser?_currentUser.name:'—';
+const errCount=_bugErrors.length;
+
+let h=`<div style="padding:14px 16px;background:linear-gradient(135deg,#ff5722,#d32f2f);color:#fff;font-weight:700;display:flex;justify-content:space-between;align-items:center">
+<span>🐛 Bug Reporter</span>
+<button onclick="document.getElementById('bug-panel').style.display='none'" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0 4px">✕</button>
+</div>`;
+
+// Auto-captured context
+h+=`<div style="padding:10px 16px;background:rgba(255,152,0,.08);border-bottom:1px solid var(--border,#333);font-size:11px">
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<span><strong>Sección:</strong> <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">${section}</code></span>
+<span><strong>Usuario:</strong> ${sanitizeHTML(user)}</span>
+<span><strong>Errores JS:</strong> <span style="color:${errCount?'#f44336':'#4caf50'};font-weight:700">${errCount}</span></span>
+</div></div>`;
+
+// New bug form
+h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#333)">
+<div style="margin-bottom:8px"><select id="bug-severity" style="width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px">
+<option value="low">🟡 Bajo — Visual/cosmético</option>
+<option value="medium" selected>🟠 Medio — Funcionalidad parcial</option>
+<option value="high">🔴 Alto — Funcionalidad rota</option>
+<option value="critical">💀 Crítico — Pérdida de datos/crash</option>
+</select></div>
+<div style="margin-bottom:8px"><textarea id="bug-desc" rows="3" placeholder="¿Qué pasó? Describe el bug..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
+<div style="display:flex;gap:8px">
+<button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">📨 Reportar Bug</button>
+${errCount?`<button onclick="_attachErrors()" style="padding:8px 12px;border:none;border-radius:8px;background:rgba(255,152,0,.2);color:#ff9800;cursor:pointer;font-size:11px;font-weight:600" title="Adjuntar errores capturados">📎 ${errCount} err</button>`:''}
+</div></div>`;
+
+// Bug list
+h+=`<div style="flex:1;overflow-y:auto;max-height:40vh">`;
+if(bugs.length===0){
+h+=`<div style="text-align:center;padding:30px 16px;color:var(--text-muted,#666)">
+<div style="font-size:32px;margin-bottom:8px">✨</div>
+<div>No hay bugs reportados</div>
+<div style="font-size:11px;margin-top:4px">¡El app funciona perfecto! (o nadie ha reportado)</div>
+</div>`;
+}else{
+bugs.slice().reverse().forEach((b,i)=>{
+const idx=bugs.length-1-i;
+const sevIcon={low:'🟡',medium:'🟠',high:'🔴',critical:'💀'}[b.severity]||'🟠';
+const sevColor={low:'#ffeb3b',medium:'#ff9800',high:'#f44336',critical:'#b71c1c'}[b.severity]||'#ff9800';
+const ts=new Date(b.ts).toLocaleString();
+const errBadge=b.errors?.length?`<span style="background:rgba(244,67,54,.15);color:#f44336;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">${b.errors.length} err</span>`:'';
+h+=`<div style="padding:10px 16px;border-bottom:1px solid var(--border,#222);position:relative" class="bug-item">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+<div style="flex:1">
+<div style="font-size:11px;color:var(--text-muted,#666);margin-bottom:3px">${ts} · <code style="font-size:10px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">${sanitizeHTML(b.section)}</code> ${errBadge}</div>
+<div style="font-size:12px;line-height:1.4">${sevIcon} ${sanitizeHTML(b.desc)}</div>`;
+if(b.errors?.length){
+h+=`<details style="margin-top:4px"><summary style="font-size:10px;color:#f44336;cursor:pointer">Ver errores adjuntos (${b.errors.length})</summary>
+<div style="margin-top:4px;font-size:10px;font-family:monospace;background:rgba(0,0,0,.3);padding:6px 8px;border-radius:6px;max-height:120px;overflow-y:auto">`;
+b.errors.forEach(e=>{
+h+=`<div style="margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:3px">
+<span style="color:#f44336">${sanitizeHTML(e.type)}</span> @ <span style="color:#64b5f6">${sanitizeHTML(e.src)}:${e.line}:${e.col}</span><br>
+<span style="color:#fff">${sanitizeHTML(e.msg)}</span>
+${e.stack?'<br><span style="color:#888">'+sanitizeHTML(e.stack.substring(0,150))+'</span>':''}
+</div>`;
+});
+h+=`</div></details>`;
+}
+h+=`</div>
+<button onclick="_deleteBug(${idx})" style="background:none;border:none;color:var(--text-muted,#666);cursor:pointer;font-size:14px;padding:2px;flex-shrink:0" title="Eliminar">🗑</button>
+</div></div>`;
+});
+}
+h+=`</div>`;
+
+// Footer
+if(bugs.length>0){
+h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#333);display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:11px;color:var(--text-muted,#666)">${bugs.length} bug${bugs.length!==1?'s':''} reportado${bugs.length!==1?'s':''}</span>
+<div style="display:flex;gap:6px">
+<button onclick="_exportBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(255,255,255,.08);color:var(--text,#eee);cursor:pointer;font-size:11px">📋 Exportar</button>
+<button onclick="_clearBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(244,67,54,.1);color:#f44336;cursor:pointer;font-size:11px">🗑 Limpiar</button>
+</div></div>`;
+}
+
+p.innerHTML=h;
+}
+
+// Submit bug
+window._submitBug=function(){
+const desc=document.getElementById('bug-desc')?.value?.trim();
+if(!desc){toast?.('Describe el bug',true);return;}
+const bug={
+id:typeof genId!=='undefined'?genId():Date.now().toString(36),
+ts:new Date().toISOString(),
+section:typeof currentSection!=='undefined'?currentSection:'?',
+user:typeof _currentUser!=='undefined'&&_currentUser?_currentUser.name:'anon',
+severity:document.getElementById('bug-severity')?.value||'medium',
+desc:desc,
+errors:window._bugAttachedErrors||null,
+ua:navigator.userAgent.substring(0,100),
+viewport:window.innerWidth+'x'+window.innerHeight,
+lang:typeof LANG!=='undefined'?LANG:'?'
+};
+const bugs=loadBugs();
+bugs.push(bug);
+saveBugs(bugs);
+window._bugAttachedErrors=null;
+document.getElementById('bug-desc').value='';
+toast?.('🐛 Bug reportado — sección: '+bug.section);
+renderBugPanel();
+};
+
+// Attach captured JS errors
+window._attachErrors=function(){
+if(!_bugErrors.length){toast?.('No hay errores capturados',true);return;}
+window._bugAttachedErrors=[..._bugErrors];
+const btn=document.querySelector('[onclick="_attachErrors()"]');
+if(btn){btn.style.background='rgba(76,175,80,.2)';btn.style.color='#4caf50';btn.textContent='✅ '+_bugErrors.length+' adjuntos';}
+};
+
+// Delete single bug
+window._deleteBug=function(idx){
+const bugs=loadBugs();
+bugs.splice(idx,1);
+saveBugs(bugs);
+renderBugPanel();
+_bugUpdateBadge();
+};
+
+// Clear all bugs
+window._clearBugs=function(){
+if(!confirm('¿Eliminar todos los bugs reportados?'))return;
+saveBugs([]);
+renderBugPanel();
+};
+
+// Export bugs as JSON
+window._exportBugs=function(){
+const bugs=loadBugs();
+if(!bugs.length)return;
+const blob=new Blob([JSON.stringify(bugs,null,2)],{type:'application/json'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='egglogu_bugs_'+new Date().toISOString().split('T')[0]+'.json';
+a.click();
+URL.revokeObjectURL(a.href);
+toast?.('📋 Bugs exportados ('+bugs.length+')');
+};
+
+// Inject on DOM ready
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',injectBugWidget);
+else injectBugWidget();
+})();
+
 // ============ SERVICE WORKER ============
 if('serviceWorker' in navigator){
 navigator.serviceWorker.register('sw.js').then(reg=>{
