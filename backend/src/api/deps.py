@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 from typing import Callable
 
 from fastapi import Depends
@@ -11,7 +12,7 @@ from src.core.plans import check_feature_access, get_plan_limits
 from src.core.security import decode_token
 from src.database import get_db
 from src.models.auth import User
-from src.models.subscription import Subscription
+from src.models.subscription import Subscription, SubscriptionStatus
 
 bearer_scheme = HTTPBearer()
 
@@ -55,14 +56,39 @@ async def get_subscription(org_id: uuid.UUID, db: AsyncSession) -> Subscription 
     return result.scalar_one_or_none()
 
 
+def _is_trial_expired(sub: Subscription) -> bool:
+    """Check if a trial subscription has expired."""
+    if not sub.is_trial or not sub.trial_end:
+        return False
+    trial_end = sub.trial_end
+    if trial_end.tzinfo is None:
+        trial_end = trial_end.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) > trial_end
+
+
+async def _resolve_plan(sub: Subscription | None, db: AsyncSession) -> str:
+    """Resolve effective plan, auto-suspending expired trials."""
+    if not sub:
+        return "suspended"
+    if sub.status == SubscriptionStatus.suspended:
+        return "suspended"
+    if sub.status != SubscriptionStatus.active:
+        return "suspended"
+    # Trial expired and no Stripe subscription → suspend
+    if sub.is_trial and _is_trial_expired(sub) and not sub.stripe_subscription_id:
+        sub.status = SubscriptionStatus.suspended
+        sub.is_trial = False
+        await db.flush()
+        return "suspended"
+    return sub.plan.value
+
+
 async def get_org_plan(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> str:
     sub = await get_subscription(user.organization_id, db)
-    if sub and sub.status.value == "active":
-        return sub.plan.value
-    return "free"
+    return await _resolve_plan(sub, db)
 
 
 def require_plan(*plans: str) -> Callable:
@@ -71,9 +97,11 @@ def require_plan(*plans: str) -> Callable:
         db: AsyncSession = Depends(get_db),
     ) -> User:
         sub = await get_subscription(user.organization_id, db)
-        current_plan = "free"
-        if sub and sub.status.value == "active":
-            current_plan = sub.plan.value
+        current_plan = await _resolve_plan(sub, db)
+        if current_plan == "suspended":
+            raise ForbiddenError(
+                "Your trial has ended. Choose a plan to continue using EGGlogU."
+            )
         if current_plan not in plans:
             raise ForbiddenError(
                 f"This feature requires one of these plans: {', '.join(plans)}. "
@@ -89,9 +117,11 @@ def require_feature(feature: str) -> Callable:
         db: AsyncSession = Depends(get_db),
     ) -> User:
         sub = await get_subscription(user.organization_id, db)
-        current_plan = "free"
-        if sub and sub.status.value == "active":
-            current_plan = sub.plan.value
+        current_plan = await _resolve_plan(sub, db)
+        if current_plan == "suspended":
+            raise ForbiddenError(
+                "Your trial has ended. Choose a plan to continue using EGGlogU."
+            )
         check_feature_access(current_plan, feature)
         return user
     return feature_checker

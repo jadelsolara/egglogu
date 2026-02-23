@@ -34,6 +34,19 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
+  // Network-first for EGGlogU API calls — never cache, let app handle offline via localStorage
+  if ((url.hostname.includes('egglogu') || url.hostname.includes('railway.app')) && url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return new Response(JSON.stringify({error: 'offline', detail: 'No network connection'}), {
+          status: 503,
+          headers: {'Content-Type': 'application/json'}
+        });
+      })
+    );
+    return;
+  }
+
   // Network-first for API calls (OpenWeatherMap, MQTT)
   if (url.hostname.includes('openweathermap.org') || url.hostname.includes('mqtt')) {
     event.respondWith(

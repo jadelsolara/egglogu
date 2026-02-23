@@ -1,6 +1,6 @@
 # EGGlogU User Manual
 
-**Version 5.0 | Comprehensive Poultry Farm Management PWA**
+**Version 6.0 | Comprehensive Poultry Farm Management SaaS Platform**
 
 ---
 
@@ -24,6 +24,9 @@
 16. [Settings & Configuration](#16-settings--configuration)
 17. [Data Management](#17-data-management)
 18. [Troubleshooting](#18-troubleshooting)
+19. [Billing & Subscription](#19-billing--subscription)
+20. [Support](#20-support)
+21. [Admin Panel](#21-admin-panel)
 
 ---
 
@@ -31,26 +34,39 @@
 
 ### What is EGGlogU?
 
-EGGlogU is a single-file Progressive Web App (PWA) for managing poultry farms. It runs entirely in your browser with no server required. All data is stored locally on your device using browser localStorage.
+EGGlogU is a cloud-based SaaS platform for managing poultry farms, with full offline capabilities. Your data is securely stored on the server and syncs between all your devices via **api.egglogu.com**. When you are offline, EGGlogU continues working using a local IndexedDB cache and automatically syncs your changes when connectivity is restored.
 
-### Installation
+### Getting Started
 
-**On Desktop (Chrome, Firefox, Edge):**
-1. Open the `egglogu.html` file in your browser.
-2. If prompted by your browser, click "Install" or "Add to Home Screen" to install as a PWA.
-3. Once installed, the app works offline.
+1. Visit **[egglogu.com](https://egglogu.com)** in any modern browser.
+2. Create an account or sign in (see **First Login** below).
+3. You will automatically start a **30-day free Enterprise trial** -- no credit card required.
+4. All your data syncs between devices via **api.egglogu.com**.
 
-**On Mobile (Android/iOS):**
-1. Open the file URL in Chrome (Android) or Safari (iOS).
-2. Tap the browser menu and select "Add to Home Screen".
-3. The app appears as a native-looking icon on your device.
+**Installing as a PWA (optional):**
+
+- **Desktop (Chrome, Firefox, Edge):** Click the install icon in the address bar or browser prompt to add EGGlogU to your desktop.
+- **Mobile (Android/iOS):** Tap the browser menu and select "Add to Home Screen". The app appears as a native-looking icon on your device.
+- Once installed as a PWA, the app works offline and syncs when back online.
 
 ### First Login
 
-On first launch, you will see a login screen. Create your credentials:
-- Enter a username and password.
-- These are stored locally in your browser -- there is no external server.
-- Subsequent visits require these same credentials.
+On first visit, you will see the login/registration screen. You have several options to create your account:
+
+**Email & Password:**
+1. Enter your email address and choose a password.
+2. A verification email is sent via Resend -- you must verify your email before accessing the platform.
+3. Check your inbox (and spam folder) for the verification link.
+
+**Social Sign-In:**
+- **Google OAuth** -- Sign in with your Google account.
+- **Apple Sign-In** -- Sign in with your Apple ID.
+- **Microsoft Identity** -- Sign in with your Microsoft account.
+
+**Offline PIN:**
+- After initial login, you can set up a local PIN for quick offline access on the same device.
+
+Your account includes a **30-day free Enterprise trial** with access to all features, unlimited farms, flocks, and users. After the trial, choose a plan that fits your operation (see [Section 19: Billing & Subscription](#19-billing--subscription)).
 
 ### Language Selection
 
@@ -1163,16 +1179,46 @@ Configure default daily tasks that auto-populate the Operations checklist each m
 > - Alert thresholds: Min feed 100 kg, Max mortality 3%, Alert days 5
 > - Default checklist: "Revisar bebederos, Recolectar huevos, Registrar consumo alimento, Limpiar pediluvio"
 
+### Team Management
+
+Invite team members and assign roles to control access across your organization.
+
+**Inviting Users:**
+1. Navigate to Settings > Team Management.
+2. Click "Invite User" and enter the team member's email address.
+3. Select a role for the new user (see roles below).
+4. The invited user receives an email with a link to join your organization.
+
+**Roles:**
+
+| Role | Permissions |
+|------|-------------|
+| **Owner** | Full access to all features, billing, and team management. Protected account -- cannot be deactivated or have role changed by other users. |
+| **Manager** | Can manage farms, flocks, production data, and view reports. Cannot modify billing or team roles. |
+| **Operator** | Can record daily data (production, feed, health events). Cannot modify farm settings or view financial details. |
+| **Viewer** | Read-only access to dashboards, reports, and data. Cannot create or modify records. |
+
+**Owner Protection:**
+- The owner account cannot be deactivated or have its role changed by any other user, including other owners.
+- This prevents accidental lockout from the organization.
+
+**Pending User Deletion:**
+- Admins (owner/manager) can delete pending invitations that have not yet been accepted.
+- Active users can be deactivated from the Admin Panel (see [Section 21: Admin Panel](#21-admin-panel)).
+
 ---
 
 ## 17. Data Management
 
 ### Where is Data Stored?
 
-All data is stored in your browser's localStorage under the key `egglogu_data`. There is no cloud server. This means:
-- Data is specific to the browser and device you use.
-- Clearing browser data will delete your farm records.
-- Data does not sync between devices automatically.
+EGGlogU uses a **dual-write model** to ensure your data is always safe and accessible:
+
+- **Primary storage:** Cloud server (PostgreSQL) at **api.egglogu.com**. This is the source of truth for all your data.
+- **Offline cache:** IndexedDB in your browser provides local access when you are offline.
+- **Auto-sync:** When online, changes are saved to both the local cache and the server simultaneously. A 3-second debounce prevents excessive requests after rapid edits.
+- Data syncs automatically between all your devices when connected to the internet.
+- Clearing browser data only removes the local cache -- your data remains safe on the server and will re-sync on next login.
 
 ### JSON Backup (Export)
 
@@ -1200,10 +1246,12 @@ The Financial module and Traceability module each have CSV export buttons for sp
 
 In Settings, the "Reset All Data" button:
 1. Shows a confirmation dialog.
-2. Deletes all data from localStorage.
-3. Returns the app to its initial default state.
+2. Clears the local IndexedDB cache on your device.
+3. Returns the local app to its initial default state.
 
-**Warning:** This is irreversible. Always export a backup before resetting.
+**Note:** This clears local cached data only. Your server-side data remains intact and will re-sync on next login. To permanently delete all server data, contact support or use the account deletion option in the Admin Panel.
+
+**Warning:** Always export a backup before resetting.
 
 ### Data Statistics
 
@@ -1214,10 +1262,11 @@ The Settings page shows a summary of your data:
 
 ### PWA & Offline Use
 
-EGGlogU registers a service worker (`sw.js`) that enables:
-- Offline functionality after first load
+EGGlogU registers a service worker that enables:
+- Offline functionality after first load -- all changes saved to IndexedDB
 - App-like experience when installed to home screen
-- Automatic caching of the application file
+- Automatic caching of application assets
+- Automatic sync of offline changes when connectivity is restored
 
 ### Data Migration
 
@@ -1227,10 +1276,10 @@ The app includes automatic migration logic for older data formats:
 - Runs silently on every data load
 
 **Tips:**
-- Back up before and after major data entry sessions.
-- If using EGGlogU on multiple devices, manually transfer the JSON backup file between them.
-- Keep a backup on a USB drive or external storage as an additional safety measure.
-- The app's localStorage limit is typically 5-10 MB depending on the browser. For very large operations with years of data, monitor the data statistics in Settings.
+- Although your data is stored on the server, periodic JSON exports are still recommended as an extra safety measure.
+- Keep a backup on a USB drive or external storage as an additional safety layer.
+- Data syncs automatically between devices -- no manual transfer needed.
+- The local IndexedDB cache has generous storage limits, but for very large operations, the server handles primary storage without browser constraints.
 
 ---
 
@@ -1244,13 +1293,15 @@ The app includes automatic migration logic for older data formats:
 - Check that JavaScript is enabled in your browser settings.
 
 **Data disappeared after browser update**
-- Some browser updates clear localStorage. Always maintain backups.
+- Some browser updates clear the local IndexedDB cache. Your data remains safe on the server.
+- Log out and log back in to trigger a fresh sync from the server.
 - Check if you are using the same browser profile.
-- If you have a JSON backup, use Import to restore.
+- If sync does not restore your data, use a JSON backup via Import to restore.
 
 **Login credentials forgotten**
-- Credentials are stored in localStorage. If you clear browser data, they are lost.
-- Clear the `egglogu_auth` localStorage key via browser developer tools (F12 > Application > Local Storage) to reset authentication.
+- Use the "Forgot Password" link on the login page to receive a password reset email.
+- If you signed in with Google, Apple, or Microsoft, use the corresponding social sign-in button instead.
+- Contact your organization owner if your account has been deactivated.
 
 **Charts not displaying**
 - Chart.js must be loaded from the CDN. Ensure you have internet connectivity on first load.
@@ -1291,6 +1342,34 @@ The app includes automatic migration logic for older data formats:
 - Try opening the JSON file in a text editor to verify it is valid JSON.
 - File must not exceed browser memory limits.
 
+**Email verification not received**
+- Check your spam/junk folder -- verification emails are sent via Resend and may be filtered.
+- Ensure the email address was typed correctly during registration.
+- Use the "Resend Verification" link on the login page to trigger a new verification email.
+- If the issue persists, try registering with a different email provider or use social sign-in (Google, Apple, Microsoft).
+
+**OAuth login fails (Google, Apple, Microsoft)**
+- Check that your browser is not blocking popups -- OAuth sign-in requires a popup window.
+- Disable any ad blockers or privacy extensions that may interfere with OAuth redirects.
+- Try a different OAuth provider if one is not working.
+- Clear browser cookies for egglogu.com and try again.
+
+**Sync not working**
+- Verify your internet connection is active.
+- Check that your JWT authentication token is still valid -- if expired, log out and log back in.
+- Open browser developer tools (F12 > Console) to check for sync error messages.
+- If offline changes were queued, they will sync automatically when connectivity is restored.
+
+**"Too many requests" error**
+- You have been rate limited by the server. Wait at least 1 minute before retrying.
+- Avoid rapidly refreshing pages or making bulk edits in quick succession.
+- If this occurs frequently, contact support.
+
+**Trial expired**
+- Your 30-day free Enterprise trial has ended. Your data is preserved but access to premium features is restricted.
+- Upgrade to a paid plan via Settings > Billing or the in-app upgrade prompt.
+- See [Section 19: Billing & Subscription](#19-billing--subscription) for available plans.
+
 ### Browser Compatibility
 
 | Browser | Minimum Version | Notes |
@@ -1310,11 +1389,167 @@ The app includes automatic migration logic for older data formats:
 
 ### Getting Help
 
-EGGlogU is a self-contained application with no external support server. For issues:
-1. Check this manual first.
-2. Use browser developer tools (F12) to inspect errors in the Console tab.
-3. Export your data as JSON backup before attempting any fixes.
-4. If the app is in an unrecoverable state, reset and restore from backup.
+If you encounter an issue:
+1. Check this manual and the in-app FAQ (see [Section 20: Support](#20-support)).
+2. Search for your issue in the FAQ articles within the Support module.
+3. Submit a support ticket from within the app for personalized assistance.
+4. Use the bug reporter widget (floating button) to report bugs with automatic context capture.
+5. Use browser developer tools (F12) to inspect errors in the Console tab for technical details.
+6. Export your data as JSON backup before attempting any manual fixes.
+
+---
+
+## 19. Billing & Subscription
+
+### Free Trial
+
+Every new account starts with a **30-day free Enterprise trial**. No credit card is required. During the trial, you have access to all features, unlimited farms, flocks, and users. When the trial expires, your data is preserved but access to premium features is restricted until you select a paid plan.
+
+### Pricing Tiers
+
+| Feature | Hobby ($9/mo) | Starter ($19/mo) | Pro ($49/mo) | Enterprise ($99/mo) |
+|---------|---------------|-------------------|--------------|---------------------|
+| **Farms** | 1 | 3 | 10 | Unlimited |
+| **Flocks** | 3 | 10 | Unlimited | Unlimited |
+| **Users** | 2 | 5 | 15 | Unlimited |
+| **Core Modules** | All 18 | All 18 | All 18 | All 18 |
+| **Analytics & Predictions** | Basic | Full | Full | Full + Custom |
+| **Support SLA** | Community | 48h response | 24h response | 4h response + dedicated |
+| **Data Export** | JSON | JSON + CSV | JSON + CSV + API | JSON + CSV + API + Bulk |
+| **Audit Log** | -- | -- | 30 days | Unlimited |
+
+### Annual Pricing
+
+Save **20%** by choosing annual billing:
+
+| Plan | Monthly | Annual (per month) | Annual Total |
+|------|---------|-------------------|--------------|
+| Hobby | $9/mo | $7.20/mo | $86.40/yr |
+| Starter | $19/mo | $15.20/mo | $182.40/yr |
+| Pro | $49/mo | $39.20/mo | $470.40/yr |
+| Enterprise | $99/mo | $79.20/mo | $950.40/yr |
+
+### Managing Your Subscription
+
+EGGlogU uses **Stripe** for secure payment processing.
+
+**Subscribing to a Plan:**
+1. Navigate to Settings > Billing.
+2. Select the plan that fits your operation.
+3. Click "Subscribe" to open the Stripe checkout page.
+4. Enter your payment details and confirm.
+
+**Stripe Customer Portal:**
+- Access the Stripe customer portal from Settings > Billing > "Manage Subscription".
+- From the portal you can: update payment method, view invoices, download receipts, and cancel your subscription.
+
+**Upgrading:**
+- Navigate to Settings > Billing and select a higher plan.
+- The upgrade takes effect immediately. You are charged a prorated amount for the remainder of the current billing period.
+
+**Downgrading:**
+- Navigate to Settings > Billing and select a lower plan.
+- The downgrade takes effect at the end of the current billing period.
+- If your current usage exceeds the new plan's limits (e.g., more farms than allowed), you will need to reduce usage before the downgrade activates.
+
+---
+
+## 20. Support
+
+### Creating Support Tickets
+
+1. Navigate to the **Support** module from the sidebar.
+2. Click "New Ticket".
+3. Fill in the ticket details:
+   - **Subject** -- Brief description of your issue.
+   - **Category** -- Select from: Bug Report, Feature Request, Billing, Account, Data, General.
+   - **Priority** -- Low, Medium, High, or Urgent.
+   - **Description** -- Detailed explanation of the issue. Include steps to reproduce if applicable.
+4. Submit the ticket. You will receive a confirmation and can track the ticket status in the Support module.
+
+### FAQ Articles
+
+- Browse frequently asked questions organized by category.
+- Use the search bar to find articles matching your issue.
+- Vote articles as "Helpful" or "Not Helpful" to improve recommendations for other users.
+
+### Auto-Responses
+
+For common issues (password reset, sync problems, billing questions), the system provides automatic responses with step-by-step solutions. These are delivered instantly when your ticket matches a known issue pattern.
+
+### Bug Reporter Widget
+
+- A floating bug reporter button is available throughout the app.
+- Click it to open the bug report form, which automatically captures:
+  - Current page/module
+  - Browser and device information
+  - Recent console errors (if any)
+- Add your description and submit. The report is created as a support ticket with "Bug Report" category.
+
+### Response Time Expectations
+
+Response times vary by your subscription tier:
+
+| Plan | First Response SLA |
+|------|--------------------|
+| Hobby | Community support (best effort) |
+| Starter | Within 48 hours |
+| Pro | Within 24 hours |
+| Enterprise | Within 4 hours (dedicated support) |
+
+---
+
+## 21. Admin Panel
+
+The Admin Panel is available to users with **Owner** or **Manager** roles and provides centralized management of your organization.
+
+### User Management
+
+- **View all users** in your organization with their current role, status, and last activity.
+- **Add users** by sending email invitations directly from the Admin Panel.
+- **Edit users** -- update display name, contact information, and assigned farms.
+- **Deactivate users** -- disable access for users who no longer need it. Deactivated users cannot log in but their historical data (entries, edits) is preserved.
+- **Reactivate users** -- restore access for previously deactivated users.
+
+**Note:** The owner account is protected and cannot be deactivated or have its role changed by any other user.
+
+### Role Assignment
+
+Assign or change roles for any user in your organization:
+
+| Role | Access Level |
+|------|-------------|
+| **Owner** | Full access. Manages billing, team, and all data. Cannot be deactivated. |
+| **Manager** | Manages farms, flocks, data, and team invitations. Cannot modify billing. |
+| **Operator** | Records daily data (production, feed, health). No access to financial or settings modules. |
+| **Viewer** | Read-only access to all dashboards and reports. |
+
+### Team Invitations
+
+1. Click "Invite User" in the Admin Panel.
+2. Enter the email address and select a role.
+3. The invitee receives an email with a link to join your organization.
+4. Pending invitations are visible in the "Pending" tab and can be resent or cancelled.
+
+### Billing Status Overview
+
+- View your current plan, billing period, and next payment date.
+- See usage metrics against plan limits (farms, flocks, users).
+- Quick link to Stripe customer portal for payment management.
+
+### Audit Log Viewer
+
+- View a chronological log of significant actions in your organization.
+- Tracked events include: user logins, data modifications, role changes, farm/flock creation and deletion, billing changes.
+- Filter by user, action type, date range, or entity.
+- Available on Pro plan (30-day retention) and Enterprise plan (unlimited retention).
+
+### Pending User Activation
+
+- When new users register via an invitation link, they appear in the "Pending Activation" list.
+- Admins can approve or reject pending users.
+- Approved users receive access according to their assigned role.
+- Rejected users are notified and their pending account is removed.
 
 ---
 
@@ -1362,11 +1597,12 @@ Planning ---- Settings
 
 ### Data Backup Checklist
 
-- [ ] Export JSON backup (Settings > Export)
-- [ ] Save backup file to external storage (USB drive, cloud)
+- [ ] Data is automatically synced to the server (verify sync status in Settings)
+- [ ] Export JSON backup periodically (Settings > Export) as an additional safety measure
+- [ ] Save backup file to external storage (USB drive, external cloud)
 - [ ] Verify backup by checking file size is > 0 bytes
 - [ ] Test restore on a secondary browser/device periodically
 
 ---
 
-*EGGlogU -- Professional Poultry Farm Management, Offline-First, 8 Languages, Zero Dependencies.*
+*EGGlogU -- Professional Poultry Farm Management SaaS, Offline-First, 8 Languages, Cloud-Synced.*

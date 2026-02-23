@@ -2,21 +2,21 @@ import uuid
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class VaccineCreate(BaseModel):
     flock_id: uuid.UUID
     date: date
-    name: str
-    method: Optional[str] = None
-    notes: Optional[str] = None
+    name: str = Field(min_length=1, max_length=200)
+    method: Optional[str] = Field(default=None, max_length=100)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class VaccineUpdate(BaseModel):
-    name: Optional[str] = None
-    method: Optional[str] = None
-    notes: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    method: Optional[str] = Field(default=None, max_length=100)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class VaccineRead(BaseModel):
@@ -35,17 +35,17 @@ class VaccineRead(BaseModel):
 class MedicationCreate(BaseModel):
     flock_id: uuid.UUID
     date: date
-    name: str
-    dosage: Optional[str] = None
-    duration_days: Optional[int] = None
-    notes: Optional[str] = None
+    name: str = Field(min_length=1, max_length=200)
+    dosage: Optional[str] = Field(default=None, max_length=200)
+    duration_days: Optional[int] = Field(default=None, ge=1, le=365)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class MedicationUpdate(BaseModel):
-    name: Optional[str] = None
-    dosage: Optional[str] = None
-    duration_days: Optional[int] = None
-    notes: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    dosage: Optional[str] = Field(default=None, max_length=200)
+    duration_days: Optional[int] = Field(default=None, ge=1, le=365)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class MedicationRead(BaseModel):
@@ -65,18 +65,18 @@ class MedicationRead(BaseModel):
 class OutbreakCreate(BaseModel):
     flock_id: uuid.UUID
     date: date
-    disease: str
-    affected_count: int = 0
-    deaths: int = 0
-    treatment: Optional[str] = None
+    disease: str = Field(min_length=1, max_length=200)
+    affected_count: int = Field(default=0, ge=0, le=10_000_000)
+    deaths: int = Field(default=0, ge=0, le=10_000_000)
+    treatment: Optional[str] = Field(default=None, max_length=1000)
     resolved: bool = False
 
 
 class OutbreakUpdate(BaseModel):
-    disease: Optional[str] = None
-    affected_count: Optional[int] = None
-    deaths: Optional[int] = None
-    treatment: Optional[str] = None
+    disease: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    affected_count: Optional[int] = Field(default=None, ge=0, le=10_000_000)
+    deaths: Optional[int] = Field(default=None, ge=0, le=10_000_000)
+    treatment: Optional[str] = Field(default=None, max_length=1000)
     resolved: Optional[bool] = None
 
 
@@ -98,15 +98,15 @@ class OutbreakRead(BaseModel):
 class StressEventCreate(BaseModel):
     flock_id: uuid.UUID
     date: date
-    type: str
-    severity: int
-    description: Optional[str] = None
+    type: str = Field(min_length=1, max_length=100)
+    severity: int = Field(ge=1, le=10)
+    description: Optional[str] = Field(default=None, max_length=2000)
 
 
 class StressEventUpdate(BaseModel):
-    type: Optional[str] = None
-    severity: Optional[int] = None
-    description: Optional[str] = None
+    type: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    severity: Optional[int] = Field(default=None, ge=1, le=10)
+    description: Optional[str] = Field(default=None, max_length=2000)
 
 
 class StressEventRead(BaseModel):

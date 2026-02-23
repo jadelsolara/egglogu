@@ -2,29 +2,29 @@ import uuid
 from datetime import date, time, datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class EnvironmentReadingCreate(BaseModel):
     date: date
     time: Optional[time] = None
-    temp_c: Optional[float] = None
-    humidity_pct: Optional[float] = None
-    ammonia_ppm: Optional[float] = None
-    light_lux: Optional[float] = None
-    wind_speed: Optional[float] = None
-    heat_stress_idx: Optional[float] = None
-    notes: Optional[str] = None
+    temp_c: Optional[float] = Field(default=None, ge=-50, le=70)
+    humidity_pct: Optional[float] = Field(default=None, ge=0, le=100)
+    ammonia_ppm: Optional[float] = Field(default=None, ge=0, le=500)
+    light_lux: Optional[float] = Field(default=None, ge=0, le=200_000)
+    wind_speed: Optional[float] = Field(default=None, ge=0, le=200)
+    heat_stress_idx: Optional[float] = Field(default=None, ge=0, le=100)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class EnvironmentReadingUpdate(BaseModel):
-    temp_c: Optional[float] = None
-    humidity_pct: Optional[float] = None
-    ammonia_ppm: Optional[float] = None
-    light_lux: Optional[float] = None
-    wind_speed: Optional[float] = None
-    heat_stress_idx: Optional[float] = None
-    notes: Optional[str] = None
+    temp_c: Optional[float] = Field(default=None, ge=-50, le=70)
+    humidity_pct: Optional[float] = Field(default=None, ge=0, le=100)
+    ammonia_ppm: Optional[float] = Field(default=None, ge=0, le=500)
+    light_lux: Optional[float] = Field(default=None, ge=0, le=200_000)
+    wind_speed: Optional[float] = Field(default=None, ge=0, le=200)
+    heat_stress_idx: Optional[float] = Field(default=None, ge=0, le=100)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class EnvironmentReadingRead(BaseModel):
@@ -46,15 +46,15 @@ class EnvironmentReadingRead(BaseModel):
 
 class IoTReadingCreate(BaseModel):
     timestamp: datetime
-    sensor_type: str
-    value: float
-    unit: str
+    sensor_type: str = Field(min_length=1, max_length=100)
+    value: float = Field(ge=-1000, le=1_000_000)
+    unit: str = Field(min_length=1, max_length=20)
 
 
 class IoTReadingUpdate(BaseModel):
-    sensor_type: Optional[str] = None
-    value: Optional[float] = None
-    unit: Optional[str] = None
+    sensor_type: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    value: Optional[float] = Field(default=None, ge=-1000, le=1_000_000)
+    unit: Optional[str] = Field(default=None, min_length=1, max_length=20)
 
 
 class IoTReadingRead(BaseModel):
@@ -71,20 +71,20 @@ class IoTReadingRead(BaseModel):
 
 class WeatherCacheCreate(BaseModel):
     timestamp: datetime
-    temp_c: Optional[float] = None
-    humidity: Optional[float] = None
-    wind_speed: Optional[float] = None
-    description: Optional[str] = None
-    icon: Optional[str] = None
+    temp_c: Optional[float] = Field(default=None, ge=-90, le=60)
+    humidity: Optional[float] = Field(default=None, ge=0, le=100)
+    wind_speed: Optional[float] = Field(default=None, ge=0, le=300)
+    description: Optional[str] = Field(default=None, max_length=200)
+    icon: Optional[str] = Field(default=None, max_length=20)
     forecast_json: Optional[dict] = None
 
 
 class WeatherCacheUpdate(BaseModel):
-    temp_c: Optional[float] = None
-    humidity: Optional[float] = None
-    wind_speed: Optional[float] = None
-    description: Optional[str] = None
-    icon: Optional[str] = None
+    temp_c: Optional[float] = Field(default=None, ge=-90, le=60)
+    humidity: Optional[float] = Field(default=None, ge=0, le=100)
+    wind_speed: Optional[float] = Field(default=None, ge=0, le=300)
+    description: Optional[str] = Field(default=None, max_length=200)
+    icon: Optional[str] = Field(default=None, max_length=20)
     forecast_json: Optional[dict] = None
 
 

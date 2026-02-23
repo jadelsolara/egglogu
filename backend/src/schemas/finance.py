@@ -2,27 +2,27 @@ import uuid
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class IncomeCreate(BaseModel):
     client_id: uuid.UUID
     date: date
-    dozens: float
-    egg_size: Optional[str] = None
-    unit_price: float
-    total: float
-    payment_method: Optional[str] = None
-    notes: Optional[str] = None
+    dozens: float = Field(gt=0, le=1_000_000)
+    egg_size: Optional[str] = Field(default=None, max_length=50)
+    unit_price: float = Field(ge=0, le=100_000)
+    total: float = Field(ge=0, le=100_000_000)
+    payment_method: Optional[str] = Field(default=None, max_length=50)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class IncomeUpdate(BaseModel):
-    dozens: Optional[float] = None
-    egg_size: Optional[str] = None
-    unit_price: Optional[float] = None
-    total: Optional[float] = None
-    payment_method: Optional[str] = None
-    notes: Optional[str] = None
+    dozens: Optional[float] = Field(default=None, gt=0, le=1_000_000)
+    egg_size: Optional[str] = Field(default=None, max_length=50)
+    unit_price: Optional[float] = Field(default=None, ge=0, le=100_000)
+    total: Optional[float] = Field(default=None, ge=0, le=100_000_000)
+    payment_method: Optional[str] = Field(default=None, max_length=50)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class IncomeRead(BaseModel):
@@ -43,17 +43,17 @@ class IncomeRead(BaseModel):
 
 class ExpenseCreate(BaseModel):
     date: date
-    category: str
-    description: Optional[str] = None
-    amount: float
-    notes: Optional[str] = None
+    category: str = Field(min_length=1, max_length=100)
+    description: Optional[str] = Field(default=None, max_length=500)
+    amount: float = Field(gt=0, le=100_000_000)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class ExpenseUpdate(BaseModel):
-    category: Optional[str] = None
-    description: Optional[str] = None
-    amount: Optional[float] = None
-    notes: Optional[str] = None
+    category: Optional[str] = Field(default=None, min_length=1, max_length=100)
+    description: Optional[str] = Field(default=None, max_length=500)
+    amount: Optional[float] = Field(default=None, gt=0, le=100_000_000)
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class ExpenseRead(BaseModel):
@@ -72,19 +72,19 @@ class ExpenseRead(BaseModel):
 class ReceivableCreate(BaseModel):
     client_id: uuid.UUID
     date: date
-    amount: float
+    amount: float = Field(gt=0, le=100_000_000)
     due_date: Optional[date] = None
     paid: bool = False
     paid_date: Optional[date] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class ReceivableUpdate(BaseModel):
-    amount: Optional[float] = None
+    amount: Optional[float] = Field(default=None, gt=0, le=100_000_000)
     due_date: Optional[date] = None
     paid: Optional[bool] = None
     paid_date: Optional[date] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class ReceivableRead(BaseModel):

@@ -14,3 +14,7 @@ from src.models.biosecurity import BiosecurityVisitor, BiosecurityZone, PestSigh
 from src.models.traceability import TraceabilityBatch  # noqa: F401
 from src.models.planning import ProductionPlan  # noqa: F401
 from src.models.subscription import Subscription  # noqa: F401
+from src.models.support import (  # noqa: F401
+    SupportTicket, TicketMessage, SupportRating, FAQArticle, AutoResponse,
+)
+from src.models.lead import Lead  # noqa: F401

@@ -1,6 +1,12 @@
-# Environment
-backend/.env
+# Environment / Secrets — never commit these
 .env
+.env.*
+backend/.env
+backend/.env.*
+*.pem
+*.key
+credentials.json
+service-account*.json
 
 # Python
 __pycache__/

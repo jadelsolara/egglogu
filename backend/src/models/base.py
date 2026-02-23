@@ -16,4 +16,4 @@ class SoftDeleteMixin:
 
 
 class TenantMixin:
-    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"), index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True)

@@ -62,11 +62,15 @@ async def sync_data(
             conflicts.append(f"Unknown entity: {entity_key}")
             continue
 
+        # Only allow columns that exist on the model — reject unknown fields
+        valid_cols = {c.key for c in model_cls.__table__.columns}
+
         for record_data in records:
             record_data.pop("id", None)
             record_data["organization_id"] = user.organization_id
+            filtered = {k: v for k, v in record_data.items() if k in valid_cols}
             try:
-                obj = model_cls(**record_data)
+                obj = model_cls(**filtered)
                 db.add(obj)
                 synced += 1
             except Exception as e:

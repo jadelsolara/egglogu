@@ -26,7 +26,7 @@ async def _send_email(to: str, subject: str, html: str) -> None:
 
 
 async def send_verification_email(email: str, token: str) -> None:
-    link = f"{settings.FRONTEND_URL}/verify-email?token={token}"
+    link = f"{settings.FRONTEND_URL}/egglogu.html?verify={token}"
     html = f"""
     <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
       <h2 style="color:#2563eb">Bienvenido a EGGlogU 360</h2>
@@ -35,13 +35,14 @@ async def send_verification_email(email: str, token: str) -> None:
         Verificar Email
       </a>
       <p style="color:#666;font-size:13px">Si no creaste esta cuenta, ignora este mensaje.</p>
+      <p style="color:#999;font-size:11px">Si el botón no funciona, copia este enlace: {link}</p>
     </div>
     """
     await _send_email(email, "Verifica tu email — EGGlogU", html)
 
 
 async def send_password_reset(email: str, token: str) -> None:
-    link = f"{settings.FRONTEND_URL}/reset-password?token={token}"
+    link = f"{settings.FRONTEND_URL}/egglogu.html?reset={token}"
     html = f"""
     <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
       <h2 style="color:#2563eb">Restablecer contraseña</h2>
@@ -53,6 +54,22 @@ async def send_password_reset(email: str, token: str) -> None:
     </div>
     """
     await _send_email(email, "Restablecer contraseña — EGGlogU", html)
+
+
+async def send_team_invite(email: str, member_name: str, role: str, org_name: str, invited_by: str) -> None:
+    link = f"{settings.FRONTEND_URL}/egglogu.html"
+    html = f"""
+    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
+      <h2 style="color:#2563eb">Te han invitado a EGGlogU 360</h2>
+      <p><strong>{invited_by}</strong> te ha agregado como <strong>{role}</strong> en la organización <strong>{org_name}</strong>.</p>
+      <p>Para acceder a la plataforma, haz clic en el siguiente enlace:</p>
+      <a href="{link}" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;margin:16px 0">
+        Acceder a EGGlogU
+      </a>
+      <p style="color:#666;font-size:13px">Si no reconoces esta invitación, ignora este mensaje.</p>
+    </div>
+    """
+    await _send_email(email, f"{invited_by} te invitó a EGGlogU 360", html)
 
 
 async def send_welcome(email: str, name: str) -> None:

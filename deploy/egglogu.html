@@ -374,7 +374,7 @@ window.addEventListener('unhandledrejection', function(e) {
   if(_bugErrors.length>_BUG_ERROR_CAP)_bugErrors.shift();
   _bugUpdateBadge();
 });
-function _bugUpdateBadge(){const b=document.getElementById('bug-badge');if(b){b.textContent=_bugErrors.length;b.style.display=_bugErrors.length?'flex':'none';}}
+function _bugUpdateBadge(){const b=document.getElementById('bug-badge');if(!b)return;try{const bugs=JSON.parse(localStorage.getItem('egglogu_bugs')||'[]');const unsent=bugs.filter(x=>!x.sent).length;const total=unsent+_bugErrors.length;b.textContent=total;b.style.display=total?'flex':'none';}catch(e){b.textContent=_bugErrors.length;b.style.display=_bugErrors.length?'flex':'none';}}
 
 // ============ TRANSLATIONS ============
 const T={es:{
@@ -5409,10 +5409,9 @@ window.addEventListener('DOMContentLoaded',init);
 (function(){
 const STORAGE_KEY='egglogu_bugs';
 function loadBugs(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch(e){return[];}}
-function saveBugs(b){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(b.slice(-100)));}catch(e){}}
+function saveBugs(b){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(b.slice(-200)));_bugUpdateBadge();}catch(e){}}
 
 function injectBugWidget(){
-// Floating button
 const fab=document.createElement('div');
 fab.id='bug-fab';
 fab.innerHTML=`<span style="font-size:20px">🐛</span><span id="bug-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#f44336;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center">0</span>`;
@@ -5423,10 +5422,9 @@ fab.onclick=toggleBugPanel;
 document.body.appendChild(fab);
 _bugUpdateBadge();
 
-// Panel
 const panel=document.createElement('div');
 panel.id='bug-panel';
-panel.style.cssText='position:fixed;bottom:80px;right:20px;width:380px;max-height:80vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
+panel.style.cssText='position:fixed;bottom:80px;right:20px;width:400px;max-height:80vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
 document.body.appendChild(panel);
 }
 
@@ -5438,59 +5436,72 @@ p.style.display='flex';
 renderBugPanel();
 }
 
+function _formatBugText(b){
+const sev={low:'Bajo',medium:'Medio',high:'Alto',critical:'Critico'}[b.severity]||b.severity;
+let txt=`[${sev.toUpperCase()}] ${b.desc}\nSeccion: ${b.section} | Usuario: ${b.user} | ${new Date(b.ts).toLocaleString()}\nViewport: ${b.viewport} | Lang: ${b.lang}`;
+if(b.errors?.length){txt+=`\nErrores JS adjuntos: ${b.errors.length}`;b.errors.forEach((e,i)=>{txt+=`\n  ${i+1}. ${e.type} @ ${e.src}:${e.line}:${e.col} — ${e.msg}`;});}
+return txt;
+}
+
 function renderBugPanel(){
 const p=document.getElementById('bug-panel');if(!p)return;
 const bugs=loadBugs();
+const unsent=bugs.filter(x=>!x.sent);
+const sent=bugs.filter(x=>x.sent);
 const section=typeof currentSection!=='undefined'?currentSection:'?';
 const user=typeof _currentUser!=='undefined'&&_currentUser?_currentUser.name:'—';
 const errCount=_bugErrors.length;
 
 let h=`<div style="padding:14px 16px;background:linear-gradient(135deg,#ff5722,#d32f2f);color:#fff;font-weight:700;display:flex;justify-content:space-between;align-items:center">
 <span>🐛 Bug Reporter</span>
+<div style="display:flex;align-items:center;gap:8px">
+${unsent.length?`<span style="background:rgba(255,255,255,.25);padding:2px 8px;border-radius:10px;font-size:11px">${unsent.length} pendiente${unsent.length!==1?'s':''}</span>`:''}
 <button onclick="document.getElementById('bug-panel').style.display='none'" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0 4px">✕</button>
-</div>`;
+</div></div>`;
 
-// Auto-captured context
 h+=`<div style="padding:10px 16px;background:rgba(255,152,0,.08);border-bottom:1px solid var(--border,#333);font-size:11px">
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<span><strong>Sección:</strong> <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">${section}</code></span>
+<span><strong>Seccion:</strong> <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">${section}</code></span>
 <span><strong>Usuario:</strong> ${sanitizeHTML(user)}</span>
 <span><strong>Errores JS:</strong> <span style="color:${errCount?'#f44336':'#4caf50'};font-weight:700">${errCount}</span></span>
 </div></div>`;
 
-// New bug form
 h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#333)">
 <div style="margin-bottom:8px"><select id="bug-severity" style="width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px">
-<option value="low">🟡 Bajo — Visual/cosmético</option>
+<option value="low">🟡 Bajo — Visual/cosmetico</option>
 <option value="medium" selected>🟠 Medio — Funcionalidad parcial</option>
 <option value="high">🔴 Alto — Funcionalidad rota</option>
-<option value="critical">💀 Crítico — Pérdida de datos/crash</option>
+<option value="critical">💀 Critico — Perdida de datos/crash</option>
 </select></div>
-<div style="margin-bottom:8px"><textarea id="bug-desc" rows="3" placeholder="¿Qué pasó? Describe el bug..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
+<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Opcional — describe que paso (requerido si ya reportaste en esta seccion)" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
 <div style="display:flex;gap:8px">
-<button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">📨 Reportar Bug</button>
+<button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">+ Reportar Bug</button>
 ${errCount?`<button onclick="_attachErrors()" style="padding:8px 12px;border:none;border-radius:8px;background:rgba(255,152,0,.2);color:#ff9800;cursor:pointer;font-size:11px;font-weight:600" title="Adjuntar errores capturados">📎 ${errCount} err</button>`:''}
 </div></div>`;
 
-// Bug list
 h+=`<div style="flex:1;overflow-y:auto;max-height:40vh">`;
 if(bugs.length===0){
 h+=`<div style="text-align:center;padding:30px 16px;color:var(--text-muted,#666)">
 <div style="font-size:32px;margin-bottom:8px">✨</div>
 <div>No hay bugs reportados</div>
-<div style="font-size:11px;margin-top:4px">¡El app funciona perfecto! (o nadie ha reportado)</div>
+<div style="font-size:11px;margin-top:4px">Navega la app y reporta cualquier problema que encuentres</div>
 </div>`;
 }else{
+if(unsent.length>0){
+h+=`<div style="padding:6px 16px;background:rgba(255,87,34,.06);font-size:10px;font-weight:700;color:#ff5722;text-transform:uppercase;letter-spacing:.5px">Pendientes de envio (${unsent.length})</div>`;
+}
 bugs.slice().reverse().forEach((b,i)=>{
 const idx=bugs.length-1-i;
+const isSent=!!b.sent;
 const sevIcon={low:'🟡',medium:'🟠',high:'🔴',critical:'💀'}[b.severity]||'🟠';
-const sevColor={low:'#ffeb3b',medium:'#ff9800',high:'#f44336',critical:'#b71c1c'}[b.severity]||'#ff9800';
 const ts=new Date(b.ts).toLocaleString();
 const errBadge=b.errors?.length?`<span style="background:rgba(244,67,54,.15);color:#f44336;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">${b.errors.length} err</span>`:'';
-h+=`<div style="padding:10px 16px;border-bottom:1px solid var(--border,#222);position:relative" class="bug-item">
-<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-<div style="flex:1">
-<div style="font-size:11px;color:var(--text-muted,#666);margin-bottom:3px">${ts} · <code style="font-size:10px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">${sanitizeHTML(b.section)}</code> ${errBadge}</div>
+const sentBadge=isSent?`<span style="background:rgba(76,175,80,.15);color:#4caf50;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">✓ Enviado</span>`:`<span style="background:rgba(255,152,0,.15);color:#ff9800;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">Pendiente</span>`;
+const opacity=isSent?'0.55':'1';
+h+=`<div style="padding:10px 16px;border-bottom:1px solid var(--border,#222);opacity:${opacity}">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+<div style="flex:1;min-width:0">
+<div style="font-size:11px;color:var(--text-muted,#666);margin-bottom:3px">${ts} · <code style="font-size:10px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">${sanitizeHTML(b.section)}</code> ${errBadge} ${sentBadge}</div>
 <div style="font-size:12px;line-height:1.4">${sevIcon} ${sanitizeHTML(b.desc)}</div>`;
 if(b.errors?.length){
 h+=`<details style="margin-top:4px"><summary style="font-size:10px;color:#f44336;cursor:pointer">Ver errores adjuntos (${b.errors.length})</summary>
@@ -5505,17 +5516,20 @@ ${e.stack?'<br><span style="color:#888">'+sanitizeHTML(e.stack.substring(0,150))
 h+=`</div></details>`;
 }
 h+=`</div>
-<button onclick="_deleteBug(${idx})" style="background:none;border:none;color:var(--text-muted,#666);cursor:pointer;font-size:14px;padding:2px;flex-shrink:0" title="Eliminar">🗑</button>
+<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+${!isSent?`<button onclick="_sendBug(${idx})" style="background:none;border:1px solid rgba(76,175,80,.4);color:#4caf50;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap" title="Enviar este bug">📨</button>`:''}
+<button onclick="_deleteBug(${idx})" style="background:none;border:none;color:var(--text-muted,#666);cursor:pointer;font-size:14px;padding:2px;text-align:center" title="Eliminar">🗑</button>
+</div>
 </div></div>`;
 });
 }
 h+=`</div>`;
 
-// Footer
 if(bugs.length>0){
-h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#333);display:flex;justify-content:space-between;align-items:center">
-<span style="font-size:11px;color:var(--text-muted,#666)">${bugs.length} bug${bugs.length!==1?'s':''} reportado${bugs.length!==1?'s':''}</span>
-<div style="display:flex;gap:6px">
+h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#333);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+<span style="font-size:11px;color:var(--text-muted,#666)">${bugs.length} bug${bugs.length!==1?'s':''} · ${unsent.length} pendiente${unsent.length!==1?'s':''}</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+${unsent.length>0?`<button onclick="_sendAllBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:linear-gradient(135deg,#4caf50,#388e3c);color:#fff;cursor:pointer;font-size:11px;font-weight:600">📨 Enviar ${unsent.length>1?'todos ('+unsent.length+')':'1'}</button>`:''}
 <button onclick="_exportBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(255,255,255,.08);color:var(--text,#eee);cursor:pointer;font-size:11px">📋 Exportar</button>
 <button onclick="_clearBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(244,67,54,.1);color:#f44336;cursor:pointer;font-size:11px">🗑 Limpiar</button>
 </div></div>`;
@@ -5524,28 +5538,67 @@ h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#333);display
 p.innerHTML=h;
 }
 
-// Submit bug
+// Submit bug — desc optional for first report in section, required if duplicate section
 window._submitBug=function(){
-const desc=document.getElementById('bug-desc')?.value?.trim();
-if(!desc){toast?.('Describe el bug',true);return;}
+const desc=document.getElementById('bug-desc')?.value?.trim()||'';
+const section=typeof currentSection!=='undefined'?currentSection:'?';
+const bugs=loadBugs();
+const sameSection=bugs.filter(b=>b.section===section&&!b.sent);
+if(sameSection.length>0&&!desc){toast?.('Ya hay un bug en esta seccion — agrega detalles para diferenciarlo',true);document.getElementById('bug-desc')?.focus();return;}
 const bug={
 id:typeof genId!=='undefined'?genId():Date.now().toString(36),
 ts:new Date().toISOString(),
-section:typeof currentSection!=='undefined'?currentSection:'?',
+section:section,
 user:typeof _currentUser!=='undefined'&&_currentUser?_currentUser.name:'anon',
 severity:document.getElementById('bug-severity')?.value||'medium',
-desc:desc,
+desc:desc||'Bug en '+section,
 errors:window._bugAttachedErrors||null,
 ua:navigator.userAgent.substring(0,100),
 viewport:window.innerWidth+'x'+window.innerHeight,
-lang:typeof LANG!=='undefined'?LANG:'?'
+lang:typeof LANG!=='undefined'?LANG:'?',
+sent:false
 };
-const bugs=loadBugs();
 bugs.push(bug);
 saveBugs(bugs);
 window._bugAttachedErrors=null;
 document.getElementById('bug-desc').value='';
-toast?.('🐛 Bug reportado — sección: '+bug.section);
+toast?.('🐛 Bug #'+(bugs.filter(x=>!x.sent).length)+' guardado — sigue navegando');
+renderBugPanel();
+};
+
+// Send single bug (copy to clipboard + mark sent)
+window._sendBug=function(idx){
+const bugs=loadBugs();
+if(!bugs[idx])return;
+const b=bugs[idx];
+const txt=_formatBugText(b);
+navigator.clipboard.writeText(txt).then(()=>{
+toast?.('📋 Bug copiado al portapapeles — pegalo en email o chat');
+}).catch(()=>{
+const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+toast?.('📋 Bug copiado al portapapeles');
+});
+bugs[idx].sent=true;
+bugs[idx].sentAt=new Date().toISOString();
+saveBugs(bugs);
+renderBugPanel();
+};
+
+// Send all unsent bugs
+window._sendAllBugs=function(){
+const bugs=loadBugs();
+const unsent=bugs.filter(x=>!x.sent);
+if(!unsent.length){toast?.('No hay bugs pendientes',true);return;}
+let report='═══ EGGlogU Bug Report ═══\nFecha: '+new Date().toLocaleString()+'\nTotal: '+unsent.length+' bug(s)\n\n';
+unsent.forEach((b,i)=>{report+='--- Bug '+(i+1)+' ---\n'+_formatBugText(b)+'\n\n';});
+navigator.clipboard.writeText(report).then(()=>{
+toast?.('📨 '+unsent.length+' bug(s) copiados al portapapeles — listos para enviar');
+}).catch(()=>{
+const ta=document.createElement('textarea');ta.value=report;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+toast?.('📨 '+unsent.length+' bug(s) copiados al portapapeles');
+});
+bugs.forEach(b=>{if(!b.sent){b.sent=true;b.sentAt=new Date().toISOString();}});
+saveBugs(bugs);
 renderBugPanel();
 };
 
@@ -5563,7 +5616,6 @@ const bugs=loadBugs();
 bugs.splice(idx,1);
 saveBugs(bugs);
 renderBugPanel();
-_bugUpdateBadge();
 };
 
 // Clear all bugs
@@ -5586,7 +5638,6 @@ URL.revokeObjectURL(a.href);
 toast?.('📋 Bugs exportados ('+bugs.length+')');
 };
 
-// Inject on DOM ready
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',injectBugWidget);
 else injectBugWidget();
 })();

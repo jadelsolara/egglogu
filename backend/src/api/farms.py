@@ -9,18 +9,18 @@ from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.farm import Farm
-from src.schemas.farm import FarmCreate, FarmRead, FarmUpdate
+from src.schemas.farm import FarmCreate, FarmRead, FarmReadPublic, FarmUpdate
 
 router = APIRouter(prefix="/farms", tags=["farms"])
 
 
-@router.get("/", response_model=list[FarmRead])
+@router.get("/", response_model=list[FarmReadPublic])
 async def list_farms(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
     result = await db.execute(select(Farm).where(Farm.organization_id == user.organization_id))
     return result.scalars().all()
 
 
-@router.get("/{farm_id}", response_model=FarmRead)
+@router.get("/{farm_id}", response_model=FarmReadPublic)
 async def get_farm(farm_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
     result = await db.execute(
         select(Farm).where(Farm.id == farm_id, Farm.organization_id == user.organization_id)
@@ -50,6 +50,7 @@ async def update_farm(farm_id: uuid.UUID, data: FarmUpdate, db: AsyncSession = D
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(farm, key, value)
     await db.flush()
+    await db.refresh(farm)
     return farm
 
 

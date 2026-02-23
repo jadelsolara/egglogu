@@ -17,27 +17,9 @@ p{color:#757575;font-size:16px;line-height:1.5}
 <body>
 <div class="container">
 <div class="icon">🥚📡</div>
-<h1 id="title">EGGlogU - Sin Conexión</h1>
-<p id="msg">No hay conexión a internet disponible. Tus datos están guardados localmente y estarán disponibles cuando recuperes la conexión.</p>
-<button class="btn" id="retry" onclick="location.reload()">Reintentar</button>
+<h1>EGGlogU - Sin Conexión</h1>
+<p>No hay conexión a internet disponible. Tus datos están guardados localmente y estarán disponibles cuando recuperes la conexión.</p>
+<button class="btn" onclick="location.reload()">Reintentar</button>
 </div>
-<script>
-const T={
-  es:{title:'EGGlogU - Sin Conexión',msg:'No hay conexión a internet disponible. Tus datos están guardados localmente y estarán disponibles cuando recuperes la conexión.',retry:'Reintentar'},
-  en:{title:'EGGlogU - Offline',msg:'No internet connection available. Your data is saved locally and will be available when you reconnect.',retry:'Retry'},
-  pt:{title:'EGGlogU - Sem Conexão',msg:'Sem conexão com a internet. Seus dados estão salvos localmente e estarão disponíveis quando a conexão for restabelecida.',retry:'Tentar novamente'},
-  fr:{title:'EGGlogU - Hors Ligne',msg:'Vous êtes hors ligne. Certaines fonctionnalités peuvent ne pas être disponibles.',retry:'Réessayer'},
-  de:{title:'EGGlogU - Offline',msg:'Sie sind offline. Einige Funktionen sind möglicherweise nicht verfügbar.',retry:'Erneut versuchen'},
-  zh:{title:'EGGlogU - 离线',msg:'当前无网络连接。您的数据已保存在本地，恢复连接后即可使用。',retry:'重试'},
-  hi:{title:'EGGlogU - ऑफ़लाइन',msg:'इंटरनेट कनेक्शन उपलब्ध नहीं है। आपका डेटा स्थानीय रूप से सहेजा गया है और कनेक्शन बहाल होने पर उपलब्ध होगा।',retry:'पुनः प्रयास करें'},
-  ar:{title:'EGGlogU - غير متصل',msg:'لا يوجد اتصال بالإنترنت. بياناتك محفوظة محليًا وستكون متاحة عند استعادة الاتصال.',retry:'إعادة المحاولة'}
-};
-const lang=(localStorage.getItem('egglogu_lang')||navigator.language||'es').substring(0,2);
-const t=T[lang]||T.en;
-document.getElementById('title').textContent=t.title;
-document.getElementById('msg').textContent=t.msg;
-document.getElementById('retry').textContent=t.retry;
-document.documentElement.lang=lang;
-</script>
 </body>
 </html>

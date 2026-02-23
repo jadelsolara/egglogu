@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>EGGlogU MEGA Loader</title></head>
+<body style="font-family:monospace;background:#1a1a2e;color:#0f0;padding:40px;text-align:center;font-size:16px;">
+<h2>EGGlogU MEGA Data Loader</h2>
+<pre id="log">Cargando JSON (4.43 MB)...</pre>
+<script>
+const LOG = document.getElementById('log');
+function log(msg) { LOG.textContent += '\n' + msg; }
+
+(async () => {
+  try {
+    const resp = await fetch('./MEGA_1000clients.json');
+    if (!resp.ok) throw new Error('Fetch failed: ' + resp.status);
+    const text = await resp.text();
+    log('JSON loaded: ' + (text.length / 1024 / 1024).toFixed(2) + ' MB');
+
+    const data = JSON.parse(text);
+    log('Parsed OK:');
+    log('  Clients: ' + data.clients.length + ' (600 VET / 400 NOVET)');
+    log('  Flocks: ' + data.flocks.length + ' (18 VET / 10 NOVET)');
+    log('  Production: ' + data.dailyProduction.length + ' records');
+    log('  Income: ' + data.finances.income.length + ' records');
+    log('  Inventory: ' + data.inventory.length + ' records');
+    log('  Users: ' + data.users.map(u => u.name + ' (' + u.role + ')').join(', '));
+
+    localStorage.setItem('egglogu_data', text);
+    log('');
+    log('Saved to localStorage OK');
+    log('Redirecting to EGGlogU in 3 seconds...');
+
+    setTimeout(() => {
+      window.location.href = '../egglogu.html';
+    }, 3000);
+  } catch (e) {
+    log('ERROR: ' + e.message);
+  }
+})();
+</script>
+</body>
+</html>

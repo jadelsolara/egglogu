@@ -31,7 +31,7 @@ class DailyProduction(TimestampMixin, TenantMixin, Base):
     __tablename__ = "daily_production"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
     date: Mapped[date] = mapped_column(Date, index=True)
     total_eggs: Mapped[int] = mapped_column(Integer, default=0)
     broken: Mapped[int] = mapped_column(Integer, default=0)

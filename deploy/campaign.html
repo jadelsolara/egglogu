@@ -108,10 +108,36 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
 .btn-ghost{padding:16px 40px;background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.3);border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
 .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.05)}
 
+/* Reviews */
+.phase-reviews{padding:80px 24px;text-align:center;background:var(--navy)}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1000px;margin:40px auto 0}
+.review-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;text-align:left;transition:transform .2s}
+.review-card:hover{transform:translateY(-3px)}
+.review-stars{color:var(--orange);font-size:16px;letter-spacing:2px;margin-bottom:10px}
+.review-text{font-size:14px;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:14px;font-style:italic}
+.review-author{font-size:13px;font-weight:600;color:rgba(255,255,255,.5)}
+.review-author span{color:rgba(255,255,255,.3);font-weight:400}
+.review-form-wrap{max-width:500px;margin:40px auto 0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px 24px}
+.review-form-wrap h3{font-size:16px;font-weight:700;margin-bottom:16px}
+.rf-row{display:flex;gap:12px;margin-bottom:12px}
+.rf-row input,.rf-row select{flex:1;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;font-family:inherit}
+.rf-row input::placeholder{color:rgba(255,255,255,.3)}
+.rf-textarea{width:100%;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;margin-bottom:12px}
+.rf-textarea::placeholder{color:rgba(255,255,255,.3)}
+.rf-submit{width:100%;padding:12px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.rf-submit:hover{background:#FFB84D}
+.rf-msg{margin-top:12px;font-size:13px;color:#7ed957;display:none}
+.star-select{display:flex;gap:4px;font-size:22px;cursor:pointer}
+.star-select span{color:rgba(255,255,255,.2);transition:color .15s}
+.star-select span.active{color:var(--orange)}
+
 /* Footer */
 .footer{padding:32px 24px;text-align:center;background:var(--navy-deep);border-top:1px solid rgba(255,255,255,.05)}
 .footer p{font-size:13px;color:rgba(255,255,255,.3)}
 .footer a{color:var(--orange);text-decoration:none}
+.footer-links{margin-top:8px;font-size:12px}
+.footer-links a{margin:0 10px;color:rgba(255,255,255,.35)}
+.footer-links a:hover{color:var(--orange)}
 
 /* Social share cards */
 .share-strip{display:flex;gap:12px;justify-content:center;margin-top:32px}
@@ -318,8 +344,53 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
   </div>
 </section>
 
+<!-- REVIEWS -->
+<section class="phase-reviews" id="reviews">
+  <div class="section-title" data-t="reviews_title">Lo que dicen nuestros usuarios</div>
+  <div class="section-sub" data-t="reviews_sub">Opiniones reales de productores avicolas</div>
+
+  <div class="reviews-grid" id="reviewsGrid">
+    <div class="review-card">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="review-text" data-t="rev1_text">"Llevaba todo en cuadernos. EGGlogU me cambio la vida. Ahora se exactamente cuanto produzco y cuanto gano."</div>
+      <div class="review-author">Carlos M. <span>— Productor, Panama</span></div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="review-text" data-t="rev2_text">"El modo campo es genial. Registro los huevos con una mano mientras trabajo. Simple y rapido."</div>
+      <div class="review-author">Maria L. <span>— Avicultora, Colombia</span></div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="review-text" data-t="rev3_text">"La trazabilidad con QR me abrio puertas a clientes que exigen certificacion. Vale cada centavo."</div>
+      <div class="review-author">Roberto S. <span>— Granja Comercial, Mexico</span></div>
+    </div>
+  </div>
+
+  <div class="review-form-wrap">
+    <h3 data-t="review_form_title">Deja tu opinion</h3>
+    <div class="rf-row">
+      <input type="text" id="rfName" placeholder="Tu nombre" data-ph-t="rf_name_ph">
+      <input type="text" id="rfCountry" placeholder="Pais / Region" data-ph-t="rf_country_ph">
+    </div>
+    <div class="rf-row" style="align-items:center">
+      <span style="font-size:13px;color:rgba(255,255,255,.5);white-space:nowrap" data-t="rf_rating_label">Calificacion:</span>
+      <div class="star-select" id="starSelect">
+        <span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5" class="active">&#9733;</span>
+      </div>
+    </div>
+    <textarea class="rf-textarea" id="rfText" placeholder="Escribe tu experiencia con EGGlogU 360..." data-ph-t="rf_text_ph"></textarea>
+    <button class="rf-submit" onclick="submitReview()" data-t="rf_submit">Enviar Opinion</button>
+    <div class="rf-msg" id="rfMsg" data-t="rf_thanks">Gracias por tu opinion. Sera visible pronto.</div>
+  </div>
+</section>
+
 <footer class="footer">
   <p>&copy; 2026 <a href="/">EGGlogU 360</a> — Gestion Avicola Inteligente</p>
+  <div class="footer-links">
+    <a href="terms.html" data-t="footer_terms">Terminos de Servicio</a>
+    <a href="privacy.html" data-t="footer_privacy">Politica de Privacidad</a>
+  </div>
 </footer>
 
 <script>
@@ -351,7 +422,13 @@ es:{
   t2f1:'Hasta 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA predictiva + Analytics',t2f5:'Bioseguridad + Trazabilidad',t2f6:'Validacion Zero Tolerance',
   tier3_name:'Enterprise',tier3_desc:'Multi-granja, sin limites',
   t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Todo en Professional +',t3f5:'Soporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Crece y ahorra: al subir de plan, el costo por usuario baja hasta <strong>50%</strong> y recibes <strong>2 meses gratis</strong> el primer año. Tu inversion se reinvierte en programas de mejora genetica y calidad de materia prima.'
+  pricing_note:'Crece y ahorra: al subir de plan, el costo por usuario baja hasta <strong>50%</strong> y recibes <strong>2 meses gratis</strong> el primer año. Tu inversion se reinvierte en programas de mejora genetica y calidad de materia prima.',
+  reviews_title:'Lo que dicen nuestros usuarios',reviews_sub:'Opiniones reales de productores avicolas',
+  rev1_text:'"Llevaba todo en cuadernos. EGGlogU me cambio la vida. Ahora se exactamente cuanto produzco y cuanto gano."',
+  rev2_text:'"El modo campo es genial. Registro los huevos con una mano mientras trabajo. Simple y rapido."',
+  rev3_text:'"La trazabilidad con QR me abrio puertas a clientes que exigen certificacion. Vale cada centavo."',
+  review_form_title:'Deja tu opinion',rf_rating_label:'Calificacion:',rf_submit:'Enviar Opinion',rf_thanks:'Gracias por tu opinion. Sera visible pronto.',
+  footer_terms:'Terminos de Servicio',footer_privacy:'Politica de Privacidad'
 },
 en:{
   client_access:'Client Login',
@@ -380,7 +457,13 @@ en:{
   t2f1:'Up to 15 flocks',t2f2:'1 user · +$2.99/extra',t2f3:'All 20 modules',t2f4:'Predictive AI + Analytics',t2f5:'Biosecurity + Traceability',t2f6:'Zero Tolerance Validation',
   tier3_name:'Enterprise',tier3_desc:'Multi-farm, no limits',
   t3f1:'Unlimited flocks',t3f2:'1 user · +$2.49/extra (-50%)',t3f3:'Centralized multi-farm',t3f4:'Everything in Professional +',t3f5:'Dedicated 24/7 support',t3f6:'Personalized onboarding',
-  pricing_note:'Grow & save: upgrade your plan and per-user cost drops up to <strong>50%</strong>, plus <strong>2 months free</strong> on your first year. Your investment funds genetic improvement and raw material quality programs.'
+  pricing_note:'Grow & save: upgrade your plan and per-user cost drops up to <strong>50%</strong>, plus <strong>2 months free</strong> on your first year. Your investment funds genetic improvement and raw material quality programs.',
+  reviews_title:'What our users say',reviews_sub:'Real opinions from poultry producers',
+  rev1_text:'"I used to track everything in notebooks. EGGlogU changed my life. Now I know exactly how much I produce and earn."',
+  rev2_text:'"Field mode is amazing. I log eggs with one hand while working. Simple and fast."',
+  rev3_text:'"QR traceability opened doors to clients who demand certification. Worth every penny."',
+  review_form_title:'Leave your review',rf_rating_label:'Rating:',rf_submit:'Submit Review',rf_thanks:'Thank you for your review. It will be visible soon.',
+  footer_terms:'Terms of Service',footer_privacy:'Privacy Policy'
 },
 pt:{
   client_access:'Acesso Clientes',
@@ -409,7 +492,13 @@ pt:{
   t2f1:'Ate 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA preditiva + Analytics',t2f5:'Biosseguranca + Rastreabilidade',t2f6:'Validacao Zero Tolerance',
   tier3_name:'Enterprise',tier3_desc:'Multi-granja, sem limites',
   t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Tudo no Professional +',t3f5:'Suporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Cresça e economize: ao subir de plano, o custo por usuario cai ate <strong>50%</strong> e voce recebe <strong>2 meses gratis</strong> no primeiro ano. Seu investimento financia programas de melhoria genetica e qualidade de materia-prima.'
+  pricing_note:'Cresça e economize: ao subir de plano, o custo por usuario cai ate <strong>50%</strong> e voce recebe <strong>2 meses gratis</strong> no primeiro ano. Seu investimento financia programas de melhoria genetica e qualidade de materia-prima.',
+  reviews_title:'O que nossos usuarios dizem',reviews_sub:'Opinioes reais de produtores avicolas',
+  rev1_text:'"Eu controlava tudo em cadernos. EGGlogU mudou minha vida. Agora sei exatamente quanto produzo e quanto ganho."',
+  rev2_text:'"O modo campo e incrivel. Registro os ovos com uma mao enquanto trabalho. Simples e rapido."',
+  rev3_text:'"A rastreabilidade com QR me abriu portas para clientes que exigem certificacao. Vale cada centavo."',
+  review_form_title:'Deixe sua opiniao',rf_rating_label:'Avaliacao:',rf_submit:'Enviar Opiniao',rf_thanks:'Obrigado pela sua opiniao. Sera visivel em breve.',
+  footer_terms:'Termos de Servico',footer_privacy:'Politica de Privacidade'
 }
 };
 /* FR, DE, ZH, HI, AR — Phase 2 (global expansion) */
@@ -521,6 +610,34 @@ function detectDeviceLang(){
 // Use saved only if user manually switched, otherwise always use device lang
 const userChose=localStorage.getItem('campaign_lang_manual');
 setLang(userChose&&T[userChose]?userChose:detectDeviceLang());
+
+/* ── Reviews system ── */
+const PH={es:{rf_name_ph:'Tu nombre',rf_country_ph:'Pais / Region',rf_text_ph:'Escribe tu experiencia con EGGlogU 360...'},en:{rf_name_ph:'Your name',rf_country_ph:'Country / Region',rf_text_ph:'Write your experience with EGGlogU 360...'},pt:{rf_name_ph:'Seu nome',rf_country_ph:'Pais / Regiao',rf_text_ph:'Escreva sua experiencia com EGGlogU 360...'}};
+function updatePlaceholders(l){const ph=PH[l]||PH.en;document.querySelectorAll('[data-ph-t]').forEach(el=>{const k=el.getAttribute('data-ph-t');if(ph[k])el.placeholder=ph[k]})}
+const origSetLang=setLang;setLang=function(l,m){origSetLang(l,m);updatePlaceholders(l)};updatePlaceholders(curLang);
+
+let selectedStars=5;
+document.getElementById('starSelect').addEventListener('click',function(e){
+  const v=e.target.getAttribute('data-v');if(!v)return;selectedStars=parseInt(v);
+  this.querySelectorAll('span').forEach(s=>{s.classList.toggle('active',parseInt(s.getAttribute('data-v'))<=selectedStars)});
+});
+
+function submitReview(){
+  const name=document.getElementById('rfName').value.trim();
+  const country=document.getElementById('rfCountry').value.trim();
+  const text=document.getElementById('rfText').value.trim();
+  if(!name||!text){alert(curLang==='es'?'Por favor completa nombre y opinion.':curLang==='pt'?'Por favor preencha nome e opiniao.':'Please fill in name and review.');return}
+  const review={name,country,text,stars:selectedStars,date:new Date().toISOString()};
+  const saved=JSON.parse(localStorage.getItem('egglogu_reviews')||'[]');
+  saved.push(review);localStorage.setItem('egglogu_reviews',JSON.stringify(saved));
+  const card=document.createElement('div');card.className='review-card';
+  card.innerHTML='<div class="review-stars">'+'&#9733;'.repeat(review.stars)+'</div><div class="review-text">"'+review.text.replace(/</g,'&lt;')+'"</div><div class="review-author">'+review.name.replace(/</g,'&lt;')+' <span>— '+(review.country||'').replace(/</g,'&lt;')+'</span></div>';
+  document.getElementById('reviewsGrid').appendChild(card);
+  document.getElementById('rfName').value='';document.getElementById('rfText').value='';document.getElementById('rfCountry').value='';
+  document.getElementById('rfMsg').style.display='block';setTimeout(()=>document.getElementById('rfMsg').style.display='none',4000);
+}
+// Load saved reviews
+(function(){const saved=JSON.parse(localStorage.getItem('egglogu_reviews')||'[]');const grid=document.getElementById('reviewsGrid');saved.forEach(r=>{const card=document.createElement('div');card.className='review-card';card.innerHTML='<div class="review-stars">'+'&#9733;'.repeat(r.stars||5)+'</div><div class="review-text">"'+r.text.replace(/</g,'&lt;')+'"</div><div class="review-author">'+r.name.replace(/</g,'&lt;')+' <span>— '+(r.country||'').replace(/</g,'&lt;')+'</span></div>';grid.appendChild(card)})})();
 </script>
 </body>
 </html>

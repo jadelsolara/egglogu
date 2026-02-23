@@ -1,7 +1,7 @@
 # EGGlogU Enterprise — Arquitectura SaaS de Grado Industrial
 
-**Versión:** 1.0.0
-**Fecha:** 2026-02-15
+**Versión:** 2.0.0
+**Fecha:** 2026-02-22
 **Clasificación:** Documento Estratégico — Arquitectura de Producto
 **Autor:** Jose Antonio / GenieOS
 
@@ -35,19 +35,17 @@
 
 ### 1.1 Estado Actual (v1.0 — PWA Offline)
 
-| Dimensión | Valor Actual | Límite |
-|-----------|-------------|--------|
-| Arquitectura | Single HTML (4,025 líneas) | No escala a equipo |
-| Almacenamiento | localStorage | **5 MB techo duro** |
-| Backend | Ninguno | No hay API |
-| Base de datos | JSON en navegador | Sin queries, sin índices |
-| Autenticación | PIN 4 dígitos local | Sin verificación real |
-| Sincronización | Ninguna | Datos atrapados en 1 dispositivo |
-| Bug reporting | Ninguno | Usuario pierde datos sin aviso |
-| Actualizaciones | Manual (re-descargar HTML) | Versiones divergen |
-| Aislamiento | Total (cada navegador es isla) | Sin datos agregados |
-| Notificaciones | Ninguna | Sin alertas de producción |
-| Soporte empresarial | No existe | No apto para industria |
+| Dimensión | Valor Actual | Notas |
+|-----------|-------------|-------|
+| Frontend | Single HTML (7,272 líneas), vanilla JS + IndexedDB + Service Worker PWA | Offline-first, 8 idiomas |
+| Backend | Python 3.12 + FastAPI 0.115 + SQLAlchemy 2.0 async | 18 módulos de rutas API |
+| Base de datos | PostgreSQL 16 (asyncpg) + Redis 7 (rate limiting) | 21+ modelos SQLAlchemy |
+| Autenticación | JWT + Google OAuth + Apple Sign-In + Microsoft Identity + email verification (Resend) + offline PIN (bcrypt) | Multi-proveedor |
+| Infraestructura | Docker Compose en VPS GoldHuevos + Cloudflare Pages | Frontend: egglogu.com, API: api.egglogu.com |
+| Pagos | Stripe (checkout, portal, webhooks) | 4 tiers: Hobby/Starter/Pro/Enterprise |
+| Sincronización | IndexedDB local + dual-write sync con API | Offline-first con sync online |
+| Soporte | Módulo integrado: tickets, FAQ, auto-responses, ratings | SLA por tier |
+| Multi-tenant | Organization FK (org_id en cada modelo) | NO schema-per-tenant |
 
 ### 1.2 Datos Reales — Simulación MEGA (28 parvadas, 15,464 gallinas, 1,000 clientes)
 
@@ -133,7 +131,7 @@
 │      │          │          │          │          │                │
 │  ┌───┴───┐  ┌──┴───┐  ┌──┴───┐  ┌──┴───┐  ┌──┴───┐            │
 │  │ API-1 │  │ API-2│  │ API-3│  │ API-4│  │ API-N│            │
-│  │(Node) │  │      │  │      │  │      │  │      │            │
+│  │(FastAPI│  │      │  │      │  │      │  │      │            │
 │  └───┬───┘  └──┬───┘  └──┬───┘  └──┬───┘  └──┬───┘            │
 │      │         │         │         │         │                  │
 │  ┌───┴─────────┴─────────┴─────────┴─────────┴──────────┐      │
@@ -171,18 +169,18 @@
 
 | Componente | Tecnología | Justificación |
 |------------|-----------|---------------|
-| **Frontend** | PWA (HTML/JS/CSS) → evoluciona a React/Svelte | Mantiene offline-first, agrega real-time |
-| **API** | Node.js + Fastify | Misma base de código, 2x más rápido que Express |
-| **DB Primaria** | PostgreSQL 16 | ACID, particionamiento nativo, JSON/JSONB, extensiones geográficas |
-| **Cache** | Redis 7 | Sessions, rate limiting, pub/sub para real-time, queue para bugs |
-| **Object Storage** | S3/R2 (Cloudflare) | Backups, exports, media (fotos de parvadas) |
-| **Analytics** | ClickHouse | Columnar, 100x más rápido que PG para aggregations sobre millones de rows |
-| **CDN/WAF** | Cloudflare | Ya contratado, 330+ PoPs, DDoS gratis |
-| **Containers** | Docker + K8s (o Fly.io para MVP) | Auto-scaling, rolling updates, zero-downtime deploy |
-| **CI/CD** | GitHub Actions | Gratis para repos privados, integra con todo |
-| **Monitoring** | Prometheus + Grafana | Open source, estándar industria |
-| **Error Tracking** | Sentry (self-hosted o cloud) | Stack traces, breadcrumbs, release tracking |
-| **Email** | Proton Bridge (transaccional crítico) + Resend (notificaciones) | E2E para datos sensibles, Resend para volumen |
+| **Frontend** | Single HTML PWA (7,272 líneas), vanilla JS, IndexedDB, Service Worker | Offline-first, sin framework, 8 idiomas, desplegado en Cloudflare Pages |
+| **API** | Python 3.12 + FastAPI 0.115 | Async nativo, OpenAPI auto-generada, Pydantic v2 validation, 18 módulos de rutas |
+| **ORM** | SQLAlchemy 2.0 async (asyncpg) | 21+ modelos, migraciones con Alembic, async sessions |
+| **DB Primaria** | PostgreSQL 16 | ACID, JSON/JSONB, asyncpg driver, multi-tenant via Organization FK |
+| **Cache/Rate Limit** | Redis 7 | Rate limiting global (120 req/min por IP), cache de sesiones |
+| **Auth** | JWT + Google OAuth + Apple Sign-In + Microsoft Identity | Resend para email verification, bcrypt para PIN offline |
+| **Pagos** | Stripe | Checkout sessions, customer portal, webhooks |
+| **CDN/WAF** | Cloudflare Pages + Cloudflare DNS | Frontend servido desde edge, DDoS protection |
+| **Containers** | Docker Compose | App + PostgreSQL 16 + Redis 7 en VPS GoldHuevos |
+| **CI/CD** | GitHub Actions | Pipeline CI en .github/workflows/ci.yml |
+| **Email** | Resend API | Verificación, password reset, invitaciones de equipo |
+| **Middleware** | SecurityHeaders (CSP, HSTS, X-Frame-Options) + GlobalRateLimit | Seguridad en capa de aplicación |
 
 ### 2.3 Principio Fundamental: Offline-First con Sync
 
@@ -209,25 +207,39 @@ GRANJA (sin internet)          NUBE (siempre disponible)
 
 ## 3. Modelo de Datos — PostgreSQL Multi-Tenant
 
-### 3.1 Estrategia de Aislamiento: Schema-per-Tenant
+### 3.1 Estrategia de Aislamiento: Multi-Tenant via Organization FK
 
-Cada granja tiene su propio schema de PostgreSQL. Esto garantiza:
-- **Aislamiento total**: Un `SELECT *` en Granja A jamás toca datos de Granja B
-- **Backup independiente**: Se puede restaurar una granja sin afectar otras
-- **Performance**: Índices y vacuum por schema, no compiten
-- **Compliance**: Datos de cada país en su región (GDPR, etc.)
+Cada organización (tenant) se aísla mediante foreign keys (`org_id`) en cada modelo. **NO se usa schema-per-tenant**. Esto garantiza:
+- **Simplicidad**: Un solo schema, queries filtradas por `org_id` automáticamente
+- **Escalabilidad**: Sin overhead de crear/migrar schemas por tenant
+- **Performance**: Índices compuestos con `org_id` como prefijo aseguran isolation en queries
+- **Modelos reales (21+)**: Organization, User, Role, Farm, Flock, BreedCurve, DailyProduction, Vaccine, Medication, Outbreak, StressEvent, FeedPurchase, FeedConsumption, Client, Income, Expense, Receivable, EnvironmentReading, IoTReading, WeatherCache, ChecklistItem, LogbookEntry, Personnel, KPISnapshot, Prediction, BiosecurityVisitor, BiosecurityZone, PestSighting, BiosecurityProtocol, TraceabilityBatch, ProductionPlan, Subscription, SupportTicket, TicketMessage, SupportRating, FAQArticle, AutoResponse, Lead
 
-```sql
--- Estructura por tenant
-CREATE SCHEMA tenant_farm_00001;
-CREATE SCHEMA tenant_farm_00002;
--- ... hasta tenant_farm_NNNNNNN
-
--- Cada schema tiene las mismas tablas
-SET search_path TO tenant_farm_00001;
+```
+Jerarquía de datos:
+Organization (tenant root)
+├── User (con Role)
+├── Farm
+│   ├── Flock
+│   │   ├── DailyProduction
+│   │   ├── Vaccine / Medication / Outbreak / StressEvent
+│   │   ├── FeedConsumption
+│   │   └── BreedCurve
+│   ├── EnvironmentReading / IoTReading / WeatherCache
+│   ├── BiosecurityVisitor / BiosecurityZone / PestSighting / BiosecurityProtocol
+│   └── ChecklistItem / LogbookEntry
+├── Client / Income / Expense / Receivable
+├── FeedPurchase
+├── Personnel
+├── KPISnapshot / Prediction
+├── TraceabilityBatch / ProductionPlan
+├── Subscription (Stripe)
+├── SupportTicket / TicketMessage / SupportRating
+├── FAQArticle / AutoResponse
+└── Lead
 ```
 
-### 3.2 Tablas Principales (por schema)
+### 3.2 Modelos SQLAlchemy (referencia)
 
 ```sql
 -- ═══════════════════════════════════════════════
@@ -487,7 +499,7 @@ CREATE INDEX idx_clients_channel ON clients (channel) WHERE active = true;
 
 ---
 
-## 4. Pipeline de Bugs Autorreparable
+## 4. Pipeline de Bugs Autorreparable [PLANIFICADO]
 
 ### 4.1 Principio: El usuario NUNCA debe diagnosticar un bug
 
@@ -810,7 +822,7 @@ TIEMPO TOTAL: bug detectado 08:00, corregido para todos 10:02 = 2 HORAS
 
 ---
 
-## 5. Sistema de Actualizaciones Obligatorias
+## 5. Sistema de Actualizaciones Obligatorias [PARCIAL]
 
 ### 5.1 Service Worker v2 — Force Update
 
@@ -966,7 +978,7 @@ app.get('/api/version', async (req, res) => {
 
 ---
 
-## 6. Aislamiento de Fallos — Zero Contagion
+## 6. Aislamiento de Fallos — Zero Contagion [PARCIAL]
 
 ### 6.1 Principio: Un Bug en Granja A NUNCA Afecta Granja B
 
@@ -975,18 +987,18 @@ app.get('/api/version', async (req, res) => {
 │                  ARQUITECTURA DE AISLAMIENTO                │
 │                                                            │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
-│  │ Granja A │  │ Granja B │  │ Granja C │  │ Granja N │  │
-│  │ Schema A │  │ Schema B │  │ Schema C │  │ Schema N │  │
+│  │ Org A    │  │ Org B    │  │ Org C    │  │ Org N    │  │
+│  │ org_id=1 │  │ org_id=2 │  │ org_id=3 │  │ org_id=N │  │
 │  │ ════════ │  │ ════════ │  │ ════════ │  │ ════════ │  │
-│  │ Muro de  │  │ Muro de  │  │ Muro de  │  │ Muro de  │  │
-│  │ fuego DB │  │ fuego DB │  │ fuego DB │  │ fuego DB │  │
+│  │ FK filter│  │ FK filter│  │ FK filter│  │ FK filter│  │
+│  │ por query│  │ por query│  │ por query│  │ por query│  │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘  │
 │       │              │              │              │        │
 │  ┌────┴──────────────┴──────────────┴──────────────┴────┐  │
-│  │              API GATEWAY (tenant-aware)               │  │
-│  │  Cada request tiene X-Tenant header                   │  │
-│  │  Middleware valida: token.tenant === request.tenant    │  │
-│  │  Row-Level Security en PostgreSQL como segunda capa   │  │
+│  │              FastAPI MIDDLEWARE (tenant-aware)         │  │
+│  │  JWT contiene org_id del usuario autenticado           │  │
+│  │  Cada query filtra por org_id automáticamente          │  │
+│  │  Middleware valida: token.org_id === resource.org_id   │  │
 │  └───────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────┘
 ```
@@ -995,10 +1007,10 @@ app.get('/api/version', async (req, res) => {
 
 | Capa | Mecanismo | Qué Protege |
 |------|-----------|-------------|
-| **1. Schema isolation** | Cada tenant = schema separado en PostgreSQL | Datos nunca se mezclan |
+| **1. Organization FK isolation** | Cada query filtrada por `org_id` automáticamente | Datos nunca se mezclan |
 | **2. Connection pooling** | Pool separado por tenant (PgBouncer) | Un tenant lento no bloquea otros |
-| **3. Rate limiting** | 100 req/min por tenant | Un tenant no consume toda la API |
-| **4. Resource quotas** | CPU/RAM limits por tier | Enterprise no compite con Free |
+| **3. Rate limiting** | 120 req/min por IP via Redis (GlobalRateLimit middleware) | Un tenant no consume toda la API |
+| **4. Resource quotas** | Límites por tier (farms, flocks, users) | Enterprise no compite con Hobby |
 | **5. Circuit breaker** | Si un tenant genera 5 errores en 1 min, se aísla | Bug en A no cascadea a B |
 | **6. Canary deploy** | Updates van al 5% primero | Bug nuevo afecta 5%, no 100% |
 | **7. Feature flags** | Funciones nuevas se activan por tenant | Rollout gradual |
@@ -1086,7 +1098,7 @@ RESULTADO: Un bug nuevo MÁXIMO afecta al 5% de usuarios por 15 minutos.
 
 ---
 
-## 7. Notificaciones Esenciales
+## 7. Notificaciones Esenciales [PLANIFICADO]
 
 ### 7.1 Principio: Solo lo que IMPORTA para producir huevos y mantener la app estable
 
@@ -1171,14 +1183,14 @@ const DEFAULT_NOTIFICATION_SETTINGS = {
 
 ---
 
-## 8. Escalamiento — De 1 Granja a 10 Millones
+## 8. Escalamiento — De 1 Granja a 10 Millones [PLANIFICADO]
 
 ### 8.1 Fases de Crecimiento
 
 ```
 FASE 1: MVP SaaS (0 — 1,000 granjas)
-├─ Infraestructura: 1 servidor (Fly.io o Railway)
-├─ DB: PostgreSQL single instance (shared schemas)
+├─ Infraestructura: VPS GoldHuevos + Cloudflare Pages (actual)
+├─ DB: PostgreSQL 16 single instance (Organization FK multi-tenant)
 ├─ Cache: Redis single instance
 ├─ Costo: $20-50/mes
 ├─ Equipo: 1 developer (Jose Antonio)
@@ -1286,85 +1298,56 @@ spec:
 
 ---
 
-## 9. Tiers de Servicio
+## 9. Tiers de Servicio [IMPLEMENTADO]
 
 ### 9.1 Tabla de Planes
 
-| Feature | Free | Pro ($9/mes) | Enterprise ($49/mes) | Industrial (Custom) |
-|---------|------|-------------|---------------------|---------------------|
-| Parvadas | 5 | 20 | 100 | Ilimitado |
-| Clientes | 50 | 500 | 5,000 | Ilimitado |
-| Usuarios | 2 | 5 | 25 | Ilimitado |
-| Historial | 1 año | 3 años | 10 años | Ilimitado |
-| Almacenamiento | 100 MB | 1 GB | 10 GB | Ilimitado |
-| Dispositivos sync | 1 | 3 | 10 | Ilimitado |
-| Export (CSV/PDF) | Básico | Completo | Completo + API | Completo + API + BI |
-| Notificaciones push | 5/día | 20/día | Ilimitado | Ilimitado |
-| Soporte | Comunidad | Email (48h) | Email (4h) + Chat | Dedicado + SLA |
-| Analytics | Básico | Avanzado | Avanzado + Benchmarking | Custom + AI Predictions |
-| Bioseguridad | Básico | Completo | Completo + Trazabilidad | Compliance certificado |
-| Vacunas | Manual | + Recordatorios | + Integración veterinaria | + Reportes regulatorios |
-| API access | No | Read-only | Full CRUD | Full + Webhooks |
-| SSO | No | No | Google/Microsoft | SAML/OIDC custom |
-| MFA | No | TOTP | TOTP + Hardware keys | + Biometric |
-| White-label | No | No | No | Sí |
-| On-premise | No | No | No | Sí |
-| Uptime SLA | Best effort | 99.5% | 99.9% | 99.95% |
-| Backup frequency | Diario | Cada 6h | Cada hora | Cada 15min |
-| Data residency | Auto | Elegir región | Elegir región | Dedicado |
+> **Todos los planes incluyen 30 días de prueba gratuita.** Pagos via Stripe (checkout sessions, customer portal, webhooks).
+
+| Feature | Hobby ($9/mes) | Starter ($19/mes) | Pro ($49/mes) | Enterprise ($99/mes) |
+|---------|----------------|-------------------|---------------|---------------------|
+| Granjas | 1 | 3 | 10 | Ilimitado |
+| Parvadas | 3 | 10 | Ilimitado | Ilimitado |
+| Usuarios | 2 | 5 | 15 | Ilimitado |
+| Módulos | Dashboard, Producción, Alimento | 7 módulos | 11 módulos | Todos los módulos |
+| SLA soporte | Comunidad | Email (48h) | Email (12h) | Dedicado (4h) |
+| Export | Básico | CSV/PDF | CSV/PDF + API | Completo + API + BI |
+| Soporte | Comunidad | Email | Email + prioridad | Dedicado + SLA |
 
 ### 9.2 Modelo de Revenue Proyectado
 
-| Fase | Granjas | Free (70%) | Pro (20%) | Enterprise (8%) | Industrial (2%) | MRR |
-|------|---------|-----------|-----------|-----------------|-----------------|-----|
-| 1 | 1K | 700 | 200 × $9 | 80 × $49 | 20 × $200 | **$9,720** |
-| 2 | 10K | 7K | 2K × $9 | 800 × $49 | 200 × $200 | **$97,200** |
-| 3 | 100K | 70K | 20K × $9 | 8K × $49 | 2K × $200 | **$972,000** |
-| 4 | 1M | 700K | 200K × $9 | 80K × $49 | 20K × $200 | **$9.72M** |
-| 5 | 10M | 7M | 2M × $9 | 800K × $49 | 200K × $200 | **$97.2M** |
+| Fase | Orgs | Hobby (40%) × $9 | Starter (30%) × $19 | Pro (20%) × $49 | Enterprise (10%) × $99 | MRR |
+|------|------|-------------------|---------------------|-----------------|----------------------|-----|
+| 1 | 1K | 400 × $9 | 300 × $19 | 200 × $49 | 100 × $99 | **$19,200** |
+| 2 | 10K | 4K × $9 | 3K × $19 | 2K × $49 | 1K × $99 | **$192,000** |
+| 3 | 100K | 40K × $9 | 30K × $19 | 20K × $49 | 10K × $99 | **$1.92M** |
+| 4 | 1M | 400K × $9 | 300K × $19 | 200K × $49 | 100K × $99 | **$19.2M** |
 
 ### 9.3 Límites Técnicos por Tier (Enforcement)
 
-```javascript
-// Middleware de enforcement de tier
-const TIER_LIMITS = {
-    free:       { flocks: 5,   clients: 50,   users: 2,   storage_mb: 100,   api_rpm: 30 },
-    pro:        { flocks: 20,  clients: 500,  users: 5,   storage_mb: 1024,  api_rpm: 120 },
-    enterprise: { flocks: 100, clients: 5000, users: 25,  storage_mb: 10240, api_rpm: 600 },
-    industrial: { flocks: Infinity, clients: Infinity, users: Infinity, storage_mb: Infinity, api_rpm: 6000 }
-};
-
-async function enforceTierLimits(req, res, next) {
-    const tenant = req.tenant;
-    const limits = TIER_LIMITS[tenant.tier];
-
-    // Ejemplo: crear parvada
-    if (req.path === '/api/flocks' && req.method === 'POST') {
-        const currentCount = await db.query(
-            `SELECT COUNT(*) FROM ${tenant.schema}.flocks WHERE status = 'active'`
-        );
-        if (currentCount >= limits.flocks) {
-            return res.status(402).json({
-                error: 'tier_limit',
-                message: `Tu plan ${tenant.tier} permite ${limits.flocks} parvadas activas.`,
-                upgrade_url: '/settings/billing'
-            });
-        }
-    }
-    next();
+```python
+# backend/src/core/plans.py — Enforcement de tier (Python/FastAPI real)
+TIER_LIMITS = {
+    "hobby":      {"farms": 1,   "flocks": 3,          "users": 2,  "modules": ["dashboard", "production", "feed"]},
+    "starter":    {"farms": 3,   "flocks": 10,         "users": 5,  "modules": 7},
+    "pro":        {"farms": 10,  "flocks": float("inf"), "users": 15, "modules": 11},
+    "enterprise": {"farms": float("inf"), "flocks": float("inf"), "users": float("inf"), "modules": "all"},
 }
+
+# Rate limiting global: 120 req/min por IP via Redis (middleware GlobalRateLimit)
+# Stripe webhooks actualizan el tier de la Subscription automáticamente
 ```
 
 ---
 
-## 10. Seguridad y Compliance
+## 10. Seguridad y Compliance [PARCIAL]
 
 ### 10.1 Capas de Seguridad
 
 | Capa | Implementación |
 |------|---------------|
 | **Transport** | TLS 1.3 obligatorio (Cloudflare enforced) |
-| **Autenticación** | OAuth 2.0 + PKCE (no passwords en URLs) |
+| **Autenticación** | JWT + Google OAuth + Apple Sign-In + Microsoft Identity + Resend email verification + offline PIN (bcrypt) |
 | **Autorización** | RBAC por rol + tenant isolation |
 | **MFA** | TOTP (Google Auth) + backup codes |
 | **API** | JWT con rotación cada 15 min + refresh token (7 días) |
@@ -1420,7 +1403,7 @@ CREATE TABLE traceability_batches (
 
 ---
 
-## 11. Costos de Infraestructura
+## 11. Costos de Infraestructura [PLANIFICADO]
 
 ### 11.1 Desglose por Fase
 
@@ -1451,7 +1434,7 @@ El costo de infraestructura por granja es ~$0.03/mes. Incluso el plan Free cuest
 
 ---
 
-## 12. Roadmap de Migración
+## 12. Roadmap de Migración [IMPLEMENTADO]
 
 ### 12.1 Fase 0 — Preparación (2 semanas)
 
@@ -1539,25 +1522,25 @@ Semana 11:
 
 ---
 
-## 13. SLA y Garantías
+## 13. SLA y Garantías [PARCIAL]
 
 ### 13.1 Service Level Agreement
 
 | Nivel | Uptime | Downtime Máximo/Mes | Compensación |
 |-------|--------|---------------------|-------------|
-| Free | Best effort | Sin garantía | Ninguna |
-| Pro | 99.5% | 3h 39min | 10% crédito |
-| Enterprise | 99.9% | 43 min | 25% crédito |
-| Industrial | 99.95% | 21 min | 50% crédito + soporte directo |
+| Hobby ($9) | Best effort | Sin garantía | Ninguna |
+| Starter ($19) | 99.5% | 3h 39min | 10% crédito |
+| Pro ($49) | 99.9% | 43 min | 25% crédito |
+| Enterprise ($99) | 99.95% | 21 min | 50% crédito + soporte directo |
 
 ### 13.2 Recovery Point Objective (RPO) & Recovery Time Objective (RTO)
 
 | Tier | RPO (máxima pérdida de datos) | RTO (tiempo para restaurar) |
 |------|------------------------------|----------------------------|
-| Free | 24 horas | 4 horas |
-| Pro | 6 horas | 1 hora |
-| Enterprise | 1 hora | 15 minutos |
-| Industrial | 15 minutos | 5 minutos |
+| Hobby | 24 horas | 4 horas |
+| Starter | 6 horas | 1 hora |
+| Pro | 1 hora | 15 minutos |
+| Enterprise | 15 minutos | 5 minutos |
 
 ### 13.3 Garantías de Bug Response
 
@@ -1570,7 +1553,7 @@ Semana 11:
 
 ---
 
-## 14. Análisis de Saturación Post-Migración
+## 14. Análisis de Saturación Post-Migración [IMPLEMENTADO]
 
 ### 14.1 Comparación: Antes vs Después
 
@@ -1583,7 +1566,7 @@ Semana 11:
 | **Registros totales** | ~21,000 | **Trillones** |
 | **Bug detection** | No existe | **Automático < 5 segundos** |
 | **Bug fix delivery** | Manual re-download | **Automático < 4 horas** |
-| **Contagion risk** | 0 (islas) | **0 (schema isolation)** |
+| **Contagion risk** | 0 (islas) | **0 (Organization FK isolation)** |
 | **Multi-device** | No | **Sí, real-time sync** |
 | **Offline** | Sí (100%) | **Sí (offline-first + sync)** |
 
@@ -1648,14 +1631,14 @@ VEREDICTO FINAL:
 | **PWA** | Progressive Web App — app web que funciona offline |
 | **RPO** | Recovery Point Objective — máxima pérdida de datos aceptable |
 | **RTO** | Recovery Time Objective — tiempo máximo para restaurar servicio |
-| **Schema isolation** | Cada tenant tiene su propio namespace en la base de datos |
+| **Organization FK isolation** | Cada tenant se aísla mediante foreign keys (`org_id`) en cada modelo, en un solo schema |
 | **Service Worker** | Script del navegador que intercepta requests y maneja cache/updates |
 | **SLA** | Service Level Agreement — garantía de disponibilidad |
 | **Tenant** | Una granja (organización) dentro del sistema multi-tenant |
 
 ---
 
-## 15. Command Center Global — Panel Ejecutivo del Fundador
+## 15. Command Center Global — Panel Ejecutivo del Fundador [PLANIFICADO]
 
 ### 15.1 Qué Es
 
@@ -1949,7 +1932,7 @@ CREATE TABLE feature_usage (
 
 ---
 
-## 16. FarmlogU — El Paraguas Multi-Especie
+## 16. FarmlogU — El Paraguas Multi-Especie [PLANIFICADO]
 
 ### 16.1 Visión
 
@@ -2568,7 +2551,7 @@ FarmlogU elige confianza. Y la profundidad del sistema hace el resto.
 ║     K-anonymity: segmentos < 10 granjas = ocultos.            ║
 ║                                                               ║
 ║  3. ZERO CONTAGION — Bug en una granja no afecta a otra       ║
-║     Schema isolation + circuit breakers + canary deploy.      ║
+║     Organization FK isolation + circuit breakers + canary deploy. ║
 ║                                                               ║
 ║  4. BUGS SE ARREGLAN SOLOS — Detección automática + pipeline  ║
 ║     El granjero aprieta "Send" UNA vez. Nosotros lo hacemos.  ║

@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manual de Usuario — EGGlogU 360</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#1A3C6E;
+  --primary-light:#4A7AB5;
+  --primary-dark:#0E2240;
+  --secondary:#FF8F00;
+  --accent:#2E7D32;
+  --danger:#C62828;
+  --warning:#F9A825;
+  --bg:#F5F5F5;
+  --card:#FFF;
+  --text:#212121;
+  --text-light:#757575;
+  --border:#E0E0E0;
+  --radius:8px;
+  --sidebar-w:280px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+
+/* Sidebar TOC */
+.toc{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--primary-dark);color:#fff;overflow-y:auto;padding:1rem 0;z-index:100;transition:transform .3s}
+.toc-header{padding:0 1.2rem 1rem;border-bottom:1px solid rgba(255,255,255,.15)}
+.toc-header h2{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.2rem}
+.toc-header small{color:rgba(255,255,255,.6);font-size:.75rem}
+.toc a{display:flex;align-items:center;gap:.5rem;padding:.55rem 1.2rem;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;transition:all .15s;border-left:3px solid transparent}
+.toc a:hover,.toc a.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--secondary)}
+.toc a .toc-icon{width:20px;text-align:center;font-size:.95rem;flex-shrink:0}
+.toc .toc-section-title{padding:.6rem 1.2rem .2rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-top:.3rem}
+
+/* Main content */
+.main{margin-left:var(--sidebar-w);padding:2rem 2.5rem 4rem}
+.main>section{max-width:900px;margin:0 auto 3rem}
+
+/* Mobile nav toggle */
+.nav-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--primary);color:#fff;border:none;border-radius:var(--radius);width:42px;height:42px;font-size:1.3rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.toc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+
+/* Hero */
+.hero{text-align:center;padding:2.5rem 1rem 2rem;margin-bottom:2rem}
+.hero h1{font-size:2.2rem;color:var(--primary);margin-bottom:.3rem}
+.hero h1 span{color:var(--secondary)}
+.hero .subtitle{color:var(--text-light);font-size:1.05rem}
+.hero .version{display:inline-block;background:var(--primary);color:#fff;padding:.2rem .7rem;border-radius:20px;font-size:.75rem;margin-top:.5rem}
+
+/* Section headers */
+.section-header{display:flex;align-items:center;gap:.7rem;margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:2px solid var(--primary)}
+.section-header .icon{width:40px;height:40px;border-radius:var(--radius);background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.section-header h2{font-size:1.4rem;color:var(--primary)}
+.section-header h2 small{font-size:.8rem;color:var(--text-light);font-weight:400;margin-left:.5rem}
+
+/* Cards */
+.card{background:var(--card);border-radius:var(--radius);padding:1.3rem 1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid var(--border)}
+.card h3{font-size:1.05rem;color:var(--primary-dark);margin-bottom:.5rem}
+.card h4{font-size:.95rem;color:var(--primary);margin:1rem 0 .4rem}
+
+/* Steps */
+.steps{counter-reset:step;padding-left:0;list-style:none}
+.steps li{counter-increment:step;position:relative;padding:.7rem 0 .7rem 3rem;border-left:2px solid var(--border);margin-left:15px}
+.steps li::before{content:counter(step);position:absolute;left:-15px;top:.55rem;width:28px;height:28px;background:var(--primary);color:#fff;border-radius:50%;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.steps li:last-child{border-left-color:transparent}
+.steps li strong{color:var(--primary-dark)}
+
+/* Inline code & KBD */
+code{background:rgba(26,60,110,.08);color:var(--primary-dark);padding:.15rem .4rem;border-radius:4px;font-size:.88rem}
+kbd{background:#333;color:#fff;padding:.15rem .45rem;border-radius:4px;font-size:.82rem;font-family:inherit}
+
+/* Tables */
+.ref-table{width:100%;border-collapse:collapse;margin:.8rem 0;font-size:.9rem}
+.ref-table th{background:var(--primary);color:#fff;padding:.55rem .7rem;text-align:left;font-weight:600}
+.ref-table td{padding:.5rem .7rem;border-bottom:1px solid var(--border)}
+.ref-table tr:hover td{background:rgba(26,60,110,.03)}
+
+/* Badges */
+.badge{display:inline-block;padding:.15rem .55rem;border-radius:20px;font-size:.75rem;font-weight:600}
+.badge-primary{background:var(--primary);color:#fff}
+.badge-secondary{background:var(--secondary);color:#fff}
+.badge-accent{background:var(--accent);color:#fff}
+.badge-danger{background:var(--danger);color:#fff}
+.badge-warning{background:var(--warning);color:#333}
+
+/* Tips */
+.tip,.warning,.info{padding:.9rem 1.1rem;border-radius:var(--radius);margin:.8rem 0;font-size:.9rem}
+.tip{background:#E8F5E9;border-left:4px solid var(--accent)}
+.tip::before{content:"💡 ";font-size:1rem}
+.warning{background:#FFF3E0;border-left:4px solid var(--secondary)}
+.warning::before{content:"⚠️ ";font-size:1rem}
+.info{background:#E3F2FD;border-left:4px solid var(--primary-light)}
+.info::before{content:"ℹ️ ";font-size:1rem}
+
+/* Field list */
+.field-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:.5rem;margin:.6rem 0}
+.field-item{display:flex;gap:.4rem;align-items:baseline;font-size:.9rem;padding:.3rem .5rem;background:rgba(26,60,110,.03);border-radius:4px}
+.field-item .fname{font-weight:600;color:var(--primary-dark);white-space:nowrap}
+.field-item .fdesc{color:var(--text-light)}
+
+/* Back to top */
+.back-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:var(--primary);color:#fff;border:none;border-radius:50%;font-size:1.2rem;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .3s;z-index:50}
+.back-top.show{opacity:1;pointer-events:auto}
+
+/* Print */
+@media print{
+  .toc,.nav-toggle,.back-top,.toc-overlay{display:none!important}
+  .main{margin-left:0;padding:1rem}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .toc{transform:translateX(-100%)}
+  .toc.open{transform:translateX(0)}
+  .toc-overlay.open{display:block}
+  .nav-toggle{display:flex;align-items:center;justify-content:center}
+  .main{margin-left:0;padding:1.2rem 1rem 3rem}
+  .hero h1{font-size:1.6rem}
+  .section-header h2{font-size:1.15rem}
+  .field-list{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .main{padding:.8rem .6rem 3rem}
+  .card{padding:1rem}
+  .ref-table{font-size:.8rem}
+  .ref-table th,.ref-table td{padding:.4rem .5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile toggle -->
+<button class="nav-toggle" onclick="toggleTOC()" aria-label="Abrir menú">☰</button>
+<div class="toc-overlay" onclick="toggleTOC()"></div>
+
+<!-- Table of Contents Sidebar -->
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <h2>🥚 EGGlogU 360</h2>
+    <small>Manual de Usuario v1.0</small>
+  </div>
+
+  <div class="toc-section-title">Inicio</div>
+  <a href="#bienvenida"><span class="toc-icon">👋</span> Bienvenida</a>
+  <a href="#primeros-pasos"><span class="toc-icon">🚀</span> Primeros Pasos</a>
+
+  <div class="toc-section-title">Módulos Principales</div>
+  <a href="#dashboard"><span class="toc-icon">📊</span> Dashboard</a>
+  <a href="#produccion"><span class="toc-icon">🥚</span> Producción</a>
+  <a href="#lotes"><span class="toc-icon">🐔</span> Lotes</a>
+  <a href="#sanidad"><span class="toc-icon">💉</span> Sanidad</a>
+  <a href="#alimento"><span class="toc-icon">🌾</span> Alimento</a>
+  <a href="#clientes"><span class="toc-icon">👥</span> Clientes</a>
+  <a href="#finanzas"><span class="toc-icon">💰</span> Finanzas</a>
+  <a href="#analisis"><span class="toc-icon">📈</span> Análisis</a>
+  <a href="#operaciones"><span class="toc-icon">📋</span> Operaciones</a>
+  <a href="#bioseguridad"><span class="toc-icon">🛡️</span> Bioseguridad</a>
+  <a href="#trazabilidad"><span class="toc-icon">📦</span> Trazabilidad</a>
+  <a href="#planificacion"><span class="toc-icon">🗓️</span> Planificación</a>
+  <a href="#ambiente"><span class="toc-icon">🌡️</span> Ambiente</a>
+  <a href="#ia-predictiva"><span class="toc-icon">🤖</span> IA Predictiva</a>
+
+  <div class="toc-section-title">Modos Especiales</div>
+  <a href="#modo-campo"><span class="toc-icon">🌿</span> Modo Campo</a>
+  <a href="#modo-vet"><span class="toc-icon">🩺</span> Modo Veterinario</a>
+
+  <div class="toc-section-title">Sistema</div>
+  <a href="#configuracion"><span class="toc-icon">⚙️</span> Configuración</a>
+  <a href="#tips"><span class="toc-icon">✨</span> Tips y Buenas Prácticas</a>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<!-- ============================================ -->
+<!-- BIENVENIDA -->
+<!-- ============================================ -->
+<section id="bienvenida">
+  <div class="hero">
+    <h1>Manual de Usuario<br><span>EGGlogU 360</span></h1>
+    <p class="subtitle">Gestión Avícola Inteligente — Guía Completa</p>
+    <span class="version">v1.0 — 2026</span>
+  </div>
+
+  <div class="card">
+    <h3>Qué es EGGlogU 360</h3>
+    <p>EGGlogU 360 es una plataforma web completa para la gestión de granjas avícolas de postura. Funciona como una <strong>Progressive Web App (PWA)</strong>, lo que significa que puedes instalarla en tu celular o computador y usarla incluso sin conexión a internet.</p>
+    <h4>Capacidades principales</h4>
+    <ul>
+      <li><strong>14 módulos</strong> que cubren desde producción diaria hasta IA predictiva</li>
+      <li><strong>2 modos especiales</strong>: Campo (uso rápido en terreno) y Veterinario (vista clínica)</li>
+      <li><strong>8 idiomas</strong>: Español, Inglés, Portugués, Francés, Alemán, Chino, Hindi, Árabe</li>
+      <li><strong>16 razas comerciales</strong> con curvas de producción reales</li>
+      <li><strong>IA integrada</strong>: predicción de brotes, pronósticos de producción, detección de anomalías</li>
+      <li><strong>IoT compatible</strong>: sensores MQTT en tiempo real</li>
+      <li><strong>100% offline</strong>: todos los datos se guardan en tu dispositivo (localStorage)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PRIMEROS PASOS -->
+<!-- ============================================ -->
+<section id="primeros-pasos">
+  <div class="section-header">
+    <div class="icon">🚀</div>
+    <h2>Primeros Pasos</h2>
+  </div>
+
+  <div class="card">
+    <h3>Acceso a la plataforma</h3>
+    <p>Abre <code>index.html</code> en cualquier navegador moderno (Chrome, Firefox, Edge, Safari). No necesitas servidor — funciona directo desde el archivo.</p>
+
+    <h4>Instalar como app (PWA)</h4>
+    <ol class="steps">
+      <li>Abre EGGlogU en Chrome o Edge</li>
+      <li>Haz clic en el icono de instalación en la barra de dirección (o en el menú ⋮ > <strong>"Instalar app"</strong>)</li>
+      <li>La app aparecerá en tu escritorio o pantalla de inicio</li>
+      <li>Ahora funciona como una aplicación nativa, incluso sin internet</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Navegación general</h3>
+    <p>La interfaz tiene un <strong>sidebar izquierdo</strong> con todos los módulos. En móvil, el sidebar se oculta y aparece un botón ☰ para abrirlo.</p>
+    <ol class="steps">
+      <li>Haz clic en cualquier módulo del sidebar para navegar a él</li>
+      <li>El módulo activo se resalta con un fondo más claro</li>
+      <li>En la parte inferior del sidebar encontrarás los botones de <strong>Modo Campo</strong> y <strong>Modo Veterinario</strong></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Cambiar idioma</h3>
+    <ol class="steps">
+      <li>En la parte superior del sidebar verás <strong>8 banderas</strong> de idiomas</li>
+      <li>Haz clic en la bandera del idioma que prefieras</li>
+      <li>La interfaz se traduce instantáneamente</li>
+      <li>Tu preferencia se guarda automáticamente para futuras sesiones</li>
+    </ol>
+    <div class="tip">Idiomas disponibles: 🇪🇸 Español, 🇺🇸 Inglés, 🇧🇷 Portugués, 🇫🇷 Francés, 🇩🇪 Alemán, 🇨🇳 Chino, 🇮🇳 Hindi, 🇸🇦 Árabe</div>
+  </div>
+
+  <div class="card">
+    <h3>Configuración inicial recomendada</h3>
+    <ol class="steps">
+      <li>Ve a <strong>Configuración</strong> (⚙️) y establece el nombre de tu granja, ubicación y moneda</li>
+      <li>Si tienes datos climáticos, ingresa tu API Key de OpenWeatherMap</li>
+      <li>Crea tu primer <strong>Lote</strong> con la raza, cantidad de aves y fecha de nacimiento</li>
+      <li>Empieza a registrar <strong>Producción</strong> diaria — desde aquí los KPIs del Dashboard se activan</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- DASHBOARD -->
+<!-- ============================================ -->
+<section id="dashboard">
+  <div class="section-header">
+    <div class="icon">📊</div>
+    <h2>Dashboard <small>Panel principal</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Vista general</h3>
+    <p>El Dashboard es tu centro de mando. Muestra los indicadores clave (KPIs) de toda la granja en tiempo real.</p>
+
+    <h4>KPIs mostrados</h4>
+    <table class="ref-table">
+      <thead><tr><th>KPI</th><th>Qué mide</th><th>Cómo se calcula</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Producción Hoy</strong></td><td>Huevos recolectados hoy</td><td>Suma de registros de producción del día</td></tr>
+        <tr><td><strong>Hen-Day %</strong></td><td>Tasa de postura</td><td>(Huevos hoy ÷ gallinas activas) × 100</td></tr>
+        <tr><td><strong>FCR</strong></td><td>Conversión alimenticia</td><td>kg alimento consumido ÷ kg huevos producidos (30 días)</td></tr>
+        <tr><td><strong>Mortalidad %</strong></td><td>Pérdida de aves</td><td>(Muertes 30d ÷ aves totales) × 100</td></tr>
+        <tr><td><strong>Costo/Huevo</strong></td><td>Costo unitario</td><td>Gastos totales ÷ huevos totales (30 días)</td></tr>
+        <tr><td><strong>Ingreso Neto</strong></td><td>Ganancia del mes</td><td>Ingresos del mes − gastos del mes</td></tr>
+        <tr><td><strong>Gallinas Activas</strong></td><td>Plantel actual</td><td>Suma de aves vivas por lote</td></tr>
+        <tr><td><strong>Alertas</strong></td><td>Situaciones que requieren atención</td><td>Conteo de alertas activas</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Panel de alertas</h3>
+    <p>Las alertas se generan automáticamente cuando se detectan situaciones importantes:</p>
+    <ul>
+      <li><span class="badge badge-danger">Urgente</span> Vacunas vencidas sin aplicar</li>
+      <li><span class="badge badge-warning">Atención</span> Vacunas próximas a vencer</li>
+      <li><span class="badge badge-warning">Atención</span> Stock de alimento bajo el mínimo configurado</li>
+      <li><span class="badge badge-danger">Urgente</span> Mortalidad sobre el umbral</li>
+      <li><span class="badge badge-danger">Urgente</span> Brotes sanitarios activos</li>
+      <li><span class="badge badge-warning">Atención</span> Períodos de retiro de medicamentos activos</li>
+      <li><span class="badge badge-warning">Atención</span> Zonas de bioseguridad con desinfección vencida</li>
+      <li><span class="badge badge-danger">Urgente</span> Avistamientos de plagas sin resolver</li>
+      <li><span class="badge badge-danger">Urgente</span> Riesgo de contaminación cruzada por visitantes</li>
+    </ul>
+    <div class="tip">Los umbrales de alerta se configuran en <strong>Configuración → Umbrales de alerta</strong>.</div>
+  </div>
+
+  <div class="card">
+    <h3>Recomendaciones inteligentes</h3>
+    <p>El motor de recomendaciones analiza tus datos y genera sugerencias priorizadas:</p>
+    <ul>
+      <li><span class="badge badge-danger">Alta</span> FCR &gt; 2.4 → revisar dieta y calidad de alimento</li>
+      <li><span class="badge badge-danger">Alta</span> Pico de mortalidad en 48h → revisar condiciones ambientales</li>
+      <li><span class="badge badge-warning">Media</span> Lote bajo su curva de raza por &gt;10% → investigar causa</li>
+      <li><span class="badge badge-warning">Media</span> Stock de alimento para menos de 7 días → programar compra</li>
+      <li><span class="badge badge-primary">Normal</span> Sin lectura ambiental en 3+ días → registrar temperatura y humedad</li>
+      <li><span class="badge badge-warning">Media</span> Zonas con desinfección vencida → desinfectar</li>
+      <li><span class="badge badge-danger">Alta</span> Estrés térmico prolongado (THI &gt; 28 consecutivo) → activar plan de calor</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Widget climático y gráfico de tendencia</h3>
+    <p>Si tienes configurada una API Key de OpenWeatherMap, el Dashboard muestra:</p>
+    <ul>
+      <li><strong>Clima actual:</strong> temperatura, humedad, viento, sensación térmica, índice THI</li>
+      <li><strong>Pronóstico 3 días</strong></li>
+    </ul>
+    <p>Además, un gráfico de línea muestra la <strong>tendencia de producción de los últimos 30 días</strong>.</p>
+
+    <h4>Snapshots de KPIs</h4>
+    <p>El sistema guarda una "foto" de tus KPIs cada día. Puedes ver el historial en la tabla de snapshots al final del Dashboard. Estos datos alimentan el módulo de <strong>Análisis → Evolución de KPIs</strong>.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PRODUCCIÓN -->
+<!-- ============================================ -->
+<section id="produccion">
+  <div class="section-header">
+    <div class="icon">🥚</div>
+    <h2>Producción <small>Registro diario de huevos</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Para qué sirve</h3>
+    <p>Aquí registras la recolección diaria de huevos por lote. Es el módulo más importante — alimenta el Dashboard, Análisis, Finanzas, Trazabilidad y la IA Predictiva.</p>
+  </div>
+
+  <div class="card">
+    <h3>Registrar producción</h3>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Registro"</strong></li>
+      <li>Selecciona la <strong>fecha</strong> (por defecto hoy)</li>
+      <li>Selecciona el <strong>lote</strong> del que vienes a registrar</li>
+      <li>Ingresa la cantidad de <strong>huevos recolectados</strong></li>
+      <li>Ingresa la cantidad de <strong>huevos rotos</strong> (si aplica)</li>
+      <li>Distribuye por <strong>tamaño</strong>: S, M, L, XL, Jumbo</li>
+      <li>Selecciona el <strong>tipo de huevo</strong>: Convencional, Free-range, Orgánico, Pastura, Decorativo</li>
+      <li>Selecciona el <strong>canal de venta</strong>: Mayorista, Supermercado, Restaurante, Directo, Exportación, Pasteurizado</li>
+      <li>Opcional: color de cáscara, puntaje de yema (1-10), muertes del día, causa de muerte, notas</li>
+      <li>Haz clic en <strong>"Guardar"</strong></li>
+    </ol>
+
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Fecha</span><span class="fdesc">Día de recolección</span></div>
+      <div class="field-item"><span class="fname">Lote</span><span class="fdesc">Parvada origen</span></div>
+      <div class="field-item"><span class="fname">Huevos</span><span class="fdesc">Total recolectados</span></div>
+      <div class="field-item"><span class="fname">Rotos</span><span class="fdesc">Huevos dañados</span></div>
+      <div class="field-item"><span class="fname">S / M / L / XL / Jumbo</span><span class="fdesc">Distribución por tamaño</span></div>
+      <div class="field-item"><span class="fname">Tipo</span><span class="fdesc">Convencional, orgánico, etc.</span></div>
+      <div class="field-item"><span class="fname">Canal</span><span class="fdesc">Canal de comercialización</span></div>
+      <div class="field-item"><span class="fname">Calidad yema</span><span class="fdesc">Puntaje 1-10</span></div>
+      <div class="field-item"><span class="fname">Muertes</span><span class="fdesc">Bajas del día</span></div>
+    </div>
+
+    <div class="tip">Registra muertes aquí — el sistema descuenta automáticamente las aves del lote para mantener actualizado el conteo de gallinas activas.</div>
+  </div>
+
+  <div class="card">
+    <h3>Filtrar y consultar registros</h3>
+    <p>Usa la barra de filtros en la parte superior para:</p>
+    <ul>
+      <li><strong>Filtrar por lote:</strong> ver solo la producción de un lote específico</li>
+      <li><strong>Filtrar por rango de fechas:</strong> fecha inicio y fecha fin</li>
+    </ul>
+    <p>La tabla muestra todos los registros con sus detalles. Cada fila tiene botones para <strong>editar</strong> o <strong>eliminar</strong>.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- LOTES -->
+<!-- ============================================ -->
+<section id="lotes">
+  <div class="section-header">
+    <div class="icon">🐔</div>
+    <h2>Lotes <small>Gestión de parvadas</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Para qué sirve</h3>
+    <p>Un <strong>lote</strong> (o parvada) es un grupo de aves que ingresaron juntas a la granja. Todo en EGGlogU se organiza por lote: producción, sanidad, alimentación, trazabilidad, etc.</p>
+  </div>
+
+  <div class="card">
+    <h3>Crear un nuevo lote</h3>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Lote"</strong></li>
+      <li>Ingresa un <strong>nombre</strong> identificador (ej: "Lote A-2026", "Galpón 3")</li>
+      <li>Selecciona la <strong>raza</strong> del menú desplegable (16 razas comerciales disponibles)</li>
+      <li>Ingresa la <strong>cantidad inicial</strong> de aves</li>
+      <li>Selecciona la <strong>fecha de nacimiento</strong> — esto es crucial para las curvas de producción y el calendario de vacunas</li>
+      <li>Selecciona el <strong>tipo de alojamiento</strong>: Piso, Jaula, o Free-range</li>
+      <li>La <strong>curva objetivo</strong> y el <strong>color de huevo</strong> se llenan automáticamente según la raza</li>
+      <li>Opcional: estado (activo/inactivo), costo de adquisición, notas</li>
+      <li>Haz clic en <strong>"Guardar"</strong></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Razas disponibles</h3>
+    <table class="ref-table">
+      <thead><tr><th>Raza</th><th>Tipo</th><th>Huevos/Año</th><th>Color Huevo</th><th>Peso Huevo</th><th>FCR</th></tr></thead>
+      <tbody>
+        <tr><td>ISA Brown</td><td>Industrial</td><td>320</td><td>Marrón</td><td>63g</td><td>2.1</td></tr>
+        <tr><td>Hy-Line W-36</td><td>Industrial</td><td>330</td><td>Blanco</td><td>62g</td><td>1.9</td></tr>
+        <tr><td>Hy-Line Brown</td><td>Industrial</td><td>325</td><td>Marrón</td><td>64g</td><td>2.0</td></tr>
+        <tr><td>Lohmann Brown</td><td>Industrial</td><td>315</td><td>Marrón</td><td>64g</td><td>2.1</td></tr>
+        <tr><td>Lohmann LSL</td><td>Industrial</td><td>330</td><td>Blanco</td><td>63g</td><td>1.9</td></tr>
+        <tr><td>Bovans Brown</td><td>Industrial</td><td>310</td><td>Marrón</td><td>63g</td><td>2.1</td></tr>
+        <tr><td>Bovans White</td><td>Industrial</td><td>325</td><td>Blanco</td><td>62g</td><td>1.9</td></tr>
+        <tr><td>Dekalb White</td><td>Industrial</td><td>320</td><td>Blanco</td><td>61g</td><td>2.0</td></tr>
+        <tr><td>Novogen Brown</td><td>Industrial</td><td>310</td><td>Marrón</td><td>63g</td><td>2.1</td></tr>
+        <tr><td>Novogen White</td><td>Industrial</td><td>320</td><td>Blanco</td><td>62g</td><td>2.0</td></tr>
+        <tr><td>Araucana</td><td>Heritage</td><td>250</td><td>Azul/Verde</td><td>55g</td><td>2.5</td></tr>
+        <tr><td>Marans</td><td>Heritage</td><td>200</td><td>Chocolate</td><td>65g</td><td>2.6</td></tr>
+        <tr><td>Sussex</td><td>Doble propósito</td><td>260</td><td>Crema</td><td>60g</td><td>2.4</td></tr>
+        <tr><td>Plymouth Rock</td><td>Doble propósito</td><td>250</td><td>Marrón</td><td>60g</td><td>2.4</td></tr>
+        <tr><td>Leghorn</td><td>Industrial</td><td>300</td><td>Blanco</td><td>61g</td><td>2.0</td></tr>
+        <tr><td>Genérica</td><td>General</td><td>280</td><td>Marrón</td><td>60g</td><td>2.2</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Hoja de ruta del ciclo de vida</h3>
+    <p>Cada lote muestra una barra visual con las <strong>8 etapas del ciclo de vida</strong>:</p>
+    <table class="ref-table">
+      <thead><tr><th>Etapa</th><th>Semanas</th><th>Descripción</th></tr></thead>
+      <tbody>
+        <tr><td>Cría</td><td>0-4</td><td>Pollitas recién nacidas, control de temperatura</td></tr>
+        <tr><td>Recría</td><td>5-8</td><td>Crecimiento, primeras vacunas</td></tr>
+        <tr><td>Desarrollo</td><td>9-15</td><td>Preparación para postura</td></tr>
+        <tr><td>Pre-postura</td><td>16-17</td><td>Estimulación lumínica, cambio de alimento</td></tr>
+        <tr><td>Inicio postura</td><td>18-22</td><td>Primeros huevos, producción creciente</td></tr>
+        <tr><td>Pico</td><td>23-35</td><td>Máxima producción (90-95% Hen-Day)</td></tr>
+        <tr><td>Persistencia</td><td>36-65</td><td>Producción gradualmente descendente</td></tr>
+        <tr><td>Fin ciclo</td><td>66+</td><td>Producción mínima, evaluar descarte/muda</td></tr>
+      </tbody>
+    </table>
+    <div class="info">La etapa se calcula automáticamente a partir de la fecha de nacimiento del lote.</div>
+  </div>
+
+  <div class="card">
+    <h3>Detalle de lote</h3>
+    <p>Haz clic en un lote para ver su tarjeta de detalle, que incluye:</p>
+    <ul>
+      <li><strong>Score de salud:</strong> puntuación compuesta (0-100) basada en mortalidad, brotes, vacunas y FCR</li>
+      <li><strong>Timeline de vacunas:</strong> calendario de vacunación específico para ese lote</li>
+      <li><strong>Información de producción:</strong> resumen de huevos y rendimiento</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- SANIDAD -->
+<!-- ============================================ -->
+<section id="sanidad">
+  <div class="section-header">
+    <div class="icon">💉</div>
+    <h2>Sanidad <small>Vacunas, medicamentos, brotes y estrés</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Vista general</h3>
+    <p>El módulo de Sanidad tiene <strong>4 pestañas</strong>: Vacunas, Medicamentos, Brotes y Eventos de Estrés.</p>
+  </div>
+
+  <div class="card">
+    <h3>Vacunas</h3>
+    <p>El sistema genera <strong>automáticamente</strong> un calendario de 9 vacunas para cada lote basado en su fecha de nacimiento:</p>
+    <table class="ref-table">
+      <thead><tr><th>Vacuna</th><th>Día</th><th>Enfermedad que previene</th></tr></thead>
+      <tbody>
+        <tr><td>Marek</td><td>Día 1</td><td>Enfermedad de Marek</td></tr>
+        <tr><td>Newcastle + BI</td><td>Día 7</td><td>Newcastle + Bronquitis Infecciosa</td></tr>
+        <tr><td>Gumboro</td><td>Día 14</td><td>Enfermedad de Gumboro (IBD)</td></tr>
+        <tr><td>Newcastle Refuerzo</td><td>Día 21</td><td>Refuerzo Newcastle</td></tr>
+        <tr><td>Gumboro Refuerzo</td><td>Día 28</td><td>Refuerzo Gumboro</td></tr>
+        <tr><td>Viruela Aviar</td><td>Día 42</td><td>Viruela aviar</td></tr>
+        <tr><td>Newcastle + BI 2do Refuerzo</td><td>Día 63</td><td>Segundo refuerzo Newcastle + BI</td></tr>
+        <tr><td>Coriza</td><td>Día 77</td><td>Coriza infecciosa</td></tr>
+        <tr><td>Newcastle + BI 3er Refuerzo</td><td>Día 112</td><td>Refuerzo pre-postura</td></tr>
+      </tbody>
+    </table>
+    <h4>Cómo aplicar una vacuna</h4>
+    <ol class="steps">
+      <li>Ve a <strong>Sanidad → Vacunas</strong></li>
+      <li>Verás la tabla con todas las vacunas pendientes de todos los lotes</li>
+      <li>Las vacunas <span class="badge badge-danger">vencidas</span> aparecen resaltadas en rojo</li>
+      <li>Haz clic en <strong>"Aplicar"</strong> junto a la vacuna</li>
+      <li>El estado cambia a <span class="badge badge-accent">Aplicada</span></li>
+    </ol>
+    <div class="warning">Las vacunas vencidas generan alertas en el Dashboard. Es importante mantener el calendario al día.</div>
+  </div>
+
+  <div class="card">
+    <h3>Medicamentos</h3>
+    <p>Registra tratamientos médicos con control de período de retiro.</p>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Medicamento"</strong></li>
+      <li>Selecciona <strong>fecha</strong> y <strong>lote</strong></li>
+      <li>Ingresa el nombre del <strong>medicamento</strong></li>
+      <li>Ingresa <strong>dosis</strong> y <strong>vía de administración</strong> (oral, inyectable, agua, etc.)</li>
+      <li>Ingresa los <strong>días de tratamiento</strong></li>
+      <li>Ingresa los <strong>días de retiro</strong> — el sistema calcula automáticamente la fecha en que termina el período de retiro</li>
+      <li>Guardar</li>
+    </ol>
+    <div class="warning">Mientras un lote está en <strong>período de retiro</strong>, aparece un badge visible y una alerta en el Dashboard. Los huevos de ese lote NO deben comercializarse hasta que termine el retiro.</div>
+  </div>
+
+  <div class="card">
+    <h3>Brotes</h3>
+    <p>Registra eventos de enfermedad para llevar seguimiento hasta su resolución.</p>
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Fecha</span><span class="fdesc">Inicio del brote</span></div>
+      <div class="field-item"><span class="fname">Lote</span><span class="fdesc">Parvada afectada</span></div>
+      <div class="field-item"><span class="fname">Enfermedad</span><span class="fdesc">Nombre o sospecha</span></div>
+      <div class="field-item"><span class="fname">Síntomas</span><span class="fdesc">Descripción clínica</span></div>
+      <div class="field-item"><span class="fname">Tratamiento</span><span class="fdesc">Acciones tomadas</span></div>
+      <div class="field-item"><span class="fname">Estado</span><span class="fdesc">Activo / Controlado / Resuelto</span></div>
+    </div>
+    <div class="info">Los brotes activos generan alertas, incrementan el riesgo de brote de la IA Predictiva, y se muestran en el Modo Veterinario.</div>
+  </div>
+
+  <div class="card">
+    <h3>Eventos de Estrés</h3>
+    <p>Registra eventos que pueden afectar la producción. El sistema mide automáticamente el <strong>impacto en producción</strong> comparando los 3 días antes vs. 3 días después del evento.</p>
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Fecha</span><span class="fdesc">Cuándo ocurrió</span></div>
+      <div class="field-item"><span class="fname">Tipo</span><span class="fdesc">Calor, enfermedad, cambio de alimento, corte de luz, depredador, otro</span></div>
+      <div class="field-item"><span class="fname">Severidad</span><span class="fdesc">1-5 (de leve a severo)</span></div>
+      <div class="field-item"><span class="fname">Lote</span><span class="fdesc">Parvada afectada</span></div>
+      <div class="field-item"><span class="fname">Descripción</span><span class="fdesc">Detalle del evento</span></div>
+    </div>
+    <div class="tip">Cuando el índice THI (Temperatura-Humedad) supera 28, el sistema genera automáticamente un evento de estrés por calor.</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- ALIMENTO -->
+<!-- ============================================ -->
+<section id="alimento">
+  <div class="section-header">
+    <div class="icon">🌾</div>
+    <h2>Alimento <small>Compras y consumo de alimento</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>KPIs de alimento</h3>
+    <p>En la parte superior del módulo verás:</p>
+    <ul>
+      <li><strong>Stock actual (kg):</strong> compras totales − consumo total</li>
+      <li><strong>Total compras:</strong> inversión acumulada en alimento</li>
+      <li><strong>Total consumo (kg):</strong> alimento usado</li>
+      <li><strong>FCR 30 días:</strong> conversión alimenticia del último mes</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Registrar compra de alimento</h3>
+    <ol class="steps">
+      <li>Ve a la pestaña <strong>"Compras"</strong></li>
+      <li>Haz clic en <strong>"+ Nueva Compra"</strong></li>
+      <li>Ingresa: <strong>fecha</strong>, <strong>tipo de alimento</strong>, <strong>cantidad (kg)</strong>, <strong>costo total</strong> y <strong>proveedor</strong></li>
+      <li>El sistema calcula automáticamente el <strong>$/kg</strong></li>
+      <li>Guardar</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Registrar consumo de alimento</h3>
+    <ol class="steps">
+      <li>Ve a la pestaña <strong>"Consumo"</strong></li>
+      <li>Haz clic en <strong>"+ Nuevo Consumo"</strong></li>
+      <li>Ingresa: <strong>fecha</strong>, <strong>lote</strong>, <strong>cantidad (kg)</strong> y <strong>tipo de alimento</strong></li>
+      <li>Guardar</li>
+    </ol>
+    <div class="tip">Registra el consumo diariamente para obtener un FCR preciso. El FCR es el indicador más importante de eficiencia alimenticia.</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- CLIENTES -->
+<!-- ============================================ -->
+<section id="clientes">
+  <div class="section-header">
+    <div class="icon">👥</div>
+    <h2>Clientes <small>Gestión de compradores</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Para qué sirve</h3>
+    <p>Gestiona tu cartera de clientes y sus precios personalizados por tamaño de huevo. Los clientes se vinculan con Finanzas (ingresos, cuentas por cobrar) y Trazabilidad (despachos).</p>
+  </div>
+
+  <div class="card">
+    <h3>Crear un cliente</h3>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Cliente"</strong></li>
+      <li>Ingresa: <strong>nombre</strong>, <strong>teléfono</strong>, <strong>email</strong>, <strong>ruta</strong>, <strong>dirección</strong></li>
+      <li>Define los <strong>precios por tamaño</strong> para este cliente: S, M, L, XL, Jumbo</li>
+      <li>Opcional: notas</li>
+      <li>Guardar</li>
+    </ol>
+    <div class="info">Los precios por tamaño permiten que al registrar un ingreso vinculado a este cliente, el precio se sugiera automáticamente según el tamaño del huevo.</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FINANZAS -->
+<!-- ============================================ -->
+<section id="finanzas">
+  <div class="section-header">
+    <div class="icon">💰</div>
+    <h2>Finanzas <small>Ingresos, gastos y cuentas por cobrar</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Vista general</h3>
+    <p>El módulo de Finanzas tiene <strong>4 pestañas</strong>: Ingresos, Gastos, Cuentas por Cobrar y Resumen.</p>
+  </div>
+
+  <div class="card">
+    <h3>Ingresos</h3>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Ingreso"</strong></li>
+      <li>Selecciona la <strong>fecha</strong></li>
+      <li>Selecciona el <strong>tipo</strong>: Huevos, Aves, Guano (gallinaza), Otro</li>
+      <li>Ingresa <strong>cantidad</strong> y <strong>precio unitario</strong> — el total se calcula automáticamente</li>
+      <li>Opcional: selecciona el <strong>cliente</strong> vinculado</li>
+      <li>Guardar</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Gastos</h3>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Gasto"</strong></li>
+      <li>Selecciona la <strong>fecha</strong></li>
+      <li>Selecciona la <strong>categoría</strong>: Alimento, Vacunas, Transporte, Mano de obra, Infraestructura, Otro</li>
+      <li>Ingresa <strong>descripción</strong> y <strong>monto</strong></li>
+      <li>Guardar</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Cuentas por Cobrar</h3>
+    <p>Lleva control de ventas a crédito.</p>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nueva Cuenta"</strong></li>
+      <li>Ingresa: <strong>fecha</strong>, <strong>cliente</strong>, <strong>descripción</strong>, <strong>monto</strong>, <strong>fecha de vencimiento</strong></li>
+      <li>Cuando el cliente pague, haz clic en <strong>"Marcar como pagada"</strong></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Resumen financiero</h3>
+    <p>La pestaña Resumen muestra:</p>
+    <ul>
+      <li><strong>KPIs del mes:</strong> ingresos, gastos, ingreso neto</li>
+      <li><strong>Desglose mensual:</strong> tabla mes a mes con ingresos, gastos y neto</li>
+      <li><strong>Gastos por categoría:</strong> cuánto se gasta en cada rubro</li>
+      <li><strong>Análisis de punto de equilibrio:</strong> cuántos huevos necesitas vender para cubrir costos</li>
+      <li><strong>Costo por huevo:</strong> costo real de producir cada huevo</li>
+      <li><strong>Exportar CSV:</strong> botón para descargar todos los datos financieros</li>
+    </ul>
+    <div class="tip">Revisa el resumen financiero mensualmente para detectar tendencias de costos y ajustar precios.</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- ANÁLISIS -->
+<!-- ============================================ -->
+<section id="analisis">
+  <div class="section-header">
+    <div class="icon">📈</div>
+    <h2>Análisis <small>Comparaciones, estacionalidad y rentabilidad</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Vista general</h3>
+    <p>El módulo de Análisis tiene <strong>5 pestañas</strong> que procesan todos tus datos para generar inteligencia accionable.</p>
+  </div>
+
+  <div class="card">
+    <h3>Comparación de Lotes</h3>
+    <p>Tabla que compara todos los lotes activos lado a lado:</p>
+    <ul>
+      <li>Cantidad de aves, gallinas actuales</li>
+      <li>Hen-Day % (tasa de postura)</li>
+      <li>FCR (conversión alimenticia)</li>
+      <li>Mortalidad %</li>
+      <li>Score de salud</li>
+    </ul>
+    <p>Los lotes se ordenan por Hen-Day %. Se identifica el <strong>mejor</strong> y el <strong>peor</strong> lote.</p>
+  </div>
+
+  <div class="card">
+    <h3>Estacionalidad</h3>
+    <p>Gráfico de barras y tabla mostrando la producción promedio de huevos <strong>por mes</strong>. Permite identificar los meses de mayor y menor producción, útil para planificar ventas y abastecimiento.</p>
+  </div>
+
+  <div class="card">
+    <h3>Rentabilidad</h3>
+    <p>Tres análisis de rentabilidad:</p>
+    <ul>
+      <li><strong>Por lote:</strong> huevos, ingresos, gastos, neto y costo/huevo por cada lote</li>
+      <li><strong>Por tipo de huevo:</strong> rentabilidad de convencional vs. orgánico vs. free-range, etc.</li>
+      <li><strong>Por canal de venta:</strong> rentabilidad por mayorista, supermercado, directo, etc.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Evolución de KPIs</h3>
+    <p>Gráfico de líneas multi-eje con los últimos 30 snapshots diarios, mostrando:</p>
+    <ul>
+      <li>Hen-Day % (eje izquierdo)</li>
+      <li>FCR (eje derecho)</li>
+      <li>Mortalidad % (eje derecho)</li>
+    </ul>
+    <p>Debajo, tabla histórica con todos los KPIs: gallinas activas, Hen-Day, FCR, mortalidad, costo/huevo, ingreso neto.</p>
+  </div>
+
+  <div class="card">
+    <h3>Predicciones (ML)</h3>
+    <p>Ver sección completa en <a href="#ia-predictiva">IA Predictiva</a>.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- OPERACIONES -->
+<!-- ============================================ -->
+<section id="operaciones">
+  <div class="section-header">
+    <div class="icon">📋</div>
+    <h2>Operaciones <small>Checklist, bitácora y personal</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Checklist diario</h3>
+    <p>Lista de tareas que se deben completar cada día en la granja.</p>
+    <ol class="steps">
+      <li>Al abrir la pestaña <strong>"Checklist"</strong>, verás las tareas predefinidas del día</li>
+      <li>Marca cada tarea como completada haciendo clic en el checkbox</li>
+      <li>Haz clic en <strong>"+ Agregar tarea"</strong> para añadir tareas personalizadas</li>
+      <li>Un indicador muestra el <strong>% de completitud</strong> del día</li>
+      <li>Puedes ver el historial de los <strong>últimos 7 días</strong></li>
+    </ol>
+    <div class="tip">Configura las tareas predeterminadas del checklist en <strong>Configuración → Checklist por defecto</strong>.</div>
+  </div>
+
+  <div class="card">
+    <h3>Bitácora</h3>
+    <p>Registro libre de notas y observaciones diarias.</p>
+    <ol class="steps">
+      <li>Ve a la pestaña <strong>"Bitácora"</strong></li>
+      <li>Haz clic en <strong>"+ Nueva Entrada"</strong></li>
+      <li>Selecciona la <strong>fecha</strong> y <strong>categoría</strong>: General, Salud, Producción, Mantenimiento, Observación</li>
+      <li>Escribe tu <strong>nota</strong></li>
+      <li>Guardar</li>
+    </ol>
+    <p>Puedes filtrar las entradas por categoría usando el selector superior.</p>
+  </div>
+
+  <div class="card">
+    <h3>Personal</h3>
+    <p>Gestiona a los trabajadores de la granja.</p>
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Nombre</span><span class="fdesc">Nombre del trabajador</span></div>
+      <div class="field-item"><span class="fname">Rol</span><span class="fdesc">Cargo o función</span></div>
+      <div class="field-item"><span class="fname">Salario</span><span class="fdesc">Sueldo mensual</span></div>
+      <div class="field-item"><span class="fname">Fecha inicio</span><span class="fdesc">Desde cuándo trabaja</span></div>
+      <div class="field-item"><span class="fname">Estado</span><span class="fdesc">Activo / Inactivo</span></div>
+    </div>
+    <p>El KPI superior muestra la <strong>suma total de salarios activos</strong>, útil para el análisis de costos.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- BIOSEGURIDAD -->
+<!-- ============================================ -->
+<section id="bioseguridad">
+  <div class="section-header">
+    <div class="icon">🛡️</div>
+    <h2>Bioseguridad <small>Visitantes, zonas, plagas y protocolos</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>KPIs de bioseguridad</h3>
+    <ul>
+      <li><strong>Pest Score (/100):</strong> puntuación compuesta de riesgo de plagas — mientras más alto, más riesgo</li>
+      <li><strong>Plagas sin resolver:</strong> avistamientos activos</li>
+      <li><strong>Total visitantes:</strong> conteo de visitas registradas</li>
+      <li><strong>Total zonas:</strong> zonas de bioseguridad configuradas</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Visitantes</h3>
+    <p>Registra cada persona que ingresa a la granja.</p>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Visitante"</strong></li>
+      <li>Ingresa: <strong>fecha</strong>, <strong>nombre</strong>, <strong>empresa</strong>, <strong>motivo de visita</strong>, <strong>zona visitada</strong></li>
+      <li>Ingresa la <strong>patente del vehículo</strong> (si aplica)</li>
+      <li>Marca si fue <strong>desinfectado</strong> (Sí/No)</li>
+      <li>Si viene de otra granja: ingresa el <strong>ID de granja de origen</strong> y su <strong>estado sanitario</strong> (Sana / En brote / Desconocido)</li>
+      <li>Guardar</li>
+    </ol>
+    <div class="warning">Si un visitante viene de una granja "En brote", el sistema genera una <strong>alerta de contaminación cruzada</strong> que aparece en el Dashboard y en el Modo Veterinario.</div>
+  </div>
+
+  <div class="card">
+    <h3>Zonas</h3>
+    <p>Define las zonas de bioseguridad de tu granja con nivel de riesgo y frecuencia de desinfección.</p>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nueva Zona"</strong></li>
+      <li>Ingresa: <strong>nombre</strong> (ej: "Galpón 1", "Bodega alimento", "Ingreso")</li>
+      <li>Selecciona el <strong>nivel de riesgo</strong>: <span class="badge badge-accent">Verde</span> <span class="badge badge-warning">Amarillo</span> <span class="badge badge-danger">Rojo</span></li>
+      <li>Ingresa la <strong>fecha de última desinfección</strong> y la <strong>frecuencia</strong> (cada cuántos días)</li>
+      <li>Guardar</li>
+    </ol>
+    <p>Las zonas con desinfección vencida aparecen con un indicador <span class="badge badge-danger">Vencida</span> y generan alertas.</p>
+  </div>
+
+  <div class="card">
+    <h3>Plagas</h3>
+    <p>Registra avistamientos de plagas con timeline visual.</p>
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Fecha</span><span class="fdesc">Cuándo se detectó</span></div>
+      <div class="field-item"><span class="fname">Tipo</span><span class="fdesc">Roedor, mosca, ave silvestre, otro</span></div>
+      <div class="field-item"><span class="fname">Ubicación</span><span class="fdesc">Dónde se detectó</span></div>
+      <div class="field-item"><span class="fname">Severidad</span><span class="fdesc">1-5 estrellas</span></div>
+      <div class="field-item"><span class="fname">Acción tomada</span><span class="fdesc">Qué se hizo al respecto</span></div>
+      <div class="field-item"><span class="fname">Estado</span><span class="fdesc">Activo / Resuelto</span></div>
+    </div>
+    <p>Haz clic en <strong>"Marcar como resuelto"</strong> cuando el problema esté controlado.</p>
+
+    <h4>Cómo se calcula el Pest Score</h4>
+    <p>El puntaje (0-100) se compone de:</p>
+    <ul>
+      <li>Avistamientos sin resolver: hasta 40 puntos</li>
+      <li>Severidad promedio: hasta 20 puntos</li>
+      <li>Zonas en rojo: 15 puntos c/u; zonas en amarillo: 5 puntos c/u</li>
+      <li>Desinfecciones vencidas: 10 puntos c/u</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Protocolos</h3>
+    <p>Define protocolos recurrentes de bioseguridad.</p>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Protocolo"</strong></li>
+      <li>Ingresa: <strong>nombre</strong> (ej: "Desratización", "Fumigación galpones")</li>
+      <li>Selecciona la <strong>frecuencia</strong>: Diaria, Semanal, Mensual</li>
+      <li>Agrega los <strong>ítems del checklist</strong> del protocolo</li>
+      <li>Guardar</li>
+    </ol>
+    <p>Cada protocolo muestra su fecha de última ejecución y un indicador si está vencido. Haz clic en <strong>"Completar protocolo"</strong> para registrar su ejecución.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- TRAZABILIDAD -->
+<!-- ============================================ -->
+<section id="trazabilidad">
+  <div class="section-header">
+    <div class="icon">📦</div>
+    <h2>Trazabilidad <small>Lotes de despacho con QR</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Para qué sirve</h3>
+    <p>Registra cada despacho de huevos desde la granja hasta el cliente, con código QR que permite rastrear el origen completo de cada caja.</p>
+  </div>
+
+  <div class="card">
+    <h3>Crear un lote de despacho</h3>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Lote"</strong></li>
+      <li>Ingresa la <strong>fecha</strong> de preparación</li>
+      <li>Selecciona el <strong>lote de aves</strong> de origen</li>
+      <li>Ingresa: <strong>galpón</strong>, <strong>número de rack</strong></li>
+      <li>Ingresa: <strong>cantidad de cajas</strong> y <strong>huevos por caja</strong> (default: 30)</li>
+      <li>Selecciona el <strong>tipo de huevo</strong></li>
+      <li>Selecciona el <strong>cliente</strong> destino</li>
+      <li>Ingresa la <strong>fecha de entrega</strong></li>
+      <li>Opcional: notas</li>
+      <li>Guardar</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Código QR</h3>
+    <p>Cada lote genera automáticamente un <strong>código QR</strong> con el siguiente formato:</p>
+    <p><code>EGGLOGU|BATCH:{id}|FLOCK:{flockId}|DATE:{fecha}|HOUSE:{galpón}|TYPE:{tipo}</code></p>
+    <p>Al hacer clic en un lote, se abre la <strong>vista de trazabilidad completa</strong> que muestra:</p>
+    <ul>
+      <li>ID del lote de despacho</li>
+      <li>Galpón de origen</li>
+      <li>Lote de aves + raza</li>
+      <li>Fecha de producción</li>
+      <li>Score de salud del lote de origen</li>
+      <li>Tipo de huevo</li>
+      <li>Cliente destino</li>
+      <li>Código QR escaneable</li>
+    </ul>
+    <div class="tip">Puedes buscar lotes de despacho por ID usando la barra de búsqueda. También puedes <strong>exportar todos los lotes a CSV</strong> con el botón de descarga.</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- PLANIFICACIÓN -->
+<!-- ============================================ -->
+<section id="planificacion">
+  <div class="section-header">
+    <div class="icon">🗓️</div>
+    <h2>Planificación <small>Planes de producción</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Para qué sirve</h3>
+    <p>Crea planes de producción para cumplir compromisos con clientes. El sistema estima automáticamente la producción esperada de cada lote usando las <strong>curvas de raza</strong> y calcula si alcanzarás la meta.</p>
+  </div>
+
+  <div class="card">
+    <h3>Crear un plan de producción</h3>
+    <ol class="steps">
+      <li>Haz clic en <strong>"+ Nuevo Plan"</strong></li>
+      <li>Ingresa el <strong>nombre</strong> del plan (ej: "Pedido Supermercado Marzo")</li>
+      <li>Selecciona la <strong>fecha objetivo</strong></li>
+      <li>Ingresa la cantidad de <strong>huevos necesarios</strong></li>
+      <li>Opcional: selecciona el <strong>cliente</strong> vinculado</li>
+      <li>Selecciona los <strong>lotes asignados</strong> al plan — para cada lote verás la producción estimada calculada automáticamente</li>
+      <li>Guardar</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Seguimiento de planes</h3>
+    <p>Cada plan se muestra como una tarjeta con:</p>
+    <ul>
+      <li><strong>Nombre</strong> y <strong>fecha objetivo</strong></li>
+      <li><strong>Huevos necesarios</strong> vs. <strong>producción esperada</strong></li>
+      <li><strong>Brecha (gap):</strong> diferencia entre lo necesario y lo estimado</li>
+      <li><strong>% en camino:</strong> porcentaje de cumplimiento estimado</li>
+    </ul>
+    <div class="info">La estimación de producción se calcula día a día usando la curva Hen-Day % de la raza de cada lote asignado, multiplicada por el número actual de gallinas.</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- AMBIENTE -->
+<!-- ============================================ -->
+<section id="ambiente">
+  <div class="section-header">
+    <div class="icon">🌡️</div>
+    <h2>Ambiente <small>Registro manual, IoT e historial</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Rangos óptimos de referencia</h3>
+    <table class="ref-table">
+      <thead><tr><th>Parámetro</th><th>Rango Óptimo</th><th>Unidad</th></tr></thead>
+      <tbody>
+        <tr><td>Temperatura</td><td>18 – 24</td><td>°C</td></tr>
+        <tr><td>Humedad</td><td>40 – 70</td><td>%</td></tr>
+        <tr><td>Horas de luz</td><td>14 – 16</td><td>horas</td></tr>
+        <tr><td>Amoníaco</td><td>&lt; 25</td><td>ppm</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Registro Manual</h3>
+    <ol class="steps">
+      <li>Ve a la pestaña <strong>"Manual"</strong></li>
+      <li>Haz clic en <strong>"+ Nueva Lectura"</strong></li>
+      <li>Ingresa: <strong>fecha</strong>, <strong>temperatura (°C)</strong>, <strong>humedad (%)</strong>, <strong>horas de luz</strong></li>
+      <li>Opcional: <strong>amoníaco (ppm)</strong>, <strong>ventilación</strong>, <strong>notas</strong></li>
+      <li>Guardar</li>
+    </ol>
+    <p>La última lectura se muestra con indicadores de color: <span class="badge badge-accent">OK</span> si está en rango, <span class="badge badge-danger">Fuera de rango</span> si no.</p>
+    <p>El sistema calcula el <strong>THI (Índice Temperatura-Humedad)</strong> automáticamente:</p>
+    <p><code>THI = (1.8×T + 32) − (0.55 − 0.0055×H) × (1.8×T − 26)</code></p>
+    <div class="warning">Cuando el THI supera 28, se genera automáticamente un evento de estrés por calor en Sanidad.</div>
+  </div>
+
+  <div class="card">
+    <h3>IoT (Sensores en tiempo real)</h3>
+    <p>Si tienes sensores conectados por MQTT:</p>
+    <ol class="steps">
+      <li>Configura el <strong>broker MQTT</strong> en Configuración (URL wss://, usuario, password, prefijo de topic)</li>
+      <li>Ve a la pestaña <strong>"IoT"</strong></li>
+      <li>Haz clic en <strong>"Conectar"</strong></li>
+      <li>Los <strong>gauges en tiempo real</strong> mostrarán: Temperatura, Humedad, Amoníaco, Luz</li>
+      <li>Cada gauge tiene colores indicando si el valor está en rango óptimo</li>
+      <li>Haz clic en <strong>"Guardar lectura"</strong> para almacenar la lectura actual como registro ambiental</li>
+    </ol>
+    <div class="info">El sistema se suscribe al topic <code>{prefijo}sensors/#</code> y espera mensajes JSON con formato <code>{"value": 23.5, "unit": "°C"}</code>.</div>
+  </div>
+
+  <div class="card">
+    <h3>Historial</h3>
+    <p>La pestaña <strong>"Historial"</strong> muestra:</p>
+    <ul>
+      <li><strong>Gráfico dual:</strong> línea de temperatura (eje izq.) y humedad (eje der.) de las últimas 30 lecturas</li>
+      <li><strong>Tabla completa:</strong> todas las lecturas con sus valores y THI calculado</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- IA PREDICTIVA -->
+<!-- ============================================ -->
+<section id="ia-predictiva">
+  <div class="section-header">
+    <div class="icon">🤖</div>
+    <h2>IA Predictiva <small>Pronósticos y análisis avanzado</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Vista general</h3>
+    <p>EGGlogU incluye modelos de Machine Learning que corren <strong>100% en tu navegador</strong> — tus datos nunca salen de tu dispositivo. Los resultados se encuentran en <strong>Análisis → Predicciones</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h3>Clasificador de Riesgo de Brote</h3>
+    <p>Modelo de clasificación que evalúa la probabilidad de un brote sanitario usando una <strong>función sigmoide con 7 factores ponderados</strong>:</p>
+    <table class="ref-table">
+      <thead><tr><th>Factor</th><th>Peso</th><th>Qué mide</th></tr></thead>
+      <tbody>
+        <tr><td>Pico de mortalidad</td><td>25%</td><td>Aumento anormal de muertes recientes</td></tr>
+        <tr><td>Caída de producción</td><td>20%</td><td>Tendencia descendente (regresión lineal)</td></tr>
+        <tr><td>Deterioro de FCR</td><td>15%</td><td>Empeoramiento de conversión alimenticia</td></tr>
+        <tr><td>Estrés térmico (THI)</td><td>15%</td><td>Índice calor-humedad elevado</td></tr>
+        <tr><td>Brotes activos</td><td>10%</td><td>Presencia de brotes sin resolver</td></tr>
+        <tr><td>Vacunas pendientes</td><td>10%</td><td>Calendario de vacunación atrasado</td></tr>
+        <tr><td>Eventos de estrés</td><td>5%</td><td>Eventos de estrés recientes</td></tr>
+      </tbody>
+    </table>
+    <p>El resultado se muestra como semáforo:</p>
+    <ul>
+      <li><span class="badge badge-danger">Rojo (≥50%)</span> Alto riesgo — acción inmediata requerida</li>
+      <li><span class="badge badge-warning">Amarillo (&gt;40%)</span> Riesgo moderado — monitorear de cerca</li>
+      <li><span class="badge badge-accent">Verde (≤40%)</span> Riesgo bajo — operación normal</li>
+    </ul>
+    <p>Además de la probabilidad, el sistema genera <strong>recomendaciones específicas</strong> según los factores que más contribuyen al riesgo.</p>
+  </div>
+
+  <div class="card">
+    <h3>Pronóstico de Producción (Ensemble)</h3>
+    <p>Proyección de producción a 7 o 14 días usando un <strong>modelo ensemble</strong> que combina:</p>
+    <ul>
+      <li><strong>Media Móvil Ponderada (WMA):</strong> da más peso a los datos recientes</li>
+      <li><strong>Regresión Lineal:</strong> captura la tendencia general</li>
+    </ul>
+    <p>El resultado se promedia y se muestra en un gráfico con:</p>
+    <ul>
+      <li><strong>Línea azul:</strong> datos reales</li>
+      <li><strong>Línea naranja:</strong> pronóstico</li>
+      <li><strong>Banda gris:</strong> intervalo de confianza (±1 desviación estándar)</li>
+    </ul>
+    <div class="info">Necesitas al menos 14 días de datos de producción para que el pronóstico se active.</div>
+  </div>
+
+  <div class="card">
+    <h3>Detección de Anomalías</h3>
+    <p>El sistema calcula el <strong>Z-score</strong> de cada día de producción de los últimos 30 días. Los días con |Z| &gt; 2 se marcan como anomalías — producción inusualmente alta o baja.</p>
+    <div class="tip">Las anomalías pueden indicar problemas de salud, cambios de alimento, errores de registro, o factores externos como cortes de luz o visitas de depredadores.</div>
+  </div>
+
+  <div class="card">
+    <h3>Benchmark por Raza</h3>
+    <p>Compara la producción real de cada lote contra su <strong>curva teórica de raza</strong>. Muestra la diferencia porcentual — si un lote produce significativamente menos que su potencial genético, hay un factor que investigar.</p>
+  </div>
+
+  <div class="card">
+    <h3>Score de Riesgo de Caída</h3>
+    <p>Puntaje compuesto (0-100) que predice la probabilidad de una caída de producción. Considera 4 factores:</p>
+    <ul>
+      <li><strong>Pico de mortalidad:</strong> hasta 30 puntos</li>
+      <li><strong>Empeoramiento de FCR:</strong> hasta 25 puntos</li>
+      <li><strong>THI elevado:</strong> hasta 20 puntos</li>
+      <li><strong>Tendencia de producción:</strong> hasta 25 puntos</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- MODO CAMPO -->
+<!-- ============================================ -->
+<section id="modo-campo">
+  <div class="section-header">
+    <div class="icon">🌿</div>
+    <h2>Modo Campo <small>Uso rápido en terreno</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Para qué sirve</h3>
+    <p>El Modo Campo es una <strong>vista simplificada</strong> diseñada para usar en el gallinero o en terreno, donde necesitas registrar datos rápido, con mínimas distracciones.</p>
+  </div>
+
+  <div class="card">
+    <h3>Cómo activarlo</h3>
+    <ol class="steps">
+      <li>En el sidebar, haz clic en el botón <strong>"Modo Campo"</strong> (icono de hoja 🌿)</li>
+      <li>La interfaz cambia: se ocultan todos los módulos excepto <strong>Dashboard</strong> y <strong>Producción</strong></li>
+      <li>El Dashboard muestra solo 4 KPIs grandes: Producción Hoy, Hen-Day%, Mortalidad%, Alertas</li>
+      <li>Aparece un <strong>botón grande de registro rápido</strong></li>
+    </ol>
+    <div class="info">El Modo Campo y el Modo Veterinario son <strong>mutuamente excluyentes</strong> — activar uno desactiva el otro.</div>
+  </div>
+
+  <div class="card">
+    <h3>Registro rápido de producción</h3>
+    <ol class="steps">
+      <li>Haz clic en el <strong>botón grande "+"</strong> de registro rápido</li>
+      <li>Se abre un modal simplificado con solo 3 campos:<br>
+        — <strong>Lote</strong> (selector)<br>
+        — <strong>Huevos recolectados</strong> (campo grande, fácil de tocar en móvil)<br>
+        — <strong>Muertes</strong> (si hubo bajas)
+      </li>
+      <li>Haz clic en <strong>"Guardar"</strong></li>
+      <li>El registro se crea con la fecha de hoy y valores predeterminados para los demás campos</li>
+    </ol>
+    <div class="tip">Ideal para: caminar entre galpones con el celular, registrar la recolección de cada lote en segundos, y luego completar los detalles (tamaño, tipo) al volver a la oficina editando el registro en el módulo de Producción.</div>
+  </div>
+
+  <div class="card">
+    <h3>Desactivar Modo Campo</h3>
+    <p>Haz clic nuevamente en el botón <strong>"Modo Campo"</strong> en el sidebar para volver a la vista completa con los 14 módulos.</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- MODO VETERINARIO -->
+<!-- ============================================ -->
+<section id="modo-vet">
+  <div class="section-header">
+    <div class="icon">🩺</div>
+    <h2>Modo Veterinario <small>Vista clínica</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Para qué sirve</h3>
+    <p>El Modo Veterinario reemplaza el Dashboard con una <strong>vista clínica</strong> orientada a la salud de los lotes. Diseñado para que el veterinario pueda evaluar rápidamente el estado sanitario de la granja.</p>
+  </div>
+
+  <div class="card">
+    <h3>Cómo activarlo</h3>
+    <ol class="steps">
+      <li>En el sidebar, haz clic en el botón <strong>"Modo Veterinario"</strong> (icono de estetoscopio 🩺)</li>
+      <li>El Dashboard se reemplaza por la vista veterinaria</li>
+      <li>Selecciona un <strong>lote específico</strong> o <strong>"Todos"</strong> en el selector</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Información mostrada</h3>
+    <p>Para cada lote (o todos), el modo veterinario muestra:</p>
+    <ul>
+      <li><strong>Score de salud:</strong> puntuación compuesta del lote (0-100)</li>
+      <li><strong>Brotes activos:</strong> cantidad y detalle de brotes sin resolver</li>
+      <li><strong>Vacunas pendientes:</strong> vacunas próximas o vencidas</li>
+      <li><strong>Última lectura ambiental:</strong> temperatura, humedad, THI</li>
+      <li><strong>Timeline de vacunas:</strong> calendario completo con estado</li>
+      <li><strong>Verificación de contaminación cruzada:</strong> visitantes de los últimos 7 días que provienen de granjas con brotes activos</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Acciones veterinarias</h3>
+    <p>El modo incluye 3 botones de acción rápida:</p>
+    <ul>
+      <li><strong>"Visita"</strong> — Registra la visita del veterinario. Crea una entrada en la bitácora y un registro de visitante en bioseguridad</li>
+      <li><strong>"Vacunas"</strong> — Navega directo al módulo de vacunas</li>
+      <li><strong>"Pendientes"</strong> — Muestra un resumen de todo lo que requiere atención inmediata</li>
+    </ul>
+    <div class="tip">El botón "Visita" genera automáticamente un registro de bioseguridad para el veterinario, cumpliendo el protocolo de control de visitantes.</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- CONFIGURACIÓN -->
+<!-- ============================================ -->
+<section id="configuracion">
+  <div class="section-header">
+    <div class="icon">⚙️</div>
+    <h2>Configuración <small>Personalización y datos</small></h2>
+  </div>
+
+  <div class="card">
+    <h3>Tema visual</h3>
+    <p>Elige entre 5 temas de color haciendo clic en los botones de color:</p>
+    <ul>
+      <li><span class="badge badge-primary">Azul</span> — tema por defecto (profesional)</li>
+      <li><span class="badge badge-accent">Verde</span> — tema natural</li>
+      <li><span class="badge" style="background:#6A1B9A;color:#fff">Púrpura</span> — tema elegante</li>
+      <li><span class="badge" style="background:#37474F;color:#fff">Negro</span> — tema corporativo</li>
+      <li><span class="badge" style="background:#263238;color:#90CAF9">Oscuro</span> — tema oscuro completo</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Accesibilidad</h3>
+    <ul>
+      <li><strong>Tamaño de fuente:</strong> Pequeño, Normal, Grande, Extra Grande</li>
+      <li><strong>Modo oscuro:</strong> toggle on/off — reduce la fatiga visual en ambientes con poca luz</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Información de la granja</h3>
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Nombre</span><span class="fdesc">Nombre de tu granja</span></div>
+      <div class="field-item"><span class="fname">Ubicación</span><span class="fdesc">Ciudad o dirección</span></div>
+      <div class="field-item"><span class="fname">Capacidad</span><span class="fdesc">Aves máximas</span></div>
+      <div class="field-item"><span class="fname">Moneda</span><span class="fdesc">Símbolo monetario (ej: $, €, CLP)</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Geolocalización</h3>
+    <p>Define la ubicación de tu granja para que funcione el widget climático:</p>
+    <ol class="steps">
+      <li>Haz clic en <strong>"Usar GPS"</strong> para capturar tu ubicación actual</li>
+      <li>O haz clic en el <strong>mapa</strong> para seleccionar la ubicación manualmente</li>
+      <li>Las coordenadas se usan para obtener datos climáticos de OpenWeatherMap</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>API del clima (OpenWeatherMap)</h3>
+    <ol class="steps">
+      <li>Obtén una API Key gratuita en <strong>openweathermap.org</strong></li>
+      <li>Ingresa la key en el campo <strong>"API Key"</strong></li>
+      <li>Haz clic en <strong>"Probar"</strong> para verificar que funcione</li>
+      <li>El Dashboard mostrará clima actual y pronóstico de 3 días</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>IoT / MQTT</h3>
+    <p>Configura la conexión a sensores IoT:</p>
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Broker URL</span><span class="fdesc">Dirección wss:// del broker MQTT</span></div>
+      <div class="field-item"><span class="fname">Usuario</span><span class="fdesc">Credencial MQTT</span></div>
+      <div class="field-item"><span class="fname">Password</span><span class="fdesc">Credencial MQTT</span></div>
+      <div class="field-item"><span class="fname">Prefijo topic</span><span class="fdesc">ej: granja/ (se suscribe a granja/sensors/#)</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Umbrales de alerta</h3>
+    <div class="field-list">
+      <div class="field-item"><span class="fname">Stock mínimo alimento</span><span class="fdesc">En kg — genera alerta si baja de este valor</span></div>
+      <div class="field-item"><span class="fname">Mortalidad máxima</span><span class="fdesc">En % — genera alerta si supera este valor</span></div>
+      <div class="field-item"><span class="fname">Días anticipación vacunas</span><span class="fdesc">Cuántos días antes alertar por vacuna próxima</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Checklist por defecto</h3>
+    <p>Define las tareas que aparecen cada día en el módulo de Operaciones → Checklist.</p>
+    <ol class="steps">
+      <li>Escribe el nombre de una tarea</li>
+      <li>Haz clic en <strong>"Agregar"</strong></li>
+      <li>Repite para cada tarea diaria</li>
+      <li>Elimina tareas con el botón ✕</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Gestión de datos</h3>
+    <h4>Exportar datos</h4>
+    <p>Haz clic en <strong>"Exportar JSON"</strong> para descargar un archivo con TODOS los datos de tu granja. Esto incluye lotes, producción, sanidad, finanzas, bioseguridad — absolutamente todo.</p>
+
+    <h4>Importar datos</h4>
+    <p>Haz clic en <strong>"Importar JSON"</strong> y selecciona un archivo de respaldo. Los datos se cargan y reemplazan los actuales.</p>
+
+    <h4>Restablecer datos</h4>
+    <p>Haz clic en <strong>"Restablecer"</strong> para borrar TODOS los datos y volver al estado inicial. Requiere <strong>doble confirmación</strong>.</p>
+
+    <div class="warning">Antes de restablecer, SIEMPRE exporta un respaldo. Los datos eliminados no se pueden recuperar.</div>
+
+    <h4>Estadísticas</h4>
+    <p>Al final de la sección de configuración verás el conteo de registros por categoría (lotes, registros de producción, vacunas, etc.).</p>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- TIPS -->
+<!-- ============================================ -->
+<section id="tips">
+  <div class="section-header">
+    <div class="icon">✨</div>
+    <h2>Tips y Mejores Prácticas</h2>
+  </div>
+
+  <div class="card">
+    <h3>Registro diario</h3>
+    <ul>
+      <li>Registra la producción <strong>todos los días</strong>, idealmente a la misma hora. La consistencia mejora la precisión de las predicciones</li>
+      <li>Usa el <strong>Modo Campo</strong> en el gallinero para registrar rápido, y completa los detalles después en la oficina</li>
+      <li>Registra el <strong>consumo de alimento</strong> diariamente para obtener un FCR preciso</li>
+      <li>No olvides registrar las <strong>muertes</strong> — son cruciales para el cálculo de mortalidad y alertas</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Salud y prevención</h3>
+    <ul>
+      <li>Mantén el <strong>calendario de vacunas al día</strong> — las vacunas vencidas no solo generan alertas, también incrementan el riesgo calculado por la IA</li>
+      <li>Registra los <strong>eventos de estrés</strong> cuando ocurran — ayuda a correlacionar caídas de producción</li>
+      <li>Revisa el <strong>Modo Veterinario</strong> antes de cada visita del vet para preparar la información</li>
+      <li>Siempre registra el <strong>período de retiro</strong> de medicamentos para evitar vender huevos contaminados</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Bioseguridad</h3>
+    <ul>
+      <li>Registra <strong>TODOS los visitantes</strong> — especialmente si vienen de otras granjas</li>
+      <li>Mantén las <strong>zonas de desinfección</strong> actualizadas</li>
+      <li>Resuelve los <strong>avistamientos de plagas</strong> lo antes posible — el Pest Score es un buen indicador de acción</li>
+      <li>Completa los <strong>protocolos</strong> en su frecuencia — el sistema te avisa cuando están vencidos</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Finanzas y planificación</h3>
+    <ul>
+      <li>Vincula los <strong>ingresos con clientes</strong> para poder analizar la rentabilidad por cliente</li>
+      <li>Revisa el <strong>resumen financiero</strong> mensualmente — el punto de equilibrio te dice cuánto necesitas producir para no perder dinero</li>
+      <li>Usa la <strong>planificación</strong> para compromisos grandes — la estimación automática por curva de raza es bastante precisa</li>
+      <li>Registra las <strong>cuentas por cobrar</strong> para no perder de vista las deudas de clientes</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Datos y respaldo</h3>
+    <ul>
+      <li><strong>Exporta tus datos regularmente</strong> (al menos una vez por semana). Los datos están en localStorage del navegador — si borras datos del navegador, pierdes todo</li>
+      <li>Guarda los archivos JSON de respaldo en <strong>un lugar seguro</strong> (USB, nube, otro dispositivo)</li>
+      <li>Si usas la plataforma en varios dispositivos, puedes <strong>exportar de uno e importar en otro</strong> para sincronizar</li>
+    </ul>
+    <div class="warning">EGGlogU guarda todo en <strong>localStorage del navegador</strong>. Si limpias los datos del navegador o cambias de equipo, necesitarás importar un respaldo. Haz respaldos frecuentes.</div>
+  </div>
+
+  <div class="card">
+    <h3>IA y pronósticos</h3>
+    <ul>
+      <li>Los modelos predictivos necesitan <strong>mínimo 14 días de datos</strong> para funcionar</li>
+      <li>Mientras más datos acumules, <strong>más precisos</strong> serán los pronósticos</li>
+      <li>El semáforo de riesgo de brote considera 7 factores — si está en rojo, revisa las recomendaciones específicas que genera</li>
+      <li>Las <strong>anomalías</strong> detectadas no siempre son problemas — pueden ser días festivos, errores de registro, o eventos puntuales. Pero siempre vale la pena verificar</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Ambiente e IoT</h3>
+    <ul>
+      <li>Si no tienes sensores IoT, registra las condiciones ambientales <strong>manualmente al menos cada 2-3 días</strong></li>
+      <li>Configura el <strong>API del clima</strong> — la información de THI es clave para anticipar estrés por calor</li>
+      <li>Si tienes sensores MQTT, el módulo IoT puede recoger datos en tiempo real y guardarlos con un clic</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Footer -->
+<section style="text-align:center;padding:2rem 0;color:var(--text-light);font-size:.85rem;border-top:1px solid var(--border)">
+  <p><strong>EGGlogU 360</strong> — Gestión Avícola Inteligente</p>
+  <p>Manual de Usuario v1.0 — 2026</p>
+</section>
+
+</div><!-- /main -->
+
+<!-- Back to top button -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+
+<script>
+// TOC toggle (mobile)
+function toggleTOC(){
+  document.getElementById('toc').classList.toggle('open');
+  document.querySelector('.toc-overlay').classList.toggle('open');
+}
+
+// Close TOC on link click (mobile)
+document.querySelectorAll('.toc a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    if(window.innerWidth<=900){
+      document.getElementById('toc').classList.remove('open');
+      document.querySelector('.toc-overlay').classList.remove('open');
+    }
+  });
+});
+
+// Back to top visibility
+window.addEventListener('scroll',()=>{
+  document.getElementById('backTop').classList.toggle('show',window.scrollY>400);
+});
+
+// Active TOC link tracking
+const sections=document.querySelectorAll('section[id]');
+const tocLinks=document.querySelectorAll('.toc a[href^="#"]');
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      tocLinks.forEach(l=>l.classList.remove('active'));
+      const active=document.querySelector('.toc a[href="#'+e.target.id+'"]');
+      if(active)active.classList.add('active');
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>observer.observe(s));
+</script>
+</body>
+</html>

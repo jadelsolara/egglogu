@@ -2,21 +2,18 @@ from typing import Optional
 
 from src.core.exceptions import ForbiddenError
 
-# ── Feature matrix per plan ──
-# Based on competitive analysis vs PoultryCare($79), EggTrac($106), Farmbrite($19)
-# EGGlogU undercuts everyone while offering more features at each tier.
+# ── Feature matrix: 4 tiers + suspended ──
+# Trial: 30 days Enterprise free, then choose a plan or get suspended
+# Year 1 soft landing: Q1 40% off → Q2 25% off → Q3 15% off → Q4 full price
 
 PLAN_LIMITS = {
-    "free": {
+    "suspended": {
         "price_monthly": 0,
-        "farms": 1,
-        "flocks": 2,
-        "users": 1,
-        "modules": [
-            "dashboard", "production", "feed",
-            "clients", "environment", "operations",
-        ],
-        # Feature flags
+        "price_annual": 0,
+        "farms": 0,
+        "flocks": 0,
+        "users": 0,
+        "modules": [],
         "health": False,
         "fcr": False,
         "finance": False,
@@ -28,40 +25,68 @@ PLAN_LIMITS = {
         "vet_mode": False,
         "iot": False,
         "i18n": False,
-        # Universal (PWA-level, always on)
+        "offline": False,
+        "dark_mode": True,
+        "support_tickets": 0,
+        "support_sla_hours": None,
+    },
+    "hobby": {
+        "price_monthly": 9,
+        "price_annual": 90,  # 2 months free
+        "farms": 1,
+        "flocks": 3,
+        "users": 2,
+        "modules": ["dashboard", "production", "feed"],
+        "health": False,
+        "fcr": True,
+        "finance": False,
+        "biosecurity": False,
+        "traceability": False,
+        "planning": False,
+        "ai_predictions": False,
+        "field_mode": False,
+        "vet_mode": False,
+        "iot": False,
+        "i18n": False,
         "offline": True,
         "dark_mode": True,
+        "support_tickets": 3,
+        "support_sla_hours": None,  # FAQ only
     },
-    "pro": {
-        "price_monthly": 29,
-        "farms": 5,
-        "flocks": None,  # unlimited
-        "users": 10,
-        "modules": [
-            "dashboard", "production", "health", "feed",
-            "clients", "finance", "environment", "operations",
-            "biosecurity", "traceability", "planning",
-        ],
+    "starter": {
+        "price_monthly": 19,
+        "price_annual": 190,
+        "farms": 3,
+        "flocks": 10,
+        "users": 5,
+        "modules": ["dashboard", "production", "health", "feed", "clients", "finance", "environment"],
         "health": True,
         "fcr": True,
         "finance": True,
-        "biosecurity": True,
-        "traceability": True,
-        "planning": True,
+        "biosecurity": False,
+        "traceability": False,
+        "planning": False,
         "ai_predictions": False,
-        "field_mode": False,
+        "field_mode": True,
         "vet_mode": False,
         "iot": False,
         "i18n": True,
         "offline": True,
         "dark_mode": True,
+        "support_tickets": 10,
+        "support_sla_hours": 48,
     },
-    "business": {
-        "price_monthly": 79,
-        "farms": None,  # unlimited
-        "flocks": None,
-        "users": None,  # unlimited
-        "modules": "all",
+    "pro": {
+        "price_monthly": 49,
+        "price_annual": 490,
+        "farms": 10,
+        "flocks": None,  # unlimited
+        "users": 15,
+        "modules": [
+            "dashboard", "production", "health", "feed", "clients",
+            "finance", "environment", "operations", "biosecurity",
+            "traceability", "planning",
+        ],
         "health": True,
         "fcr": True,
         "finance": True,
@@ -71,13 +96,16 @@ PLAN_LIMITS = {
         "ai_predictions": True,
         "field_mode": True,
         "vet_mode": True,
-        "iot": True,
+        "iot": False,
         "i18n": True,
         "offline": True,
         "dark_mode": True,
+        "support_tickets": None,  # unlimited
+        "support_sla_hours": 12,
     },
     "enterprise": {
-        "price_monthly": None,  # custom pricing
+        "price_monthly": 99,
+        "price_annual": 990,
         "farms": None,
         "flocks": None,
         "users": None,
@@ -95,6 +123,8 @@ PLAN_LIMITS = {
         "i18n": True,
         "offline": True,
         "dark_mode": True,
+        "support_tickets": None,
+        "support_sla_hours": 4,
     },
 }
 
@@ -104,16 +134,18 @@ ALL_MODULES = [
     "traceability", "planning", "iot",
 ]
 
-# Features that are plan-gated (not module-level, but feature-level)
 ALL_FEATURES = [
     "health", "fcr", "finance", "biosecurity", "traceability",
     "planning", "ai_predictions", "field_mode", "vet_mode",
     "iot", "i18n", "offline", "dark_mode",
 ]
 
+# Tier ordering for upgrade/downgrade checks
+TIER_ORDER = ["suspended", "hobby", "starter", "pro", "enterprise"]
+
 
 def get_plan_limits(plan: str) -> dict:
-    return PLAN_LIMITS.get(plan, PLAN_LIMITS["free"])
+    return PLAN_LIMITS.get(plan, PLAN_LIMITS["suspended"])
 
 
 def check_plan_limit(plan: str, resource: str, current_count: int) -> None:
@@ -121,7 +153,7 @@ def check_plan_limit(plan: str, resource: str, current_count: int) -> None:
     max_val = limits.get(resource)
     if max_val is not None and current_count >= max_val:
         raise ForbiddenError(
-            f"Plan '{plan}' limit reached: max {max_val} {resource}. Upgrade to continue."
+            f"Limit reached: max {max_val} {resource}. Upgrade your plan to continue."
         )
 
 
@@ -129,7 +161,7 @@ def check_feature_access(plan: str, feature: str) -> None:
     limits = get_plan_limits(plan)
     if not limits.get(feature, False):
         raise ForbiddenError(
-            f"Feature '{feature}' not available on plan '{plan}'. Upgrade to access."
+            f"Feature '{feature}' requires a higher plan. Upgrade to access."
         )
 
 
@@ -152,6 +184,7 @@ def get_plan_summary(plan: str) -> dict:
     return {
         "plan": plan,
         "price_monthly": limits.get("price_monthly"),
+        "price_annual": limits.get("price_annual"),
         "limits": {
             "farms": limits.get("farms"),
             "flocks": limits.get("flocks"),
@@ -160,3 +193,10 @@ def get_plan_summary(plan: str) -> dict:
         "modules": get_allowed_modules(plan),
         "features": get_allowed_features(plan),
     }
+
+
+def is_upgrade(current: str, target: str) -> bool:
+    """Check if target plan is higher than current."""
+    cur_idx = TIER_ORDER.index(current) if current in TIER_ORDER else 0
+    tgt_idx = TIER_ORDER.index(target) if target in TIER_ORDER else 0
+    return tgt_idx > cur_idx

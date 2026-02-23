@@ -2,25 +2,25 @@ import uuid
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ProductionPlanCreate(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=200)
     target_date: Optional[date] = None
     client_id: Optional[uuid.UUID] = None
-    eggs_needed: int = 0
-    notes: Optional[str] = None
-    flock_allocations_json: Optional[str] = None
+    eggs_needed: int = Field(default=0, ge=0, le=100_000_000)
+    notes: Optional[str] = Field(default=None, max_length=2000)
+    flock_allocations_json: Optional[str] = Field(default=None, max_length=10_000)
 
 
 class ProductionPlanUpdate(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=200)
     target_date: Optional[date] = None
     client_id: Optional[uuid.UUID] = None
-    eggs_needed: Optional[int] = None
-    notes: Optional[str] = None
-    flock_allocations_json: Optional[str] = None
+    eggs_needed: Optional[int] = Field(default=None, ge=0, le=100_000_000)
+    notes: Optional[str] = Field(default=None, max_length=2000)
+    flock_allocations_json: Optional[str] = Field(default=None, max_length=10_000)
 
 
 class ProductionPlanRead(BaseModel):

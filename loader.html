@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>EGGlogU — Loading MEGA Simulation</title>
+<style>
+body{display:flex;justify-content:center;align-items:center;height:100vh;margin:0;background:#1a1a2e;color:#e0e0e0;font-family:system-ui}
+.box{text-align:center}
+.spinner{width:60px;height:60px;border:4px solid #333;border-top:4px solid #f4a261;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#status{font-size:1.1em;margin-top:10px}
+#error{color:#e74c3c;margin-top:10px;display:none}
+</style></head>
+<body>
+<div class="box">
+<div class="spinner"></div>
+<h2>EGGlogU MEGA Simulation</h2>
+<div id="status">Loading 1,000 clients + 365 days of data...</div>
+<div id="error"></div>
+</div>
+<script>
+(async function(){
+  const status = document.getElementById('status');
+  const error = document.getElementById('error');
+  try {
+    status.textContent = 'Fetching simulation data...';
+    const res = await fetch('data/MEGA_1000clients.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    status.textContent = 'Parsing JSON (4.5 MB)...';
+    const text = await res.text();
+    status.textContent = 'Injecting into localStorage (' + (text.length / 1024 / 1024).toFixed(2) + ' MB)...';
+    try {
+      localStorage.setItem('egglogu_data', text);
+    } catch(e) {
+      // If full JSON exceeds quota, try a trimmed version
+      error.style.display = 'block';
+      error.textContent = 'localStorage quota warning: ' + e.message + '. Trying compressed version...';
+      const data = JSON.parse(text);
+      // Trim dailyProduction to last 180 days to fit
+      if (data.dailyProduction && data.dailyProduction.length > 5000) {
+        data.dailyProduction = data.dailyProduction.slice(-5000);
+      }
+      if (data.auditLog && data.auditLog.length > 200) {
+        data.auditLog = data.auditLog.slice(-200);
+      }
+      const trimmed = JSON.stringify(data);
+      localStorage.setItem('egglogu_data', trimmed);
+      error.textContent += ' OK — trimmed to ' + (trimmed.length / 1024 / 1024).toFixed(2) + ' MB';
+    }
+    status.textContent = 'Data loaded! Redirecting to EGGlogU...';
+    setTimeout(function(){ window.location.href = 'egglogu.html'; }, 800);
+  } catch(e) {
+    error.style.display = 'block';
+    error.textContent = 'Error: ' + e.message;
+    status.textContent = 'Failed to load data.';
+  }
+})();
+</script>
+</body></html>

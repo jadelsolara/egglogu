@@ -8,13 +8,17 @@
 <meta name="description" content="What came first, the chicken or the egg? Answer: EGGlogU 360 — Gestión Avícola Inteligente">
 <meta property="og:title" content="What came first, the chicken or the egg?">
 <meta property="og:description" content="Answer: EGGlogU 360 — La plataforma que nació antes que el problema.">
-<meta property="og:image" content="campaign-logo.webp">
+<meta property="og:image" content="https://egglogu.com/campaign-logo.webp">
+<meta property="og:url" content="https://egglogu.com/campaign.html">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://egglogu.com/campaign.html">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
 :root{--navy:#1B2E4B;--navy-deep:#0F2137;--orange:#F5A623;--red:#E74C3C;--white:#FFFFFF;--cream:#FFF8E1}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:var(--white);min-height:100vh;overflow-x:hidden}
@@ -67,35 +71,29 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
 .section-title{font-size:clamp(22px,3.5vw,36px);font-weight:800;margin-bottom:8px}
 .section-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,.5);font-weight:300}
 
-/* Pricing */
+/* Pricing — Side-by-Side Cards */
 .phase-pricing{padding:80px 24px;text-align:center;background:var(--navy-deep)}
-.pricing-accordion{max-width:680px;margin:48px auto 0;text-align:left}
-.acc-item{border:1px solid rgba(255,255,255,.08);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:all .3s}
-.acc-item.featured{border-color:var(--orange)}
-.acc-item.open{background:rgba(255,255,255,.05)}
-.acc-item.open.featured{background:rgba(245,166,35,.05)}
-.acc-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;user-select:none;transition:background .2s}
-.acc-header:hover{background:rgba(255,255,255,.04)}
-.acc-h-left{display:flex;align-items:center;gap:16px}
-.acc-tier{font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.7)}
-.acc-item.featured .acc-tier{color:var(--orange)}
-.acc-price{font-size:28px;font-weight:900;line-height:1}
-.acc-price span{font-size:14px;font-weight:400;color:rgba(255,255,255,.5)}
-.acc-badge{background:var(--orange);color:var(--navy-deep);font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap}
-.acc-chevron{font-size:20px;color:rgba(255,255,255,.4);transition:transform .3s}
-.acc-item.open .acc-chevron{transform:rotate(180deg);color:var(--orange)}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.acc-item.open .acc-body{max-height:500px}
-.acc-content{padding:0 24px 24px}
-.acc-desc{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:16px}
-.price-features{list-style:none;text-align:left;margin-bottom:20px}
-.price-features li{padding:6px 0;font-size:14px;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.05)}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1200px;margin:48px auto 0;text-align:left}
+@media(max-width:1024px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.pricing-grid{grid-template-columns:1fr;max-width:400px}}
+.plan-card{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;transition:transform .2s,border-color .2s;position:relative;background:rgba(255,255,255,.02)}
+.plan-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.2)}
+.plan-card.featured{border-color:var(--orange);background:rgba(245,166,35,.05)}
+.plan-card.featured:hover{border-color:var(--orange)}
+.plan-badge{position:absolute;top:-12px;right:20px;background:var(--orange);color:var(--navy-deep);font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.plan-tier{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:12px}
+.plan-card.featured .plan-tier{color:var(--orange)}
+.plan-price{font-size:36px;font-weight:900;line-height:1;margin-bottom:4px}
+.plan-price span{font-size:15px;font-weight:400;color:rgba(255,255,255,.5)}
+.plan-desc{font-size:14px;color:rgba(255,255,255,.45);margin-bottom:20px}
+.price-features{list-style:none;text-align:left;margin-bottom:24px;flex:1}
+.price-features li{padding:7px 0;font-size:13.5px;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.05)}
 .price-features li::before{content:'\2713  ';color:var(--orange);font-weight:700}
-.btn-price{display:inline-block;padding:12px 28px;background:transparent;border:2px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;transition:all .2s;cursor:pointer}
+.btn-price{display:block;padding:12px 20px;background:transparent;border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;transition:all .2s;cursor:pointer}
 .btn-price:hover{border-color:#fff;background:rgba(255,255,255,.05)}
 .btn-price-main{background:var(--orange);border-color:var(--orange);color:var(--navy-deep)}
 .btn-price-main:hover{background:#FFB84D;border-color:#FFB84D}
-.pricing-note{max-width:680px;margin:28px auto 0;padding:16px 24px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:12px;font-size:14px;color:rgba(255,255,255,.8);line-height:1.6}
+.pricing-note{max-width:1200px;margin:28px auto 0;padding:16px 24px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:12px;font-size:14px;color:rgba(255,255,255,.8);line-height:1.6;text-align:center}
 .pricing-note strong{color:var(--orange)}
 .contact-strip{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .btn-email{padding:14px 32px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
@@ -114,10 +112,92 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
 .btn-ghost{padding:16px 40px;background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.3);border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
 .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.05)}
 
+/* Reviews */
+.phase-reviews{padding:80px 24px;text-align:center;background:var(--navy)}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1000px;margin:40px auto 0}
+.review-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;text-align:left;transition:transform .2s}
+.review-card:hover{transform:translateY(-3px)}
+.review-stars{color:var(--orange);font-size:16px;letter-spacing:2px;margin-bottom:10px}
+.review-text{font-size:14px;color:rgba(255,255,255,.75);line-height:1.6;margin-bottom:14px;font-style:italic}
+.review-author{font-size:13px;font-weight:600;color:rgba(255,255,255,.5)}
+.review-author span{color:rgba(255,255,255,.3);font-weight:400}
+.review-form-wrap{max-width:500px;margin:40px auto 0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px 24px}
+.review-form-wrap h3{font-size:16px;font-weight:700;margin-bottom:16px}
+.rf-row{display:flex;gap:12px;margin-bottom:12px}
+.rf-row input,.rf-row select{flex:1;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;font-family:inherit}
+.rf-row input::placeholder{color:rgba(255,255,255,.3)}
+.rf-textarea{width:100%;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;margin-bottom:12px}
+.rf-textarea::placeholder{color:rgba(255,255,255,.3)}
+.rf-submit{width:100%;padding:12px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.rf-submit:hover{background:#FFB84D}
+.rf-msg{margin-top:12px;font-size:13px;color:#7ed957;display:none}
+.star-select{display:flex;gap:4px;font-size:22px;cursor:pointer}
+.star-select span{color:rgba(255,255,255,.2);transition:color .15s}
+.star-select span.active{color:var(--orange)}
+
+/* Promo Banner */
+.promo-banner{max-width:1200px;margin:32px auto 0;background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(245,166,35,.04));border:2px solid var(--orange);border-radius:16px;padding:28px 32px;text-align:center}
+.promo-banner h3{font-size:clamp(18px,3vw,22px);font-weight:800;color:var(--orange);margin-bottom:16px;text-transform:uppercase;letter-spacing:2px}
+.promo-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0;text-align:left}
+.promo-item{background:rgba(255,255,255,.04);border-radius:10px;padding:14px 16px;border:1px solid rgba(255,255,255,.06)}
+.promo-item strong{color:var(--orange);display:block;font-size:15px;margin-bottom:4px}
+.promo-item span{font-size:13px;color:rgba(255,255,255,.6);line-height:1.5}
+.promo-bottom{margin-top:16px;font-size:14px;color:rgba(255,255,255,.75);line-height:1.6}
+.promo-bottom strong{color:var(--orange)}
+.promo-ref{margin-top:10px;font-size:13px;color:rgba(255,255,255,.6)}
+.promo-ref strong{color:#7ed957}
+.promo-highlight{border-color:rgba(126,217,87,.3);background:rgba(126,217,87,.06)}
+.promo-highlight strong{color:#7ed957!important}
+.promo-reward{border-color:rgba(100,181,246,.3);background:rgba(100,181,246,.06)}
+.promo-reward strong{color:#64B5F6!important}
+.promo-rewards{margin-top:14px;padding:12px 18px;background:rgba(255,255,255,.04);border-radius:10px;font-size:13px;color:rgba(255,255,255,.7);line-height:1.8}
+.promo-rewards strong{color:var(--orange)}
+/* Founding Farmer */
+.founding-farmer{max-width:1200px;margin:28px auto 0;background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(184,134,11,.04));border:2px solid #DAA520;border-radius:16px;padding:32px;text-align:center;position:relative;overflow:hidden}
+.founding-farmer::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23DAA520' fill-opacity='0.03'%3E%3Cpath d='M30 10 L32 25 L30 22 L28 25Z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+.ff-seal{margin-bottom:16px;display:flex;justify-content:center}
+.ff-seal-outer{width:140px;height:140px;position:relative;border-radius:50%;background:conic-gradient(from 0deg,#DAA520,#FFD700,#C0C0C0,#E8D5B7,#B8860B,#FFD700,#DAA520);padding:3px;animation:ff-holo-rotate 6s linear infinite}
+@keyframes ff-holo-rotate{to{filter:hue-rotate(360deg)}}
+.ff-seal-ring{position:absolute;inset:3px;border-radius:50%;border:2px dashed rgba(218,165,32,.4);pointer-events:none;animation:ff-ring-spin 20s linear infinite}
+@keyframes ff-ring-spin{to{transform:rotate(360deg)}}
+.ff-seal-shimmer{position:absolute;inset:-2px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0%,rgba(255,255,255,.3) 10%,transparent 20%,transparent 50%,rgba(255,255,255,.2) 60%,transparent 70%);animation:ff-shimmer 3s linear infinite;pointer-events:none;z-index:2}
+@keyframes ff-shimmer{to{transform:rotate(360deg)}}
+.ff-seal-inner{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,215,0,.15),rgba(15,33,55,.95) 70%);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 30px rgba(218,165,32,.15),0 0 40px rgba(218,165,32,.2)}
+.ff-seal-svg{width:110px;height:110px;filter:drop-shadow(0 0 6px rgba(218,165,32,.4))}
+.founding-farmer h3{font-size:clamp(20px,3vw,26px);font-weight:900;color:#DAA520;text-transform:uppercase;letter-spacing:3px;margin-bottom:8px}
+.ff-sub{font-size:14px;color:rgba(255,255,255,.65);max-width:600px;margin:0 auto 24px;line-height:1.6}
+.ff-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:700px){.ff-slots{grid-template-columns:repeat(2,1fr)}}
+.ff-slot{background:rgba(255,255,255,.04);border:1px solid rgba(218,165,32,.2);border-radius:12px;padding:16px 12px}
+.ff-slot-pop{border-color:var(--orange);background:rgba(245,166,35,.06)}
+.ff-slot-ent{border-color:#DAA520;background:rgba(218,165,32,.08)}
+.ff-tier{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:6px}
+.ff-count{font-size:22px;font-weight:900;color:#DAA520;margin-bottom:4px}
+.ff-price{font-size:14px;color:rgba(255,255,255,.6)}
+.ff-price span{font-size:12px;color:rgba(255,255,255,.4)}
+.ff-fine{font-size:13px;color:rgba(255,255,255,.55);line-height:1.7;max-width:800px;margin:0 auto}
+
+/* Lead Capture */
+.phase-lead{padding:80px 24px;text-align:center;background:var(--navy)}
+.lead-form{max-width:520px;margin:40px auto 0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px 28px}
+.lead-form .lf-row{display:flex;gap:12px;margin-bottom:14px}
+.lead-form input,.lead-form select{flex:1;padding:12px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-size:14px;font-family:inherit;transition:border-color .2s}
+.lead-form input::placeholder{color:rgba(255,255,255,.3)}
+.lead-form input:focus,.lead-form select:focus{outline:none;border-color:var(--orange)}
+.lead-form select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,.4)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.lead-form select option{background:var(--navy-deep);color:#fff}
+.lf-submit{width:100%;padding:14px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
+.lf-submit:hover{background:#FFB84D;transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,166,35,.3)}
+.lf-privacy{margin-top:12px;font-size:11px;color:rgba(255,255,255,.3)}
+.lf-msg{margin-top:16px;padding:14px;background:rgba(126,217,87,.1);border:1px solid rgba(126,217,87,.3);border-radius:10px;color:#7ed957;font-size:14px;font-weight:600;display:none}
+
 /* Footer */
 .footer{padding:32px 24px;text-align:center;background:var(--navy-deep);border-top:1px solid rgba(255,255,255,.05)}
 .footer p{font-size:13px;color:rgba(255,255,255,.3)}
 .footer a{color:var(--orange);text-decoration:none}
+.footer-links{margin-top:8px;font-size:12px}
+.footer-links a{margin:0 10px;color:rgba(255,255,255,.35)}
+.footer-links a:hover{color:var(--orange)}
 
 /* Social share cards */
 .share-strip{display:flex;gap:12px;justify-content:center;margin-top:32px}
@@ -125,11 +205,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
 .share-btn:hover{background:var(--orange);border-color:var(--orange);color:var(--navy-deep);transform:scale(1.1)}
 
 /* Language switcher */
-.lang-bar{position:fixed;top:16px;right:16px;z-index:200;display:flex;gap:6px;align-items:center;background:rgba(15,33,55,.85);backdrop-filter:blur(8px);padding:6px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.1)}
+.top-bar{position:fixed;top:16px;left:16px;right:16px;z-index:200;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.top-bar>*{pointer-events:auto}
+.lang-bar{display:flex;gap:6px;align-items:center;background:rgba(15,33,55,.85);backdrop-filter:blur(8px);padding:6px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.1)}
 .lang-bar button{padding:5px 14px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
 .lang-bar button.active{background:#fff;color:var(--navy-deep);border-color:#fff}
 .lang-bar button:hover:not(.active){background:rgba(255,255,255,.1);color:#fff}
 .lang-bar .badge-more{font-size:10px;color:var(--orange);font-weight:500;padding:0 4px}
+.btn-client-access{display:inline-flex;align-items:center;gap:6px;padding:7px 18px;background:rgba(245,166,35,.15);border:1px solid var(--orange);color:var(--orange);border-radius:30px;font-size:12px;font-weight:700;text-decoration:none;transition:all .2s;backdrop-filter:blur(8px)}
+.btn-client-access:hover{background:var(--orange);color:var(--navy-deep)}
 
 @media(max-width:600px){
   .logo-container img{width:200px;height:200px;border-radius:30px}
@@ -139,14 +223,21 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
   .price-amount{font-size:36px}
 }
 </style>
+<!-- Plausible Analytics — privacy-first, no cookies, GDPR compliant -->
+<!-- Geo tracking (country/region/city), UTM params, custom events included -->
+<script defer data-domain="egglogu.com" src="https://plausible.io/js/script.tagged-events.outbound-links.file-downloads.js"></script>
+<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script>
 </head>
 <body>
 
-<!-- Language switcher -->
-<div class="lang-bar">
-  <button class="active" onclick="setLang('es',true)">ES</button>
-  <button onclick="setLang('en',true)">EN</button>
-  <button onclick="setLang('pt',true)">PT</button>
+<!-- Top bar: Client access + Language switcher -->
+<div class="top-bar">
+  <a href="egglogu.html" class="btn-client-access" data-t="btn_access">🔑 <span data-t="client_access">Acceso Clientes</span></a>
+  <div class="lang-bar">
+    <button class="active" onclick="setLang('es',true)">ES</button>
+    <button onclick="setLang('en',true)">EN</button>
+    <button onclick="setLang('pt',true)">PT</button>
+  </div>
 </div>
 
 <!-- PHASE 1: THE QUESTION -->
@@ -223,87 +314,216 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
   <div class="section-title" data-t="pricing_title">Planes y Precios</div>
   <div class="section-sub" data-t="pricing_sub">Sin contratos. Cancela cuando quieras. 14 dias de prueba completa.</div>
 
-  <div class="pricing-accordion" id="pricingAcc">
-    <div class="acc-item" data-acc="0">
-      <div class="acc-header" onclick="toggleAcc(0)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier0_name">Hobbyist</span><span class="acc-price">$19<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-chevron">&#9662;</span>
-      </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier0_desc">Productor independiente</div>
-        <ul class="price-features">
-          <li data-t="t0f1">Hasta 2 lotes</li>
-          <li data-t="t0f2">1 usuario · +$4.99/extra</li>
-          <li data-t="t0f3">Produccion + Dashboard</li>
-          <li data-t="t0f4">Modo Campo</li>
-          <li data-t="t0f5">Funciona sin internet</li>
-        </ul>
-        <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
-      </div></div>
+  <div class="pricing-grid">
+    <div class="plan-card">
+      <div class="plan-tier" data-t="tier0_name">Hobbyist</div>
+      <div class="plan-price">$19<span data-t="price_mo">/mes</span></div>
+      <div class="plan-desc" data-t="tier0_desc">Productor independiente</div>
+      <ul class="price-features">
+        <li data-t="t0f1">Hasta 2 lotes</li>
+        <li data-t="t0f2">1 usuario · +$4.99/extra</li>
+        <li data-t="t0f3">Produccion + Dashboard</li>
+        <li data-t="t0f4">Modo Campo</li>
+        <li data-t="t0f5">Funciona sin internet</li>
+      </ul>
+      <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
     </div>
 
-    <div class="acc-item" data-acc="1">
-      <div class="acc-header" onclick="toggleAcc(1)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier1_name">Starter</span><span class="acc-price">$49<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-chevron">&#9662;</span>
-      </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier1_desc">Operacion comercial</div>
-        <ul class="price-features">
-          <li data-t="t1f1">Hasta 5 lotes</li>
-          <li data-t="t1f2">1 usuario · +$3.99/extra</li>
-          <li data-t="t1f3">Produccion + Alimentacion + Salud</li>
-          <li data-t="t1f4">Finanzas + Clientes</li>
-          <li data-t="t1f5">Modo Campo + Dashboard</li>
-        </ul>
-        <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
-      </div></div>
+    <div class="plan-card">
+      <div class="plan-tier" data-t="tier1_name">Starter</div>
+      <div class="plan-price">$49<span data-t="price_mo">/mes</span></div>
+      <div class="plan-desc" data-t="tier1_desc">Operacion comercial</div>
+      <ul class="price-features">
+        <li data-t="t1f1">Hasta 5 lotes</li>
+        <li data-t="t1f2">1 usuario · +$3.99/extra</li>
+        <li data-t="t1f3">Produccion + Alimentacion + Salud</li>
+        <li data-t="t1f4">Finanzas + Clientes</li>
+        <li data-t="t1f5">Modo Campo + Dashboard</li>
+      </ul>
+      <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
     </div>
 
-    <div class="acc-item featured open" data-acc="2">
-      <div class="acc-header" onclick="toggleAcc(2)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier2_name">Professional</span><span class="acc-price">$99<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-badge" data-t="badge_pop">Mas Popular</span>
-        <span class="acc-chevron">&#9662;</span>
-      </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier2_desc">Operacion completa con IA</div>
-        <ul class="price-features">
-          <li data-t="t2f1">Hasta 15 lotes</li>
-          <li data-t="t2f2">1 usuario · +$2.99/extra</li>
-          <li data-t="t2f3">20 modulos completos</li>
-          <li data-t="t2f4">IA predictiva + Analytics</li>
-          <li data-t="t2f5">Bioseguridad + Trazabilidad</li>
-          <li data-t="t2f6">Validacion Zero Tolerance</li>
-        </ul>
-        <a href="egglogu.html" class="btn-price btn-price-main" data-t="btn_trial">Probar 14 Dias</a>
-      </div></div>
+    <div class="plan-card featured">
+      <span class="plan-badge" data-t="badge_pop">Mas Popular</span>
+      <div class="plan-tier" data-t="tier2_name">Professional</div>
+      <div class="plan-price">$99<span data-t="price_mo">/mes</span></div>
+      <div class="plan-desc" data-t="tier2_desc">Operacion completa con IA</div>
+      <ul class="price-features">
+        <li data-t="t2f1">Hasta 15 lotes</li>
+        <li data-t="t2f2">1 usuario · +$2.99/extra</li>
+        <li data-t="t2f3">20 modulos completos</li>
+        <li data-t="t2f4">IA predictiva + Analytics</li>
+        <li data-t="t2f5">Bioseguridad + Trazabilidad</li>
+        <li data-t="t2f6">Validacion Zero Tolerance</li>
+      </ul>
+      <a href="egglogu.html" class="btn-price btn-price-main" data-t="btn_trial">Probar 14 Dias</a>
     </div>
 
-    <div class="acc-item" data-acc="3">
-      <div class="acc-header" onclick="toggleAcc(3)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier3_name">Enterprise</span><span class="acc-price">$199<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-chevron">&#9662;</span>
-      </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier3_desc">Multi-granja, sin limites</div>
-        <ul class="price-features">
-          <li data-t="t3f1">Lotes ilimitados</li>
-          <li data-t="t3f2">1 usuario · +$2.49/extra (-50%)</li>
-          <li data-t="t3f3">Multi-granja centralizada</li>
-          <li data-t="t3f4">Todo en Professional +</li>
-          <li data-t="t3f5">Soporte dedicado 24/7</li>
-          <li data-t="t3f6">Onboarding personalizado</li>
-        </ul>
-        <a href="mailto:jadelsolara@pm.me?subject=EGGlogU%20Enterprise" class="btn-price" data-t="btn_contact">Contactar</a>
-      </div></div>
+    <div class="plan-card">
+      <div class="plan-tier" data-t="tier3_name">Enterprise</div>
+      <div class="plan-price">$199<span data-t="price_mo">/mes</span></div>
+      <div class="plan-desc" data-t="tier3_desc">Multi-granja, sin limites</div>
+      <ul class="price-features">
+        <li data-t="t3f1">Lotes ilimitados</li>
+        <li data-t="t3f2">1 usuario · +$2.49/extra (-50%)</li>
+        <li data-t="t3f3">Multi-granja centralizada</li>
+        <li data-t="t3f4">Todo en Professional +</li>
+        <li data-t="t3f5">Soporte dedicado 24/7</li>
+        <li data-t="t3f6">Onboarding personalizado</li>
+      </ul>
+      <a href="#early-access" class="btn-price btn-price-main" data-t="btn_trial_ent">Probar Enterprise</a>
     </div>
   </div>
 
-  <div class="pricing-note" data-t="pricing_note">Crece y ahorra: al subir de plan, el costo por usuario baja hasta <strong>50%</strong> y recibes <strong>2 meses gratis</strong> el primer año. Tu inversion se reinvierte en programas de mejora genetica y calidad de materia prima.</div>
+  <div class="promo-banner">
+    <h3 data-t="promo_title">Oferta de Lanzamiento</h3>
+    <div class="promo-details">
+      <div class="promo-item">
+        <strong data-t="promo_trial">30 Dias Enterprise</strong>
+        <span data-t="promo_trial_desc">Registrate en cualquier plan y prueba Enterprise completo por 30 dias.</span>
+      </div>
+      <div class="promo-item">
+        <strong data-t="promo_user2">2do Usuario GRATIS</strong>
+        <span data-t="promo_user2_desc">Agrega a tu equipo desde el dia 1. Sin costo adicional.</span>
+      </div>
+      <div class="promo-item">
+        <strong data-t="promo_users34">Usuarios 3-4: $2.50/mes</strong>
+        <span data-t="promo_users34_desc">El precio mas bajo. Mete toda tu operacion.</span>
+      </div>
+      <div class="promo-item">
+        <strong data-t="promo_users5">Usuarios 5+: $2.00/mes</strong>
+        <span data-t="promo_users5_desc">Volumen = ahorro. Operacion completa digitalizada.</span>
+      </div>
+      <div class="promo-item promo-highlight">
+        <strong data-t="promo_invites">5 Invitaciones Promo</strong>
+        <span data-t="promo_invites_desc">Cada cuenta recibe 5 invites. Llega a 5+ referidos activos y desbloquea 50% off en tu 2do año.</span>
+      </div>
+      <div class="promo-item promo-highlight">
+        <strong data-t="promo_booster">Booster $100/año</strong>
+        <span data-t="promo_booster_desc">Agrega $100/año y mantiene la tarifa de $2.50/usuario para siempre.</span>
+      </div>
+      <div class="promo-item promo-reward">
+        <strong data-t="promo_review">Deja tu Review ★★★★★</strong>
+        <span data-t="promo_review_desc">Review con estrellas = +1 semana Enterprise. Con foto/video de tu operacion = +2 semanas.</span>
+      </div>
+      <div class="promo-item promo-reward">
+        <strong data-t="promo_survey">Completa el Survey</strong>
+        <span data-t="promo_survey_desc">Responde nuestra encuesta de 2 min y recibe +1 semana Enterprise. Tu feedback mejora la plataforma.</span>
+      </div>
+    </div>
+    <div class="promo-bottom" data-t="promo_annual">Si te quedas, tu equipo mantiene precios Enterprise por el resto del año. Renovacion 2do año con <strong>50% descuento</strong>.</div>
+    <div class="promo-ref" data-t="promo_referral">Cada cuenta incluye <strong>5 invitaciones promo</strong>. Refiere granjas → ambos reciben <strong>1 mes gratis</strong>. Al llegar a 5+ referidos activos, desbloqueamos tu <strong>50% off para el 2do año</strong>. Los mas activos seran seleccionados como <strong style="color:#7ed957">Beta Testers</strong>.</div>
+    <div class="promo-rewards" data-t="promo_rewards_summary">Cada accion suma: <strong>Registro</strong> = 30 dias Enterprise · <strong>Review ★</strong> = +1 sem · <strong>Foto/Video</strong> = +2 sem · <strong>Survey</strong> = +1 sem · <strong>Referido</strong> = 1 mes gratis · <strong>5 referidos</strong> = 50% off año 2</div>
+  </div>
+
+  <div class="founding-farmer">
+    <div class="ff-seal">
+      <div class="ff-seal-outer">
+        <div class="ff-seal-shimmer"></div>
+        <div class="ff-seal-ring"></div>
+        <div class="ff-seal-inner">
+          <svg class="ff-seal-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="holoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#DAA520"><animate attributeName="stop-color" values="#DAA520;#FFD700;#C0C0C0;#E8D5B7;#DAA520" dur="4s" repeatCount="indefinite"/></stop>
+                <stop offset="50%" style="stop-color:#FFD700"><animate attributeName="stop-color" values="#FFD700;#C0C0C0;#DAA520;#FFD700;#FFD700" dur="4s" repeatCount="indefinite"/></stop>
+                <stop offset="100%" style="stop-color:#B8860B"><animate attributeName="stop-color" values="#B8860B;#DAA520;#FFD700;#C0C0C0;#B8860B" dur="4s" repeatCount="indefinite"/></stop>
+              </linearGradient>
+              <path id="ffTopArc" d="M 16 62 A 46 46 0 0 1 104 62" fill="none"/>
+            </defs>
+            <!-- Double border ring -->
+            <circle cx="60" cy="60" r="57" fill="none" stroke="url(#holoGrad)" stroke-width="1.5"/>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="url(#holoGrad)" stroke-width="0.5"/>
+            <!-- Anti-counterfeit microtext ring -->
+            <circle cx="60" cy="60" r="51" fill="none" stroke="url(#holoGrad)" stroke-width="0.3" stroke-dasharray="1,2"/>
+            <!-- Curved: FOUNDING FARMER -->
+            <text fill="url(#holoGrad)" font-size="6.5" font-weight="800" letter-spacing="3" font-family="Inter,sans-serif">
+              <textPath href="#ffTopArc" startOffset="50%" text-anchor="middle">FOUNDING FARMER</textPath>
+            </text>
+            <!-- Wheat laurel left -->
+            <g fill="none" stroke="url(#holoGrad)" stroke-width="0.8" opacity="0.85">
+              <path d="M26 92 C28 78 30 65 34 50"/>
+              <ellipse cx="28" cy="74" rx="4" ry="1.8" transform="rotate(-25 28 74)" fill="url(#holoGrad)" opacity="0.35"/>
+              <ellipse cx="27" cy="66" rx="3.5" ry="1.5" transform="rotate(-20 27 66)" fill="url(#holoGrad)" opacity="0.35"/>
+              <ellipse cx="29" cy="58" rx="3" ry="1.3" transform="rotate(-15 29 58)" fill="url(#holoGrad)" opacity="0.35"/>
+              <ellipse cx="31" cy="50" rx="2.5" ry="1.2" transform="rotate(-10 31 50)" fill="url(#holoGrad)" opacity="0.35"/>
+            </g>
+            <!-- Wheat laurel right -->
+            <g fill="none" stroke="url(#holoGrad)" stroke-width="0.8" opacity="0.85">
+              <path d="M94 92 C92 78 90 65 86 50"/>
+              <ellipse cx="92" cy="74" rx="4" ry="1.8" transform="rotate(25 92 74)" fill="url(#holoGrad)" opacity="0.35"/>
+              <ellipse cx="93" cy="66" rx="3.5" ry="1.5" transform="rotate(20 93 66)" fill="url(#holoGrad)" opacity="0.35"/>
+              <ellipse cx="91" cy="58" rx="3" ry="1.3" transform="rotate(15 91 58)" fill="url(#holoGrad)" opacity="0.35"/>
+              <ellipse cx="89" cy="50" rx="2.5" ry="1.2" transform="rotate(10 89 50)" fill="url(#holoGrad)" opacity="0.35"/>
+            </g>
+            <!-- Egg shape (THE EGGlogU icon) -->
+            <path d="M60 30 C47 30 36 48 36 63 C36 78 47 88 60 88 C73 88 84 78 84 63 C84 48 73 30 60 30Z" fill="none" stroke="url(#holoGrad)" stroke-width="1.3"/>
+            <!-- Rooster silhouette inside egg -->
+            <g fill="url(#holoGrad)" opacity="0.55">
+              <!-- Comb -->
+              <path d="M57 42 Q55 38 54 41 Q53 37 51 40 Q52 42 54 43 L57 42Z"/>
+              <!-- Head -->
+              <circle cx="56" cy="45" r="3"/>
+              <!-- Eye (negative) -->
+              <circle cx="55" cy="44.5" r="0.8" fill="rgba(15,33,55,.95)"/>
+              <!-- Beak -->
+              <path d="M53 46 L49 47.5 L53 48.5Z"/>
+              <!-- Body -->
+              <path d="M58 47 C62 50 67 56 67 64 C67 70 63 74 59 74 C55 74 51 70 51 64 C51 56 54 50 58 47Z" opacity="0.25"/>
+              <!-- Tail feathers -->
+              <path d="M66 56 Q72 48 70 40" fill="none" stroke="url(#holoGrad)" stroke-width="1" opacity="0.7"/>
+              <path d="M67 58 Q74 51 73 43" fill="none" stroke="url(#holoGrad)" stroke-width="0.7" opacity="0.5"/>
+              <path d="M68 61 Q75 55 75 47" fill="none" stroke="url(#holoGrad)" stroke-width="0.5" opacity="0.4"/>
+              <!-- Feet -->
+              <path d="M55 74 L53 79 M53 79 L51 78 M53 79 L54 78" fill="none" stroke="url(#holoGrad)" stroke-width="0.6" opacity="0.5"/>
+              <path d="M62 74 L64 79 M64 79 L62 78 M64 79 L66 78" fill="none" stroke="url(#holoGrad)" stroke-width="0.6" opacity="0.5"/>
+            </g>
+            <!-- Brand: EGGlogU -->
+            <text x="60" y="96" text-anchor="middle" fill="url(#holoGrad)" font-size="7" font-weight="900" letter-spacing="1.5" font-family="Inter,sans-serif">EGGlogU</text>
+            <!-- 360 sub-mark -->
+            <text x="60" y="102" text-anchor="middle" fill="url(#holoGrad)" font-size="4.5" font-weight="700" letter-spacing="2.5" font-family="Inter,sans-serif">360</text>
+            <!-- Egg-shaped separators -->
+            <ellipse cx="40" cy="108" rx="1.8" ry="2.5" fill="url(#holoGrad)" opacity="0.3"/>
+            <ellipse cx="80" cy="108" rx="1.8" ry="2.5" fill="url(#holoGrad)" opacity="0.3"/>
+            <!-- Serial number + year -->
+            <text x="60" y="112" text-anchor="middle" fill="url(#holoGrad)" font-size="3.8" font-family="'Courier New',monospace" letter-spacing="0.8" opacity="0.65">N&#176; 001 &#183; EST. 2026</text>
+            <!-- Bottom feather flourish -->
+            <path d="M46 116 Q53 112 60 116 Q67 112 74 116" fill="none" stroke="url(#holoGrad)" stroke-width="0.6" opacity="0.45"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <h3 data-t="ff_title">Founding Farmer</h3>
+    <p class="ff-sub" data-t="ff_sub">Precios de lanzamiento congelados para siempre. Badge permanente en tu cuenta. Cuando se llenan los slots, se acabaron.</p>
+    <div class="ff-slots">
+      <div class="ff-slot">
+        <div class="ff-tier">Hobbyist</div>
+        <div class="ff-count" data-t="ff_hobby_slots">100 slots</div>
+        <div class="ff-price">$19<span>/mo</span></div>
+      </div>
+      <div class="ff-slot">
+        <div class="ff-tier">Starter</div>
+        <div class="ff-count" data-t="ff_starter_slots">50 slots</div>
+        <div class="ff-price">$49<span>/mo</span></div>
+      </div>
+      <div class="ff-slot ff-slot-pop">
+        <div class="ff-tier">Professional</div>
+        <div class="ff-count" data-t="ff_pro_slots">25 slots</div>
+        <div class="ff-price">$99<span>/mo</span></div>
+      </div>
+      <div class="ff-slot ff-slot-ent">
+        <div class="ff-tier">Enterprise</div>
+        <div class="ff-count" data-t="ff_ent_slots">10 slots</div>
+        <div class="ff-price">$199<span>/mo</span></div>
+      </div>
+    </div>
+    <p class="ff-fine" data-t="ff_fine">Founding Farmers mantienen TODOS los beneficios de lanzamiento: 2do usuario gratis, $2.50/usuario extra, 5 invites promo, y el badge exclusivo visible en su cuenta. Para siempre. Cuando se llenen los slots → precios normales para todos los nuevos.</p>
+  </div>
+
+  <div class="pricing-note" data-t="pricing_note"><strong>2do usuario GRATIS</strong> · Usuarios 3-4: <strong>$2.50/mes</strong> · 5+: <strong>$2.00/mes</strong>. Tu equipo mantiene precios Enterprise todo el año. Renovacion 2do año: <strong>50% descuento</strong>.</div>
 
   <div class="contact-strip">
-    <a href="mailto:jadelsolara@pm.me?subject=EGGlogU%20-%20Consulta" class="btn-email">✉ jadelsolara@pm.me</a>
+    <a href="mailto:contacto@egglogu.com?subject=EGGlogU%20-%20Consulta" class="btn-email">✉ contacto@egglogu.com</a>
   </div>
 </section>
 
@@ -326,20 +546,106 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:
   </div>
 
   <div class="share-strip">
-    <a class="share-btn" title="Share on X" href="https://twitter.com/intent/tweet?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A&url=https://egglogu.pages.dev/campaign" target="_blank">&#120143;</a>
-    <a class="share-btn" title="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://egglogu.pages.dev/campaign" target="_blank">in</a>
-    <a class="share-btn" title="Share on WhatsApp" href="https://wa.me/?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A%20https://egglogu.pages.dev/campaign" target="_blank">💬</a>
+    <a class="share-btn" title="Share on X" href="https://twitter.com/intent/tweet?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A&url=https://egglogu.com/campaign" target="_blank">&#120143;</a>
+    <a class="share-btn" title="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://egglogu.com/campaign" target="_blank">in</a>
+    <a class="share-btn" title="Share on WhatsApp" href="https://wa.me/?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A%20https://egglogu.com/campaign" target="_blank">💬</a>
     <a class="share-btn" title="Copy link" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='\u2713';setTimeout(()=>this.textContent='\uD83D\uDD17',2000)" href="javascript:void(0)">🔗</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LEAD CAPTURE -->
+<section class="phase-lead" id="early-access">
+  <div class="section-title" data-t="lead_title">Acceso Anticipado</div>
+  <div class="section-sub" data-t="lead_sub">Registrate y recibe informacion personalizada para tu operacion.</div>
+
+  <form class="lead-form" id="leadForm" data-source="campaign">
+    <input type="text" name="_gotcha" style="display:none">
+    <div class="lf-row">
+      <input type="email" name="email" required placeholder="correo@ejemplo.com" data-ph-t="lf_email_ph">
+    </div>
+    <div class="lf-row">
+      <input type="text" name="farm_name" placeholder="Nombre de tu granja" data-ph-t="lf_farm_ph">
+      <input type="text" name="country" placeholder="Pais" data-ph-t="lf_country_ph">
+    </div>
+    <div class="lf-row">
+      <select name="operation_size">
+        <option value="" disabled selected data-t="lf_size_default">Tamano de operacion</option>
+        <option value="hobbyist" data-t="lf_size_hobby">1-2 lotes (Hobbyist)</option>
+        <option value="starter" data-t="lf_size_starter">3-5 lotes (Starter)</option>
+        <option value="professional" data-t="lf_size_pro">6-15 lotes (Professional)</option>
+        <option value="enterprise" data-t="lf_size_ent">15+ lotes (Enterprise)</option>
+      </select>
+    </div>
+    <div class="lf-row">
+      <select name="primary_need">
+        <option value="" disabled selected data-t="lf_need_default">Necesidad principal</option>
+        <option value="production" data-t="lf_need_prod">Control de produccion</option>
+        <option value="traceability" data-t="lf_need_trace">Trazabilidad</option>
+        <option value="ai_analytics" data-t="lf_need_ai">IA y Analytics</option>
+        <option value="biosecurity" data-t="lf_need_bio">Bioseguridad</option>
+      </select>
+    </div>
+    <button type="submit" class="lf-submit" data-t="lf_btn">Quiero Acceso Anticipado</button>
+    <div class="lf-privacy" data-t="lf_privacy">Tu informacion es confidencial. No spam, solo valor.</div>
+    <div class="lf-msg" id="lfMsg" data-t="lf_thanks">Listo! Recibiras informacion personalizada para tu operacion.</div>
+  </form>
+</section>
+
+<!-- REVIEWS -->
+<section class="phase-reviews" id="reviews">
+  <div class="section-title" data-t="reviews_title">Lo que dicen nuestros usuarios</div>
+  <div class="section-sub" data-t="reviews_sub">Opiniones reales de productores avicolas</div>
+
+  <div class="reviews-grid" id="reviewsGrid">
+    <div class="review-card">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="review-text" data-t="rev1_text">"Llevaba todo en cuadernos. EGGlogU me cambio la vida. Ahora se exactamente cuanto produzco y cuanto gano."</div>
+      <div class="review-author">Carlos M. <span>— Productor, Panama</span></div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="review-text" data-t="rev2_text">"El modo campo es genial. Registro los huevos con una mano mientras trabajo. Simple y rapido."</div>
+      <div class="review-author">Maria L. <span>— Avicultora, Colombia</span></div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <div class="review-text" data-t="rev3_text">"La trazabilidad con QR me abrio puertas a clientes que exigen certificacion. Vale cada centavo."</div>
+      <div class="review-author">Roberto S. <span>— Granja Comercial, Mexico</span></div>
+    </div>
+  </div>
+
+  <div class="review-form-wrap">
+    <h3 data-t="review_form_title">Deja tu opinion</h3>
+    <div class="rf-row">
+      <input type="text" id="rfName" placeholder="Tu nombre" data-ph-t="rf_name_ph">
+      <input type="text" id="rfCountry" placeholder="Pais / Region" data-ph-t="rf_country_ph">
+    </div>
+    <div class="rf-row" style="align-items:center">
+      <span style="font-size:13px;color:rgba(255,255,255,.5);white-space:nowrap" data-t="rf_rating_label">Calificacion:</span>
+      <div class="star-select" id="starSelect">
+        <span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5" class="active">&#9733;</span>
+      </div>
+    </div>
+    <textarea class="rf-textarea" id="rfText" placeholder="Escribe tu experiencia con EGGlogU 360..." data-ph-t="rf_text_ph"></textarea>
+    <button class="rf-submit" onclick="submitReview()" data-t="rf_submit">Enviar Opinion</button>
+    <div class="rf-msg" id="rfMsg" data-t="rf_thanks">Gracias por tu opinion. Sera visible pronto.</div>
   </div>
 </section>
 
 <footer class="footer">
   <p>&copy; 2026 <a href="/">EGGlogU 360</a> — Gestion Avicola Inteligente</p>
+  <div class="footer-links">
+    <a href="terms.html" data-t="footer_terms">Terminos de Servicio</a>
+    <a href="privacy.html" data-t="footer_privacy">Politica de Privacidad</a>
+  </div>
 </footer>
 
 <script>
 const T={
 es:{
+  client_access:'Acceso Clientes',
   q_what:'Que fue primero...',q_chicken_egg:'el huevo o la gallina?',
   tagline_main:'La plataforma que nacio antes que el problema.',
   pitch_title:'Ni el huevo ni la gallina.',pitch_sub:'Nosotros llegamos primero.',
@@ -354,9 +660,9 @@ es:{
   tl2:'Antes del huevo. Antes de la gallina. <strong>EGGlogU 360.</strong>',
   tl3:'La respuesta que la industria avicola estaba esperando.',
   tl4:'<strong>EGGlogU 360</strong> — Nacimos primero.',
-  btn_start:'Probar 14 Dias',btn_plans:'Ver Planes y Precios',
-  pricing_title:'Planes y Precios',pricing_sub:'Sin contratos. Cancela cuando quieras. 14 dias de prueba completa.',
-  badge_pop:'Mas Popular',btn_trial:'Probar 14 Dias',btn_contact:'Contactar',price_mo:'/mes',
+  btn_start:'Empezar Ahora',btn_plans:'Ver Planes y Precios',
+  pricing_title:'Planes y Precios',pricing_sub:'Sin contratos. Cancela cuando quieras. Todos incluyen 30 dias Enterprise.',
+  badge_pop:'Mas Popular',btn_trial:'Empezar + Enterprise 30 Dias',btn_contact:'Contactar',btn_trial_ent:'Probar Enterprise',price_mo:'/mes',
   tier0_name:'Hobbyist',tier0_desc:'Productor independiente',
   t0f1:'Hasta 2 lotes',t0f2:'1 usuario · +$4.99/extra',t0f3:'Produccion + Dashboard',t0f4:'Modo Campo',t0f5:'Funciona sin internet',
   tier1_name:'Starter',tier1_desc:'Operacion comercial',
@@ -365,9 +671,21 @@ es:{
   t2f1:'Hasta 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA predictiva + Analytics',t2f5:'Bioseguridad + Trazabilidad',t2f6:'Validacion Zero Tolerance',
   tier3_name:'Enterprise',tier3_desc:'Multi-granja, sin limites',
   t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Todo en Professional +',t3f5:'Soporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Crece y ahorra: al subir de plan, el costo por usuario baja hasta <strong>50%</strong> y recibes <strong>2 meses gratis</strong> el primer año. Tu inversion se reinvierte en programas de mejora genetica y calidad de materia prima.'
+  pricing_note:'<strong>2do usuario GRATIS</strong> · Usuarios 3-4: <strong>$2.50/mes</strong> · 5+: <strong>$2.00/mes</strong> · <strong>5 invites promo</strong> por cuenta. Booster $100/año = $2.50/usuario fijo. 50% off 2do año al referir 5+ granjas activas.',
+  promo_title:'Oferta de Lanzamiento',promo_trial:'30 Dias Enterprise',promo_trial_desc:'Registrate en cualquier plan y prueba Enterprise completo por 30 dias.',promo_user2:'2do Usuario GRATIS',promo_user2_desc:'Agrega a tu equipo desde el dia 1. Sin costo adicional.',promo_users34:'Usuarios 3-4: $2.50/mes',promo_users34_desc:'El precio mas bajo. Mete toda tu operacion.',promo_users5:'Usuarios 5+: $2.00/mes',promo_users5_desc:'Volumen = ahorro. Operacion completa digitalizada.',promo_annual:'Si te quedas, tu equipo mantiene precios Enterprise por el resto del año. Renovacion 2do año con <strong>50% descuento</strong>.',promo_invites:'5 Invitaciones Promo',promo_invites_desc:'Cada cuenta recibe 5 invites. Llega a 5+ referidos activos y desbloquea 50% off en tu 2do año.',promo_booster:'Booster $100/año',promo_booster_desc:'Agrega $100/año y mantiene la tarifa de $2.50/usuario para siempre.',promo_review:'Deja tu Review ★★★★★',promo_review_desc:'Review con estrellas = +1 semana Enterprise. Con foto/video de tu operacion = +2 semanas.',promo_survey:'Completa el Survey',promo_survey_desc:'Responde nuestra encuesta de 2 min y recibe +1 semana Enterprise. Tu feedback mejora la plataforma.',promo_referral:'Cada cuenta incluye <strong>5 invitaciones promo</strong>. Refiere granjas → ambos reciben <strong>1 mes gratis</strong>. Al llegar a 5+ referidos activos, desbloqueamos tu <strong>50% off para el 2do año</strong>. Los mas activos seran seleccionados como <strong style="color:#7ed957">Beta Testers</strong>.',promo_rewards_summary:'Cada accion suma: <strong>Registro</strong> = 30 dias Enterprise · <strong>Review ★</strong> = +1 sem · <strong>Foto/Video</strong> = +2 sem · <strong>Survey</strong> = +1 sem · <strong>Referido</strong> = 1 mes gratis · <strong>5 referidos</strong> = 50% off año 2',ff_title:'Founding Farmer',ff_sub:'Precios de lanzamiento congelados para siempre. Badge permanente en tu cuenta. Cuando se llenan los slots, se acabaron.',ff_hobby_slots:'100 slots',ff_starter_slots:'50 slots',ff_pro_slots:'25 slots',ff_ent_slots:'10 slots',ff_fine:'Founding Farmers mantienen TODOS los beneficios de lanzamiento: 2do usuario gratis, $2.50/usuario extra, 5 invites promo, y el badge exclusivo visible en su cuenta. Para siempre. Cuando se llenen los slots → precios normales para todos los nuevos.',btn_trial_ent:'Probar Enterprise',
+  reviews_title:'Lo que dicen nuestros usuarios',reviews_sub:'Opiniones reales de productores avicolas',
+  rev1_text:'"Llevaba todo en cuadernos. EGGlogU me cambio la vida. Ahora se exactamente cuanto produzco y cuanto gano."',
+  rev2_text:'"El modo campo es genial. Registro los huevos con una mano mientras trabajo. Simple y rapido."',
+  rev3_text:'"La trazabilidad con QR me abrio puertas a clientes que exigen certificacion. Vale cada centavo."',
+  review_form_title:'Deja tu opinion',rf_rating_label:'Calificacion:',rf_submit:'Enviar Opinion',rf_thanks:'Gracias por tu opinion. Sera visible pronto.',
+  footer_terms:'Terminos de Servicio',footer_privacy:'Politica de Privacidad',
+  lead_title:'Acceso Anticipado',lead_sub:'Registrate y recibe informacion personalizada para tu operacion.',
+  lf_size_default:'Tamano de operacion',lf_size_hobby:'1-2 lotes (Hobbyist)',lf_size_starter:'3-5 lotes (Starter)',lf_size_pro:'6-15 lotes (Professional)',lf_size_ent:'15+ lotes (Enterprise)',
+  lf_need_default:'Necesidad principal',lf_need_prod:'Control de produccion',lf_need_trace:'Trazabilidad',lf_need_ai:'IA y Analytics',lf_need_bio:'Bioseguridad',
+  lf_btn:'Quiero Acceso Anticipado',lf_privacy:'Tu informacion es confidencial. No spam, solo valor.',lf_thanks:'Listo! Recibiras informacion personalizada para tu operacion.'
 },
 en:{
+  client_access:'Client Login',
   q_what:'What came first...',q_chicken_egg:'the chicken or the egg?',
   tagline_main:'The platform that was born before the problem.',
   pitch_title:'Neither the chicken nor the egg.',pitch_sub:'We got here first.',
@@ -382,9 +700,9 @@ en:{
   tl2:'Before the chicken. Before the egg. <strong>EGGlogU 360.</strong>',
   tl3:'The answer the poultry industry was waiting for.',
   tl4:'<strong>EGGlogU 360</strong> — We were born first.',
-  btn_start:'Start 14-Day Trial',btn_plans:'See Plans & Pricing',
-  pricing_title:'Plans & Pricing',pricing_sub:'No contracts. Cancel anytime. 14-day full-access trial.',
-  badge_pop:'Most Popular',btn_trial:'Start 14-Day Trial',btn_contact:'Contact Us',price_mo:'/mo',
+  btn_start:'Start Now',btn_plans:'See Plans & Pricing',
+  pricing_title:'Plans & Pricing',pricing_sub:'No contracts. Cancel anytime. All plans include 30-day Enterprise trial.',
+  badge_pop:'Most Popular',btn_trial:'Start + 30-Day Enterprise',btn_contact:'Contact Us',btn_trial_ent:'Try Enterprise',price_mo:'/mo',
   tier0_name:'Hobbyist',tier0_desc:'Independent producer',
   t0f1:'Up to 2 flocks',t0f2:'1 user · +$4.99/extra',t0f3:'Production + Dashboard',t0f4:'Field Mode',t0f5:'Works offline',
   tier1_name:'Starter',tier1_desc:'Commercial operation',
@@ -393,9 +711,21 @@ en:{
   t2f1:'Up to 15 flocks',t2f2:'1 user · +$2.99/extra',t2f3:'All 20 modules',t2f4:'Predictive AI + Analytics',t2f5:'Biosecurity + Traceability',t2f6:'Zero Tolerance Validation',
   tier3_name:'Enterprise',tier3_desc:'Multi-farm, no limits',
   t3f1:'Unlimited flocks',t3f2:'1 user · +$2.49/extra (-50%)',t3f3:'Centralized multi-farm',t3f4:'Everything in Professional +',t3f5:'Dedicated 24/7 support',t3f6:'Personalized onboarding',
-  pricing_note:'Grow & save: upgrade your plan and per-user cost drops up to <strong>50%</strong>, plus <strong>2 months free</strong> on your first year. Your investment funds genetic improvement and raw material quality programs.'
+  pricing_note:'<strong>2nd user FREE</strong> · Users 3-4: <strong>$2.50/mo</strong> · 5+: <strong>$2.00/mo</strong> · <strong>5 promo invites</strong> per account. Booster $100/yr = locked $2.50/user. 50% off Year 2 when you refer 5+ active farms.',
+  promo_title:'Launch Offer',promo_trial:'30-Day Enterprise Trial',promo_trial_desc:'Sign up for any plan and try full Enterprise for 30 days.',promo_user2:'2nd User FREE',promo_user2_desc:'Add your team from day 1. No extra cost.',promo_users34:'Users 3-4: $2.50/mo',promo_users34_desc:'Lowest price. Get your whole operation in.',promo_users5:'Users 5+: $2.00/mo',promo_users5_desc:'Volume = savings. Full operation digitized.',promo_annual:'If you stay, your team keeps Enterprise pricing for the rest of the year. Year 2 renewal with <strong>50% discount</strong>.',promo_invites:'5 Promo Invites',promo_invites_desc:'Each account gets 5 invites. Reach 5+ active referrals and unlock 50% off your 2nd year.',promo_booster:'Booster $100/year',promo_booster_desc:'Add $100/year and lock in the $2.50/user rate forever.',promo_review:'Leave a Review ★★★★★',promo_review_desc:'Star review = +1 week Enterprise. With photo/video of your operation = +2 weeks.',promo_survey:'Complete the Survey',promo_survey_desc:'Answer our 2-min survey and get +1 week Enterprise. Your feedback improves the platform.',promo_referral:'Each account includes <strong>5 promo invites</strong>. Refer farms → both get <strong>1 month free</strong>. Reach 5+ active referrals and unlock your <strong>50% off for Year 2</strong>. Most active users will be selected as <strong style="color:#7ed957">Beta Testers</strong>.',promo_rewards_summary:'Every action counts: <strong>Sign up</strong> = 30 days Enterprise · <strong>Review ★</strong> = +1 wk · <strong>Photo/Video</strong> = +2 wk · <strong>Survey</strong> = +1 wk · <strong>Referral</strong> = 1 month free · <strong>5 referrals</strong> = 50% off Year 2',ff_title:'Founding Farmer',ff_sub:'Launch prices frozen forever. Permanent badge on your account. When slots fill up, they are gone.',ff_hobby_slots:'100 slots',ff_starter_slots:'50 slots',ff_pro_slots:'25 slots',ff_ent_slots:'10 slots',ff_fine:'Founding Farmers keep ALL launch benefits: 2nd user free, $2.50/extra user, 5 promo invites, and the exclusive badge visible on their account. Forever. When slots fill up → normal prices for all new users.',btn_trial_ent:'Try Enterprise',
+  reviews_title:'What our users say',reviews_sub:'Real opinions from poultry producers',
+  rev1_text:'"I used to track everything in notebooks. EGGlogU changed my life. Now I know exactly how much I produce and earn."',
+  rev2_text:'"Field mode is amazing. I log eggs with one hand while working. Simple and fast."',
+  rev3_text:'"QR traceability opened doors to clients who demand certification. Worth every penny."',
+  review_form_title:'Leave your review',rf_rating_label:'Rating:',rf_submit:'Submit Review',rf_thanks:'Thank you for your review. It will be visible soon.',
+  footer_terms:'Terms of Service',footer_privacy:'Privacy Policy',
+  lead_title:'Early Access',lead_sub:'Sign up and receive personalized info for your operation.',
+  lf_size_default:'Operation size',lf_size_hobby:'1-2 flocks (Hobbyist)',lf_size_starter:'3-5 flocks (Starter)',lf_size_pro:'6-15 flocks (Professional)',lf_size_ent:'15+ flocks (Enterprise)',
+  lf_need_default:'Primary need',lf_need_prod:'Production tracking',lf_need_trace:'Traceability',lf_need_ai:'AI & Analytics',lf_need_bio:'Biosecurity',
+  lf_btn:'Get Early Access',lf_privacy:'Your info is confidential. No spam, only value.',lf_thanks:'Done! You will receive personalized info for your operation.'
 },
 pt:{
+  client_access:'Acesso Clientes',
   q_what:'O que veio primeiro...',q_chicken_egg:'o ovo ou a galinha?',
   tagline_main:'A plataforma que nasceu antes do problema.',
   pitch_title:'Nem o ovo nem a galinha.',pitch_sub:'Nos chegamos primeiro.',
@@ -410,9 +740,9 @@ pt:{
   tl2:'Antes do ovo. Antes da galinha. <strong>EGGlogU 360.</strong>',
   tl3:'A resposta que a industria avicola estava esperando.',
   tl4:'<strong>EGGlogU 360</strong> — Nascemos primeiro.',
-  btn_start:'Testar 14 Dias',btn_plans:'Ver Planos e Precos',
-  pricing_title:'Planos e Precos',pricing_sub:'Sem contratos. Cancele quando quiser. 14 dias de teste completo.',
-  badge_pop:'Mais Popular',btn_trial:'Testar 14 Dias',btn_contact:'Contatar',price_mo:'/mes',
+  btn_start:'Comecar Agora',btn_plans:'Ver Planos e Precos',
+  pricing_title:'Planos e Precos',pricing_sub:'Sem contratos. Cancele quando quiser. Todos incluem 30 dias Enterprise.',
+  badge_pop:'Mais Popular',btn_trial:'Comecar + Enterprise 30 Dias',btn_contact:'Contatar',btn_trial_ent:'Testar Enterprise',price_mo:'/mes',
   tier0_name:'Hobbyist',tier0_desc:'Produtor independente',
   t0f1:'Ate 2 lotes',t0f2:'1 usuario · +$4.99/extra',t0f3:'Producao + Dashboard',t0f4:'Modo Campo',t0f5:'Funciona sem internet',
   tier1_name:'Starter',tier1_desc:'Operacao comercial',
@@ -421,7 +751,18 @@ pt:{
   t2f1:'Ate 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA preditiva + Analytics',t2f5:'Biosseguranca + Rastreabilidade',t2f6:'Validacao Zero Tolerance',
   tier3_name:'Enterprise',tier3_desc:'Multi-granja, sem limites',
   t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Tudo no Professional +',t3f5:'Suporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Cresça e economize: ao subir de plano, o custo por usuario cai ate <strong>50%</strong> e voce recebe <strong>2 meses gratis</strong> no primeiro ano. Seu investimento financia programas de melhoria genetica e qualidade de materia-prima.'
+  pricing_note:'<strong>2o usuario GRATIS</strong> · Usuarios 3-4: <strong>$2.50/mes</strong> · 5+: <strong>$2.00/mes</strong> · <strong>5 convites promo</strong> por conta. Booster $100/ano = $2.50/usuario fixo. 50% off 2o ano ao indicar 5+ granjas ativas.',
+  promo_title:'Oferta de Lancamento',promo_trial:'30 Dias Enterprise',promo_trial_desc:'Cadastre-se em qualquer plano e teste Enterprise completo por 30 dias.',promo_user2:'2o Usuario GRATIS',promo_user2_desc:'Adicione sua equipe desde o dia 1. Sem custo adicional.',promo_users34:'Usuarios 3-4: $2.50/mes',promo_users34_desc:'O preco mais baixo. Coloque toda sua operacao.',promo_users5:'Usuarios 5+: $2.00/mes',promo_users5_desc:'Volume = economia. Operacao completa digitalizada.',promo_annual:'Se ficar, sua equipe mantem precos Enterprise pelo resto do ano. Renovacao 2o ano com <strong>50% desconto</strong>.',promo_invites:'5 Convites Promo',promo_invites_desc:'Cada conta recebe 5 convites. Alcance 5+ indicados ativos e desbloqueie 50% off no seu 2o ano.',promo_booster:'Booster $100/ano',promo_booster_desc:'Adicione $100/ano e mantenha a tarifa de $2.50/usuario para sempre.',promo_review:'Deixe seu Review ★★★★★',promo_review_desc:'Review com estrelas = +1 semana Enterprise. Com foto/video da sua operacao = +2 semanas.',promo_survey:'Complete o Survey',promo_survey_desc:'Responda nossa pesquisa de 2 min e receba +1 semana Enterprise. Seu feedback melhora a plataforma.',promo_referral:'Cada conta inclui <strong>5 convites promo</strong>. Indique granjas → ambos recebem <strong>1 mes gratis</strong>. Ao alcancar 5+ indicados ativos, desbloqueamos seu <strong>50% off para o 2o ano</strong>. Os mais ativos serao selecionados como <strong style="color:#7ed957">Beta Testers</strong>.',promo_rewards_summary:'Cada acao conta: <strong>Cadastro</strong> = 30 dias Enterprise · <strong>Review ★</strong> = +1 sem · <strong>Foto/Video</strong> = +2 sem · <strong>Survey</strong> = +1 sem · <strong>Indicacao</strong> = 1 mes gratis · <strong>5 indicacoes</strong> = 50% off ano 2',ff_title:'Founding Farmer',ff_sub:'Precos de lancamento congelados para sempre. Badge permanente na sua conta. Quando os slots encherem, acabou.',ff_hobby_slots:'100 slots',ff_starter_slots:'50 slots',ff_pro_slots:'25 slots',ff_ent_slots:'10 slots',ff_fine:'Founding Farmers mantem TODOS os beneficios de lancamento: 2o usuario gratis, $2.50/usuario extra, 5 convites promo, e o badge exclusivo visivel na sua conta. Para sempre. Quando os slots encherem → precos normais para todos os novos.',btn_trial_ent:'Testar Enterprise',
+  reviews_title:'O que nossos usuarios dizem',reviews_sub:'Opinioes reais de produtores avicolas',
+  rev1_text:'"Eu controlava tudo em cadernos. EGGlogU mudou minha vida. Agora sei exatamente quanto produzo e quanto ganho."',
+  rev2_text:'"O modo campo e incrivel. Registro os ovos com uma mao enquanto trabalho. Simples e rapido."',
+  rev3_text:'"A rastreabilidade com QR me abriu portas para clientes que exigem certificacao. Vale cada centavo."',
+  review_form_title:'Deixe sua opiniao',rf_rating_label:'Avaliacao:',rf_submit:'Enviar Opiniao',rf_thanks:'Obrigado pela sua opiniao. Sera visivel em breve.',
+  footer_terms:'Termos de Servico',footer_privacy:'Politica de Privacidade',
+  lead_title:'Acesso Antecipado',lead_sub:'Cadastre-se e receba informacao personalizada para sua operacao.',
+  lf_size_default:'Tamanho da operacao',lf_size_hobby:'1-2 lotes (Hobbyist)',lf_size_starter:'3-5 lotes (Starter)',lf_size_pro:'6-15 lotes (Professional)',lf_size_ent:'15+ lotes (Enterprise)',
+  lf_need_default:'Necessidade principal',lf_need_prod:'Controle de producao',lf_need_trace:'Rastreabilidade',lf_need_ai:'IA e Analytics',lf_need_bio:'Biosseguranca',
+  lf_btn:'Quero Acesso Antecipado',lf_privacy:'Sua informacao e confidencial. Sem spam, so valor.',lf_thanks:'Pronto! Voce recebera informacao personalizada para sua operacao.'
 }
 };
 /* FR, DE, ZH, HI, AR — Phase 2 (global expansion) */
@@ -520,12 +861,7 @@ function setLang(l,manual){
   document.documentElement.dir=l==='ar'?'rtl':'ltr';
   if(manual) localStorage.setItem('campaign_lang_manual',l);
 }
-function toggleAcc(n){
-  document.querySelectorAll('.acc-item').forEach(el=>{
-    if(+el.dataset.acc===n) el.classList.toggle('open');
-    else el.classList.remove('open');
-  });
-}
+/* toggleAcc removed — plans are now always visible side-by-side */
 // Auto-detect device language, manual switch saves preference
 function detectDeviceLang(){
   const nav=navigator.language||navigator.userLanguage||'';
@@ -538,6 +874,67 @@ function detectDeviceLang(){
 // Use saved only if user manually switched, otherwise always use device lang
 const userChose=localStorage.getItem('campaign_lang_manual');
 setLang(userChose&&T[userChose]?userChose:detectDeviceLang());
+
+/* ── Reviews system ── */
+const PH={es:{rf_name_ph:'Tu nombre',rf_country_ph:'Pais / Region',rf_text_ph:'Escribe tu experiencia con EGGlogU 360...',lf_email_ph:'correo@ejemplo.com',lf_farm_ph:'Nombre de tu granja',lf_country_ph:'Pais'},en:{rf_name_ph:'Your name',rf_country_ph:'Country / Region',rf_text_ph:'Write your experience with EGGlogU 360...',lf_email_ph:'email@example.com',lf_farm_ph:'Your farm name',lf_country_ph:'Country'},pt:{rf_name_ph:'Seu nome',rf_country_ph:'Pais / Regiao',rf_text_ph:'Escreva sua experiencia com EGGlogU 360...',lf_email_ph:'email@exemplo.com',lf_farm_ph:'Nome da sua granja',lf_country_ph:'Pais'}};
+function updatePlaceholders(l){const ph=PH[l]||PH.en;document.querySelectorAll('[data-ph-t]').forEach(el=>{const k=el.getAttribute('data-ph-t');if(ph[k])el.placeholder=ph[k]})}
+const origSetLang=setLang;setLang=function(l,m){origSetLang(l,m);updatePlaceholders(l)};updatePlaceholders(curLang);
+
+let selectedStars=5;
+document.getElementById('starSelect').addEventListener('click',function(e){
+  const v=e.target.getAttribute('data-v');if(!v)return;selectedStars=parseInt(v);
+  this.querySelectorAll('span').forEach(s=>{s.classList.toggle('active',parseInt(s.getAttribute('data-v'))<=selectedStars)});
+});
+
+function submitReview(){
+  const name=document.getElementById('rfName').value.trim();
+  const country=document.getElementById('rfCountry').value.trim();
+  const text=document.getElementById('rfText').value.trim();
+  if(!name||!text){alert(curLang==='es'?'Por favor completa nombre y opinion.':curLang==='pt'?'Por favor preencha nome e opiniao.':'Please fill in name and review.');return}
+  const review={name,country,text,stars:selectedStars,date:new Date().toISOString()};
+  const saved=JSON.parse(localStorage.getItem('egglogu_reviews')||'[]');
+  saved.push(review);localStorage.setItem('egglogu_reviews',JSON.stringify(saved));
+  const card=document.createElement('div');card.className='review-card';
+  card.innerHTML='<div class="review-stars">'+'&#9733;'.repeat(review.stars)+'</div><div class="review-text">"'+review.text.replace(/</g,'&lt;')+'"</div><div class="review-author">'+review.name.replace(/</g,'&lt;')+' <span>— '+(review.country||'').replace(/</g,'&lt;')+'</span></div>';
+  document.getElementById('reviewsGrid').appendChild(card);
+  document.getElementById('rfName').value='';document.getElementById('rfText').value='';document.getElementById('rfCountry').value='';
+  document.getElementById('rfMsg').style.display='block';setTimeout(()=>document.getElementById('rfMsg').style.display='none',4000);
+}
+// Load saved reviews
+(function(){const saved=JSON.parse(localStorage.getItem('egglogu_reviews')||'[]');const grid=document.getElementById('reviewsGrid');saved.forEach(r=>{const card=document.createElement('div');card.className='review-card';card.innerHTML='<div class="review-stars">'+'&#9733;'.repeat(r.stars||5)+'</div><div class="review-text">"'+r.text.replace(/</g,'&lt;')+'"</div><div class="review-author">'+r.name.replace(/</g,'&lt;')+' <span>— '+(r.country||'').replace(/</g,'&lt;')+'</span></div>';grid.appendChild(card)})})();
+
+/* ── Lead form ── */
+document.getElementById('leadForm').addEventListener('submit',function(e){
+  e.preventDefault();var f=this;
+  if(f.querySelector('[name="_gotcha"]').value)return;
+  var body={email:f.email.value,farm_name:f.farm_name.value||null,country:f.country.value||null,operation_size:f.operation_size.value||null,primary_need:f.primary_need.value||null,source:f.dataset.source||'campaign'};
+  fetch('/api/leads/',{method:'POST',body:JSON.stringify(body),headers:{'Content-Type':'application/json'}})
+  .then(function(r){if(r.ok||r.status===201){document.getElementById('lfMsg').style.display='block';f.reset();setTimeout(function(){document.getElementById('lfMsg').style.display='none'},5000)}else{alert(curLang==='es'?'Error al enviar. Intenta de nuevo.':curLang==='pt'?'Erro ao enviar. Tente novamente.':'Error submitting. Please try again.')}})
+  .catch(function(){alert(curLang==='es'?'Error de conexion. Intenta de nuevo.':curLang==='pt'?'Erro de conexao. Tente novamente.':'Connection error. Please try again.')});
+});
+
+/* ── UTM Capture ── */
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k => {
+    const v = params.get(k);
+    if(v) localStorage.setItem(k, v);
+  });
+})();
+
+/* ── Conversion tracking on CTA clicks ── */
+(function(){
+  function fireConversion(){
+    plausible('Lead',{props:{source:document.referrer||'direct',page:location.pathname}});
+  }
+  // All btn-main (primary CTA), btn-price (plan trials), btn-price-main links
+  document.querySelectorAll('.btn-main, .btn-price, .btn-price-main').forEach(function(el){
+    el.addEventListener('click', fireConversion);
+  });
+  // Lead form submit
+  var lf=document.getElementById('leadForm');
+  if(lf) lf.addEventListener('submit', fireConversion);
+})();
 </script>
 </body>
 </html>

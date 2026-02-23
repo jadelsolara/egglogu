@@ -33,10 +33,12 @@ class User(TimestampMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True)
-    hashed_password: Mapped[str] = mapped_column(String(128))
+    hashed_password: Mapped[Optional[str]] = mapped_column(String(128), default=None)
     full_name: Mapped[str] = mapped_column(String(200))
+    oauth_provider: Mapped[Optional[str]] = mapped_column(String(20), default=None)
+    oauth_sub: Mapped[Optional[str]] = mapped_column(String(255), default=None)
     role: Mapped[Role] = mapped_column(default=Role.viewer)
-    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id"))
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     verification_token: Mapped[Optional[str]] = mapped_column(String(200), default=None)
@@ -44,5 +46,18 @@ class User(TimestampMixin, Base):
     reset_token_expires: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), default=None
     )
+
+    # UTM tracking fields for conversion attribution
+    utm_source: Mapped[Optional[str]] = mapped_column(String(200), default=None)
+    utm_medium: Mapped[Optional[str]] = mapped_column(String(200), default=None)
+    utm_campaign: Mapped[Optional[str]] = mapped_column(String(200), default=None)
+
+    # Geolocation (detected at registration via IP)
+    geo_country: Mapped[Optional[str]] = mapped_column(String(100), default=None)
+    geo_city: Mapped[Optional[str]] = mapped_column(String(200), default=None)
+    geo_region: Mapped[Optional[str]] = mapped_column(String(200), default=None)
+    geo_timezone: Mapped[Optional[str]] = mapped_column(String(100), default=None)
+    geo_lat: Mapped[Optional[float]] = mapped_column(default=None)
+    geo_lng: Mapped[Optional[float]] = mapped_column(default=None)
 
     organization: Mapped[Organization] = relationship(back_populates="users")

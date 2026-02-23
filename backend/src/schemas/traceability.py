@@ -2,33 +2,33 @@ import uuid
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TraceabilityBatchCreate(BaseModel):
     date: date
     flock_id: uuid.UUID
-    house: Optional[str] = None
-    rack_number: Optional[str] = None
-    box_count: int = 0
-    eggs_per_box: int = 30
-    egg_type: Optional[str] = None
+    house: Optional[str] = Field(default=None, max_length=100)
+    rack_number: Optional[str] = Field(default=None, max_length=50)
+    box_count: int = Field(default=0, ge=0, le=100_000)
+    eggs_per_box: int = Field(default=30, ge=1, le=1000)
+    egg_type: Optional[str] = Field(default=None, max_length=50)
     client_id: Optional[uuid.UUID] = None
     delivery_date: Optional[date] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class TraceabilityBatchUpdate(BaseModel):
     date: Optional[date] = None
     flock_id: Optional[uuid.UUID] = None
-    house: Optional[str] = None
-    rack_number: Optional[str] = None
-    box_count: Optional[int] = None
-    eggs_per_box: Optional[int] = None
-    egg_type: Optional[str] = None
+    house: Optional[str] = Field(default=None, max_length=100)
+    rack_number: Optional[str] = Field(default=None, max_length=50)
+    box_count: Optional[int] = Field(default=None, ge=0, le=100_000)
+    eggs_per_box: Optional[int] = Field(default=None, ge=1, le=1000)
+    egg_type: Optional[str] = Field(default=None, max_length=50)
     client_id: Optional[uuid.UUID] = None
     delivery_date: Optional[date] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(default=None, max_length=2000)
 
 
 class TraceabilityBatchRead(BaseModel):

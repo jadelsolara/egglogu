@@ -23,3 +23,8 @@ class UnauthorizedError(HTTPException):
 class ConflictError(HTTPException):
     def __init__(self, detail: str = "Resource already exists"):
         super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
+
+
+class RateLimitError(HTTPException):
+    def __init__(self, detail: str = "Too many requests, try again later"):
+        super().__init__(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=detail)

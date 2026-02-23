@@ -2,16 +2,16 @@ import uuid
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ChecklistItemCreate(BaseModel):
-    label: str
+    label: str = Field(min_length=1, max_length=300)
     is_default: bool = False
 
 
 class ChecklistItemUpdate(BaseModel):
-    label: Optional[str] = None
+    label: Optional[str] = Field(default=None, min_length=1, max_length=300)
     is_default: Optional[bool] = None
 
 
@@ -27,11 +27,11 @@ class ChecklistItemRead(BaseModel):
 
 class LogbookEntryCreate(BaseModel):
     date: date
-    text: str
+    text: str = Field(min_length=1, max_length=5000)
 
 
 class LogbookEntryUpdate(BaseModel):
-    text: Optional[str] = None
+    text: Optional[str] = Field(default=None, min_length=1, max_length=5000)
 
 
 class LogbookEntryRead(BaseModel):
@@ -45,20 +45,20 @@ class LogbookEntryRead(BaseModel):
 
 
 class PersonnelCreate(BaseModel):
-    name: str
-    role_desc: Optional[str] = None
-    phone: Optional[str] = None
+    name: str = Field(min_length=1, max_length=200)
+    role_desc: Optional[str] = Field(default=None, max_length=200)
+    phone: Optional[str] = Field(default=None, max_length=30)
     start_date: Optional[date] = None
-    salary: Optional[float] = None
+    salary: Optional[float] = Field(default=None, ge=0, le=10_000_000)
     is_active: bool = True
 
 
 class PersonnelUpdate(BaseModel):
-    name: Optional[str] = None
-    role_desc: Optional[str] = None
-    phone: Optional[str] = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    role_desc: Optional[str] = Field(default=None, max_length=200)
+    phone: Optional[str] = Field(default=None, max_length=30)
     start_date: Optional[date] = None
-    salary: Optional[float] = None
+    salary: Optional[float] = Field(default=None, ge=0, le=10_000_000)
     is_active: Optional[bool] = None
 
 
