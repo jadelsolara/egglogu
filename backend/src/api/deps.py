@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exceptions import ForbiddenError, UnauthorizedError
-from src.core.plans import check_feature_access, get_plan_limits
+from src.core.plans import check_feature_access
 from src.core.security import decode_token
 from src.database import get_db
 from src.models.auth import User
