@@ -83,9 +83,9 @@ async def system_health():
     redis_status = await _check_redis()
 
     # Overall status: "ok" only if all dependencies are healthy
-    all_ok = (
-        db_status["status"] == "ok"
-        and redis_status["status"] in ("ok", "not_configured")
+    all_ok = db_status["status"] == "ok" and redis_status["status"] in (
+        "ok",
+        "not_configured",
     )
 
     uptime_secs = time.monotonic() - _start_time
@@ -93,7 +93,9 @@ async def system_health():
     return {
         "status": "ok" if all_ok else "degraded",
         "version": APP_VERSION,
-        "environment": "production" if settings.FRONTEND_URL == "https://egglogu.com" else "development",
+        "environment": "production"
+        if settings.FRONTEND_URL == "https://egglogu.com"
+        else "development",
         "database": db_status,
         "redis": redis_status,
         "timestamp": datetime.now(timezone.utc).isoformat(),

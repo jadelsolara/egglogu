@@ -15,14 +15,26 @@ router = APIRouter(prefix="/clients", tags=["clients"])
 
 
 @router.get("/", response_model=list[ClientRead])
-async def list_clients(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Client).where(Client.organization_id == user.organization_id))
+async def list_clients(
+    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Client).where(Client.organization_id == user.organization_id)
+    )
     return result.scalars().all()
 
 
 @router.get("/{client_id}", response_model=ClientRead)
-async def get_client(client_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Client).where(Client.id == client_id, Client.organization_id == user.organization_id))
+async def get_client(
+    client_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Client).where(
+            Client.id == client_id, Client.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Client not found")
@@ -30,7 +42,11 @@ async def get_client(client_id: uuid.UUID, db: AsyncSession = Depends(get_db), u
 
 
 @router.post("/", response_model=ClientRead, status_code=status.HTTP_201_CREATED)
-async def create_client(data: ClientCreate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def create_client(
+    data: ClientCreate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     item = Client(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
@@ -38,8 +54,17 @@ async def create_client(data: ClientCreate, db: AsyncSession = Depends(get_db), 
 
 
 @router.put("/{client_id}", response_model=ClientRead)
-async def update_client(client_id: uuid.UUID, data: ClientUpdate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Client).where(Client.id == client_id, Client.organization_id == user.organization_id))
+async def update_client(
+    client_id: uuid.UUID,
+    data: ClientUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Client).where(
+            Client.id == client_id, Client.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Client not found")
@@ -50,8 +75,16 @@ async def update_client(client_id: uuid.UUID, data: ClientUpdate, db: AsyncSessi
 
 
 @router.delete("/{client_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_client(client_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Client).where(Client.id == client_id, Client.organization_id == user.organization_id))
+async def delete_client(
+    client_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Client).where(
+            Client.id == client_id, Client.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Client not found")

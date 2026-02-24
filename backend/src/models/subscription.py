@@ -32,7 +32,9 @@ class Subscription(TimestampMixin, Base):
         ForeignKey("organizations.id", ondelete="CASCADE"), unique=True, index=True
     )
     plan: Mapped[PlanTier] = mapped_column(default=PlanTier.enterprise)
-    status: Mapped[SubscriptionStatus] = mapped_column(default=SubscriptionStatus.active)
+    status: Mapped[SubscriptionStatus] = mapped_column(
+        default=SubscriptionStatus.active
+    )
     is_trial: Mapped[bool] = mapped_column(Boolean, default=True)
     trial_end: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), default=None
@@ -41,9 +43,13 @@ class Subscription(TimestampMixin, Base):
     # 0=trial, 1=Q1(40%off), 2=Q2(25%off), 3=Q3(15%off), 4=full price
     discount_phase: Mapped[int] = mapped_column(Integer, default=0)
     months_subscribed: Mapped[int] = mapped_column(Integer, default=0)
-    billing_interval: Mapped[str] = mapped_column(String(10), default="month")  # "month" or "year"
+    billing_interval: Mapped[str] = mapped_column(
+        String(10), default="month"
+    )  # "month" or "year"
     stripe_customer_id: Mapped[Optional[str]] = mapped_column(String(100), default=None)
-    stripe_subscription_id: Mapped[Optional[str]] = mapped_column(String(100), default=None)
+    stripe_subscription_id: Mapped[Optional[str]] = mapped_column(
+        String(100), default=None
+    )
     current_period_end: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True), default=None
     )

@@ -16,10 +16,25 @@ from src.config import settings
 from src.core.rate_limit import init_redis, close_redis
 from src.database import engine
 from src.api import (
-    auth, farms, flocks, production, health, feed, clients,
-    finance, environment, operations, sync,
-    biosecurity, traceability, planning, billing, trace_public,
-    support, healthcheck, leads,
+    auth,
+    farms,
+    flocks,
+    production,
+    health,
+    feed,
+    clients,
+    finance,
+    environment,
+    operations,
+    sync,
+    biosecurity,
+    traceability,
+    planning,
+    billing,
+    trace_public,
+    support,
+    healthcheck,
+    leads,
 )
 
 
@@ -155,10 +170,14 @@ class GlobalRateLimitMiddleware(BaseHTTPMiddleware):
 async def lifespan(app: FastAPI):
     # Fail fast if JWT secret is still the default
     if settings.JWT_SECRET_KEY == "change-me-in-production":
-        raise RuntimeError("FATAL: JWT_SECRET_KEY is still the default. Set a strong secret in .env")
+        raise RuntimeError(
+            "FATAL: JWT_SECRET_KEY is still the default. Set a strong secret in .env"
+        )
 
     # Tables managed by Alembic migrations — run `alembic upgrade head` before deploy
-    logging.getLogger("egglogu").info("Startup: tables managed by Alembic (run 'alembic upgrade head')")
+    logging.getLogger("egglogu").info(
+        "Startup: tables managed by Alembic (run 'alembic upgrade head')"
+    )
     await init_redis()
     yield
     await close_redis()
@@ -225,15 +244,18 @@ app.include_router(healthcheck.router, prefix="/api")
 
 # ── Global Exception Handlers ────────────────────────────────────────
 
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Return clean 422 without exposing internal schema details."""
     errors = []
     for err in exc.errors():
-        errors.append({
-            "field": ".".join(str(loc) for loc in err.get("loc", [])),
-            "message": err.get("msg", "Invalid value"),
-        })
+        errors.append(
+            {
+                "field": ".".join(str(loc) for loc in err.get("loc", [])),
+                "message": err.get("msg", "Invalid value"),
+            }
+        )
     return JSONResponse(status_code=422, content={"detail": errors})
 
 

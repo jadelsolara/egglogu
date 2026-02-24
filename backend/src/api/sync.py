@@ -20,9 +20,25 @@ from src.api.deps import get_current_user
 from src.database import get_db
 from src.models.auth import User
 from src.models import (
-    Farm, Flock, DailyProduction, Vaccine, Medication, Outbreak, StressEvent,
-    FeedPurchase, FeedConsumption, Client, Income, Expense, Receivable,
-    EnvironmentReading, IoTReading, WeatherCache, ChecklistItem, LogbookEntry, Personnel,
+    Farm,
+    Flock,
+    DailyProduction,
+    Vaccine,
+    Medication,
+    Outbreak,
+    StressEvent,
+    FeedPurchase,
+    FeedConsumption,
+    Client,
+    Income,
+    Expense,
+    Receivable,
+    EnvironmentReading,
+    IoTReading,
+    WeatherCache,
+    ChecklistItem,
+    LogbookEntry,
+    Personnel,
 )
 
 router = APIRouter(prefix="/sync", tags=["sync"])
@@ -97,7 +113,9 @@ async def sync_data(
                             if isinstance(client_updated, str):
                                 client_updated = datetime.fromisoformat(client_updated)
                             if client_updated <= existing.updated_at:
-                                conflicts.append(f"{entity_key}/{record_id}: server is newer")
+                                conflicts.append(
+                                    f"{entity_key}/{record_id}: server is newer"
+                                )
                                 continue
                         # Apply update
                         for k, v in filtered.items():
@@ -121,7 +139,9 @@ async def sync_data(
     since = payload.last_synced_at or datetime.min.replace(tzinfo=timezone.utc)
 
     for entity_key, model_cls in MODEL_MAP.items():
-        if not hasattr(model_cls, "updated_at") or not hasattr(model_cls, "organization_id"):
+        if not hasattr(model_cls, "updated_at") or not hasattr(
+            model_cls, "organization_id"
+        ):
             continue
         stmt = (
             select(model_cls)
@@ -135,9 +155,7 @@ async def sync_data(
         result = await db.execute(stmt)
         rows = result.scalars().all()
         if rows:
-            server_changes[entity_key] = [
-                _row_to_dict(r) for r in rows
-            ]
+            server_changes[entity_key] = [_row_to_dict(r) for r in rows]
 
     return SyncResponse(
         synced=synced,

@@ -15,10 +15,18 @@ from src.models.biosecurity import (
     PestSighting,
 )
 from src.schemas.biosecurity import (
-    BiosecurityProtocolCreate, BiosecurityProtocolRead, BiosecurityProtocolUpdate,
-    BiosecurityVisitorCreate, BiosecurityVisitorRead, BiosecurityVisitorUpdate,
-    BiosecurityZoneCreate, BiosecurityZoneRead, BiosecurityZoneUpdate,
-    PestSightingCreate, PestSightingRead, PestSightingUpdate,
+    BiosecurityProtocolCreate,
+    BiosecurityProtocolRead,
+    BiosecurityProtocolUpdate,
+    BiosecurityVisitorCreate,
+    BiosecurityVisitorRead,
+    BiosecurityVisitorUpdate,
+    BiosecurityZoneCreate,
+    BiosecurityZoneRead,
+    BiosecurityZoneUpdate,
+    PestSightingCreate,
+    PestSightingRead,
+    PestSightingUpdate,
 )
 
 router = APIRouter(prefix="/biosecurity", tags=["biosecurity"])
@@ -26,18 +34,25 @@ router = APIRouter(prefix="/biosecurity", tags=["biosecurity"])
 
 # ── Visitors ──
 
+
 @router.get("/visitors", response_model=list[BiosecurityVisitorRead])
 async def list_visitors(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
     result = await db.execute(
-        select(BiosecurityVisitor).where(BiosecurityVisitor.organization_id == user.organization_id)
+        select(BiosecurityVisitor).where(
+            BiosecurityVisitor.organization_id == user.organization_id
+        )
     )
     return result.scalars().all()
 
 
-@router.post("/visitors", response_model=BiosecurityVisitorRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/visitors",
+    response_model=BiosecurityVisitorRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_visitor(
     data: BiosecurityVisitorCreate,
     db: AsyncSession = Depends(get_db),
@@ -91,18 +106,23 @@ async def delete_visitor(
 
 # ── Zones ──
 
+
 @router.get("/zones", response_model=list[BiosecurityZoneRead])
 async def list_zones(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
     result = await db.execute(
-        select(BiosecurityZone).where(BiosecurityZone.organization_id == user.organization_id)
+        select(BiosecurityZone).where(
+            BiosecurityZone.organization_id == user.organization_id
+        )
     )
     return result.scalars().all()
 
 
-@router.post("/zones", response_model=BiosecurityZoneRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/zones", response_model=BiosecurityZoneRead, status_code=status.HTTP_201_CREATED
+)
 async def create_zone(
     data: BiosecurityZoneCreate,
     db: AsyncSession = Depends(get_db),
@@ -156,6 +176,7 @@ async def delete_zone(
 
 # ── Pest Sightings ──
 
+
 @router.get("/pests", response_model=list[PestSightingRead])
 async def list_pests(
     db: AsyncSession = Depends(get_db),
@@ -167,7 +188,9 @@ async def list_pests(
     return result.scalars().all()
 
 
-@router.post("/pests", response_model=PestSightingRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/pests", response_model=PestSightingRead, status_code=status.HTTP_201_CREATED
+)
 async def create_pest(
     data: PestSightingCreate,
     db: AsyncSession = Depends(get_db),
@@ -221,18 +244,25 @@ async def delete_pest(
 
 # ── Protocols ──
 
+
 @router.get("/protocols", response_model=list[BiosecurityProtocolRead])
 async def list_protocols(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
     result = await db.execute(
-        select(BiosecurityProtocol).where(BiosecurityProtocol.organization_id == user.organization_id)
+        select(BiosecurityProtocol).where(
+            BiosecurityProtocol.organization_id == user.organization_id
+        )
     )
     return result.scalars().all()
 
 
-@router.post("/protocols", response_model=BiosecurityProtocolRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/protocols",
+    response_model=BiosecurityProtocolRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_protocol(
     data: BiosecurityProtocolCreate,
     db: AsyncSession = Depends(get_db),

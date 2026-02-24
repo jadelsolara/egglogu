@@ -8,19 +8,31 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 # Year 1: Trial → Q1(40%off) → Q2(25%off) → Q3(15%off) → Q4(full)
 # Year 2+: Full price for new customers, same structure
 DISCOUNT_PHASES = [
-    (0, "Trial — 30 days free"),       # phase 0: trial
-    (40, "Welcome — 40% off"),         # phase 1: Q1 (months 1-3)
-    (25, "Growing — 25% off"),         # phase 2: Q2 (months 4-6)
-    (15, "Loyalty — 15% off"),         # phase 3: Q3 (months 7-9)
-    (0, "Full access"),                # phase 4: full price (months 10+)
+    (0, "Trial — 30 days free"),  # phase 0: trial
+    (40, "Welcome — 40% off"),  # phase 1: Q1 (months 1-3)
+    (25, "Growing — 25% off"),  # phase 2: Q2 (months 4-6)
+    (15, "Loyalty — 15% off"),  # phase 3: Q3 (months 7-9)
+    (0, "Full access"),  # phase 4: full price (months 10+)
 ]
 
 # Price IDs per tier (monthly + annual)
 TIER_PRICE_MAP = {
-    "hobby": {"month": settings.STRIPE_PRICE_HOBBY, "year": settings.STRIPE_PRICE_HOBBY_ANNUAL},
-    "starter": {"month": settings.STRIPE_PRICE_STARTER, "year": settings.STRIPE_PRICE_STARTER_ANNUAL},
-    "pro": {"month": settings.STRIPE_PRICE_PRO, "year": settings.STRIPE_PRICE_PRO_ANNUAL},
-    "enterprise": {"month": settings.STRIPE_PRICE_ENTERPRISE, "year": settings.STRIPE_PRICE_ENTERPRISE_ANNUAL},
+    "hobby": {
+        "month": settings.STRIPE_PRICE_HOBBY,
+        "year": settings.STRIPE_PRICE_HOBBY_ANNUAL,
+    },
+    "starter": {
+        "month": settings.STRIPE_PRICE_STARTER,
+        "year": settings.STRIPE_PRICE_STARTER_ANNUAL,
+    },
+    "pro": {
+        "month": settings.STRIPE_PRICE_PRO,
+        "year": settings.STRIPE_PRICE_PRO_ANNUAL,
+    },
+    "enterprise": {
+        "month": settings.STRIPE_PRICE_ENTERPRISE,
+        "year": settings.STRIPE_PRICE_ENTERPRISE_ANNUAL,
+    },
 }
 
 # Base prices for display calculations

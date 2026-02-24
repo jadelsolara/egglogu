@@ -7,8 +7,19 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
-from src.core.email import generate_token, send_password_reset, send_team_invite, send_verification_email, send_welcome
-from src.core.exceptions import ConflictError, NotFoundError, RateLimitError, UnauthorizedError
+from src.core.email import (
+    generate_token,
+    send_password_reset,
+    send_team_invite,
+    send_verification_email,
+    send_welcome,
+)
+from src.core.exceptions import (
+    ConflictError,
+    NotFoundError,
+    RateLimitError,
+    UnauthorizedError,
+)
 from src.core.rate_limit import check_rate_limit
 from src.core.security import (
     WeakPasswordError,
@@ -46,6 +57,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 async def auth_config():
     """Public endpoint — returns OAuth client IDs for frontend initialization."""
     from src.config import settings
+
     return {
         "google_client_id": settings.GOOGLE_CLIENT_ID or None,
         "apple_client_id": settings.APPLE_CLIENT_ID or None,
@@ -59,8 +71,12 @@ def _slugify(name: str) -> str:
     return slug
 
 
-@router.post("/register", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
-async def register(data: UserCreate, request: Request, db: AsyncSession = Depends(get_db)):
+@router.post(
+    "/register", response_model=MessageResponse, status_code=status.HTTP_201_CREATED
+)
+async def register(
+    data: UserCreate, request: Request, db: AsyncSession = Depends(get_db)
+):
     # Rate limit: 5 registrations per IP per hour
     client_ip = request.client.host if request.client else "unknown"
     if not await check_rate_limit(f"register:{client_ip}", 5, 3600):
@@ -75,7 +91,9 @@ async def register(data: UserCreate, request: Request, db: AsyncSession = Depend
     if existing.scalar_one_or_none():
         raise ConflictError("Email already registered")
 
-    org = Organization(name=data.organization_name, slug=_slugify(data.organization_name))
+    org = Organization(
+        name=data.organization_name, slug=_slugify(data.organization_name)
+    )
     db.add(org)
     await db.flush()
 
@@ -117,7 +135,9 @@ async def register(data: UserCreate, request: Request, db: AsyncSession = Depend
 
 
 @router.post("/google", response_model=TokenResponse)
-async def google_auth(data: GoogleAuthRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def google_auth(
+    data: GoogleAuthRequest, request: Request, db: AsyncSession = Depends(get_db)
+):
     from google.auth.transport.requests import Request as GoogleRequest
     from google.oauth2 import id_token as google_id_token
 
@@ -192,13 +212,17 @@ async def google_auth(data: GoogleAuthRequest, request: Request, db: AsyncSessio
         await db.flush()
 
     return TokenResponse(
-        access_token=create_access_token(user.id, user.organization_id, user.role.value),
+        access_token=create_access_token(
+            user.id, user.organization_id, user.role.value
+        ),
         refresh_token=create_refresh_token(user.id),
     )
 
 
 @router.post("/apple", response_model=TokenResponse)
-async def apple_auth(data: AppleAuthRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def apple_auth(
+    data: AppleAuthRequest, request: Request, db: AsyncSession = Depends(get_db)
+):
     import jwt
     from src.config import settings
 
@@ -211,6 +235,7 @@ async def apple_auth(data: AppleAuthRequest, request: Request, db: AsyncSession 
 
     # Fetch Apple's public keys and verify the id_token
     import httpx
+
     try:
         async with httpx.AsyncClient() as http:
             keys_resp = await http.get("https://appleid.apple.com/auth/keys")
@@ -285,13 +310,17 @@ async def apple_auth(data: AppleAuthRequest, request: Request, db: AsyncSession 
         await db.flush()
 
     return TokenResponse(
-        access_token=create_access_token(user.id, user.organization_id, user.role.value),
+        access_token=create_access_token(
+            user.id, user.organization_id, user.role.value
+        ),
         refresh_token=create_refresh_token(user.id),
     )
 
 
 @router.post("/microsoft", response_model=TokenResponse)
-async def microsoft_auth(data: MicrosoftAuthRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def microsoft_auth(
+    data: MicrosoftAuthRequest, request: Request, db: AsyncSession = Depends(get_db)
+):
     from src.config import settings
 
     if not settings.MICROSOFT_CLIENT_ID:
@@ -303,6 +332,7 @@ async def microsoft_auth(data: MicrosoftAuthRequest, request: Request, db: Async
 
     # Validate token by calling Microsoft Graph /me endpoint
     import httpx
+
     try:
         async with httpx.AsyncClient() as http:
             graph_resp = await http.get(
@@ -366,13 +396,17 @@ async def microsoft_auth(data: MicrosoftAuthRequest, request: Request, db: Async
         await db.flush()
 
     return TokenResponse(
-        access_token=create_access_token(user.id, user.organization_id, user.role.value),
+        access_token=create_access_token(
+            user.id, user.organization_id, user.role.value
+        ),
         refresh_token=create_refresh_token(user.id),
     )
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(data: LoginRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def login(
+    data: LoginRequest, request: Request, db: AsyncSession = Depends(get_db)
+):
     # Rate limit: 10 login attempts per IP per 15 minutes
     client_ip = request.client.host if request.client else "unknown"
     if not await check_rate_limit(f"login:{client_ip}", 10, 900):
@@ -383,22 +417,30 @@ async def login(data: LoginRequest, request: Request, db: AsyncSession = Depends
     if not user:
         raise UnauthorizedError("Invalid email or password")
     if user.hashed_password is None:
-        raise UnauthorizedError("Esta cuenta usa Google Sign-In. Usa el botón 'Continuar con Google'.")
+        raise UnauthorizedError(
+            "Esta cuenta usa Google Sign-In. Usa el botón 'Continuar con Google'."
+        )
     if not verify_password(data.password, user.hashed_password):
         raise UnauthorizedError("Invalid email or password")
     if not user.is_active:
         raise UnauthorizedError("Account is disabled")
     if not user.email_verified:
-        raise UnauthorizedError("Email not verified. Check your inbox or resend verification.")
+        raise UnauthorizedError(
+            "Email not verified. Check your inbox or resend verification."
+        )
 
     return TokenResponse(
-        access_token=create_access_token(user.id, user.organization_id, user.role.value),
+        access_token=create_access_token(
+            user.id, user.organization_id, user.role.value
+        ),
         refresh_token=create_refresh_token(user.id),
     )
 
 
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh(data: RefreshRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def refresh(
+    data: RefreshRequest, request: Request, db: AsyncSession = Depends(get_db)
+):
     # Rate limit: 30 refreshes per IP per 15 minutes
     client_ip = request.client.host if request.client else "unknown"
     if not await check_rate_limit(f"refresh:{client_ip}", 30, 900):
@@ -417,7 +459,9 @@ async def refresh(data: RefreshRequest, request: Request, db: AsyncSession = Dep
         raise UnauthorizedError()
 
     return TokenResponse(
-        access_token=create_access_token(user.id, user.organization_id, user.role.value),
+        access_token=create_access_token(
+            user.id, user.organization_id, user.role.value
+        ),
         refresh_token=create_refresh_token(user.id),
     )
 
@@ -428,7 +472,9 @@ async def me(user: User = Depends(get_current_user)):
 
 
 @router.post("/forgot-password", response_model=MessageResponse)
-async def forgot_password(data: ForgotPasswordRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def forgot_password(
+    data: ForgotPasswordRequest, request: Request, db: AsyncSession = Depends(get_db)
+):
     # Rate limit: 3 password reset requests per IP per hour
     client_ip = request.client.host if request.client else "unknown"
     if not await check_rate_limit(f"forgot:{client_ip}", 3, 3600):
@@ -447,14 +493,16 @@ async def forgot_password(data: ForgotPasswordRequest, request: Request, db: Asy
 
 
 @router.post("/reset-password", response_model=MessageResponse)
-async def reset_password(data: ResetPasswordRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(
-        select(User).where(User.reset_token == data.token)
-    )
+async def reset_password(
+    data: ResetPasswordRequest, db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(select(User).where(User.reset_token == data.token))
     user = result.scalar_one_or_none()
     if not user:
         raise NotFoundError("Invalid or expired reset token")
-    if user.reset_token_expires and user.reset_token_expires < datetime.now(timezone.utc):
+    if user.reset_token_expires and user.reset_token_expires < datetime.now(
+        timezone.utc
+    ):
         raise NotFoundError("Reset token has expired")
 
     try:
@@ -470,22 +518,24 @@ async def reset_password(data: ResetPasswordRequest, db: AsyncSession = Depends(
 
 
 @router.post("/verify-email", response_model=TokenResponse)
-async def verify_email(data: VerifyEmailRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def verify_email(
+    data: VerifyEmailRequest, request: Request, db: AsyncSession = Depends(get_db)
+):
     # Rate limit: 10 verification attempts per IP per 15 minutes
     client_ip = request.client.host if request.client else "unknown"
     if not await check_rate_limit(f"verify:{client_ip}", 10, 900):
         raise RateLimitError("Too many verification attempts. Try again later.")
 
-    result = await db.execute(
-        select(User).where(User.verification_token == data.token)
-    )
+    result = await db.execute(select(User).where(User.verification_token == data.token))
     user = result.scalar_one_or_none()
     if not user:
         raise NotFoundError("Invalid verification token")
     if user.email_verified:
         # Already verified — still return tokens so user can proceed
         return TokenResponse(
-            access_token=create_access_token(user.id, user.organization_id, user.role.value),
+            access_token=create_access_token(
+                user.id, user.organization_id, user.role.value
+            ),
             refresh_token=create_refresh_token(user.id),
         )
 
@@ -495,13 +545,19 @@ async def verify_email(data: VerifyEmailRequest, request: Request, db: AsyncSess
 
     # Return tokens so user is auto-logged-in after verification
     return TokenResponse(
-        access_token=create_access_token(user.id, user.organization_id, user.role.value),
+        access_token=create_access_token(
+            user.id, user.organization_id, user.role.value
+        ),
         refresh_token=create_refresh_token(user.id),
     )
 
 
 @router.post("/resend-verification", response_model=MessageResponse)
-async def resend_verification(data: ResendVerificationRequest, request: Request, db: AsyncSession = Depends(get_db)):
+async def resend_verification(
+    data: ResendVerificationRequest,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+):
     # Rate limit: 1 resend per email per 2 minutes
     if not await check_rate_limit(f"resend:{data.email}", 1, 120):
         raise RateLimitError("Verification email already sent. Wait 2 minutes.")
@@ -514,7 +570,9 @@ async def resend_verification(data: ResendVerificationRequest, request: Request,
         user.verification_token = token
         await db.flush()
         await send_verification_email(data.email, token)
-    return MessageResponse(message="If the email exists and is not verified, a new link has been sent.")
+    return MessageResponse(
+        message="If the email exists and is not verified, a new link has been sent."
+    )
 
 
 @router.post("/send-team-invite", response_model=MessageResponse)

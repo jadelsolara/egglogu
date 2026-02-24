@@ -27,6 +27,7 @@ class FarmUpdate(BaseModel):
 
 class FarmReadPublic(BaseModel):
     """Safe schema — no secrets exposed."""
+
     id: uuid.UUID
     name: str
     lat: Optional[float]
@@ -39,6 +40,7 @@ class FarmReadPublic(BaseModel):
 
 class FarmRead(BaseModel):
     """Admin schema — includes MQTT/OWM config (only for create/update responses)."""
+
     id: uuid.UUID
     name: str
     lat: Optional[float]

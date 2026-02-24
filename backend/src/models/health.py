@@ -14,7 +14,9 @@ class Vaccine(TimestampMixin, TenantMixin, Base):
     __tablename__ = "vaccines"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     name: Mapped[str] = mapped_column(String(200))
     method: Mapped[Optional[str]] = mapped_column(String(100), default=None)
@@ -25,7 +27,9 @@ class Medication(TimestampMixin, TenantMixin, Base):
     __tablename__ = "medications"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     name: Mapped[str] = mapped_column(String(200))
     dosage: Mapped[Optional[str]] = mapped_column(String(100), default=None)
@@ -37,7 +41,9 @@ class Outbreak(TimestampMixin, TenantMixin, Base):
     __tablename__ = "outbreaks"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     disease: Mapped[str] = mapped_column(String(200))
     affected_count: Mapped[int] = mapped_column(Integer, default=0)
@@ -59,7 +65,9 @@ class StressEvent(TimestampMixin, TenantMixin, Base):
     __tablename__ = "stress_events"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     type: Mapped[StressType]
     severity: Mapped[int] = mapped_column(Integer)

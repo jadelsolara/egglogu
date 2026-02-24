@@ -10,24 +10,43 @@ from src.database import get_db
 from src.models.auth import User
 from src.models.finance import Expense, Income, Receivable
 from src.schemas.finance import (
-    ExpenseCreate, ExpenseRead, ExpenseUpdate,
-    IncomeCreate, IncomeRead, IncomeUpdate,
-    ReceivableCreate, ReceivableRead, ReceivableUpdate,
+    ExpenseCreate,
+    ExpenseRead,
+    ExpenseUpdate,
+    IncomeCreate,
+    IncomeRead,
+    IncomeUpdate,
+    ReceivableCreate,
+    ReceivableRead,
+    ReceivableUpdate,
 )
 
 router = APIRouter(tags=["finance"])
 
 # --- Income ---
 
+
 @router.get("/income", response_model=list[IncomeRead])
-async def list_income(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Income).where(Income.organization_id == user.organization_id))
+async def list_income(
+    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Income).where(Income.organization_id == user.organization_id)
+    )
     return result.scalars().all()
 
 
 @router.get("/income/{item_id}", response_model=IncomeRead)
-async def get_income(item_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Income).where(Income.id == item_id, Income.organization_id == user.organization_id))
+async def get_income(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Income).where(
+            Income.id == item_id, Income.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Income not found")
@@ -35,7 +54,11 @@ async def get_income(item_id: uuid.UUID, db: AsyncSession = Depends(get_db), use
 
 
 @router.post("/income", response_model=IncomeRead, status_code=status.HTTP_201_CREATED)
-async def create_income(data: IncomeCreate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def create_income(
+    data: IncomeCreate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     item = Income(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
@@ -43,8 +66,17 @@ async def create_income(data: IncomeCreate, db: AsyncSession = Depends(get_db), 
 
 
 @router.put("/income/{item_id}", response_model=IncomeRead)
-async def update_income(item_id: uuid.UUID, data: IncomeUpdate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Income).where(Income.id == item_id, Income.organization_id == user.organization_id))
+async def update_income(
+    item_id: uuid.UUID,
+    data: IncomeUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Income).where(
+            Income.id == item_id, Income.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Income not found")
@@ -55,32 +87,60 @@ async def update_income(item_id: uuid.UUID, data: IncomeUpdate, db: AsyncSession
 
 
 @router.delete("/income/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_income(item_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Income).where(Income.id == item_id, Income.organization_id == user.organization_id))
+async def delete_income(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Income).where(
+            Income.id == item_id, Income.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Income not found")
     await db.delete(item)
 
+
 # --- Expenses ---
 
+
 @router.get("/expenses", response_model=list[ExpenseRead])
-async def list_expenses(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Expense).where(Expense.organization_id == user.organization_id))
+async def list_expenses(
+    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Expense).where(Expense.organization_id == user.organization_id)
+    )
     return result.scalars().all()
 
 
 @router.get("/expenses/{item_id}", response_model=ExpenseRead)
-async def get_expense(item_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Expense).where(Expense.id == item_id, Expense.organization_id == user.organization_id))
+async def get_expense(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Expense).where(
+            Expense.id == item_id, Expense.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Expense not found")
     return item
 
 
-@router.post("/expenses", response_model=ExpenseRead, status_code=status.HTTP_201_CREATED)
-async def create_expense(data: ExpenseCreate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+@router.post(
+    "/expenses", response_model=ExpenseRead, status_code=status.HTTP_201_CREATED
+)
+async def create_expense(
+    data: ExpenseCreate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     item = Expense(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
@@ -88,8 +148,17 @@ async def create_expense(data: ExpenseCreate, db: AsyncSession = Depends(get_db)
 
 
 @router.put("/expenses/{item_id}", response_model=ExpenseRead)
-async def update_expense(item_id: uuid.UUID, data: ExpenseUpdate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Expense).where(Expense.id == item_id, Expense.organization_id == user.organization_id))
+async def update_expense(
+    item_id: uuid.UUID,
+    data: ExpenseUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Expense).where(
+            Expense.id == item_id, Expense.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Expense not found")
@@ -100,32 +169,60 @@ async def update_expense(item_id: uuid.UUID, data: ExpenseUpdate, db: AsyncSessi
 
 
 @router.delete("/expenses/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_expense(item_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Expense).where(Expense.id == item_id, Expense.organization_id == user.organization_id))
+async def delete_expense(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Expense).where(
+            Expense.id == item_id, Expense.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Expense not found")
     await db.delete(item)
 
+
 # --- Receivables ---
 
+
 @router.get("/receivables", response_model=list[ReceivableRead])
-async def list_receivables(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Receivable).where(Receivable.organization_id == user.organization_id))
+async def list_receivables(
+    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Receivable).where(Receivable.organization_id == user.organization_id)
+    )
     return result.scalars().all()
 
 
 @router.get("/receivables/{item_id}", response_model=ReceivableRead)
-async def get_receivable(item_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Receivable).where(Receivable.id == item_id, Receivable.organization_id == user.organization_id))
+async def get_receivable(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Receivable).where(
+            Receivable.id == item_id, Receivable.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Receivable not found")
     return item
 
 
-@router.post("/receivables", response_model=ReceivableRead, status_code=status.HTTP_201_CREATED)
-async def create_receivable(data: ReceivableCreate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+@router.post(
+    "/receivables", response_model=ReceivableRead, status_code=status.HTTP_201_CREATED
+)
+async def create_receivable(
+    data: ReceivableCreate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     item = Receivable(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
@@ -133,8 +230,17 @@ async def create_receivable(data: ReceivableCreate, db: AsyncSession = Depends(g
 
 
 @router.put("/receivables/{item_id}", response_model=ReceivableRead)
-async def update_receivable(item_id: uuid.UUID, data: ReceivableUpdate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Receivable).where(Receivable.id == item_id, Receivable.organization_id == user.organization_id))
+async def update_receivable(
+    item_id: uuid.UUID,
+    data: ReceivableUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Receivable).where(
+            Receivable.id == item_id, Receivable.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Receivable not found")
@@ -145,8 +251,16 @@ async def update_receivable(item_id: uuid.UUID, data: ReceivableUpdate, db: Asyn
 
 
 @router.delete("/receivables/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_receivable(item_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Receivable).where(Receivable.id == item_id, Receivable.organization_id == user.organization_id))
+async def delete_receivable(
+    item_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Receivable).where(
+            Receivable.id == item_id, Receivable.organization_id == user.organization_id
+        )
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise NotFoundError("Receivable not found")

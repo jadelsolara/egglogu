@@ -79,20 +79,22 @@ async def get_pricing():
     for tier_name in ["hobby", "starter", "pro", "enterprise"]:
         limits = PLAN_LIMITS[tier_name]
         q1 = get_effective_price(tier_name, 1, "month")
-        tiers.append({
-            "tier": tier_name,
-            "price_monthly": limits["price_monthly"],
-            "price_annual": limits["price_annual"],
-            "price_monthly_q1": q1["effective_price"],
-            "annual_monthly": round(limits["price_annual"] / 12, 2),
-            "limits": {
-                "farms": limits.get("farms"),
-                "flocks": limits.get("flocks"),
-                "users": limits.get("users"),
-            },
-            "modules": limits.get("modules"),
-            "support_sla_hours": limits.get("support_sla_hours"),
-        })
+        tiers.append(
+            {
+                "tier": tier_name,
+                "price_monthly": limits["price_monthly"],
+                "price_annual": limits["price_annual"],
+                "price_monthly_q1": q1["effective_price"],
+                "annual_monthly": round(limits["price_annual"] / 12, 2),
+                "limits": {
+                    "farms": limits.get("farms"),
+                    "flocks": limits.get("flocks"),
+                    "users": limits.get("users"),
+                },
+                "modules": limits.get("modules"),
+                "support_sla_hours": limits.get("support_sla_hours"),
+            }
+        )
     return {"tiers": tiers, "trial_days": 30, "q1_discount_pct": 40}
 
 
@@ -168,7 +170,9 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                 await db.flush()
                 logger.info(
                     "Checkout completed: org %s → %s/%s (Q1 40%% off)",
-                    org_uuid, plan_str, interval,
+                    org_uuid,
+                    plan_str,
+                    interval,
                 )
 
     elif event_type == "customer.subscription.created":
@@ -195,7 +199,11 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
         stripe_sub_id = data_obj.get("subscription")
         if stripe_sub_id:
             sub = await _find_sub_by_stripe_id(stripe_sub_id, db)
-            if sub and sub.status == SubscriptionStatus.active and sub.billing_interval == "month":
+            if (
+                sub
+                and sub.status == SubscriptionStatus.active
+                and sub.billing_interval == "month"
+            ):
                 # Advance month counter and check if we need to change discount phase
                 sub.months_subscribed += 1
                 new_phase = compute_phase(sub.months_subscribed)
@@ -206,7 +214,8 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                     await apply_phase_coupon(sub.stripe_subscription_id, new_phase)
                     logger.info(
                         "Soft landing: org %s → phase %d (%s) after %d months",
-                        sub.organization_id, new_phase,
+                        sub.organization_id,
+                        new_phase,
                         get_phase_discount(new_phase)["label"],
                         sub.months_subscribed,
                     )
@@ -261,7 +270,9 @@ async def billing_status(
     billing_interval = "month"
 
     if sub:
-        period_end = sub.current_period_end.isoformat() if sub.current_period_end else None
+        period_end = (
+            sub.current_period_end.isoformat() if sub.current_period_end else None
+        )
         sub_status = sub.status.value
         is_trial = sub.is_trial
         discount_phase = sub.discount_phase
@@ -307,7 +318,10 @@ async def billing_status(
 
 # ── Helpers ──
 
-async def _find_sub_by_stripe_id(stripe_sub_id: str, db: AsyncSession) -> Subscription | None:
+
+async def _find_sub_by_stripe_id(
+    stripe_sub_id: str, db: AsyncSession
+) -> Subscription | None:
     if not stripe_sub_id:
         return None
     result = await db.execute(

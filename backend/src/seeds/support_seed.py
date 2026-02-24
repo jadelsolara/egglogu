@@ -1155,6 +1155,7 @@ AUTO_RESPONSES: list[dict] = [
 # SEED FUNCTION
 # ═══════════════════════════════════════════════════════════════════
 
+
 async def seed_support() -> dict[str, int]:
     """
     Insert FAQ articles and auto-response templates.
@@ -1186,9 +1187,7 @@ async def seed_support() -> dict[str, int]:
                     inserted["faq_articles"] += 1
                 logger.info("Inserted %d FAQ articles", inserted["faq_articles"])
             else:
-                logger.info(
-                    "Skipping FAQ seed — %d articles already exist", faq_count
-                )
+                logger.info("Skipping FAQ seed — %d articles already exist", faq_count)
 
             # ── Check existing auto-responses ──
             ar_count = (
@@ -1219,6 +1218,7 @@ async def seed_support() -> dict[str, int]:
 # ═══════════════════════════════════════════════════════════════════
 # CLI ENTRYPOINT
 # ═══════════════════════════════════════════════════════════════════
+
 
 async def main():
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

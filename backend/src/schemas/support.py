@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 # ── Ticket ──
 
+
 class TicketCreate(BaseModel):
     subject: str = Field(..., min_length=3, max_length=300)
     description: str = Field(..., min_length=10)
@@ -66,6 +67,7 @@ class RatingRead(BaseModel):
 
 # ── Admin ──
 
+
 class AdminTicketUpdate(BaseModel):
     status: Optional[str] = None
     priority: Optional[str] = None
@@ -92,6 +94,7 @@ class AdminAnalytics(BaseModel):
 
 
 # ── FAQ ──
+
 
 class FAQRead(BaseModel):
     id: uuid.UUID
@@ -134,6 +137,7 @@ class HelpfulFeedback(BaseModel):
 
 # ── Auto-Response ──
 
+
 class AutoResponseRead(BaseModel):
     id: uuid.UUID
     category: str
@@ -164,6 +168,7 @@ class AutoResponseUpdate(BaseModel):
 
 
 # ── Offline Sync ──
+
 
 class OfflineTicket(BaseModel):
     offline_id: str

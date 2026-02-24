@@ -13,7 +13,9 @@ class Flock(TimestampMixin, TenantMixin, Base):
     __tablename__ = "flocks"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    farm_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("farms.id", ondelete="CASCADE"), index=True)
+    farm_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("farms.id", ondelete="CASCADE"), index=True
+    )
     name: Mapped[str] = mapped_column(String(200))
     initial_count: Mapped[int] = mapped_column(Integer)
     current_count: Mapped[int] = mapped_column(Integer)
@@ -31,7 +33,9 @@ class BreedCurve(TimestampMixin, TenantMixin, Base):
     __tablename__ = "breed_curves"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     week: Mapped[int] = mapped_column(Integer)
     expected_pct: Mapped[float]
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)

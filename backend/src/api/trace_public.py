@@ -26,13 +26,17 @@ router = APIRouter(prefix="/trace", tags=["traceability-public"])
 
 
 @router.get("/{batch_code}", response_model=TracePublicResponse)
-async def public_trace(batch_code: str, request: Request, db: AsyncSession = Depends(get_db)):
+async def public_trace(
+    batch_code: str, request: Request, db: AsyncSession = Depends(get_db)
+):
     """
     Public endpoint: scan QR -> get batch origin info.
     No authentication required. Rate limited per IP.
     """
     client_ip = request.client.host if request.client else "unknown"
-    if not await check_rate_limit(f"trace:{client_ip}", max_requests=30, window_seconds=60):
+    if not await check_rate_limit(
+        f"trace:{client_ip}", max_requests=30, window_seconds=60
+    ):
         raise RateLimitError("Too many requests. Please try again later.")
 
     result = await db.execute(

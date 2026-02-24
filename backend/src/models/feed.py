@@ -26,6 +26,8 @@ class FeedConsumption(TimestampMixin, TenantMixin, Base):
     __tablename__ = "feed_consumption"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     feed_kg: Mapped[float] = mapped_column(Float)

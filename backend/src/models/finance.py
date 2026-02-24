@@ -13,7 +13,9 @@ class Income(TimestampMixin, TenantMixin, Base):
     __tablename__ = "incomes"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("clients.id", ondelete="CASCADE"), index=True)
+    client_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("clients.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     dozens: Mapped[float] = mapped_column(Float)
     egg_size: Mapped[Optional[str]] = mapped_column(String(20), default=None)
@@ -40,7 +42,9 @@ class Receivable(TimestampMixin, TenantMixin, Base):
     __tablename__ = "receivables"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    client_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("clients.id", ondelete="CASCADE"), index=True)
+    client_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("clients.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     amount: Mapped[float] = mapped_column(Float)
     due_date: Mapped[Optional[date]] = mapped_column(Date, default=None)

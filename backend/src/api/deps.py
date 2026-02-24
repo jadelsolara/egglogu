@@ -42,6 +42,7 @@ def require_role(*roles: str) -> Callable:
         if user.role.value not in roles:
             raise ForbiddenError()
         return user
+
     return role_checker
 
 
@@ -108,6 +109,7 @@ def require_plan(*plans: str) -> Callable:
                 f"Current plan: {current_plan}."
             )
         return user
+
     return plan_checker
 
 
@@ -124,4 +126,5 @@ def require_feature(feature: str) -> Callable:
             )
         check_feature_access(current_plan, feature)
         return user
+
     return feature_checker

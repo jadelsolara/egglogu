@@ -27,6 +27,7 @@ class ProtocolFrequencyEnum(str, Enum):
 
 # --- BiosecurityVisitor ---
 
+
 class BiosecurityVisitorCreate(BaseModel):
     date: date
     name: str
@@ -70,6 +71,7 @@ class BiosecurityVisitorRead(BaseModel):
 
 # --- BiosecurityZone ---
 
+
 class BiosecurityZoneCreate(BaseModel):
     name: str
     risk_level: RiskLevelEnum = RiskLevelEnum.green
@@ -100,6 +102,7 @@ class BiosecurityZoneRead(BaseModel):
 
 
 # --- PestSighting ---
+
 
 class PestSightingCreate(BaseModel):
     date: date
@@ -137,6 +140,7 @@ class PestSightingRead(BaseModel):
 
 
 # --- BiosecurityProtocol ---
+
 
 class BiosecurityProtocolCreate(BaseModel):
     name: str

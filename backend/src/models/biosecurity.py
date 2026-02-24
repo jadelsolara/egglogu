@@ -49,8 +49,12 @@ class BiosecurityZone(TimestampMixin, TenantMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(200))
-    risk_level: Mapped[RiskLevel] = mapped_column(Enum(RiskLevel), default=RiskLevel.green)
-    last_disinfection: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    risk_level: Mapped[RiskLevel] = mapped_column(
+        Enum(RiskLevel), default=RiskLevel.green
+    )
+    last_disinfection: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
     frequency_days: Mapped[Optional[int]] = mapped_column(Integer, default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
@@ -73,7 +77,11 @@ class BiosecurityProtocol(TimestampMixin, TenantMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(200))
-    frequency: Mapped[ProtocolFrequency] = mapped_column(Enum(ProtocolFrequency), default=ProtocolFrequency.daily)
-    last_completed: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    frequency: Mapped[ProtocolFrequency] = mapped_column(
+        Enum(ProtocolFrequency), default=ProtocolFrequency.daily
+    )
+    last_completed: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
     items_json: Mapped[Optional[str]] = mapped_column(Text, default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)

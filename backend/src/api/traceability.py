@@ -49,7 +49,9 @@ async def list_batches(
     user: User = Depends(require_feature("traceability")),
 ):
     result = await db.execute(
-        select(TraceabilityBatch).where(TraceabilityBatch.organization_id == user.organization_id)
+        select(TraceabilityBatch).where(
+            TraceabilityBatch.organization_id == user.organization_id
+        )
     )
     return result.scalars().all()
 
@@ -72,7 +74,11 @@ async def get_batch(
     return obj
 
 
-@router.post("/batches", response_model=TraceabilityBatchRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/batches",
+    response_model=TraceabilityBatchRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_batch(
     data: TraceabilityBatchCreate,
     db: AsyncSession = Depends(get_db),

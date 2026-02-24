@@ -15,15 +15,25 @@ router = APIRouter(prefix="/farms", tags=["farms"])
 
 
 @router.get("/", response_model=list[FarmReadPublic])
-async def list_farms(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Farm).where(Farm.organization_id == user.organization_id))
+async def list_farms(
+    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Farm).where(Farm.organization_id == user.organization_id)
+    )
     return result.scalars().all()
 
 
 @router.get("/{farm_id}", response_model=FarmReadPublic)
-async def get_farm(farm_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def get_farm(
+    farm_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     result = await db.execute(
-        select(Farm).where(Farm.id == farm_id, Farm.organization_id == user.organization_id)
+        select(Farm).where(
+            Farm.id == farm_id, Farm.organization_id == user.organization_id
+        )
     )
     farm = result.scalar_one_or_none()
     if not farm:
@@ -32,7 +42,11 @@ async def get_farm(farm_id: uuid.UUID, db: AsyncSession = Depends(get_db), user:
 
 
 @router.post("/", response_model=FarmRead, status_code=status.HTTP_201_CREATED)
-async def create_farm(data: FarmCreate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def create_farm(
+    data: FarmCreate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     farm = Farm(**data.model_dump(), organization_id=user.organization_id)
     db.add(farm)
     await db.flush()
@@ -40,9 +54,16 @@ async def create_farm(data: FarmCreate, db: AsyncSession = Depends(get_db), user
 
 
 @router.put("/{farm_id}", response_model=FarmRead)
-async def update_farm(farm_id: uuid.UUID, data: FarmUpdate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def update_farm(
+    farm_id: uuid.UUID,
+    data: FarmUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     result = await db.execute(
-        select(Farm).where(Farm.id == farm_id, Farm.organization_id == user.organization_id)
+        select(Farm).where(
+            Farm.id == farm_id, Farm.organization_id == user.organization_id
+        )
     )
     farm = result.scalar_one_or_none()
     if not farm:
@@ -55,9 +76,15 @@ async def update_farm(farm_id: uuid.UUID, data: FarmUpdate, db: AsyncSession = D
 
 
 @router.delete("/{farm_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_farm(farm_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def delete_farm(
+    farm_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     result = await db.execute(
-        select(Farm).where(Farm.id == farm_id, Farm.organization_id == user.organization_id)
+        select(Farm).where(
+            Farm.id == farm_id, Farm.organization_id == user.organization_id
+        )
     )
     farm = result.scalar_one_or_none()
     if not farm:

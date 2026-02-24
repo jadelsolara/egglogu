@@ -15,7 +15,9 @@ def _strip_html(html: str) -> str:
     return re.sub(r"<[^>]+>", "", html).strip()
 
 
-async def _send_email(to: str, subject: str, html: str, tipo: str = "respuesta") -> None:
+async def _send_email(
+    to: str, subject: str, html: str, tipo: str = "respuesta"
+) -> None:
     archive_email(tipo, to, subject, _strip_html(html))
     if not settings.RESEND_API_KEY:
         return
@@ -60,10 +62,14 @@ async def send_password_reset(email: str, token: str) -> None:
       <p style="color:#666;font-size:13px">Este enlace expira en 1 hora. Si no solicitaste esto, ignora este mensaje.</p>
     </div>
     """
-    await _send_email(email, "Restablecer contraseña — EGGlogU", html, tipo="recuperacion")
+    await _send_email(
+        email, "Restablecer contraseña — EGGlogU", html, tipo="recuperacion"
+    )
 
 
-async def send_team_invite(email: str, member_name: str, role: str, org_name: str, invited_by: str) -> None:
+async def send_team_invite(
+    email: str, member_name: str, role: str, org_name: str, invited_by: str
+) -> None:
     link = f"{settings.FRONTEND_URL}/egglogu.html"
     html = f"""
     <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
@@ -76,7 +82,9 @@ async def send_team_invite(email: str, member_name: str, role: str, org_name: st
       <p style="color:#666;font-size:13px">Si no reconoces esta invitación, ignora este mensaje.</p>
     </div>
     """
-    await _send_email(email, f"{invited_by} te invitó a EGGlogU 360", html, tipo="invitacion")
+    await _send_email(
+        email, f"{invited_by} te invitó a EGGlogU 360", html, tipo="invitacion"
+    )
 
 
 async def send_welcome(email: str, name: str) -> None:

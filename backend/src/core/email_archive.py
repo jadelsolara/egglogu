@@ -112,5 +112,8 @@ def archive_ticket_reply(
         from_email,
         f"[{ticket_number}] {'Admin' if is_admin else 'Usuario'} responde",
         message,
-        extra={"Ticket": ticket_number, "Remitente": "admin" if is_admin else "usuario"},
+        extra={
+            "Ticket": ticket_number,
+            "Remitente": "admin" if is_admin else "usuario",
+        },
     )

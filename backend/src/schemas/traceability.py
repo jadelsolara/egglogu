@@ -53,6 +53,7 @@ class TraceabilityBatchRead(BaseModel):
 
 # ── Public trace response (no auth, for QR scan) ──
 
+
 class TraceFlockInfo(BaseModel):
     name: str
     breed: Optional[str] = None
@@ -70,6 +71,7 @@ class TraceFarmInfo(BaseModel):
 
 class TracePublicResponse(BaseModel):
     """What a client/inspector sees when scanning the QR code."""
+
     batch_code: str
     date: date
     total_eggs: int

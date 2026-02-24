@@ -13,7 +13,9 @@ class KPISnapshot(TimestampMixin, TenantMixin, Base):
     __tablename__ = "kpi_snapshots"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     hen_day_pct: Mapped[Optional[float]] = mapped_column(Float, default=None)
     fcr: Mapped[Optional[float]] = mapped_column(Float, default=None)
@@ -25,7 +27,9 @@ class Prediction(TimestampMixin, TenantMixin, Base):
     __tablename__ = "predictions"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    flock_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("flocks.id", ondelete="CASCADE"), index=True)
+    flock_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("flocks.id", ondelete="CASCADE"), index=True
+    )
     date: Mapped[date] = mapped_column(Date)
     type: Mapped[str] = mapped_column(String(100))
     value_json: Mapped[Optional[dict]] = mapped_column(JSON, default=None)

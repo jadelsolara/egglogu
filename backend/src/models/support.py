@@ -41,42 +41,129 @@ class TicketCategory(str, enum.Enum):
 # Keywords for auto-classification (ES + EN)
 CATEGORY_KEYWORDS = {
     TicketCategory.produccion: [
-        "produccion", "production", "huevos", "eggs", "postura", "lay",
-        "hen-day", "cascara", "shell", "roto", "broken", "calidad", "quality",
+        "produccion",
+        "production",
+        "huevos",
+        "eggs",
+        "postura",
+        "lay",
+        "hen-day",
+        "cascara",
+        "shell",
+        "roto",
+        "broken",
+        "calidad",
+        "quality",
     ],
     TicketCategory.sanidad: [
-        "vacuna", "vaccine", "enfermedad", "disease", "mortalidad", "mortality",
-        "brote", "outbreak", "medicamento", "medication", "veterinario", "vet",
-        "sintoma", "symptom",
+        "vacuna",
+        "vaccine",
+        "enfermedad",
+        "disease",
+        "mortalidad",
+        "mortality",
+        "brote",
+        "outbreak",
+        "medicamento",
+        "medication",
+        "veterinario",
+        "vet",
+        "sintoma",
+        "symptom",
     ],
     TicketCategory.alimento: [
-        "alimento", "feed", "fcr", "conversion", "consumo", "consumption",
-        "stock", "kg", "nutricion", "nutrition", "transicion",
+        "alimento",
+        "feed",
+        "fcr",
+        "conversion",
+        "consumo",
+        "consumption",
+        "stock",
+        "kg",
+        "nutricion",
+        "nutrition",
+        "transicion",
     ],
     TicketCategory.iot: [
-        "sensor", "mqtt", "iot", "temperatura", "temperature", "humedad",
-        "humidity", "amoniaco", "ammonia", "lectura", "reading",
+        "sensor",
+        "mqtt",
+        "iot",
+        "temperatura",
+        "temperature",
+        "humedad",
+        "humidity",
+        "amoniaco",
+        "ammonia",
+        "lectura",
+        "reading",
     ],
     TicketCategory.billing: [
-        "plan", "pago", "payment", "factura", "invoice", "suscripcion",
-        "subscription", "upgrade", "downgrade", "stripe", "cobro", "charge",
-        "precio", "price", "cancelar", "cancel",
+        "plan",
+        "pago",
+        "payment",
+        "factura",
+        "invoice",
+        "suscripcion",
+        "subscription",
+        "upgrade",
+        "downgrade",
+        "stripe",
+        "cobro",
+        "charge",
+        "precio",
+        "price",
+        "cancelar",
+        "cancel",
     ],
     TicketCategory.bug: [
-        "bug", "error", "crash", "falla", "fail", "no funciona", "not working",
-        "pantalla", "screen", "blank", "blanco",
+        "bug",
+        "error",
+        "crash",
+        "falla",
+        "fail",
+        "no funciona",
+        "not working",
+        "pantalla",
+        "screen",
+        "blank",
+        "blanco",
     ],
     TicketCategory.sync: [
-        "sync", "sincronizar", "offline", "datos", "data", "backup",
-        "restaurar", "restore", "perdido", "lost",
+        "sync",
+        "sincronizar",
+        "offline",
+        "datos",
+        "data",
+        "backup",
+        "restaurar",
+        "restore",
+        "perdido",
+        "lost",
     ],
     TicketCategory.feature_request: [
-        "feature", "funcionalidad", "sugerencia", "suggestion", "solicitud",
-        "request", "mejorar", "improve", "agregar", "add",
+        "feature",
+        "funcionalidad",
+        "sugerencia",
+        "suggestion",
+        "solicitud",
+        "request",
+        "mejorar",
+        "improve",
+        "agregar",
+        "add",
     ],
     TicketCategory.acceso: [
-        "password", "contraseña", "login", "acceso", "access", "cuenta",
-        "account", "verificar", "verify", "email", "google",
+        "password",
+        "contraseña",
+        "login",
+        "acceso",
+        "access",
+        "cuenta",
+        "account",
+        "verificar",
+        "verify",
+        "email",
+        "google",
     ],
 }
 
@@ -86,15 +173,23 @@ class SupportTicket(TimestampMixin, TenantMixin, Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     ticket_number: Mapped[str] = mapped_column(String(20), unique=True, index=True)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
     subject: Mapped[str] = mapped_column(String(300))
     description: Mapped[str] = mapped_column(Text)
     category: Mapped[TicketCategory] = mapped_column(default=TicketCategory.general)
     priority: Mapped[TicketPriority] = mapped_column(default=TicketPriority.medium)
     status: Mapped[TicketStatus] = mapped_column(default=TicketStatus.open)
-    sla_deadline: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
-    resolved_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
-    closed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    sla_deadline: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
+    resolved_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
+    closed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
     admin_notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
     suggested_faq_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("faq_articles.id", ondelete="SET NULL"), default=None
@@ -105,8 +200,12 @@ class TicketMessage(TimestampMixin, Base):
     __tablename__ = "ticket_messages"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    ticket_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("support_tickets.id", ondelete="CASCADE"), index=True)
-    sender_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    ticket_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("support_tickets.id", ondelete="CASCADE"), index=True
+    )
+    sender_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE")
+    )
     message: Mapped[str] = mapped_column(Text)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_internal: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -116,8 +215,12 @@ class SupportRating(TimestampMixin, Base):
     __tablename__ = "support_ratings"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    ticket_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("support_tickets.id", ondelete="CASCADE"), unique=True)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    ticket_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("support_tickets.id", ondelete="CASCADE"), unique=True
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE")
+    )
     rating: Mapped[int] = mapped_column(Integer)  # 1-5
     comment: Mapped[Optional[str]] = mapped_column(Text, default=None)
 

@@ -24,7 +24,9 @@ async def list_plans(
     user: User = Depends(require_feature("planning")),
 ):
     result = await db.execute(
-        select(ProductionPlan).where(ProductionPlan.organization_id == user.organization_id)
+        select(ProductionPlan).where(
+            ProductionPlan.organization_id == user.organization_id
+        )
     )
     return result.scalars().all()
 
@@ -47,7 +49,9 @@ async def get_plan(
     return obj
 
 
-@router.post("/plans", response_model=ProductionPlanRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/plans", response_model=ProductionPlanRead, status_code=status.HTTP_201_CREATED
+)
 async def create_plan(
     data: ProductionPlanCreate,
     db: AsyncSession = Depends(get_db),

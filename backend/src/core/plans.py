@@ -57,7 +57,15 @@ PLAN_LIMITS = {
         "farms": 3,
         "flocks": 10,
         "users": 5,
-        "modules": ["dashboard", "production", "health", "feed", "clients", "finance", "environment"],
+        "modules": [
+            "dashboard",
+            "production",
+            "health",
+            "feed",
+            "clients",
+            "finance",
+            "environment",
+        ],
         "health": True,
         "fcr": True,
         "finance": True,
@@ -81,9 +89,17 @@ PLAN_LIMITS = {
         "flocks": None,  # unlimited
         "users": 15,
         "modules": [
-            "dashboard", "production", "health", "feed", "clients",
-            "finance", "environment", "operations", "biosecurity",
-            "traceability", "planning",
+            "dashboard",
+            "production",
+            "health",
+            "feed",
+            "clients",
+            "finance",
+            "environment",
+            "operations",
+            "biosecurity",
+            "traceability",
+            "planning",
         ],
         "health": True,
         "fcr": True,
@@ -127,15 +143,34 @@ PLAN_LIMITS = {
 }
 
 ALL_MODULES = [
-    "dashboard", "production", "health", "feed", "clients",
-    "finance", "environment", "operations", "biosecurity",
-    "traceability", "planning", "iot",
+    "dashboard",
+    "production",
+    "health",
+    "feed",
+    "clients",
+    "finance",
+    "environment",
+    "operations",
+    "biosecurity",
+    "traceability",
+    "planning",
+    "iot",
 ]
 
 ALL_FEATURES = [
-    "health", "fcr", "finance", "biosecurity", "traceability",
-    "planning", "ai_predictions", "field_mode", "vet_mode",
-    "iot", "i18n", "offline", "dark_mode",
+    "health",
+    "fcr",
+    "finance",
+    "biosecurity",
+    "traceability",
+    "planning",
+    "ai_predictions",
+    "field_mode",
+    "vet_mode",
+    "iot",
+    "i18n",
+    "offline",
+    "dark_mode",
 ]
 
 # Tier ordering for upgrade/downgrade checks

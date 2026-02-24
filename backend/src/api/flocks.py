@@ -15,15 +15,25 @@ router = APIRouter(prefix="/flocks", tags=["flocks"])
 
 
 @router.get("/", response_model=list[FlockRead])
-async def list_flocks(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Flock).where(Flock.organization_id == user.organization_id))
+async def list_flocks(
+    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Flock).where(Flock.organization_id == user.organization_id)
+    )
     return result.scalars().all()
 
 
 @router.get("/{flock_id}", response_model=FlockRead)
-async def get_flock(flock_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def get_flock(
+    flock_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     result = await db.execute(
-        select(Flock).where(Flock.id == flock_id, Flock.organization_id == user.organization_id)
+        select(Flock).where(
+            Flock.id == flock_id, Flock.organization_id == user.organization_id
+        )
     )
     flock = result.scalar_one_or_none()
     if not flock:
@@ -32,7 +42,11 @@ async def get_flock(flock_id: uuid.UUID, db: AsyncSession = Depends(get_db), use
 
 
 @router.post("/", response_model=FlockRead, status_code=status.HTTP_201_CREATED)
-async def create_flock(data: FlockCreate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def create_flock(
+    data: FlockCreate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     flock = Flock(**data.model_dump(), organization_id=user.organization_id)
     db.add(flock)
     await db.flush()
@@ -40,9 +54,16 @@ async def create_flock(data: FlockCreate, db: AsyncSession = Depends(get_db), us
 
 
 @router.put("/{flock_id}", response_model=FlockRead)
-async def update_flock(flock_id: uuid.UUID, data: FlockUpdate, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def update_flock(
+    flock_id: uuid.UUID,
+    data: FlockUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     result = await db.execute(
-        select(Flock).where(Flock.id == flock_id, Flock.organization_id == user.organization_id)
+        select(Flock).where(
+            Flock.id == flock_id, Flock.organization_id == user.organization_id
+        )
     )
     flock = result.scalar_one_or_none()
     if not flock:
@@ -54,9 +75,15 @@ async def update_flock(flock_id: uuid.UUID, data: FlockUpdate, db: AsyncSession 
 
 
 @router.delete("/{flock_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_flock(flock_id: uuid.UUID, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def delete_flock(
+    flock_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
     result = await db.execute(
-        select(Flock).where(Flock.id == flock_id, Flock.organization_id == user.organization_id)
+        select(Flock).where(
+            Flock.id == flock_id, Flock.organization_id == user.organization_id
+        )
     )
     flock = result.scalar_one_or_none()
     if not flock:

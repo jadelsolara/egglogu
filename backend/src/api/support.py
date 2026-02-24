@@ -49,7 +49,7 @@ router = APIRouter(prefix="/support", tags=["support"])
 # SLA hours — single plan, 4h response time
 SLA_HOURS = {
     "suspended": None,
-    "hobby": None,       # FAQ only
+    "hobby": None,  # FAQ only
     "starter": 48,
     "pro": 12,
     "enterprise": 4,
@@ -84,18 +84,24 @@ async def _find_matching_faq(text: str, db: AsyncSession) -> FAQArticle | None:
     return best if best_score >= 2 else None
 
 
-async def _get_auto_response(category: TicketCategory, text: str, db: AsyncSession) -> AutoResponse | None:
+async def _get_auto_response(
+    category: TicketCategory, text: str, db: AsyncSession
+) -> AutoResponse | None:
     result = await db.execute(
-        select(AutoResponse).where(
+        select(AutoResponse)
+        .where(
             and_(AutoResponse.category == category, AutoResponse.is_active.is_(True))
-        ).order_by(AutoResponse.sort_order)
+        )
+        .order_by(AutoResponse.sort_order)
     )
     responses = result.scalars().all()
     text_lower = text.lower()
     for resp in responses:
         if not resp.trigger_keywords:
             return resp
-        triggers = [k.strip().lower() for k in resp.trigger_keywords.split(",") if k.strip()]
+        triggers = [
+            k.strip().lower() for k in resp.trigger_keywords.split(",") if k.strip()
+        ]
         if not triggers or any(t in text_lower for t in triggers):
             return resp
     return None
@@ -158,6 +164,7 @@ def _pick_auto_response_text(auto_resp: AutoResponse, lang: str) -> str:
 # PUBLIC — FAQ
 # ══════════════════════════════════════════════
 
+
 @router.get("/faq", response_model=list[FAQRead])
 async def list_faq(
     q: str = Query("", max_length=200),
@@ -182,7 +189,9 @@ async def list_faq(
 
 
 @router.post("/faq/{faq_id}/helpful")
-async def faq_helpful(faq_id: uuid.UUID, data: HelpfulFeedback, db: AsyncSession = Depends(get_db)):
+async def faq_helpful(
+    faq_id: uuid.UUID, data: HelpfulFeedback, db: AsyncSession = Depends(get_db)
+):
     result = await db.execute(select(FAQArticle).where(FAQArticle.id == faq_id))
     faq = result.scalar_one_or_none()
     if not faq:
@@ -197,6 +206,7 @@ async def faq_helpful(faq_id: uuid.UUID, data: HelpfulFeedback, db: AsyncSession
 # ══════════════════════════════════════════════
 # USER — Tickets
 # ══════════════════════════════════════════════
+
 
 @router.get("/tickets", response_model=list[TicketRead])
 async def list_user_tickets(
@@ -238,7 +248,11 @@ async def create_ticket(
 
     # Auto-classify
     category = classify_ticket(data.subject, data.description)
-    priority = TicketPriority(data.priority) if data.priority in TicketPriority.__members__ else TicketPriority.medium
+    priority = (
+        TicketPriority(data.priority)
+        if data.priority in TicketPriority.__members__
+        else TicketPriority.medium
+    )
 
     # SLA deadline
     sla_hours = SLA_HOURS.get(plan)
@@ -309,9 +323,14 @@ async def get_ticket(
 
     # Messages (exclude internal notes for regular users)
     msg_result = await db.execute(
-        select(TicketMessage).where(
-            and_(TicketMessage.ticket_id == ticket_id, TicketMessage.is_internal.is_(False))
-        ).order_by(TicketMessage.created_at)
+        select(TicketMessage)
+        .where(
+            and_(
+                TicketMessage.ticket_id == ticket_id,
+                TicketMessage.is_internal.is_(False),
+            )
+        )
+        .order_by(TicketMessage.created_at)
     )
     messages = [MessageRead.model_validate(m) for m in msg_result.scalars().all()]
 
@@ -323,14 +342,20 @@ async def get_ticket(
     rating = RatingRead.model_validate(rating_obj) if rating_obj else None
 
     return TicketDetailRead(
-        **{c.name: getattr(ticket, c.name) for c in SupportTicket.__table__.columns if c.name != "admin_notes"},
+        **{
+            c.name: getattr(ticket, c.name)
+            for c in SupportTicket.__table__.columns
+            if c.name != "admin_notes"
+        },
         admin_notes=None,
         messages=messages,
         rating=rating,
     )
 
 
-@router.post("/tickets/{ticket_id}/messages", response_model=MessageRead, status_code=201)
+@router.post(
+    "/tickets/{ticket_id}/messages", response_model=MessageRead, status_code=201
+)
 async def add_message(
     ticket_id: uuid.UUID,
     data: TicketMessageCreate,
@@ -451,7 +476,9 @@ async def sync_offline_tickets(
             subject=t.subject,
             description=t.description,
             category=category,
-            priority=TicketPriority(t.priority) if t.priority in TicketPriority.__members__ else TicketPriority.medium,
+            priority=TicketPriority(t.priority)
+            if t.priority in TicketPriority.__members__
+            else TicketPriority.medium,
             sla_deadline=sla_deadline,
         )
         db.add(ticket)
@@ -461,7 +488,9 @@ async def sync_offline_tickets(
             subject=t.subject,
             description=t.description,
             category=category.value if hasattr(category, "value") else str(category),
-            priority=ticket.priority.value if hasattr(ticket.priority, "value") else str(ticket.priority),
+            priority=ticket.priority.value
+            if hasattr(ticket.priority, "value")
+            else str(ticket.priority),
         )
         synced += 1
         numbers.append(ticket_number)
@@ -473,6 +502,7 @@ async def sync_offline_tickets(
 # ══════════════════════════════════════════════
 # ADMIN — Contact Center
 # ══════════════════════════════════════════════
+
 
 @router.get("/admin/tickets", response_model=list[TicketRead])
 async def admin_list_tickets(
@@ -532,7 +562,9 @@ async def admin_update_ticket(
     return ticket
 
 
-@router.post("/admin/tickets/{ticket_id}/reply", response_model=MessageRead, status_code=201)
+@router.post(
+    "/admin/tickets/{ticket_id}/reply", response_model=MessageRead, status_code=201
+)
 async def admin_reply(
     ticket_id: uuid.UUID,
     data: AdminReply,
@@ -584,15 +616,27 @@ async def admin_analytics(
     base = SupportTicket.organization_id == org_id
 
     total = (await db.execute(select(func.count()).where(base))).scalar() or 0
-    open_t = (await db.execute(
-        select(func.count()).where(and_(base, SupportTicket.status == TicketStatus.open))
-    )).scalar() or 0
-    in_prog = (await db.execute(
-        select(func.count()).where(and_(base, SupportTicket.status == TicketStatus.in_progress))
-    )).scalar() or 0
-    resolved = (await db.execute(
-        select(func.count()).where(and_(base, SupportTicket.status.in_(["resolved", "closed"])))
-    )).scalar() or 0
+    open_t = (
+        await db.execute(
+            select(func.count()).where(
+                and_(base, SupportTicket.status == TicketStatus.open)
+            )
+        )
+    ).scalar() or 0
+    in_prog = (
+        await db.execute(
+            select(func.count()).where(
+                and_(base, SupportTicket.status == TicketStatus.in_progress)
+            )
+        )
+    ).scalar() or 0
+    resolved = (
+        await db.execute(
+            select(func.count()).where(
+                and_(base, SupportTicket.status.in_(["resolved", "closed"]))
+            )
+        )
+    ).scalar() or 0
 
     # Avg resolution time
     avg_res = None
@@ -612,9 +656,7 @@ async def admin_analytics(
     # Avg rating
     rating_result = await db.execute(
         select(func.avg(SupportRating.rating), func.count(SupportRating.id)).where(
-            SupportRating.ticket_id.in_(
-                select(SupportTicket.id).where(base)
-            )
+            SupportRating.ticket_id.in_(select(SupportTicket.id).where(base))
         )
     )
     rating_row = rating_result.one()
@@ -624,7 +666,11 @@ async def admin_analytics(
     # SLA compliance
     sla_result = await db.execute(
         select(SupportTicket.sla_deadline, SupportTicket.resolved_at).where(
-            and_(base, SupportTicket.sla_deadline.isnot(None), SupportTicket.resolved_at.isnot(None))
+            and_(
+                base,
+                SupportTicket.sla_deadline.isnot(None),
+                SupportTicket.resolved_at.isnot(None),
+            )
         )
     )
     sla_tickets = sla_result.all()
@@ -635,15 +681,25 @@ async def admin_analytics(
 
     # By category
     cat_result = await db.execute(
-        select(SupportTicket.category, func.count()).where(base).group_by(SupportTicket.category)
+        select(SupportTicket.category, func.count())
+        .where(base)
+        .group_by(SupportTicket.category)
     )
-    by_category = {str(r[0].value) if hasattr(r[0], 'value') else str(r[0]): r[1] for r in cat_result.all()}
+    by_category = {
+        str(r[0].value) if hasattr(r[0], "value") else str(r[0]): r[1]
+        for r in cat_result.all()
+    }
 
     # By priority
     pri_result = await db.execute(
-        select(SupportTicket.priority, func.count()).where(base).group_by(SupportTicket.priority)
+        select(SupportTicket.priority, func.count())
+        .where(base)
+        .group_by(SupportTicket.priority)
     )
-    by_priority = {str(r[0].value) if hasattr(r[0], 'value') else str(r[0]): r[1] for r in pri_result.all()}
+    by_priority = {
+        str(r[0].value) if hasattr(r[0], "value") else str(r[0]): r[1]
+        for r in pri_result.all()
+    }
 
     return AdminAnalytics(
         total_tickets=total,
@@ -660,6 +716,7 @@ async def admin_analytics(
 
 
 # ── Admin FAQ CRUD ──
+
 
 @router.post("/admin/faq", response_model=FAQRead, status_code=201)
 async def create_faq(
@@ -716,6 +773,7 @@ async def delete_faq(
 
 
 # ── Admin Auto-Response CRUD ──
+
 
 @router.get("/admin/auto-responses", response_model=list[AutoResponseRead])
 async def list_auto_responses(
