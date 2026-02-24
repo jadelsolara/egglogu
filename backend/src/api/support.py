@@ -69,7 +69,7 @@ async def _gen_ticket_number(db: AsyncSession) -> str:
 async def _find_matching_faq(text: str, db: AsyncSession) -> FAQArticle | None:
     """Find best FAQ match based on keyword overlap."""
     result = await db.execute(
-        select(FAQArticle).where(FAQArticle.is_published == True)
+        select(FAQArticle).where(FAQArticle.is_published.is_(True))
     )
     faqs = result.scalars().all()
     text_lower = text.lower()
@@ -87,7 +87,7 @@ async def _find_matching_faq(text: str, db: AsyncSession) -> FAQArticle | None:
 async def _get_auto_response(category: TicketCategory, text: str, db: AsyncSession) -> AutoResponse | None:
     result = await db.execute(
         select(AutoResponse).where(
-            and_(AutoResponse.category == category, AutoResponse.is_active == True)
+            and_(AutoResponse.category == category, AutoResponse.is_active.is_(True))
         ).order_by(AutoResponse.sort_order)
     )
     responses = result.scalars().all()
@@ -164,7 +164,7 @@ async def list_faq(
     category: str = Query("", max_length=30),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(FAQArticle).where(FAQArticle.is_published == True)
+    stmt = select(FAQArticle).where(FAQArticle.is_published.is_(True))
     if category:
         stmt = stmt.where(FAQArticle.category == category)
     if q:
@@ -310,7 +310,7 @@ async def get_ticket(
     # Messages (exclude internal notes for regular users)
     msg_result = await db.execute(
         select(TicketMessage).where(
-            and_(TicketMessage.ticket_id == ticket_id, TicketMessage.is_internal == False)
+            and_(TicketMessage.ticket_id == ticket_id, TicketMessage.is_internal.is_(False))
         ).order_by(TicketMessage.created_at)
     )
     messages = [MessageRead.model_validate(m) for m in msg_result.scalars().all()]

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from src.core.exceptions import ForbiddenError
 
 # ── Feature matrix: 4 tiers + suspended ──
