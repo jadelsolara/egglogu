@@ -206,7 +206,7 @@ async def cost_center_overview(
         select(CostCenter)
         .where(
             CostCenter.organization_id == user.organization_id,
-            CostCenter.is_active == True,
+            CostCenter.is_active.is_(True),
         )
     )
     centers = centers_result.scalars().all()

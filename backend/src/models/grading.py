@@ -1,11 +1,10 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date
 from typing import Optional
 
 from sqlalchemy import (
-    String, Float, Integer, Date, DateTime, Enum,
-    ForeignKey, Text, Boolean
+    String, Float, Integer, Date, ForeignKey, Text
 )
 from sqlalchemy.orm import Mapped, mapped_column
 

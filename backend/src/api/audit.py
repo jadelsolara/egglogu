@@ -1,4 +1,3 @@
-import uuid
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
@@ -35,13 +34,13 @@ async def list_audit_logs(
     logs = result.scalars().all()
     return [
         {
-            "id": str(l.id),
-            "timestamp": l.timestamp.isoformat() if l.timestamp else None,
-            "user_id": l.user_id,
-            "action": l.action,
-            "resource": l.resource,
-            "resource_id": l.resource_id,
-            "changes": l.changes,
+            "id": str(log.id),
+            "timestamp": log.timestamp.isoformat() if log.timestamp else None,
+            "user_id": log.user_id,
+            "action": log.action,
+            "resource": log.resource,
+            "resource_id": log.resource_id,
+            "changes": log.changes,
         }
-        for l in logs
+        for log in logs
     ]

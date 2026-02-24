@@ -10,7 +10,7 @@ from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.purchase_order import (
-    Supplier, PurchaseOrder, PurchaseOrderItem, POStatus,
+    Supplier, PurchaseOrder, PurchaseOrderItem,
 )
 from src.schemas.purchase_order import (
     SupplierCreate, SupplierUpdate, SupplierRead,

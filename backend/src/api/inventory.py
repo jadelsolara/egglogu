@@ -1,7 +1,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
