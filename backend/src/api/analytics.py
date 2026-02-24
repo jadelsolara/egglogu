@@ -45,9 +45,9 @@ async def get_economics(
 
     # Global weighted avg feed price: SUM(total_cost) / SUM(kg)
     feed_price_result = await db.execute(
-        select(
-            func.sum(FeedPurchase.total_cost), func.sum(FeedPurchase.kg)
-        ).where(FeedPurchase.organization_id == org_id)
+        select(func.sum(FeedPurchase.total_cost), func.sum(FeedPurchase.kg)).where(
+            FeedPurchase.organization_id == org_id
+        )
     )
     row = feed_price_result.one()
     total_feed_cost_global = row[0]
@@ -149,9 +149,7 @@ async def get_economics(
 
         total_cost_with_acq = total_cost
         if acquisition is not None:
-            total_cost_with_acq = round(
-                (total_cost or 0) + acquisition, 2
-            )
+            total_cost_with_acq = round((total_cost or 0) + acquisition, 2)
 
         if total_cost is not None or acquisition is not None:
             org_total_costs += total_cost_with_acq or 0
@@ -180,7 +178,11 @@ async def get_economics(
                 )
 
         daily_cost_per_bird = None
-        if total_cost_with_acq is not None and flock.current_count > 0 and days_active > 0:
+        if (
+            total_cost_with_acq is not None
+            and flock.current_count > 0
+            and days_active > 0
+        ):
             daily_cost_per_bird = round(
                 total_cost_with_acq / flock.current_count / days_active, 4
             )
