@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,11 +25,13 @@ router = APIRouter(prefix="/feed", tags=["feed"])
 
 @router.get("/purchases", response_model=list[FeedPurchaseRead])
 async def list_purchases(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(FeedPurchase).where(FeedPurchase.organization_id == user.organization_id)
-    )
+    stmt = select(FeedPurchase).where(FeedPurchase.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -110,13 +112,13 @@ async def delete_purchase(
 
 @router.get("/consumption", response_model=list[FeedConsumptionRead])
 async def list_consumption(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(FeedConsumption).where(
-            FeedConsumption.organization_id == user.organization_id
-        )
-    )
+    stmt = select(FeedConsumption).where(FeedConsumption.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 

@@ -46,7 +46,7 @@ class TestListIncome:
 
     async def test_list_income_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/income")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -69,7 +69,7 @@ class TestCreateIncome:
             "client_id": str(uuid.uuid4()), "date": "2025-01-01",
             "dozens": 10, "unit_price": 2.5, "total": 25
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -124,7 +124,7 @@ class TestListExpenses:
 
     async def test_list_expenses_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/expenses")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -142,7 +142,7 @@ class TestCreateExpense:
         response = await client.post(f"{API}/expenses", json={
             "date": "2025-01-01", "category": "feed", "amount": 500, "description": "Feed purchase"
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -182,4 +182,4 @@ class TestListReceivables:
 
     async def test_list_receivables_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/receivables")
-        assert response.status_code == 403
+        assert response.status_code == 401

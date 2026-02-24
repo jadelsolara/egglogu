@@ -35,7 +35,7 @@ class TestListEnvironment:
 
     async def test_list_environment_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/environment")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -53,7 +53,7 @@ class TestCreateEnvironment:
         response = await client.post(f"{API}/environment", json={
             "date": "2025-01-01", "temp_c": 25.0, "humidity_pct": 60
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -106,7 +106,7 @@ class TestListIoT:
 
     async def test_list_iot_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/iot-readings")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -124,7 +124,7 @@ class TestCreateIoT:
         response = await client.post(f"{API}/iot-readings", json={
             "timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -164,4 +164,4 @@ class TestListWeather:
 
     async def test_list_weather_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/weather")
-        assert response.status_code == 403
+        assert response.status_code == 401

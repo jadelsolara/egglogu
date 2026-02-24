@@ -5,6 +5,7 @@ import traceback
 import uuid as _uuid
 from contextlib import asynccontextmanager
 
+import sentry_sdk
 from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,6 +14,19 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 import src.models  # noqa: F401, E402
 from src.config import settings
+
+# ── Sentry Error Tracking ────────────────────────────────────────
+if settings.SENTRY_DSN:
+    from sentry_sdk.integrations.fastapi import FastApiIntegration
+    from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+    sentry_sdk.init(
+        dsn=settings.SENTRY_DSN,
+        integrations=[FastApiIntegration(), SqlalchemyIntegration()],
+        traces_sample_rate=0.05,
+        profiles_sample_rate=0.05,
+        environment="production" if "egglogu.com" in settings.FRONTEND_URL else "development",
+        send_default_pii=False,
+    )
 from src.core.rate_limit import init_redis, close_redis
 from src.database import engine
 from src.api import (
@@ -36,6 +50,12 @@ from src.api import (
     support,
     healthcheck,
     leads,
+    inventory,
+    grading,
+    purchase_orders,
+    audit,
+    compliance,
+    cost_centers,
 )
 
 
@@ -113,7 +133,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "style-src 'self'; "
             "img-src 'self' data: https:; "
             "font-src 'self'; "
-            "connect-src 'self' https://api.stripe.com https://egglogu.com; "
+            "connect-src 'self' https://api.stripe.com https://egglogu.com https://*.sentry.io; worker-src 'self' blob:; "
             "frame-ancestors 'none'; "
             "form-action 'self'; "
             "base-uri 'self'; "
@@ -237,6 +257,13 @@ app.include_router(billing.router, prefix=prefix)
 app.include_router(support.router, prefix=prefix)
 app.include_router(analytics.router, prefix=prefix)
 
+app.include_router(inventory.router, prefix=prefix)
+app.include_router(grading.router, prefix=prefix)
+app.include_router(purchase_orders.router, prefix=prefix)
+app.include_router(audit.router, prefix=prefix)
+app.include_router(compliance.router, prefix=prefix)
+app.include_router(cost_centers.router, prefix=prefix)
+
 # Public routes (no /api/v1 prefix)
 app.include_router(trace_public.router)
 app.include_router(leads.router, prefix="/api")
@@ -271,6 +298,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
         exc,
         traceback.format_exc(),
     )
+    sentry_sdk.capture_exception(exc)
     return JSONResponse(
         status_code=500,
         content={"detail": "Internal server error"},

@@ -31,7 +31,7 @@ class TestListClients:
 
     async def test_list_clients_unauthenticated(self, client: AsyncClient):
         response = await client.get(PREFIX)
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -48,7 +48,7 @@ class TestCreateClient:
 
     async def test_create_client_unauthenticated(self, client: AsyncClient):
         response = await client.post(PREFIX, json={"name": "No Auth"})
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

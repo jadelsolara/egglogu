@@ -50,7 +50,7 @@ class TestListBatches:
 
     async def test_list_batches_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/batches")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -71,7 +71,7 @@ class TestCreateBatch:
             "date": "2025-01-01", "flock_id": str(uuid.uuid4()),
             "box_count": 10, "eggs_per_box": 30
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

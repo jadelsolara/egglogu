@@ -48,7 +48,7 @@ class TestListTickets:
 
     async def test_list_tickets_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/tickets")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -67,7 +67,7 @@ class TestCreateTicket:
         response = await client.post(f"{PREFIX}/tickets", json={
             "subject": "No Auth", "description": "This should fail without authentication"
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

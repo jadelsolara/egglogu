@@ -51,7 +51,7 @@ class TestListProduction:
 
     async def test_list_production_unauthenticated(self, client: AsyncClient):
         response = await client.get(PREFIX)
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -71,7 +71,7 @@ class TestCreateProduction:
         response = await client.post(PREFIX, json={
             "flock_id": str(uuid.uuid4()), "date": "2025-01-15", "total_eggs": 500
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

@@ -142,3 +142,35 @@ async def authenticated_user(db_session: AsyncSession):
     headers = {"Authorization": f"Bearer {token}"}
 
     return {"user": user, "org": org, "headers": headers}
+
+
+# ---------------------------------------------------------------------------
+# Helper: Create a sample farm + flock for tests that need flock_id
+# ---------------------------------------------------------------------------
+@pytest_asyncio.fixture
+async def sample_farm(db_session: AsyncSession, authenticated_user):
+    from src.models.farm import Farm
+    farm = Farm(
+        name="Test Farm",
+        organization_id=authenticated_user["org"].id,
+    )
+    db_session.add(farm)
+    await db_session.flush()
+    return farm
+
+
+@pytest_asyncio.fixture
+async def sample_flock(db_session: AsyncSession, authenticated_user, sample_farm):
+    from src.models.flock import Flock
+    flock = Flock(
+        name="Test Flock A",
+        organization_id=authenticated_user["org"].id,
+        farm_id=sample_farm.id,
+        breed="Hy-Line W-36",
+        initial_count=5000,
+        current_count=5000,
+        start_date=datetime(2025, 6, 1).date(),
+    )
+    db_session.add(flock)
+    await db_session.flush()
+    return flock

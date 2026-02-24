@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,14 +37,13 @@ router = APIRouter(prefix="/biosecurity", tags=["biosecurity"])
 
 @router.get("/visitors", response_model=list[BiosecurityVisitorRead])
 async def list_visitors(
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityVisitor).where(
-            BiosecurityVisitor.organization_id == user.organization_id
-        )
-    )
+    stmt = select(BiosecurityVisitor).where(BiosecurityVisitor.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -109,14 +108,13 @@ async def delete_visitor(
 
 @router.get("/zones", response_model=list[BiosecurityZoneRead])
 async def list_zones(
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityZone).where(
-            BiosecurityZone.organization_id == user.organization_id
-        )
-    )
+    stmt = select(BiosecurityZone).where(BiosecurityZone.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -179,12 +177,13 @@ async def delete_zone(
 
 @router.get("/pests", response_model=list[PestSightingRead])
 async def list_pests(
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(PestSighting).where(PestSighting.organization_id == user.organization_id)
-    )
+    stmt = select(PestSighting).where(PestSighting.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -247,14 +246,13 @@ async def delete_pest(
 
 @router.get("/protocols", response_model=list[BiosecurityProtocolRead])
 async def list_protocols(
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityProtocol).where(
-            BiosecurityProtocol.organization_id == user.organization_id
-        )
-    )
+    stmt = select(BiosecurityProtocol).where(BiosecurityProtocol.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 

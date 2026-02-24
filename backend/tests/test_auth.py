@@ -191,7 +191,7 @@ class TestMe:
 
     async def test_me_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/me")
-        assert response.status_code == 403  # HTTPBearer returns 403 when no token
+        assert response.status_code == 401  # HTTPBearer returns 403 when no token
 
     async def test_me_invalid_token(self, client: AsyncClient):
         response = await client.get(

@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,13 +28,13 @@ router = APIRouter(tags=["operations"])
 
 @router.get("/checklist", response_model=list[ChecklistItemRead])
 async def list_checklist(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(ChecklistItem).where(
-            ChecklistItem.organization_id == user.organization_id
-        )
-    )
+    stmt = select(ChecklistItem).where(ChecklistItem.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -115,11 +115,13 @@ async def delete_checklist(
 
 @router.get("/logbook", response_model=list[LogbookEntryRead])
 async def list_logbook(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(LogbookEntry).where(LogbookEntry.organization_id == user.organization_id)
-    )
+    stmt = select(LogbookEntry).where(LogbookEntry.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -200,11 +202,13 @@ async def delete_logbook(
 
 @router.get("/personnel", response_model=list[PersonnelRead])
 async def list_personnel(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(Personnel).where(Personnel.organization_id == user.organization_id)
-    )
+    stmt = select(Personnel).where(Personnel.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 

@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,14 +20,13 @@ router = APIRouter(prefix="/planning", tags=["planning"])
 
 @router.get("/plans", response_model=list[ProductionPlanRead])
 async def list_plans(
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("planning")),
 ):
-    result = await db.execute(
-        select(ProductionPlan).where(
-            ProductionPlan.organization_id == user.organization_id
-        )
-    )
+    stmt = select(ProductionPlan).where(ProductionPlan.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 

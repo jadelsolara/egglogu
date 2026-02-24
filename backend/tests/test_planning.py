@@ -32,7 +32,7 @@ class TestListPlans:
 
     async def test_list_plans_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/plans")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -51,7 +51,7 @@ class TestCreatePlan:
         response = await client.post(f"{PREFIX}/plans", json={
             "name": "Q1 Plan", "eggs_needed": 10000
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

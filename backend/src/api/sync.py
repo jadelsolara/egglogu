@@ -8,12 +8,14 @@ Strategy:
   4. Conflict resolution: last-write-wins based on `updated_at`.
 """
 
+import logging
 from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
@@ -40,6 +42,8 @@ from src.models import (
     LogbookEntry,
     Personnel,
 )
+
+logger = logging.getLogger("egglogu.sync")
 
 router = APIRouter(prefix="/sync", tags=["sync"])
 
@@ -88,11 +92,17 @@ async def sync_data(
     conflicts: list[str] = []
     server_now = datetime.now(timezone.utc)
 
+    logger.info(
+        "Sync request from user=%s org=%s entities=%d last_synced=%s",
+        user.id, user.organization_id, len(payload.data), payload.last_synced_at,
+    )
+
     # ── Phase 1: Upsert client changes ──
     for entity_key, records in payload.data.items():
         model_cls = MODEL_MAP.get(entity_key)
         if not model_cls:
             conflicts.append(f"Unknown entity: {entity_key}")
+            logger.warning("Unknown sync entity: %s", entity_key)
             continue
 
         valid_cols = {c.key for c in model_cls.__table__.columns}
@@ -104,10 +114,8 @@ async def sync_data(
 
             try:
                 if record_id:
-                    # Try to find existing record by UUID
                     existing = await db.get(model_cls, record_id)
                     if existing and existing.organization_id == user.organization_id:
-                        # Last-write-wins: update if client record is newer
                         client_updated = record_data.get("updated_at")
                         if client_updated and existing.updated_at:
                             if isinstance(client_updated, str):
@@ -117,20 +125,23 @@ async def sync_data(
                                     f"{entity_key}/{record_id}: server is newer"
                                 )
                                 continue
-                        # Apply update
                         for k, v in filtered.items():
                             if k not in ("id", "organization_id", "created_at"):
                                 setattr(existing, k, v)
                         synced += 1
                         continue
 
-                # New record — insert
                 filtered.pop("id", None)
                 obj = model_cls(**filtered)
                 db.add(obj)
                 synced += 1
+            except IntegrityError as e:
+                await db.rollback()
+                conflicts.append(f"{entity_key}: FK violation — {e.orig}")
+                logger.error("Sync IntegrityError on %s: %s", entity_key, e.orig)
             except Exception as e:
                 conflicts.append(f"{entity_key}: {e}")
+                logger.error("Sync error on %s: %s", entity_key, e)
 
     await db.flush()
 
@@ -156,6 +167,11 @@ async def sync_data(
         rows = result.scalars().all()
         if rows:
             server_changes[entity_key] = [_row_to_dict(r) for r in rows]
+
+    logger.info(
+        "Sync complete: synced=%d conflicts=%d changes_returned=%d",
+        synced, len(conflicts), sum(len(v) for v in server_changes.values()),
+    )
 
     return SyncResponse(
         synced=synced,

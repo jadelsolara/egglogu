@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,11 +31,13 @@ router = APIRouter(tags=["health"])
 
 @router.get("/vaccines", response_model=list[VaccineRead])
 async def list_vaccines(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(Vaccine).where(Vaccine.organization_id == user.organization_id)
-    )
+    stmt = select(Vaccine).where(Vaccine.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -113,11 +115,13 @@ async def delete_vaccine(
 
 @router.get("/medications", response_model=list[MedicationRead])
 async def list_medications(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(Medication).where(Medication.organization_id == user.organization_id)
-    )
+    stmt = select(Medication).where(Medication.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -195,11 +199,13 @@ async def delete_medication(
 
 @router.get("/outbreaks", response_model=list[OutbreakRead])
 async def list_outbreaks(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(Outbreak).where(Outbreak.organization_id == user.organization_id)
-    )
+    stmt = select(Outbreak).where(Outbreak.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -277,11 +283,13 @@ async def delete_outbreak(
 
 @router.get("/stress-events", response_model=list[StressEventRead])
 async def list_stress_events(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(StressEvent).where(StressEvent.organization_id == user.organization_id)
-    )
+    stmt = select(StressEvent).where(StressEvent.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 

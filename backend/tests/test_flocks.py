@@ -46,7 +46,7 @@ class TestListFlocks:
 
     async def test_list_flocks_unauthenticated(self, client: AsyncClient):
         response = await client.get(PREFIX)
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -70,7 +70,7 @@ class TestCreateFlock:
             "farm_id": str(uuid.uuid4()), "name": "No Auth",
             "initial_count": 100, "current_count": 100, "start_date": "2025-01-01"
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

@@ -37,5 +37,38 @@ services:
       redis:
         condition: service_healthy
 
+  backup:
+    image: postgres:16-alpine
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGUSER: egglogu
+      PGPASSWORD: egglogu
+      PGDATABASE: egglogu
+    volumes:
+      - backups:/backups
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "EGGlogU backup service started — daily pg_dump, 7-day retention"
+        while true; do
+          TIMESTAMP=$$(date +%Y%m%d_%H%M%S)
+          FILENAME="/backups/egglogu_$${TIMESTAMP}.sql.gz"
+          pg_dump -Fc | gzip > "$$FILENAME"
+          if [ $$? -eq 0 ]; then
+            SIZE=$$(du -h "$$FILENAME" | cut -f1)
+            echo "[$$TIMESTAMP] Backup OK: $$FILENAME ($$SIZE)"
+          else
+            echo "[$$TIMESTAMP] Backup FAILED"
+          fi
+          find /backups -name "egglogu_*.sql.gz" -mtime +7 -delete
+          echo "[$$TIMESTAMP] Cleaned backups older than 7 days"
+          sleep 86400
+        done
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  backups:

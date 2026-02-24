@@ -35,7 +35,7 @@ class TestListVisitors:
 
     async def test_list_visitors_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/visitors")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -53,7 +53,7 @@ class TestCreateVisitor:
         response = await client.post(f"{PREFIX}/visitors", json={
             "date": "2025-01-01", "name": "Inspector"
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -99,7 +99,7 @@ class TestListZones:
 
     async def test_list_zones_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/zones")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -115,7 +115,7 @@ class TestCreateZone:
 
     async def test_create_zone_unauthenticated(self, client: AsyncClient):
         response = await client.post(f"{PREFIX}/zones", json={"name": "Zone A"})
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -163,7 +163,7 @@ class TestListPests:
 
     async def test_list_pests_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/pests")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -181,7 +181,7 @@ class TestCreatePest:
         response = await client.post(f"{PREFIX}/pests", json={
             "date": "2025-01-01", "pest_type": "rodent"
         })
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -227,7 +227,7 @@ class TestListProtocols:
 
     async def test_list_protocols_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/protocols")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -243,7 +243,7 @@ class TestCreateProtocol:
 
     async def test_create_protocol_unauthenticated(self, client: AsyncClient):
         response = await client.post(f"{PREFIX}/protocols", json={"name": "Entry Protocol"})
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

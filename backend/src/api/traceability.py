@@ -1,7 +1,7 @@
 import uuid
 from datetime import date as date_type
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,14 +45,13 @@ async def _generate_batch_code(
 
 @router.get("/batches", response_model=list[TraceabilityBatchRead])
 async def list_batches(
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("traceability")),
 ):
-    result = await db.execute(
-        select(TraceabilityBatch).where(
-            TraceabilityBatch.organization_id == user.organization_id
-        )
-    )
+    stmt = select(TraceabilityBatch).where(TraceabilityBatch.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 

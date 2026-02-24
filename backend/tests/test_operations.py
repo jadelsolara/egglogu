@@ -31,7 +31,7 @@ class TestListChecklist:
 
     async def test_list_checklist_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/checklist")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -47,7 +47,7 @@ class TestCreateChecklist:
 
     async def test_create_checklist_unauthenticated(self, client: AsyncClient):
         response = await client.post(f"{API}/checklist", json={"label": "Check water"})
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -94,7 +94,7 @@ class TestListLogbook:
 
     async def test_list_logbook_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/logbook")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -110,7 +110,7 @@ class TestCreateLogbook:
 
     async def test_create_logbook_unauthenticated(self, client: AsyncClient):
         response = await client.post(f"{API}/logbook", json={"date": "2025-01-01", "text": "All normal"})
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -159,7 +159,7 @@ class TestListPersonnel:
 
     async def test_list_personnel_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{API}/personnel")
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio
@@ -175,7 +175,7 @@ class TestCreatePersonnel:
 
     async def test_create_personnel_unauthenticated(self, client: AsyncClient):
         response = await client.post(f"{API}/personnel", json={"name": "John", "role": "caretaker"})
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 @pytest.mark.asyncio

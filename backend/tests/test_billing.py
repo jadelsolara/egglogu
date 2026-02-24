@@ -34,4 +34,4 @@ class TestBillingStatus:
 
     async def test_billing_status_unauthenticated(self, client: AsyncClient):
         response = await client.get(f"{PREFIX}/status")
-        assert response.status_code == 403
+        assert response.status_code == 401

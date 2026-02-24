@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,13 +28,13 @@ router = APIRouter(tags=["environment"])
 
 @router.get("/environment", response_model=list[EnvironmentReadingRead])
 async def list_environment(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(EnvironmentReading).where(
-            EnvironmentReading.organization_id == user.organization_id
-        )
-    )
+    stmt = select(EnvironmentReading).where(EnvironmentReading.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -117,11 +117,13 @@ async def delete_environment(
 
 @router.get("/iot-readings", response_model=list[IoTReadingRead])
 async def list_iot(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(IoTReading).where(IoTReading.organization_id == user.organization_id)
-    )
+    stmt = select(IoTReading).where(IoTReading.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
@@ -199,11 +201,13 @@ async def delete_iot(
 
 @router.get("/weather", response_model=list[WeatherCacheRead])
 async def list_weather(
-    db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)
+    page: int = Query(1, ge=1),
+    size: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(WeatherCache).where(WeatherCache.organization_id == user.organization_id)
-    )
+    stmt = select(WeatherCache).where(WeatherCache.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    result = await db.execute(stmt)
     return result.scalars().all()
 
 
