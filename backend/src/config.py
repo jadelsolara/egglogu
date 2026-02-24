@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     MICROSOFT_TENANT_ID: str = "common"  # "common" for multi-tenant
     EMAIL_FROM_DOMAIN: str = "egglogu.com"
     FRONTEND_URL: str = "https://egglogu.com"
+    CORREOS_DIR: str = "/home/jose-antonio/Desktop/Proyectos/EGGlogU/correos"
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

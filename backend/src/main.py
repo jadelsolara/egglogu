@@ -1,5 +1,8 @@
+import json
 import logging
+import time
 import traceback
+import uuid as _uuid
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, Response
@@ -9,6 +12,39 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.config import settings
+
+
+# ── Structured JSON Logging ────────────────────────────────────────
+class JSONFormatter(logging.Formatter):
+    """Emit log records as single-line JSON for structured log aggregation."""
+
+    def format(self, record: logging.LogRecord) -> str:
+        log_entry = {
+            "ts": self.formatTime(record, "%Y-%m-%dT%H:%M:%S"),
+            "level": record.levelname,
+            "logger": record.name,
+            "msg": record.getMessage(),
+        }
+        if hasattr(record, "request_id"):
+            log_entry["request_id"] = record.request_id
+        if record.exc_info and record.exc_info[0]:
+            log_entry["exception"] = self.formatException(record.exc_info)
+        return json.dumps(log_entry, ensure_ascii=False)
+
+
+def setup_logging() -> None:
+    handler = logging.StreamHandler()
+    handler.setFormatter(JSONFormatter())
+    root = logging.getLogger()
+    root.handlers.clear()
+    root.addHandler(handler)
+    root.setLevel(logging.INFO)
+    # Quiet noisy libs
+    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+
+
+setup_logging()
 
 logger = logging.getLogger("egglogu")
 from src.core.rate_limit import init_redis, close_redis
@@ -22,6 +58,30 @@ from src.api import (
 
 # Import all models so Base.metadata knows about every table
 import src.models  # noqa: F401
+
+
+# ── Request ID + Logging Middleware ─────────────────────────────────
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    """Assigns a request_id, logs method/path/status/duration for every request."""
+
+    async def dispatch(self, request: Request, call_next) -> Response:
+        request_id = request.headers.get("X-Request-ID", str(_uuid.uuid4())[:8])
+        request.state.request_id = request_id
+
+        start = time.perf_counter()
+        response: Response = await call_next(request)
+        duration_ms = round((time.perf_counter() - start) * 1000)
+
+        logger.info(
+            "%s %s → %d (%dms)",
+            request.method,
+            request.url.path,
+            response.status_code,
+            duration_ms,
+            extra={"request_id": request_id},
+        )
+        response.headers["X-Request-ID"] = request_id
+        return response
 
 
 # ── Security Headers Middleware ──────────────────────────────────────
@@ -118,10 +178,13 @@ app = FastAPI(
 )
 
 # Middleware order matters: outermost runs first.
-# 1) Security headers on every response
+# 1) Request ID + structured logging (outermost — captures everything)
+app.add_middleware(RequestLoggingMiddleware)
+
+# 2) Security headers on every response
 app.add_middleware(SecurityHeadersMiddleware)
 
-# 2) Global rate limit (before CORS so abusive IPs are cut early)
+# 3) Global rate limit (before CORS so abusive IPs are cut early)
 app.add_middleware(GlobalRateLimitMiddleware)
 
 # 3) CORS — restricted origins, never wildcard

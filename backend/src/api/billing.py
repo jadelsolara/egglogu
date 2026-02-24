@@ -131,7 +131,10 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 
     try:
         event = construct_webhook_event(payload, sig)
-    except Exception:
+    except ValueError:
+        raise ForbiddenError("Invalid webhook payload")
+    except Exception as e:
+        logger.warning("Webhook signature verification failed: %s", e)
         raise ForbiddenError("Invalid webhook signature")
 
     event_type = event["type"]

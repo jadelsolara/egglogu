@@ -1,3 +1,4 @@
+import re
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -5,6 +6,25 @@ import bcrypt
 from jose import JWTError, jwt
 
 from src.config import settings
+
+
+class WeakPasswordError(ValueError):
+    """Raised when a password doesn't meet strength requirements."""
+
+
+def validate_password(password: str) -> None:
+    """Enforce password strength: min 8 chars, 1 upper, 1 lower, 1 digit.
+
+    Raises WeakPasswordError with a descriptive message on failure.
+    """
+    if len(password) < 8:
+        raise WeakPasswordError("Password must be at least 8 characters long")
+    if not re.search(r"[A-Z]", password):
+        raise WeakPasswordError("Password must contain at least one uppercase letter")
+    if not re.search(r"[a-z]", password):
+        raise WeakPasswordError("Password must contain at least one lowercase letter")
+    if not re.search(r"\d", password):
+        raise WeakPasswordError("Password must contain at least one digit")
 
 
 def hash_password(plain: str) -> str:

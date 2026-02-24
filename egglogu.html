@@ -324,8 +324,8 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
  <a data-section="dashboard" class="active" onclick="nav('dashboard')"><i>📊</i><span data-t="nav_dashboard">Dashboard</span></a>
  <div class="nav-group-label grp-open" data-t="grp_production" onclick="toggleNavGroup(this)">Producción</div>
  <div class="nav-group-links grp-open" data-grp="production">
- <a data-section="produccion" onclick="nav('produccion')"><i>🥚</i><span data-t="nav_production">Producción</span></a>
  <a data-section="lotes" onclick="nav('lotes')"><i>🐔</i><span data-t="nav_flocks">Lotes</span></a>
+ <a data-section="produccion" onclick="nav('produccion')"><i>🥚</i><span data-t="nav_production">Producción</span></a>
  <a data-section="alimento" onclick="nav('alimento')"><i>🌾</i><span data-t="nav_feed">Alimento</span></a>
  <a data-section="ambiente" onclick="nav('ambiente')"><i>🌡️</i><span data-t="nav_environment">Ambiente</span></a>
  </div>
@@ -379,8 +379,8 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
 <main class="main-content" id="main-content" role="main" aria-label="Content">
 <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
 <div id="sec-dashboard" class="section active" role="region" aria-label="Dashboard"></div>
-<div id="sec-produccion" class="section" role="region" aria-label="Production"></div>
 <div id="sec-lotes" class="section" role="region" aria-label="Flocks"></div>
+<div id="sec-produccion" class="section" role="region" aria-label="Production"></div>
 <div id="sec-sanidad" class="section" role="region" aria-label="Health"></div>
 <div id="sec-alimento" class="section" role="region" aria-label="Feed"></div>
 <div id="sec-clientes" class="section" role="region" aria-label="Clients"></div>
@@ -2462,7 +2462,7 @@ document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',
 openNavGroupFor(section);
 $('sidebar').classList.remove('open');
 _injectOnboarding(section);
-const R={dashboard:renderDashboard,produccion:renderProduction,lotes:renderFlocks,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,soporte:renderSoporte,admin:renderAdmin,config:renderConfig};
+const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,soporte:renderSoporte,admin:renderAdmin,config:renderConfig};
 if(R[section]){
 if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);});}
 else{R[section]();postRenderA11y(section);}
@@ -2477,7 +2477,7 @@ function closeModal(){$('modal-overlay').classList.remove('open');if(_modalTrigg
 function toast(msg,err=false){const e=$('toast');e.textContent=msg;e.className='toast show'+(err?' error':'');setTimeout(()=>e.className='toast',3000);}
 function emptyState(icon,msg,btn,act){let h=`<div class="empty-state"><div class="empty-icon">${sanitizeHTML(icon)}</div><p>${sanitizeHTML(msg)}</p>`;if(btn)h+=`<button class="btn btn-primary" onclick="${escapeAttr(act)}">${sanitizeHTML(btn)}</button>`;return h+'</div>';}
 function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);document.documentElement.lang=l;const lt=$('langToggle');if(lt){lt.querySelectorAll('.lang-grid button').forEach(b=>{b.classList.toggle('active',b.id==='btn-'+l);});const names={es:'Español',en:'English',pt:'Português',fr:'Français',de:'Deutsch',it:'Italiano',ja:'日本語',zh:'中文'};const lc=$('langCurrent');if(lc)lc.textContent=names[l]||l;lt.classList.remove('open');}document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
-function flockSelect(sel,all=false){const D=loadData();let h=all?`<option value="">${t('all')}</option>`:'<option value="">--</option>';D.flocks.forEach(f=>{h+=`<option value="${escapeAttr(f.id)}"${f.id===sel?' selected':''}>${sanitizeHTML(f.name)}</option>`;});return h;}
+function flockSelect(sel,all=false){const D=loadData();const active=D.flocks.filter(f=>f.status!=='descarte');let h=all?`<option value="">${t('all')}</option>`:'';if(all||active.length!==1)h+='<option value="">--</option>';active.forEach(f=>{const autoSel=(!sel&&active.length===1)||f.id===sel;h+=`<option value="${escapeAttr(f.id)}"${autoSel?' selected':''}>${sanitizeHTML(f.name)}</option>`;});return h;}
 function clientSelect(sel){const D=loadData();let h='<option value="">--</option>';D.clients.forEach(c=>{h+=`<option value="${escapeAttr(c.id)}"${c.id===sel?' selected':''}>${sanitizeHTML(c.name)}</option>`;});return h;}
 function destroyCharts(){Object.values(CHARTS).forEach(c=>{try{c.destroy();}catch(e){}});CHARTS={};}
 
@@ -2834,12 +2834,18 @@ eggType:$('p-etype')?.value||'conventional',marketChannel:$('p-market')?.value||
 notes:$('p-notes').value};
 const v=validateForm({'p-date':{value:o.date,rules:{required:true,date:true}},'p-flock':{value:o.flockId,rules:{required:true}},'p-eggs':{value:$('p-eggs').value,rules:{required:true,numeric:true,min:0}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
+// Real-time validations: eggs vs flock size, deaths vs remaining
+const flock=D.flocks.find(f=>f.id===o.flockId);
+if(flock&&flock.currentCount){if(o.eggsCollected>flock.currentCount*1.1){showFieldError('p-eggs',t('prod_eggs')+' > '+Math.round(flock.currentCount*1.1)+' (110% '+t('prod_flock')+')');return;}
+if(o.deaths>flock.currentCount){showFieldError('p-deaths',t('prod_deaths')+' > '+flock.currentCount+' ('+t('prod_flock')+')');return;}}
 if(!_vengWarningsShown){const vr=VENG.gate.production(o,D);if(!vr.ok){vr.errors.forEach(e=>{if(e.field)showFieldError(e.field,e.msg);});showVengPanel(vr.errors,vr.warnings);return;}if(vr.warnings.length){showVengPanel([],vr.warnings);_vengWarningsShown=true;return;}}_vengWarningsShown=false;
 if(id){const i=D.dailyProduction.findIndex(p=>p.id===id);if(i>=0){logAudit('update','production','Edit production',D.dailyProduction[i],o);D.dailyProduction[i]={...D.dailyProduction[i],...o};}}
 else{o.id=genId();D.dailyProduction.push(o);logAudit('create','production','New production: '+o.eggsCollected+' eggs',null,o);
 if(o.eggsCollected>0){const sizes=[{k:'eggsS',t:'S'},{k:'eggsM',t:'M'},{k:'eggsL',t:'L'},{k:'eggsXL',t:'XL'},{k:'eggsJumbo',t:'Jumbo'}];
 let distributed=false;sizes.forEach(s=>{if(o[s.k]>0){D.inventory.push({id:genId(),date:o.date,flockId:o.flockId,eggType:s.t,qtyIn:o[s.k],qtyOut:0,source:'production',ref:o.id});distributed=true;}});
 if(!distributed)D.inventory.push({id:genId(),date:o.date,flockId:o.flockId,eggType:'M',qtyIn:o.eggsCollected,qtyOut:0,source:'production',ref:o.id});}}
+// Auto-subtract mortality from flock current count
+if(o.deaths>0){const fi=D.flocks.findIndex(f=>f.id===o.flockId);if(fi>=0&&D.flocks[fi].currentCount){D.flocks[fi].currentCount=Math.max(0,D.flocks[fi].currentCount-o.deaths);}}
 saveData(D);closeModal();toast(t('cfg_saved'));renderProduction();
 }
 async function deleteProd(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();const old=D.dailyProduction.find(p=>p.id===id);logAudit('delete','production','Delete production',old,null);D.dailyProduction=D.dailyProduction.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderProduction();}

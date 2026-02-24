@@ -11,10 +11,12 @@ from src.core.email import generate_token, send_password_reset, send_team_invite
 from src.core.exceptions import ConflictError, NotFoundError, RateLimitError, UnauthorizedError
 from src.core.rate_limit import check_rate_limit
 from src.core.security import (
+    WeakPasswordError,
     create_access_token,
     create_refresh_token,
     decode_token,
     hash_password,
+    validate_password,
     verify_password,
 )
 from src.database import get_db
@@ -63,6 +65,11 @@ async def register(data: UserCreate, request: Request, db: AsyncSession = Depend
     client_ip = request.client.host if request.client else "unknown"
     if not await check_rate_limit(f"register:{client_ip}", 5, 3600):
         raise RateLimitError("Too many registrations. Try again in 1 hour.")
+
+    try:
+        validate_password(data.password)
+    except WeakPasswordError as e:
+        raise ConflictError(str(e))
 
     existing = await db.execute(select(User).where(User.email == data.email))
     if existing.scalar_one_or_none():
@@ -449,6 +456,11 @@ async def reset_password(data: ResetPasswordRequest, db: AsyncSession = Depends(
         raise NotFoundError("Invalid or expired reset token")
     if user.reset_token_expires and user.reset_token_expires < datetime.now(timezone.utc):
         raise NotFoundError("Reset token has expired")
+
+    try:
+        validate_password(data.new_password)
+    except WeakPasswordError as e:
+        raise ConflictError(str(e))
 
     user.hashed_password = hash_password(data.new_password)
     user.reset_token = None

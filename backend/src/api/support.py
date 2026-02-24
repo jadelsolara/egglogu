@@ -6,6 +6,7 @@ from sqlalchemy import select, func, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user, get_org_plan, require_role
+from src.core.email_archive import archive_ticket, archive_ticket_reply
 from src.core.exceptions import ForbiddenError, NotFoundError
 from src.core.plans import get_plan_limits
 from src.database import get_db
@@ -74,6 +75,8 @@ async def _find_matching_faq(text: str, db: AsyncSession) -> FAQArticle | None:
     text_lower = text.lower()
     best, best_score = None, 0
     for faq in faqs:
+        if not faq.keywords:
+            continue
         keywords = [k.strip().lower() for k in faq.keywords.split(",") if k.strip()]
         score = sum(1 for kw in keywords if kw in text_lower)
         if score > best_score:
@@ -90,6 +93,8 @@ async def _get_auto_response(category: TicketCategory, text: str, db: AsyncSessi
     responses = result.scalars().all()
     text_lower = text.lower()
     for resp in responses:
+        if not resp.trigger_keywords:
+            return resp
         triggers = [k.strip().lower() for k in resp.trigger_keywords.split(",") if k.strip()]
         if not triggers or any(t in text_lower for t in triggers):
             return resp
@@ -261,6 +266,15 @@ async def create_ticket(
     db.add(ticket)
     await db.flush()
 
+    archive_ticket(
+        ticket_number=ticket.ticket_number,
+        user_email=user.email,
+        subject=data.subject,
+        description=data.description,
+        category=category.value if hasattr(category, "value") else str(category),
+        priority=priority.value if hasattr(priority, "value") else str(priority),
+    )
+
     # Add auto-response as first message if available, in the user's language
     auto_resp = await _get_auto_response(category, combined_text, db)
     if auto_resp:
@@ -273,6 +287,7 @@ async def create_ticket(
             is_internal=False,
         )
         db.add(msg)
+        await db.flush()
 
     return ticket
 
@@ -341,6 +356,14 @@ async def add_message(
         is_internal=False,
     )
     db.add(msg)
+    await db.flush()
+
+    archive_ticket_reply(
+        ticket_number=ticket.ticket_number,
+        from_email=user.email,
+        message=data.message,
+        is_admin=False,
+    )
 
     # Reopen if waiting
     if ticket.status == TicketStatus.waiting_user:
@@ -400,6 +423,7 @@ async def rate_ticket(
         comment=data.comment,
     )
     db.add(rating)
+    await db.flush()
     return rating
 
 
@@ -431,9 +455,18 @@ async def sync_offline_tickets(
             sla_deadline=sla_deadline,
         )
         db.add(ticket)
+        archive_ticket(
+            ticket_number=ticket_number,
+            user_email=user.email,
+            subject=t.subject,
+            description=t.description,
+            category=category.value if hasattr(category, "value") else str(category),
+            priority=ticket.priority.value if hasattr(ticket.priority, "value") else str(ticket.priority),
+        )
         synced += 1
         numbers.append(ticket_number)
 
+    await db.flush()
     return TicketSyncResponse(synced=synced, ticket_numbers=numbers)
 
 
@@ -526,6 +559,15 @@ async def admin_reply(
         is_internal=data.is_internal,
     )
     db.add(msg)
+    await db.flush()
+
+    if not data.is_internal:
+        archive_ticket_reply(
+            ticket_number=ticket.ticket_number,
+            from_email=user.email,
+            message=data.message,
+            is_admin=True,
+        )
 
     if not data.is_internal and ticket.status == TicketStatus.open:
         ticket.status = TicketStatus.in_progress
@@ -655,6 +697,7 @@ async def update_faq(
             setattr(faq, field, TicketCategory(val))
         else:
             setattr(faq, field, val)
+    await db.flush()
     return faq
 
 
@@ -719,6 +762,7 @@ async def update_auto_response(
             setattr(ar, field, TicketCategory(val))
         else:
             setattr(ar, field, val)
+    await db.flush()
     return ar
 
 
