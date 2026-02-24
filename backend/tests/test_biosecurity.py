@@ -151,10 +151,10 @@ class TestListPests:
     async def test_list_pests_returns_created(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         await client.post(f"{PREFIX}/pests", json={
-            "date": "2025-01-01", "pest_type": "rodent"
+            "date": "2025-01-01", "type": "rodent"
         }, headers=headers)
         await client.post(f"{PREFIX}/pests", json={
-            "date": "2025-01-02", "pest_type": "insect"
+            "date": "2025-01-02", "type": "fly"
         }, headers=headers)
 
         response = await client.get(f"{PREFIX}/pests", headers=headers)
@@ -171,7 +171,7 @@ class TestCreatePest:
 
     async def test_create_pest_minimal(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
-        payload = {"date": "2025-01-01", "pest_type": "rodent"}
+        payload = {"date": "2025-01-01", "type": "rodent"}
         response = await client.post(f"{PREFIX}/pests", json=payload, headers=headers)
         assert response.status_code == 201
         data = response.json()
@@ -179,7 +179,7 @@ class TestCreatePest:
 
     async def test_create_pest_unauthenticated(self, client: AsyncClient):
         response = await client.post(f"{PREFIX}/pests", json={
-            "date": "2025-01-01", "pest_type": "rodent"
+            "date": "2025-01-01", "type": "rodent"
         })
         assert response.status_code == 401
 
@@ -190,7 +190,7 @@ class TestDeletePest:
     async def test_delete_pest_success(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         create_resp = await client.post(f"{PREFIX}/pests", json={
-            "date": "2025-01-01", "pest_type": "rodent"
+            "date": "2025-01-01", "type": "rodent"
         }, headers=headers)
         item_id = create_resp.json()["id"]
 

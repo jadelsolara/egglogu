@@ -94,10 +94,10 @@ class TestListIoT:
     async def test_list_iot_returns_created(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         await client.post(f"{API}/iot-readings", json={
-            "timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0
+            "timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0, "unit": "C"
         }, headers=headers)
         await client.post(f"{API}/iot-readings", json={
-            "timestamp": "2025-01-01T13:00:00Z", "sensor_type": "humidity", "value": 60.0
+            "timestamp": "2025-01-01T13:00:00Z", "sensor_type": "humidity", "value": 60.0, "unit": "%"
         }, headers=headers)
 
         response = await client.get(f"{API}/iot-readings", headers=headers)
@@ -114,7 +114,7 @@ class TestCreateIoT:
 
     async def test_create_iot_minimal(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
-        payload = {"timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0}
+        payload = {"timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0, "unit": "C"}
         response = await client.post(f"{API}/iot-readings", json=payload, headers=headers)
         assert response.status_code == 201
         data = response.json()
@@ -122,7 +122,7 @@ class TestCreateIoT:
 
     async def test_create_iot_unauthenticated(self, client: AsyncClient):
         response = await client.post(f"{API}/iot-readings", json={
-            "timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0
+            "timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0, "unit": "C"
         })
         assert response.status_code == 401
 
@@ -133,7 +133,7 @@ class TestDeleteIoT:
     async def test_delete_iot_success(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         create_resp = await client.post(f"{API}/iot-readings", json={
-            "timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0
+            "timestamp": "2025-01-01T12:00:00Z", "sensor_type": "temperature", "value": 25.0, "unit": "C"
         }, headers=headers)
         item_id = create_resp.json()["id"]
 
