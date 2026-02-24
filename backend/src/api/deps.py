@@ -14,13 +14,15 @@ from src.database import get_db
 from src.models.auth import User
 from src.models.subscription import Subscription, SubscriptionStatus
 
-bearer_scheme = HTTPBearer()
+bearer_scheme = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
+    if credentials is None:
+        raise UnauthorizedError()
     try:
         payload = decode_token(credentials.credentials)
     except ValueError:
