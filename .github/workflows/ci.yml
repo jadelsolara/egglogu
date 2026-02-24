@@ -226,8 +226,6 @@ jobs:
       name: production
       url: https://egglogu.com
     steps:
-      - uses: actions/checkout@v4
-
       - name: Verify branch
         run: |
           if [ "${{ github.ref }}" != "refs/heads/main" ]; then
@@ -235,26 +233,33 @@ jobs:
             exit 1
           fi
 
-      - name: Deploy backend
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          echo "Deploying EGGlogU backend to production..."
-          # Railway deployment (already configured via railway.json)
-          npm install -g @railway/cli
-          cd backend && railway up --detach
-        # If not using Railway, replace with your deployment method:
-        # - Docker push to registry + deploy
-        # - SSH deploy
-        # - Cloud provider CLI (fly deploy, etc.)
+      - name: Deploy backend via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
+          script: |
+            cd ${{ secrets.VPS_APP_PATH || '/opt/egglogu' }}
+            echo "==> Pulling latest code..."
+            git pull origin main
+            echo "==> Building and restarting containers..."
+            docker compose up -d --build --remove-orphans
+            echo "==> Running Alembic migrations..."
+            docker compose exec -T app alembic upgrade head
+            echo "==> Verifying health..."
+            sleep 5
+            curl -sf http://localhost:8000/health || { echo "::error::Health check failed"; exit 1; }
+            echo "==> Deploy complete"
 
-      - name: Verify deployment
+      - name: Verify public endpoint
         run: |
           echo "Waiting for deployment to stabilize..."
-          sleep 30
-          # Health check against production
-          curl -f https://api.egglogu.com/api/health || echo "::warning::Health check pending"
+          sleep 15
+          curl -f https://api.egglogu.com/api/health || echo "::warning::Public health check pending — DNS/proxy may need time"
 
       - name: Notify deployment
         if: success()
-        run: echo "::notice::EGGlogU v3.0.0 deployed to production successfully"
+        run: echo "::notice::EGGlogU deployed to production via SSH successfully"
