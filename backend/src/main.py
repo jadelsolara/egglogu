@@ -11,7 +11,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
+import src.models  # noqa: F401, E402
 from src.config import settings
+from src.core.rate_limit import init_redis, close_redis
+from src.database import engine
+from src.api import (
+    auth, farms, flocks, production, health, feed, clients,
+    finance, environment, operations, sync,
+    biosecurity, traceability, planning, billing, trace_public,
+    support, healthcheck, leads,
+)
 
 
 # ── Structured JSON Logging ────────────────────────────────────────
@@ -39,7 +48,6 @@ def setup_logging() -> None:
     root.handlers.clear()
     root.addHandler(handler)
     root.setLevel(logging.INFO)
-    # Quiet noisy libs
     logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
 
@@ -47,17 +55,6 @@ def setup_logging() -> None:
 setup_logging()
 
 logger = logging.getLogger("egglogu")
-from src.core.rate_limit import init_redis, close_redis
-from src.database import engine
-from src.api import (
-    auth, farms, flocks, production, health, feed, clients,
-    finance, environment, operations, sync,
-    biosecurity, traceability, planning, billing, trace_public,
-    support, healthcheck, leads,
-)
-
-# Import all models so Base.metadata knows about every table
-import src.models  # noqa: F401
 
 
 # ── Request ID + Logging Middleware ─────────────────────────────────
