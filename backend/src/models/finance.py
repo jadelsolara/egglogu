@@ -36,6 +36,9 @@ class Expense(TimestampMixin, TenantMixin, Base):
     description: Mapped[Optional[str]] = mapped_column(Text, default=None)
     amount: Mapped[float] = mapped_column(Float)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
+    flock_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("flocks.id", ondelete="SET NULL"), index=True, default=None
+    )
 
 
 class Receivable(TimestampMixin, TenantMixin, Base):

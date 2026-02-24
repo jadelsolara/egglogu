@@ -16,6 +16,7 @@ from src.config import settings
 from src.core.rate_limit import init_redis, close_redis
 from src.database import engine
 from src.api import (
+    analytics,
     auth,
     farms,
     flocks,
@@ -234,6 +235,7 @@ app.include_router(traceability.router, prefix=prefix)
 app.include_router(planning.router, prefix=prefix)
 app.include_router(billing.router, prefix=prefix)
 app.include_router(support.router, prefix=prefix)
+app.include_router(analytics.router, prefix=prefix)
 
 # Public routes (no /api/v1 prefix)
 app.include_router(trace_public.router)

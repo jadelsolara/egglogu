@@ -3,7 +3,7 @@ import uuid
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import String, Integer, Date, Boolean, ForeignKey, Text
+from sqlalchemy import String, Integer, Float, Date, Boolean, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
@@ -21,6 +21,7 @@ class Vaccine(TimestampMixin, TenantMixin, Base):
     name: Mapped[str] = mapped_column(String(200))
     method: Mapped[Optional[str]] = mapped_column(String(100), default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
+    cost: Mapped[Optional[float]] = mapped_column(Float, default=None)
 
 
 class Medication(TimestampMixin, TenantMixin, Base):
@@ -35,6 +36,7 @@ class Medication(TimestampMixin, TenantMixin, Base):
     dosage: Mapped[Optional[str]] = mapped_column(String(100), default=None)
     duration_days: Mapped[Optional[int]] = mapped_column(Integer, default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
+    cost: Mapped[Optional[float]] = mapped_column(Float, default=None)
 
 
 class Outbreak(TimestampMixin, TenantMixin, Base):

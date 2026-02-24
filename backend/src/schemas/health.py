@@ -11,12 +11,14 @@ class VaccineCreate(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     method: Optional[str] = Field(default=None, max_length=100)
     notes: Optional[str] = Field(default=None, max_length=2000)
+    cost: Optional[float] = Field(default=None, ge=0, le=10_000_000)
 
 
 class VaccineUpdate(BaseModel):
     name: Optional[str] = Field(default=None, min_length=1, max_length=200)
     method: Optional[str] = Field(default=None, max_length=100)
     notes: Optional[str] = Field(default=None, max_length=2000)
+    cost: Optional[float] = Field(default=None, ge=0, le=10_000_000)
 
 
 class VaccineRead(BaseModel):
@@ -26,6 +28,7 @@ class VaccineRead(BaseModel):
     name: str
     method: Optional[str]
     notes: Optional[str]
+    cost: Optional[float]
     created_at: datetime
     updated_at: datetime
 
@@ -39,6 +42,7 @@ class MedicationCreate(BaseModel):
     dosage: Optional[str] = Field(default=None, max_length=200)
     duration_days: Optional[int] = Field(default=None, ge=1, le=365)
     notes: Optional[str] = Field(default=None, max_length=2000)
+    cost: Optional[float] = Field(default=None, ge=0, le=10_000_000)
 
 
 class MedicationUpdate(BaseModel):
@@ -46,6 +50,7 @@ class MedicationUpdate(BaseModel):
     dosage: Optional[str] = Field(default=None, max_length=200)
     duration_days: Optional[int] = Field(default=None, ge=1, le=365)
     notes: Optional[str] = Field(default=None, max_length=2000)
+    cost: Optional[float] = Field(default=None, ge=0, le=10_000_000)
 
 
 class MedicationRead(BaseModel):
@@ -56,6 +61,7 @@ class MedicationRead(BaseModel):
     dosage: Optional[str]
     duration_days: Optional[int]
     notes: Optional[str]
+    cost: Optional[float]
     created_at: datetime
     updated_at: datetime
 

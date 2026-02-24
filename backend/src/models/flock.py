@@ -2,7 +2,7 @@ import uuid
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import String, Integer, Date, Boolean, ForeignKey, Text
+from sqlalchemy import String, Integer, Float, Date, Boolean, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
@@ -24,6 +24,9 @@ class Flock(TimestampMixin, TenantMixin, Base):
     housing_type: Mapped[Optional[str]] = mapped_column(String(100), default=None)
     target_curve: Mapped[Optional[str]] = mapped_column(String(100), default=None)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    purchase_cost_per_bird: Mapped[Optional[float]] = mapped_column(
+        Float, default=None
+    )
 
     farm: Mapped["Farm"] = relationship(back_populates="flocks")  # noqa: F821
     breed_curves: Mapped[list["BreedCurve"]] = relationship(back_populates="flock")

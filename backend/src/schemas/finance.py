@@ -47,6 +47,7 @@ class ExpenseCreate(BaseModel):
     description: Optional[str] = Field(default=None, max_length=500)
     amount: float = Field(gt=0, le=100_000_000)
     notes: Optional[str] = Field(default=None, max_length=2000)
+    flock_id: Optional[uuid.UUID] = None
 
 
 class ExpenseUpdate(BaseModel):
@@ -54,6 +55,7 @@ class ExpenseUpdate(BaseModel):
     description: Optional[str] = Field(default=None, max_length=500)
     amount: Optional[float] = Field(default=None, gt=0, le=100_000_000)
     notes: Optional[str] = Field(default=None, max_length=2000)
+    flock_id: Optional[uuid.UUID] = None
 
 
 class ExpenseRead(BaseModel):
@@ -63,6 +65,7 @@ class ExpenseRead(BaseModel):
     description: Optional[str]
     amount: float
     notes: Optional[str]
+    flock_id: Optional[uuid.UUID]
     created_at: datetime
     updated_at: datetime
 

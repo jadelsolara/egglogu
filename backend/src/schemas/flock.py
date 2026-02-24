@@ -15,6 +15,7 @@ class FlockCreate(BaseModel):
     housing_type: Optional[str] = Field(default=None, max_length=100)
     target_curve: Optional[str] = Field(default=None, max_length=100)
     is_active: bool = True
+    purchase_cost_per_bird: Optional[float] = Field(default=None, ge=0, le=100_000)
 
 
 class FlockUpdate(BaseModel):
@@ -24,6 +25,7 @@ class FlockUpdate(BaseModel):
     housing_type: Optional[str] = Field(default=None, max_length=100)
     target_curve: Optional[str] = Field(default=None, max_length=100)
     is_active: Optional[bool] = None
+    purchase_cost_per_bird: Optional[float] = Field(default=None, ge=0, le=100_000)
 
 
 class FlockRead(BaseModel):
@@ -37,6 +39,7 @@ class FlockRead(BaseModel):
     housing_type: Optional[str]
     target_curve: Optional[str]
     is_active: bool
+    purchase_cost_per_bird: Optional[float]
     created_at: datetime
     updated_at: datetime
 
