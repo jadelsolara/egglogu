@@ -35,6 +35,7 @@ from src.models.auth import Organization, Role, User
 from src.models.subscription import Subscription, PlanTier, SubscriptionStatus
 from src.schemas.auth import (
     AppleAuthRequest,
+    ChangePasswordRequest,
     ForgotPasswordRequest,
     GoogleAuthRequest,
     LoginRequest,
@@ -515,6 +516,25 @@ async def reset_password(
     user.reset_token_expires = None
     await db.flush()
     return MessageResponse(message="Password has been reset successfully.")
+
+
+@router.post("/change-password", response_model=MessageResponse)
+async def change_password(
+    data: ChangePasswordRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if not user.hashed_password:
+        raise ConflictError("Account uses social login. Set a password via forgot-password first.")
+    if not verify_password(data.current_password, user.hashed_password):
+        raise UnauthorizedError("Current password is incorrect")
+    try:
+        validate_password(data.new_password)
+    except WeakPasswordError as e:
+        raise ConflictError(str(e))
+    user.hashed_password = hash_password(data.new_password)
+    await db.flush()
+    return MessageResponse(message="Password changed successfully.")
 
 
 @router.post("/verify-email", response_model=TokenResponse)

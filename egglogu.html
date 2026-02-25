@@ -4638,7 +4638,8 @@ egg_type:'Tipo Huevo',quantity:'Cantidad',warehouse:'Almacén',
 ticket_id:'#Ticket',subject:'Asunto',priority:'Prioridad',category:'Categoría',org:'Organización',delete_selected:'Eliminar Seleccionados',
 region:'Región',price:'Precio Promedio',production:'Producción',demand:'Demanda',supply:'Oferta',trend:'Tendencia',add_entry:'Nueva Entrada',date:'Fecha',source:'Fuente',notes:'Notas',save:'Guardar',
 no_data:'Sin datos',error:'Error al cargar datos',hours:'hrs',confirm_delete_org:'ELIMINAR ORGANIZACIÓN COMPLETA. Esto es IRREVERSIBLE.',confirm_delete_ticket:'Eliminar ticket permanentemente?',confirm_delete_user:'Eliminar usuario permanentemente?',
-total_production:'Producción Total',feature_requests:'Solicitudes',critical_tickets:'Críticos',response_avg:'Resp. Promedio'},
+total_production:'Producción Total',feature_requests:'Solicitudes',critical_tickets:'Críticos',response_avg:'Resp. Promedio',
+tab_settings:'Mi Cuenta',current_pw:'Contraseña Actual',new_pw:'Nueva Contraseña',confirm_pw:'Confirmar Contraseña',change_pw:'Cambiar Contraseña',pw_changed:'Contraseña cambiada exitosamente',pw_mismatch:'Las contraseñas no coinciden',pw_rules:'Mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número, 1 símbolo',account_info:'Información de Cuenta'},
 en:{title:'Superadmin Panel',tab_dashboard:'Dashboard',tab_inventory:'Global Inventory',tab_accounts:'Accounts',tab_tickets:'Tickets',tab_market:'Market',
 loading:'Loading...',total_orgs:'Organizations',total_users:'Users',active_users:'Active',mrr:'Estimated MRR',total_eggs:'Eggs in Stock',open_tickets:'Open Tickets',bug_tickets:'Bugs',avg_resolution:'Avg. Resolution',sla:'SLA',support_rating:'Support Rating',new_orgs_30d:'New Orgs (30d)',new_users_30d:'New Users (30d)',plan_dist:'Plan Distribution',
 org_name:'Organization',plan:'Plan',users:'Users',farms:'Farms',status:'Status',created:'Created',last_activity:'Last Activity',actions:'Actions',deactivate:'Deactivate',activate:'Activate',delete:'Delete',
@@ -4647,7 +4648,8 @@ egg_type:'Egg Type',quantity:'Quantity',warehouse:'Warehouse',
 ticket_id:'#Ticket',subject:'Subject',priority:'Priority',category:'Category',org:'Organization',delete_selected:'Delete Selected',
 region:'Region',price:'Avg. Price',production:'Production',demand:'Demand',supply:'Supply',trend:'Trend',add_entry:'New Entry',date:'Date',source:'Source',notes:'Notes',save:'Save',
 no_data:'No data',error:'Error loading data',hours:'hrs',confirm_delete_org:'DELETE ENTIRE ORGANIZATION. This is IRREVERSIBLE.',confirm_delete_ticket:'Permanently delete ticket?',confirm_delete_user:'Permanently delete user?',
-total_production:'Total Production',feature_requests:'Feature Requests',critical_tickets:'Critical',response_avg:'Avg. Response'}};
+total_production:'Total Production',feature_requests:'Feature Requests',critical_tickets:'Critical',response_avg:'Avg. Response',
+tab_settings:'My Account',current_pw:'Current Password',new_pw:'New Password',confirm_pw:'Confirm Password',change_pw:'Change Password',pw_changed:'Password changed successfully',pw_mismatch:'Passwords do not match',pw_rules:'Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol',account_info:'Account Info'}};
 const lang=document.documentElement.lang||'es';
 const lbl=L[lang]||L[Object.keys(L).find(k=>lang.startsWith(k))]||L.es;
 
@@ -4656,7 +4658,8 @@ const tabs=[
 {id:'sa-inventory',label:lbl.tab_inventory,icon:'📦'},
 {id:'sa-accounts',label:lbl.tab_accounts,icon:'🏢'},
 {id:'sa-tickets',label:lbl.tab_tickets,icon:'🎫'},
-{id:'sa-market',label:lbl.tab_market,icon:'📈'}
+{id:'sa-market',label:lbl.tab_market,icon:'📈'},
+{id:'sa-settings',label:lbl.tab_settings,icon:'⚙️'}
 ];
 
 let h=`<div class="page-header"><h2>🔑 ${lbl.title}</h2></div>`;
@@ -4678,6 +4681,7 @@ else if(_saTab==='sa-inventory')await _saRenderInventory(ct,lbl);
 else if(_saTab==='sa-accounts')await _saRenderAccounts(ct,lbl);
 else if(_saTab==='sa-tickets')await _saRenderTickets(ct,lbl);
 else if(_saTab==='sa-market')await _saRenderMarket(ct,lbl);
+else if(_saTab==='sa-settings')_saRenderSettings(ct,lbl);
 }catch(e){ct.innerHTML=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
 }
 
@@ -4911,6 +4915,41 @@ try{
 const r=await apiService.fetch('/api/v1/superadmin/market-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
 if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
 showToast('Entrada creada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _saRenderSettings(ct,lbl){
+const u=_currentUser||{};
+let h=`<div class="card" style="margin-bottom:16px"><h3>👤 ${lbl.account_info}</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
+<div class="kpi-card"><div class="kpi-label">Email</div><div class="kpi-value" style="font-size:0.95rem">${u.email||'-'}</div></div>
+<div class="kpi-card"><div class="kpi-label">Nombre</div><div class="kpi-value" style="font-size:0.95rem">${u.full_name||'-'}</div></div>
+<div class="kpi-card"><div class="kpi-label">Rol</div><div class="kpi-value" style="font-size:0.95rem;color:var(--primary)">SUPERADMIN</div></div>
+</div></div>`;
+
+h+=`<div class="card"><h3>🔒 ${lbl.change_pw}</h3>
+<p style="font-size:0.85rem;color:var(--text-light);margin-bottom:12px">${lbl.pw_rules}</p>
+<form id="sa-pw-form" onsubmit="_saChangePassword(event);return false" style="max-width:400px;display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.current_pw}</label><input type="password" id="sa-pw-current" required autocomplete="current-password"></div>
+<div><label>${lbl.new_pw}</label><input type="password" id="sa-pw-new" required minlength="8" maxlength="128" autocomplete="new-password"></div>
+<div><label>${lbl.confirm_pw}</label><input type="password" id="sa-pw-confirm" required minlength="8" maxlength="128" autocomplete="new-password"></div>
+<button type="submit" class="btn btn-primary" style="align-self:flex-start">${lbl.change_pw}</button>
+</form></div>`;
+ct.innerHTML=h;
+}
+
+async function _saChangePassword(e){
+e.preventDefault();
+const lang=document.documentElement.lang||'es';
+const cur=document.getElementById('sa-pw-current').value;
+const nw=document.getElementById('sa-pw-new').value;
+const cf=document.getElementById('sa-pw-confirm').value;
+if(nw!==cf){showToast(lang==='en'?'Passwords do not match':'Las contraseñas no coinciden','error');return;}
+try{
+const r=await apiService.fetch('/api/v1/auth/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({current_password:cur,new_password:nw})});
+if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.detail||r.statusText);}
+showToast(lang==='en'?'Password changed successfully':'Contraseña cambiada exitosamente');
+document.getElementById('sa-pw-form').reset();
 }catch(err){showToast('Error: '+err.message,'error');}
 }
 
