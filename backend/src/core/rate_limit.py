@@ -32,6 +32,7 @@ async def close_redis() -> None:
 async def check_rate_limit(key: str, max_requests: int, window_seconds: int) -> bool:
     """Return True if request is allowed, False if rate limited."""
     if not _redis:
+        logger.warning("Rate limit bypassed — Redis unavailable (key=%s)", key)
         return True  # Fail-open: allow requests when Redis is unavailable
     try:
         full_key = f"rl:{key}"

@@ -30,11 +30,12 @@ PLAN_LIMITS = {
         "support_sla_hours": None,
     },
     "hobby": {
-        "price_monthly": 9,
-        "price_annual": 90,  # 2 months free
+        "price_monthly": 19,
+        "price_annual": 190,  # 2 months free
+        "per_user_extra": 4.99,
         "farms": 1,
-        "flocks": 3,
-        "users": 2,
+        "flocks": 2,
+        "users": 1,  # base; extra users at per_user_extra
         "modules": ["dashboard", "production", "feed"],
         "health": False,
         "fcr": True,
@@ -44,7 +45,7 @@ PLAN_LIMITS = {
         "traceability": False,
         "planning": False,
         "ai_predictions": False,
-        "field_mode": False,
+        "field_mode": True,
         "vet_mode": False,
         "iot": False,
         "i18n": False,
@@ -54,11 +55,12 @@ PLAN_LIMITS = {
         "support_sla_hours": None,  # FAQ only
     },
     "starter": {
-        "price_monthly": 19,
-        "price_annual": 190,
-        "farms": 3,
-        "flocks": 10,
-        "users": 5,
+        "price_monthly": 49,
+        "price_annual": 490,
+        "per_user_extra": 3.99,
+        "farms": 1,
+        "flocks": 5,
+        "users": 1,
         "modules": [
             "dashboard",
             "production",
@@ -87,11 +89,12 @@ PLAN_LIMITS = {
         "support_sla_hours": 48,
     },
     "pro": {
-        "price_monthly": 49,
-        "price_annual": 490,
-        "farms": 10,
-        "flocks": None,  # unlimited
-        "users": 15,
+        "price_monthly": 99,
+        "price_annual": 990,
+        "per_user_extra": 2.99,
+        "farms": 1,
+        "flocks": 15,
+        "users": 1,
         "modules": [
             "dashboard",
             "production",
@@ -101,7 +104,6 @@ PLAN_LIMITS = {
             "finance",
             "inventory",
             "environment",
-            "inventory",
             "operations",
             "biosecurity",
             "traceability",
@@ -125,11 +127,12 @@ PLAN_LIMITS = {
         "support_sla_hours": 12,
     },
     "enterprise": {
-        "price_monthly": 99,
-        "price_annual": 990,
-        "farms": None,
-        "flocks": None,
-        "users": None,
+        "price_monthly": 199,
+        "price_annual": 1990,
+        "per_user_extra": 2.49,
+        "farms": None,  # unlimited
+        "flocks": None,  # unlimited
+        "users": 1,
         "modules": "all",
         "health": True,
         "fcr": True,
@@ -146,7 +149,7 @@ PLAN_LIMITS = {
         "offline": True,
         "dark_mode": True,
         "support_tickets": None,
-        "support_sla_hours": 4,
+        "support_sla_hours": None,  # 24/7 dedicated
     },
 }
 
@@ -228,6 +231,7 @@ def get_plan_summary(plan: str) -> dict:
         "plan": plan,
         "price_monthly": limits.get("price_monthly"),
         "price_annual": limits.get("price_annual"),
+        "per_user_extra": limits.get("per_user_extra", 0),
         "limits": {
             "farms": limits.get("farms"),
             "flocks": limits.get("flocks"),

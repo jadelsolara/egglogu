@@ -24,5 +24,8 @@ async def capture_lead(data: LeadCreate, db: AsyncSession = Depends(get_db)):
     lead = Lead(**data.model_dump())
     db.add(lead)
     await db.flush()
-    archive_lead(data.email, data.model_dump())
+    try:
+        archive_lead(data.email, data.model_dump())
+    except Exception:
+        pass  # Lead saved to DB; archive is best-effort
     return {"ok": True}
