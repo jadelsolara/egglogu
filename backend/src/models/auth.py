@@ -11,6 +11,7 @@ from src.models.base import TimestampMixin
 
 
 class Role(str, enum.Enum):
+    superadmin = "superadmin"
     owner = "owner"
     manager = "manager"
     vet = "vet"
@@ -38,8 +39,8 @@ class User(TimestampMixin, Base):
     oauth_provider: Mapped[Optional[str]] = mapped_column(String(20), default=None)
     oauth_sub: Mapped[Optional[str]] = mapped_column(String(255), default=None)
     role: Mapped[Role] = mapped_column(default=Role.viewer)
-    organization_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("organizations.id", ondelete="CASCADE")
+    organization_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("organizations.id", ondelete="CASCADE"), nullable=True, default=None
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -62,4 +63,4 @@ class User(TimestampMixin, Base):
     geo_lat: Mapped[Optional[float]] = mapped_column(default=None)
     geo_lng: Mapped[Optional[float]] = mapped_column(default=None)
 
-    organization: Mapped[Organization] = relationship(back_populates="users")
+    organization: Mapped[Optional[Organization]] = relationship(back_populates="users")

@@ -38,3 +38,4 @@ from src.models.compliance import (  # noqa: F401
     ComplianceCertification, ComplianceInspection, SalmonellaTest,
 )
 from src.models.cost_center import CostCenter, CostAllocation, ProfitLossSnapshot  # noqa: F401
+from src.models.market_intelligence import MarketIntelligence, PriceTrend  # noqa: F401

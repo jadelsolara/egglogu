@@ -354,6 +354,12 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
  <a data-section="admin" onclick="nav('admin')"><i>👑</i><span data-t="nav_admin">Admin</span></a>
  <a data-section="config" onclick="nav('config')"><i>⚙️</i><span data-t="nav_config">Config</span></a>
  </div>
+ <div id="nav-superadmin-group" style="display:none">
+ <div class="nav-group-label grp-open" data-t="grp_superadmin" onclick="toggleNavGroup(this)">Superadmin</div>
+ <div class="nav-group-links grp-open" data-grp="superadmin">
+ <a data-section="superadmin" onclick="nav('superadmin')"><i>🔑</i><span data-t="nav_superadmin">Superadmin</span></a>
+ </div>
+ </div>
  </nav>
 <div class="mode-toggles">
 <button onclick="toggleCampoMode()" id="btn-campo" class="mode-btn" aria-label="Toggle Campo Mode">🌾 <span data-t="nav_campo_mode">Modo Campo</span></button>
@@ -396,6 +402,7 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
 <div id="sec-soporte" class="section" role="region" aria-label="Support"></div>
 <div id="sec-admin" class="section" role="region" aria-label="Administration"></div>
 <div id="sec-config" class="section" role="region" aria-label="Settings"></div>
+<div id="sec-superadmin" class="section" role="region" aria-label="Superadmin"></div>
 </main>
 </div>
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal()" role="dialog" aria-modal="true" aria-labelledby="modal-title">
@@ -448,7 +455,7 @@ function _bugUpdateBadge(){const b=document.getElementById('bug-badge');if(!b)re
 // ============ TRANSLATIONS ============
 const T={es:{
 save:'Guardar',cancel:'Cancelar',delete:'Eliminar',edit:'Editar',add:'Agregar',close:'Cerrar',actions:'Acciones',date:'Fecha',notes:'Notas',name:'Nombre',phone:'Teléfono',email:'Email',address:'Dirección',confirm_delete:'¿Eliminar este registro?',no_data:'No hay datos registrados',total:'Total',all:'Todos',loading:'Cargando',search:'Buscar',from:'Desde',to:'Hasta',status:'Estado',export_csv:'Exportar CSV',today:'Hoy',active:'Activo',inactive:'Inactivo',
-nav_dashboard:'Dashboard',nav_production:'Producción',nav_flocks:'Lotes',nav_health:'Sanidad',nav_feed:'Alimento',nav_clients:'Clientes',nav_finances:'Finanzas',nav_analysis:'Análisis',nav_operations:'Operaciones',nav_environment:'Ambiente',nav_config:'Configuración',nav_support:'Soporte',nav_admin:'Admin SaaS',nav_inventory:'Inventario',grp_production:'Producción',grp_health:'Salud',grp_commercial:'Comercial',grp_management:'Gestión',grp_system:'Sistema',
+nav_dashboard:'Dashboard',nav_production:'Producción',nav_flocks:'Lotes',nav_health:'Sanidad',nav_feed:'Alimento',nav_clients:'Clientes',nav_finances:'Finanzas',nav_analysis:'Análisis',nav_operations:'Operaciones',nav_environment:'Ambiente',nav_config:'Configuración',nav_support:'Soporte',nav_admin:'Admin SaaS',nav_inventory:'Inventario',nav_superadmin:'Superadmin',grp_production:'Producción',grp_health:'Salud',grp_commercial:'Comercial',grp_management:'Gestión',grp_system:'Sistema',grp_superadmin:'Superadmin',
 dash_title:'Panel Principal',kpi_today:'Producción Hoy',kpi_henday:'Tasa Hen-Day',kpi_fcr:'Conversión (FCR)',kpi_mortality:'Mortalidad',kpi_cost_egg:'Costo/Huevo',kpi_income_net:'Ingreso Neto',kpi_alerts:'Alertas',kpi_active_hens:'Gallinas Activas',kpi_active_flocks:'Lotes Activos',dash_alerts:'Alertas',dash_trend:'Tendencia 30 Días',dash_no_alerts:'Sin alertas',dash_snapshot:'Guardar Snapshot KPI',dash_kpi_history:'Historial KPI',qe_title:'Entrada Rápida',qe_eggs_title:'Producción',qe_feed_title:'Alimento',qe_mort_title:'Mortalidad',qe_env_title:'Ambiente',qe_eggs_count:'Huevos',qe_feed_kg:'Kg Alimento',qe_deaths:'Muertes',qe_cause:'Causa',qe_temp:'Temp °C',qe_hum:'Humedad %',qe_save:'Guardar',qe_saved:'Guardado',qe_select_flock:'Seleccionar Lote',
 alert_vaccine_overdue:'Vacuna vencida',alert_vaccine_soon:'Vacuna próxima',alert_low_feed:'Stock alimento bajo',alert_high_mortality:'Mortalidad alta',alert_active_outbreak:'Brote activo',alert_withdrawal:'Retiro activo',
 flock_title:'Gestión de Lotes',flock_add:'Nuevo Lote',flock_name:'Nombre',flock_breed:'Raza',flock_count:'Cantidad Inicial',flock_birthdate:'Fecha Nacimiento',flock_purchase_date:'Fecha Compra',flock_supplier:'Proveedor',flock_cost:'Costo Total',flock_status:'Estado',flock_notes:'Notas',flock_age:'Edad',flock_health:'Salud',flock_weeks:'sem',flock_days:'días',flock_current:'Actuales',flock_status_cria:'Cría',flock_status_recria:'Recría',flock_status_produccion:'Producción',flock_status_descarte:'Descarte',flock_edit:'Editar Lote',flock_lifecycle:'Ciclo de Vida',flock_roadmap:'Roadmap',
@@ -509,7 +516,7 @@ auth_welcome:'Cuenta creada. Bienvenido!',auth_error:'Credenciales incorrectas',
 ana_economics:'Economía',flock_purchase_cost:'Costo por Ave',econ_cost_per_egg:'Costo/Huevo',econ_roi_per_bird:'ROI/Ave',econ_acquisition:'Adquisición',econ_feed_cost:'Costo Alimento',econ_health_cost:'Costo Sanitario',econ_direct_expenses:'Gastos Directos',econ_total_investment:'Inversión Total',econ_total_costs:'Costos Totales',econ_net_result:'Resultado Neto',econ_daily_cost_bird:'Costo Diario/Ave',econ_days_active:'Días Activo',econ_no_data_guide:'Ingrese costos de compra en Lotes, gastos en Finanzas y costos en Vacunas/Medicamentos para ver el análisis económico.',exp_flock:'Lote (opcional)',health_cost:'Costo',econ_org_summary:'Resumen Organización',econ_cost_breakdown:'Desglose de Costos',econ_completeness:'Datos Disponibles'
 },en:{
 save:'Save',cancel:'Cancel',delete:'Delete',edit:'Edit',add:'Add',close:'Close',actions:'Actions',date:'Date',notes:'Notes',name:'Name',phone:'Phone',email:'Email',address:'Address',confirm_delete:'Delete this record?',no_data:'No data recorded',total:'Total',all:'All',loading:'Loading',search:'Search',from:'From',to:'To',status:'Status',export_csv:'Export CSV',today:'Today',active:'Active',inactive:'Inactive',
-nav_dashboard:'Dashboard',nav_production:'Production',nav_flocks:'Flocks',nav_health:'Health',nav_feed:'Feed',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analysis',nav_operations:'Operations',nav_environment:'Environment',nav_config:'Settings',nav_support:'Support',nav_admin:'SaaS Admin',nav_inventory:'Inventory',grp_production:'Production',grp_health:'Health',grp_commercial:'Commercial',grp_management:'Management',grp_system:'System',
+nav_dashboard:'Dashboard',nav_production:'Production',nav_flocks:'Flocks',nav_health:'Health',nav_feed:'Feed',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analysis',nav_operations:'Operations',nav_environment:'Environment',nav_config:'Settings',nav_support:'Support',nav_admin:'SaaS Admin',nav_inventory:'Inventory',nav_superadmin:'Superadmin',grp_production:'Production',grp_health:'Health',grp_commercial:'Commercial',grp_management:'Management',grp_system:'System',grp_superadmin:'Superadmin',
 dash_title:'Main Dashboard',kpi_today:'Production Today',kpi_henday:'Hen-Day Rate',kpi_fcr:'Feed Conversion (FCR)',kpi_mortality:'Mortality',kpi_cost_egg:'Cost/Egg',kpi_income_net:'Net Income',kpi_alerts:'Alerts',kpi_active_hens:'Active Hens',kpi_active_flocks:'Active Flocks',dash_alerts:'Alerts',dash_trend:'30 Day Trend',dash_no_alerts:'No alerts',dash_snapshot:'Save KPI Snapshot',dash_kpi_history:'KPI History',qe_title:'Quick Entry',qe_eggs_title:'Production',qe_feed_title:'Feed',qe_mort_title:'Mortality',qe_env_title:'Environment',qe_eggs_count:'Eggs',qe_feed_kg:'Kg Feed',qe_deaths:'Deaths',qe_cause:'Cause',qe_temp:'Temp °C',qe_hum:'Humidity %',qe_save:'Save',qe_saved:'Saved',qe_select_flock:'Select Flock',
 alert_vaccine_overdue:'Vaccine overdue',alert_vaccine_soon:'Vaccine upcoming',alert_low_feed:'Feed stock low',alert_high_mortality:'High mortality',alert_active_outbreak:'Active outbreak',alert_withdrawal:'Active withdrawal',
 flock_title:'Flock Management',flock_add:'New Flock',flock_name:'Name',flock_breed:'Breed',flock_count:'Initial Count',flock_birthdate:'Birth Date',flock_purchase_date:'Purchase Date',flock_supplier:'Supplier',flock_cost:'Total Cost',flock_status:'Status',flock_notes:'Notes',flock_age:'Age',flock_health:'Health',flock_weeks:'wks',flock_days:'days',flock_current:'Current',flock_status_cria:'Brooding',flock_status_recria:'Growing',flock_status_produccion:'Production',flock_status_descarte:'Culled',flock_edit:'Edit Flock',flock_lifecycle:'Lifecycle',flock_roadmap:'Roadmap',
@@ -563,7 +570,7 @@ auth_welcome:'Account created. Welcome!',auth_error:'Invalid credentials',auth_f
 ana_economics:'Economics',flock_purchase_cost:'Cost per Bird',econ_cost_per_egg:'Cost/Egg',econ_roi_per_bird:'ROI/Bird',econ_acquisition:'Acquisition',econ_feed_cost:'Feed Cost',econ_health_cost:'Health Cost',econ_direct_expenses:'Direct Expenses',econ_total_investment:'Total Investment',econ_total_costs:'Total Costs',econ_net_result:'Net Result',econ_daily_cost_bird:'Daily Cost/Bird',econ_days_active:'Days Active',econ_no_data_guide:'Enter purchase costs in Flocks, expenses in Finances, and costs in Vaccines/Medications to see the economic analysis.',exp_flock:'Flock (optional)',health_cost:'Cost',econ_org_summary:'Organization Summary',econ_cost_breakdown:'Cost Breakdown',econ_completeness:'Data Available'
 },pt:{
 save:'Salvar',cancel:'Cancelar',delete:'Excluir',edit:'Editar',add:'Adicionar',close:'Fechar',actions:'Ações',date:'Data',notes:'Observações',name:'Nome',phone:'Telefone',email:'Email',address:'Endereço',confirm_delete:'Excluir este registro?',no_data:'Nenhum dado registrado',total:'Total',all:'Todos',loading:'Carregando',search:'Buscar',from:'De',to:'Até',status:'Status',export_csv:'Exportar CSV',today:'Hoje',active:'Ativo',inactive:'Inativo',
-nav_dashboard:'Dashboard',nav_production:'Produção',nav_flocks:'Lotes',nav_health:'Sanidade',nav_feed:'Alimentação',nav_clients:'Clientes',nav_finances:'Finanças',nav_analysis:'Análise',nav_operations:'Operações',nav_environment:'Ambiente',nav_config:'Configuração',nav_support:'Suporte',nav_admin:'Admin SaaS',nav_inventory:'Inventário',grp_production:'Produção',grp_health:'Saúde',grp_commercial:'Comercial',grp_management:'Gestão',grp_system:'Sistema',
+nav_dashboard:'Dashboard',nav_production:'Produção',nav_flocks:'Lotes',nav_health:'Sanidade',nav_feed:'Alimentação',nav_clients:'Clientes',nav_finances:'Finanças',nav_analysis:'Análise',nav_operations:'Operações',nav_environment:'Ambiente',nav_config:'Configuração',nav_support:'Suporte',nav_admin:'Admin SaaS',nav_inventory:'Inventário',nav_superadmin:'Superadmin',grp_production:'Produção',grp_health:'Saúde',grp_commercial:'Comercial',grp_management:'Gestão',grp_system:'Sistema',grp_superadmin:'Superadmin',
 dash_title:'Painel Principal',kpi_today:'Produção Hoje',kpi_henday:'Taxa Hen-Day',kpi_fcr:'Conversão (FCR)',kpi_mortality:'Mortalidade',kpi_cost_egg:'Custo/Ovo',kpi_income_net:'Receita Líquida',kpi_alerts:'Alertas',kpi_active_hens:'Galinhas Ativas',kpi_active_flocks:'Lotes Ativos',dash_alerts:'Alertas',dash_trend:'Tendência 30 Dias',dash_no_alerts:'Sem alertas',dash_snapshot:'Salvar Snapshot KPI',dash_kpi_history:'Histórico KPI',qe_title:'Entrada Rápida',qe_eggs_title:'Produção',qe_feed_title:'Alimentação',qe_mort_title:'Mortalidade',qe_env_title:'Ambiente',qe_eggs_count:'Ovos',qe_feed_kg:'Kg Ração',qe_deaths:'Mortes',qe_cause:'Causa',qe_temp:'Temp °C',qe_hum:'Umidade %',qe_save:'Salvar',qe_saved:'Salvo',qe_select_flock:'Selecionar Lote',
 alert_vaccine_overdue:'Vacina vencida',alert_vaccine_soon:'Vacina próxima',alert_low_feed:'Estoque de ração baixo',alert_high_mortality:'Mortalidade alta',alert_active_outbreak:'Surto ativo',alert_withdrawal:'Carência ativa',
 flock_title:'Gestão de Lotes',flock_add:'Novo Lote',flock_name:'Nome',flock_breed:'Raça',flock_count:'Quantidade Inicial',flock_birthdate:'Data de Nascimento',flock_purchase_date:'Data de Compra',flock_supplier:'Fornecedor',flock_cost:'Custo Total',flock_status:'Status',flock_notes:'Observações',flock_age:'Idade',flock_health:'Saúde',flock_weeks:'sem',flock_days:'dias',flock_current:'Atuais',flock_status_cria:'Cria',flock_status_recria:'Recria',flock_status_produccion:'Produção',flock_status_descarte:'Descarte',flock_edit:'Editar Lote',flock_lifecycle:'Ciclo de Vida',flock_roadmap:'Roadmap',
@@ -618,7 +625,7 @@ ana_economics:'Economia',flock_purchase_cost:'Custo por Ave',econ_cost_per_egg:'
 },
 fr:{
 save:'Enregistrer',cancel:'Annuler',delete:'Supprimer',edit:'Modifier',add:'Ajouter',close:'Fermer',actions:'Actions',date:'Date',notes:'Notes',name:'Nom',phone:'Téléphone',email:'E-mail',address:'Adresse',confirm_delete:'Supprimer cet enregistrement ?',no_data:'Aucune donnée enregistrée',total:'Total',all:'Tout',loading:'Chargement',search:'Rechercher',from:'Du',to:'Au',status:'Statut',export_csv:'Exporter CSV',today:'Aujourd\'hui',active:'Actif',inactive:'Inactif',
-nav_dashboard:'Tableau de bord',nav_production:'Production',nav_flocks:'Lots',nav_health:'Santé',nav_feed:'Alimentation',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analyses',nav_operations:'Opérations',nav_environment:'Environnement',nav_config:'Paramètres',nav_support:'Support',nav_admin:'Admin SaaS',nav_inventory:'Inventaire',grp_production:'Production',grp_health:'Santé',grp_commercial:'Commercial',grp_management:'Gestion',grp_system:'Système',
+nav_dashboard:'Tableau de bord',nav_production:'Production',nav_flocks:'Lots',nav_health:'Santé',nav_feed:'Alimentation',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analyses',nav_operations:'Opérations',nav_environment:'Environnement',nav_config:'Paramètres',nav_support:'Support',nav_admin:'Admin SaaS',nav_inventory:'Inventaire',nav_superadmin:'Superadmin',grp_production:'Production',grp_health:'Santé',grp_commercial:'Commercial',grp_management:'Gestion',grp_system:'Système',grp_superadmin:'Superadmin',
 dash_title:'Tableau de bord principal',kpi_today:'Production du jour',kpi_henday:'Taux de ponte',kpi_fcr:'Indice de consommation (FCR)',kpi_mortality:'Mortalité',kpi_cost_egg:'Coût/Œuf',kpi_income_net:'Revenu net',kpi_alerts:'Alertes',kpi_active_hens:'Poules actives',kpi_active_flocks:'Lots actifs',dash_alerts:'Alertes',dash_trend:'Tendance 30 jours',dash_no_alerts:'Aucune alerte',dash_snapshot:'Sauvegarder un instantané KPI',dash_kpi_history:'Historique KPI',qe_title:'Saisie Rapide',qe_eggs_title:'Production',qe_feed_title:'Alimentation',qe_mort_title:'Mortalité',qe_env_title:'Environnement',qe_eggs_count:'Œufs',qe_feed_kg:'Kg Aliment',qe_deaths:'Décès',qe_cause:'Cause',qe_temp:'Temp °C',qe_hum:'Humidité %',qe_save:'Enregistrer',qe_saved:'Enregistré',qe_select_flock:'Sélectionner Lot',
 alert_vaccine_overdue:'Vaccin en retard',alert_vaccine_soon:'Vaccin à venir',alert_low_feed:'Stock d\'aliment bas',alert_high_mortality:'Mortalité élevée',alert_active_outbreak:'Épidémie active',alert_withdrawal:'Délai d\'attente actif',
 flock_title:'Gestion des lots',flock_add:'Nouveau lot',flock_name:'Nom',flock_breed:'Race',flock_count:'Effectif initial',flock_birthdate:'Date de naissance',flock_purchase_date:'Date d\'achat',flock_supplier:'Fournisseur',flock_cost:'Coût total',flock_status:'Statut',flock_notes:'Notes',flock_age:'Âge',flock_health:'Santé',flock_weeks:'sem',flock_days:'jours',flock_current:'Actuel',flock_status_cria:'Démarrage',flock_status_recria:'Croissance',flock_status_produccion:'Production',flock_status_descarte:'Réformé',flock_edit:'Modifier le lot',flock_lifecycle:'Cycle de vie',flock_roadmap:'Plan de route',
@@ -673,7 +680,7 @@ ana_economics:'Économie',flock_purchase_cost:'Coût par oiseau',econ_cost_per_e
 },
 de:{
 save:'Speichern',cancel:'Abbrechen',delete:'Löschen',edit:'Bearbeiten',add:'Hinzufügen',close:'Schließen',actions:'Aktionen',date:'Datum',notes:'Notizen',name:'Name',phone:'Telefon',email:'E-Mail',address:'Adresse',confirm_delete:'Diesen Eintrag löschen?',no_data:'Keine Daten erfasst',total:'Gesamt',all:'Alle',loading:'Laden',search:'Suche',from:'Von',to:'Bis',status:'Status',export_csv:'CSV exportieren',today:'Heute',active:'Aktiv',inactive:'Inaktiv',
-nav_dashboard:'Übersicht',nav_production:'Produktion',nav_flocks:'Herden',nav_health:'Gesundheit',nav_feed:'Futter',nav_clients:'Kunden',nav_finances:'Finanzen',nav_analysis:'Analyse',nav_operations:'Betrieb',nav_environment:'Umwelt',nav_config:'Einstellungen',nav_support:'Support',nav_admin:'SaaS-Admin',nav_inventory:'Inventar',grp_production:'Produktion',grp_health:'Gesundheit',grp_commercial:'Geschäft',grp_management:'Verwaltung',grp_system:'System',
+nav_dashboard:'Übersicht',nav_production:'Produktion',nav_flocks:'Herden',nav_health:'Gesundheit',nav_feed:'Futter',nav_clients:'Kunden',nav_finances:'Finanzen',nav_analysis:'Analyse',nav_operations:'Betrieb',nav_environment:'Umwelt',nav_config:'Einstellungen',nav_support:'Support',nav_admin:'SaaS-Admin',nav_inventory:'Inventar',nav_superadmin:'Superadmin',grp_production:'Produktion',grp_health:'Gesundheit',grp_commercial:'Geschäft',grp_management:'Verwaltung',grp_system:'System',grp_superadmin:'Superadmin',
 dash_title:'Hauptübersicht',kpi_today:'Produktion heute',kpi_henday:'Legeleistung',kpi_fcr:'Futterverwertung (FCR)',kpi_mortality:'Mortalität',kpi_cost_egg:'Kosten/Ei',kpi_income_net:'Nettoeinkommen',kpi_alerts:'Warnungen',kpi_active_hens:'Aktive Hennen',kpi_active_flocks:'Aktive Herden',dash_alerts:'Warnungen',dash_trend:'30-Tage-Trend',dash_no_alerts:'Keine Warnungen',dash_snapshot:'KPI-Snapshot speichern',dash_kpi_history:'KPI-Verlauf',qe_title:'Schnelleingabe',qe_eggs_title:'Produktion',qe_feed_title:'Futter',qe_mort_title:'Mortalität',qe_env_title:'Umwelt',qe_eggs_count:'Eier',qe_feed_kg:'Kg Futter',qe_deaths:'Todesfälle',qe_cause:'Ursache',qe_temp:'Temp °C',qe_hum:'Feuchtigkeit %',qe_save:'Speichern',qe_saved:'Gespeichert',qe_select_flock:'Herde wählen',
 alert_vaccine_overdue:'Impfung überfällig',alert_vaccine_soon:'Impfung bevorstehend',alert_low_feed:'Futterbestand niedrig',alert_high_mortality:'Hohe Mortalität',alert_active_outbreak:'Aktiver Ausbruch',alert_withdrawal:'Aktive Wartezeit',
 flock_title:'Herdenverwaltung',flock_add:'Neue Herde',flock_name:'Name',flock_breed:'Rasse',flock_count:'Anfangsbestand',flock_birthdate:'Schlupfdatum',flock_purchase_date:'Kaufdatum',flock_supplier:'Lieferant',flock_cost:'Gesamtkosten',flock_status:'Status',flock_notes:'Notizen',flock_age:'Alter',flock_health:'Gesundheit',flock_weeks:'Wo.',flock_days:'Tage',flock_current:'Aktuell',flock_status_cria:'Aufzucht',flock_status_recria:'Junghennenaufzucht',flock_status_produccion:'Produktion',flock_status_descarte:'Aussortiert',flock_edit:'Herde bearbeiten',flock_lifecycle:'Lebenszyklus',flock_roadmap:'Fahrplan',
@@ -728,7 +735,7 @@ ana_economics:'Wirtschaft',flock_purchase_cost:'Kosten pro Tier',econ_cost_per_e
 },
 it:{
 save:'Salva',cancel:'Annulla',delete:'Elimina',edit:'Modifica',add:'Aggiungi',close:'Chiudi',actions:'Azioni',date:'Data',notes:'Note',name:'Nome',phone:'Telefono',email:'Email',address:'Indirizzo',confirm_delete:'Eliminare questo record?',no_data:'Nessun dato registrato',total:'Totale',all:'Tutti',loading:'Caricamento',search:'Cerca',from:'Da',to:'A',status:'Stato',export_csv:'Esporta CSV',today:'Oggi',active:'Attivo',inactive:'Inattivo',
-nav_dashboard:'Pannello',nav_production:'Produzione',nav_flocks:'Gruppi',nav_health:'Sanità',nav_feed:'Mangime',nav_clients:'Clienti',nav_finances:'Finanze',nav_analysis:'Analisi',nav_operations:'Operazioni',nav_environment:'Ambiente',nav_config:'Impostazioni',nav_support:'Supporto',nav_admin:'Admin SaaS',nav_inventory:'Inventario',grp_production:'Produzione',grp_health:'Salute',grp_commercial:'Commerciale',grp_management:'Gestione',grp_system:'Sistema',
+nav_dashboard:'Pannello',nav_production:'Produzione',nav_flocks:'Gruppi',nav_health:'Sanità',nav_feed:'Mangime',nav_clients:'Clienti',nav_finances:'Finanze',nav_analysis:'Analisi',nav_operations:'Operazioni',nav_environment:'Ambiente',nav_config:'Impostazioni',nav_support:'Supporto',nav_admin:'Admin SaaS',nav_inventory:'Inventario',nav_superadmin:'Superadmin',grp_production:'Produzione',grp_health:'Salute',grp_commercial:'Commerciale',grp_management:'Gestione',grp_system:'Sistema',grp_superadmin:'Superadmin',
 dash_title:'Pannello Principale',kpi_today:'Produzione Oggi',kpi_henday:'Tasso Gallina-Giorno',kpi_fcr:'Indice di Conversione (FCR)',kpi_mortality:'Mortalità',kpi_cost_egg:'Costo/Uovo',kpi_income_net:'Reddito Netto',kpi_alerts:'Avvisi',kpi_active_hens:'Galline Attive',kpi_active_flocks:'Gruppi Attivi',dash_alerts:'Avvisi',dash_trend:'Tendenza 30 Giorni',dash_no_alerts:'Nessun avviso',dash_snapshot:'Salva Istantanea KPI',dash_kpi_history:'Storico KPI',qe_title:'Inserimento Rapido',qe_eggs_title:'Produzione',qe_feed_title:'Mangime',qe_mort_title:'Mortalità',qe_env_title:'Ambiente',qe_eggs_count:'Uova',qe_feed_kg:'Kg Mangime',qe_deaths:'Decessi',qe_cause:'Causa',qe_temp:'Temp °C',qe_hum:'Umidità %',qe_save:'Salva',qe_saved:'Salvato',qe_select_flock:'Seleziona Gruppo',
 alert_vaccine_overdue:'Vaccino scaduto',alert_vaccine_soon:'Vaccino in arrivo',alert_low_feed:'Scorta mangime bassa',alert_high_mortality:'Mortalità elevata',alert_active_outbreak:'Focolaio attivo',alert_withdrawal:'Sospensione attiva',
 flock_title:'Gestione Gruppi',flock_add:'Nuovo Gruppo',flock_name:'Nome',flock_breed:'Razza',flock_count:'Quantità Iniziale',flock_birthdate:'Data di Nascita',flock_purchase_date:'Data di Acquisto',flock_supplier:'Fornitore',flock_cost:'Costo Totale',flock_status:'Stato',flock_notes:'Note',flock_age:'Età',flock_health:'Sanità',flock_weeks:'sett.',flock_days:'giorni',flock_current:'Attuale',flock_status_cria:'Allevamento',flock_status_recria:'Accrescimento',flock_status_produccion:'Produzione',flock_status_descarte:'Scarti',flock_edit:'Modifica Gruppo',flock_lifecycle:'Ciclo di Vita',flock_roadmap:'Roadmap',
@@ -783,7 +790,7 @@ ana_economics:'Economia',flock_purchase_cost:'Costo per capo',econ_cost_per_egg:
 },
 ja:{
 save:'保存',cancel:'キャンセル',delete:'削除',edit:'編集',add:'追加',close:'閉じる',actions:'操作',date:'日付',notes:'メモ',name:'名前',phone:'電話',email:'メール',address:'住所',confirm_delete:'このレコードを削除しますか？',no_data:'データがありません',total:'合計',all:'すべて',loading:'読み込み中',search:'検索',from:'開始',to:'終了',status:'ステータス',export_csv:'CSV出力',today:'今日',active:'有効',inactive:'無効',
-nav_dashboard:'ダッシュボード',nav_production:'産卵記録',nav_flocks:'鶏群',nav_health:'健康管理',nav_feed:'飼料',nav_clients:'取引先',nav_finances:'財務',nav_analysis:'分析',nav_operations:'運営',nav_environment:'環境',nav_config:'設定',nav_support:'サポート',nav_admin:'SaaS管理',nav_inventory:'在庫',grp_production:'生産',grp_health:'健康',grp_commercial:'商業',grp_management:'管理',grp_system:'システム',
+nav_dashboard:'ダッシュボード',nav_production:'産卵記録',nav_flocks:'鶏群',nav_health:'健康管理',nav_feed:'飼料',nav_clients:'取引先',nav_finances:'財務',nav_analysis:'分析',nav_operations:'運営',nav_environment:'環境',nav_config:'設定',nav_support:'サポート',nav_admin:'SaaS管理',nav_inventory:'在庫',nav_superadmin:'スーパー管理者',grp_production:'生産',grp_health:'健康',grp_commercial:'商業',grp_management:'管理',grp_system:'システム',grp_superadmin:'スーパー管理者',
 dash_title:'メインダッシュボード',kpi_today:'本日の生産',kpi_henday:'ヘンデイ産卵率',kpi_fcr:'飼料要求率（FCR）',kpi_mortality:'死亡率',kpi_cost_egg:'卵1個あたりコスト',kpi_income_net:'純利益',kpi_alerts:'アラート',kpi_active_hens:'稼働鶏数',kpi_active_flocks:'稼働鶏群数',dash_alerts:'アラート',dash_trend:'30日間トレンド',dash_no_alerts:'アラートなし',dash_snapshot:'KPIスナップショットを保存',dash_kpi_history:'KPI履歴',qe_title:'クイック入力',qe_eggs_title:'産卵',qe_feed_title:'飼料',qe_mort_title:'死亡',qe_env_title:'環境',qe_eggs_count:'卵数',qe_feed_kg:'Kg飼料',qe_deaths:'死亡数',qe_cause:'原因',qe_temp:'温度°C',qe_hum:'湿度%',qe_save:'保存',qe_saved:'保存済み',qe_select_flock:'鶏群を選択',
 alert_vaccine_overdue:'ワクチン期限超過',alert_vaccine_soon:'ワクチン接種予定',alert_low_feed:'飼料在庫不足',alert_high_mortality:'高死亡率',alert_active_outbreak:'発生中の疾病',alert_withdrawal:'休薬期間中',
 flock_title:'鶏群管理',flock_add:'新規鶏群',flock_name:'名称',flock_breed:'品種',flock_count:'初期羽数',flock_birthdate:'孵化日',flock_purchase_date:'購入日',flock_supplier:'仕入先',flock_cost:'総コスト',flock_status:'ステータス',flock_notes:'メモ',flock_age:'日齢',flock_health:'健康状態',flock_weeks:'週',flock_days:'日',flock_current:'現在',flock_status_cria:'育雛',flock_status_recria:'育成',flock_status_produccion:'産卵期',flock_status_descarte:'淘汰',flock_edit:'鶏群を編集',flock_lifecycle:'ライフサイクル',flock_roadmap:'ロードマップ',
@@ -838,7 +845,7 @@ ana_economics:'経済分析',flock_purchase_cost:'1羽あたりコスト',econ_c
 },
 zh:{
 save:'保存',cancel:'取消',delete:'删除',edit:'编辑',add:'添加',close:'关闭',actions:'操作',date:'日期',notes:'备注',name:'名称',phone:'电话',email:'邮箱',address:'地址',confirm_delete:'确定删除此记录？',no_data:'暂无数据',total:'合计',all:'全部',loading:'加载中',search:'搜索',from:'从',to:'至',status:'状态',export_csv:'导出CSV',today:'今天',active:'活跃',inactive:'停用',
-nav_dashboard:'仪表盘',nav_production:'产蛋',nav_flocks:'鸡群',nav_health:'健康',nav_feed:'饲料',nav_clients:'客户',nav_finances:'财务',nav_analysis:'分析',nav_operations:'运营',nav_environment:'环境',nav_config:'设置',nav_support:'支持',nav_admin:'SaaS管理',nav_inventory:'库存',grp_production:'生产',grp_health:'健康',grp_commercial:'商务',grp_management:'管理',grp_system:'系统',
+nav_dashboard:'仪表盘',nav_production:'产蛋',nav_flocks:'鸡群',nav_health:'健康',nav_feed:'饲料',nav_clients:'客户',nav_finances:'财务',nav_analysis:'分析',nav_operations:'运营',nav_environment:'环境',nav_config:'设置',nav_support:'支持',nav_admin:'SaaS管理',nav_inventory:'库存',nav_superadmin:'超级管理员',grp_production:'生产',grp_health:'健康',grp_commercial:'商务',grp_management:'管理',grp_system:'系统',grp_superadmin:'超级管理员',
 dash_title:'主仪表盘',kpi_today:'今日产量',kpi_henday:'产蛋率',kpi_fcr:'饲料转化率(FCR)',kpi_mortality:'死亡率',kpi_cost_egg:'单蛋成本',kpi_income_net:'净收入',kpi_alerts:'警报',kpi_active_hens:'在产母鸡',kpi_active_flocks:'活跃鸡群',dash_alerts:'警报',dash_trend:'30天趋势',dash_no_alerts:'无警报',dash_snapshot:'保存KPI快照',dash_kpi_history:'KPI历史',qe_title:'快速录入',qe_eggs_title:'产蛋',qe_feed_title:'饲料',qe_mort_title:'死亡',qe_env_title:'环境',qe_eggs_count:'鸡蛋数',qe_feed_kg:'公斤饲料',qe_deaths:'死亡数',qe_cause:'原因',qe_temp:'温度°C',qe_hum:'湿度%',qe_save:'保存',qe_saved:'已保存',qe_select_flock:'选择鸡群',
 alert_vaccine_overdue:'疫苗已过期',alert_vaccine_soon:'疫苗即将到期',alert_low_feed:'饲料库存不足',alert_high_mortality:'死亡率偏高',alert_active_outbreak:'疫情进行中',alert_withdrawal:'休药期进行中',
 flock_title:'鸡群管理',flock_add:'新建鸡群',flock_name:'名称',flock_breed:'品种',flock_count:'初始数量',flock_birthdate:'出生日期',flock_purchase_date:'购入日期',flock_supplier:'供应商',flock_cost:'总成本',flock_status:'状态',flock_notes:'备注',flock_age:'日龄',flock_health:'健康',flock_weeks:'周',flock_days:'天',flock_current:'当前',flock_status_cria:'育雏期',flock_status_recria:'育成期',flock_status_produccion:'产蛋期',flock_status_descarte:'淘汰',flock_edit:'编辑鸡群',flock_lifecycle:'生命周期',flock_roadmap:'发展规划',
@@ -2221,6 +2228,7 @@ function getStorageUsage(){try{const d=localStorage.getItem('egglogu_data');retu
 
 // ============ ROLE PERMISSIONS (A8) ============
 const ROLE_PERMISSIONS={
+superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
 owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
 manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
 worker:['dashboard','produccion','lotes','alimento','ambiente','soporte'],
@@ -2236,6 +2244,7 @@ system:['admin','config']
 };
 const DEFAULT_ROLE_PERMS=JSON.parse(JSON.stringify(ROLE_PERMISSIONS));
 const ROLE_MAX_MODULES={
+superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
 owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
 manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
 worker:['dashboard','produccion','lotes','alimento','ambiente','operaciones','soporte'],
@@ -2399,7 +2408,7 @@ saveData(D);
 }
 
 // ============ UI HELPERS ============
-const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','trazabilidad','carencias','soporte','admin']);
+const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','trazabilidad','carencias','soporte','admin','superadmin']);
 function toggleNavGroup(lbl){
 const links=lbl.nextElementSibling;if(!links||!links.classList.contains('nav-group-links'))return;
 lbl.classList.toggle('grp-open');links.classList.toggle('grp-open');
@@ -2470,7 +2479,7 @@ document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',
 openNavGroupFor(section);
 $('sidebar').classList.remove('open');
 _injectOnboarding(section);
-const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,soporte:renderSoporte,admin:renderAdmin,config:renderConfig};
+const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
 if(R[section]){
 if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);});}
 else{R[section]();postRenderA11y(section);}
@@ -4616,6 +4625,294 @@ closeModal();_loadAdminData();
 
 // Auto-sync offline tickets on reconnect
 window.addEventListener('online',()=>{if(_offlineTicketQueue.length)_syncOfflineTickets();});
+
+// ============ SUPERADMIN PANEL ============
+let _saTab='sa-dashboard';
+async function renderSuperadmin(){
+const el=$('sec-superadmin');if(!el)return;
+const L={es:{title:'Panel Superadmin',tab_dashboard:'Dashboard',tab_inventory:'Inventario Global',tab_accounts:'Cuentas',tab_tickets:'Tickets',tab_market:'Mercado',
+loading:'Cargando...',total_orgs:'Organizaciones',total_users:'Usuarios',active_users:'Activos',mrr:'MRR Estimado',total_eggs:'Huevos en Stock',open_tickets:'Tickets Abiertos',bug_tickets:'Bugs',avg_resolution:'Resol. Promedio',sla:'SLA',support_rating:'Rating Soporte',new_orgs_30d:'Nuevas Orgs (30d)',new_users_30d:'Nuevos Usuarios (30d)',plan_dist:'Distribución de Planes',
+org_name:'Organización',plan:'Plan',users:'Usuarios',farms:'Granjas',status:'Estado',created:'Creado',last_activity:'Última Actividad',actions:'Acciones',deactivate:'Desactivar',activate:'Activar',delete:'Eliminar',
+churn_title:'Análisis de Churn',monthly_churn:'Churn Mensual',retention:'Retención',churned_orgs:'Orgs Perdidas',
+egg_type:'Tipo Huevo',quantity:'Cantidad',warehouse:'Almacén',
+ticket_id:'#Ticket',subject:'Asunto',priority:'Prioridad',category:'Categoría',org:'Organización',delete_selected:'Eliminar Seleccionados',
+region:'Región',price:'Precio Promedio',production:'Producción',demand:'Demanda',supply:'Oferta',trend:'Tendencia',add_entry:'Nueva Entrada',date:'Fecha',source:'Fuente',notes:'Notas',save:'Guardar',
+no_data:'Sin datos',error:'Error al cargar datos',hours:'hrs',confirm_delete_org:'ELIMINAR ORGANIZACIÓN COMPLETA. Esto es IRREVERSIBLE.',confirm_delete_ticket:'Eliminar ticket permanentemente?',confirm_delete_user:'Eliminar usuario permanentemente?',
+total_production:'Producción Total',feature_requests:'Solicitudes',critical_tickets:'Críticos',response_avg:'Resp. Promedio'},
+en:{title:'Superadmin Panel',tab_dashboard:'Dashboard',tab_inventory:'Global Inventory',tab_accounts:'Accounts',tab_tickets:'Tickets',tab_market:'Market',
+loading:'Loading...',total_orgs:'Organizations',total_users:'Users',active_users:'Active',mrr:'Estimated MRR',total_eggs:'Eggs in Stock',open_tickets:'Open Tickets',bug_tickets:'Bugs',avg_resolution:'Avg. Resolution',sla:'SLA',support_rating:'Support Rating',new_orgs_30d:'New Orgs (30d)',new_users_30d:'New Users (30d)',plan_dist:'Plan Distribution',
+org_name:'Organization',plan:'Plan',users:'Users',farms:'Farms',status:'Status',created:'Created',last_activity:'Last Activity',actions:'Actions',deactivate:'Deactivate',activate:'Activate',delete:'Delete',
+churn_title:'Churn Analysis',monthly_churn:'Monthly Churn',retention:'Retention',churned_orgs:'Churned Orgs',
+egg_type:'Egg Type',quantity:'Quantity',warehouse:'Warehouse',
+ticket_id:'#Ticket',subject:'Subject',priority:'Priority',category:'Category',org:'Organization',delete_selected:'Delete Selected',
+region:'Region',price:'Avg. Price',production:'Production',demand:'Demand',supply:'Supply',trend:'Trend',add_entry:'New Entry',date:'Date',source:'Source',notes:'Notes',save:'Save',
+no_data:'No data',error:'Error loading data',hours:'hrs',confirm_delete_org:'DELETE ENTIRE ORGANIZATION. This is IRREVERSIBLE.',confirm_delete_ticket:'Permanently delete ticket?',confirm_delete_user:'Permanently delete user?',
+total_production:'Total Production',feature_requests:'Feature Requests',critical_tickets:'Critical',response_avg:'Avg. Response'}};
+const lang=document.documentElement.lang||'es';
+const lbl=L[lang]||L[Object.keys(L).find(k=>lang.startsWith(k))]||L.es;
+
+const tabs=[
+{id:'sa-dashboard',label:lbl.tab_dashboard,icon:'📊'},
+{id:'sa-inventory',label:lbl.tab_inventory,icon:'📦'},
+{id:'sa-accounts',label:lbl.tab_accounts,icon:'🏢'},
+{id:'sa-tickets',label:lbl.tab_tickets,icon:'🎫'},
+{id:'sa-market',label:lbl.tab_market,icon:'📈'}
+];
+
+let h=`<div class="page-header"><h2>🔑 ${lbl.title}</h2></div>`;
+h+=`<div class="tabs" style="margin-bottom:16px;display:flex;gap:4px;flex-wrap:wrap">`;
+tabs.forEach(tb=>{
+h+=`<button class="btn ${_saTab===tb.id?'btn-primary':'btn-secondary'} btn-sm" onclick="_saTab='${tb.id}';renderSuperadmin()">${tb.icon} ${tb.label}</button>`;
+});
+h+=`</div><div id="sa-content"></div>`;
+el.innerHTML=h;
+
+// Load tab content
+const ct=$('sa-content');
+if(!ct)return;
+ct.innerHTML=`<div class="loading-spinner" aria-label="${lbl.loading}"></div>`;
+
+try{
+if(_saTab==='sa-dashboard')await _saRenderDashboard(ct,lbl);
+else if(_saTab==='sa-inventory')await _saRenderInventory(ct,lbl);
+else if(_saTab==='sa-accounts')await _saRenderAccounts(ct,lbl);
+else if(_saTab==='sa-tickets')await _saRenderTickets(ct,lbl);
+else if(_saTab==='sa-market')await _saRenderMarket(ct,lbl);
+}catch(e){ct.innerHTML=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
+}
+
+async function _saFetch(path){
+const r=await apiService.fetch('/api/v1/superadmin'+path);
+if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.detail||r.statusText);}
+return r.json();
+}
+
+async function _saRenderDashboard(ct,lbl){
+const stats=await _saFetch('/platform-stats');
+let h=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">`;
+const kpis=[
+{label:lbl.total_orgs,value:stats.total_organizations,color:'var(--primary)'},
+{label:lbl.total_users,value:stats.total_users,color:'var(--info)'},
+{label:lbl.active_users,value:stats.active_users,color:'var(--success)'},
+{label:lbl.mrr,value:'$'+((stats.mrr_estimated||0).toFixed(2)),color:'var(--warning)'},
+{label:lbl.total_eggs,value:(stats.total_eggs_in_stock||0).toLocaleString(),color:'#8B4513'},
+{label:lbl.open_tickets,value:stats.open_tickets||0,color:'var(--danger)'},
+{label:lbl.bug_tickets,value:stats.bug_tickets||0,color:'#f44336'},
+{label:lbl.feature_requests,value:stats.feature_requests||0,color:'#2196F3'},
+{label:lbl.critical_tickets,value:stats.critical_tickets||0,color:'#d32f2f'},
+{label:lbl.avg_resolution,value:((stats.avg_resolution_hours||0).toFixed(1))+' '+lbl.hours,color:'var(--info)'},
+{label:lbl.response_avg,value:((stats.ticket_response_avg_hours||0).toFixed(1))+' '+lbl.hours,color:'#673AB7'},
+{label:lbl.sla,value:((stats.sla_compliance_pct||0).toFixed(1))+'%',color:stats.sla_compliance_pct>=90?'var(--success)':'var(--danger)'},
+{label:lbl.support_rating,value:((stats.avg_support_rating||0).toFixed(1))+'/5',color:'#FF9800'},
+{label:lbl.new_orgs_30d,value:stats.new_orgs_30d||0,color:'var(--primary)'},
+{label:lbl.new_users_30d,value:stats.new_users_30d||0,color:'var(--info)'}
+];
+kpis.forEach(k=>{
+h+=`<div class="kpi-card"><div class="kpi-label">${k.label}</div><div class="kpi-value" style="color:${k.color}">${k.value}</div></div>`;
+});
+h+=`</div>`;
+
+// Plan distribution
+if(stats.plan_distribution){
+h+=`<div class="card"><h3>${lbl.plan_dist}</h3><div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px">`;
+Object.entries(stats.plan_distribution).forEach(([plan,count])=>{
+const colors={hobby:'#78909C',starter:'#42A5F5',pro:'#AB47BC',enterprise:'#FF7043'};
+h+=`<div style="text-align:center;padding:12px 20px;background:var(--bg-card);border-radius:8px;border:2px solid ${colors[plan]||'var(--border)'}">
+<div style="font-size:24px;font-weight:700;color:${colors[plan]||'var(--text)'}">${count}</div>
+<div style="font-size:12px;color:var(--text-light);text-transform:uppercase">${plan}</div></div>`;
+});
+h+=`</div></div>`;
+}
+ct.innerHTML=h;
+}
+
+async function _saRenderInventory(ct,lbl){
+let h='';
+try{
+const data=await _saFetch('/inventory/overview');
+h+=`<div class="card"><h3>📦 ${lbl.tab_inventory}</h3>`;
+if(!data||!data.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.org}</th><th>${lbl.egg_type}</th><th>${lbl.quantity}</th><th>${lbl.warehouse}</th></tr></thead><tbody>`;
+data.forEach(item=>{
+h+=`<tr><td>${item.organization_name||'-'}</td><td>${item.egg_type||'-'}</td><td>${(item.total_quantity||0).toLocaleString()}</td><td>${item.warehouse||'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+}catch(e){h=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
+ct.innerHTML=h;
+}
+
+async function _saRenderAccounts(ct,lbl){
+let h='';
+try{
+const [orgs,churn]=await Promise.all([_saFetch('/organizations'),_saFetch('/churn-analysis')]);
+
+// Churn KPIs
+h+=`<div class="card" style="margin-bottom:16px"><h3>📉 ${lbl.churn_title}</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px">
+<div class="kpi-card"><div class="kpi-label">${lbl.monthly_churn}</div><div class="kpi-value" style="color:${churn.monthly_churn_rate>5?'var(--danger)':'var(--success)'}">${(churn.monthly_churn_rate||0).toFixed(1)}%</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.retention}</div><div class="kpi-value" style="color:${churn.retention_rate>=90?'var(--success)':'var(--warning)'}">${(churn.retention_rate||0).toFixed(1)}%</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.churned_orgs}</div><div class="kpi-value" style="color:var(--danger)">${(churn.churned_orgs||[]).length}</div></div>
+</div></div>`;
+
+// Orgs table
+h+=`<div class="card"><h3>🏢 ${lbl.tab_accounts}</h3>`;
+if(!orgs||!orgs.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.org_name}</th><th>${lbl.plan}</th><th>${lbl.users}</th><th>${lbl.farms}</th><th>${lbl.status}</th><th>${lbl.created}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+orgs.forEach(o=>{
+const st=o.subscription_status||'active';
+const badge=st==='active'?'success':st==='trialing'?'info':'secondary';
+h+=`<tr><td><strong>${o.name||'-'}</strong></td><td><span class="badge badge-${o.plan==='enterprise'?'warning':o.plan==='pro'?'info':'secondary'}">${(o.plan||'free').toUpperCase()}</span></td>
+<td>${o.user_count||0}</td><td>${o.farm_count||0}</td>
+<td><span class="badge badge-${badge}">${st}</span></td>
+<td>${o.created_at?(o.created_at.substring(0,10)):'-'}</td>
+<td><div class="btn-group">
+<button class="btn btn-secondary btn-sm" onclick="_saToggleOrg('${o.id}','${st==='active'||st==='trialing'?'cancelled':'active'}')">${st==='active'||st==='trialing'?lbl.deactivate:lbl.activate}</button>
+<button class="btn btn-danger btn-sm" onclick="_saDeleteOrg('${o.id}','${o.name||''}')">${lbl.delete}</button>
+</div></td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+}catch(e){h=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
+ct.innerHTML=h;
+}
+
+async function _saToggleOrg(orgId,newStatus){
+try{
+const r=await apiService.fetch('/api/v1/superadmin/organizations/'+orgId,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription_status:newStatus})});
+if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+showToast('Organización actualizada');renderSuperadmin();
+}catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function _saDeleteOrg(orgId,orgName){
+const lang=document.documentElement.lang||'es';
+const msg=lang==='en'?'DELETE ENTIRE ORGANIZATION. This is IRREVERSIBLE. Type the organization name to confirm:':'ELIMINAR ORGANIZACIÓN COMPLETA. Esto es IRREVERSIBLE. Escriba el nombre de la organización para confirmar:';
+const input=prompt(msg);
+if(!input||input!==orgName){showToast(lang==='en'?'Name does not match. Cancelled.':'Nombre no coincide. Cancelado.','error');return;}
+try{
+const r=await apiService.fetch('/api/v1/superadmin/organizations/'+orgId,{method:'DELETE'});
+if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+showToast('Organización eliminada');renderSuperadmin();
+}catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function _saRenderTickets(ct,lbl){
+let h='';
+try{
+const data=await _saFetch('/tickets?limit=50');
+const tickets=data.items||data||[];
+h+=`<div class="card"><h3>🎫 ${lbl.tab_tickets}</h3>`;
+if(!tickets.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div style="margin-bottom:12px"><button class="btn btn-danger btn-sm" onclick="_saBulkDeleteTickets()">${lbl.delete_selected}</button></div>`;
+h+=`<div class="table-wrap"><table><thead><tr><th><input type="checkbox" id="sa-ticket-all" onchange="document.querySelectorAll('.sa-ticket-cb').forEach(c=>c.checked=this.checked)"></th><th>${lbl.ticket_id}</th><th>${lbl.subject}</th><th>${lbl.org}</th><th>${lbl.priority}</th><th>${lbl.category}</th><th>${lbl.status}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+tickets.forEach(tk=>{
+const prBadge={critical:'danger',high:'warning',medium:'info',low:'secondary'};
+h+=`<tr><td><input type="checkbox" class="sa-ticket-cb" value="${tk.id}"></td>
+<td>${tk.ticket_number||tk.id.substring(0,8)}</td>
+<td>${tk.subject||'-'}</td>
+<td>${tk.organization_name||'-'}</td>
+<td><span class="badge badge-${prBadge[tk.priority]||'secondary'}">${tk.priority||'-'}</span></td>
+<td>${tk.category||'-'}</td>
+<td><span class="badge badge-${tk.status==='open'?'warning':tk.status==='resolved'?'success':'secondary'}">${tk.status||'-'}</span></td>
+<td><button class="btn btn-danger btn-sm" onclick="_saDeleteTicket('${tk.id}')">${lbl.delete}</button></td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+}catch(e){h=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
+ct.innerHTML=h;
+}
+
+async function _saDeleteTicket(ticketId){
+if(!confirm('Eliminar ticket permanentemente?'))return;
+try{
+const r=await apiService.fetch('/api/v1/superadmin/tickets/'+ticketId,{method:'DELETE'});
+if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+showToast('Ticket eliminado');renderSuperadmin();
+}catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function _saBulkDeleteTickets(){
+const ids=Array.from(document.querySelectorAll('.sa-ticket-cb:checked')).map(c=>c.value);
+if(!ids.length){showToast('Selecciona tickets','error');return;}
+if(!confirm(`Eliminar ${ids.length} ticket(s) permanentemente?`))return;
+try{
+const r=await apiService.fetch('/api/v1/superadmin/tickets/bulk',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticket_ids:ids})});
+if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+showToast(`${ids.length} tickets eliminados`);renderSuperadmin();
+}catch(e){showToast('Error: '+e.message,'error');}
+}
+
+async function _saRenderMarket(ct,lbl){
+let h='';
+try{
+const [data,summary]=await Promise.all([_saFetch('/market-intelligence'),_saFetch('/market-intelligence/summary')]);
+const items=data.items||data||[];
+
+// Summary cards
+if(summary&&summary.length){
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px">`;
+summary.forEach(s=>{
+const trendIcon={up:'📈',down:'📉',stable:'➡️'};
+h+=`<div class="kpi-card"><div class="kpi-label">${s.region}</div>
+<div class="kpi-value" style="font-size:1.1rem">${trendIcon[s.avg_trend]||'➡️'} $${(s.avg_price||0).toFixed(2)}</div>
+<div style="font-size:11px;color:var(--text-light)">${lbl.production}: ${(s.total_production||0).toLocaleString()}</div></div>`;
+});
+h+=`</div>`;
+}
+
+// Add entry form
+h+=`<div class="card" style="margin-bottom:16px"><h3>➕ ${lbl.add_entry}</h3>
+<form id="sa-market-form" onsubmit="_saAddMarketEntry(event);return false" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px">
+<div><label>${lbl.date}</label><input type="date" name="report_date" value="${new Date().toISOString().substring(0,10)}" required></div>
+<div><label>${lbl.region}</label><input type="text" name="region" placeholder="LATAM, NA, EU..." required></div>
+<div><label>${lbl.egg_type}</label><input type="text" name="egg_type" placeholder="Convencional, Orgánico..." required></div>
+<div><label>${lbl.price} ($)</label><input type="number" name="avg_price_per_unit" step="0.01" min="0" required></div>
+<div><label>${lbl.production} (units)</label><input type="number" name="total_production_units" min="0" value="0"></div>
+<div><label>${lbl.demand} (0-100)</label><input type="number" name="demand_index" step="0.1" min="0" max="100" value="50"></div>
+<div><label>${lbl.supply} (0-100)</label><input type="number" name="supply_index" step="0.1" min="0" max="100" value="50"></div>
+<div><label>${lbl.trend}</label><select name="price_trend"><option value="stable">Stable</option><option value="up">Up</option><option value="down">Down</option></select></div>
+<div><label>${lbl.source}</label><input type="text" name="source" placeholder="FAO, USDA..."></div>
+<div><label>${lbl.notes}</label><input type="text" name="notes"></div>
+<div style="display:flex;align-items:end"><button type="submit" class="btn btn-primary">${lbl.save}</button></div>
+</form></div>`;
+
+// Data table
+h+=`<div class="card"><h3>📈 ${lbl.tab_market}</h3>`;
+if(!items.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.date}</th><th>${lbl.region}</th><th>${lbl.egg_type}</th><th>${lbl.price}</th><th>${lbl.production}</th><th>${lbl.demand}</th><th>${lbl.supply}</th><th>${lbl.trend}</th><th>${lbl.source}</th></tr></thead><tbody>`;
+items.forEach(mi=>{
+const trendIcon={up:'📈',down:'📉',stable:'➡️'};
+h+=`<tr><td>${mi.report_date||'-'}</td><td>${mi.region||'-'}</td><td>${mi.egg_type||'-'}</td>
+<td>$${(mi.avg_price_per_unit||0).toFixed(2)}</td><td>${(mi.total_production_units||0).toLocaleString()}</td>
+<td>${mi.demand_index||0}</td><td>${mi.supply_index||0}</td>
+<td>${trendIcon[mi.price_trend]||'➡️'} ${mi.price_trend||'-'}</td><td>${mi.source||'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+}catch(e){h=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
+ct.innerHTML=h;
+}
+
+async function _saAddMarketEntry(e){
+e.preventDefault();
+const form=document.getElementById('sa-market-form');if(!form)return;
+const fd=new FormData(form);
+const body={};fd.forEach((v,k)=>{
+if(['avg_price_per_unit','demand_index','supply_index'].includes(k))body[k]=parseFloat(v);
+else if(k==='total_production_units')body[k]=parseInt(v)||0;
+else body[k]=v;
+});
+try{
+const r=await apiService.fetch('/api/v1/superadmin/market-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+showToast('Entrada creada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
 
 function renderAdmin(){
 const D=loadData();
@@ -7048,6 +7345,9 @@ const allHidden=Array.from(grp.querySelectorAll('a[data-section]')).every(a=>a.s
 lbl.style.display=allHidden?'none':'';
 grp.style.display=allHidden?'none':'';
 });
+// Superadmin nav group — only visible for superadmin role
+const saGroup=document.getElementById('nav-superadmin-group');
+if(saGroup)saGroup.style.display=(_currentUser.role==='superadmin')?'':'none';
 }
 // ============ INIT ============
 async function init(){

@@ -11,10 +11,14 @@ from src.core.exceptions import ForbiddenError, UnauthorizedError
 from src.core.plans import check_feature_access
 from src.core.security import decode_token
 from src.database import get_db
-from src.models.auth import User
+from src.models.auth import Role, User
 from src.models.subscription import Subscription, SubscriptionStatus
 
 bearer_scheme = HTTPBearer(auto_error=False)
+
+
+def is_superadmin(user: User) -> bool:
+    return user.role == Role.superadmin
 
 
 async def get_current_user(
@@ -41,11 +45,22 @@ async def get_current_user(
 
 def require_role(*roles: str) -> Callable:
     async def role_checker(user: User = Depends(get_current_user)) -> User:
+        if is_superadmin(user):
+            return user
         if user.role.value not in roles:
             raise ForbiddenError()
         return user
 
     return role_checker
+
+
+def require_superadmin() -> Callable:
+    async def superadmin_checker(user: User = Depends(get_current_user)) -> User:
+        if not is_superadmin(user):
+            raise ForbiddenError("Superadmin access required")
+        return user
+
+    return superadmin_checker
 
 
 def get_org_filter(user: User):
@@ -90,6 +105,8 @@ async def get_org_plan(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> str:
+    if is_superadmin(user):
+        return "enterprise"
     sub = await get_subscription(user.organization_id, db)
     return await _resolve_plan(sub, db)
 
@@ -99,6 +116,8 @@ def require_plan(*plans: str) -> Callable:
         user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
     ) -> User:
+        if is_superadmin(user):
+            return user
         sub = await get_subscription(user.organization_id, db)
         current_plan = await _resolve_plan(sub, db)
         if current_plan == "suspended":
@@ -120,6 +139,8 @@ def require_feature(feature: str) -> Callable:
         user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
     ) -> User:
+        if is_superadmin(user):
+            return user
         sub = await get_subscription(user.organization_id, db)
         current_plan = await _resolve_plan(sub, db)
         if current_plan == "suspended":

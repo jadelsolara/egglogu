@@ -41,7 +41,7 @@ class UserRead(BaseModel):
     email: str
     full_name: str
     role: str
-    organization_id: uuid.UUID
+    organization_id: Optional[uuid.UUID] = None
     is_active: bool
     email_verified: bool
     created_at: datetime
@@ -92,7 +92,7 @@ class ResendVerificationRequest(BaseModel):
 class TeamInviteRequest(BaseModel):
     email: EmailStr
     member_name: str = Field(..., min_length=1, max_length=200)
-    role: str = Field(..., min_length=1, max_length=50)
+    role: str = Field(..., min_length=1, max_length=50, pattern=r"^(owner|manager|vet|viewer)$")
     organization_name: str = Field(..., min_length=1, max_length=200)
     invited_by: str = Field(..., min_length=1, max_length=200)
 
