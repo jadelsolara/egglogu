@@ -27,7 +27,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .sidebar{width:var(--sidebar-width);background:var(--sidebar-bg);color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;transition:transform .3s}
 .sidebar-logo{padding:20px;font-size:24px;font-weight:700;text-align:center;border-bottom:1px solid rgba(255,255,255,.2);letter-spacing:2px}
 .sidebar-logo small{display:block;font-size:10px;font-weight:400;opacity:.7}
-.sidebar nav{flex:1;padding:10px 0;overflow-y:auto}
+.sidebar nav{flex:1;padding:10px 0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
+.sidebar nav::-webkit-scrollbar{width:4px}.sidebar nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:4px}
 .sidebar nav a{display:flex;align-items:center;gap:12px;padding:12px 20px;color:rgba(255,255,255,.8);text-decoration:none;transition:all .2s;cursor:pointer;font-size:14px}
 .sidebar nav a:hover{background:rgba(255,255,255,.1);color:#fff}
 .sidebar nav a.active{background:rgba(255,255,255,.2);color:#fff;font-weight:600;border-left:3px solid var(--secondary)}
@@ -4686,9 +4687,7 @@ else if(_saTab==='sa-settings')_saRenderSettings(ct,lbl);
 }
 
 async function _saFetch(path){
-const r=await apiService.fetch('/api/v1/superadmin'+path);
-if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.detail||r.statusText);}
-return r.json();
+return apiService.request('GET','/superadmin'+path);
 }
 
 async function _saRenderDashboard(ct,lbl){
@@ -4785,8 +4784,7 @@ ct.innerHTML=h;
 
 async function _saToggleOrg(orgId,newStatus){
 try{
-const r=await apiService.fetch('/api/v1/superadmin/organizations/'+orgId,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription_status:newStatus})});
-if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+await apiService.request('PATCH','/superadmin/organizations/'+orgId,{subscription_status:newStatus});
 showToast('Organización actualizada');renderSuperadmin();
 }catch(e){showToast('Error: '+e.message,'error');}
 }
@@ -4797,8 +4795,7 @@ const msg=lang==='en'?'DELETE ENTIRE ORGANIZATION. This is IRREVERSIBLE. Type th
 const input=prompt(msg);
 if(!input||input!==orgName){showToast(lang==='en'?'Name does not match. Cancelled.':'Nombre no coincide. Cancelado.','error');return;}
 try{
-const r=await apiService.fetch('/api/v1/superadmin/organizations/'+orgId,{method:'DELETE'});
-if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+await apiService.request('DELETE','/superadmin/organizations/'+orgId);
 showToast('Organización eliminada');renderSuperadmin();
 }catch(e){showToast('Error: '+e.message,'error');}
 }
@@ -4833,8 +4830,7 @@ ct.innerHTML=h;
 async function _saDeleteTicket(ticketId){
 if(!confirm('Eliminar ticket permanentemente?'))return;
 try{
-const r=await apiService.fetch('/api/v1/superadmin/tickets/'+ticketId,{method:'DELETE'});
-if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+await apiService.request('DELETE','/superadmin/tickets/'+ticketId);
 showToast('Ticket eliminado');renderSuperadmin();
 }catch(e){showToast('Error: '+e.message,'error');}
 }
@@ -4844,8 +4840,7 @@ const ids=Array.from(document.querySelectorAll('.sa-ticket-cb:checked')).map(c=>
 if(!ids.length){showToast('Selecciona tickets','error');return;}
 if(!confirm(`Eliminar ${ids.length} ticket(s) permanentemente?`))return;
 try{
-const r=await apiService.fetch('/api/v1/superadmin/tickets/bulk',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticket_ids:ids})});
-if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+await apiService.request('DELETE','/superadmin/tickets/bulk',{ticket_ids:ids});
 showToast(`${ids.length} tickets eliminados`);renderSuperadmin();
 }catch(e){showToast('Error: '+e.message,'error');}
 }
@@ -4912,8 +4907,7 @@ else if(k==='total_production_units')body[k]=parseInt(v)||0;
 else body[k]=v;
 });
 try{
-const r=await apiService.fetch('/api/v1/superadmin/market-intelligence',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.statusText);
+await apiService.request('POST','/superadmin/market-intelligence',body);
 showToast('Entrada creada');renderSuperadmin();
 }catch(err){showToast('Error: '+err.message,'error');}
 }
@@ -7386,6 +7380,15 @@ grp.style.display=allHidden?'none':'';
 // Superadmin nav group — only visible for superadmin role
 const saGroup=document.getElementById('nav-superadmin-group');
 if(saGroup)saGroup.style.display=(_currentUser.role==='superadmin')?'':'none';
+// For superadmin: collapse all farm nav groups — keep sidebar clean
+if(_currentUser.role==='superadmin'){
+document.querySelectorAll('.nav-group-label').forEach(lbl=>{
+const grp=lbl.nextElementSibling;
+if(!grp||!grp.classList.contains('nav-group-links'))return;
+if(grp.dataset.grp==='superadmin')return;// keep superadmin group open
+lbl.classList.remove('grp-open');grp.classList.remove('grp-open');
+});
+}
 }
 // ============ INIT ============
 async function init(){
