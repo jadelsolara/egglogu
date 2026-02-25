@@ -1070,7 +1070,7 @@ function confirmYes(){$('confirm-overlay').classList.remove('open');if(_confirmR
 function confirmNo(){$('confirm-overlay').classList.remove('open');if(_confirmResolve){_confirmResolve(false);_confirmResolve=null;}}
 
 // ============ API SERVICE LAYER (Backend Connection) ============
-const API_BASE=localStorage.getItem('egglogu_api_base')||'https://egglogu-api.up.railway.app/api/v1';
+const API_BASE=localStorage.getItem('egglogu_api_base')||'https://api.egglogu.com/api/v1';
 const _GOOGLE_CLIENT_ID=localStorage.getItem('egglogu_google_client_id')||'';window._GOOGLE_CLIENT_ID=_GOOGLE_CLIENT_ID;
 // SECURITY MODEL — localStorage Token Storage
 // JWT tokens (access + refresh) are stored in localStorage for offline-first PWA support.
@@ -4946,8 +4946,7 @@ const nw=document.getElementById('sa-pw-new').value;
 const cf=document.getElementById('sa-pw-confirm').value;
 if(nw!==cf){showToast(lang==='en'?'Passwords do not match':'Las contraseñas no coinciden','error');return;}
 try{
-const r=await apiService.fetch('/api/v1/auth/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({current_password:cur,new_password:nw})});
-if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.detail||r.statusText);}
+await apiService.request('POST','/auth/change-password',{current_password:cur,new_password:nw});
 showToast(lang==='en'?'Password changed successfully':'Contraseña cambiada exitosamente');
 document.getElementById('sa-pw-form').reset();
 }catch(err){showToast('Error: '+err.message,'error');}
