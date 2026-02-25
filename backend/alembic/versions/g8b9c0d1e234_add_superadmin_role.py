@@ -52,8 +52,24 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(), server_default=sa.func.now(), nullable=False),
     )
 
+    # 4. Create audit_logs table (platform-wide)
+    op.create_table(
+        "audit_logs",
+        sa.Column("id", sa.UUID(), primary_key=True),
+        sa.Column("timestamp", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False, index=True),
+        sa.Column("user_id", sa.String(50), nullable=False, index=True),
+        sa.Column("organization_id", sa.String(50), nullable=False, index=True),
+        sa.Column("action", sa.String(20), nullable=False),
+        sa.Column("resource", sa.String(100), nullable=False, index=True),
+        sa.Column("resource_id", sa.String(50), nullable=False),
+        sa.Column("changes", sa.JSON(), nullable=True),
+        sa.Column("ip_address", sa.String(50), nullable=True),
+        sa.Column("user_agent", sa.String(500), nullable=True),
+    )
+
 
 def downgrade() -> None:
+    op.drop_table("audit_logs")
     op.drop_table("market_intelligence")
     op.execute("DROP TYPE IF EXISTS pricetrend")
 

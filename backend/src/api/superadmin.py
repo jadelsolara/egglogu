@@ -75,7 +75,7 @@ async def platform_stats(
     user: User = SUPERADMIN,
     db: AsyncSession = Depends(get_db),
 ):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     d30 = now - timedelta(days=30)
 
     # Organizations
@@ -174,19 +174,26 @@ async def platform_stats(
     avg_resolution_hours = round(res_times / 3600, 1) if res_times else None
 
     # Avg first-response time (hours) — time from ticket creation to first admin message
-    first_responses = await db.execute(
+    # Use subquery to get first admin response per ticket, then average
+    first_resp_sub = (
         select(
-            func.avg(
-                func.extract(
-                    "epoch",
-                    func.min(TicketMessage.created_at) - SupportTicket.created_at,
-                )
-            )
+            SupportTicket.id.label("tid"),
+            func.min(TicketMessage.created_at).label("first_resp"),
+            SupportTicket.created_at.label("created"),
         )
         .join(TicketMessage, TicketMessage.ticket_id == SupportTicket.id)
         .where(
             TicketMessage.is_admin.is_(True),
             SupportTicket.created_at >= now - timedelta(days=90),
+        )
+        .group_by(SupportTicket.id, SupportTicket.created_at)
+        .subquery()
+    )
+    first_responses = await db.execute(
+        select(
+            func.avg(
+                func.extract("epoch", first_resp_sub.c.first_resp - first_resp_sub.c.created)
+            )
         )
     )
     first_resp_avg = first_responses.scalar()
@@ -887,7 +894,7 @@ async def churn_analysis(
     user: User = SUPERADMIN,
     db: AsyncSession = Depends(get_db),
 ):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     trend: list[ChurnDataPoint] = []
     churned_orgs = []
 
