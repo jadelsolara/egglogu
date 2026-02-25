@@ -60,8 +60,32 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:24px}
 .kpi-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid var(--primary)}
 .kpi-card.warning{border-left-color:var(--warning)}.kpi-card.danger{border-left-color:var(--danger)}.kpi-card.accent{border-left-color:var(--accent)}.kpi-card.secondary{border-left-color:var(--secondary)}
+.kpi-card{position:relative}
 .kpi-card .kpi-label{font-size:12px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
 .kpi-card .kpi-value{font-size:28px;font-weight:700}.kpi-card .kpi-sub{font-size:12px;color:var(--text-light);margin-top:4px}
+.kpi-info-btn{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--text-light);background:transparent;color:var(--text-light);font-size:12px;font-weight:700;font-style:italic;font-family:Georgia,serif;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.45;transition:opacity .2s,border-color .2s,color .2s;line-height:1;padding:0}
+.kpi-info-btn:hover{opacity:.85;border-color:var(--primary);color:var(--primary)}
+.kpi-tooltip{position:absolute;top:34px;right:4px;background:var(--sidebar-bg);color:#fff;font-size:12.5px;line-height:1.45;padding:10px 14px;border-radius:8px;max-width:240px;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:50;animation:kpiTipIn .15s ease-out;pointer-events:auto}
+.kpi-tooltip::before{content:'';position:absolute;top:-6px;right:12px;width:12px;height:12px;background:var(--sidebar-bg);transform:rotate(45deg);border-radius:2px}
+@keyframes kpiTipIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+/* ── Walkthrough Engine ── */
+.wt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9990;pointer-events:none}
+.wt-spotlight{position:absolute;z-index:9991;border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);pointer-events:none;transition:all .4s ease}
+.wt-narration{position:fixed;top:20px;right:20px;width:320px;max-width:calc(100vw - 40px);background:var(--card,#fff);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);z-index:9995;padding:20px;animation:wtSlideIn .3s ease-out;pointer-events:auto}
+.wt-narration-icon{font-size:28px;margin-bottom:8px}
+.wt-narration-tour{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:4px}
+.wt-narration-text{font-size:14px;line-height:1.6;color:var(--text)}
+@keyframes wtSlideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.wt-controls{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--sidebar-bg,#1a1a2e);color:#fff;border-radius:16px;padding:10px 20px;display:flex;align-items:center;gap:12px;z-index:9995;box-shadow:0 8px 32px rgba(0,0,0,.3);pointer-events:auto;font-size:13px}
+.wt-controls button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;transition:background .2s}
+.wt-controls button:hover{background:rgba(255,255,255,.3)}
+.wt-controls button:disabled{opacity:.3;cursor:default}
+.wt-controls button.wt-exit{background:rgba(255,80,80,.3)}
+.wt-controls button.wt-exit:hover{background:rgba(255,80,80,.6)}
+.wt-progress{flex:1;min-width:80px;height:4px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden}
+.wt-progress-fill{height:100%;background:var(--secondary,#f6c90e);border-radius:4px;transition:width .3s}
+.wt-controls-info{font-size:11px;opacity:.7;white-space:nowrap}
+@media(max-width:768px){.wt-narration{top:auto;bottom:90px;right:10px;left:10px;width:auto}.wt-controls{bottom:10px;padding:8px 12px;gap:8px;font-size:12px}}
 .card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:20px}
 .card h3{margin-bottom:16px;color:var(--primary-dark);font-size:18px}
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -514,7 +538,9 @@ pred_outbreak_risk:'Riesgo de Brote',pred_outbreak_high:'Alto Riesgo',pred_outbr
 ana_segment_profit:'Rentabilidad por Segmento',cfg_accessibility:'Accesibilidad',
 rec_title:'Recomendaciones',rec_dismiss:'Descartar',rec_check_diet:'Revisar dieta / diseño de alimentación / descartar enfermedad',rec_check_env:'Verificar ambiente / enfermedad / estrés inmediatamente',rec_below_curve:'Producción bajo estándar — revisar estrés, luz, alimentación',rec_buy_feed:'Programar compra de alimento',rec_record_env:'Registrar condiciones ambientales',rec_disinfect:'Ejecutar protocolo de desinfección zona',rec_heat_plan:'Estrés calórico prolongado — activar plan de enfriamiento',rec_lab_samples:'Llevar muestras al laboratorio',rec_ventilation:'Aumentar ventilación, verificar agua fresca',
 auth_welcome:'Cuenta creada. Bienvenido!',auth_error:'Credenciales incorrectas',auth_first_run:'Primera vez: ingrese usuario y contraseña para crear su cuenta.',login_subtitle:'Inicia sesión o crea tu cuenta',logout:'Cerrar sesión',required:'Campo obligatorio',invalid_email:'Email inválido',invalid_phone:'Teléfono inválido',must_be_number:'Debe ser un número',invalid_date:'Fecha inválida',invalid_format:'Formato inválido',min_length:'Largo mínimo',max_length:'Largo máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Error de red',error_unexpected:'Error inesperado',error_loading:'Error al cargar',
-ana_economics:'Economía',flock_purchase_cost:'Costo por Ave',econ_cost_per_egg:'Costo/Huevo',econ_roi_per_bird:'ROI/Ave',econ_acquisition:'Adquisición',econ_feed_cost:'Costo Alimento',econ_health_cost:'Costo Sanitario',econ_direct_expenses:'Gastos Directos',econ_total_investment:'Inversión Total',econ_total_costs:'Costos Totales',econ_net_result:'Resultado Neto',econ_daily_cost_bird:'Costo Diario/Ave',econ_days_active:'Días Activo',econ_no_data_guide:'Ingrese costos de compra en Lotes, gastos en Finanzas y costos en Vacunas/Medicamentos para ver el análisis económico.',exp_flock:'Lote (opcional)',health_cost:'Costo',econ_org_summary:'Resumen Organización',econ_cost_breakdown:'Desglose de Costos',econ_completeness:'Datos Disponibles'
+ana_economics:'Economía',flock_purchase_cost:'Costo por Ave',econ_cost_per_egg:'Costo/Huevo',econ_roi_per_bird:'ROI/Ave',econ_acquisition:'Adquisición',econ_feed_cost:'Costo Alimento',econ_health_cost:'Costo Sanitario',econ_direct_expenses:'Gastos Directos',econ_total_investment:'Inversión Total',econ_total_costs:'Costos Totales',econ_net_result:'Resultado Neto',econ_daily_cost_bird:'Costo Diario/Ave',econ_days_active:'Días Activo',econ_no_data_guide:'Ingrese costos de compra en Lotes, gastos en Finanzas y costos en Vacunas/Medicamentos para ver el análisis económico.',exp_flock:'Lote (opcional)',health_cost:'Costo',econ_org_summary:'Resumen Organización',econ_cost_breakdown:'Desglose de Costos',econ_completeness:'Datos Disponibles',
+nav_census:'Carencias',inv_total_in:'Total Entrada',inv_total_out:'Total Salida',inv_balance:'Balance',inv_records:'Registros',inv_by_type:'Por Tipo de Huevo',source:'Origen',fin_egg_type:'Tipo',
+kpi_info_today:'Huevos recolectados hoy en todos los lotes activos.',kpi_info_henday:'Porcentaje de gallinas que pusieron huevo hoy. Ideal: >85%.',kpi_info_fcr:'Kg de alimento por kg de huevo producido. Menor es mejor. Ideal: <2.2.',kpi_info_mortality:'Porcentaje acumulado de muertes sobre el total de aves. Objetivo: <3%.',kpi_info_cost_egg:'Costo total (alimento + sanidad + gastos) dividido entre huevos producidos.',kpi_info_income_net:'Ingresos por ventas menos todos los gastos del mes en curso.',kpi_info_active_hens:'Total de gallinas vivas en lotes activos actualmente.',kpi_info_alerts:'Número de situaciones que requieren tu atención inmediata.'
 },en:{
 save:'Save',cancel:'Cancel',delete:'Delete',edit:'Edit',add:'Add',close:'Close',actions:'Actions',date:'Date',notes:'Notes',name:'Name',phone:'Phone',email:'Email',address:'Address',confirm_delete:'Delete this record?',no_data:'No data recorded',total:'Total',all:'All',loading:'Loading',search:'Search',from:'From',to:'To',status:'Status',export_csv:'Export CSV',today:'Today',active:'Active',inactive:'Inactive',
 nav_dashboard:'Dashboard',nav_production:'Production',nav_flocks:'Flocks',nav_health:'Health',nav_feed:'Feed',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analysis',nav_operations:'Operations',nav_environment:'Environment',nav_config:'Settings',nav_support:'Support',nav_admin:'SaaS Admin',nav_inventory:'Inventory',nav_superadmin:'Superadmin',grp_production:'Production',grp_health:'Health',grp_commercial:'Commercial',grp_management:'Management',grp_system:'System',grp_superadmin:'Superadmin',
@@ -568,7 +594,9 @@ pred_outbreak_risk:'Outbreak Risk',pred_outbreak_high:'High Risk',pred_outbreak_
 ana_segment_profit:'Profitability by Segment',cfg_accessibility:'Accessibility',
 rec_title:'Recommendations',rec_dismiss:'Dismiss',rec_check_diet:'Check diet / feed design / rule out disease',rec_check_env:'Check environment / disease / stress immediately',rec_below_curve:'Below standard production — check stress, light, feed',rec_buy_feed:'Schedule feed purchase',rec_record_env:'Record environmental conditions',rec_disinfect:'Execute disinfection protocol zone',rec_heat_plan:'Prolonged heat stress — activate cooling plan',rec_lab_samples:'Take samples to laboratory',rec_ventilation:'Increase ventilation, check fresh water',
 auth_welcome:'Account created. Welcome!',auth_error:'Invalid credentials',auth_first_run:'First time: enter username and password to create your account.',login_subtitle:'Sign in or create your account',logout:'Logout',required:'Required field',invalid_email:'Invalid email',invalid_phone:'Invalid phone',must_be_number:'Must be a number',invalid_date:'Invalid date',invalid_format:'Invalid format',min_length:'Min length',max_length:'Max length',min_value:'Min value',max_value:'Max value',error_network:'Network error',error_unexpected:'Unexpected error',error_loading:'Loading error',
-ana_economics:'Economics',flock_purchase_cost:'Cost per Bird',econ_cost_per_egg:'Cost/Egg',econ_roi_per_bird:'ROI/Bird',econ_acquisition:'Acquisition',econ_feed_cost:'Feed Cost',econ_health_cost:'Health Cost',econ_direct_expenses:'Direct Expenses',econ_total_investment:'Total Investment',econ_total_costs:'Total Costs',econ_net_result:'Net Result',econ_daily_cost_bird:'Daily Cost/Bird',econ_days_active:'Days Active',econ_no_data_guide:'Enter purchase costs in Flocks, expenses in Finances, and costs in Vaccines/Medications to see the economic analysis.',exp_flock:'Flock (optional)',health_cost:'Cost',econ_org_summary:'Organization Summary',econ_cost_breakdown:'Cost Breakdown',econ_completeness:'Data Available'
+ana_economics:'Economics',flock_purchase_cost:'Cost per Bird',econ_cost_per_egg:'Cost/Egg',econ_roi_per_bird:'ROI/Bird',econ_acquisition:'Acquisition',econ_feed_cost:'Feed Cost',econ_health_cost:'Health Cost',econ_direct_expenses:'Direct Expenses',econ_total_investment:'Total Investment',econ_total_costs:'Total Costs',econ_net_result:'Net Result',econ_daily_cost_bird:'Daily Cost/Bird',econ_days_active:'Days Active',econ_no_data_guide:'Enter purchase costs in Flocks, expenses in Finances, and costs in Vaccines/Medications to see the economic analysis.',exp_flock:'Flock (optional)',health_cost:'Cost',econ_org_summary:'Organization Summary',econ_cost_breakdown:'Cost Breakdown',econ_completeness:'Data Available',
+nav_census:'Withdrawals',inv_total_in:'Total In',inv_total_out:'Total Out',inv_balance:'Balance',inv_records:'Records',inv_by_type:'By Egg Type',source:'Source',fin_egg_type:'Type',
+kpi_info_today:'Eggs collected today across all active flocks.',kpi_info_henday:'Percentage of hens that laid today. Ideal: >85%.',kpi_info_fcr:'Kg of feed per kg of eggs produced. Lower is better. Ideal: <2.2.',kpi_info_mortality:'Cumulative death percentage over total birds. Target: <3%.',kpi_info_cost_egg:'Total cost (feed + health + expenses) divided by eggs produced.',kpi_info_income_net:'Sales revenue minus all expenses for the current month.',kpi_info_active_hens:'Total live hens in currently active flocks.',kpi_info_alerts:'Number of situations requiring your immediate attention.'
 },pt:{
 save:'Salvar',cancel:'Cancelar',delete:'Excluir',edit:'Editar',add:'Adicionar',close:'Fechar',actions:'Ações',date:'Data',notes:'Observações',name:'Nome',phone:'Telefone',email:'Email',address:'Endereço',confirm_delete:'Excluir este registro?',no_data:'Nenhum dado registrado',total:'Total',all:'Todos',loading:'Carregando',search:'Buscar',from:'De',to:'Até',status:'Status',export_csv:'Exportar CSV',today:'Hoje',active:'Ativo',inactive:'Inativo',
 nav_dashboard:'Dashboard',nav_production:'Produção',nav_flocks:'Lotes',nav_health:'Sanidade',nav_feed:'Alimentação',nav_clients:'Clientes',nav_finances:'Finanças',nav_analysis:'Análise',nav_operations:'Operações',nav_environment:'Ambiente',nav_config:'Configuração',nav_support:'Suporte',nav_admin:'Admin SaaS',nav_inventory:'Inventário',nav_superadmin:'Superadmin',grp_production:'Produção',grp_health:'Saúde',grp_commercial:'Comercial',grp_management:'Gestão',grp_system:'Sistema',grp_superadmin:'Superadmin',
@@ -622,7 +650,9 @@ pred_outbreak_risk:'Risco de Surto',pred_outbreak_high:'Alto Risco',pred_outbrea
 ana_segment_profit:'Rentabilidade por Segmento',cfg_accessibility:'Acessibilidade',
 rec_title:'Recomendações',rec_dismiss:'Descartar',rec_check_diet:'Verificar dieta / formulação de ração / descartar doença',rec_check_env:'Verificar ambiente / doença / estresse imediatamente',rec_below_curve:'Produção abaixo do padrão — verificar estresse, luz, alimentação',rec_buy_feed:'Programar compra de ração',rec_record_env:'Registrar condições ambientais',rec_disinfect:'Executar protocolo de desinfecção zona',rec_heat_plan:'Estresse térmico prolongado — ativar plano de resfriamento',rec_lab_samples:'Levar amostras ao laboratório',rec_ventilation:'Aumentar ventilação, verificar água fresca',
 auth_welcome:'Conta criada. Bem-vindo!',auth_error:'Credenciais inválidas',auth_first_run:'Primeira vez: insira usuário e senha para criar sua conta.',login_subtitle:'Entre ou crie sua conta',logout:'Sair',required:'Campo obrigatório',invalid_email:'Email inválido',invalid_phone:'Telefone inválido',must_be_number:'Deve ser um número',invalid_date:'Data inválida',invalid_format:'Formato inválido',min_length:'Comprimento mínimo',max_length:'Comprimento máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Erro de rede',error_unexpected:'Erro inesperado',error_loading:'Erro ao carregar',
-ana_economics:'Economia',flock_purchase_cost:'Custo por Ave',econ_cost_per_egg:'Custo/Ovo',econ_roi_per_bird:'ROI/Ave',econ_acquisition:'Aquisição',econ_feed_cost:'Custo Ração',econ_health_cost:'Custo Sanitário',econ_direct_expenses:'Despesas Diretas',econ_total_investment:'Investimento Total',econ_total_costs:'Custos Totais',econ_net_result:'Resultado Líquido',econ_daily_cost_bird:'Custo Diário/Ave',econ_days_active:'Dias Ativo',econ_no_data_guide:'Insira custos de compra em Lotes, despesas em Finanças e custos em Vacinas/Medicamentos para ver a análise econômica.',exp_flock:'Lote (opcional)',health_cost:'Custo',econ_org_summary:'Resumo Organização',econ_cost_breakdown:'Detalhamento de Custos',econ_completeness:'Dados Disponíveis'
+ana_economics:'Economia',flock_purchase_cost:'Custo por Ave',econ_cost_per_egg:'Custo/Ovo',econ_roi_per_bird:'ROI/Ave',econ_acquisition:'Aquisição',econ_feed_cost:'Custo Ração',econ_health_cost:'Custo Sanitário',econ_direct_expenses:'Despesas Diretas',econ_total_investment:'Investimento Total',econ_total_costs:'Custos Totais',econ_net_result:'Resultado Líquido',econ_daily_cost_bird:'Custo Diário/Ave',econ_days_active:'Dias Ativo',econ_no_data_guide:'Insira custos de compra em Lotes, despesas em Finanças e custos em Vacinas/Medicamentos para ver a análise econômica.',exp_flock:'Lote (opcional)',health_cost:'Custo',econ_org_summary:'Resumo Organização',econ_cost_breakdown:'Detalhamento de Custos',econ_completeness:'Dados Disponíveis',
+nav_census:'Carências',inv_total_in:'Total Entrada',inv_total_out:'Total Saída',inv_balance:'Saldo',inv_records:'Registros',inv_by_type:'Por Tipo de Ovo',source:'Origem',fin_egg_type:'Tipo',
+kpi_info_today:'Ovos coletados hoje em todos os lotes ativos.',kpi_info_henday:'Percentual de galinhas que puseram hoje. Ideal: >85%.',kpi_info_fcr:'Kg de ração por kg de ovos produzidos. Menor é melhor. Ideal: <2.2.',kpi_info_mortality:'Percentual acumulado de mortes sobre o total de aves. Meta: <3%.',kpi_info_cost_egg:'Custo total (ração + sanidade + despesas) dividido pelos ovos produzidos.',kpi_info_income_net:'Receita de vendas menos todas as despesas do mês corrente.',kpi_info_active_hens:'Total de galinhas vivas em lotes atualmente ativos.',kpi_info_alerts:'Número de situações que requerem sua atenção imediata.'
 },
 fr:{
 save:'Enregistrer',cancel:'Annuler',delete:'Supprimer',edit:'Modifier',add:'Ajouter',close:'Fermer',actions:'Actions',date:'Date',notes:'Notes',name:'Nom',phone:'Téléphone',email:'E-mail',address:'Adresse',confirm_delete:'Supprimer cet enregistrement ?',no_data:'Aucune donnée enregistrée',total:'Total',all:'Tout',loading:'Chargement',search:'Rechercher',from:'Du',to:'Au',status:'Statut',export_csv:'Exporter CSV',today:'Aujourd\'hui',active:'Actif',inactive:'Inactif',
@@ -677,7 +707,9 @@ pred_outbreak_risk:'Risque d\'épidémie',pred_outbreak_high:'Risque élevé',pr
 ana_segment_profit:'Rentabilité par segment',cfg_accessibility:'Accessibilité',
 rec_title:'Recommandations',rec_dismiss:'Ignorer',rec_check_diet:'Vérifier l\'alimentation / formulation / exclure une maladie',rec_check_env:'Vérifier environnement / maladie / stress immédiatement',rec_below_curve:'En dessous de la courbe standard — vérifier stress, lumière, aliment',rec_buy_feed:'Planifier l\'achat d\'aliment',rec_record_env:'Enregistrer les conditions environnementales',rec_disinfect:'Exécuter le protocole de désinfection de la zone',rec_heat_plan:'Stress thermique prolongé — activer le plan de refroidissement',rec_lab_samples:'Envoyer des échantillons au laboratoire',rec_ventilation:'Augmenter la ventilation, vérifier l\'eau fraîche',
 auth_welcome:'Compte créé. Bienvenue!',auth_error:'Identifiants incorrects',auth_first_run:'Première fois: entrez un nom d\'utilisateur et un mot de passe pour créer votre compte.',login_subtitle:'Connectez-vous ou créez votre compte',logout:'Déconnexion',required:'Champ obligatoire',invalid_email:'Email invalide',invalid_phone:'Téléphone invalide',must_be_number:'Doit être un nombre',invalid_date:'Date invalide',invalid_format:'Format invalide',min_length:'Longueur min',max_length:'Longueur max',min_value:'Valeur min',max_value:'Valeur max',error_network:'Erreur réseau',error_unexpected:'Erreur inattendue',error_loading:'Erreur de chargement',
-ana_economics:'Économie',flock_purchase_cost:'Coût par oiseau',econ_cost_per_egg:'Coût/Œuf',econ_roi_per_bird:'ROI/Oiseau',econ_acquisition:'Acquisition',econ_feed_cost:'Coût aliment',econ_health_cost:'Coût sanitaire',econ_direct_expenses:'Dépenses directes',econ_total_investment:'Investissement total',econ_total_costs:'Coûts totaux',econ_net_result:'Résultat net',econ_daily_cost_bird:'Coût jour/oiseau',econ_days_active:'Jours actif',econ_no_data_guide:'Saisissez les coûts d\'achat dans Lots, les dépenses dans Finances et les coûts dans Vaccins/Médicaments pour voir l\'analyse économique.',exp_flock:'Lot (optionnel)',health_cost:'Coût',econ_org_summary:'Résumé organisation',econ_cost_breakdown:'Ventilation des coûts',econ_completeness:'Données disponibles'
+ana_economics:'Économie',flock_purchase_cost:'Coût par oiseau',econ_cost_per_egg:'Coût/Œuf',econ_roi_per_bird:'ROI/Oiseau',econ_acquisition:'Acquisition',econ_feed_cost:'Coût aliment',econ_health_cost:'Coût sanitaire',econ_direct_expenses:'Dépenses directes',econ_total_investment:'Investissement total',econ_total_costs:'Coûts totaux',econ_net_result:'Résultat net',econ_daily_cost_bird:'Coût jour/oiseau',econ_days_active:'Jours actif',econ_no_data_guide:'Saisissez les coûts d\'achat dans Lots, les dépenses dans Finances et les coûts dans Vaccins/Médicaments pour voir l\'analyse économique.',exp_flock:'Lot (optionnel)',health_cost:'Coût',econ_org_summary:'Résumé organisation',econ_cost_breakdown:'Ventilation des coûts',econ_completeness:'Données disponibles',
+nav_census:'Carences',inv_total_in:'Total Entrées',inv_total_out:'Total Sorties',inv_balance:'Solde',inv_records:'Enregistrements',inv_by_type:'Par Type d\'Œuf',source:'Source',fin_egg_type:'Type',
+kpi_info_today:'Œufs collectés aujourd\'hui dans tous les lots actifs.',kpi_info_henday:'Pourcentage de poules ayant pondu aujourd\'hui. Idéal: >85%.',kpi_info_fcr:'Kg d\'aliment par kg d\'œufs produits. Plus bas est mieux. Idéal: <2.2.',kpi_info_mortality:'Pourcentage cumulé de décès sur le total d\'oiseaux. Objectif: <3%.',kpi_info_cost_egg:'Coût total (aliment + santé + dépenses) divisé par les œufs produits.',kpi_info_income_net:'Revenus des ventes moins toutes les dépenses du mois en cours.',kpi_info_active_hens:'Total de poules vivantes dans les lots actuellement actifs.',kpi_info_alerts:'Nombre de situations nécessitant votre attention immédiate.'
 },
 de:{
 save:'Speichern',cancel:'Abbrechen',delete:'Löschen',edit:'Bearbeiten',add:'Hinzufügen',close:'Schließen',actions:'Aktionen',date:'Datum',notes:'Notizen',name:'Name',phone:'Telefon',email:'E-Mail',address:'Adresse',confirm_delete:'Diesen Eintrag löschen?',no_data:'Keine Daten erfasst',total:'Gesamt',all:'Alle',loading:'Laden',search:'Suche',from:'Von',to:'Bis',status:'Status',export_csv:'CSV exportieren',today:'Heute',active:'Aktiv',inactive:'Inaktiv',
@@ -732,7 +764,9 @@ pred_outbreak_risk:'Ausbruchsrisiko',pred_outbreak_high:'Hohes Risiko',pred_outb
 ana_segment_profit:'Rentabilität nach Segment',cfg_accessibility:'Barrierefreiheit',
 rec_title:'Empfehlungen',rec_dismiss:'Verwerfen',rec_check_diet:'Futter / Futterrezeptur prüfen / Krankheit ausschließen',rec_check_env:'Umwelt / Krankheit / Stress sofort prüfen',rec_below_curve:'Unter Standardproduktion — Stress, Licht, Futter prüfen',rec_buy_feed:'Futterkauf planen',rec_record_env:'Umweltbedingungen erfassen',rec_disinfect:'Desinfektionsprotokoll Zone ausführen',rec_heat_plan:'Anhaltender Hitzestress — Kühlungsplan aktivieren',rec_lab_samples:'Proben ins Labor bringen',rec_ventilation:'Belüftung erhöhen, Frischwasser kontrollieren',
 auth_welcome:'Konto erstellt. Willkommen!',auth_error:'Ungültige Anmeldedaten',auth_first_run:'Erstmalig: Benutzernamen und Passwort eingeben, um Ihr Konto zu erstellen.',login_subtitle:'Anmelden oder Konto erstellen',logout:'Abmelden',required:'Pflichtfeld',invalid_email:'Ungültige E-Mail',invalid_phone:'Ungültige Telefonnummer',must_be_number:'Muss eine Zahl sein',invalid_date:'Ungültiges Datum',invalid_format:'Ungültiges Format',min_length:'Mindestlänge',max_length:'Maximale Länge',min_value:'Mindestwert',max_value:'Maximalwert',error_network:'Netzwerkfehler',error_unexpected:'Unerwarteter Fehler',error_loading:'Ladefehler',
-ana_economics:'Wirtschaft',flock_purchase_cost:'Kosten pro Tier',econ_cost_per_egg:'Kosten/Ei',econ_roi_per_bird:'ROI/Tier',econ_acquisition:'Anschaffung',econ_feed_cost:'Futterkosten',econ_health_cost:'Gesundheitskosten',econ_direct_expenses:'Direkte Ausgaben',econ_total_investment:'Gesamtinvestition',econ_total_costs:'Gesamtkosten',econ_net_result:'Nettoergebnis',econ_daily_cost_bird:'Tageskosten/Tier',econ_days_active:'Tage aktiv',econ_no_data_guide:'Geben Sie Kaufkosten in Herden, Ausgaben in Finanzen und Kosten in Impfungen/Medikamente ein, um die Wirtschaftsanalyse zu sehen.',exp_flock:'Herde (optional)',health_cost:'Kosten',econ_org_summary:'Betriebsübersicht',econ_cost_breakdown:'Kostenaufschlüsselung',econ_completeness:'Verfügbare Daten'
+ana_economics:'Wirtschaft',flock_purchase_cost:'Kosten pro Tier',econ_cost_per_egg:'Kosten/Ei',econ_roi_per_bird:'ROI/Tier',econ_acquisition:'Anschaffung',econ_feed_cost:'Futterkosten',econ_health_cost:'Gesundheitskosten',econ_direct_expenses:'Direkte Ausgaben',econ_total_investment:'Gesamtinvestition',econ_total_costs:'Gesamtkosten',econ_net_result:'Nettoergebnis',econ_daily_cost_bird:'Tageskosten/Tier',econ_days_active:'Tage aktiv',econ_no_data_guide:'Geben Sie Kaufkosten in Herden, Ausgaben in Finanzen und Kosten in Impfungen/Medikamente ein, um die Wirtschaftsanalyse zu sehen.',exp_flock:'Herde (optional)',health_cost:'Kosten',econ_org_summary:'Betriebsübersicht',econ_cost_breakdown:'Kostenaufschlüsselung',econ_completeness:'Verfügbare Daten',
+nav_census:'Wartezeiten',inv_total_in:'Gesamt Eingang',inv_total_out:'Gesamt Ausgang',inv_balance:'Bestand',inv_records:'Einträge',inv_by_type:'Nach Eiertyp',source:'Quelle',fin_egg_type:'Typ',
+kpi_info_today:'Heute gesammelte Eier in allen aktiven Herden.',kpi_info_henday:'Prozent der Hennen die heute gelegt haben. Ideal: >85%.',kpi_info_fcr:'Kg Futter pro kg produzierter Eier. Niedriger ist besser. Ideal: <2.2.',kpi_info_mortality:'Kumulierter Todesanteil am Gesamtbestand. Ziel: <3%.',kpi_info_cost_egg:'Gesamtkosten (Futter + Gesundheit + Ausgaben) geteilt durch produzierte Eier.',kpi_info_income_net:'Verkaufserlöse minus alle Ausgaben des laufenden Monats.',kpi_info_active_hens:'Gesamtzahl lebender Hennen in derzeit aktiven Herden.',kpi_info_alerts:'Anzahl der Situationen die Ihre sofortige Aufmerksamkeit erfordern.'
 },
 it:{
 save:'Salva',cancel:'Annulla',delete:'Elimina',edit:'Modifica',add:'Aggiungi',close:'Chiudi',actions:'Azioni',date:'Data',notes:'Note',name:'Nome',phone:'Telefono',email:'Email',address:'Indirizzo',confirm_delete:'Eliminare questo record?',no_data:'Nessun dato registrato',total:'Totale',all:'Tutti',loading:'Caricamento',search:'Cerca',from:'Da',to:'A',status:'Stato',export_csv:'Esporta CSV',today:'Oggi',active:'Attivo',inactive:'Inattivo',
@@ -787,7 +821,9 @@ pred_outbreak_risk:'Rischio Focolaio',pred_outbreak_high:'Rischio Alto',pred_out
 ana_segment_profit:'Redditività per Segmento',cfg_accessibility:'Accessibilità',
 rec_title:'Raccomandazioni',rec_dismiss:'Ignora',rec_check_diet:'Controllare dieta / formulazione mangime / escludere malattia',rec_check_env:'Controllare ambiente / malattia / stress immediatamente',rec_below_curve:'Sotto la produzione standard — controllare stress, luce, mangime',rec_buy_feed:'Programmare acquisto mangime',rec_record_env:'Registrare condizioni ambientali',rec_disinfect:'Eseguire protocollo di disinfezione zona',rec_heat_plan:'Stress da calore prolungato — attivare piano di raffreddamento',rec_lab_samples:'Inviare campioni al laboratorio',rec_ventilation:'Aumentare ventilazione, controllare acqua fresca',
 auth_welcome:'Account creato. Benvenuto!',auth_error:'Credenziali non valide',auth_first_run:'Prima volta: inserisci nome utente e password per creare il tuo account.',login_subtitle:'Accedi o crea il tuo account',logout:'Esci',required:'Campo obbligatorio',invalid_email:'Email non valida',invalid_phone:'Telefono non valido',must_be_number:'Deve essere un numero',invalid_date:'Data non valida',invalid_format:'Formato non valido',min_length:'Lunghezza minima',max_length:'Lunghezza massima',min_value:'Valore minimo',max_value:'Valore massimo',error_network:'Errore di rete',error_unexpected:'Errore imprevisto',error_loading:'Errore di caricamento',
-ana_economics:'Economia',flock_purchase_cost:'Costo per capo',econ_cost_per_egg:'Costo/Uovo',econ_roi_per_bird:'ROI/Capo',econ_acquisition:'Acquisizione',econ_feed_cost:'Costo mangime',econ_health_cost:'Costo sanitario',econ_direct_expenses:'Spese dirette',econ_total_investment:'Investimento totale',econ_total_costs:'Costi totali',econ_net_result:'Risultato netto',econ_daily_cost_bird:'Costo giorno/capo',econ_days_active:'Giorni attivo',econ_no_data_guide:'Inserisci i costi di acquisto in Gruppi, le spese in Finanze e i costi in Vaccini/Medicamenti per vedere l\'analisi economica.',exp_flock:'Gruppo (opzionale)',health_cost:'Costo',econ_org_summary:'Riepilogo organizzazione',econ_cost_breakdown:'Ripartizione costi',econ_completeness:'Dati disponibili'
+ana_economics:'Economia',flock_purchase_cost:'Costo per capo',econ_cost_per_egg:'Costo/Uovo',econ_roi_per_bird:'ROI/Capo',econ_acquisition:'Acquisizione',econ_feed_cost:'Costo mangime',econ_health_cost:'Costo sanitario',econ_direct_expenses:'Spese dirette',econ_total_investment:'Investimento totale',econ_total_costs:'Costi totali',econ_net_result:'Risultato netto',econ_daily_cost_bird:'Costo giorno/capo',econ_days_active:'Giorni attivo',econ_no_data_guide:'Inserisci i costi di acquisto in Gruppi, le spese in Finanze e i costi in Vaccini/Medicamenti per vedere l\'analisi economica.',exp_flock:'Gruppo (opzionale)',health_cost:'Costo',econ_org_summary:'Riepilogo organizzazione',econ_cost_breakdown:'Ripartizione costi',econ_completeness:'Dati disponibili',
+nav_census:'Sospensioni',inv_total_in:'Totale Entrate',inv_total_out:'Totale Uscite',inv_balance:'Saldo',inv_records:'Registrazioni',inv_by_type:'Per Tipo di Uovo',source:'Origine',fin_egg_type:'Tipo',
+kpi_info_today:'Uova raccolte oggi in tutti i gruppi attivi.',kpi_info_henday:'Percentuale di galline che hanno deposto oggi. Ideale: >85%.',kpi_info_fcr:'Kg di mangime per kg di uova prodotte. Più basso è meglio. Ideale: <2.2.',kpi_info_mortality:'Percentuale cumulativa di decessi sul totale dei capi. Obiettivo: <3%.',kpi_info_cost_egg:'Costo totale (mangime + sanità + spese) diviso per le uova prodotte.',kpi_info_income_net:'Ricavi delle vendite meno tutte le spese del mese corrente.',kpi_info_active_hens:'Totale di galline vive nei gruppi attualmente attivi.',kpi_info_alerts:'Numero di situazioni che richiedono la vostra attenzione immediata.'
 },
 ja:{
 save:'保存',cancel:'キャンセル',delete:'削除',edit:'編集',add:'追加',close:'閉じる',actions:'操作',date:'日付',notes:'メモ',name:'名前',phone:'電話',email:'メール',address:'住所',confirm_delete:'このレコードを削除しますか？',no_data:'データがありません',total:'合計',all:'すべて',loading:'読み込み中',search:'検索',from:'開始',to:'終了',status:'ステータス',export_csv:'CSV出力',today:'今日',active:'有効',inactive:'無効',
@@ -842,7 +878,9 @@ pred_outbreak_risk:'疾病発生リスク',pred_outbreak_high:'高リスク',pre
 ana_segment_profit:'セグメント別収益性',cfg_accessibility:'アクセシビリティ',
 rec_title:'推奨事項',rec_dismiss:'非表示にする',rec_check_diet:'飼料設計を確認・疾病の可能性を除外',rec_check_env:'環境・疾病・ストレスを直ちに確認',rec_below_curve:'標準産卵曲線を下回っています — ストレス・照明・飼料を確認',rec_buy_feed:'飼料の購入を計画してください',rec_record_env:'環境条件を記録してください',rec_disinfect:'ゾーンの消毒プロトコルを実施してください',rec_heat_plan:'長期間の熱ストレス — 冷却計画を実施してください',rec_lab_samples:'検体を検査機関に提出してください',rec_ventilation:'換気を強化し、新鮮な飲水を確認してください',
 auth_welcome:'アカウントが作成されました。ようこそ！',auth_error:'認証情報が正しくありません',auth_first_run:'初回：ユーザー名とパスワードを入力してアカウントを作成してください。',login_subtitle:'ログインまたはアカウント作成',logout:'ログアウト',required:'必須項目',invalid_email:'無効なメールアドレス',invalid_phone:'無効な電話番号',must_be_number:'数値を入力してください',invalid_date:'無効な日付',invalid_format:'無効な形式',min_length:'最小長',max_length:'最大長',min_value:'最小値',max_value:'最大値',error_network:'ネットワークエラー',error_unexpected:'予期しないエラー',error_loading:'読み込みエラー',
-ana_economics:'経済分析',flock_purchase_cost:'1羽あたりコスト',econ_cost_per_egg:'卵1個コスト',econ_roi_per_bird:'ROI/羽',econ_acquisition:'取得費',econ_feed_cost:'飼料費',econ_health_cost:'衛生費',econ_direct_expenses:'直接経費',econ_total_investment:'総投資額',econ_total_costs:'総コスト',econ_net_result:'純利益',econ_daily_cost_bird:'日額コスト/羽',econ_days_active:'稼働日数',econ_no_data_guide:'鶏群に購入コスト、財務に経費、ワクチン・投薬にコストを入力すると経済分析が表示されます。',exp_flock:'鶏群（任意）',health_cost:'費用',econ_org_summary:'組織サマリー',econ_cost_breakdown:'コスト内訳',econ_completeness:'利用可能データ'
+ana_economics:'経済分析',flock_purchase_cost:'1羽あたりコスト',econ_cost_per_egg:'卵1個コスト',econ_roi_per_bird:'ROI/羽',econ_acquisition:'取得費',econ_feed_cost:'飼料費',econ_health_cost:'衛生費',econ_direct_expenses:'直接経費',econ_total_investment:'総投資額',econ_total_costs:'総コスト',econ_net_result:'純利益',econ_daily_cost_bird:'日額コスト/羽',econ_days_active:'稼働日数',econ_no_data_guide:'鶏群に購入コスト、財務に経費、ワクチン・投薬にコストを入力すると経済分析が表示されます。',exp_flock:'鶏群（任意）',health_cost:'費用',econ_org_summary:'組織サマリー',econ_cost_breakdown:'コスト内訳',econ_completeness:'利用可能データ',
+nav_census:'休薬期間',inv_total_in:'総入庫',inv_total_out:'総出庫',inv_balance:'在庫残高',inv_records:'記録',inv_by_type:'卵タイプ別',source:'産地',fin_egg_type:'種類',
+kpi_info_today:'全稼働鶏群の本日集卵数。',kpi_info_henday:'本日産卵した鶏の割合。理想: >85%。',kpi_info_fcr:'産卵1kgあたりの飼料kg。低いほど良い。理想: <2.2。',kpi_info_mortality:'総羽数に対する累積死亡率。目標: <3%。',kpi_info_cost_egg:'総コスト（飼料+衛生+経費）÷ 産卵数。',kpi_info_income_net:'当月の売上から全経費を差し引いた額。',kpi_info_active_hens:'現在稼働中の鶏群の生存鶏総数。',kpi_info_alerts:'即座に対応が必要な状況の数。'
 },
 zh:{
 save:'保存',cancel:'取消',delete:'删除',edit:'编辑',add:'添加',close:'关闭',actions:'操作',date:'日期',notes:'备注',name:'名称',phone:'电话',email:'邮箱',address:'地址',confirm_delete:'确定删除此记录？',no_data:'暂无数据',total:'合计',all:'全部',loading:'加载中',search:'搜索',from:'从',to:'至',status:'状态',export_csv:'导出CSV',today:'今天',active:'活跃',inactive:'停用',
@@ -897,7 +935,9 @@ pred_outbreak_risk:'疫情风险',pred_outbreak_high:'高风险',pred_outbreak_m
 ana_segment_profit:'按细分盈利分析',cfg_accessibility:'无障碍',
 rec_title:'建议',rec_dismiss:'忽略',rec_check_diet:'检查日粮/饲料配方/排除疾病',rec_check_env:'立即检查环境/疾病/应激',rec_below_curve:'低于标准产蛋曲线 - 检查应激、光照、饲料',rec_buy_feed:'安排饲料采购',rec_record_env:'记录环境条件',rec_disinfect:'执行区域消毒规程',rec_heat_plan:'持续热应激 - 启动降温方案',rec_lab_samples:'采集样本送检',rec_ventilation:'加强通风，检查饮水供应',
 auth_welcome:'账户已创建。欢迎！',auth_error:'凭据不正确',auth_first_run:'首次使用：输入用户名和密码以创建您的账户。',login_subtitle:'登录或创建账户',logout:'退出登录',required:'必填项',invalid_email:'无效的邮箱',invalid_phone:'无效的电话号码',must_be_number:'必须是数字',invalid_date:'无效的日期',invalid_format:'无效的格式',min_length:'最小长度',max_length:'最大长度',min_value:'最小值',max_value:'最大值',error_network:'网络错误',error_unexpected:'意外错误',error_loading:'加载错误',
-ana_economics:'经济分析',flock_purchase_cost:'每只成本',econ_cost_per_egg:'单蛋成本',econ_roi_per_bird:'ROI/只',econ_acquisition:'采购成本',econ_feed_cost:'饲料成本',econ_health_cost:'卫生成本',econ_direct_expenses:'直接费用',econ_total_investment:'总投资',econ_total_costs:'总成本',econ_net_result:'净利润',econ_daily_cost_bird:'日均成本/只',econ_days_active:'活跃天数',econ_no_data_guide:'在鸡群中输入采购成本，在财务中输入费用，在疫苗/用药中输入成本，即可查看经济分析。',exp_flock:'鸡群（可选）',health_cost:'费用',econ_org_summary:'组织概览',econ_cost_breakdown:'成本明细',econ_completeness:'可用数据'
+ana_economics:'经济分析',flock_purchase_cost:'每只成本',econ_cost_per_egg:'单蛋成本',econ_roi_per_bird:'ROI/只',econ_acquisition:'采购成本',econ_feed_cost:'饲料成本',econ_health_cost:'卫生成本',econ_direct_expenses:'直接费用',econ_total_investment:'总投资',econ_total_costs:'总成本',econ_net_result:'净利润',econ_daily_cost_bird:'日均成本/只',econ_days_active:'活跃天数',econ_no_data_guide:'在鸡群中输入采购成本，在财务中输入费用，在疫苗/用药中输入成本，即可查看经济分析。',exp_flock:'鸡群（可选）',health_cost:'费用',econ_org_summary:'组织概览',econ_cost_breakdown:'成本明细',econ_completeness:'可用数据',
+nav_census:'停药期',inv_total_in:'总入库',inv_total_out:'总出库',inv_balance:'库存余额',inv_records:'记录',inv_by_type:'按蛋类型',source:'来源',fin_egg_type:'类型',
+kpi_info_today:'所有活跃鸡群今日采蛋总量。',kpi_info_henday:'今日产蛋母鸡比例。理想值: >85%。',kpi_info_fcr:'每公斤蛋的饲料公斤数。越低越好。理想值: <2.2。',kpi_info_mortality:'占总鸡数的累计死亡百分比。目标: <3%。',kpi_info_cost_egg:'总成本（饲料+卫生+支出）除以产蛋数。',kpi_info_income_net:'当月销售收入减去所有支出。',kpi_info_active_hens:'当前活跃鸡群中的存活母鸡总数。',kpi_info_alerts:'需要立即关注的事项数量。'
 }};
 
 // ============ LIFECYCLE ROADMAP ============
@@ -1008,6 +1048,9 @@ function t(k){return(T[LANG]&&T[LANG][k])||(T.es&&T.es[k])||k;}
 function fmtNum(n,d=0){return Number(n||0).toLocaleString(locale(),{minimumFractionDigits:d,maximumFractionDigits:d});}
 function fmtMoney(n){return currency()+fmtNum(n,2);}
 function fmtDate(d){if(!d)return'-';return new Date(d+'T12:00:00').toLocaleDateString(locale());}
+// ── Live number formatting: blur=formatted, focus=raw ──
+document.addEventListener('focusout',function(e){const inp=e.target;if(!inp.matches||!inp.matches('input[type="number"],input[data-numfmt]'))return;const v=parseFloat(inp.value);if(isNaN(v))return;inp.dataset._rawVal=inp.value;inp.type='text';inp.value=fmtNum(v,inp.step&&String(inp.step).includes('.')?2:0);},true);
+document.addEventListener('focusin',function(e){const inp=e.target;if(inp.dataset._rawVal==null)return;inp.type='number';inp.value=inp.dataset._rawVal;delete inp.dataset._rawVal;},true);
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 function currency(){return(DATA||loadData()).farm.currency||'$';}
 function todayStr(){return new Date().toISOString().substring(0,10);}
@@ -1362,6 +1405,7 @@ if(navigator.onLine&&user.includes('@')){
     init();
     await loadFromServer();
     toast(t('auth_welcome')||'Bienvenido, '+me.full_name+'!');
+    if(!localStorage.getItem('egglogu_walkthrough_done')){setTimeout(()=>{startWalkthrough();},1500);}
     return;
   }catch(e){
     if(e.message==='offline'){/* fall through to local auth */}
@@ -2460,6 +2504,7 @@ var msg=LANG==='en'?'All tutorials reactivated!':'Todos los tutoriales reactivad
 toast(msg);nav('config');
 }
 function _injectOnboarding(section){
+if(_wtActive)return;
 document.querySelectorAll('.tutorial-overlay').forEach(function(el){el.remove();});
 var html=renderOnboarding(section);if(!html)return;
 document.body.insertAdjacentHTML('beforeend',html);
@@ -2468,6 +2513,371 @@ if(overlay){overlay.setAttribute('tabindex','-1');overlay.focus();
 overlay.addEventListener('click',function(e){if(e.target===overlay)dismissTutorial(section,false);});
 overlay.addEventListener('keydown',function(e){if(e.key==='Escape')dismissTutorial(section,false);});}
 }
+
+// ============ WALKTHROUGH GUIDED TOUR ENGINE ============
+let _wtActive=false,_wtPaused=false,_wtTourIdx=0,_wtStepIdx=0,_wtTimer=null,_wtBackup=null;
+const WT_STEP_MS=6000;
+
+const _WT_DEMO={
+farm:{name:'Granja Demo',capacity:1500,currency:'$'},
+flocks:[{id:'demo-f1',name:'Lote ISA-2026',breed:'isa-brown',count:1000,henCount:1000,dateIn:'2025-09-01',status:'produccion',houseNumber:'1',ageWeeks:22}],
+dailyProduction:[
+{id:'demo-p1',flockId:'demo-f1',date:new Date().toISOString().slice(0,10),eggsCollected:950,eggsBroken:5,mortality:2,feedKg:120,waterLiters:200,notes:'Demo'},
+{id:'demo-p2',flockId:'demo-f1',date:new Date(Date.now()-864e5).toISOString().slice(0,10),eggsCollected:945,eggsBroken:3,mortality:1,feedKg:118,waterLiters:198}
+],
+vaccines:[{id:'demo-v1',flockId:'demo-f1',name:'Newcastle+BI',date:'2026-02-10',nextDue:'2026-04-07',batchNumber:'NC-2026-045',status:'applied'}],
+medications:[{id:'demo-m1',flockId:'demo-f1',name:'Enrofloxacina',startDate:'2026-02-20',endDate:'2026-02-25',dosage:'10mg/kg',reason:'Preventivo',withdrawalDays:7}],
+feedPurchases:[{id:'demo-fp1',date:'2026-02-20',type:'Ponedora',quantity:2000,unitPrice:0.45,supplier:'AgroFeed'}],
+feedConsumption:[{id:'demo-fc1',date:new Date().toISOString().slice(0,10),flockId:'demo-f1',quantityKg:120}],
+clients:[{id:'demo-c1',name:'Restaurante El Buen Huevo',phone:'+1234567890',type:'restaurant',creditLimit:500,balance:0}],
+income:[{id:'demo-i1',date:new Date().toISOString().slice(0,10),clientId:'demo-c1',concept:'Venta huevos',amount:75,method:'transfer',status:'paid',qty:500,unitPrice:0.15}],
+expenses:[{id:'demo-e1',date:'2026-02-20',category:'feed',amount:900,description:'Alimento ponedora 2000kg',supplier:'AgroFeed'}],
+environment:[{id:'demo-env1',date:new Date().toISOString().slice(0,10),hour:8,tempC:22,humidity:55,co2ppm:800,lightLux:300}]
+};
+
+const _WT_NARR={
+es:{
+t1_name:'Produccion',t2_name:'Salud',t3_name:'Comercial',t4_name:'Gestion',t5_name:'Dashboard',
+t1s1:'Bienvenido a EGGlogU. Vamos a recorrer el ciclo completo de produccion.',
+t1s2:'Aqui gestionas tus lotes de gallinas. Cada lote tiene raza, cantidad y semana de edad.',
+t1s3:'Registra la recoleccion diaria: huevos, rotos, mortalidad y alimento consumido.',
+t1s4:'Los KPIs se calculan automaticamente. 950/1000 = 95% hen-day.',
+t1s5:'Controla compras de alimento: proveedor, cantidad, precio por kg.',
+t1s6:'El FCR se calcula: 120kg alimento / (950 huevos x 0.062kg) = 2.04',
+t1s7:'Monitorea temperatura, humedad y condiciones del galpon.',
+t1s8:'Con 5 minutos al dia, tienes todo el ciclo de produccion registrado.',
+t2s1:'Protege la salud de tu parvada con vacunacion y bioseguridad.',
+t2s2:'Calendario de vacunacion: nombre, fecha, proxima dosis, lote.',
+t2s3:'Registra tratamientos con dias de carencia para trazabilidad.',
+t2s4:'Control de visitantes, zonas de riesgo y protocolos de desinfeccion.',
+t2s5:'La sanidad preventiva reduce brotes hasta un 80%.',
+t3s1:'Gestiona ventas, clientes y finanzas en un solo lugar.',
+t3s2:'Tu cartera de clientes: restaurantes, mayoristas, directos.',
+t3s3:'El inventario se calcula automaticamente: produccion - ventas = stock.',
+t3s4:'Registra cada venta con detalle: cliente, cantidad, precio.',
+t3s5:'Ingresos menos gastos = rentabilidad clara. Costo por huevo automatico.',
+t4s1:'Herramientas avanzadas de gestion para decisiones inteligentes.',
+t4s2:'Graficos y predicciones basadas en tus datos reales.',
+t4s3:'Checklists diarios, bitacora de operaciones y personal.',
+t4s4:'Trazabilidad con codigo QR y planificacion de produccion.',
+t4s5:'Todo conectado, todo trazable, todo automatico.',
+t5s1:'Tu centro de control: todos los KPIs en una pantalla.',
+t5s2:'Alertas y recomendaciones inteligentes basadas en tus datos.',
+t5s3:'Sistema listo. Bienvenido a EGGlogU!',
+wt_exit:'Salir',wt_pause:'Pausar',wt_resume:'Reanudar',wt_next:'Sig.',wt_prev:'Ant.',wt_skip:'Saltar Tour',wt_replay:'Ver Tour Guiado',wt_tour:'Tour',wt_step:'Paso'
+},
+en:{
+t1_name:'Production',t2_name:'Health',t3_name:'Commercial',t4_name:'Management',t5_name:'Dashboard',
+t1s1:'Welcome to EGGlogU. Let\'s walk through the complete production cycle.',
+t1s2:'Here you manage your flocks. Each flock has breed, count, and age week.',
+t1s3:'Record daily collection: eggs, broken, mortality, and feed consumed.',
+t1s4:'KPIs are calculated automatically. 950/1000 = 95% hen-day.',
+t1s5:'Track feed purchases: supplier, quantity, price per kg.',
+t1s6:'FCR is calculated: 120kg feed / (950 eggs x 0.062kg) = 2.04',
+t1s7:'Monitor temperature, humidity, and housing conditions.',
+t1s8:'5 minutes a day and your full production cycle is recorded.',
+t2s1:'Protect your flock health with vaccination and biosecurity.',
+t2s2:'Vaccination calendar: name, date, next dose, batch.',
+t2s3:'Record treatments with withdrawal days for traceability.',
+t2s4:'Visitor control, risk zones, and disinfection protocols.',
+t2s5:'Preventive health reduces outbreaks by up to 80%.',
+t3s1:'Manage sales, clients, and finances in one place.',
+t3s2:'Your client portfolio: restaurants, wholesalers, direct sales.',
+t3s3:'Inventory is calculated automatically: production - sales = stock.',
+t3s4:'Record each sale with detail: client, quantity, price.',
+t3s5:'Revenue minus expenses = clear profitability. Cost per egg automatic.',
+t4s1:'Advanced management tools for smart decisions.',
+t4s2:'Charts and predictions based on your real data.',
+t4s3:'Daily checklists, operations log, and personnel.',
+t4s4:'Traceability with QR codes and production planning.',
+t4s5:'Everything connected, everything traceable, everything automatic.',
+t5s1:'Your control center: all KPIs on one screen.',
+t5s2:'Smart alerts and recommendations based on your data.',
+t5s3:'System ready. Welcome to EGGlogU!',
+wt_exit:'Exit',wt_pause:'Pause',wt_resume:'Resume',wt_next:'Next',wt_prev:'Prev',wt_skip:'Skip Tour',wt_replay:'Watch Guided Tour',wt_tour:'Tour',wt_step:'Step'
+},
+fr:{
+t1_name:'Production',t2_name:'Sante',t3_name:'Commercial',t4_name:'Gestion',t5_name:'Tableau de bord',
+t1s1:'Bienvenue sur EGGlogU. Decouvrons le cycle complet de production.',
+t1s2:'Gerez vos lots de poules: race, nombre et age.',
+t1s3:'Enregistrez la collecte quotidienne: oeufs, casses, mortalite, aliment.',
+t1s4:'Les KPIs sont calcules automatiquement. 950/1000 = 95% taux de ponte.',
+t1s5:'Suivez les achats d\'aliment: fournisseur, quantite, prix/kg.',
+t1s6:'L\'IC se calcule: 120kg / (950 oeufs x 0.062kg) = 2.04',
+t1s7:'Surveillez temperature, humidite et conditions du batiment.',
+t1s8:'5 minutes par jour pour un cycle de production complet.',
+t2s1:'Protegez la sante de votre troupeau.',t2s2:'Calendrier vaccinal complet.',t2s3:'Traitements avec delais de retrait.',t2s4:'Controle visiteurs et biosecurite.',t2s5:'La prevention reduit les foyers de 80%.',
+t3s1:'Ventes, clients et finances en un seul endroit.',t3s2:'Portefeuille clients: restaurants, grossistes.',t3s3:'Inventaire automatique: production - ventes = stock.',t3s4:'Chaque vente avec detail complet.',t3s5:'Revenus - depenses = rentabilite claire.',
+t4s1:'Outils avances pour decisions intelligentes.',t4s2:'Graphiques et predictions.',t4s3:'Checklists et journal des operations.',t4s4:'Tracabilite QR et planification.',t4s5:'Tout connecte, tout tracable.',
+t5s1:'Centre de controle: tous les KPIs.',t5s2:'Alertes et recommandations intelligentes.',t5s3:'Systeme pret. Bienvenue!',
+wt_exit:'Quitter',wt_pause:'Pause',wt_resume:'Reprendre',wt_next:'Suiv.',wt_prev:'Prec.',wt_skip:'Passer',wt_replay:'Voir le Tour Guide',wt_tour:'Tour',wt_step:'Etape'
+},
+pt:{
+t1_name:'Producao',t2_name:'Saude',t3_name:'Comercial',t4_name:'Gestao',t5_name:'Painel',
+t1s1:'Bem-vindo ao EGGlogU. Vamos percorrer o ciclo completo.',
+t1s2:'Gerencie seus lotes: raca, quantidade e idade.',
+t1s3:'Registre a coleta diaria: ovos, quebrados, mortalidade, racao.',
+t1s4:'KPIs calculados automaticamente. 950/1000 = 95% hen-day.',
+t1s5:'Controle compras de racao: fornecedor, quantidade, preco/kg.',
+t1s6:'CA calculado: 120kg / (950 ovos x 0.062kg) = 2.04',
+t1s7:'Monitore temperatura, umidade e condicoes.',
+t1s8:'5 minutos por dia para o ciclo completo.',
+t2s1:'Proteja a saude do seu plantel.',t2s2:'Calendario de vacinacao completo.',t2s3:'Tratamentos com carencia.',t2s4:'Controle de visitantes e biosseguranca.',t2s5:'Prevencao reduz surtos em 80%.',
+t3s1:'Vendas, clientes e financas em um so lugar.',t3s2:'Carteira de clientes completa.',t3s3:'Estoque automatico: producao - vendas.',t3s4:'Cada venda com detalhes.',t3s5:'Receita - despesas = rentabilidade clara.',
+t4s1:'Ferramentas avancadas de gestao.',t4s2:'Graficos e previsoes.',t4s3:'Checklists e diario de operacoes.',t4s4:'Rastreabilidade QR e planejamento.',t4s5:'Tudo conectado, tudo rastreavel.',
+t5s1:'Centro de controle: todos os KPIs.',t5s2:'Alertas e recomendacoes inteligentes.',t5s3:'Sistema pronto. Bem-vindo!',
+wt_exit:'Sair',wt_pause:'Pausar',wt_resume:'Retomar',wt_next:'Prox.',wt_prev:'Ant.',wt_skip:'Pular Tour',wt_replay:'Ver Tour Guiado',wt_tour:'Tour',wt_step:'Passo'
+},
+de:{
+t1_name:'Produktion',t2_name:'Gesundheit',t3_name:'Handel',t4_name:'Management',t5_name:'Dashboard',
+t1s1:'Willkommen bei EGGlogU. Entdecken Sie den Produktionszyklus.',
+t1s2:'Verwalten Sie Ihre Herden: Rasse, Anzahl und Alter.',
+t1s3:'Tageliche Sammlung: Eier, Bruch, Mortalitat, Futter.',
+t1s4:'KPIs werden automatisch berechnet. 950/1000 = 95%.',
+t1s5:'Futterkaufe verfolgen: Lieferant, Menge, Preis/kg.',
+t1s6:'FCR berechnet: 120kg / (950 Eier x 0.062kg) = 2.04',
+t1s7:'Temperatur, Luftfeuchtigkeit und Stallbedingungen.',
+t1s8:'5 Minuten taglich fur den kompletten Zyklus.',
+t2s1:'Schutzen Sie die Gesundheit Ihrer Herde.',t2s2:'Impfkalender.',t2s3:'Behandlungen mit Wartezeiten.',t2s4:'Besucherkontrolle und Biosicherheit.',t2s5:'Pravention reduziert Ausbruche um 80%.',
+t3s1:'Verkaufe, Kunden und Finanzen an einem Ort.',t3s2:'Kundenportfolio.',t3s3:'Automatischer Bestand.',t3s4:'Jeder Verkauf mit Details.',t3s5:'Einnahmen - Ausgaben = Rentabilitat.',
+t4s1:'Erweiterte Management-Tools.',t4s2:'Diagramme und Prognosen.',t4s3:'Checklisten und Betriebstagebuch.',t4s4:'QR-Ruckverfolgbarkeit und Planung.',t4s5:'Alles verbunden, alles ruckverfolgbar.',
+t5s1:'Kontrollzentrum: alle KPIs.',t5s2:'Intelligente Warnungen.',t5s3:'System bereit. Willkommen!',
+wt_exit:'Beenden',wt_pause:'Pause',wt_resume:'Fortsetzen',wt_next:'Weiter',wt_prev:'Zuruck',wt_skip:'Tour uberspringen',wt_replay:'Tour ansehen',wt_tour:'Tour',wt_step:'Schritt'
+},
+it:{
+t1_name:'Produzione',t2_name:'Salute',t3_name:'Commerciale',t4_name:'Gestione',t5_name:'Pannello',
+t1s1:'Benvenuto su EGGlogU. Scopriamo il ciclo produttivo completo.',
+t1s2:'Gestisci i tuoi gruppi: razza, quantita e eta.',
+t1s3:'Registra la raccolta giornaliera: uova, rotte, mortalita, mangime.',
+t1s4:'I KPI sono calcolati automaticamente. 950/1000 = 95%.',
+t1s5:'Acquisti mangime: fornitore, quantita, prezzo/kg.',
+t1s6:'ICA calcolato: 120kg / (950 uova x 0.062kg) = 2.04',
+t1s7:'Monitora temperatura, umidita e condizioni.',
+t1s8:'5 minuti al giorno per il ciclo completo.',
+t2s1:'Proteggi la salute del tuo allevamento.',t2s2:'Calendario vaccinale.',t2s3:'Trattamenti con tempi di sospensione.',t2s4:'Controllo visitatori e biosicurezza.',t2s5:'La prevenzione riduce i focolai dell\'80%.',
+t3s1:'Vendite, clienti e finanze in un unico posto.',t3s2:'Portafoglio clienti.',t3s3:'Inventario automatico.',t3s4:'Ogni vendita con dettagli.',t3s5:'Ricavi - spese = redditivita chiara.',
+t4s1:'Strumenti avanzati di gestione.',t4s2:'Grafici e previsioni.',t4s3:'Checklist e diario operativo.',t4s4:'Tracciabilita QR e pianificazione.',t4s5:'Tutto connesso, tutto tracciabile.',
+t5s1:'Centro di controllo: tutti i KPI.',t5s2:'Avvisi e raccomandazioni intelligenti.',t5s3:'Sistema pronto. Benvenuto!',
+wt_exit:'Esci',wt_pause:'Pausa',wt_resume:'Riprendi',wt_next:'Succ.',wt_prev:'Prec.',wt_skip:'Salta Tour',wt_replay:'Guarda il Tour',wt_tour:'Tour',wt_step:'Passo'
+},
+ja:{
+t1_name:'生産',t2_name:'健康',t3_name:'商業',t4_name:'管理',t5_name:'ダッシュボード',
+t1s1:'EGGlogUへようこそ。生産サイクル全体をご案内します。',
+t1s2:'鶏群管理：品種、羽数、週齢。',
+t1s3:'日次記録：集卵数、破卵、死亡、飼料。',
+t1s4:'KPIは自動計算。950/1000 = 95%産卵率。',
+t1s5:'飼料購入管理：業者、数量、単価。',
+t1s6:'FCR計算：120kg / (950卵 x 0.062kg) = 2.04',
+t1s7:'温度、湿度、鶏舎環境のモニタリング。',
+t1s8:'1日5分で生産サイクル全体を記録。',
+t2s1:'ワクチンと防疫で鶏群の健康を守ります。',t2s2:'ワクチンカレンダー。',t2s3:'休薬期間付き治療記録。',t2s4:'訪問者管理と防疫。',t2s5:'予防で疾病発生を80%削減。',
+t3s1:'販売・顧客・財務を一元管理。',t3s2:'顧客ポートフォリオ。',t3s3:'在庫自動計算。',t3s4:'販売詳細記録。',t3s5:'収入 - 支出 = 明確な収益性。',
+t4s1:'高度な管理ツール。',t4s2:'グラフと予測。',t4s3:'チェックリストと業務日誌。',t4s4:'QRトレーサビリティと計画。',t4s5:'すべて接続、すべて追跡可能。',
+t5s1:'コントロールセンター：全KPI一覧。',t5s2:'スマートアラートと推奨事項。',t5s3:'準備完了。ようこそ！',
+wt_exit:'終了',wt_pause:'一時停止',wt_resume:'再開',wt_next:'次へ',wt_prev:'前へ',wt_skip:'スキップ',wt_replay:'ガイドツアーを見る',wt_tour:'ツアー',wt_step:'ステップ'
+},
+zh:{
+t1_name:'生产',t2_name:'健康',t3_name:'商务',t4_name:'管理',t5_name:'仪表盘',
+t1s1:'欢迎使用EGGlogU。让我们了解完整的生产流程。',
+t1s2:'管理鸡群：品种、数量和周龄。',
+t1s3:'记录日常采蛋：鸡蛋、破损、死亡、饲料。',
+t1s4:'KPI自动计算。950/1000 = 95%产蛋率。',
+t1s5:'饲料采购管理：供应商、数量、单价。',
+t1s6:'饲料转化率：120kg / (950蛋 x 0.062kg) = 2.04',
+t1s7:'监测温度、湿度和鸡舍环境。',
+t1s8:'每天5分钟，完整记录生产周期。',
+t2s1:'通过疫苗和生物安全保护鸡群健康。',t2s2:'疫苗日历。',t2s3:'带停药期的治疗记录。',t2s4:'访客管理和生物安全。',t2s5:'预防可减少80%的疫情爆发。',
+t3s1:'销售、客户和财务一站式管理。',t3s2:'客户组合管理。',t3s3:'库存自动计算。',t3s4:'详细销售记录。',t3s5:'收入 - 支出 = 清晰的盈利能力。',
+t4s1:'高级管理工具助力明智决策。',t4s2:'图表和预测分析。',t4s3:'检查清单和运营日志。',t4s4:'QR溯源和生产计划。',t4s5:'一切互联，一切可追溯。',
+t5s1:'控制中心：所有KPI一目了然。',t5s2:'智能警报和建议。',t5s3:'系统就绪。欢迎！',
+wt_exit:'退出',wt_pause:'暂停',wt_resume:'继续',wt_next:'下一步',wt_prev:'上一步',wt_skip:'跳过',wt_replay:'观看引导教程',wt_tour:'导览',wt_step:'步骤'
+}
+};
+
+const _WT_TOURS=[
+{id:'production',icon:'🥚',steps:[
+{section:'lotes',narr:'t1s2',highlight:'.card'},
+{section:'produccion',narr:'t1s3',highlight:'.card'},
+{section:'produccion',narr:'t1s4',highlight:'.kpi-grid'},
+{section:'alimento',narr:'t1s5',highlight:'.card'},
+{section:'alimento',narr:'t1s6',highlight:'.kpi-grid'},
+{section:'ambiente',narr:'t1s7',highlight:'.card'},
+{section:'ambiente',narr:'t1s8',highlight:'.kpi-grid'}
+]},
+{id:'health',icon:'💉',steps:[
+{section:'sanidad',narr:'t2s2',highlight:'.card'},
+{section:'sanidad',narr:'t2s3',highlight:'.card:nth-child(2)'},
+{section:'bioseguridad',narr:'t2s4',highlight:'.card'},
+{section:'bioseguridad',narr:'t2s5',highlight:'.kpi-grid'}
+]},
+{id:'commercial',icon:'💰',steps:[
+{section:'clientes',narr:'t3s2',highlight:'.card'},
+{section:'inventario',narr:'t3s3',highlight:'.kpi-grid'},
+{section:'finanzas',narr:'t3s4',highlight:'.card'},
+{section:'finanzas',narr:'t3s5',highlight:'.kpi-grid'}
+]},
+{id:'management',icon:'📈',steps:[
+{section:'analisis',narr:'t4s2',highlight:'.card'},
+{section:'operaciones',narr:'t4s3',highlight:'.card'},
+{section:'trazabilidad',narr:'t4s4',highlight:'.card'},
+{section:'planificacion',narr:'t4s5',highlight:'.card'}
+]},
+{id:'dashboard',icon:'📊',steps:[
+{section:'dashboard',narr:'t5s1',highlight:'.kpi-grid'},
+{section:'dashboard',narr:'t5s2',highlight:'.card'},
+{section:'dashboard',narr:'t5s3',highlight:'.page-header'}
+]}
+];
+
+function _wtL(k){const n=_WT_NARR[LANG]||_WT_NARR.es;return n[k]||(_WT_NARR.es[k])||k;}
+
+function startWalkthrough(tourIdx){
+if(_wtActive)return;
+_wtActive=true;_wtPaused=false;
+_wtTourIdx=typeof tourIdx==='number'?tourIdx:0;_wtStepIdx=0;
+// Backup current data
+const D=loadData();
+_wtBackup=JSON.stringify(D);
+// Inject demo data
+D.flocks=(_WT_DEMO.flocks||[]).concat(D.flocks||[]);
+D.dailyProduction=(_WT_DEMO.dailyProduction||[]).concat(D.dailyProduction||[]);
+D.vaccines=(_WT_DEMO.vaccines||[]).concat(D.vaccines||[]);
+D.medications=(_WT_DEMO.medications||[]).concat(D.medications||[]);
+D.feedPurchases=(_WT_DEMO.feedPurchases||[]).concat(D.feedPurchases||[]);
+D.feedConsumption=(_WT_DEMO.feedConsumption||[]).concat(D.feedConsumption||[]);
+D.clients=(_WT_DEMO.clients||[]).concat(D.clients||[]);
+D.income=(_WT_DEMO.income||[]).concat(D.income||[]);
+D.expenses=(_WT_DEMO.expenses||[]).concat(D.expenses||[]);
+D.environment=(_WT_DEMO.environment||[]).concat(D.environment||[]);
+saveData(D);
+// Render controls + first step
+_wtRenderUI();
+_wtRenderStep();
+}
+
+function endWalkthrough(markDone){
+_wtActive=false;_wtPaused=false;
+if(_wtTimer){clearTimeout(_wtTimer);_wtTimer=null;}
+// Restore original data
+if(_wtBackup){try{const orig=JSON.parse(_wtBackup);saveData(orig);}catch(e){}_wtBackup=null;}
+// Clean demo data IDs
+const D=loadData();
+['flocks','dailyProduction','vaccines','medications','feedPurchases','feedConsumption','clients','income','expenses','environment'].forEach(k=>{
+if(Array.isArray(D[k]))D[k]=D[k].filter(r=>!String(r.id||'').startsWith('demo-'));
+});
+saveData(D);
+// Remove UI
+document.querySelectorAll('.wt-overlay,.wt-narration,.wt-controls').forEach(el=>el.remove());
+if(markDone!==false)localStorage.setItem('egglogu_walkthrough_done','1');
+nav(currentSection||'dashboard');
+}
+
+function _wtRenderUI(){
+// Remove old
+document.querySelectorAll('.wt-overlay,.wt-narration,.wt-controls').forEach(el=>el.remove());
+// Overlay for spotlight
+const ov=document.createElement('div');ov.className='wt-overlay';ov.id='wt-overlay';document.body.appendChild(ov);
+// Narration panel
+const nr=document.createElement('div');nr.className='wt-narration';nr.id='wt-narration';document.body.appendChild(nr);
+// Controls bar
+const ct=document.createElement('div');ct.className='wt-controls';ct.id='wt-controls';document.body.appendChild(ct);
+}
+
+function _wtRenderStep(){
+if(!_wtActive)return;
+const tour=_WT_TOURS[_wtTourIdx];if(!tour)return endWalkthrough();
+const step=tour.steps[_wtStepIdx];
+if(!step){
+// Tour finished — next tour
+_wtTourIdx++;_wtStepIdx=0;
+if(_wtTourIdx>=_WT_TOURS.length)return endWalkthrough();
+// Show intro for next tour
+_wtRenderStep();return;
+}
+// Navigate to section
+nav(step.section);
+// Update narration
+const nr=document.getElementById('wt-narration');
+if(nr){
+const tourName=_wtL('t'+(_wtTourIdx+1)+'_name');
+// Intro narration for first step of tour
+const introKey='t'+(_wtTourIdx+1)+'s1';
+const narrText=_wtStepIdx===0?_wtL(introKey)+'<br><br>'+_wtL(step.narr):_wtL(step.narr);
+nr.innerHTML='<div class="wt-narration-icon">'+tour.icon+'</div>'
++'<div class="wt-narration-tour">'+tourName+'</div>'
++'<div class="wt-narration-text">'+narrText+'</div>';
+}
+// Spotlight
+setTimeout(()=>{_wtSpotlight(step.highlight);},300);
+// Update controls
+_wtRenderControls();
+// Auto-advance timer
+if(_wtTimer)clearTimeout(_wtTimer);
+if(!_wtPaused){_wtTimer=setTimeout(()=>{_wtNext();},WT_STEP_MS);}
+}
+
+function _wtSpotlight(sel){
+const ov=document.getElementById('wt-overlay');if(!ov)return;
+ov.innerHTML='';
+if(!sel)return;
+const el=document.querySelector('.main-content .section.active '+sel)||document.querySelector('.main-content '+sel);
+if(!el)return;
+const r=el.getBoundingClientRect();
+const sp=document.createElement('div');sp.className='wt-spotlight';
+sp.style.left=r.left-6+'px';sp.style.top=r.top-6+'px';sp.style.width=r.width+12+'px';sp.style.height=r.height+12+'px';
+ov.appendChild(sp);
+el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function _wtRenderControls(){
+const ct=document.getElementById('wt-controls');if(!ct)return;
+const tour=_WT_TOURS[_wtTourIdx];if(!tour)return;
+const totalSteps=tour.steps.length;
+const totalTours=_WT_TOURS.length;
+const globalStep=_WT_TOURS.slice(0,_wtTourIdx).reduce((a,t)=>a+t.steps.length,0)+_wtStepIdx;
+const globalTotal=_WT_TOURS.reduce((a,t)=>a+t.steps.length,0);
+const pct=Math.round((globalStep/globalTotal)*100);
+ct.innerHTML=
+'<button onclick="_wtPrev()" '+ (_wtStepIdx===0&&_wtTourIdx===0?'disabled':'')+'>'+_wtL('wt_prev')+'</button>'
++'<button onclick="_wtTogglePause()">'+(_wtPaused?'▶ '+_wtL('wt_resume'):'⏸ '+_wtL('wt_pause'))+'</button>'
++'<button onclick="_wtNext()">'+_wtL('wt_next')+'</button>'
++'<button onclick="_wtSkipTour()">'+_wtL('wt_skip')+' ⏭</button>'
++'<div class="wt-progress"><div class="wt-progress-fill" style="width:'+pct+'%"></div></div>'
++'<span class="wt-controls-info">'+_wtL('wt_tour')+' '+(_wtTourIdx+1)+'/'+totalTours+' · '+_wtL('wt_step')+' '+(_wtStepIdx+1)+'/'+totalSteps+'</span>'
++'<button class="wt-exit" onclick="endWalkthrough()">✕ '+_wtL('wt_exit')+'</button>';
+}
+
+function _wtNext(){
+if(!_wtActive)return;
+if(_wtTimer)clearTimeout(_wtTimer);
+const tour=_WT_TOURS[_wtTourIdx];
+if(tour&&_wtStepIdx<tour.steps.length-1){_wtStepIdx++;}
+else{_wtTourIdx++;_wtStepIdx=0;}
+if(_wtTourIdx>=_WT_TOURS.length)return endWalkthrough();
+_wtRenderStep();
+}
+function _wtPrev(){
+if(!_wtActive)return;
+if(_wtTimer)clearTimeout(_wtTimer);
+if(_wtStepIdx>0){_wtStepIdx--;}
+else if(_wtTourIdx>0){_wtTourIdx--;_wtStepIdx=Math.max(0,_WT_TOURS[_wtTourIdx].steps.length-1);}
+_wtRenderStep();
+}
+function _wtTogglePause(){
+_wtPaused=!_wtPaused;
+if(_wtPaused&&_wtTimer){clearTimeout(_wtTimer);_wtTimer=null;}
+if(!_wtPaused){_wtTimer=setTimeout(()=>{_wtNext();},WT_STEP_MS);}
+_wtRenderControls();
+}
+function _wtSkipTour(){
+if(!_wtActive)return;
+if(_wtTimer)clearTimeout(_wtTimer);
+_wtTourIdx++;_wtStepIdx=0;
+if(_wtTourIdx>=_WT_TOURS.length)return endWalkthrough();
+_wtRenderStep();
+}
+// ============ END WALKTHROUGH ENGINE ============
+
 function nav(section){
 // Suspension gate — trial expired, force to dashboard
 const _p=(loadData().settings.plan||{});
@@ -2610,13 +3020,13 @@ const alerts=getAlerts(D);
 let h=`<div class="page-header"><h2>${t('dash_title')}</h2><div class="btn-group"><button class="btn btn-secondary" onclick="saveKpiSnapshot()">${t('dash_snapshot')}</button><span>${sanitizeHTML(D.farm.name)}</span></div></div>`;
 h+=renderTrialBanner(D);
 h+=`<div class="kpi-grid">`;
-h+=kpi(t('kpi_today'),fmtNum(snap.eggsToday),'','')+kpi(t('kpi_henday'),fmtNum(snap.henDay,1)+'%',fmtNum(snap.activeHens)+' '+t('kpi_active_hens').toLowerCase()+(prevSnap?snapshotDelta(snap.henDay,prevSnap.henDay):''),snap.henDay<50?'danger':snap.henDay<70?'warning':'');
-h+=kpi(t('kpi_fcr'),snap.fcr>0?fmtNum(snap.fcr,2):'-',t('fcr_unit')+(prevSnap?snapshotDelta(-snap.fcr,-prevSnap.fcr):''),snap.fcr>3?'danger':snap.fcr>2.5?'warning':'');
-h+=kpi(t('kpi_mortality'),fmtNum(snap.mortality,1)+'%',''+(prevSnap?snapshotDelta(-snap.mortality,-prevSnap.mortality):''),snap.mortality>5?'danger':snap.mortality>3?'warning':'');
-h+=kpi(t('kpi_cost_egg'),fmtMoney(snap.costPerEgg),''+(prevSnap?snapshotDelta(-snap.costPerEgg,-prevSnap.costPerEgg):''),'accent');
-h+=kpi(t('kpi_income_net'),fmtMoney(snap.netIncome),today.substring(0,7)+(prevSnap?snapshotDelta(snap.netIncome,prevSnap.netIncome):''),snap.netIncome<0?'danger':'secondary');
-h+=kpi(t('kpi_active_hens'),fmtNum(snap.activeHens),snap.totalFlocks+' '+t('kpi_active_flocks').toLowerCase());
-h+=kpi(t('kpi_alerts'),alerts.length.toString(),alerts.length>0?'⚠':'✓',alerts.length>0?'warning':'');
+h+=kpi(t('kpi_today'),fmtNum(snap.eggsToday),'','',t('kpi_info_today'))+kpi(t('kpi_henday'),fmtNum(snap.henDay,1)+'%',fmtNum(snap.activeHens)+' '+t('kpi_active_hens').toLowerCase()+(prevSnap?snapshotDelta(snap.henDay,prevSnap.henDay):''),snap.henDay<50?'danger':snap.henDay<70?'warning':'',t('kpi_info_henday'));
+h+=kpi(t('kpi_fcr'),snap.fcr>0?fmtNum(snap.fcr,2):'-',t('fcr_unit')+(prevSnap?snapshotDelta(-snap.fcr,-prevSnap.fcr):''),snap.fcr>3?'danger':snap.fcr>2.5?'warning':'',t('kpi_info_fcr'));
+h+=kpi(t('kpi_mortality'),fmtNum(snap.mortality,1)+'%',''+(prevSnap?snapshotDelta(-snap.mortality,-prevSnap.mortality):''),snap.mortality>5?'danger':snap.mortality>3?'warning':'',t('kpi_info_mortality'));
+h+=kpi(t('kpi_cost_egg'),fmtMoney(snap.costPerEgg),''+(prevSnap?snapshotDelta(-snap.costPerEgg,-prevSnap.costPerEgg):''),'accent',t('kpi_info_cost_egg'));
+h+=kpi(t('kpi_income_net'),fmtMoney(snap.netIncome),today.substring(0,7)+(prevSnap?snapshotDelta(snap.netIncome,prevSnap.netIncome):''),snap.netIncome<0?'danger':'secondary',t('kpi_info_income_net'));
+h+=kpi(t('kpi_active_hens'),fmtNum(snap.activeHens),snap.totalFlocks+' '+t('kpi_active_flocks').toLowerCase(),'',t('kpi_info_active_hens'));
+h+=kpi(t('kpi_alerts'),alerts.length.toString(),alerts.length>0?'⚠':'✓',alerts.length>0?'warning':'',t('kpi_info_alerts'));
 h+='</div>';
 // Quick Entry Cards
 h+=renderQuickEntry();
@@ -2642,7 +3052,9 @@ h+='</tbody></table></div></div>';}
 h+=renderIntegrityWidget(D);
 $('sec-dashboard').innerHTML=h;destroyCharts();renderTrendChart(D);fetchWeather();
 }
-function kpi(label,value,sub,cls=''){return `<div class="kpi-card ${cls}"><div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub||''}</div></div>`;}
+function kpi(label,value,sub,cls='',info=''){return `<div class="kpi-card ${cls}">${info?'<button class="kpi-info-btn" onclick="event.stopPropagation();toggleKpiTip(this,\''+info.replace(/'/g,'\\x27').replace(/"/g,'&quot;')+'\')">i</button>':''}<div class="kpi-label">${label}</div><div class="kpi-value">${value}</div><div class="kpi-sub">${sub||''}</div></div>`;}
+function toggleKpiTip(btn,txt){const card=btn.closest('.kpi-card');const existing=card.querySelector('.kpi-tooltip');if(existing){existing.remove();return;}document.querySelectorAll('.kpi-tooltip').forEach(e=>e.remove());const tip=document.createElement('div');tip.className='kpi-tooltip';tip.textContent=txt;card.appendChild(tip);}
+document.addEventListener('click',function(e){if(!e.target.closest('.kpi-info-btn')&&!e.target.closest('.kpi-tooltip')){document.querySelectorAll('.kpi-tooltip').forEach(el=>el.remove());}});
 function renderTrendChart(D){
 const c=document.getElementById('chart-trend');if(!c)return;
 const labels=[],dE=[],dH=[];
@@ -4109,69 +4521,18 @@ const _TICKET_PRIORITIES=['low','medium','high','urgent'];
 const _TICKET_STATUSES=['open','in_progress','waiting_user','resolved','closed'];
 
 function _sL(){
-const lang=document.documentElement.lang||'es';const isEs=lang.startsWith('es');
-return {
-faq_title:isEs?'Centro de Ayuda':'Help Center',
-faq_search:isEs?'Buscar articulos...':'Search articles...',
-faq_helpful:isEs?'Te fue util?':'Was this helpful?',
-faq_yes:isEs?'Si':'Yes',
-faq_no:'No',
-faq_empty:isEs?'No hay articulos disponibles':'No articles available',
-faq_no_results:isEs?'Sin resultados para':'No results for',
-tab_faq:'FAQ',
-tab_new_ticket:isEs?'Nuevo Ticket':'New Ticket',
-tab_my_tickets:isEs?'Mis Tickets':'My Tickets',
-tab_contact_center:'Contact Center',
-ticket_subject:isEs?'Asunto':'Subject',
-ticket_desc:isEs?'Descripcion del problema':'Describe the issue',
-ticket_priority:isEs?'Prioridad':'Priority',
-ticket_send:isEs?'Enviar Ticket':'Submit Ticket',
-ticket_empty:isEs?'No tienes tickets':'No tickets yet',
-ticket_status:isEs?'Estado':'Status',
-ticket_created:isEs?'Creado':'Created',
-ticket_category:isEs?'Categoria':'Category',
-ticket_close:isEs?'Cerrar Ticket':'Close Ticket',
-ticket_rate:isEs?'Calificar':'Rate',
-ticket_reply:isEs?'Responder':'Reply',
-ticket_msg_placeholder:isEs?'Escribe tu mensaje...':'Type your message...',
-ticket_send_msg:isEs?'Enviar':'Send',
-ticket_rated:isEs?'Calificado':'Rated',
-ticket_offline:isEs?'Guardado offline — se enviara al reconectar':'Saved offline — will sync when online',
-ticket_synced:isEs?'Tickets sincronizados':'Tickets synced',
-admin_total:isEs?'Total Tickets':'Total Tickets',
-admin_open:isEs?'Abiertos':'Open',
-admin_progress:isEs?'En Progreso':'In Progress',
-admin_resolved:isEs?'Resueltos':'Resolved',
-admin_avg_time:isEs?'Tiempo Promedio':'Avg Resolution',
-admin_csat:'CSAT',
-admin_sla:'SLA %',
-admin_hours:isEs?'horas':'hours',
-admin_filter:isEs?'Filtrar':'Filter',
-admin_internal:isEs?'Nota interna':'Internal note',
-admin_notes:isEs?'Notas admin':'Admin notes',
-admin_update:isEs?'Actualizar':'Update',
-admin_faq_manage:isEs?'Gestionar FAQ':'Manage FAQ',
-pri_low:isEs?'Baja':'Low',
-pri_medium:isEs?'Media':'Medium',
-pri_high:isEs?'Alta':'High',
-pri_urgent:isEs?'Urgente':'Urgent',
-st_open:isEs?'Abierto':'Open',
-st_in_progress:isEs?'En Progreso':'In Progress',
-st_waiting_user:isEs?'Esperando Respuesta':'Waiting Response',
-st_resolved:isEs?'Resuelto':'Resolved',
-st_closed:isEs?'Cerrado':'Closed',
-cat_production:isEs?'Produccion':'Production',
-cat_health:isEs?'Sanidad':'Health',
-cat_feed:isEs?'Alimento':'Feed',
-cat_iot:'IoT',
-cat_billing:isEs?'Facturacion':'Billing',
-cat_bug:'Bug',
-cat_sync:isEs?'Sincronizacion':'Sync',
-cat_feature_request:isEs?'Solicitud':'Feature Request',
-cat_access:isEs?'Acceso':'Access',
-cat_general:'General',
-all:isEs?'Todos':'All',
+const _SL={
+es:{faq_title:'Centro de Ayuda',faq_search:'Buscar articulos...',faq_helpful:'Te fue util?',faq_yes:'Si',faq_no:'No',faq_empty:'No hay articulos disponibles',faq_no_results:'Sin resultados para',tab_faq:'FAQ',tab_new_ticket:'Nuevo Ticket',tab_my_tickets:'Mis Tickets',tab_contact_center:'Contact Center',ticket_subject:'Asunto',ticket_desc:'Descripcion del problema',ticket_priority:'Prioridad',ticket_send:'Enviar Ticket',ticket_empty:'No tienes tickets',ticket_status:'Estado',ticket_created:'Creado',ticket_category:'Categoria',ticket_close:'Cerrar Ticket',ticket_rate:'Calificar',ticket_reply:'Responder',ticket_msg_placeholder:'Escribe tu mensaje...',ticket_send_msg:'Enviar',ticket_rated:'Calificado',ticket_offline:'Guardado offline — se enviara al reconectar',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abiertos',admin_progress:'En Progreso',admin_resolved:'Resueltos',admin_avg_time:'Tiempo Promedio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Actualizar',admin_faq_manage:'Gestionar FAQ',pri_low:'Baja',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Abierto',st_in_progress:'En Progreso',st_waiting_user:'Esperando Respuesta',st_resolved:'Resuelto',st_closed:'Cerrado',cat_production:'Produccion',cat_health:'Sanidad',cat_feed:'Alimento',cat_iot:'IoT',cat_billing:'Facturacion',cat_bug:'Bug',cat_sync:'Sincronizacion',cat_feature_request:'Solicitud',cat_access:'Acceso',cat_general:'General',all:'Todos'},
+en:{faq_title:'Help Center',faq_search:'Search articles...',faq_helpful:'Was this helpful?',faq_yes:'Yes',faq_no:'No',faq_empty:'No articles available',faq_no_results:'No results for',tab_faq:'FAQ',tab_new_ticket:'New Ticket',tab_my_tickets:'My Tickets',tab_contact_center:'Contact Center',ticket_subject:'Subject',ticket_desc:'Describe the issue',ticket_priority:'Priority',ticket_send:'Submit Ticket',ticket_empty:'No tickets yet',ticket_status:'Status',ticket_created:'Created',ticket_category:'Category',ticket_close:'Close Ticket',ticket_rate:'Rate',ticket_reply:'Reply',ticket_msg_placeholder:'Type your message...',ticket_send_msg:'Send',ticket_rated:'Rated',ticket_offline:'Saved offline — will sync when online',ticket_synced:'Tickets synced',admin_total:'Total Tickets',admin_open:'Open',admin_progress:'In Progress',admin_resolved:'Resolved',admin_avg_time:'Avg Resolution',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'hours',admin_filter:'Filter',admin_internal:'Internal note',admin_notes:'Admin notes',admin_update:'Update',admin_faq_manage:'Manage FAQ',pri_low:'Low',pri_medium:'Medium',pri_high:'High',pri_urgent:'Urgent',st_open:'Open',st_in_progress:'In Progress',st_waiting_user:'Waiting Response',st_resolved:'Resolved',st_closed:'Closed',cat_production:'Production',cat_health:'Health',cat_feed:'Feed',cat_iot:'IoT',cat_billing:'Billing',cat_bug:'Bug',cat_sync:'Sync',cat_feature_request:'Feature Request',cat_access:'Access',cat_general:'General',all:'All'},
+fr:{faq_title:'Centre d\'Aide',faq_search:'Rechercher...',faq_helpful:'Cela vous a aide?',faq_yes:'Oui',faq_no:'Non',faq_empty:'Aucun article disponible',faq_no_results:'Aucun resultat pour',tab_faq:'FAQ',tab_new_ticket:'Nouveau Ticket',tab_my_tickets:'Mes Tickets',tab_contact_center:'Contact Center',ticket_subject:'Objet',ticket_desc:'Decrivez le probleme',ticket_priority:'Priorite',ticket_send:'Envoyer le Ticket',ticket_empty:'Aucun ticket',ticket_status:'Statut',ticket_created:'Cree le',ticket_category:'Categorie',ticket_close:'Fermer le Ticket',ticket_rate:'Evaluer',ticket_reply:'Repondre',ticket_msg_placeholder:'Ecrivez votre message...',ticket_send_msg:'Envoyer',ticket_rated:'Evalue',ticket_offline:'Sauvegarde hors ligne — sera synchronise',ticket_synced:'Tickets synchronises',admin_total:'Total Tickets',admin_open:'Ouverts',admin_progress:'En Cours',admin_resolved:'Resolus',admin_avg_time:'Temps Moyen',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'heures',admin_filter:'Filtrer',admin_internal:'Note interne',admin_notes:'Notes admin',admin_update:'Mettre a jour',admin_faq_manage:'Gerer FAQ',pri_low:'Faible',pri_medium:'Moyenne',pri_high:'Haute',pri_urgent:'Urgente',st_open:'Ouvert',st_in_progress:'En Cours',st_waiting_user:'En Attente',st_resolved:'Resolu',st_closed:'Ferme',cat_production:'Production',cat_health:'Sante',cat_feed:'Alimentation',cat_iot:'IoT',cat_billing:'Facturation',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Demande',cat_access:'Acces',cat_general:'General',all:'Tous'},
+pt:{faq_title:'Central de Ajuda',faq_search:'Pesquisar artigos...',faq_helpful:'Foi util?',faq_yes:'Sim',faq_no:'Nao',faq_empty:'Nenhum artigo disponivel',faq_no_results:'Sem resultados para',tab_faq:'FAQ',tab_new_ticket:'Novo Ticket',tab_my_tickets:'Meus Tickets',tab_contact_center:'Contact Center',ticket_subject:'Assunto',ticket_desc:'Descreva o problema',ticket_priority:'Prioridade',ticket_send:'Enviar Ticket',ticket_empty:'Nenhum ticket',ticket_status:'Estado',ticket_created:'Criado',ticket_category:'Categoria',ticket_close:'Fechar Ticket',ticket_rate:'Avaliar',ticket_reply:'Responder',ticket_msg_placeholder:'Digite sua mensagem...',ticket_send_msg:'Enviar',ticket_rated:'Avaliado',ticket_offline:'Salvo offline — sera sincronizado',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abertos',admin_progress:'Em Progresso',admin_resolved:'Resolvidos',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Atualizar',admin_faq_manage:'Gerenciar FAQ',pri_low:'Baixa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aberto',st_in_progress:'Em Progresso',st_waiting_user:'Aguardando Resposta',st_resolved:'Resolvido',st_closed:'Fechado',cat_production:'Producao',cat_health:'Saude',cat_feed:'Alimentacao',cat_iot:'IoT',cat_billing:'Faturamento',cat_bug:'Bug',cat_sync:'Sincronizacao',cat_feature_request:'Solicitacao',cat_access:'Acesso',cat_general:'Geral',all:'Todos'},
+de:{faq_title:'Hilfezentrum',faq_search:'Artikel suchen...',faq_helpful:'War das hilfreich?',faq_yes:'Ja',faq_no:'Nein',faq_empty:'Keine Artikel verfugbar',faq_no_results:'Keine Ergebnisse fur',tab_faq:'FAQ',tab_new_ticket:'Neues Ticket',tab_my_tickets:'Meine Tickets',tab_contact_center:'Contact Center',ticket_subject:'Betreff',ticket_desc:'Beschreiben Sie das Problem',ticket_priority:'Prioritat',ticket_send:'Ticket senden',ticket_empty:'Keine Tickets',ticket_status:'Status',ticket_created:'Erstellt',ticket_category:'Kategorie',ticket_close:'Ticket schliessen',ticket_rate:'Bewerten',ticket_reply:'Antworten',ticket_msg_placeholder:'Nachricht eingeben...',ticket_send_msg:'Senden',ticket_rated:'Bewertet',ticket_offline:'Offline gespeichert — wird synchronisiert',ticket_synced:'Tickets synchronisiert',admin_total:'Gesamt Tickets',admin_open:'Offen',admin_progress:'In Bearbeitung',admin_resolved:'Gelost',admin_avg_time:'Durchschnittliche Losung',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'Stunden',admin_filter:'Filtern',admin_internal:'Interne Notiz',admin_notes:'Admin-Notizen',admin_update:'Aktualisieren',admin_faq_manage:'FAQ verwalten',pri_low:'Niedrig',pri_medium:'Mittel',pri_high:'Hoch',pri_urgent:'Dringend',st_open:'Offen',st_in_progress:'In Bearbeitung',st_waiting_user:'Warte auf Antwort',st_resolved:'Gelost',st_closed:'Geschlossen',cat_production:'Produktion',cat_health:'Gesundheit',cat_feed:'Futter',cat_iot:'IoT',cat_billing:'Abrechnung',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Anfrage',cat_access:'Zugang',cat_general:'Allgemein',all:'Alle'},
+it:{faq_title:'Centro Assistenza',faq_search:'Cerca articoli...',faq_helpful:'Ti e stato utile?',faq_yes:'Si',faq_no:'No',faq_empty:'Nessun articolo disponibile',faq_no_results:'Nessun risultato per',tab_faq:'FAQ',tab_new_ticket:'Nuovo Ticket',tab_my_tickets:'I Miei Ticket',tab_contact_center:'Contact Center',ticket_subject:'Oggetto',ticket_desc:'Descrivi il problema',ticket_priority:'Priorita',ticket_send:'Invia Ticket',ticket_empty:'Nessun ticket',ticket_status:'Stato',ticket_created:'Creato',ticket_category:'Categoria',ticket_close:'Chiudi Ticket',ticket_rate:'Valuta',ticket_reply:'Rispondi',ticket_msg_placeholder:'Scrivi il tuo messaggio...',ticket_send_msg:'Invia',ticket_rated:'Valutato',ticket_offline:'Salvato offline — verra sincronizzato',ticket_synced:'Ticket sincronizzati',admin_total:'Totale Ticket',admin_open:'Aperti',admin_progress:'In Corso',admin_resolved:'Risolti',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'ore',admin_filter:'Filtra',admin_internal:'Nota interna',admin_notes:'Note admin',admin_update:'Aggiorna',admin_faq_manage:'Gestisci FAQ',pri_low:'Bassa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aperto',st_in_progress:'In Corso',st_waiting_user:'In Attesa',st_resolved:'Risolto',st_closed:'Chiuso',cat_production:'Produzione',cat_health:'Sanita',cat_feed:'Mangime',cat_iot:'IoT',cat_billing:'Fatturazione',cat_bug:'Bug',cat_sync:'Sincronizzazione',cat_feature_request:'Richiesta',cat_access:'Accesso',cat_general:'Generale',all:'Tutti'},
+ja:{faq_title:'ヘルプセンター',faq_search:'記事を検索...',faq_helpful:'役に立ちましたか？',faq_yes:'はい',faq_no:'いいえ',faq_empty:'記事がありません',faq_no_results:'結果なし',tab_faq:'FAQ',tab_new_ticket:'新規チケット',tab_my_tickets:'マイチケット',tab_contact_center:'コンタクトセンター',ticket_subject:'件名',ticket_desc:'問題を説明してください',ticket_priority:'優先度',ticket_send:'チケット送信',ticket_empty:'チケットなし',ticket_status:'状態',ticket_created:'作成日',ticket_category:'カテゴリ',ticket_close:'チケットを閉じる',ticket_rate:'評価',ticket_reply:'返信',ticket_msg_placeholder:'メッセージを入力...',ticket_send_msg:'送信',ticket_rated:'評価済み',ticket_offline:'オフライン保存 — オンライン時に同期',ticket_synced:'チケット同期完了',admin_total:'チケット合計',admin_open:'未対応',admin_progress:'対応中',admin_resolved:'解決済み',admin_avg_time:'平均解決時間',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'時間',admin_filter:'フィルター',admin_internal:'内部メモ',admin_notes:'管理者メモ',admin_update:'更新',admin_faq_manage:'FAQ管理',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'緊急',st_open:'未対応',st_in_progress:'対応中',st_waiting_user:'返答待ち',st_resolved:'解決済み',st_closed:'終了',cat_production:'生産',cat_health:'衛生',cat_feed:'飼料',cat_iot:'IoT',cat_billing:'請求',cat_bug:'バグ',cat_sync:'同期',cat_feature_request:'機能要望',cat_access:'アクセス',cat_general:'一般',all:'すべて'},
+zh:{faq_title:'帮助中心',faq_search:'搜索文章...',faq_helpful:'对您有帮助吗？',faq_yes:'是',faq_no:'否',faq_empty:'暂无文章',faq_no_results:'无结果',tab_faq:'FAQ',tab_new_ticket:'新建工单',tab_my_tickets:'我的工单',tab_contact_center:'联系中心',ticket_subject:'主题',ticket_desc:'描述您的问题',ticket_priority:'优先级',ticket_send:'提交工单',ticket_empty:'暂无工单',ticket_status:'状态',ticket_created:'创建时间',ticket_category:'分类',ticket_close:'关闭工单',ticket_rate:'评价',ticket_reply:'回复',ticket_msg_placeholder:'输入消息...',ticket_send_msg:'发送',ticket_rated:'已评价',ticket_offline:'已离线保存 — 联网后自动同步',ticket_synced:'工单已同步',admin_total:'工单总数',admin_open:'待处理',admin_progress:'处理中',admin_resolved:'已解决',admin_avg_time:'平均解决时间',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'小时',admin_filter:'筛选',admin_internal:'内部备注',admin_notes:'管理员备注',admin_update:'更新',admin_faq_manage:'管理FAQ',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'紧急',st_open:'待处理',st_in_progress:'处理中',st_waiting_user:'等待回复',st_resolved:'已解决',st_closed:'已关闭',cat_production:'生产',cat_health:'卫生',cat_feed:'饲料',cat_iot:'IoT',cat_billing:'账单',cat_bug:'Bug',cat_sync:'同步',cat_feature_request:'功能需求',cat_access:'访问',cat_general:'通用',all:'全部'}
 };
+const d=_SL[LANG]||_SL.es;const es=_SL.es;const en=_SL.en;
+return new Proxy({},{get:(_,k)=>d[k]||es[k]||en[k]||k});
 }
 
 function renderSoporte(){
@@ -4190,6 +4551,7 @@ h+=`<button class="btn ${_supportTab===tab?'btn-primary':'btn-secondary'}" oncli
 if(isAdmin){
 h+=`<button class="btn ${_supportTab==='contact_center'?'btn-primary':'btn-secondary'}" onclick="_supportTab='contact_center';renderSoporte()" style="padding:8px 16px;font-size:.9em">${L.tab_contact_center}</button>`;
 }
+h+=`<button class="btn btn-secondary" onclick="startWalkthrough()" style="padding:8px 16px;font-size:.9em;margin-left:auto">🎬 ${_wtL('wt_replay')}</button>`;
 h+=`</div>`;
 
 // Tab content
@@ -7116,6 +7478,7 @@ const overlay=$('pin-login-overlay');if(overlay)overlay.remove();
 const appEl=document.querySelector('.app');if(appEl)appEl.style.display='';
 applyRoleNav();
 toast(isEs?'Cuenta creada localmente':'Account created locally');
+if(!localStorage.getItem('egglogu_walkthrough_done')){setTimeout(()=>{startWalkthrough();},1500);}
 }
 function showPinLoginRefresh(){
 const overlay=$('pin-login-overlay');if(overlay)overlay.remove();
@@ -7362,6 +7725,7 @@ applyRoleNav();
 const header=document.querySelector('.top-bar .hamburger');
 if(header){const userTag=document.createElement('span');userTag.id='current-user-tag';userTag.style.cssText='font-size:12px;color:var(--text-light);margin-left:8px';
 userTag.textContent=user.name+' ('+user.role+')';header.parentNode.insertBefore(userTag,header.nextSibling);}
+if(!localStorage.getItem('egglogu_walkthrough_done')){setTimeout(()=>{startWalkthrough();},1500);}
 }
 function applyRoleNav(){
 if(!_currentUser||!_currentUser.role)return;
@@ -7432,6 +7796,8 @@ if(apiService.isLoggedIn()&&_currentUser.email){
   nav('dashboard');
   // Load server data in background (non-blocking)
   loadFromServer();
+  // Walkthrough on first login
+  if(!localStorage.getItem('egglogu_walkthrough_done')){setTimeout(()=>{startWalkthrough();},1500);}
 }else if(D.users.length>0){showPinLogin();}else{nav('dashboard');}
 // Keyboard navigation for sidebar
 document.querySelectorAll('#main-nav a').forEach(a=>{a.setAttribute('tabindex','0');a.setAttribute('role','menuitem');a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();a.click();}});});
