@@ -1,9 +1,9 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date
 from typing import Optional
 
-from sqlalchemy import Date, Float, Integer, String, Text, func
+from sqlalchemy import Date, Float, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base

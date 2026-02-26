@@ -7,9 +7,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy import delete, distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
-from src.api.deps import get_current_user, require_superadmin
+from src.api.deps import require_superadmin
 from src.core.exceptions import ForbiddenError, NotFoundError
 from src.database import get_db
 from src.models.audit import AuditLog
@@ -18,7 +17,7 @@ from src.models.farm import Farm
 from src.models.flock import Flock
 from src.models.inventory import EggStock, StockMovement
 from src.models.market_intelligence import MarketIntelligence, PriceTrend
-from src.models.subscription import PlanTier, Subscription, SubscriptionStatus
+from src.models.subscription import Subscription, SubscriptionStatus
 from src.models.support import SupportRating, SupportTicket, TicketMessage, TicketStatus
 from src.schemas.superadmin import (
     BulkDeleteRequest,

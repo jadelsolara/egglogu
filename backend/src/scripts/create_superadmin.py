@@ -13,7 +13,6 @@ import getpass
 import sys
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 # Ensure project root is importable
 sys.path.insert(0, ".")
@@ -50,12 +49,12 @@ async def create_superadmin(email: str, full_name: str, password: str) -> None:
         await db.commit()
         await db.refresh(user)
 
-        print(f"Superadmin created successfully:")
+        print("Superadmin created successfully:")
         print(f"  ID:    {user.id}")
         print(f"  Email: {user.email}")
         print(f"  Name:  {user.full_name}")
         print(f"  Role:  {user.role.value}")
-        print(f"  Org:   None (platform-level)")
+        print("  Org:   None (platform-level)")
 
 
 def main():
