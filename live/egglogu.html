@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1A3C6E">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'sha256-RT2YKwJL79q7cHt5mwHpekUz4UjuVwBsxkLOleKOv2w=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' http://localhost:8000 https://egglogu-api.up.railway.app https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'sha256-HHEk297t6JH7ApX87peHbggG8yap9+bBtfnfCUuUaiw=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' http://localhost:8000 https://egglogu-api.up.railway.app https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -335,6 +335,7 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
  <div class="nav-group-links grp-open" data-grp="health">
  <a data-section="sanidad" onclick="nav('sanidad')"><i>💉</i><span data-t="nav_health">Sanidad</span></a>
  <a data-section="bioseguridad" onclick="nav('bioseguridad')"><i>🛡️</i><span data-t="nav_biosecurity">Bioseguridad</span></a>
+ <a data-section="bienestar" onclick="nav('bienestar')"><i>🐾</i><span data-t="nav_welfare">Bienestar</span></a>
  </div>
  <div class="nav-group-label grp-open" data-t="grp_commercial" onclick="toggleNavGroup(this)">Comercial</div>
  <div class="nav-group-links grp-open" data-grp="commercial">
@@ -403,6 +404,7 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
 <div id="sec-analisis" class="section" role="region" aria-label="Analytics"></div>
 <div id="sec-operaciones" class="section" role="region" aria-label="Operations"></div>
 <div id="sec-bioseguridad" class="section" role="region" aria-label="Biosecurity"></div>
+<div id="sec-bienestar" class="section" role="region" aria-label="Welfare"></div>
 <div id="sec-trazabilidad" class="section" role="region" aria-label="Traceability"></div>
 <div id="sec-planificacion" class="section" role="region" aria-label="Planning"></div>
 <div id="sec-ambiente" class="section" role="region" aria-label="Environment"></div>
