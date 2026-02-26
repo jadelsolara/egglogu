@@ -66,6 +66,7 @@ sidebar_subtitle:'Sistema Avícola 360°',prod_shell_white:'Blanco',prod_shell_b
 weather_title:'Clima',weather_temp:'Temperatura',weather_humidity:'Humedad',weather_wind:'Viento',weather_forecast:'Pronóstico 3 Días',weather_no_key:'Establece la ubicación de la granja para ver el clima',weather_heat_alert:'Alerta de Estrés Calórico',weather_thi:'Índice THI',weather_feels:'Sensación',weather_last_update:'Última actualización',weather_test:'Probar',
 geo_set_location:'Ubicación de la Granja',geo_use_gps:'Usar mi GPS',geo_click_map:'Clic en el mapa para ubicar',geo_lat:'Latitud',geo_lng:'Longitud',geo_saved:'Ubicación guardada',
 iot_title:'IoT Sensores',iot_broker:'Broker MQTT (wss://)',iot_user:'Usuario MQTT',iot_pass:'Contraseña MQTT',iot_topic:'Prefijo Topic',iot_connect:'Conectar',iot_disconnect:'Desconectar',iot_live:'IoT En Vivo',iot_no_config:'Configure MQTT en Configuración',iot_save_reading:'Guardar lectura actual',iot_connected:'Conectado',iot_disconnected:'Desconectado',iot_ammonia:'Amoníaco',iot_light:'Luz',iot_lux:'lux',iot_ppm:'ppm',
+iot_control_title:'Control IoT',iot_control_panel:'Panel de Control',iot_not_connected:'No conectado',iot_command_sent:'Comando enviado',iot_send:'Enviar',iot_act_ventilation:'Ventilación',iot_act_heating:'Calefacción',iot_act_lighting:'Iluminación',iot_act_feeding:'Alimentación',iot_act_misting:'Nebulización',iot_rules_title:'Reglas de Automatización',iot_rule:'Regla',iot_rule_add:'Agregar Regla',iot_rule_condition:'Condición',iot_rule_action:'Acción',iot_rule_cooldown:'Enfriamiento (min)',iot_rule_enable:'Activar',iot_rule_disable:'Desactivar',iot_rule_fired:'Ejecutada',iot_no_rules:'Sin reglas de automatización',iot_safety_title:'Límites de Seguridad',iot_safety_desc:'Mín/máx por actuador',iot_safety_blocked:'Bloqueado por seguridad',iot_safety_invalid:'Valor fuera de rango',iot_device:'Dispositivo',iot_command:'Comando',iot_value:'Valor',iot_trigger:'Disparador',iot_history_title:'Historial de Comandos',iot_no_commands:'Sin comandos enviados',
 pred_title:'Predicciones',pred_forecast:'Pronóstico Producción',pred_anomaly:'Anomalías',pred_drop_risk:'Riesgo de Caída',pred_breed_curve:'Curva de Raza',pred_fcr_trend:'Tendencia FCR',pred_next_7d:'Próximos 7 días',pred_improving:'Mejorando',pred_worsening:'Empeorando',pred_stable:'Estable',pred_score:'Puntuación',pred_low:'Bajo',pred_medium:'Medio',pred_high:'Alto',pred_vs_expected:'Real vs Esperado',
 stress_title:'Eventos de Estrés',stress_type:'Tipo',stress_severity:'Severidad',stress_heat:'Calor',stress_disease:'Enfermedad',stress_feed_change:'Cambio Alimento',stress_power:'Corte Eléctrico',stress_predator:'Depredador',stress_other:'Otro',stress_description:'Descripción',stress_add:'Nuevo Evento',stress_impact:'Impacto en Producción',stress_auto:'(Auto-generado)',
 env_ammonia:'Amoníaco (ppm)',env_wind:'Velocidad Viento (km/h)',env_thi:'Índice THI',env_manual:'Entrada Manual',env_history:'Historial',env_iot:'IoT En Vivo',
@@ -82,6 +83,29 @@ bio_add_pest:'Nuevo Avistamiento',bio_pest_type:'Tipo',bio_pest_rodent:'Roedor',
 bio_add_protocol:'Nuevo Protocolo',bio_protocol_name:'Nombre Protocolo',bio_protocol_frequency:'Frecuencia',bio_protocol_daily:'Diario',bio_protocol_weekly:'Semanal',bio_protocol_monthly:'Mensual',bio_protocol_last:'Último Completado',bio_protocol_items:'Ítems del Protocolo',bio_protocol_complete:'Completar',bio_protocol_overdue:'Vencido',
 bio_pest_score:'Puntuación Plagas',bio_overdue_disinfection:'Desinfección vencida',bio_unresolved_pests:'Plagas sin resolver',
 alert_bio_disinfection:'Desinfección vencida zona',alert_bio_pests:'Plagas sin resolver',alert_bio_cross:'Riesgo contaminación cruzada',
+// Welfare Quality
+nav_welfare:'Bienestar',wql_title:'Bienestar Animal',wql_tab_assessment:'Evaluación',wql_tab_body:'Condición Corporal',wql_tab_behavior:'Comportamiento',wql_tab_results:'Resultados',wql_tab_history:'Historial',
+wql_new_assessment:'Nueva Evaluación',wql_assessor:'Evaluador',wql_sample_size:'Tamaño de Muestra',wql_date:'Fecha',wql_flock:'Lote',
+wql_p1_title:'Principio 1: Buena Alimentación',wql_p2_title:'Principio 2: Buen Alojamiento',wql_p3_title:'Principio 3: Buena Salud',wql_p4_title:'Principio 4: Comportamiento Apropiado',
+wql_body_condition:'Condición Corporal',wql_keel_bone:'Hueso Quilla',wql_score_0:'Normal (0)',wql_score_1:'Leve (1)',wql_score_2:'Severo (2)',
+wql_water_type:'Tipo Bebedero',wql_water_functional:'Funcionales',wql_water_clean:'Limpios',wql_water_cm:'cm/Ave',wql_water_nipple:'Niple',wql_water_bell:'Campana',wql_water_cup:'Copa',wql_water_trough:'Canal',
+wql_stocking_density:'Densidad de Alojamiento',wql_total_area:'Área Total (m²)',wql_hen_count:'Nº de Aves',wql_cm2_per_hen:'cm²/Ave',wql_eu_compliant:'Cumple UE',
+wql_perch_space:'Espacio de Percha',wql_perch_total_cm:'Total cm',wql_perch_cm_per_hen:'cm/Ave',wql_nest_boxes:'Nidales',wql_nest_count:'Nº Nidales',wql_hens_per_nest:'Aves/Nidal',
+wql_dust_bathing:'Baño de Polvo',wql_substrate_available:'Sustrato Disponible',wql_percent_bathing:'% Bañándose',
+wql_thermal_comfort:'Confort Térmico',wql_panting:'Jadeo',wql_huddling:'Acurrucamiento',
+wql_plumage:'Plumaje',wql_region_neck:'Cuello',wql_region_back:'Espalda',wql_region_belly:'Abdomen',wql_region_wings:'Alas',wql_region_tail:'Cola',
+wql_skin_lesions:'Lesiones de Piel',wql_foot_pad:'Pododermatitis',wql_toe_damage:'Daño en Dedos',wql_keel_damage:'Daño Quilla',wql_beak_trimming:'Despique',wql_beak_trimmed:'Despicadas',wql_beak_not_trimmed:'Sin Despicar',wql_beak_quality:'Calidad Despique',
+wql_comb_wounds:'Heridas de Cresta',wql_eye_pathology:'Patología Ocular',wql_respiratory:'Problemas Respiratorios',wql_red_mites:'Ácaros Rojos',wql_dust_sheet:'Puntuación Sábana',
+wql_mortality_pct:'Mortalidad %',wql_culling_pct:'Descarte %',
+wql_adt_title:'Test de Distancia de Evitación (ADT)',wql_adt_distances:'Distancias (cm)',wql_adt_avg:'Distancia Promedio',
+wql_not_title:'Test de Objeto Novedoso (NOT)',wql_not_approaching:'Aves que se Acercan',wql_not_total_area:'Total en Área',wql_not_pct:'% Acercamiento',
+wql_qba_title:'Evaluación Cualitativa de Comportamiento (QBA)',wql_qba_active:'Activo',wql_qba_relaxed:'Relajado',wql_qba_fearful:'Temeroso',wql_qba_agitated:'Agitado',wql_qba_calm:'Calmado',wql_qba_content:'Satisfecho',wql_qba_frustrated:'Frustrado',wql_qba_friendly:'Amigable',wql_qba_bored:'Aburrido',wql_qba_positively_occupied:'Positivamente Ocupado',wql_qba_energetic:'Energético',wql_qba_distressed:'Angustiado',wql_qba_happy:'Feliz',wql_qba_uncomfortable:'Incómodo',wql_qba_sociable:'Sociable',wql_qba_apathetic:'Apático',wql_qba_curious:'Curioso',wql_qba_withdrawn:'Retraído',wql_qba_confident:'Confiado',wql_qba_depressed:'Deprimido',
+wql_excellent:'Excelente',wql_enhanced:'Mejorado',wql_acceptable:'Aceptable',wql_not_classified:'No Clasificado',
+wql_overall_score:'Puntuación Global',wql_category:'Categoría',wql_criteria:'Criterios',wql_principles:'Principios',wql_trend:'Tendencia',wql_total_assessments:'Total Evaluaciones',
+wql_alert_not_classified:'Bienestar No Clasificado',wql_alert_low:'Bienestar bajo',
+wql_kpi_category:'Categoría Bienestar',wql_kpi_avg_score:'Puntuación Promedio',wql_kpi_count:'Evaluaciones',wql_kpi_trend:'Tendencia',
+wql_export_csv:'Exportar CSV',wql_delete_confirm:'¿Eliminar esta evaluación?',wql_no_assessments:'Sin evaluaciones registradas',
+wql_c1:'Condición Corporal',wql_c2:'Disponibilidad Agua',wql_c3:'Confort de Reposo',wql_c4:'Confort Térmico',wql_c5:'Facilidad Movimiento',wql_c6:'Lesiones',wql_c7:'Enfermedad',wql_c8:'Dolor',wql_c9:'Comportamiento Social',wql_c10:'Otros Comportamientos',wql_c11:'Relación Humano-Animal',wql_c12:'Estado Emocional',
 // Traceability
 nav_traceability:'Trazabilidad',trace_title:'Trazabilidad de Huevos',trace_add:'Nuevo Lote',trace_batch_id:'ID Lote',trace_rack:'Rack',trace_box_count:'Cajas',trace_eggs_per_box:'Huevos/Caja',trace_qr:'Código QR',trace_delivery:'Fecha Entrega',trace_search:'Buscar por ID/QR',trace_origin:'Origen',trace_house:'Galpón',
 // Planning
@@ -96,6 +120,7 @@ nav_campo_mode:'Modo Campo',nav_vet_mode:'Modo Vet',campo_today:'HOY',campo_quic
 cfg_font_size:'Tamaño Texto',cfg_font_small:'Pequeño',cfg_font_normal:'Normal',cfg_font_large:'Grande',cfg_font_xlarge:'Extra Grande',cfg_dark_mode:'Modo Oscuro',cfg_theme_dark:'Oscuro',
 // ML/Intelligence
 pred_outbreak_risk:'Riesgo de Brote',pred_outbreak_high:'Alto Riesgo',pred_outbreak_medium:'Riesgo Medio',pred_outbreak_low:'Bajo Riesgo',pred_outbreak_factor:'Factor',pred_outbreak_weight:'Peso',pred_outbreak_value:'Valor',pred_probability:'Probabilidad',pred_factors:'Factores',pred_recommendations:'Recomendaciones',pred_confidence:'Confianza',pred_forecast_7d:'7 días',pred_forecast_14d:'14 días',pred_ensemble:'Pronóstico Conjunto',pred_forecast_upper:'Banda Superior',pred_forecast_lower:'Banda Inferior',
+pred_cusum_title:'Detección de Cambios (CUSUM)',pred_cusum_desc:'Cambios estructurales en producción',pred_cusum_type:'Tipo',pred_cusum_magnitude:'Magnitud',pred_cusum_increase:'Aumento',pred_cusum_decrease:'Disminución',pred_anomaly_composite:'Anomalía Multi-Variable',pred_anomaly_score:'Puntuación Anomalía',pred_anomaly_alert:'Alerta',pred_anomaly_normal:'Normal',pred_anomaly_var:'Variable',pred_anomaly_recent:'Reciente',pred_anomaly_baseline:'Base',pred_feed_opt:'Optimización Alimentación',pred_feed_current_fcr:'FCR Actual',pred_feed_optimal_fcr:'FCR Óptimo',pred_feed_optimal_kg:'Kg/día Óptimo',pred_feed_savings:'Ahorro Potencial',pred_feed_per_hen:'Por Gallina',pred_lifecycle:'Predictor Ciclo de Vida',pred_lc_current_week:'Semana Actual',pred_lc_peak_week:'Semana Pico',pred_lc_current_hd:'HD% Actual',pred_lc_persistence:'Persistencia',pred_lc_cull_week:'Semana Descarte',pred_lc_weeks_left:'Semanas Restantes',pred_lc_projected_eggs:'Huevos Proyectados',pred_accuracy_title:'Precisión Pronóstico',pred_accuracy_desc:'Comparación de modelos',pred_accuracy_method:'Método',pred_accuracy_best:'Mejor',
 ana_segment_profit:'Rentabilidad por Segmento',cfg_accessibility:'Accesibilidad',
 rec_title:'Recomendaciones',rec_dismiss:'Descartar',rec_check_diet:'Revisar dieta / diseño de alimentación / descartar enfermedad',rec_check_env:'Verificar ambiente / enfermedad / estrés inmediatamente',rec_below_curve:'Producción bajo estándar — revisar estrés, luz, alimentación',rec_buy_feed:'Programar compra de alimento',rec_record_env:'Registrar condiciones ambientales',rec_disinfect:'Ejecutar protocolo de desinfección zona',rec_heat_plan:'Estrés calórico prolongado — activar plan de enfriamiento',rec_lab_samples:'Llevar muestras al laboratorio',rec_ventilation:'Aumentar ventilación, verificar agua fresca',
 auth_welcome:'Cuenta creada. Bienvenido!',auth_error:'Credenciales incorrectas',auth_first_run:'Primera vez: ingrese usuario y contraseña para crear su cuenta.',login_subtitle:'Inicia sesión o crea tu cuenta',logout:'Cerrar sesión',required:'Campo obligatorio',invalid_email:'Email inválido',invalid_phone:'Teléfono inválido',must_be_number:'Debe ser un número',invalid_date:'Fecha inválida',invalid_format:'Formato inválido',min_length:'Largo mínimo',max_length:'Largo máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Error de red',error_unexpected:'Error inesperado',error_loading:'Error al cargar',
@@ -131,6 +156,7 @@ sidebar_subtitle:'Poultry System 360°',prod_shell_white:'White',prod_shell_brow
 weather_title:'Weather',weather_temp:'Temperature',weather_humidity:'Humidity',weather_wind:'Wind',weather_forecast:'3-Day Forecast',weather_no_key:'Set farm location to see weather',weather_heat_alert:'Heat Stress Alert',weather_thi:'THI Index',weather_feels:'Feels like',weather_last_update:'Last updated',weather_test:'Test',
 geo_set_location:'Farm Location',geo_use_gps:'Use my GPS',geo_click_map:'Click map to set location',geo_lat:'Latitude',geo_lng:'Longitude',geo_saved:'Location saved',
 iot_title:'IoT Sensors',iot_broker:'MQTT Broker (wss://)',iot_user:'MQTT User',iot_pass:'MQTT Password',iot_topic:'Topic Prefix',iot_connect:'Connect',iot_disconnect:'Disconnect',iot_live:'IoT Live',iot_no_config:'Configure MQTT in Settings',iot_save_reading:'Save current reading',iot_connected:'Connected',iot_disconnected:'Disconnected',iot_ammonia:'Ammonia',iot_light:'Light',iot_lux:'lux',iot_ppm:'ppm',
+iot_control_title:'IoT Control',iot_control_panel:'Control Panel',iot_not_connected:'Not connected',iot_command_sent:'Command sent',iot_send:'Send',iot_act_ventilation:'Ventilation',iot_act_heating:'Heating',iot_act_lighting:'Lighting',iot_act_feeding:'Feeding',iot_act_misting:'Misting',iot_rules_title:'Automation Rules',iot_rule:'Rule',iot_rule_add:'Add Rule',iot_rule_condition:'Condition',iot_rule_action:'Action',iot_rule_cooldown:'Cooldown (min)',iot_rule_enable:'Enable',iot_rule_disable:'Disable',iot_rule_fired:'Fired',iot_no_rules:'No automation rules',iot_safety_title:'Safety Limits',iot_safety_desc:'Min/max per actuator',iot_safety_blocked:'Blocked by safety',iot_safety_invalid:'Value out of range',iot_device:'Device',iot_command:'Command',iot_value:'Value',iot_trigger:'Trigger',iot_history_title:'Command History',iot_no_commands:'No commands sent',
 pred_title:'Predictions',pred_forecast:'Production Forecast',pred_anomaly:'Anomalies',pred_drop_risk:'Drop Risk',pred_breed_curve:'Breed Curve',pred_fcr_trend:'FCR Trend',pred_next_7d:'Next 7 days',pred_improving:'Improving',pred_worsening:'Worsening',pred_stable:'Stable',pred_score:'Score',pred_low:'Low',pred_medium:'Medium',pred_high:'High',pred_vs_expected:'Actual vs Expected',
 stress_title:'Stress Events',stress_type:'Type',stress_severity:'Severity',stress_heat:'Heat',stress_disease:'Disease',stress_feed_change:'Feed Change',stress_power:'Power Outage',stress_predator:'Predator',stress_other:'Other',stress_description:'Description',stress_add:'New Event',stress_impact:'Production Impact',stress_auto:'(Auto-generated)',
 env_ammonia:'Ammonia (ppm)',env_wind:'Wind Speed (km/h)',env_thi:'THI Index',env_manual:'Manual Entry',env_history:'History',env_iot:'IoT Live',
@@ -146,6 +172,28 @@ bio_add_pest:'New Sighting',bio_pest_type:'Type',bio_pest_rodent:'Rodent',bio_pe
 bio_add_protocol:'New Protocol',bio_protocol_name:'Protocol Name',bio_protocol_frequency:'Frequency',bio_protocol_daily:'Daily',bio_protocol_weekly:'Weekly',bio_protocol_monthly:'Monthly',bio_protocol_last:'Last Completed',bio_protocol_items:'Protocol Items',bio_protocol_complete:'Complete',bio_protocol_overdue:'Overdue',
 bio_pest_score:'Pest Score',bio_overdue_disinfection:'Overdue disinfection',bio_unresolved_pests:'Unresolved pests',
 alert_bio_disinfection:'Zone disinfection overdue',alert_bio_pests:'Unresolved pests',alert_bio_cross:'Cross-contamination risk',
+nav_welfare:'Welfare',wql_title:'Animal Welfare',wql_tab_assessment:'Assessment',wql_tab_body:'Body Condition',wql_tab_behavior:'Behaviour',wql_tab_results:'Results',wql_tab_history:'History',
+wql_new_assessment:'New Assessment',wql_assessor:'Assessor',wql_sample_size:'Sample Size',wql_date:'Date',wql_flock:'Flock',
+wql_p1_title:'Principle 1: Good Feeding',wql_p2_title:'Principle 2: Good Housing',wql_p3_title:'Principle 3: Good Health',wql_p4_title:'Principle 4: Appropriate Behaviour',
+wql_body_condition:'Body Condition',wql_keel_bone:'Keel Bone',wql_score_0:'Normal (0)',wql_score_1:'Mild (1)',wql_score_2:'Severe (2)',
+wql_water_type:'Drinker Type',wql_water_functional:'Functional',wql_water_clean:'Clean',wql_water_cm:'cm/Hen',wql_water_nipple:'Nipple',wql_water_bell:'Bell',wql_water_cup:'Cup',wql_water_trough:'Trough',
+wql_stocking_density:'Stocking Density',wql_total_area:'Total Area (m²)',wql_hen_count:'Hen Count',wql_cm2_per_hen:'cm²/Hen',wql_eu_compliant:'EU Compliant',
+wql_perch_space:'Perch Space',wql_perch_total_cm:'Total cm',wql_perch_cm_per_hen:'cm/Hen',wql_nest_boxes:'Nest Boxes',wql_nest_count:'Nest Count',wql_hens_per_nest:'Hens/Nest',
+wql_dust_bathing:'Dust Bathing',wql_substrate_available:'Substrate Available',wql_percent_bathing:'% Bathing',
+wql_thermal_comfort:'Thermal Comfort',wql_panting:'Panting',wql_huddling:'Huddling',
+wql_plumage:'Plumage',wql_region_neck:'Neck',wql_region_back:'Back',wql_region_belly:'Belly',wql_region_wings:'Wings',wql_region_tail:'Tail',
+wql_skin_lesions:'Skin Lesions',wql_foot_pad:'Foot Pad Dermatitis',wql_toe_damage:'Toe Damage',wql_keel_damage:'Keel Bone Damage',wql_beak_trimming:'Beak Trimming',wql_beak_trimmed:'Trimmed',wql_beak_not_trimmed:'Not Trimmed',wql_beak_quality:'Trim Quality',
+wql_comb_wounds:'Comb Wounds',wql_eye_pathology:'Eye Pathology',wql_respiratory:'Respiratory Problems',wql_red_mites:'Red Mites',wql_dust_sheet:'Dust Sheet Score',
+wql_mortality_pct:'Mortality %',wql_culling_pct:'Culling %',
+wql_adt_title:'Avoidance Distance Test (ADT)',wql_adt_distances:'Distances (cm)',wql_adt_avg:'Average Distance',
+wql_not_title:'Novel Object Test (NOT)',wql_not_approaching:'Hens Approaching',wql_not_total_area:'Total in Area',wql_not_pct:'% Approaching',
+wql_qba_title:'Qualitative Behaviour Assessment (QBA)',wql_qba_active:'Active',wql_qba_relaxed:'Relaxed',wql_qba_fearful:'Fearful',wql_qba_agitated:'Agitated',wql_qba_calm:'Calm',wql_qba_content:'Content',wql_qba_frustrated:'Frustrated',wql_qba_friendly:'Friendly',wql_qba_bored:'Bored',wql_qba_positively_occupied:'Positively Occupied',wql_qba_energetic:'Energetic',wql_qba_distressed:'Distressed',wql_qba_happy:'Happy',wql_qba_uncomfortable:'Uncomfortable',wql_qba_sociable:'Sociable',wql_qba_apathetic:'Apathetic',wql_qba_curious:'Curious',wql_qba_withdrawn:'Withdrawn',wql_qba_confident:'Confident',wql_qba_depressed:'Depressed',
+wql_excellent:'Excellent',wql_enhanced:'Enhanced',wql_acceptable:'Acceptable',wql_not_classified:'Not Classified',
+wql_overall_score:'Overall Score',wql_category:'Category',wql_criteria:'Criteria',wql_principles:'Principles',wql_trend:'Trend',wql_total_assessments:'Total Assessments',
+wql_alert_not_classified:'Welfare Not Classified',wql_alert_low:'Low welfare',
+wql_kpi_category:'Welfare Category',wql_kpi_avg_score:'Average Score',wql_kpi_count:'Assessments',wql_kpi_trend:'Trend',
+wql_export_csv:'Export CSV',wql_delete_confirm:'Delete this assessment?',wql_no_assessments:'No assessments recorded',
+wql_c1:'Body Condition',wql_c2:'Water Availability',wql_c3:'Resting Comfort',wql_c4:'Thermal Comfort',wql_c5:'Ease of Movement',wql_c6:'Injuries',wql_c7:'Disease',wql_c8:'Pain',wql_c9:'Social Behaviour',wql_c10:'Other Behaviours',wql_c11:'Human-Animal Relationship',wql_c12:'Emotional State',
 nav_traceability:'Traceability',trace_title:'Egg Traceability',trace_add:'New Batch',trace_batch_id:'Batch ID',trace_rack:'Rack',trace_box_count:'Boxes',trace_eggs_per_box:'Eggs/Box',trace_qr:'QR Code',trace_delivery:'Delivery Date',trace_search:'Search by ID/QR',trace_origin:'Origin',trace_house:'House',
 nav_planning:'Planning',plan_title:'Production Planning',plan_add:'New Plan',plan_name:'Plan Name',plan_target_date:'Target Date',plan_eggs_needed:'Eggs Needed',plan_allocations:'Flock Allocations',plan_expected:'Expected Production',plan_gap:'Gap',plan_on_track:'On Track',plan_behind:'Behind',plan_ahead:'Ahead',plan_estimate:'Estimate',plan_commitment:'Commitment',
 prod_egg_type:'Egg Type',prod_type_conventional:'Conventional',prod_type_free_range:'Free Range',prod_type_organic:'Organic',prod_type_pasture:'Pasture Raised',prod_type_decorative:'Decorative',
@@ -154,6 +202,8 @@ ana_by_segment:'Profitability by Segment',ana_by_type:'By Type',ana_by_channel:'
 nav_campo_mode:'Campo Mode',nav_vet_mode:'Vet Mode',campo_today:'TODAY',campo_quick_entry:'Quick Entry',vet_visit:'Visit completed',vet_vaccines:'Vaccines applied',vet_pending:'Pending review',vet_select_farm:'Select Farm/Flock',
 cfg_font_size:'Text Size',cfg_font_small:'Small',cfg_font_normal:'Normal',cfg_font_large:'Large',cfg_font_xlarge:'Extra Large',cfg_dark_mode:'Dark Mode',cfg_theme_dark:'Dark',
 pred_outbreak_risk:'Outbreak Risk',pred_outbreak_high:'High Risk',pred_outbreak_medium:'Medium Risk',pred_outbreak_low:'Low Risk',pred_outbreak_factor:'Factor',pred_outbreak_weight:'Weight',pred_outbreak_value:'Value',pred_probability:'Probability',pred_factors:'Factors',pred_recommendations:'Recommendations',pred_confidence:'Confidence',pred_forecast_7d:'7 days',pred_forecast_14d:'14 days',pred_ensemble:'Ensemble Forecast',pred_forecast_upper:'Upper Band',pred_forecast_lower:'Lower Band',
+pred_cusum_title:'Detecção de Mudanças (CUSUM)',pred_cusum_desc:'Mudanças estruturais na produção',pred_cusum_type:'Tipo',pred_cusum_magnitude:'Magnitude',pred_cusum_increase:'Aumento',pred_cusum_decrease:'Diminuição',pred_anomaly_composite:'Anomalia Multi-Variável',pred_anomaly_score:'Pontuação Anomalia',pred_anomaly_alert:'Alerta',pred_anomaly_normal:'Normal',pred_anomaly_var:'Variável',pred_anomaly_recent:'Recente',pred_anomaly_baseline:'Base',pred_feed_opt:'Otimização Alimentação',pred_feed_current_fcr:'FCR Atual',pred_feed_optimal_fcr:'FCR Ótimo',pred_feed_optimal_kg:'Kg/dia Ótimo',pred_feed_savings:'Economia Potencial',pred_feed_per_hen:'Por Galinha',pred_lifecycle:'Preditor Ciclo de Vida',pred_lc_current_week:'Semana Atual',pred_lc_peak_week:'Semana Pico',pred_lc_current_hd:'HD% Atual',pred_lc_persistence:'Persistência',pred_lc_cull_week:'Semana Descarte',pred_lc_weeks_left:'Semanas Restantes',pred_lc_projected_eggs:'Ovos Projetados',pred_accuracy_title:'Precisão Previsão',pred_accuracy_desc:'Comparação de modelos',pred_accuracy_method:'Método',pred_accuracy_best:'Melhor',
+pred_cusum_title:'Change-Point Detection (CUSUM)',pred_cusum_desc:'Structural changes in production',pred_cusum_type:'Type',pred_cusum_magnitude:'Magnitude',pred_cusum_increase:'Increase',pred_cusum_decrease:'Decrease',pred_anomaly_composite:'Multi-Variable Anomaly',pred_anomaly_score:'Anomaly Score',pred_anomaly_alert:'Alert',pred_anomaly_normal:'Normal',pred_anomaly_var:'Variable',pred_anomaly_recent:'Recent',pred_anomaly_baseline:'Baseline',pred_feed_opt:'Feed Optimization',pred_feed_current_fcr:'Current FCR',pred_feed_optimal_fcr:'Optimal FCR',pred_feed_optimal_kg:'Optimal kg/day',pred_feed_savings:'Potential Savings',pred_feed_per_hen:'Per Hen',pred_lifecycle:'Lifecycle Predictor',pred_lc_current_week:'Current Week',pred_lc_peak_week:'Peak Week',pred_lc_current_hd:'Current HD%',pred_lc_persistence:'Persistence',pred_lc_cull_week:'Cull Week',pred_lc_weeks_left:'Weeks Left',pred_lc_projected_eggs:'Projected Eggs',pred_accuracy_title:'Forecast Accuracy',pred_accuracy_desc:'Model comparison',pred_accuracy_method:'Method',pred_accuracy_best:'Best',
 ana_segment_profit:'Profitability by Segment',cfg_accessibility:'Accessibility',
 rec_title:'Recommendations',rec_dismiss:'Dismiss',rec_check_diet:'Check diet / feed design / rule out disease',rec_check_env:'Check environment / disease / stress immediately',rec_below_curve:'Below standard production — check stress, light, feed',rec_buy_feed:'Schedule feed purchase',rec_record_env:'Record environmental conditions',rec_disinfect:'Execute disinfection protocol zone',rec_heat_plan:'Prolonged heat stress — activate cooling plan',rec_lab_samples:'Take samples to laboratory',rec_ventilation:'Increase ventilation, check fresh water',
 auth_welcome:'Account created. Welcome!',auth_error:'Invalid credentials',auth_first_run:'First time: enter username and password to create your account.',login_subtitle:'Sign in or create your account',logout:'Logout',required:'Required field',invalid_email:'Invalid email',invalid_phone:'Invalid phone',must_be_number:'Must be a number',invalid_date:'Invalid date',invalid_format:'Invalid format',min_length:'Min length',max_length:'Max length',min_value:'Min value',max_value:'Max value',error_network:'Network error',error_unexpected:'Unexpected error',error_loading:'Loading error',
@@ -189,6 +239,7 @@ sidebar_subtitle:'Sistema Avícola 360°',prod_shell_white:'Branco',prod_shell_b
 weather_title:'Clima',weather_temp:'Temperatura',weather_humidity:'Umidade',weather_wind:'Vento',weather_forecast:'Previsão 3 Dias',weather_no_key:'Defina a localização da granja para ver o clima',weather_heat_alert:'Alerta de Estresse Térmico',weather_thi:'Índice THI',weather_feels:'Sensação',weather_last_update:'Última atualização',weather_test:'Testar',
 geo_set_location:'Localização da Granja',geo_use_gps:'Usar meu GPS',geo_click_map:'Clique no mapa para localizar',geo_lat:'Latitude',geo_lng:'Longitude',geo_saved:'Localização salva',
 iot_title:'IoT Sensores',iot_broker:'Broker MQTT (wss://)',iot_user:'Usuário MQTT',iot_pass:'Senha MQTT',iot_topic:'Prefixo Tópico',iot_connect:'Conectar',iot_disconnect:'Desconectar',iot_live:'IoT Ao Vivo',iot_no_config:'Configure MQTT em Configuração',iot_save_reading:'Salvar leitura atual',iot_connected:'Conectado',iot_disconnected:'Desconectado',iot_ammonia:'Amônia',iot_light:'Luz',iot_lux:'lux',iot_ppm:'ppm',
+iot_control_title:'Controle IoT',iot_control_panel:'Painel de Controle',iot_not_connected:'Não conectado',iot_command_sent:'Comando enviado',iot_send:'Enviar',iot_act_ventilation:'Ventilação',iot_act_heating:'Aquecimento',iot_act_lighting:'Iluminação',iot_act_feeding:'Alimentação',iot_act_misting:'Nebulização',iot_rules_title:'Regras de Automação',iot_rule:'Regra',iot_rule_add:'Adicionar Regra',iot_rule_condition:'Condição',iot_rule_action:'Ação',iot_rule_cooldown:'Resfriamento (min)',iot_rule_enable:'Ativar',iot_rule_disable:'Desativar',iot_rule_fired:'Disparada',iot_no_rules:'Sem regras de automação',iot_safety_title:'Limites de Segurança',iot_safety_desc:'Mín/máx por atuador',iot_safety_blocked:'Bloqueado por segurança',iot_safety_invalid:'Valor fora de alcance',iot_device:'Dispositivo',iot_command:'Comando',iot_value:'Valor',iot_trigger:'Gatilho',iot_history_title:'Histórico de Comandos',iot_no_commands:'Sem comandos enviados',
 pred_title:'Predições',pred_forecast:'Previsão de Produção',pred_anomaly:'Anomalias',pred_drop_risk:'Risco de Queda',pred_breed_curve:'Curva da Raça',pred_fcr_trend:'Tendência FCR',pred_next_7d:'Próximos 7 dias',pred_improving:'Melhorando',pred_worsening:'Piorando',pred_stable:'Estável',pred_score:'Pontuação',pred_low:'Baixo',pred_medium:'Médio',pred_high:'Alto',pred_vs_expected:'Real vs Esperado',
 stress_title:'Eventos de Estresse',stress_type:'Tipo',stress_severity:'Severidade',stress_heat:'Calor',stress_disease:'Doença',stress_feed_change:'Mudança de Ração',stress_power:'Queda de Energia',stress_predator:'Predador',stress_other:'Outro',stress_description:'Descrição',stress_add:'Novo Evento',stress_impact:'Impacto na Produção',stress_auto:'(Auto-gerado)',
 env_ammonia:'Amônia (ppm)',env_wind:'Velocidade do Vento (km/h)',env_thi:'Índice THI',env_manual:'Entrada Manual',env_history:'Histórico',env_iot:'IoT Ao Vivo',
@@ -204,6 +255,28 @@ bio_add_pest:'Novo Avistamento',bio_pest_type:'Tipo',bio_pest_rodent:'Roedor',bi
 bio_add_protocol:'Novo Protocolo',bio_protocol_name:'Nome do Protocolo',bio_protocol_frequency:'Frequência',bio_protocol_daily:'Diário',bio_protocol_weekly:'Semanal',bio_protocol_monthly:'Mensal',bio_protocol_last:'Último Completado',bio_protocol_items:'Itens do Protocolo',bio_protocol_complete:'Completar',bio_protocol_overdue:'Vencido',
 bio_pest_score:'Pontuação de Pragas',bio_overdue_disinfection:'Desinfecção vencida',bio_unresolved_pests:'Pragas não resolvidas',
 alert_bio_disinfection:'Desinfecção de zona vencida',alert_bio_pests:'Pragas não resolvidas',alert_bio_cross:'Risco de contaminação cruzada',
+nav_welfare:'Bem-Estar',wql_title:'Bem-Estar Animal',wql_tab_assessment:'Avaliação',wql_tab_body:'Condição Corporal',wql_tab_behavior:'Comportamento',wql_tab_results:'Resultados',wql_tab_history:'Histórico',
+wql_new_assessment:'Nova Avaliação',wql_assessor:'Avaliador',wql_sample_size:'Tamanho da Amostra',wql_date:'Data',wql_flock:'Lote',
+wql_p1_title:'Princípio 1: Boa Alimentação',wql_p2_title:'Princípio 2: Bom Alojamento',wql_p3_title:'Princípio 3: Boa Saúde',wql_p4_title:'Princípio 4: Comportamento Apropriado',
+wql_body_condition:'Condição Corporal',wql_keel_bone:'Osso Quilha',wql_score_0:'Normal (0)',wql_score_1:'Leve (1)',wql_score_2:'Grave (2)',
+wql_water_type:'Tipo Bebedouro',wql_water_functional:'Funcionais',wql_water_clean:'Limpos',wql_water_cm:'cm/Ave',wql_water_nipple:'Nipple',wql_water_bell:'Pendular',wql_water_cup:'Taça',wql_water_trough:'Calha',
+wql_stocking_density:'Densidade de Alojamento',wql_total_area:'Área Total (m²)',wql_hen_count:'Nº de Aves',wql_cm2_per_hen:'cm²/Ave',wql_eu_compliant:'Conforme UE',
+wql_perch_space:'Espaço de Poleiro',wql_perch_total_cm:'Total cm',wql_perch_cm_per_hen:'cm/Ave',wql_nest_boxes:'Ninhos',wql_nest_count:'Nº Ninhos',wql_hens_per_nest:'Aves/Ninho',
+wql_dust_bathing:'Banho de Pó',wql_substrate_available:'Substrato Disponível',wql_percent_bathing:'% Banhando-se',
+wql_thermal_comfort:'Conforto Térmico',wql_panting:'Ofegante',wql_huddling:'Aglomeração',
+wql_plumage:'Plumagem',wql_region_neck:'Pescoço',wql_region_back:'Dorso',wql_region_belly:'Abdômen',wql_region_wings:'Asas',wql_region_tail:'Cauda',
+wql_skin_lesions:'Lesões de Pele',wql_foot_pad:'Pododermatite',wql_toe_damage:'Dano nos Dedos',wql_keel_damage:'Dano na Quilha',wql_beak_trimming:'Debicagem',wql_beak_trimmed:'Debicadas',wql_beak_not_trimmed:'Sem Debicagem',wql_beak_quality:'Qualidade Debicagem',
+wql_comb_wounds:'Feridas de Crista',wql_eye_pathology:'Patologia Ocular',wql_respiratory:'Problemas Respiratórios',wql_red_mites:'Ácaros Vermelhos',wql_dust_sheet:'Pontuação Lençol',
+wql_mortality_pct:'Mortalidade %',wql_culling_pct:'Descarte %',
+wql_adt_title:'Teste de Distância de Evitação (ADT)',wql_adt_distances:'Distâncias (cm)',wql_adt_avg:'Distância Média',
+wql_not_title:'Teste de Objeto Novo (NOT)',wql_not_approaching:'Aves que se Aproximam',wql_not_total_area:'Total na Área',wql_not_pct:'% Aproximação',
+wql_qba_title:'Avaliação Qualitativa de Comportamento (QBA)',wql_qba_active:'Ativo',wql_qba_relaxed:'Relaxado',wql_qba_fearful:'Temeroso',wql_qba_agitated:'Agitado',wql_qba_calm:'Calmo',wql_qba_content:'Satisfeito',wql_qba_frustrated:'Frustrado',wql_qba_friendly:'Amigável',wql_qba_bored:'Entediado',wql_qba_positively_occupied:'Positivamente Ocupado',wql_qba_energetic:'Energético',wql_qba_distressed:'Angustiado',wql_qba_happy:'Feliz',wql_qba_uncomfortable:'Desconfortável',wql_qba_sociable:'Sociável',wql_qba_apathetic:'Apático',wql_qba_curious:'Curioso',wql_qba_withdrawn:'Retraído',wql_qba_confident:'Confiante',wql_qba_depressed:'Deprimido',
+wql_excellent:'Excelente',wql_enhanced:'Melhorado',wql_acceptable:'Aceitável',wql_not_classified:'Não Classificado',
+wql_overall_score:'Pontuação Global',wql_category:'Categoria',wql_criteria:'Critérios',wql_principles:'Princípios',wql_trend:'Tendência',wql_total_assessments:'Total Avaliações',
+wql_alert_not_classified:'Bem-Estar Não Classificado',wql_alert_low:'Bem-estar baixo',
+wql_kpi_category:'Categoria Bem-Estar',wql_kpi_avg_score:'Pontuação Média',wql_kpi_count:'Avaliações',wql_kpi_trend:'Tendência',
+wql_export_csv:'Exportar CSV',wql_delete_confirm:'Eliminar esta avaliação?',wql_no_assessments:'Sem avaliações registradas',
+wql_c1:'Condição Corporal',wql_c2:'Disponibilidade de Água',wql_c3:'Conforto de Descanso',wql_c4:'Conforto Térmico',wql_c5:'Facilidade de Movimento',wql_c6:'Lesões',wql_c7:'Doença',wql_c8:'Dor',wql_c9:'Comportamento Social',wql_c10:'Outros Comportamentos',wql_c11:'Relação Humano-Animal',wql_c12:'Estado Emocional',
 nav_traceability:'Rastreabilidade',trace_title:'Rastreabilidade de Ovos',trace_add:'Novo Lote',trace_batch_id:'ID do Lote',trace_rack:'Rack',trace_box_count:'Caixas',trace_eggs_per_box:'Ovos/Caixa',trace_qr:'Código QR',trace_delivery:'Data de Entrega',trace_search:'Buscar por ID/QR',trace_origin:'Origem',trace_house:'Galpão',
 nav_planning:'Planejamento',plan_title:'Planejamento de Produção',plan_add:'Novo Plano',plan_name:'Nome do Plano',plan_target_date:'Data Alvo',plan_eggs_needed:'Ovos Necessários',plan_allocations:'Alocação de Lotes',plan_expected:'Produção Esperada',plan_gap:'Diferença',plan_on_track:'No Alvo',plan_behind:'Atrasado',plan_ahead:'Adiantado',plan_estimate:'Estimativa',plan_commitment:'Compromisso',
 prod_egg_type:'Tipo de Ovo',prod_type_conventional:'Convencional',prod_type_free_range:'Caipira',prod_type_organic:'Orgânico',prod_type_pasture:'Pastoreio',prod_type_decorative:'Decorativo',
@@ -212,6 +285,7 @@ ana_by_segment:'Rentabilidade por Segmento',ana_by_type:'Por Tipo',ana_by_channe
 nav_campo_mode:'Modo Campo',nav_vet_mode:'Modo Vet',campo_today:'HOJE',campo_quick_entry:'Entrada Rápida',vet_visit:'Visita realizada',vet_vaccines:'Vacinas aplicadas',vet_pending:'Pendente revisão',vet_select_farm:'Selecionar Granja/Lote',
 cfg_font_size:'Tamanho do Texto',cfg_font_small:'Pequeno',cfg_font_normal:'Normal',cfg_font_large:'Grande',cfg_font_xlarge:'Extra Grande',cfg_dark_mode:'Modo Escuro',cfg_theme_dark:'Escuro',
 pred_outbreak_risk:'Risco de Surto',pred_outbreak_high:'Alto Risco',pred_outbreak_medium:'Risco Médio',pred_outbreak_low:'Baixo Risco',pred_outbreak_factor:'Fator',pred_outbreak_weight:'Peso',pred_outbreak_value:'Valor',pred_probability:'Probabilidade',pred_factors:'Fatores',pred_recommendations:'Recomendações',pred_confidence:'Confiança',pred_forecast_7d:'7 dias',pred_forecast_14d:'14 dias',pred_ensemble:'Previsão Conjunta',pred_forecast_upper:'Banda Superior',pred_forecast_lower:'Banda Inferior',
+pred_cusum_title:'Détection de Changements (CUSUM)',pred_cusum_desc:'Changements structurels de production',pred_cusum_type:'Type',pred_cusum_magnitude:'Magnitude',pred_cusum_increase:'Augmentation',pred_cusum_decrease:'Diminution',pred_anomaly_composite:'Anomalie Multi-Variable',pred_anomaly_score:'Score Anomalie',pred_anomaly_alert:'Alerte',pred_anomaly_normal:'Normal',pred_anomaly_var:'Variable',pred_anomaly_recent:'Récent',pred_anomaly_baseline:'Base',pred_feed_opt:'Optimisation Alimentation',pred_feed_current_fcr:'IC Actuel',pred_feed_optimal_fcr:'IC Optimal',pred_feed_optimal_kg:'Kg/jour Optimal',pred_feed_savings:'Économie Potentielle',pred_feed_per_hen:'Par Poule',pred_lifecycle:'Prédicteur Cycle de Vie',pred_lc_current_week:'Semaine Actuelle',pred_lc_peak_week:'Semaine Pic',pred_lc_current_hd:'TJ% Actuel',pred_lc_persistence:'Persistance',pred_lc_cull_week:'Semaine Réforme',pred_lc_weeks_left:'Semaines Restantes',pred_lc_projected_eggs:'Œufs Projetés',pred_accuracy_title:'Précision Prévision',pred_accuracy_desc:'Comparaison de modèles',pred_accuracy_method:'Méthode',pred_accuracy_best:'Meilleur',
 ana_segment_profit:'Rentabilidade por Segmento',cfg_accessibility:'Acessibilidade',
 rec_title:'Recomendações',rec_dismiss:'Descartar',rec_check_diet:'Verificar dieta / formulação de ração / descartar doença',rec_check_env:'Verificar ambiente / doença / estresse imediatamente',rec_below_curve:'Produção abaixo do padrão — verificar estresse, luz, alimentação',rec_buy_feed:'Programar compra de ração',rec_record_env:'Registrar condições ambientais',rec_disinfect:'Executar protocolo de desinfecção zona',rec_heat_plan:'Estresse térmico prolongado — ativar plano de resfriamento',rec_lab_samples:'Levar amostras ao laboratório',rec_ventilation:'Aumentar ventilação, verificar água fresca',
 auth_welcome:'Conta criada. Bem-vindo!',auth_error:'Credenciais inválidas',auth_first_run:'Primeira vez: insira usuário e senha para criar sua conta.',login_subtitle:'Entre ou crie sua conta',logout:'Sair',required:'Campo obrigatório',invalid_email:'Email inválido',invalid_phone:'Telefone inválido',must_be_number:'Deve ser um número',invalid_date:'Data inválida',invalid_format:'Formato inválido',min_length:'Comprimento mínimo',max_length:'Comprimento máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Erro de rede',error_unexpected:'Erro inesperado',error_loading:'Erro ao carregar',
@@ -263,6 +337,28 @@ bio_add_pest:'Nouveau signalement',bio_pest_type:'Type',bio_pest_rodent:'Rongeur
 bio_add_protocol:'Nouveau protocole',bio_protocol_name:'Nom du protocole',bio_protocol_frequency:'Fréquence',bio_protocol_daily:'Quotidien',bio_protocol_weekly:'Hebdomadaire',bio_protocol_monthly:'Mensuel',bio_protocol_last:'Dernier achèvement',bio_protocol_items:'Éléments du protocole',bio_protocol_complete:'Terminé',bio_protocol_overdue:'En retard',
 bio_pest_score:'Score nuisibles',bio_overdue_disinfection:'Désinfection en retard',bio_unresolved_pests:'Nuisibles non résolus',
 alert_bio_disinfection:'Désinfection de zone en retard',alert_bio_pests:'Nuisibles non résolus',alert_bio_cross:'Risque de contamination croisée',
+nav_welfare:'Bien-être',wql_title:'Bien-être Animal',wql_tab_assessment:'Évaluation',wql_tab_body:'Condition Corporelle',wql_tab_behavior:'Comportement',wql_tab_results:'Résultats',wql_tab_history:'Historique',
+wql_new_assessment:'Nouvelle Évaluation',wql_assessor:'Évaluateur',wql_sample_size:'Taille Échantillon',wql_date:'Date',wql_flock:'Troupeau',
+wql_p1_title:'Principe 1 : Bonne Alimentation',wql_p2_title:'Principe 2 : Bon Logement',wql_p3_title:'Principe 3 : Bonne Santé',wql_p4_title:'Principe 4 : Comportement Approprié',
+wql_body_condition:'Condition Corporelle',wql_keel_bone:'Bréchet',wql_score_0:'Normal (0)',wql_score_1:'Léger (1)',wql_score_2:'Sévère (2)',
+wql_water_type:'Type Abreuvoir',wql_water_functional:'Fonctionnels',wql_water_clean:'Propres',wql_water_cm:'cm/Poule',wql_water_nipple:'Pipette',wql_water_bell:'Cloche',wql_water_cup:'Coupelle',wql_water_trough:'Auge',
+wql_stocking_density:'Densité de Peuplement',wql_total_area:'Surface Totale (m²)',wql_hen_count:'Nombre de Poules',wql_cm2_per_hen:'cm²/Poule',wql_eu_compliant:'Conforme UE',
+wql_perch_space:'Espace Perchoir',wql_perch_total_cm:'Total cm',wql_perch_cm_per_hen:'cm/Poule',wql_nest_boxes:'Nichoirs',wql_nest_count:'Nb Nichoirs',wql_hens_per_nest:'Poules/Nichoir',
+wql_dust_bathing:'Bain de Poussière',wql_substrate_available:'Substrat Disponible',wql_percent_bathing:'% Se Baignant',
+wql_thermal_comfort:'Confort Thermique',wql_panting:'Halètement',wql_huddling:'Blottissement',
+wql_plumage:'Plumage',wql_region_neck:'Cou',wql_region_back:'Dos',wql_region_belly:'Ventre',wql_region_wings:'Ailes',wql_region_tail:'Queue',
+wql_skin_lesions:'Lésions Cutanées',wql_foot_pad:'Pododermatite',wql_toe_damage:'Dommages Orteils',wql_keel_damage:'Dommages Bréchet',wql_beak_trimming:'Épointage',wql_beak_trimmed:'Épointées',wql_beak_not_trimmed:'Non Épointées',wql_beak_quality:'Qualité Épointage',
+wql_comb_wounds:'Blessures Crête',wql_eye_pathology:'Pathologie Oculaire',wql_respiratory:'Problèmes Respiratoires',wql_red_mites:'Poux Rouges',wql_dust_sheet:'Score Drap',
+wql_mortality_pct:'Mortalité %',wql_culling_pct:'Réforme %',
+wql_adt_title:'Test de Distance d\'Évitement (ADT)',wql_adt_distances:'Distances (cm)',wql_adt_avg:'Distance Moyenne',
+wql_not_title:'Test d\'Objet Nouveau (NOT)',wql_not_approaching:'Poules s\'Approchant',wql_not_total_area:'Total dans Zone',wql_not_pct:'% Approche',
+wql_qba_title:'Évaluation Qualitative du Comportement (QBA)',wql_qba_active:'Actif',wql_qba_relaxed:'Détendu',wql_qba_fearful:'Craintif',wql_qba_agitated:'Agité',wql_qba_calm:'Calme',wql_qba_content:'Satisfait',wql_qba_frustrated:'Frustré',wql_qba_friendly:'Amical',wql_qba_bored:'Ennuyé',wql_qba_positively_occupied:'Positivement Occupé',wql_qba_energetic:'Énergique',wql_qba_distressed:'En Détresse',wql_qba_happy:'Heureux',wql_qba_uncomfortable:'Inconfortable',wql_qba_sociable:'Sociable',wql_qba_apathetic:'Apathique',wql_qba_curious:'Curieux',wql_qba_withdrawn:'Renfermé',wql_qba_confident:'Confiant',wql_qba_depressed:'Déprimé',
+wql_excellent:'Excellent',wql_enhanced:'Amélioré',wql_acceptable:'Acceptable',wql_not_classified:'Non Classé',
+wql_overall_score:'Score Global',wql_category:'Catégorie',wql_criteria:'Critères',wql_principles:'Principes',wql_trend:'Tendance',wql_total_assessments:'Total Évaluations',
+wql_alert_not_classified:'Bien-être Non Classé',wql_alert_low:'Bien-être faible',
+wql_kpi_category:'Catégorie Bien-être',wql_kpi_avg_score:'Score Moyen',wql_kpi_count:'Évaluations',wql_kpi_trend:'Tendance',
+wql_export_csv:'Exporter CSV',wql_delete_confirm:'Supprimer cette évaluation ?',wql_no_assessments:'Aucune évaluation enregistrée',
+wql_c1:'Condition Corporelle',wql_c2:'Disponibilité en Eau',wql_c3:'Confort de Repos',wql_c4:'Confort Thermique',wql_c5:'Facilité de Mouvement',wql_c6:'Blessures',wql_c7:'Maladie',wql_c8:'Douleur',wql_c9:'Comportement Social',wql_c10:'Autres Comportements',wql_c11:'Relation Homme-Animal',wql_c12:'État Émotionnel',
 nav_traceability:'Traçabilité',trace_title:'Traçabilité des œufs',trace_add:'Nouveau lot',trace_batch_id:'ID du lot',trace_rack:'Casier',trace_box_count:'Boîtes',trace_eggs_per_box:'Œufs/Boîte',trace_qr:'Code QR',trace_delivery:'Date de livraison',trace_search:'Rechercher par ID/QR',trace_origin:'Origine',trace_house:'Bâtiment',
 nav_planning:'Planification',plan_title:'Planification de production',plan_add:'Nouveau plan',plan_name:'Nom du plan',plan_target_date:'Date cible',plan_eggs_needed:'Œufs nécessaires',plan_allocations:'Répartition par lot',plan_expected:'Production attendue',plan_gap:'Écart',plan_on_track:'Dans les temps',plan_behind:'En retard',plan_ahead:'En avance',plan_estimate:'Estimation',plan_commitment:'Engagement',
 prod_egg_type:'Type d\'œuf',prod_type_conventional:'Conventionnel',prod_type_free_range:'Plein air',prod_type_organic:'Biologique',prod_type_pasture:'Élevé en pâturage',prod_type_decorative:'Décoratif',
@@ -271,6 +367,7 @@ ana_by_segment:'Rentabilité par segment',ana_by_type:'Par type',ana_by_channel:
 nav_campo_mode:'Mode terrain',nav_vet_mode:'Mode vétérinaire',campo_today:'AUJOURD\'HUI',campo_quick_entry:'Saisie rapide',vet_visit:'Visite effectuée',vet_vaccines:'Vaccins administrés',vet_pending:'En attente de révision',vet_select_farm:'Sélectionner exploitation/lot',
 cfg_font_size:'Taille du texte',cfg_font_small:'Petit',cfg_font_normal:'Normal',cfg_font_large:'Grand',cfg_font_xlarge:'Très grand',cfg_dark_mode:'Mode sombre',cfg_theme_dark:'Sombre',
 pred_outbreak_risk:'Risque d\'épidémie',pred_outbreak_high:'Risque élevé',pred_outbreak_medium:'Risque moyen',pred_outbreak_low:'Risque faible',pred_outbreak_factor:'Facteur',pred_outbreak_weight:'Poids',pred_outbreak_value:'Valeur',pred_probability:'Probabilité',pred_factors:'Facteurs',pred_recommendations:'Recommandations',pred_confidence:'Confiance',pred_forecast_7d:'7 jours',pred_forecast_14d:'14 jours',pred_ensemble:'Prévision d\'ensemble',pred_forecast_upper:'Bande supérieure',pred_forecast_lower:'Bande inférieure',
+pred_cusum_title:'Änderungserkennung (CUSUM)',pred_cusum_desc:'Strukturelle Produktionsänderungen',pred_cusum_type:'Typ',pred_cusum_magnitude:'Größe',pred_cusum_increase:'Anstieg',pred_cusum_decrease:'Rückgang',pred_anomaly_composite:'Multi-Variable Anomalie',pred_anomaly_score:'Anomalie-Score',pred_anomaly_alert:'Alarm',pred_anomaly_normal:'Normal',pred_anomaly_var:'Variable',pred_anomaly_recent:'Aktuell',pred_anomaly_baseline:'Basislinie',pred_feed_opt:'Futteroptimierung',pred_feed_current_fcr:'Aktueller FVW',pred_feed_optimal_fcr:'Optimaler FVW',pred_feed_optimal_kg:'Optimal kg/Tag',pred_feed_savings:'Einsparpotenzial',pred_feed_per_hen:'Pro Henne',pred_lifecycle:'Lebenszyklus-Prognose',pred_lc_current_week:'Aktuelle Woche',pred_lc_peak_week:'Spitzenwoche',pred_lc_current_hd:'Aktueller HL%',pred_lc_persistence:'Persistenz',pred_lc_cull_week:'Aussortierungswoche',pred_lc_weeks_left:'Wochen übrig',pred_lc_projected_eggs:'Progn. Eier',pred_accuracy_title:'Prognosegenauigkeit',pred_accuracy_desc:'Modellvergleich',pred_accuracy_method:'Methode',pred_accuracy_best:'Beste',
 ana_segment_profit:'Rentabilité par segment',cfg_accessibility:'Accessibilité',
 rec_title:'Recommandations',rec_dismiss:'Ignorer',rec_check_diet:'Vérifier l\'alimentation / formulation / exclure une maladie',rec_check_env:'Vérifier environnement / maladie / stress immédiatement',rec_below_curve:'En dessous de la courbe standard — vérifier stress, lumière, aliment',rec_buy_feed:'Planifier l\'achat d\'aliment',rec_record_env:'Enregistrer les conditions environnementales',rec_disinfect:'Exécuter le protocole de désinfection de la zone',rec_heat_plan:'Stress thermique prolongé — activer le plan de refroidissement',rec_lab_samples:'Envoyer des échantillons au laboratoire',rec_ventilation:'Augmenter la ventilation, vérifier l\'eau fraîche',
 auth_welcome:'Compte créé. Bienvenue!',auth_error:'Identifiants incorrects',auth_first_run:'Première fois: entrez un nom d\'utilisateur et un mot de passe pour créer votre compte.',login_subtitle:'Connectez-vous ou créez votre compte',logout:'Déconnexion',required:'Champ obligatoire',invalid_email:'Email invalide',invalid_phone:'Téléphone invalide',must_be_number:'Doit être un nombre',invalid_date:'Date invalide',invalid_format:'Format invalide',min_length:'Longueur min',max_length:'Longueur max',min_value:'Valeur min',max_value:'Valeur max',error_network:'Erreur réseau',error_unexpected:'Erreur inattendue',error_loading:'Erreur de chargement',
@@ -322,6 +419,28 @@ bio_add_pest:'Neue Sichtung',bio_pest_type:'Art',bio_pest_rodent:'Nager',bio_pes
 bio_add_protocol:'Neues Protokoll',bio_protocol_name:'Protokollname',bio_protocol_frequency:'Häufigkeit',bio_protocol_daily:'Täglich',bio_protocol_weekly:'Wöchentlich',bio_protocol_monthly:'Monatlich',bio_protocol_last:'Zuletzt durchgeführt',bio_protocol_items:'Protokollpunkte',bio_protocol_complete:'Abgeschlossen',bio_protocol_overdue:'Überfällig',
 bio_pest_score:'Schädlingsbewertung',bio_overdue_disinfection:'Desinfektion überfällig',bio_unresolved_pests:'Ungelöste Schädlinge',
 alert_bio_disinfection:'Zonendesinfektion überfällig',alert_bio_pests:'Ungelöste Schädlinge',alert_bio_cross:'Kreuzkontaminationsrisiko',
+nav_welfare:'Tierwohl',wql_title:'Tierwohl',wql_tab_assessment:'Bewertung',wql_tab_body:'Körperkondition',wql_tab_behavior:'Verhalten',wql_tab_results:'Ergebnisse',wql_tab_history:'Verlauf',
+wql_new_assessment:'Neue Bewertung',wql_assessor:'Bewerter',wql_sample_size:'Stichprobengröße',wql_date:'Datum',wql_flock:'Herde',
+wql_p1_title:'Prinzip 1: Gute Fütterung',wql_p2_title:'Prinzip 2: Gute Haltung',wql_p3_title:'Prinzip 3: Gute Gesundheit',wql_p4_title:'Prinzip 4: Angemessenes Verhalten',
+wql_body_condition:'Körperkondition',wql_keel_bone:'Brustbein',wql_score_0:'Normal (0)',wql_score_1:'Leicht (1)',wql_score_2:'Schwer (2)',
+wql_water_type:'Tränkentyp',wql_water_functional:'Funktionsfähig',wql_water_clean:'Sauber',wql_water_cm:'cm/Henne',wql_water_nipple:'Nippel',wql_water_bell:'Glocke',wql_water_cup:'Becher',wql_water_trough:'Rinne',
+wql_stocking_density:'Besatzdichte',wql_total_area:'Gesamtfläche (m²)',wql_hen_count:'Hennenanzahl',wql_cm2_per_hen:'cm²/Henne',wql_eu_compliant:'EU-konform',
+wql_perch_space:'Sitzstangenplatz',wql_perch_total_cm:'Gesamt cm',wql_perch_cm_per_hen:'cm/Henne',wql_nest_boxes:'Legenester',wql_nest_count:'Nestanzahl',wql_hens_per_nest:'Hennen/Nest',
+wql_dust_bathing:'Staubbaden',wql_substrate_available:'Substrat Verfügbar',wql_percent_bathing:'% Badend',
+wql_thermal_comfort:'Thermischer Komfort',wql_panting:'Hecheln',wql_huddling:'Zusammendrängen',
+wql_plumage:'Gefieder',wql_region_neck:'Hals',wql_region_back:'Rücken',wql_region_belly:'Bauch',wql_region_wings:'Flügel',wql_region_tail:'Schwanz',
+wql_skin_lesions:'Hautverletzungen',wql_foot_pad:'Fußballendermatitis',wql_toe_damage:'Zehenschäden',wql_keel_damage:'Brustbeinschäden',wql_beak_trimming:'Schnabelkürzen',wql_beak_trimmed:'Gekürzt',wql_beak_not_trimmed:'Nicht Gekürzt',wql_beak_quality:'Kürzungsqualität',
+wql_comb_wounds:'Kammwunden',wql_eye_pathology:'Augenpathologie',wql_respiratory:'Atemprobleme',wql_red_mites:'Rote Vogelmilbe',wql_dust_sheet:'Staubtuch-Score',
+wql_mortality_pct:'Mortalität %',wql_culling_pct:'Selektion %',
+wql_adt_title:'Ausweichdistanztest (ADT)',wql_adt_distances:'Distanzen (cm)',wql_adt_avg:'Durchschnittliche Distanz',
+wql_not_title:'Neuheitsobjekttest (NOT)',wql_not_approaching:'Hennen Nähern sich',wql_not_total_area:'Gesamt im Bereich',wql_not_pct:'% Annäherung',
+wql_qba_title:'Qualitative Verhaltensbeurteilung (QBA)',wql_qba_active:'Aktiv',wql_qba_relaxed:'Entspannt',wql_qba_fearful:'Ängstlich',wql_qba_agitated:'Aufgeregt',wql_qba_calm:'Ruhig',wql_qba_content:'Zufrieden',wql_qba_frustrated:'Frustriert',wql_qba_friendly:'Freundlich',wql_qba_bored:'Gelangweilt',wql_qba_positively_occupied:'Positiv Beschäftigt',wql_qba_energetic:'Energisch',wql_qba_distressed:'Gestresst',wql_qba_happy:'Glücklich',wql_qba_uncomfortable:'Unbehaglich',wql_qba_sociable:'Gesellig',wql_qba_apathetic:'Apathisch',wql_qba_curious:'Neugierig',wql_qba_withdrawn:'Zurückgezogen',wql_qba_confident:'Selbstbewusst',wql_qba_depressed:'Depressiv',
+wql_excellent:'Exzellent',wql_enhanced:'Verbessert',wql_acceptable:'Akzeptabel',wql_not_classified:'Nicht Klassifiziert',
+wql_overall_score:'Gesamtscore',wql_category:'Kategorie',wql_criteria:'Kriterien',wql_principles:'Prinzipien',wql_trend:'Trend',wql_total_assessments:'Bewertungen Gesamt',
+wql_alert_not_classified:'Tierwohl Nicht Klassifiziert',wql_alert_low:'Tierwohl niedrig',
+wql_kpi_category:'Tierwohl-Kategorie',wql_kpi_avg_score:'Durchschnittsscore',wql_kpi_count:'Bewertungen',wql_kpi_trend:'Trend',
+wql_export_csv:'CSV Exportieren',wql_delete_confirm:'Diese Bewertung löschen?',wql_no_assessments:'Keine Bewertungen erfasst',
+wql_c1:'Körperkondition',wql_c2:'Wasserverfügbarkeit',wql_c3:'Ruhekomfort',wql_c4:'Thermischer Komfort',wql_c5:'Bewegungsfreiheit',wql_c6:'Verletzungen',wql_c7:'Krankheit',wql_c8:'Schmerz',wql_c9:'Sozialverhalten',wql_c10:'Andere Verhaltensweisen',wql_c11:'Mensch-Tier-Beziehung',wql_c12:'Emotionaler Zustand',
 nav_traceability:'Rückverfolgbarkeit',trace_title:'Eier-Rückverfolgbarkeit',trace_add:'Neue Charge',trace_batch_id:'Chargen-ID',trace_rack:'Gestell',trace_box_count:'Kartons',trace_eggs_per_box:'Eier/Karton',trace_qr:'QR-Code',trace_delivery:'Lieferdatum',trace_search:'Suche nach ID/QR',trace_origin:'Herkunft',trace_house:'Stall',
 nav_planning:'Planung',plan_title:'Produktionsplanung',plan_add:'Neuer Plan',plan_name:'Planname',plan_target_date:'Zieldatum',plan_eggs_needed:'Benötigte Eier',plan_allocations:'Herdenzuordnungen',plan_expected:'Erwartete Produktion',plan_gap:'Differenz',plan_on_track:'Im Plan',plan_behind:'Im Rückstand',plan_ahead:'Voraus',plan_estimate:'Schätzung',plan_commitment:'Zusage',
 prod_egg_type:'Eiertyp',prod_type_conventional:'Konventionell',prod_type_free_range:'Freiland',prod_type_organic:'Bio',prod_type_pasture:'Weidehaltung',prod_type_decorative:'Dekorativ',
@@ -330,6 +449,7 @@ ana_by_segment:'Rentabilität nach Segment',ana_by_type:'Nach Typ',ana_by_channe
 nav_campo_mode:'Feldmodus',nav_vet_mode:'Tierarztmodus',campo_today:'HEUTE',campo_quick_entry:'Schnelleingabe',vet_visit:'Besuch abgeschlossen',vet_vaccines:'Impfungen verabreicht',vet_pending:'Überprüfung ausstehend',vet_select_farm:'Betrieb/Herde auswählen',
 cfg_font_size:'Schriftgröße',cfg_font_small:'Klein',cfg_font_normal:'Normal',cfg_font_large:'Groß',cfg_font_xlarge:'Sehr groß',cfg_dark_mode:'Dunkelmodus',cfg_theme_dark:'Dunkel',
 pred_outbreak_risk:'Ausbruchsrisiko',pred_outbreak_high:'Hohes Risiko',pred_outbreak_medium:'Mittleres Risiko',pred_outbreak_low:'Niedriges Risiko',pred_outbreak_factor:'Faktor',pred_outbreak_weight:'Gewichtung',pred_outbreak_value:'Wert',pred_probability:'Wahrscheinlichkeit',pred_factors:'Faktoren',pred_recommendations:'Empfehlungen',pred_confidence:'Konfidenz',pred_forecast_7d:'7 Tage',pred_forecast_14d:'14 Tage',pred_ensemble:'Ensemble-Prognose',pred_forecast_upper:'Oberes Band',pred_forecast_lower:'Unteres Band',
+pred_cusum_title:'Rilevamento Cambiamenti (CUSUM)',pred_cusum_desc:'Cambiamenti strutturali nella produzione',pred_cusum_type:'Tipo',pred_cusum_magnitude:'Magnitudine',pred_cusum_increase:'Aumento',pred_cusum_decrease:'Diminuzione',pred_anomaly_composite:'Anomalia Multi-Variabile',pred_anomaly_score:'Punteggio Anomalia',pred_anomaly_alert:'Allarme',pred_anomaly_normal:'Normale',pred_anomaly_var:'Variabile',pred_anomaly_recent:'Recente',pred_anomaly_baseline:'Base',pred_feed_opt:'Ottimizzazione Mangime',pred_feed_current_fcr:'ICA Attuale',pred_feed_optimal_fcr:'ICA Ottimale',pred_feed_optimal_kg:'Kg/giorno Ottimale',pred_feed_savings:'Risparmio Potenziale',pred_feed_per_hen:'Per Gallina',pred_lifecycle:'Predittore Ciclo Vita',pred_lc_current_week:'Settimana Attuale',pred_lc_peak_week:'Settimana Picco',pred_lc_current_hd:'TG% Attuale',pred_lc_persistence:'Persistenza',pred_lc_cull_week:'Settimana Riforma',pred_lc_weeks_left:'Settimane Rimanenti',pred_lc_projected_eggs:'Uova Proiettate',pred_accuracy_title:'Precisione Previsione',pred_accuracy_desc:'Confronto modelli',pred_accuracy_method:'Metodo',pred_accuracy_best:'Migliore',
 ana_segment_profit:'Rentabilität nach Segment',cfg_accessibility:'Barrierefreiheit',
 rec_title:'Empfehlungen',rec_dismiss:'Verwerfen',rec_check_diet:'Futter / Futterrezeptur prüfen / Krankheit ausschließen',rec_check_env:'Umwelt / Krankheit / Stress sofort prüfen',rec_below_curve:'Unter Standardproduktion — Stress, Licht, Futter prüfen',rec_buy_feed:'Futterkauf planen',rec_record_env:'Umweltbedingungen erfassen',rec_disinfect:'Desinfektionsprotokoll Zone ausführen',rec_heat_plan:'Anhaltender Hitzestress — Kühlungsplan aktivieren',rec_lab_samples:'Proben ins Labor bringen',rec_ventilation:'Belüftung erhöhen, Frischwasser kontrollieren',
 auth_welcome:'Konto erstellt. Willkommen!',auth_error:'Ungültige Anmeldedaten',auth_first_run:'Erstmalig: Benutzernamen und Passwort eingeben, um Ihr Konto zu erstellen.',login_subtitle:'Anmelden oder Konto erstellen',logout:'Abmelden',required:'Pflichtfeld',invalid_email:'Ungültige E-Mail',invalid_phone:'Ungültige Telefonnummer',must_be_number:'Muss eine Zahl sein',invalid_date:'Ungültiges Datum',invalid_format:'Ungültiges Format',min_length:'Mindestlänge',max_length:'Maximale Länge',min_value:'Mindestwert',max_value:'Maximalwert',error_network:'Netzwerkfehler',error_unexpected:'Unerwarteter Fehler',error_loading:'Ladefehler',
@@ -381,6 +501,28 @@ bio_add_pest:'Nuovo Avvistamento',bio_pest_type:'Tipo',bio_pest_rodent:'Roditore
 bio_add_protocol:'Nuovo Protocollo',bio_protocol_name:'Nome Protocollo',bio_protocol_frequency:'Frequenza',bio_protocol_daily:'Giornaliera',bio_protocol_weekly:'Settimanale',bio_protocol_monthly:'Mensile',bio_protocol_last:'Ultimo Completamento',bio_protocol_items:'Voci del Protocollo',bio_protocol_complete:'Completato',bio_protocol_overdue:'Scaduto',
 bio_pest_score:'Punteggio Infestanti',bio_overdue_disinfection:'Disinfezione scaduta',bio_unresolved_pests:'Infestanti non risolti',
 alert_bio_disinfection:'Disinfezione zona scaduta',alert_bio_pests:'Infestanti non risolti',alert_bio_cross:'Rischio di contaminazione incrociata',
+nav_welfare:'Benessere',wql_title:'Benessere Animale',wql_tab_assessment:'Valutazione',wql_tab_body:'Condizione Corporea',wql_tab_behavior:'Comportamento',wql_tab_results:'Risultati',wql_tab_history:'Cronologia',
+wql_new_assessment:'Nuova Valutazione',wql_assessor:'Valutatore',wql_sample_size:'Dimensione Campione',wql_date:'Data',wql_flock:'Gruppo',
+wql_p1_title:'Principio 1: Buona Alimentazione',wql_p2_title:'Principio 2: Buon Alloggiamento',wql_p3_title:'Principio 3: Buona Salute',wql_p4_title:'Principio 4: Comportamento Appropriato',
+wql_body_condition:'Condizione Corporea',wql_keel_bone:'Osso Carenale',wql_score_0:'Normale (0)',wql_score_1:'Lieve (1)',wql_score_2:'Grave (2)',
+wql_water_type:'Tipo Abbeveratoio',wql_water_functional:'Funzionanti',wql_water_clean:'Puliti',wql_water_cm:'cm/Gallina',wql_water_nipple:'Nipple',wql_water_bell:'Campana',wql_water_cup:'Tazza',wql_water_trough:'Canale',
+wql_stocking_density:'Densità di Allevamento',wql_total_area:'Area Totale (m²)',wql_hen_count:'N. Galline',wql_cm2_per_hen:'cm²/Gallina',wql_eu_compliant:'Conforme UE',
+wql_perch_space:'Spazio Posatoio',wql_perch_total_cm:'Totale cm',wql_perch_cm_per_hen:'cm/Gallina',wql_nest_boxes:'Nidi',wql_nest_count:'N. Nidi',wql_hens_per_nest:'Galline/Nido',
+wql_dust_bathing:'Bagno di Polvere',wql_substrate_available:'Substrato Disponibile',wql_percent_bathing:'% in Bagno',
+wql_thermal_comfort:'Comfort Termico',wql_panting:'Ansimazione',wql_huddling:'Ammassamento',
+wql_plumage:'Piumaggio',wql_region_neck:'Collo',wql_region_back:'Schiena',wql_region_belly:'Addome',wql_region_wings:'Ali',wql_region_tail:'Coda',
+wql_skin_lesions:'Lesioni Cutanee',wql_foot_pad:'Pododermatite',wql_toe_damage:'Danni alle Dita',wql_keel_damage:'Danni Carenale',wql_beak_trimming:'Debeccaggio',wql_beak_trimmed:'Debeccate',wql_beak_not_trimmed:'Non Debeccate',wql_beak_quality:'Qualità Debeccaggio',
+wql_comb_wounds:'Ferite Cresta',wql_eye_pathology:'Patologia Oculare',wql_respiratory:'Problemi Respiratori',wql_red_mites:'Acari Rossi',wql_dust_sheet:'Punteggio Lenzuolo',
+wql_mortality_pct:'Mortalità %',wql_culling_pct:'Selezione %',
+wql_adt_title:'Test Distanza di Evitamento (ADT)',wql_adt_distances:'Distanze (cm)',wql_adt_avg:'Distanza Media',
+wql_not_title:'Test Oggetto Nuovo (NOT)',wql_not_approaching:'Galline che si Avvicinano',wql_not_total_area:'Totale nell\'Area',wql_not_pct:'% Avvicinamento',
+wql_qba_title:'Valutazione Qualitativa del Comportamento (QBA)',wql_qba_active:'Attivo',wql_qba_relaxed:'Rilassato',wql_qba_fearful:'Timoroso',wql_qba_agitated:'Agitato',wql_qba_calm:'Calmo',wql_qba_content:'Soddisfatto',wql_qba_frustrated:'Frustrato',wql_qba_friendly:'Amichevole',wql_qba_bored:'Annoiato',wql_qba_positively_occupied:'Positivamente Occupato',wql_qba_energetic:'Energico',wql_qba_distressed:'Angosciato',wql_qba_happy:'Felice',wql_qba_uncomfortable:'A Disagio',wql_qba_sociable:'Socievole',wql_qba_apathetic:'Apatico',wql_qba_curious:'Curioso',wql_qba_withdrawn:'Ritirato',wql_qba_confident:'Sicuro',wql_qba_depressed:'Depresso',
+wql_excellent:'Eccellente',wql_enhanced:'Migliorato',wql_acceptable:'Accettabile',wql_not_classified:'Non Classificato',
+wql_overall_score:'Punteggio Globale',wql_category:'Categoria',wql_criteria:'Criteri',wql_principles:'Principi',wql_trend:'Tendenza',wql_total_assessments:'Valutazioni Totali',
+wql_alert_not_classified:'Benessere Non Classificato',wql_alert_low:'Benessere basso',
+wql_kpi_category:'Categoria Benessere',wql_kpi_avg_score:'Punteggio Medio',wql_kpi_count:'Valutazioni',wql_kpi_trend:'Tendenza',
+wql_export_csv:'Esporta CSV',wql_delete_confirm:'Eliminare questa valutazione?',wql_no_assessments:'Nessuna valutazione registrata',
+wql_c1:'Condizione Corporea',wql_c2:'Disponibilità Acqua',wql_c3:'Comfort di Riposo',wql_c4:'Comfort Termico',wql_c5:'Facilità di Movimento',wql_c6:'Lesioni',wql_c7:'Malattia',wql_c8:'Dolore',wql_c9:'Comportamento Sociale',wql_c10:'Altri Comportamenti',wql_c11:'Relazione Uomo-Animale',wql_c12:'Stato Emotivo',
 nav_traceability:'Tracciabilità',trace_title:'Tracciabilità Uova',trace_add:'Nuovo Lotto',trace_batch_id:'ID Lotto',trace_rack:'Scaffale',trace_box_count:'Scatole',trace_eggs_per_box:'Uova/Scatola',trace_qr:'Codice QR',trace_delivery:'Data di Consegna',trace_search:'Cerca per ID/QR',trace_origin:'Origine',trace_house:'Capannone',
 nav_planning:'Pianificazione',plan_title:'Pianificazione Produzione',plan_add:'Nuovo Piano',plan_name:'Nome Piano',plan_target_date:'Data Obiettivo',plan_eggs_needed:'Uova Necessarie',plan_allocations:'Allocazioni Gruppi',plan_expected:'Produzione Prevista',plan_gap:'Scostamento',plan_on_track:'In Linea',plan_behind:'In Ritardo',plan_ahead:'In Anticipo',plan_estimate:'Stima',plan_commitment:'Impegno',
 prod_egg_type:'Tipo di Uovo',prod_type_conventional:'Convenzionale',prod_type_free_range:'Allevamento a Terra',prod_type_organic:'Biologico',prod_type_pasture:'Allevamento al Pascolo',prod_type_decorative:'Decorativo',
@@ -389,6 +531,7 @@ ana_by_segment:'Redditività per Segmento',ana_by_type:'Per Tipo',ana_by_channel
 nav_campo_mode:'Modalità Campo',nav_vet_mode:'Modalità Veterinario',campo_today:'OGGI',campo_quick_entry:'Inserimento Rapido',vet_visit:'Visita completata',vet_vaccines:'Vaccini applicati',vet_pending:'In attesa di revisione',vet_select_farm:'Seleziona Allevamento/Gruppo',
 cfg_font_size:'Dimensione Testo',cfg_font_small:'Piccolo',cfg_font_normal:'Normale',cfg_font_large:'Grande',cfg_font_xlarge:'Extra Grande',cfg_dark_mode:'Modalità Scura',cfg_theme_dark:'Scuro',
 pred_outbreak_risk:'Rischio Focolaio',pred_outbreak_high:'Rischio Alto',pred_outbreak_medium:'Rischio Medio',pred_outbreak_low:'Rischio Basso',pred_outbreak_factor:'Fattore',pred_outbreak_weight:'Peso',pred_outbreak_value:'Valore',pred_probability:'Probabilità',pred_factors:'Fattori',pred_recommendations:'Raccomandazioni',pred_confidence:'Affidabilità',pred_forecast_7d:'7 giorni',pred_forecast_14d:'14 giorni',pred_ensemble:'Previsione Combinata',pred_forecast_upper:'Banda Superiore',pred_forecast_lower:'Banda Inferiore',
+pred_cusum_title:'変化点検出（CUSUM）',pred_cusum_desc:'生産の構造的変化',pred_cusum_type:'タイプ',pred_cusum_magnitude:'大きさ',pred_cusum_increase:'増加',pred_cusum_decrease:'減少',pred_anomaly_composite:'多変量異常',pred_anomaly_score:'異常スコア',pred_anomaly_alert:'アラート',pred_anomaly_normal:'正常',pred_anomaly_var:'変数',pred_anomaly_recent:'最近',pred_anomaly_baseline:'基準値',pred_feed_opt:'飼料最適化',pred_feed_current_fcr:'現在のFCR',pred_feed_optimal_fcr:'最適FCR',pred_feed_optimal_kg:'最適kg/日',pred_feed_savings:'潜在的節約',pred_feed_per_hen:'1羽あたり',pred_lifecycle:'ライフサイクル予測',pred_lc_current_week:'現在の週',pred_lc_peak_week:'ピーク週',pred_lc_current_hd:'現在のHD%',pred_lc_persistence:'持続性',pred_lc_cull_week:'淘汰週',pred_lc_weeks_left:'残り週数',pred_lc_projected_eggs:'予測卵数',pred_accuracy_title:'予測精度',pred_accuracy_desc:'モデル比較',pred_accuracy_method:'方法',pred_accuracy_best:'最良',
 ana_segment_profit:'Redditività per Segmento',cfg_accessibility:'Accessibilità',
 rec_title:'Raccomandazioni',rec_dismiss:'Ignora',rec_check_diet:'Controllare dieta / formulazione mangime / escludere malattia',rec_check_env:'Controllare ambiente / malattia / stress immediatamente',rec_below_curve:'Sotto la produzione standard — controllare stress, luce, mangime',rec_buy_feed:'Programmare acquisto mangime',rec_record_env:'Registrare condizioni ambientali',rec_disinfect:'Eseguire protocollo di disinfezione zona',rec_heat_plan:'Stress da calore prolungato — attivare piano di raffreddamento',rec_lab_samples:'Inviare campioni al laboratorio',rec_ventilation:'Aumentare ventilazione, controllare acqua fresca',
 auth_welcome:'Account creato. Benvenuto!',auth_error:'Credenziali non valide',auth_first_run:'Prima volta: inserisci nome utente e password per creare il tuo account.',login_subtitle:'Accedi o crea il tuo account',logout:'Esci',required:'Campo obbligatorio',invalid_email:'Email non valida',invalid_phone:'Telefono non valido',must_be_number:'Deve essere un numero',invalid_date:'Data non valida',invalid_format:'Formato non valido',min_length:'Lunghezza minima',max_length:'Lunghezza massima',min_value:'Valore minimo',max_value:'Valore massimo',error_network:'Errore di rete',error_unexpected:'Errore imprevisto',error_loading:'Errore di caricamento',
@@ -440,6 +583,28 @@ bio_add_pest:'新規目撃',bio_pest_type:'種類',bio_pest_rodent:'げっ歯類
 bio_add_protocol:'新規プロトコル',bio_protocol_name:'プロトコル名',bio_protocol_frequency:'頻度',bio_protocol_daily:'毎日',bio_protocol_weekly:'毎週',bio_protocol_monthly:'毎月',bio_protocol_last:'最終実施日',bio_protocol_items:'プロトコル項目',bio_protocol_complete:'完了',bio_protocol_overdue:'期限超過',
 bio_pest_score:'害虫スコア',bio_overdue_disinfection:'消毒期限超過',bio_unresolved_pests:'未解決の害虫問題',
 alert_bio_disinfection:'ゾーン消毒期限超過',alert_bio_pests:'未解決の害虫問題',alert_bio_cross:'交差汚染リスク',
+nav_welfare:'福祉',wql_title:'動物福祉',wql_tab_assessment:'評価',wql_tab_body:'体調',wql_tab_behavior:'行動',wql_tab_results:'結果',wql_tab_history:'履歴',
+wql_new_assessment:'新規評価',wql_assessor:'評価者',wql_sample_size:'サンプルサイズ',wql_date:'日付',wql_flock:'群れ',
+wql_p1_title:'原則1：良好な給餌',wql_p2_title:'原則2：良好な飼育環境',wql_p3_title:'原則3：良好な健康',wql_p4_title:'原則4：適切な行動',
+wql_body_condition:'体調スコア',wql_keel_bone:'竜骨突起',wql_score_0:'正常 (0)',wql_score_1:'軽度 (1)',wql_score_2:'重度 (2)',
+wql_water_type:'給水器タイプ',wql_water_functional:'機能的',wql_water_clean:'清潔',wql_water_cm:'cm/羽',wql_water_nipple:'ニップル',wql_water_bell:'ベル',wql_water_cup:'カップ',wql_water_trough:'トラフ',
+wql_stocking_density:'飼養密度',wql_total_area:'総面積 (m²)',wql_hen_count:'羽数',wql_cm2_per_hen:'cm²/羽',wql_eu_compliant:'EU準拠',
+wql_perch_space:'止まり木スペース',wql_perch_total_cm:'合計cm',wql_perch_cm_per_hen:'cm/羽',wql_nest_boxes:'巣箱',wql_nest_count:'巣箱数',wql_hens_per_nest:'羽/巣箱',
+wql_dust_bathing:'砂浴び',wql_substrate_available:'基質あり',wql_percent_bathing:'% 砂浴び中',
+wql_thermal_comfort:'温熱快適性',wql_panting:'パンティング',wql_huddling:'密集',
+wql_plumage:'羽毛',wql_region_neck:'首',wql_region_back:'背中',wql_region_belly:'腹部',wql_region_wings:'翼',wql_region_tail:'尾',
+wql_skin_lesions:'皮膚病変',wql_foot_pad:'足底皮膚炎',wql_toe_damage:'趾の損傷',wql_keel_damage:'竜骨損傷',wql_beak_trimming:'ビークトリミング',wql_beak_trimmed:'トリミング済',wql_beak_not_trimmed:'未トリミング',wql_beak_quality:'トリミング品質',
+wql_comb_wounds:'鶏冠の傷',wql_eye_pathology:'眼病理',wql_respiratory:'呼吸器問題',wql_red_mites:'ワクモ',wql_dust_sheet:'ダストシートスコア',
+wql_mortality_pct:'死亡率 %',wql_culling_pct:'淘汰率 %',
+wql_adt_title:'回避距離テスト (ADT)',wql_adt_distances:'距離 (cm)',wql_adt_avg:'平均距離',
+wql_not_title:'新奇物体テスト (NOT)',wql_not_approaching:'接近した鶏',wql_not_total_area:'エリア内合計',wql_not_pct:'% 接近',
+wql_qba_title:'定性的行動評価 (QBA)',wql_qba_active:'活発',wql_qba_relaxed:'リラックス',wql_qba_fearful:'恐怖',wql_qba_agitated:'興奮',wql_qba_calm:'穏やか',wql_qba_content:'満足',wql_qba_frustrated:'欲求不満',wql_qba_friendly:'友好的',wql_qba_bored:'退屈',wql_qba_positively_occupied:'前向きに活動',wql_qba_energetic:'活力的',wql_qba_distressed:'苦悩',wql_qba_happy:'幸福',wql_qba_uncomfortable:'不快',wql_qba_sociable:'社交的',wql_qba_apathetic:'無気力',wql_qba_curious:'好奇心旺盛',wql_qba_withdrawn:'引きこもり',wql_qba_confident:'自信',wql_qba_depressed:'抑うつ',
+wql_excellent:'優秀',wql_enhanced:'向上',wql_acceptable:'許容',wql_not_classified:'未分類',
+wql_overall_score:'総合スコア',wql_category:'カテゴリ',wql_criteria:'基準',wql_principles:'原則',wql_trend:'傾向',wql_total_assessments:'評価合計',
+wql_alert_not_classified:'福祉未分類',wql_alert_low:'福祉低下',
+wql_kpi_category:'福祉カテゴリ',wql_kpi_avg_score:'平均スコア',wql_kpi_count:'評価数',wql_kpi_trend:'傾向',
+wql_export_csv:'CSVエクスポート',wql_delete_confirm:'この評価を削除しますか？',wql_no_assessments:'評価記録なし',
+wql_c1:'体調',wql_c2:'水の利用可能性',wql_c3:'休息の快適性',wql_c4:'温熱快適性',wql_c5:'移動の容易さ',wql_c6:'損傷',wql_c7:'疾病',wql_c8:'痛み',wql_c9:'社会的行動',wql_c10:'その他の行動',wql_c11:'人間と動物の関係',wql_c12:'感情状態',
 nav_traceability:'トレーサビリティ',trace_title:'卵のトレーサビリティ',trace_add:'新規ロット',trace_batch_id:'ロットID',trace_rack:'ラック',trace_box_count:'箱数',trace_eggs_per_box:'卵数/箱',trace_qr:'QRコード',trace_delivery:'出荷日',trace_search:'ID/QRで検索',trace_origin:'産地',trace_house:'鶏舎',
 nav_planning:'計画',plan_title:'生産計画',plan_add:'新規計画',plan_name:'計画名',plan_target_date:'目標日',plan_eggs_needed:'必要卵数',plan_allocations:'鶏群配分',plan_expected:'予想生産量',plan_gap:'差異',plan_on_track:'順調',plan_behind:'遅延',plan_ahead:'前倒し',plan_estimate:'見積り',plan_commitment:'コミットメント',
 prod_egg_type:'卵の種類',prod_type_conventional:'慣行飼育',prod_type_free_range:'フリーレンジ',prod_type_organic:'有機',prod_type_pasture:'放牧',prod_type_decorative:'装飾用',
@@ -448,6 +613,7 @@ ana_by_segment:'セグメント別収益性',ana_by_type:'種類別',ana_by_chan
 nav_campo_mode:'フィールドモード',nav_vet_mode:'獣医モード',campo_today:'本日',campo_quick_entry:'クイック入力',vet_visit:'訪問完了',vet_vaccines:'ワクチン接種済み',vet_pending:'確認待ち',vet_select_farm:'農場・鶏群を選択',
 cfg_font_size:'文字サイズ',cfg_font_small:'小',cfg_font_normal:'標準',cfg_font_large:'大',cfg_font_xlarge:'特大',cfg_dark_mode:'ダークモード',cfg_theme_dark:'ダーク',
 pred_outbreak_risk:'疾病発生リスク',pred_outbreak_high:'高リスク',pred_outbreak_medium:'中リスク',pred_outbreak_low:'低リスク',pred_outbreak_factor:'要因',pred_outbreak_weight:'重み',pred_outbreak_value:'値',pred_probability:'確率',pred_factors:'要因',pred_recommendations:'推奨事項',pred_confidence:'信頼度',pred_forecast_7d:'7日間',pred_forecast_14d:'14日間',pred_ensemble:'アンサンブル予測',pred_forecast_upper:'上限バンド',pred_forecast_lower:'下限バンド',
+pred_cusum_title:'变化点检测（CUSUM）',pred_cusum_desc:'生产结构性变化',pred_cusum_type:'类型',pred_cusum_magnitude:'幅度',pred_cusum_increase:'增加',pred_cusum_decrease:'减少',pred_anomaly_composite:'多变量异常',pred_anomaly_score:'异常评分',pred_anomaly_alert:'警报',pred_anomaly_normal:'正常',pred_anomaly_var:'变量',pred_anomaly_recent:'最近',pred_anomaly_baseline:'基线',pred_feed_opt:'饲料优化',pred_feed_current_fcr:'当前FCR',pred_feed_optimal_fcr:'最优FCR',pred_feed_optimal_kg:'最优kg/天',pred_feed_savings:'潜在节约',pred_feed_per_hen:'每只鸡',pred_lifecycle:'生命周期预测',pred_lc_current_week:'当前周',pred_lc_peak_week:'高峰周',pred_lc_current_hd:'当前HD%',pred_lc_persistence:'持续性',pred_lc_cull_week:'淘汰周',pred_lc_weeks_left:'剩余周数',pred_lc_projected_eggs:'预计产蛋',pred_accuracy_title:'预测准确度',pred_accuracy_desc:'模型比较',pred_accuracy_method:'方法',pred_accuracy_best:'最佳',
 ana_segment_profit:'セグメント別収益性',cfg_accessibility:'アクセシビリティ',
 rec_title:'推奨事項',rec_dismiss:'非表示にする',rec_check_diet:'飼料設計を確認・疾病の可能性を除外',rec_check_env:'環境・疾病・ストレスを直ちに確認',rec_below_curve:'標準産卵曲線を下回っています — ストレス・照明・飼料を確認',rec_buy_feed:'飼料の購入を計画してください',rec_record_env:'環境条件を記録してください',rec_disinfect:'ゾーンの消毒プロトコルを実施してください',rec_heat_plan:'長期間の熱ストレス — 冷却計画を実施してください',rec_lab_samples:'検体を検査機関に提出してください',rec_ventilation:'換気を強化し、新鮮な飲水を確認してください',
 auth_welcome:'アカウントが作成されました。ようこそ！',auth_error:'認証情報が正しくありません',auth_first_run:'初回：ユーザー名とパスワードを入力してアカウントを作成してください。',login_subtitle:'ログインまたはアカウント作成',logout:'ログアウト',required:'必須項目',invalid_email:'無効なメールアドレス',invalid_phone:'無効な電話番号',must_be_number:'数値を入力してください',invalid_date:'無効な日付',invalid_format:'無効な形式',min_length:'最小長',max_length:'最大長',min_value:'最小値',max_value:'最大値',error_network:'ネットワークエラー',error_unexpected:'予期しないエラー',error_loading:'読み込みエラー',
@@ -499,6 +665,28 @@ bio_add_pest:'新建记录',bio_pest_type:'类型',bio_pest_rodent:'鼠害',bio_
 bio_add_protocol:'新建规程',bio_protocol_name:'规程名称',bio_protocol_frequency:'频率',bio_protocol_daily:'每日',bio_protocol_weekly:'每周',bio_protocol_monthly:'每月',bio_protocol_last:'上次完成',bio_protocol_items:'规程项目',bio_protocol_complete:'完成',bio_protocol_overdue:'已逾期',
 bio_pest_score:'虫害评分',bio_overdue_disinfection:'消毒已逾期',bio_unresolved_pests:'未解决虫害',
 alert_bio_disinfection:'区域消毒已逾期',alert_bio_pests:'未解决虫害',alert_bio_cross:'交叉污染风险',
+nav_welfare:'福利',wql_title:'动物福利',wql_tab_assessment:'评估',wql_tab_body:'体况',wql_tab_behavior:'行为',wql_tab_results:'结果',wql_tab_history:'历史',
+wql_new_assessment:'新建评估',wql_assessor:'评估员',wql_sample_size:'样本量',wql_date:'日期',wql_flock:'鸡群',
+wql_p1_title:'原则1：良好饲养',wql_p2_title:'原则2：良好住房',wql_p3_title:'原则3：良好健康',wql_p4_title:'原则4：适当行为',
+wql_body_condition:'体况评分',wql_keel_bone:'龙骨',wql_score_0:'正常 (0)',wql_score_1:'轻度 (1)',wql_score_2:'严重 (2)',
+wql_water_type:'饮水器类型',wql_water_functional:'功能正常',wql_water_clean:'清洁',wql_water_cm:'cm/只',wql_water_nipple:'乳头式',wql_water_bell:'钟形',wql_water_cup:'杯式',wql_water_trough:'槽式',
+wql_stocking_density:'饲养密度',wql_total_area:'总面积 (m²)',wql_hen_count:'鸡只数',wql_cm2_per_hen:'cm²/只',wql_eu_compliant:'符合欧盟标准',
+wql_perch_space:'栖架空间',wql_perch_total_cm:'总长cm',wql_perch_cm_per_hen:'cm/只',wql_nest_boxes:'产蛋箱',wql_nest_count:'产蛋箱数',wql_hens_per_nest:'只/产蛋箱',
+wql_dust_bathing:'沙浴',wql_substrate_available:'有垫料',wql_percent_bathing:'% 沙浴中',
+wql_thermal_comfort:'热舒适',wql_panting:'喘气',wql_huddling:'挤堆',
+wql_plumage:'羽毛',wql_region_neck:'颈部',wql_region_back:'背部',wql_region_belly:'腹部',wql_region_wings:'翅膀',wql_region_tail:'尾部',
+wql_skin_lesions:'皮肤病变',wql_foot_pad:'脚垫皮炎',wql_toe_damage:'趾损伤',wql_keel_damage:'龙骨损伤',wql_beak_trimming:'断喙',wql_beak_trimmed:'已断喙',wql_beak_not_trimmed:'未断喙',wql_beak_quality:'断喙质量',
+wql_comb_wounds:'鸡冠伤口',wql_eye_pathology:'眼部病变',wql_respiratory:'呼吸问题',wql_red_mites:'红螨',wql_dust_sheet:'粉尘布评分',
+wql_mortality_pct:'死亡率 %',wql_culling_pct:'淘汰率 %',
+wql_adt_title:'躲避距离测试 (ADT)',wql_adt_distances:'距离 (cm)',wql_adt_avg:'平均距离',
+wql_not_title:'新奇物体测试 (NOT)',wql_not_approaching:'接近的鸡',wql_not_total_area:'区域总数',wql_not_pct:'% 接近',
+wql_qba_title:'定性行为评估 (QBA)',wql_qba_active:'活跃',wql_qba_relaxed:'放松',wql_qba_fearful:'恐惧',wql_qba_agitated:'焦躁',wql_qba_calm:'平静',wql_qba_content:'满足',wql_qba_frustrated:'沮丧',wql_qba_friendly:'友好',wql_qba_bored:'无聊',wql_qba_positively_occupied:'积极忙碌',wql_qba_energetic:'精力充沛',wql_qba_distressed:'痛苦',wql_qba_happy:'快乐',wql_qba_uncomfortable:'不舒适',wql_qba_sociable:'合群',wql_qba_apathetic:'冷漠',wql_qba_curious:'好奇',wql_qba_withdrawn:'退缩',wql_qba_confident:'自信',wql_qba_depressed:'抑郁',
+wql_excellent:'优秀',wql_enhanced:'良好',wql_acceptable:'可接受',wql_not_classified:'未分类',
+wql_overall_score:'综合评分',wql_category:'类别',wql_criteria:'标准',wql_principles:'原则',wql_trend:'趋势',wql_total_assessments:'评估总数',
+wql_alert_not_classified:'福利未分类',wql_alert_low:'福利偏低',
+wql_kpi_category:'福利类别',wql_kpi_avg_score:'平均评分',wql_kpi_count:'评估数',wql_kpi_trend:'趋势',
+wql_export_csv:'导出CSV',wql_delete_confirm:'删除此评估？',wql_no_assessments:'暂无评估记录',
+wql_c1:'体况',wql_c2:'饮水供应',wql_c3:'休息舒适',wql_c4:'热舒适',wql_c5:'活动便利',wql_c6:'损伤',wql_c7:'疾病',wql_c8:'疼痛',wql_c9:'社会行为',wql_c10:'其他行为',wql_c11:'人畜关系',wql_c12:'情绪状态',
 nav_traceability:'溯源',trace_title:'鸡蛋溯源',trace_add:'新建批次',trace_batch_id:'批次号',trace_rack:'蛋架',trace_box_count:'箱数',trace_eggs_per_box:'每箱蛋数',trace_qr:'二维码',trace_delivery:'配送日期',trace_search:'按批次号/二维码搜索',trace_origin:'产地',trace_house:'鸡舍',
 nav_planning:'计划',plan_title:'生产计划',plan_add:'新建计划',plan_name:'计划名称',plan_target_date:'目标日期',plan_eggs_needed:'需蛋量',plan_allocations:'鸡群分配',plan_expected:'预计产量',plan_gap:'缺口',plan_on_track:'正常',plan_behind:'落后',plan_ahead:'超前',plan_estimate:'预估',plan_commitment:'承诺量',
 prod_egg_type:'鸡蛋类型',prod_type_conventional:'常规蛋',prod_type_free_range:'散养蛋',prod_type_organic:'有机蛋',prod_type_pasture:'牧场蛋',prod_type_decorative:'观赏蛋',
@@ -507,6 +695,7 @@ ana_by_segment:'按细分盈利分析',ana_by_type:'按类型',ana_by_channel:'�
 nav_campo_mode:'现场模式',nav_vet_mode:'兽医模式',campo_today:'今日',campo_quick_entry:'快速录入',vet_visit:'巡检完成',vet_vaccines:'已接种疫苗',vet_pending:'待审核',vet_select_farm:'选择养殖场/鸡群',
 cfg_font_size:'字体大小',cfg_font_small:'小',cfg_font_normal:'正常',cfg_font_large:'大',cfg_font_xlarge:'特大',cfg_dark_mode:'深色模式',cfg_theme_dark:'深色',
 pred_outbreak_risk:'疫情风险',pred_outbreak_high:'高风险',pred_outbreak_medium:'中风险',pred_outbreak_low:'低风险',pred_outbreak_factor:'因素',pred_outbreak_weight:'权重',pred_outbreak_value:'数值',pred_probability:'概率',pred_factors:'因素',pred_recommendations:'建议',pred_confidence:'置信度',pred_forecast_7d:'7天',pred_forecast_14d:'14天',pred_ensemble:'集成预测',pred_forecast_upper:'上限带',pred_forecast_lower:'下限带',
+pred_cusum_title:'Обнаружение изменений (CUSUM)',pred_cusum_desc:'Структурные изменения производства',pred_cusum_type:'Тип',pred_cusum_magnitude:'Величина',pred_cusum_increase:'Увеличение',pred_cusum_decrease:'Уменьшение',pred_anomaly_composite:'Мультипеременная аномалия',pred_anomaly_score:'Оценка аномалии',pred_anomaly_alert:'Тревога',pred_anomaly_normal:'Норма',pred_anomaly_var:'Переменная',pred_anomaly_recent:'Последнее',pred_anomaly_baseline:'Базовое',pred_feed_opt:'Оптимизация корма',pred_feed_current_fcr:'Текущий КК',pred_feed_optimal_fcr:'Оптимальный КК',pred_feed_optimal_kg:'Оптим. кг/день',pred_feed_savings:'Потенц. экономия',pred_feed_per_hen:'На курицу',pred_lifecycle:'Прогноз жизненного цикла',pred_lc_current_week:'Текущая неделя',pred_lc_peak_week:'Пиковая неделя',pred_lc_current_hd:'Текущий ПН%',pred_lc_persistence:'Устойчивость',pred_lc_cull_week:'Неделя выбраковки',pred_lc_weeks_left:'Осталось недель',pred_lc_projected_eggs:'Прогноз яиц',pred_accuracy_title:'Точность прогноза',pred_accuracy_desc:'Сравнение моделей',pred_accuracy_method:'Метод',pred_accuracy_best:'Лучший',
 ana_segment_profit:'按细分盈利分析',cfg_accessibility:'无障碍',
 rec_title:'建议',rec_dismiss:'忽略',rec_check_diet:'检查日粮/饲料配方/排除疾病',rec_check_env:'立即检查环境/疾病/应激',rec_below_curve:'低于标准产蛋曲线 - 检查应激、光照、饲料',rec_buy_feed:'安排饲料采购',rec_record_env:'记录环境条件',rec_disinfect:'执行区域消毒规程',rec_heat_plan:'持续热应激 - 启动降温方案',rec_lab_samples:'采集样本送检',rec_ventilation:'加强通风，检查饮水供应',
 auth_welcome:'账户已创建。欢迎！',auth_error:'凭据不正确',auth_first_run:'首次使用：输入用户名和密码以创建您的账户。',login_subtitle:'登录或创建账户',logout:'退出登录',required:'必填项',invalid_email:'无效的邮箱',invalid_phone:'无效的电话号码',must_be_number:'必须是数字',invalid_date:'无效的日期',invalid_format:'无效的格式',min_length:'最小长度',max_length:'最大长度',min_value:'最小值',max_value:'最大值',error_network:'网络错误',error_unexpected:'意外错误',error_loading:'加载错误',
@@ -557,6 +746,28 @@ bio_add_pest:'Новое обнаружение',bio_pest_type:'Тип',bio_pest
 bio_add_protocol:'Новый протокол',bio_protocol_name:'Название протокола',bio_protocol_frequency:'Частота',bio_protocol_daily:'Ежедневно',bio_protocol_weekly:'Еженедельно',bio_protocol_monthly:'Ежемесячно',bio_protocol_last:'Последнее выполнение',bio_protocol_items:'Пункты протокола',bio_protocol_complete:'Выполнено',bio_protocol_overdue:'Просрочено',
 bio_pest_score:'Индекс вредителей',bio_overdue_disinfection:'Просроченная дезинфекция',bio_unresolved_pests:'Неустранённые вредители',
 alert_bio_disinfection:'Дезинфекция зоны просрочена',alert_bio_pests:'Неустранённые вредители',alert_bio_cross:'Риск перекрёстного заражения',
+nav_welfare:'Благополучие',wql_title:'Благополучие Животных',wql_tab_assessment:'Оценка',wql_tab_body:'Кондиция Тела',wql_tab_behavior:'Поведение',wql_tab_results:'Результаты',wql_tab_history:'История',
+wql_new_assessment:'Новая Оценка',wql_assessor:'Оценщик',wql_sample_size:'Размер Выборки',wql_date:'Дата',wql_flock:'Стадо',
+wql_p1_title:'Принцип 1: Хорошее Кормление',wql_p2_title:'Принцип 2: Хорошее Содержание',wql_p3_title:'Принцип 3: Хорошее Здоровье',wql_p4_title:'Принцип 4: Соответствующее Поведение',
+wql_body_condition:'Кондиция Тела',wql_keel_bone:'Киль',wql_score_0:'Норма (0)',wql_score_1:'Лёгкое (1)',wql_score_2:'Тяжёлое (2)',
+wql_water_type:'Тип Поилки',wql_water_functional:'Рабочие',wql_water_clean:'Чистые',wql_water_cm:'см/Курица',wql_water_nipple:'Ниппель',wql_water_bell:'Колокол',wql_water_cup:'Чашка',wql_water_trough:'Желоб',
+wql_stocking_density:'Плотность Посадки',wql_total_area:'Общая Площадь (м²)',wql_hen_count:'Кол-во Кур',wql_cm2_per_hen:'см²/Курица',wql_eu_compliant:'Соответствует ЕС',
+wql_perch_space:'Место на Насесте',wql_perch_total_cm:'Всего см',wql_perch_cm_per_hen:'см/Курица',wql_nest_boxes:'Гнёзда',wql_nest_count:'Кол-во Гнёзд',wql_hens_per_nest:'Куриц/Гнездо',
+wql_dust_bathing:'Пылевая Ванна',wql_substrate_available:'Подстилка Есть',wql_percent_bathing:'% Купающихся',
+wql_thermal_comfort:'Тепловой Комфорт',wql_panting:'Тяжёлое Дыхание',wql_huddling:'Скучивание',
+wql_plumage:'Оперение',wql_region_neck:'Шея',wql_region_back:'Спина',wql_region_belly:'Живот',wql_region_wings:'Крылья',wql_region_tail:'Хвост',
+wql_skin_lesions:'Кожные Повреждения',wql_foot_pad:'Пододерматит',wql_toe_damage:'Повреждения Пальцев',wql_keel_damage:'Повреждения Киля',wql_beak_trimming:'Обрезка Клюва',wql_beak_trimmed:'Обрезанные',wql_beak_not_trimmed:'Необрезанные',wql_beak_quality:'Качество Обрезки',
+wql_comb_wounds:'Раны Гребня',wql_eye_pathology:'Глазная Патология',wql_respiratory:'Респираторные Проблемы',wql_red_mites:'Красный Клещ',wql_dust_sheet:'Оценка Пылевой Простыни',
+wql_mortality_pct:'Смертность %',wql_culling_pct:'Выбраковка %',
+wql_adt_title:'Тест Дистанции Избегания (ADT)',wql_adt_distances:'Расстояния (см)',wql_adt_avg:'Среднее Расстояние',
+wql_not_title:'Тест Нового Объекта (NOT)',wql_not_approaching:'Куры Подходящие',wql_not_total_area:'Всего в Зоне',wql_not_pct:'% Подход',
+wql_qba_title:'Качественная Оценка Поведения (QBA)',wql_qba_active:'Активный',wql_qba_relaxed:'Расслабленный',wql_qba_fearful:'Испуганный',wql_qba_agitated:'Возбуждённый',wql_qba_calm:'Спокойный',wql_qba_content:'Довольный',wql_qba_frustrated:'Разочарованный',wql_qba_friendly:'Дружелюбный',wql_qba_bored:'Скучающий',wql_qba_positively_occupied:'Позитивно Занятый',wql_qba_energetic:'Энергичный',wql_qba_distressed:'Страдающий',wql_qba_happy:'Счастливый',wql_qba_uncomfortable:'Дискомфорт',wql_qba_sociable:'Общительный',wql_qba_apathetic:'Апатичный',wql_qba_curious:'Любопытный',wql_qba_withdrawn:'Замкнутый',wql_qba_confident:'Уверенный',wql_qba_depressed:'Подавленный',
+wql_excellent:'Отлично',wql_enhanced:'Улучшено',wql_acceptable:'Допустимо',wql_not_classified:'Не Классифицировано',
+wql_overall_score:'Общий Балл',wql_category:'Категория',wql_criteria:'Критерии',wql_principles:'Принципы',wql_trend:'Тренд',wql_total_assessments:'Всего Оценок',
+wql_alert_not_classified:'Благополучие Не Классифицировано',wql_alert_low:'Низкое благополучие',
+wql_kpi_category:'Категория Благополучия',wql_kpi_avg_score:'Средний Балл',wql_kpi_count:'Оценки',wql_kpi_trend:'Тренд',
+wql_export_csv:'Экспорт CSV',wql_delete_confirm:'Удалить эту оценку?',wql_no_assessments:'Нет зарегистрированных оценок',
+wql_c1:'Кондиция Тела',wql_c2:'Доступность Воды',wql_c3:'Комфорт Отдыха',wql_c4:'Тепловой Комфорт',wql_c5:'Лёгкость Движения',wql_c6:'Травмы',wql_c7:'Болезнь',wql_c8:'Боль',wql_c9:'Социальное Поведение',wql_c10:'Другое Поведение',wql_c11:'Отношения Человек-Животное',wql_c12:'Эмоциональное Состояние',
 nav_traceability:'Прослеживаемость',trace_title:'Прослеживаемость яиц',trace_add:'Новая партия',trace_batch_id:'ID партии',trace_rack:'Стеллаж',trace_box_count:'Коробки',trace_eggs_per_box:'Яиц/коробка',trace_qr:'QR-код',trace_delivery:'Дата доставки',trace_search:'Поиск по ID/QR',trace_origin:'Происхождение',trace_house:'Птичник',
 nav_planning:'Планирование',plan_title:'Планирование производства',plan_add:'Новый план',plan_name:'Название плана',plan_target_date:'Целевая дата',plan_eggs_needed:'Необходимо яиц',plan_allocations:'Распределение по стадам',plan_expected:'Ожидаемое производство',plan_gap:'Разрыв',plan_on_track:'По плану',plan_behind:'Отставание',plan_ahead:'Опережение',plan_estimate:'Оценка',plan_commitment:'Обязательство',
 prod_egg_type:'Тип яиц',prod_type_conventional:'Обычные',prod_type_free_range:'Свободный выгул',prod_type_organic:'Органические',prod_type_pasture:'Выпасные',prod_type_decorative:'Декоративные',
@@ -565,6 +776,7 @@ ana_by_segment:'Рентабельность по сегментам',ana_by_typ
 nav_campo_mode:'Режим поля',nav_vet_mode:'Режим ветеринара',campo_today:'СЕГОДНЯ',campo_quick_entry:'Быстрый ввод',vet_visit:'Визит выполнен',vet_vaccines:'Вакцины применены',vet_pending:'Ожидает проверки',vet_select_farm:'Выберите ферму/стадо',
 cfg_font_size:'Размер текста',cfg_font_small:'Мелкий',cfg_font_normal:'Обычный',cfg_font_large:'Крупный',cfg_font_xlarge:'Очень крупный',cfg_dark_mode:'Тёмный режим',cfg_theme_dark:'Тёмная',
 pred_outbreak_risk:'Риск вспышки',pred_outbreak_high:'Высокий риск',pred_outbreak_medium:'Средний риск',pred_outbreak_low:'Низкий риск',pred_outbreak_factor:'Фактор',pred_outbreak_weight:'Вес',pred_outbreak_value:'Значение',pred_probability:'Вероятность',pred_factors:'Факторы',pred_recommendations:'Рекомендации',pred_confidence:'Достоверность',pred_forecast_7d:'7 дней',pred_forecast_14d:'14 дней',pred_ensemble:'Ансамблевый прогноз',pred_forecast_upper:'Верхняя граница',pred_forecast_lower:'Нижняя граница',
+pred_cusum_title:'Deteksi Perubahan (CUSUM)',pred_cusum_desc:'Perubahan struktural produksi',pred_cusum_type:'Tipe',pred_cusum_magnitude:'Besaran',pred_cusum_increase:'Kenaikan',pred_cusum_decrease:'Penurunan',pred_anomaly_composite:'Anomali Multi-Variabel',pred_anomaly_score:'Skor Anomali',pred_anomaly_alert:'Peringatan',pred_anomaly_normal:'Normal',pred_anomaly_var:'Variabel',pred_anomaly_recent:'Terbaru',pred_anomaly_baseline:'Dasar',pred_feed_opt:'Optimasi Pakan',pred_feed_current_fcr:'FCR Saat Ini',pred_feed_optimal_fcr:'FCR Optimal',pred_feed_optimal_kg:'Kg/hari Optimal',pred_feed_savings:'Potensi Penghematan',pred_feed_per_hen:'Per Ayam',pred_lifecycle:'Prediktor Siklus Hidup',pred_lc_current_week:'Minggu Saat Ini',pred_lc_peak_week:'Minggu Puncak',pred_lc_current_hd:'HD% Saat Ini',pred_lc_persistence:'Persistensi',pred_lc_cull_week:'Minggu Afkir',pred_lc_weeks_left:'Minggu Tersisa',pred_lc_projected_eggs:'Telur Proyeksi',pred_accuracy_title:'Akurasi Prakiraan',pred_accuracy_desc:'Perbandingan model',pred_accuracy_method:'Metode',pred_accuracy_best:'Terbaik',
 ana_segment_profit:'Рентабельность по сегментам',cfg_accessibility:'Доступность',
 rec_title:'Рекомендации',rec_dismiss:'Отклонить',rec_check_diet:'Проверить рацион / рецептуру корма / исключить болезнь',rec_check_env:'Проверить среду / болезнь / стресс немедленно',rec_below_curve:'Ниже нормы — проверить стресс, освещение, корм',rec_buy_feed:'Запланировать закупку корма',rec_record_env:'Записать условия среды',rec_disinfect:'Провести дезинфекцию зоны',rec_heat_plan:'Длительный тепловой стресс — активировать план охлаждения',rec_lab_samples:'Отправить образцы в лабораторию',rec_ventilation:'Усилить вентиляцию, проверить свежую воду',
 auth_welcome:'Аккаунт создан. Добро пожаловать!',auth_error:'Неверные учётные данные',auth_first_run:'Первый вход: введите имя пользователя и пароль для создания аккаунта.',login_subtitle:'Войдите или создайте аккаунт',logout:'Выход',required:'Обязательное поле',invalid_email:'Некорректный email',invalid_phone:'Некорректный телефон',must_be_number:'Должно быть числом',invalid_date:'Некорректная дата',invalid_format:'Некорректный формат',min_length:'Мин. длина',max_length:'Макс. длина',min_value:'Мин. значение',max_value:'Макс. значение',error_network:'Ошибка сети',error_unexpected:'Непредвиденная ошибка',error_loading:'Ошибка загрузки',
@@ -615,6 +827,28 @@ bio_add_pest:'Temuan Baru',bio_pest_type:'Jenis',bio_pest_rodent:'Tikus',bio_pes
 bio_add_protocol:'Protokol Baru',bio_protocol_name:'Nama Protokol',bio_protocol_frequency:'Frekuensi',bio_protocol_daily:'Harian',bio_protocol_weekly:'Mingguan',bio_protocol_monthly:'Bulanan',bio_protocol_last:'Terakhir Dilakukan',bio_protocol_items:'Item Protokol',bio_protocol_complete:'Selesai',bio_protocol_overdue:'Terlambat',
 bio_pest_score:'Skor Hama',bio_overdue_disinfection:'Disinfeksi terlambat',bio_unresolved_pests:'Hama belum teratasi',
 alert_bio_disinfection:'Disinfeksi zona terlambat',alert_bio_pests:'Hama belum teratasi',alert_bio_cross:'Risiko kontaminasi silang',
+nav_welfare:'Kesejahteraan',wql_title:'Kesejahteraan Hewan',wql_tab_assessment:'Penilaian',wql_tab_body:'Kondisi Tubuh',wql_tab_behavior:'Perilaku',wql_tab_results:'Hasil',wql_tab_history:'Riwayat',
+wql_new_assessment:'Penilaian Baru',wql_assessor:'Penilai',wql_sample_size:'Ukuran Sampel',wql_date:'Tanggal',wql_flock:'Kawanan',
+wql_p1_title:'Prinsip 1: Pemberian Pakan yang Baik',wql_p2_title:'Prinsip 2: Perumahan yang Baik',wql_p3_title:'Prinsip 3: Kesehatan yang Baik',wql_p4_title:'Prinsip 4: Perilaku yang Sesuai',
+wql_body_condition:'Kondisi Tubuh',wql_keel_bone:'Tulang Lunas',wql_score_0:'Normal (0)',wql_score_1:'Ringan (1)',wql_score_2:'Parah (2)',
+wql_water_type:'Jenis Tempat Minum',wql_water_functional:'Berfungsi',wql_water_clean:'Bersih',wql_water_cm:'cm/Ayam',wql_water_nipple:'Nipple',wql_water_bell:'Bel',wql_water_cup:'Cangkir',wql_water_trough:'Palung',
+wql_stocking_density:'Kepadatan',wql_total_area:'Total Area (m²)',wql_hen_count:'Jumlah Ayam',wql_cm2_per_hen:'cm²/Ayam',wql_eu_compliant:'Sesuai UE',
+wql_perch_space:'Ruang Bertengger',wql_perch_total_cm:'Total cm',wql_perch_cm_per_hen:'cm/Ayam',wql_nest_boxes:'Kotak Sarang',wql_nest_count:'Jumlah Sarang',wql_hens_per_nest:'Ayam/Sarang',
+wql_dust_bathing:'Mandi Debu',wql_substrate_available:'Substrat Tersedia',wql_percent_bathing:'% Mandi',
+wql_thermal_comfort:'Kenyamanan Termal',wql_panting:'Terengah',wql_huddling:'Berkerumun',
+wql_plumage:'Bulu',wql_region_neck:'Leher',wql_region_back:'Punggung',wql_region_belly:'Perut',wql_region_wings:'Sayap',wql_region_tail:'Ekor',
+wql_skin_lesions:'Lesi Kulit',wql_foot_pad:'Dermatitis Kaki',wql_toe_damage:'Kerusakan Jari',wql_keel_damage:'Kerusakan Lunas',wql_beak_trimming:'Potong Paruh',wql_beak_trimmed:'Dipotong',wql_beak_not_trimmed:'Tidak Dipotong',wql_beak_quality:'Kualitas Potongan',
+wql_comb_wounds:'Luka Jengger',wql_eye_pathology:'Patologi Mata',wql_respiratory:'Masalah Pernapasan',wql_red_mites:'Kutu Merah',wql_dust_sheet:'Skor Kain Debu',
+wql_mortality_pct:'Mortalitas %',wql_culling_pct:'Afkir %',
+wql_adt_title:'Tes Jarak Menghindar (ADT)',wql_adt_distances:'Jarak (cm)',wql_adt_avg:'Jarak Rata-rata',
+wql_not_title:'Tes Objek Baru (NOT)',wql_not_approaching:'Ayam Mendekat',wql_not_total_area:'Total di Area',wql_not_pct:'% Mendekat',
+wql_qba_title:'Penilaian Perilaku Kualitatif (QBA)',wql_qba_active:'Aktif',wql_qba_relaxed:'Santai',wql_qba_fearful:'Takut',wql_qba_agitated:'Gelisah',wql_qba_calm:'Tenang',wql_qba_content:'Puas',wql_qba_frustrated:'Frustrasi',wql_qba_friendly:'Ramah',wql_qba_bored:'Bosan',wql_qba_positively_occupied:'Positif Sibuk',wql_qba_energetic:'Energik',wql_qba_distressed:'Tertekan',wql_qba_happy:'Senang',wql_qba_uncomfortable:'Tidak Nyaman',wql_qba_sociable:'Mudah Bergaul',wql_qba_apathetic:'Apatis',wql_qba_curious:'Ingin Tahu',wql_qba_withdrawn:'Menarik Diri',wql_qba_confident:'Percaya Diri',wql_qba_depressed:'Depresi',
+wql_excellent:'Sangat Baik',wql_enhanced:'Ditingkatkan',wql_acceptable:'Dapat Diterima',wql_not_classified:'Tidak Terklasifikasi',
+wql_overall_score:'Skor Keseluruhan',wql_category:'Kategori',wql_criteria:'Kriteria',wql_principles:'Prinsip',wql_trend:'Tren',wql_total_assessments:'Total Penilaian',
+wql_alert_not_classified:'Kesejahteraan Tidak Terklasifikasi',wql_alert_low:'Kesejahteraan rendah',
+wql_kpi_category:'Kategori Kesejahteraan',wql_kpi_avg_score:'Skor Rata-rata',wql_kpi_count:'Penilaian',wql_kpi_trend:'Tren',
+wql_export_csv:'Ekspor CSV',wql_delete_confirm:'Hapus penilaian ini?',wql_no_assessments:'Belum ada penilaian',
+wql_c1:'Kondisi Tubuh',wql_c2:'Ketersediaan Air',wql_c3:'Kenyamanan Istirahat',wql_c4:'Kenyamanan Termal',wql_c5:'Kemudahan Bergerak',wql_c6:'Cedera',wql_c7:'Penyakit',wql_c8:'Nyeri',wql_c9:'Perilaku Sosial',wql_c10:'Perilaku Lain',wql_c11:'Hubungan Manusia-Hewan',wql_c12:'Keadaan Emosi',
 nav_traceability:'Ketertelusuran',trace_title:'Ketertelusuran Telur',trace_add:'Batch Baru',trace_batch_id:'ID Batch',trace_rack:'Rak',trace_box_count:'Kotak',trace_eggs_per_box:'Telur/Kotak',trace_qr:'Kode QR',trace_delivery:'Tanggal Pengiriman',trace_search:'Cari berdasarkan ID/QR',trace_origin:'Asal',trace_house:'Kandang',
 nav_planning:'Perencanaan',plan_title:'Perencanaan Produksi',plan_add:'Rencana Baru',plan_name:'Nama Rencana',plan_target_date:'Tanggal Target',plan_eggs_needed:'Telur Dibutuhkan',plan_allocations:'Alokasi Kelompok',plan_expected:'Produksi Diharapkan',plan_gap:'Selisih',plan_on_track:'Sesuai Target',plan_behind:'Tertinggal',plan_ahead:'Melampaui',plan_estimate:'Estimasi',plan_commitment:'Komitmen',
 prod_egg_type:'Jenis Telur',prod_type_conventional:'Konvensional',prod_type_free_range:'Umbaran',prod_type_organic:'Organik',prod_type_pasture:'Pasture Raised',prod_type_decorative:'Dekoratif',
@@ -623,6 +857,7 @@ ana_by_segment:'Profitabilitas per Segmen',ana_by_type:'Per Jenis',ana_by_channe
 nav_campo_mode:'Mode Lapangan',nav_vet_mode:'Mode Dokter Hewan',campo_today:'HARI INI',campo_quick_entry:'Entri Cepat',vet_visit:'Kunjungan selesai',vet_vaccines:'Vaksin diberikan',vet_pending:'Menunggu tinjauan',vet_select_farm:'Pilih Peternakan/Kelompok',
 cfg_font_size:'Ukuran Teks',cfg_font_small:'Kecil',cfg_font_normal:'Normal',cfg_font_large:'Besar',cfg_font_xlarge:'Ekstra Besar',cfg_dark_mode:'Mode Gelap',cfg_theme_dark:'Gelap',
 pred_outbreak_risk:'Risiko Wabah',pred_outbreak_high:'Risiko Tinggi',pred_outbreak_medium:'Risiko Sedang',pred_outbreak_low:'Risiko Rendah',pred_outbreak_factor:'Faktor',pred_outbreak_weight:'Bobot',pred_outbreak_value:'Nilai',pred_probability:'Probabilitas',pred_factors:'Faktor',pred_recommendations:'Rekomendasi',pred_confidence:'Kepercayaan',pred_forecast_7d:'7 hari',pred_forecast_14d:'14 hari',pred_ensemble:'Prakiraan Ensemble',pred_forecast_upper:'Batas Atas',pred_forecast_lower:'Batas Bawah',
+pred_cusum_title:'كشف التغييرات (CUSUM)',pred_cusum_desc:'تغييرات هيكلية في الإنتاج',pred_cusum_type:'النوع',pred_cusum_magnitude:'الحجم',pred_cusum_increase:'زيادة',pred_cusum_decrease:'انخفاض',pred_anomaly_composite:'شذوذ متعدد المتغيرات',pred_anomaly_score:'درجة الشذوذ',pred_anomaly_alert:'تنبيه',pred_anomaly_normal:'طبيعي',pred_anomaly_var:'المتغير',pred_anomaly_recent:'الأخير',pred_anomaly_baseline:'الأساس',pred_feed_opt:'تحسين العلف',pred_feed_current_fcr:'معامل التحويل الحالي',pred_feed_optimal_fcr:'معامل التحويل الأمثل',pred_feed_optimal_kg:'كجم/يوم الأمثل',pred_feed_savings:'التوفير المحتمل',pred_feed_per_hen:'لكل دجاجة',pred_lifecycle:'توقع دورة الحياة',pred_lc_current_week:'الأسبوع الحالي',pred_lc_peak_week:'أسبوع الذروة',pred_lc_current_hd:'نسبة HD الحالية',pred_lc_persistence:'الاستمرارية',pred_lc_cull_week:'أسبوع الاستبعاد',pred_lc_weeks_left:'الأسابيع المتبقية',pred_lc_projected_eggs:'البيض المتوقع',pred_accuracy_title:'دقة التنبؤ',pred_accuracy_desc:'مقارنة النماذج',pred_accuracy_method:'الطريقة',pred_accuracy_best:'الأفضل',
 ana_segment_profit:'Profitabilitas per Segmen',cfg_accessibility:'Aksesibilitas',
 rec_title:'Rekomendasi',rec_dismiss:'Abaikan',rec_check_diet:'Periksa pakan / formulasi / singkirkan penyakit',rec_check_env:'Periksa lingkungan / penyakit / stres segera',rec_below_curve:'Di bawah standar produksi — periksa stres, cahaya, pakan',rec_buy_feed:'Jadwalkan pembelian pakan',rec_record_env:'Catat kondisi lingkungan',rec_disinfect:'Lakukan protokol disinfeksi zona',rec_heat_plan:'Stres panas berkepanjangan — aktifkan rencana pendinginan',rec_lab_samples:'Kirim sampel ke laboratorium',rec_ventilation:'Tingkatkan ventilasi, periksa air segar',
 auth_welcome:'Akun dibuat. Selamat datang!',auth_error:'Kredensial tidak valid',auth_first_run:'Pertama kali: masukkan nama pengguna dan kata sandi untuk membuat akun.',login_subtitle:'Masuk atau buat akun Anda',logout:'Keluar',required:'Wajib diisi',invalid_email:'Email tidak valid',invalid_phone:'Telepon tidak valid',must_be_number:'Harus berupa angka',invalid_date:'Tanggal tidak valid',invalid_format:'Format tidak valid',min_length:'Panjang min',max_length:'Panjang maks',min_value:'Nilai min',max_value:'Nilai maks',error_network:'Kesalahan jaringan',error_unexpected:'Kesalahan tak terduga',error_loading:'Kesalahan memuat',
@@ -674,6 +909,28 @@ bio_add_pest:'رصد جديد',bio_pest_type:'النوع',bio_pest_rodent:'قو�
 bio_add_protocol:'بروتوكول جديد',bio_protocol_name:'اسم البروتوكول',bio_protocol_frequency:'التكرار',bio_protocol_daily:'يومي',bio_protocol_weekly:'أسبوعي',bio_protocol_monthly:'شهري',bio_protocol_last:'آخر تنفيذ',bio_protocol_items:'عناصر البروتوكول',bio_protocol_complete:'مكتمل',bio_protocol_overdue:'متأخر',
 bio_pest_score:'درجة الآفات',bio_overdue_disinfection:'تعقيم متأخر',bio_unresolved_pests:'آفات لم تُحل',
 alert_bio_disinfection:'تأخر تعقيم المنطقة',alert_bio_pests:'آفات لم تُحل',alert_bio_cross:'خطر تلوث متبادل',
+nav_welfare:'الرفاهية',wql_title:'رفاهية الحيوان',wql_tab_assessment:'تقييم',wql_tab_body:'حالة الجسم',wql_tab_behavior:'السلوك',wql_tab_results:'النتائج',wql_tab_history:'السجل',
+wql_new_assessment:'تقييم جديد',wql_assessor:'المقيّم',wql_sample_size:'حجم العينة',wql_date:'التاريخ',wql_flock:'القطيع',
+wql_p1_title:'المبدأ 1: تغذية جيدة',wql_p2_title:'المبدأ 2: إيواء جيد',wql_p3_title:'المبدأ 3: صحة جيدة',wql_p4_title:'المبدأ 4: سلوك مناسب',
+wql_body_condition:'حالة الجسم',wql_keel_bone:'عظم القص',wql_score_0:'طبيعي (0)',wql_score_1:'خفيف (1)',wql_score_2:'شديد (2)',
+wql_water_type:'نوع المشرب',wql_water_functional:'عاملة',wql_water_clean:'نظيفة',wql_water_cm:'سم/دجاجة',wql_water_nipple:'حلمة',wql_water_bell:'جرس',wql_water_cup:'كوب',wql_water_trough:'حوض',
+wql_stocking_density:'كثافة التربية',wql_total_area:'المساحة الكلية (م²)',wql_hen_count:'عدد الدجاج',wql_cm2_per_hen:'سم²/دجاجة',wql_eu_compliant:'مطابق للاتحاد الأوروبي',
+wql_perch_space:'مساحة المجثم',wql_perch_total_cm:'الإجمالي سم',wql_perch_cm_per_hen:'سم/دجاجة',wql_nest_boxes:'أعشاش',wql_nest_count:'عدد الأعشاش',wql_hens_per_nest:'دجاج/عش',
+wql_dust_bathing:'حمام التراب',wql_substrate_available:'فرشة متوفرة',wql_percent_bathing:'% يستحم',
+wql_thermal_comfort:'الراحة الحرارية',wql_panting:'لهاث',wql_huddling:'تكدس',
+wql_plumage:'الريش',wql_region_neck:'الرقبة',wql_region_back:'الظهر',wql_region_belly:'البطن',wql_region_wings:'الأجنحة',wql_region_tail:'الذيل',
+wql_skin_lesions:'آفات جلدية',wql_foot_pad:'التهاب وسادة القدم',wql_toe_damage:'تلف الأصابع',wql_keel_damage:'تلف القص',wql_beak_trimming:'قص المنقار',wql_beak_trimmed:'مقصوصة',wql_beak_not_trimmed:'غير مقصوصة',wql_beak_quality:'جودة القص',
+wql_comb_wounds:'جروح العرف',wql_eye_pathology:'أمراض العين',wql_respiratory:'مشاكل تنفسية',wql_red_mites:'عث أحمر',wql_dust_sheet:'درجة قماش الغبار',
+wql_mortality_pct:'نفوق %',wql_culling_pct:'إعدام %',
+wql_adt_title:'اختبار مسافة التجنب (ADT)',wql_adt_distances:'المسافات (سم)',wql_adt_avg:'متوسط المسافة',
+wql_not_title:'اختبار الجسم الغريب (NOT)',wql_not_approaching:'دجاج يقترب',wql_not_total_area:'الإجمالي في المنطقة',wql_not_pct:'% اقتراب',
+wql_qba_title:'تقييم السلوك النوعي (QBA)',wql_qba_active:'نشط',wql_qba_relaxed:'مسترخي',wql_qba_fearful:'خائف',wql_qba_agitated:'مضطرب',wql_qba_calm:'هادئ',wql_qba_content:'راضٍ',wql_qba_frustrated:'محبط',wql_qba_friendly:'ودود',wql_qba_bored:'ضجر',wql_qba_positively_occupied:'مشغول إيجابياً',wql_qba_energetic:'نشيط',wql_qba_distressed:'متألم',wql_qba_happy:'سعيد',wql_qba_uncomfortable:'غير مرتاح',wql_qba_sociable:'اجتماعي',wql_qba_apathetic:'لامبالي',wql_qba_curious:'فضولي',wql_qba_withdrawn:'منطوي',wql_qba_confident:'واثق',wql_qba_depressed:'مكتئب',
+wql_excellent:'ممتاز',wql_enhanced:'محسّن',wql_acceptable:'مقبول',wql_not_classified:'غير مصنف',
+wql_overall_score:'الدرجة الكلية',wql_category:'الفئة',wql_criteria:'المعايير',wql_principles:'المبادئ',wql_trend:'الاتجاه',wql_total_assessments:'إجمالي التقييمات',
+wql_alert_not_classified:'رفاهية غير مصنفة',wql_alert_low:'رفاهية منخفضة',
+wql_kpi_category:'فئة الرفاهية',wql_kpi_avg_score:'متوسط الدرجة',wql_kpi_count:'التقييمات',wql_kpi_trend:'الاتجاه',
+wql_export_csv:'تصدير CSV',wql_delete_confirm:'حذف هذا التقييم؟',wql_no_assessments:'لا توجد تقييمات مسجلة',
+wql_c1:'حالة الجسم',wql_c2:'توفر المياه',wql_c3:'راحة الراحة',wql_c4:'الراحة الحرارية',wql_c5:'سهولة الحركة',wql_c6:'إصابات',wql_c7:'مرض',wql_c8:'ألم',wql_c9:'سلوك اجتماعي',wql_c10:'سلوكيات أخرى',wql_c11:'العلاقة بين الإنسان والحيوان',wql_c12:'الحالة العاطفية',
 nav_traceability:'التتبع',trace_title:'تتبع البيض',trace_add:'دفعة جديدة',trace_batch_id:'رقم الدفعة',trace_rack:'رف',trace_box_count:'صناديق',trace_eggs_per_box:'بيض/صندوق',trace_qr:'رمز QR',trace_delivery:'تاريخ التسليم',trace_search:'بحث بالرقم/QR',trace_origin:'المصدر',trace_house:'العنبر',
 nav_planning:'التخطيط',plan_title:'تخطيط الإنتاج',plan_add:'خطة جديدة',plan_name:'اسم الخطة',plan_target_date:'التاريخ المستهدف',plan_eggs_needed:'البيض المطلوب',plan_allocations:'توزيع القطعان',plan_expected:'الإنتاج المتوقع',plan_gap:'الفجوة',plan_on_track:'على المسار',plan_behind:'متأخر',plan_ahead:'متقدم',plan_estimate:'تقدير',plan_commitment:'التزام',
 prod_egg_type:'نوع البيض',prod_type_conventional:'تقليدي',prod_type_free_range:'حر الحركة',prod_type_organic:'عضوي',prod_type_pasture:'مرعى طبيعي',prod_type_decorative:'زينة',
@@ -682,6 +939,7 @@ ana_by_segment:'الربحية حسب الشريحة',ana_by_type:'حسب الن
 nav_campo_mode:'وضع الحقل',nav_vet_mode:'وضع البيطري',campo_today:'اليوم',campo_quick_entry:'إدخال سريع',vet_visit:'تمت الزيارة',vet_vaccines:'تطعيمات مُطبّقة',vet_pending:'بانتظار المراجعة',vet_select_farm:'اختر المزرعة/القطيع',
 cfg_font_size:'حجم الخط',cfg_font_small:'صغير',cfg_font_normal:'عادي',cfg_font_large:'كبير',cfg_font_xlarge:'كبير جداً',cfg_dark_mode:'الوضع الداكن',cfg_theme_dark:'داكن',
 pred_outbreak_risk:'خطر تفشٍّ',pred_outbreak_high:'خطر مرتفع',pred_outbreak_medium:'خطر متوسط',pred_outbreak_low:'خطر منخفض',pred_outbreak_factor:'العامل',pred_outbreak_weight:'الوزن',pred_outbreak_value:'القيمة',pred_probability:'الاحتمال',pred_factors:'العوامل',pred_recommendations:'التوصيات',pred_confidence:'الثقة',pred_forecast_7d:'7 أيام',pred_forecast_14d:'14 يوم',pred_ensemble:'توقع مجمّع',pred_forecast_upper:'الحد الأعلى',pred_forecast_lower:'الحد الأدنى',
+pred_cusum_title:'변화점 탐지 (CUSUM)',pred_cusum_desc:'생산의 구조적 변화',pred_cusum_type:'유형',pred_cusum_magnitude:'크기',pred_cusum_increase:'증가',pred_cusum_decrease:'감소',pred_anomaly_composite:'다변량 이상',pred_anomaly_score:'이상 점수',pred_anomaly_alert:'경보',pred_anomaly_normal:'정상',pred_anomaly_var:'변수',pred_anomaly_recent:'최근',pred_anomaly_baseline:'기준선',pred_feed_opt:'사료 최적화',pred_feed_current_fcr:'현재 FCR',pred_feed_optimal_fcr:'최적 FCR',pred_feed_optimal_kg:'최적 kg/일',pred_feed_savings:'잠재적 절약',pred_feed_per_hen:'닭 1마리당',pred_lifecycle:'생애주기 예측',pred_lc_current_week:'현재 주',pred_lc_peak_week:'피크 주',pred_lc_current_hd:'현재 HD%',pred_lc_persistence:'지속성',pred_lc_cull_week:'도태 주',pred_lc_weeks_left:'남은 주',pred_lc_projected_eggs:'예상 산란수',pred_accuracy_title:'예측 정확도',pred_accuracy_desc:'모델 비교',pred_accuracy_method:'방법',pred_accuracy_best:'최고',
 ana_segment_profit:'الربحية حسب الشريحة',cfg_accessibility:'إمكانية الوصول',
 rec_title:'التوصيات',rec_dismiss:'تجاهل',rec_check_diet:'تحقق من النظام الغذائي / تصميم العلف / استبعد الأمراض',rec_check_env:'تحقق من البيئة / الأمراض / الإجهاد فوراً',rec_below_curve:'أقل من الإنتاج القياسي — تحقق من الإجهاد والإضاءة والعلف',rec_buy_feed:'جدولة شراء الأعلاف',rec_record_env:'سجّل الظروف البيئية',rec_disinfect:'نفّذ بروتوكول تعقيم المنطقة',rec_heat_plan:'إجهاد حراري مطوّل — فعّل خطة التبريد',rec_lab_samples:'خذ عينات للمختبر',rec_ventilation:'زِد التهوية، تحقق من المياه العذبة',
 auth_welcome:'تم إنشاء الحساب. مرحباً!',auth_error:'بيانات اعتماد غير صالحة',auth_first_run:'أول مرة: أدخل اسم المستخدم وكلمة المرور لإنشاء حسابك.',login_subtitle:'سجّل الدخول أو أنشئ حسابك',logout:'تسجيل الخروج',required:'حقل مطلوب',invalid_email:'بريد إلكتروني غير صالح',invalid_phone:'هاتف غير صالح',must_be_number:'يجب أن يكون رقماً',invalid_date:'تاريخ غير صالح',invalid_format:'تنسيق غير صالح',min_length:'الحد الأدنى للطول',max_length:'الحد الأقصى للطول',min_value:'الحد الأدنى للقيمة',max_value:'الحد الأقصى للقيمة',error_network:'خطأ في الشبكة',error_unexpected:'خطأ غير متوقع',error_loading:'خطأ في التحميل',
@@ -732,6 +990,28 @@ bio_add_pest:'새 발견',bio_pest_type:'유형',bio_pest_rodent:'설치류',bio
 bio_add_protocol:'새 프로토콜',bio_protocol_name:'프로토콜 이름',bio_protocol_frequency:'주기',bio_protocol_daily:'매일',bio_protocol_weekly:'매주',bio_protocol_monthly:'매월',bio_protocol_last:'최근 완료일',bio_protocol_items:'프로토콜 항목',bio_protocol_complete:'완료',bio_protocol_overdue:'기한 초과',
 bio_pest_score:'해충 점수',bio_overdue_disinfection:'소독 기한 초과',bio_unresolved_pests:'미해결 해충',
 alert_bio_disinfection:'구역 소독 기한 초과',alert_bio_pests:'미해결 해충',alert_bio_cross:'교차 오염 위험',
+nav_welfare:'복지',wql_title:'동물 복지',wql_tab_assessment:'평가',wql_tab_body:'체상태',wql_tab_behavior:'행동',wql_tab_results:'결과',wql_tab_history:'이력',
+wql_new_assessment:'새 평가',wql_assessor:'평가자',wql_sample_size:'표본 크기',wql_date:'날짜',wql_flock:'무리',
+wql_p1_title:'원칙 1: 올바른 급이',wql_p2_title:'원칙 2: 올바른 사육환경',wql_p3_title:'원칙 3: 올바른 건강',wql_p4_title:'원칙 4: 적절한 행동',
+wql_body_condition:'체상태',wql_keel_bone:'용골뼈',wql_score_0:'정상 (0)',wql_score_1:'경미 (1)',wql_score_2:'심각 (2)',
+wql_water_type:'급수기 유형',wql_water_functional:'작동',wql_water_clean:'청결',wql_water_cm:'cm/수',wql_water_nipple:'니플',wql_water_bell:'벨',wql_water_cup:'컵',wql_water_trough:'급수통',
+wql_stocking_density:'사육밀도',wql_total_area:'총 면적 (m²)',wql_hen_count:'수수',wql_cm2_per_hen:'cm²/수',wql_eu_compliant:'EU 적합',
+wql_perch_space:'횃대 공간',wql_perch_total_cm:'총 cm',wql_perch_cm_per_hen:'cm/수',wql_nest_boxes:'산란상자',wql_nest_count:'산란상자 수',wql_hens_per_nest:'수/상자',
+wql_dust_bathing:'모래목욕',wql_substrate_available:'깔짚 있음',wql_percent_bathing:'% 모래목욕 중',
+wql_thermal_comfort:'온도 쾌적성',wql_panting:'헐떡임',wql_huddling:'모여있음',
+wql_plumage:'깃털',wql_region_neck:'목',wql_region_back:'등',wql_region_belly:'배',wql_region_wings:'날개',wql_region_tail:'꼬리',
+wql_skin_lesions:'피부 병변',wql_foot_pad:'발바닥 피부염',wql_toe_damage:'발가락 손상',wql_keel_damage:'용골 손상',wql_beak_trimming:'부리 다듬기',wql_beak_trimmed:'다듬어짐',wql_beak_not_trimmed:'미다듬',wql_beak_quality:'다듬기 품질',
+wql_comb_wounds:'볏 상처',wql_eye_pathology:'안과 병리',wql_respiratory:'호흡기 문제',wql_red_mites:'적진드기',wql_dust_sheet:'먼지천 점수',
+wql_mortality_pct:'폐사율 %',wql_culling_pct:'도태율 %',
+wql_adt_title:'회피거리 테스트 (ADT)',wql_adt_distances:'거리 (cm)',wql_adt_avg:'평균 거리',
+wql_not_title:'신기물체 테스트 (NOT)',wql_not_approaching:'접근한 닭',wql_not_total_area:'구역 내 합계',wql_not_pct:'% 접근',
+wql_qba_title:'정성적 행동 평가 (QBA)',wql_qba_active:'활발한',wql_qba_relaxed:'편안한',wql_qba_fearful:'두려운',wql_qba_agitated:'흥분한',wql_qba_calm:'차분한',wql_qba_content:'만족한',wql_qba_frustrated:'좌절한',wql_qba_friendly:'친근한',wql_qba_bored:'지루한',wql_qba_positively_occupied:'긍정적 활동',wql_qba_energetic:'활력적',wql_qba_distressed:'고통받는',wql_qba_happy:'행복한',wql_qba_uncomfortable:'불편한',wql_qba_sociable:'사교적',wql_qba_apathetic:'무관심한',wql_qba_curious:'호기심 많은',wql_qba_withdrawn:'위축된',wql_qba_confident:'자신감 있는',wql_qba_depressed:'우울한',
+wql_excellent:'우수',wql_enhanced:'향상',wql_acceptable:'수용 가능',wql_not_classified:'미분류',
+wql_overall_score:'종합 점수',wql_category:'범주',wql_criteria:'기준',wql_principles:'원칙',wql_trend:'추세',wql_total_assessments:'총 평가',
+wql_alert_not_classified:'복지 미분류',wql_alert_low:'복지 저하',
+wql_kpi_category:'복지 범주',wql_kpi_avg_score:'평균 점수',wql_kpi_count:'평가 수',wql_kpi_trend:'추세',
+wql_export_csv:'CSV 내보내기',wql_delete_confirm:'이 평가를 삭제하시겠습니까?',wql_no_assessments:'등록된 평가 없음',
+wql_c1:'체상태',wql_c2:'급수 가용성',wql_c3:'휴식 쾌적성',wql_c4:'온도 쾌적성',wql_c5:'이동 용이성',wql_c6:'부상',wql_c7:'질병',wql_c8:'통증',wql_c9:'사회적 행동',wql_c10:'기타 행동',wql_c11:'인간-동물 관계',wql_c12:'감정 상태',
 nav_traceability:'이력 추적',trace_title:'계란 이력 추적',trace_add:'새 배치',trace_batch_id:'배치 ID',trace_rack:'랙',trace_box_count:'박스 수',trace_eggs_per_box:'박스당 계란',trace_qr:'QR 코드',trace_delivery:'배송일',trace_search:'ID/QR 검색',trace_origin:'원산지',trace_house:'계사',
 nav_planning:'계획',plan_title:'생산 계획',plan_add:'새 계획',plan_name:'계획 이름',plan_target_date:'목표일',plan_eggs_needed:'필요 계란 수',plan_allocations:'계군 배정',plan_expected:'예상 생산량',plan_gap:'차이',plan_on_track:'정상 진행',plan_behind:'지연',plan_ahead:'초과 달성',plan_estimate:'추정',plan_commitment:'목표량',
 prod_egg_type:'계란 유형',prod_type_conventional:'일반',prod_type_free_range:'방사 사육',prod_type_organic:'유기농',prod_type_pasture:'목초 사육',prod_type_decorative:'관상용',
@@ -740,6 +1020,7 @@ ana_by_segment:'부문별 수익성',ana_by_type:'유형별',ana_by_channel:'채
 nav_campo_mode:'현장 모드',nav_vet_mode:'수의사 모드',campo_today:'오늘',campo_quick_entry:'빠른 입력',vet_visit:'방문 완료',vet_vaccines:'백신 접종 완료',vet_pending:'검토 대기',vet_select_farm:'농장/계군 선택',
 cfg_font_size:'글자 크기',cfg_font_small:'작게',cfg_font_normal:'보통',cfg_font_large:'크게',cfg_font_xlarge:'매우 크게',cfg_dark_mode:'다크 모드',cfg_theme_dark:'다크',
 pred_outbreak_risk:'질병 발생 위험',pred_outbreak_high:'고위험',pred_outbreak_medium:'중위험',pred_outbreak_low:'저위험',pred_outbreak_factor:'요인',pred_outbreak_weight:'가중치',pred_outbreak_value:'값',pred_probability:'확률',pred_factors:'요인',pred_recommendations:'권장 사항',pred_confidence:'신뢰도',pred_forecast_7d:'7일',pred_forecast_14d:'14일',pred_ensemble:'앙상블 예측',pred_forecast_upper:'상한선',pred_forecast_lower:'하한선',
+pred_cusum_title:'ตรวจจับการเปลี่ยนแปลง (CUSUM)',pred_cusum_desc:'การเปลี่ยนแปลงโครงสร้างการผลิต',pred_cusum_type:'ประเภท',pred_cusum_magnitude:'ขนาด',pred_cusum_increase:'เพิ่มขึ้น',pred_cusum_decrease:'ลดลง',pred_anomaly_composite:'ความผิดปกติหลายตัวแปร',pred_anomaly_score:'คะแนนความผิดปกติ',pred_anomaly_alert:'แจ้งเตือน',pred_anomaly_normal:'ปกติ',pred_anomaly_var:'ตัวแปร',pred_anomaly_recent:'ล่าสุด',pred_anomaly_baseline:'ค่าฐาน',pred_feed_opt:'เพิ่มประสิทธิภาพอาหาร',pred_feed_current_fcr:'FCR ปัจจุบัน',pred_feed_optimal_fcr:'FCR ที่ดีที่สุด',pred_feed_optimal_kg:'กก./วัน ที่ดีที่สุด',pred_feed_savings:'การประหยัดที่เป็นไปได้',pred_feed_per_hen:'ต่อตัว',pred_lifecycle:'พยากรณ์วงจรชีวิต',pred_lc_current_week:'สัปดาห์ปัจจุบัน',pred_lc_peak_week:'สัปดาห์สูงสุด',pred_lc_current_hd:'HD% ปัจจุบัน',pred_lc_persistence:'ความคงทน',pred_lc_cull_week:'สัปดาห์คัดทิ้ง',pred_lc_weeks_left:'สัปดาห์ที่เหลือ',pred_lc_projected_eggs:'ไข่ที่คาดการณ์',pred_accuracy_title:'ความแม่นยำพยากรณ์',pred_accuracy_desc:'เปรียบเทียบโมเดล',pred_accuracy_method:'วิธีการ',pred_accuracy_best:'ดีที่สุด',
 ana_segment_profit:'부문별 수익성',cfg_accessibility:'접근성',
 rec_title:'권장 사항',rec_dismiss:'무시',rec_check_diet:'사료 배합 / 사료 설계 / 질병 여부 확인',rec_check_env:'환경 / 질병 / 스트레스 즉시 확인',rec_below_curve:'표준 생산량 미달 — 스트레스, 점등, 사료 확인',rec_buy_feed:'사료 구매 일정 수립',rec_record_env:'환경 조건 기록',rec_disinfect:'구역 소독 프로토콜 실행',rec_heat_plan:'장기 열 스트레스 — 냉각 계획 가동',rec_lab_samples:'검체 채취하여 실험실 제출',rec_ventilation:'환기 증가, 신선한 물 확인',
 auth_welcome:'계정이 생성되었습니다. 환영합니다!',auth_error:'잘못된 자격 증명',auth_first_run:'처음 사용: 사용자 이름과 비밀번호를 입력하여 계정을 생성하세요.',login_subtitle:'로그인 또는 계정 생성',logout:'로그아웃',required:'필수 항목',invalid_email:'잘못된 이메일',invalid_phone:'잘못된 전화번호',must_be_number:'숫자여야 합니다',invalid_date:'잘못된 날짜',invalid_format:'잘못된 형식',min_length:'최소 길이',max_length:'최대 길이',min_value:'최솟값',max_value:'최댓값',error_network:'네트워크 오류',error_unexpected:'예기치 않은 오류',error_loading:'로딩 오류',
@@ -791,6 +1072,28 @@ bio_add_pest:'เพิ่มการพบเห็น',bio_pest_type:'ปร�
 bio_add_protocol:'เพิ่มระเบียบปฏิบัติ',bio_protocol_name:'ชื่อระเบียบ',bio_protocol_frequency:'ความถี่',bio_protocol_daily:'รายวัน',bio_protocol_weekly:'รายสัปดาห์',bio_protocol_monthly:'รายเดือน',bio_protocol_last:'ทำล่าสุด',bio_protocol_items:'รายการในระเบียบ',bio_protocol_complete:'เสร็จสมบูรณ์',bio_protocol_overdue:'เกินกำหนด',
 bio_pest_score:'คะแนนสัตว์รบกวน',bio_overdue_disinfection:'ฆ่าเชื้อเกินกำหนด',bio_unresolved_pests:'สัตว์รบกวนที่ยังไม่แก้ไข',
 alert_bio_disinfection:'ฆ่าเชื้อโซนเกินกำหนด',alert_bio_pests:'สัตว์รบกวนที่ยังไม่แก้ไข',alert_bio_cross:'เสี่ยงปนเปื้อนข้ามฟาร์ม',
+nav_welfare:'สวัสดิภาพ',wql_title:'สวัสดิภาพสัตว์',wql_tab_assessment:'ประเมิน',wql_tab_body:'สภาพร่างกาย',wql_tab_behavior:'พฤติกรรม',wql_tab_results:'ผลลัพธ์',wql_tab_history:'ประวัติ',
+wql_new_assessment:'ประเมินใหม่',wql_assessor:'ผู้ประเมิน',wql_sample_size:'ขนาดตัวอย่าง',wql_date:'วันที่',wql_flock:'ฝูง',
+wql_p1_title:'หลักการ 1: การให้อาหารที่ดี',wql_p2_title:'หลักการ 2: ที่พักอาศัยที่ดี',wql_p3_title:'หลักการ 3: สุขภาพที่ดี',wql_p4_title:'หลักการ 4: พฤติกรรมที่เหมาะสม',
+wql_body_condition:'สภาพร่างกาย',wql_keel_bone:'กระดูกอก',wql_score_0:'ปกติ (0)',wql_score_1:'เล็กน้อย (1)',wql_score_2:'รุนแรง (2)',
+wql_water_type:'ประเภทถังน้ำ',wql_water_functional:'ใช้งานได้',wql_water_clean:'สะอาด',wql_water_cm:'ซม./ตัว',wql_water_nipple:'นิปเปิ้ล',wql_water_bell:'ระฆัง',wql_water_cup:'ถ้วย',wql_water_trough:'ราง',
+wql_stocking_density:'ความหนาแน่น',wql_total_area:'พื้นที่รวม (ตร.ม.)',wql_hen_count:'จำนวนไก่',wql_cm2_per_hen:'ตร.ซม./ตัว',wql_eu_compliant:'ตาม EU',
+wql_perch_space:'พื้นที่คอน',wql_perch_total_cm:'รวม ซม.',wql_perch_cm_per_hen:'ซม./ตัว',wql_nest_boxes:'รังไข่',wql_nest_count:'จำนวนรัง',wql_hens_per_nest:'ตัว/รัง',
+wql_dust_bathing:'อาบฝุ่น',wql_substrate_available:'มีวัสดุรอง',wql_percent_bathing:'% อาบฝุ่น',
+wql_thermal_comfort:'ความสบายด้านอุณหภูมิ',wql_panting:'หอบ',wql_huddling:'รวมกลุ่ม',
+wql_plumage:'ขนนก',wql_region_neck:'คอ',wql_region_back:'หลัง',wql_region_belly:'ท้อง',wql_region_wings:'ปีก',wql_region_tail:'หาง',
+wql_skin_lesions:'รอยโรคผิวหนัง',wql_foot_pad:'ผิวหนังอุ้งเท้าอักเสบ',wql_toe_damage:'นิ้วเท้าเสียหาย',wql_keel_damage:'กระดูกอกเสียหาย',wql_beak_trimming:'ตัดปาก',wql_beak_trimmed:'ตัดแล้ว',wql_beak_not_trimmed:'ยังไม่ตัด',wql_beak_quality:'คุณภาพการตัด',
+wql_comb_wounds:'แผลหงอน',wql_eye_pathology:'โรคตา',wql_respiratory:'ปัญหาทางเดินหายใจ',wql_red_mites:'ไรแดง',wql_dust_sheet:'คะแนนผ้าฝุ่น',
+wql_mortality_pct:'อัตราตาย %',wql_culling_pct:'อัตราคัดทิ้ง %',
+wql_adt_title:'ทดสอบระยะหลบ (ADT)',wql_adt_distances:'ระยะทาง (ซม.)',wql_adt_avg:'ระยะเฉลี่ย',
+wql_not_title:'ทดสอบวัตถุใหม่ (NOT)',wql_not_approaching:'ไก่ที่เข้าใกล้',wql_not_total_area:'รวมในพื้นที่',wql_not_pct:'% เข้าใกล้',
+wql_qba_title:'ประเมินพฤติกรรมเชิงคุณภาพ (QBA)',wql_qba_active:'กระตือรือร้น',wql_qba_relaxed:'ผ่อนคลาย',wql_qba_fearful:'กลัว',wql_qba_agitated:'กระวนกระวาย',wql_qba_calm:'สงบ',wql_qba_content:'พึงพอใจ',wql_qba_frustrated:'คับข้องใจ',wql_qba_friendly:'เป็นมิตร',wql_qba_bored:'เบื่อ',wql_qba_positively_occupied:'ทำกิจกรรมเชิงบวก',wql_qba_energetic:'มีพลังงาน',wql_qba_distressed:'ทุกข์ทรมาน',wql_qba_happy:'มีความสุข',wql_qba_uncomfortable:'ไม่สบาย',wql_qba_sociable:'ชอบสังคม',wql_qba_apathetic:'เฉยเมย',wql_qba_curious:'อยากรู้',wql_qba_withdrawn:'เก็บตัว',wql_qba_confident:'มั่นใจ',wql_qba_depressed:'ซึมเศร้า',
+wql_excellent:'ดีเยี่ยม',wql_enhanced:'ปรับปรุง',wql_acceptable:'ยอมรับได้',wql_not_classified:'ไม่ได้จัดประเภท',
+wql_overall_score:'คะแนนรวม',wql_category:'ประเภท',wql_criteria:'เกณฑ์',wql_principles:'หลักการ',wql_trend:'แนวโน้ม',wql_total_assessments:'การประเมินทั้งหมด',
+wql_alert_not_classified:'สวัสดิภาพไม่ได้จัดประเภท',wql_alert_low:'สวัสดิภาพต่ำ',
+wql_kpi_category:'ประเภทสวัสดิภาพ',wql_kpi_avg_score:'คะแนนเฉลี่ย',wql_kpi_count:'การประเมิน',wql_kpi_trend:'แนวโน้ม',
+wql_export_csv:'ส่งออก CSV',wql_delete_confirm:'ลบการประเมินนี้?',wql_no_assessments:'ยังไม่มีการประเมิน',
+wql_c1:'สภาพร่างกาย',wql_c2:'ความพร้อมของน้ำ',wql_c3:'ความสบายในการพัก',wql_c4:'ความสบายด้านอุณหภูมิ',wql_c5:'ความง่ายในการเคลื่อนไหว',wql_c6:'การบาดเจ็บ',wql_c7:'โรค',wql_c8:'ความเจ็บปวด',wql_c9:'พฤติกรรมทางสังคม',wql_c10:'พฤติกรรมอื่น',wql_c11:'ความสัมพันธ์คน-สัตว์',wql_c12:'สถานะอารมณ์',
 nav_traceability:'การตรวจสอบย้อนกลับ',trace_title:'การตรวจสอบย้อนกลับไข่',trace_add:'เพิ่มล็อต',trace_batch_id:'รหัสล็อต',trace_rack:'แร็ค',trace_box_count:'กล่อง',trace_eggs_per_box:'ไข่/กล่อง',trace_qr:'QR Code',trace_delivery:'วันส่งมอบ',trace_search:'ค้นหาด้วยรหัส/QR',trace_origin:'แหล่งที่มา',trace_house:'โรงเรือน',
 nav_planning:'การวางแผน',plan_title:'การวางแผนการผลิต',plan_add:'เพิ่มแผน',plan_name:'ชื่อแผน',plan_target_date:'วันเป้าหมาย',plan_eggs_needed:'จำนวนไข่ที่ต้องการ',plan_allocations:'การจัดสรรฝูง',plan_expected:'ผลผลิตที่คาดการณ์',plan_gap:'ส่วนต่าง',plan_on_track:'ตามแผน',plan_behind:'ล่าช้า',plan_ahead:'เร็วกว่าแผน',plan_estimate:'ประมาณการ',plan_commitment:'ข้อผูกพัน',
 prod_egg_type:'ประเภทไข่',prod_type_conventional:'ทั่วไป',prod_type_free_range:'ปล่อยอิสระ',prod_type_organic:'อินทรีย์',prod_type_pasture:'เลี้ยงทุ่ง',prod_type_decorative:'ตกแต่ง',
@@ -799,6 +1102,7 @@ ana_by_segment:'กำไรตามส่วน',ana_by_type:'ตามปร�
 nav_campo_mode:'โหมดฟาร์ม',nav_vet_mode:'โหมดสัตวแพทย์',campo_today:'วันนี้',campo_quick_entry:'บันทึกด่วน',vet_visit:'เยี่ยมชมเสร็จสิ้น',vet_vaccines:'วัคซีนที่ฉีด',vet_pending:'รอตรวจสอบ',vet_select_farm:'เลือกฟาร์ม/ฝูง',
 cfg_font_size:'ขนาดตัวอักษร',cfg_font_small:'เล็ก',cfg_font_normal:'ปกติ',cfg_font_large:'ใหญ่',cfg_font_xlarge:'ใหญ่พิเศษ',cfg_dark_mode:'โหมดมืด',cfg_theme_dark:'มืด',
 pred_outbreak_risk:'ความเสี่ยงโรคระบาด',pred_outbreak_high:'ความเสี่ยงสูง',pred_outbreak_medium:'ความเสี่ยงปานกลาง',pred_outbreak_low:'ความเสี่ยงต่ำ',pred_outbreak_factor:'ปัจจัย',pred_outbreak_weight:'น้ำหนัก',pred_outbreak_value:'ค่า',pred_probability:'ความน่าจะเป็น',pred_factors:'ปัจจัย',pred_recommendations:'คำแนะนำ',pred_confidence:'ความเชื่อมั่น',pred_forecast_7d:'7 วัน',pred_forecast_14d:'14 วัน',pred_ensemble:'พยากรณ์แบบรวม',pred_forecast_upper:'ขอบบน',pred_forecast_lower:'ขอบล่าง',
+pred_cusum_title:'Phát hiện Thay đổi (CUSUM)',pred_cusum_desc:'Thay đổi cấu trúc sản xuất',pred_cusum_type:'Loại',pred_cusum_magnitude:'Độ lớn',pred_cusum_increase:'Tăng',pred_cusum_decrease:'Giảm',pred_anomaly_composite:'Bất thường Đa biến',pred_anomaly_score:'Điểm Bất thường',pred_anomaly_alert:'Cảnh báo',pred_anomaly_normal:'Bình thường',pred_anomaly_var:'Biến số',pred_anomaly_recent:'Gần đây',pred_anomaly_baseline:'Cơ sở',pred_feed_opt:'Tối ưu Thức ăn',pred_feed_current_fcr:'FCR Hiện tại',pred_feed_optimal_fcr:'FCR Tối ưu',pred_feed_optimal_kg:'Kg/ngày Tối ưu',pred_feed_savings:'Tiết kiệm Tiềm năng',pred_feed_per_hen:'Mỗi Gà',pred_lifecycle:'Dự đoán Vòng đời',pred_lc_current_week:'Tuần Hiện tại',pred_lc_peak_week:'Tuần Đỉnh',pred_lc_current_hd:'HD% Hiện tại',pred_lc_persistence:'Tính bền vững',pred_lc_cull_week:'Tuần Loại thải',pred_lc_weeks_left:'Tuần Còn lại',pred_lc_projected_eggs:'Trứng Dự kiến',pred_accuracy_title:'Độ chính xác Dự báo',pred_accuracy_desc:'So sánh mô hình',pred_accuracy_method:'Phương pháp',pred_accuracy_best:'Tốt nhất',
 ana_segment_profit:'กำไรตามส่วน',cfg_accessibility:'การเข้าถึง',
 rec_title:'คำแนะนำ',rec_dismiss:'ปิด',rec_check_diet:'ตรวจอาหาร / สูตรอาหาร / ตัดโรคออก',rec_check_env:'ตรวจสภาพแวดล้อม / โรค / ความเครียดทันที',rec_below_curve:'ต่ำกว่ามาตรฐาน — ตรวจความเครียด, แสง, อาหาร',rec_buy_feed:'วางแผนซื้ออาหารสัตว์',rec_record_env:'บันทึกสภาพแวดล้อม',rec_disinfect:'ดำเนินการฆ่าเชื้อโซน',rec_heat_plan:'ความเครียดจากความร้อนนาน — เปิดแผนระบายความร้อน',rec_lab_samples:'ส่งตัวอย่างไปห้องปฏิบัติการ',rec_ventilation:'เพิ่มการระบายอากาศ ตรวจน้ำสะอาด',
 auth_welcome:'สร้างบัญชีแล้ว ยินดีต้อนรับ!',auth_error:'ข้อมูลรับรองไม่ถูกต้อง',auth_first_run:'ครั้งแรก: ใส่ชื่อผู้ใช้และรหัสผ่านเพื่อสร้างบัญชี',login_subtitle:'ลงชื่อเข้าใช้หรือสร้างบัญชี',logout:'ออกจากระบบ',required:'ต้องกรอก',invalid_email:'อีเมลไม่ถูกต้อง',invalid_phone:'โทรศัพท์ไม่ถูกต้อง',must_be_number:'ต้องเป็นตัวเลข',invalid_date:'วันที่ไม่ถูกต้อง',invalid_format:'รูปแบบไม่ถูกต้อง',min_length:'ความยาวขั้นต่ำ',max_length:'ความยาวสูงสุด',min_value:'ค่าขั้นต่ำ',max_value:'ค่าสูงสุด',error_network:'ข้อผิดพลาดเครือข่าย',error_unexpected:'ข้อผิดพลาดที่ไม่คาดคิด',error_loading:'ข้อผิดพลาดในการโหลด',
@@ -849,6 +1153,28 @@ bio_add_pest:'Thêm phát hiện',bio_pest_type:'Loại',bio_pest_rodent:'Chuộ
 bio_add_protocol:'Thêm quy trình',bio_protocol_name:'Tên quy trình',bio_protocol_frequency:'Tần suất',bio_protocol_daily:'Hàng ngày',bio_protocol_weekly:'Hàng tuần',bio_protocol_monthly:'Hàng tháng',bio_protocol_last:'Lần cuối thực hiện',bio_protocol_items:'Hạng mục quy trình',bio_protocol_complete:'Hoàn thành',bio_protocol_overdue:'Quá hạn',
 bio_pest_score:'Điểm dịch hại',bio_overdue_disinfection:'Khử trùng quá hạn',bio_unresolved_pests:'Dịch hại chưa xử lý',
 alert_bio_disinfection:'Khử trùng khu vực quá hạn',alert_bio_pests:'Dịch hại chưa xử lý',alert_bio_cross:'Nguy cơ lây nhiễm chéo',
+nav_welfare:'Phúc lợi',wql_title:'Phúc lợi Động vật',wql_tab_assessment:'Đánh giá',wql_tab_body:'Thể trạng',wql_tab_behavior:'Hành vi',wql_tab_results:'Kết quả',wql_tab_history:'Lịch sử',
+wql_new_assessment:'Đánh giá Mới',wql_assessor:'Người đánh giá',wql_sample_size:'Kích thước Mẫu',wql_date:'Ngày',wql_flock:'Đàn',
+wql_p1_title:'Nguyên tắc 1: Cho ăn tốt',wql_p2_title:'Nguyên tắc 2: Chuồng trại tốt',wql_p3_title:'Nguyên tắc 3: Sức khỏe tốt',wql_p4_title:'Nguyên tắc 4: Hành vi phù hợp',
+wql_body_condition:'Thể trạng',wql_keel_bone:'Xương lưỡi hái',wql_score_0:'Bình thường (0)',wql_score_1:'Nhẹ (1)',wql_score_2:'Nặng (2)',
+wql_water_type:'Loại máng nước',wql_water_functional:'Hoạt động',wql_water_clean:'Sạch',wql_water_cm:'cm/Con',wql_water_nipple:'Núm',wql_water_bell:'Chuông',wql_water_cup:'Cốc',wql_water_trough:'Máng',
+wql_stocking_density:'Mật độ nuôi',wql_total_area:'Diện tích (m²)',wql_hen_count:'Số gà',wql_cm2_per_hen:'cm²/Con',wql_eu_compliant:'Đạt EU',
+wql_perch_space:'Không gian đậu',wql_perch_total_cm:'Tổng cm',wql_perch_cm_per_hen:'cm/Con',wql_nest_boxes:'Ổ đẻ',wql_nest_count:'Số ổ',wql_hens_per_nest:'Con/Ổ',
+wql_dust_bathing:'Tắm bụi',wql_substrate_available:'Có chất nền',wql_percent_bathing:'% Tắm bụi',
+wql_thermal_comfort:'Tiện nghi nhiệt',wql_panting:'Thở gấp',wql_huddling:'Co cụm',
+wql_plumage:'Lông',wql_region_neck:'Cổ',wql_region_back:'Lưng',wql_region_belly:'Bụng',wql_region_wings:'Cánh',wql_region_tail:'Đuôi',
+wql_skin_lesions:'Tổn thương da',wql_foot_pad:'Viêm đệm chân',wql_toe_damage:'Hư ngón',wql_keel_damage:'Hư xương lưỡi hái',wql_beak_trimming:'Cắt mỏ',wql_beak_trimmed:'Đã cắt',wql_beak_not_trimmed:'Chưa cắt',wql_beak_quality:'Chất lượng cắt',
+wql_comb_wounds:'Vết thương mào',wql_eye_pathology:'Bệnh mắt',wql_respiratory:'Vấn đề hô hấp',wql_red_mites:'Rận đỏ',wql_dust_sheet:'Điểm vải bụi',
+wql_mortality_pct:'Tỷ lệ chết %',wql_culling_pct:'Tỷ lệ loại %',
+wql_adt_title:'Kiểm tra Khoảng cách Tránh (ADT)',wql_adt_distances:'Khoảng cách (cm)',wql_adt_avg:'Khoảng cách TB',
+wql_not_title:'Kiểm tra Vật thể Lạ (NOT)',wql_not_approaching:'Gà tiến lại',wql_not_total_area:'Tổng trong khu vực',wql_not_pct:'% Tiến lại',
+wql_qba_title:'Đánh giá Hành vi Định tính (QBA)',wql_qba_active:'Hoạt bát',wql_qba_relaxed:'Thư giãn',wql_qba_fearful:'Sợ hãi',wql_qba_agitated:'Kích động',wql_qba_calm:'Bình tĩnh',wql_qba_content:'Hài lòng',wql_qba_frustrated:'Bực bội',wql_qba_friendly:'Thân thiện',wql_qba_bored:'Buồn chán',wql_qba_positively_occupied:'Hoạt động tích cực',wql_qba_energetic:'Năng lượng',wql_qba_distressed:'Đau khổ',wql_qba_happy:'Vui vẻ',wql_qba_uncomfortable:'Khó chịu',wql_qba_sociable:'Hòa đồng',wql_qba_apathetic:'Thờ ơ',wql_qba_curious:'Tò mò',wql_qba_withdrawn:'Thu mình',wql_qba_confident:'Tự tin',wql_qba_depressed:'Trầm cảm',
+wql_excellent:'Xuất sắc',wql_enhanced:'Cải thiện',wql_acceptable:'Chấp nhận được',wql_not_classified:'Chưa phân loại',
+wql_overall_score:'Điểm tổng',wql_category:'Phân loại',wql_criteria:'Tiêu chí',wql_principles:'Nguyên tắc',wql_trend:'Xu hướng',wql_total_assessments:'Tổng đánh giá',
+wql_alert_not_classified:'Phúc lợi Chưa phân loại',wql_alert_low:'Phúc lợi thấp',
+wql_kpi_category:'Phân loại Phúc lợi',wql_kpi_avg_score:'Điểm TB',wql_kpi_count:'Đánh giá',wql_kpi_trend:'Xu hướng',
+wql_export_csv:'Xuất CSV',wql_delete_confirm:'Xóa đánh giá này?',wql_no_assessments:'Chưa có đánh giá',
+wql_c1:'Thể trạng',wql_c2:'Nguồn nước',wql_c3:'Tiện nghi nghỉ ngơi',wql_c4:'Tiện nghi nhiệt',wql_c5:'Dễ di chuyển',wql_c6:'Chấn thương',wql_c7:'Bệnh tật',wql_c8:'Đau',wql_c9:'Hành vi xã hội',wql_c10:'Hành vi khác',wql_c11:'Quan hệ Người-Vật',wql_c12:'Trạng thái cảm xúc',
 nav_traceability:'Truy xuất nguồn gốc',trace_title:'Truy xuất nguồn gốc trứng',trace_add:'Thêm lô',trace_batch_id:'Mã lô',trace_rack:'Khay',trace_box_count:'Số hộp',trace_eggs_per_box:'Trứng/Hộp',trace_qr:'Mã QR',trace_delivery:'Ngày giao hàng',trace_search:'Tìm theo mã/QR',trace_origin:'Nguồn gốc',trace_house:'Chuồng',
 nav_planning:'Lập kế hoạch',plan_title:'Lập kế hoạch sản xuất',plan_add:'Thêm kế hoạch',plan_name:'Tên kế hoạch',plan_target_date:'Ngày mục tiêu',plan_eggs_needed:'Số trứng cần',plan_allocations:'Phân bổ đàn',plan_expected:'Sản lượng dự kiến',plan_gap:'Chênh lệch',plan_on_track:'Đúng tiến độ',plan_behind:'Chậm tiến độ',plan_ahead:'Vượt tiến độ',plan_estimate:'Ước tính',plan_commitment:'Cam kết',
 prod_egg_type:'Loại trứng',prod_type_conventional:'Thông thường',prod_type_free_range:'Thả vườn',prod_type_organic:'Hữu cơ',prod_type_pasture:'Chăn thả đồng cỏ',prod_type_decorative:'Trang trí',
@@ -902,7 +1228,7 @@ function themeRgba(a){const th=THEMES[localStorage.getItem('egglogu_theme')||'bl
 // ============ CORE ============
 let LANG=localStorage.getItem('egglogu_lang')||'es';
 let DATA=null;let CHARTS={};let currentSection='dashboard';
-let currentSanidadTab='vaccines';let currentFinanceTab='income';let currentOpsTab='checklist';
+let currentSanidadTab='vaccines';let currentFinanceTab='income';let currentOpsTab='checklist';let currentWelfareTab='assessment';
 const $=id=>document.getElementById(id);
 function t(k){return(T[LANG]&&T[LANG][k])||(T.es&&T.es[k])||k;}
 function fmtNum(n,d=0){return Number(n||0).toLocaleString(locale(),{minimumFractionDigits:d,maximumFractionDigits:d});}
@@ -925,18 +1251,20 @@ function escapeAttr(str){return sanitizeHTML(String(str||''));}
 function safeHTML(tpl,...vals){return tpl.reduce((out,s,i)=>out+s+(i<vals.length?sanitizeHTML(String(vals[i])):''),'');}
 
 // ============ SECURITY: Input Validation ============
+function numVal(id){const el=$(id);if(!el)return 0;return parseFloat(String(el.value).replace(',','.'))||0;}
 function validateInput(value,rules={}){
 const errors=[];
 const v=typeof value==='string'?value.trim():value;
+const vNum=(rules.numeric||rules.min!==undefined||rules.max!==undefined)&&typeof v==='string'?Number(v.replace(',','.')):Number(v);
 if(rules.required&&(v===''||v===null||v===undefined))errors.push(t('required')||'Required');
 if(rules.minLength&&typeof v==='string'&&v.length<rules.minLength)errors.push((t('min_length')||'Min length')+': '+rules.minLength);
 if(rules.maxLength&&typeof v==='string'&&v.length>rules.maxLength)errors.push((t('max_length')||'Max length')+': '+rules.maxLength);
-if(rules.min!==undefined&&Number(v)<rules.min)errors.push((t('min_value')||'Min')+': '+rules.min);
-if(rules.max!==undefined&&Number(v)>rules.max)errors.push((t('max_value')||'Max')+': '+rules.max);
+if(rules.min!==undefined&&vNum<rules.min)errors.push((t('min_value')||'Min')+': '+rules.min);
+if(rules.max!==undefined&&vNum>rules.max)errors.push((t('max_value')||'Max')+': '+rules.max);
 if(rules.pattern&&!rules.pattern.test(v))errors.push(rules.patternMsg||(t('invalid_format')||'Invalid format'));
 if(rules.email&&v&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))errors.push(t('invalid_email')||'Invalid email');
 if(rules.phone&&v&&!/^[+\d\s\-()]{6,20}$/.test(v))errors.push(t('invalid_phone')||'Invalid phone');
-if(rules.numeric&&v!==''&&isNaN(Number(v)))errors.push(t('must_be_number')||'Must be a number');
+if(rules.numeric&&v!==''&&isNaN(vNum))errors.push(t('must_be_number')||'Must be a number');
 if(rules.date&&v&&isNaN(Date.parse(v)))errors.push(t('invalid_date')||'Invalid date');
 return{valid:errors.length===0,errors};
 }
@@ -1359,9 +1687,11 @@ finances:{income:[],expenses:[],receivables:[]},
 inventory:[],
 environment:[],checklist:[],logbook:[],personnel:[],
 kpiSnapshots:[],weatherCache:[],stressEvents:[],iotReadings:[],predictions:[],
+iotDevices:[],iotRules:[],iotCommandLog:[],iotSafetyLimits:{},
 biosecurity:{visitors:[],zones:[],pestSightings:[],protocols:[]},
 traceability:{batches:[]},
 productionPlans:[],
+welfareAssessments:[],
 auditLog:[],
 users:[],pendingActivations:[],
 settings:{minFeedStock:50,maxMortality:5,alertDaysBefore:3,campoMode:false,vetMode:false,fontScale:'normal',darkMode:false,plan:{tier:'enterprise',status:'active',is_trial:true,modules:[]},ownerEmail:'',
@@ -1663,7 +1993,12 @@ if(!DATA.productionPlans)DATA.productionPlans=[];
 if(!DATA.inventory)DATA.inventory=[];
 if(!DATA.auditLog)DATA.auditLog=[];
 if(!DATA.clientClaims)DATA.clientClaims=[];
+if(!DATA.welfareAssessments)DATA.welfareAssessments=[];
 if(!DATA.users)DATA.users=[];
+if(!DATA.iotDevices)DATA.iotDevices=[];
+if(!DATA.iotRules)DATA.iotRules=[];
+if(!DATA.iotCommandLog)DATA.iotCommandLog=[];
+if(!DATA.iotSafetyLimits)DATA.iotSafetyLimits={};
 if(DATA.settings.taxRate===undefined)DATA.settings.taxRate=0;
 if(DATA.settings.depreciationYears===undefined)DATA.settings.depreciationYears=5;
 if(DATA.settings.assetValue===undefined)DATA.settings.assetValue=0;
@@ -2200,27 +2535,27 @@ function getStorageUsage(){try{const d=localStorage.getItem('egglogu_data');retu
 
 // ============ ROLE PERMISSIONS (A8) ============
 const ROLE_PERMISSIONS={
-superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
-owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
-manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
+superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','bienestar','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
+owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','bienestar','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
+manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','bienestar','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
 worker:['dashboard','produccion','lotes','alimento','ambiente','soporte'],
-vet:['dashboard','lotes','ambiente','sanidad','bioseguridad','trazabilidad','carencias','soporte']
+vet:['dashboard','lotes','ambiente','sanidad','bioseguridad','bienestar','trazabilidad','carencias','soporte']
 };
 
 const MODULE_GROUPS={
 production:['produccion','lotes','alimento','ambiente'],
-health:['sanidad','bioseguridad'],
+health:['sanidad','bioseguridad','bienestar'],
 commercial:['clientes','inventario','finanzas'],
 management:['analisis','operaciones','trazabilidad','planificacion','carencias'],
 system:['admin','config']
 };
 const DEFAULT_ROLE_PERMS=JSON.parse(JSON.stringify(ROLE_PERMISSIONS));
 const ROLE_MAX_MODULES={
-superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
-owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
-manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
+superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','bienestar','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
+owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','bienestar','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
+manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','bienestar','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
 worker:['dashboard','produccion','lotes','alimento','ambiente','operaciones','soporte'],
-vet:['dashboard','sanidad','bioseguridad','lotes','ambiente','trazabilidad','planificacion','carencias','soporte']
+vet:['dashboard','sanidad','bioseguridad','bienestar','lotes','ambiente','trazabilidad','planificacion','carencias','soporte']
 };
 
 function hasPermission(section){if(!_currentUser||!_currentUser.role)return true;const perms=ROLE_PERMISSIONS[_currentUser.role];return !perms||perms.includes(section);}
@@ -2329,7 +2664,7 @@ saveData(D);$("qe-egg-count").value="";qeFlash("qe-egg-ok");
 setTimeout(()=>{btn.disabled=false;renderDashboard();},1500);
 }
 function qeSaveFeed(btn){
-const fid=$("qe-feed-flock").value;const kg=parseFloat($("qe-feed-kg").value)||0;const ftype=$("qe-feed-type").value;
+const fid=$("qe-feed-flock").value;const kg=numVal("qe-feed-kg");const ftype=$("qe-feed-type").value;
 if(!fid||kg<=0){toast(t("required"),"error");return;}
 btn.disabled=true;const D=loadData();
 D.feed.consumption.push({id:genId(),date:todayStr(),flockId:fid,quantityKg:kg,type:ftype});
@@ -2349,7 +2684,7 @@ saveData(D);$("qe-mort-count").value="";qeFlash("qe-mort-ok");
 setTimeout(()=>{btn.disabled=false;renderDashboard();},1500);
 }
 function qeSaveEnv(btn){
-const temp=parseFloat($("qe-env-temp").value)||null;const hum=parseFloat($("qe-env-hum").value)||null;const light=parseFloat($("qe-env-light").value)||null;
+const temp=numVal("qe-env-temp")||null;const hum=numVal("qe-env-hum")||null;const light=numVal("qe-env-light")||null;
 if(temp===null&&hum===null){toast(t("required"),"error");return;}
 btn.disabled=true;const D=loadData();
 D.environment.push({id:genId(),date:todayStr(),temperature:temp,humidity:hum,lightHours:light,ammoniaLevel:null,ventilation:"",notes:"quick entry"});
@@ -2380,7 +2715,7 @@ saveData(D);
 }
 
 // ============ UI HELPERS ============
-const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','trazabilidad','carencias','soporte','admin','superadmin']);
+const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','bienestar','trazabilidad','carencias','soporte','admin','superadmin']);
 function toggleNavGroup(lbl){
 const links=lbl.nextElementSibling;if(!links||!links.classList.contains('nav-group-links'))return;
 lbl.classList.toggle('grp-open');links.classList.toggle('grp-open');
@@ -2771,7 +3106,7 @@ $('sec-'+section).classList.add('active');
 document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',a.dataset.section===section));
 openNavGroupFor(section);
 $('sidebar').classList.remove('open');
-const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
+const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,bienestar:renderWelfare,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
 if(R[section]){
 if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);});}
 else{R[section]();postRenderA11y(section);}
@@ -2814,6 +3149,18 @@ const unresolved=D.biosecurity.pestSightings.filter(p=>!p.resolved).length;
 if(unresolved>0)alerts.push({type:'warning',icon:'🐀',msg:`${t('alert_bio_pests')}: ${unresolved}`});
 const recentCross=D.biosecurity.visitors.filter(v=>v.fromFarmHealth==='outbreak'&&v.date>=new Date(Date.now()-7*86400000).toISOString().substring(0,10));
 if(recentCross.length)alerts.push({type:'danger',icon:'⚠️',msg:`${t('alert_bio_cross')}: ${recentCross.map(v=>sanitizeHTML(v.name)).join(', ')}`});
+}
+// Welfare alerts
+if(D.welfareAssessments&&D.welfareAssessments.length){
+D.flocks.filter(f=>f.status!=='descarte').forEach(f=>{
+const latest=D.welfareAssessments.filter(a=>a.flockId===f.id).sort((a,b)=>b.date.localeCompare(a.date))[0];
+if(latest){
+if(latest.overallCategory==='not_classified')
+alerts.push({type:'danger',icon:'🐾',msg:`${t('wql_alert_not_classified')}: ${sanitizeHTML(f.name)}`});
+else if(latest.overallScore<40)
+alerts.push({type:'warning',icon:'🐾',msg:`${t('wql_alert_low')}: ${sanitizeHTML(f.name)} (${latest.overallScore}/100)`});
+}
+});
 }
 const openClaims=(D.clientClaims||[]).filter(c=>c.status!=='resolved').length;
 if(openClaims>0)alerts.push({type:'warning',icon:'📋',msg:t('clm_alert_open').replace('{n}',openClaims)});
@@ -3047,9 +3394,9 @@ clearFieldErrors();
 const D=loadData();const breedId=$('f-breed').value;
 const o={name:$('f-name').value,breed:breedId,count:parseInt($('f-count').value)||0,
 status:$('f-status').value,housingType:$('f-housing')?.value||'floor',targetCurve:breedId,
-curveAdjust:parseFloat($('f-curve')?.value)||1.0,
+curveAdjust:numVal('f-curve')||1.0,
 birthDate:$('f-birth').value,purchaseDate:$('f-purchase').value,
-supplier:resolveSupplier('f-supplier'),cost:parseFloat($('f-cost').value)||0,purchaseCostPerBird:$('f-pcost').value?parseFloat($('f-pcost').value):null,notes:$('f-notes').value};
+supplier:resolveSupplier('f-supplier'),cost:numVal('f-cost'),purchaseCostPerBird:$('f-pcost').value?numVal('f-pcost'):null,notes:$('f-notes').value};
 const v=validateForm({'f-name':{value:o.name,rules:{required:true,maxLength:100}},'f-count':{value:$('f-count').value,rules:{required:true,numeric:true,min:1}},'f-birth':{value:o.birthDate,rules:{required:true,date:true}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(!_vengWarningsShown){const vr=VENG.gate.flock(o,D);if(!vr.ok){vr.errors.forEach(e=>{if(e.field)showFieldError(e.field,e.msg);});showVengPanel(vr.errors,vr.warnings);return;}if(vr.warnings.length){showVengPanel([],vr.warnings);_vengWarningsShown=true;return;}}_vengWarningsShown=false;
@@ -3243,7 +3590,7 @@ function saveVaccine(id){
 clearFieldErrors();
 const D=loadData();const o={flockId:$('v-flock').value,vaccineName:$('v-name').value,route:$('v-route').value,
 batchNumber:$('v-batch').value,scheduledDate:$('v-sched').value,appliedDate:$('v-applied').value,
-cost:$('v-cost').value?parseFloat($('v-cost').value):null,notes:$('v-notes').value,status:$('v-applied').value?'applied':'pending'};
+cost:$('v-cost').value?numVal('v-cost'):null,notes:$('v-notes').value,status:$('v-applied').value?'applied':'pending'};
 const v=validateForm({'v-flock':{value:o.flockId,rules:{required:true}},'v-name':{value:o.vaccineName,rules:{required:true}},'v-sched':{value:o.scheduledDate,rules:{required:true,date:true}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.vaccines.findIndex(v=>v.id===id);if(i>=0)D.vaccines[i]={...D.vaccines[i],...o};}
@@ -3293,7 +3640,7 @@ function saveMed(id){
 clearFieldErrors();
 const D=loadData();const o={flockId:$('m-flock').value,name:$('m-name').value,reason:$('m-reason').value,
 dosage:$('m-dosage').value,startDate:$('m-start').value,endDate:$('m-end').value,
-withdrawalDays:parseInt($('m-wd').value)||0,cost:$('m-cost').value?parseFloat($('m-cost').value):null,notes:$('m-notes').value};
+withdrawalDays:parseInt($('m-wd').value)||0,cost:$('m-cost').value?numVal('m-cost'):null,notes:$('m-notes').value};
 const v=validateForm({'m-flock':{value:o.flockId,rules:{required:true}},'m-name':{value:o.name,rules:{required:true}},'m-start':{value:o.startDate,rules:{required:true,date:true}},'m-dosage':{value:o.dosage,rules:{required:true}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(o.endDate&&o.withdrawalDays){const d=new Date(o.endDate+'T12:00:00');d.setDate(d.getDate()+o.withdrawalDays);o.withdrawalEnd=d.toISOString().substring(0,10);}else{o.withdrawalEnd='';}
@@ -3341,7 +3688,7 @@ function saveOutbreak(id){
 clearFieldErrors();
 const D=loadData();const o={flockId:$('o-flock').value,disease:$('o-disease').value,startDate:$('o-start').value,
 endDate:$('o-end').value,affected:parseInt($('o-affected').value)||0,deaths:parseInt($('o-deaths').value)||0,
-economicLoss:parseFloat($('o-loss').value)||0,status:$('o-status').value,
+economicLoss:numVal('o-loss'),status:$('o-status').value,
 symptoms:$('o-symptoms').value,treatment:$('o-treatment').value};
 const v=validateForm({'o-flock':{value:o.flockId,rules:{required:true}},'o-disease':{value:o.disease,rules:{required:true}},'o-start':{value:o.startDate,rules:{required:true,date:true}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
@@ -3406,7 +3753,7 @@ openModal(p?t('edit'):t('feed_add_purchase'),`
 function saveFeedPurchase(id){
 clearFieldErrors();
 const D=loadData();const o={date:$('fp-date').value,type:$('fp-type').value,
-quantityKg:parseFloat($('fp-qty').value)||0,cost:parseFloat($('fp-cost').value)||0,supplier:resolveSupplier('fp-sup')};
+quantityKg:numVal('fp-qty'),cost:numVal('fp-cost'),supplier:resolveSupplier('fp-sup')};
 const v=validateForm({'fp-date':{value:o.date,rules:{required:true,date:true}},'fp-type':{value:o.type,rules:{required:true}},'fp-qty':{value:$('fp-qty').value,rules:{required:true,numeric:true,min:0.1}},'fp-cost':{value:$('fp-cost').value,rules:{required:true,numeric:true,min:0}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.feed.purchases.findIndex(p=>p.id===id);if(i>=0)D.feed.purchases[i]={...D.feed.purchases[i],...o};}
@@ -3441,7 +3788,7 @@ openModal(c?t('edit'):t('feed_add_consumption'),`
 function saveFeedCons(id){
 clearFieldErrors();
 const D=loadData();const o={date:$('fc-date').value,flockId:$('fc-flock').value,
-quantityKg:parseFloat($('fc-qty').value)||0,type:$('fc-type').value};
+quantityKg:numVal('fc-qty'),type:$('fc-type').value};
 const v=validateForm({'fc-date':{value:o.date,rules:{required:true,date:true}},'fc-flock':{value:o.flockId,rules:{required:true}},'fc-qty':{value:$('fc-qty').value,rules:{required:true,numeric:true,min:0.1}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(!_vengWarningsShown){const vr=VENG.gate.feedCons(o,D);if(!vr.ok){vr.errors.forEach(e=>{if(e.field)showFieldError(e.field,e.msg);});showVengPanel(vr.errors,vr.warnings);return;}if(vr.warnings.length){showVengPanel([],vr.warnings);_vengWarningsShown=true;return;}}_vengWarningsShown=false;
@@ -3603,8 +3950,8 @@ function saveClient(id){
 clearFieldErrors();
 const D=loadData();const o={name:$('cl-name').value,phone:$('cl-phone').value,email:$('cl-email').value,
 route:$('cl-route').value,address:$('cl-addr').value,
-priceS:parseFloat($('cl-ps').value)||0,priceM:parseFloat($('cl-pm').value)||0,priceL:parseFloat($('cl-pl').value)||0,
-priceXL:parseFloat($('cl-pxl').value)||0,priceJumbo:parseFloat($('cl-pj').value)||0,notes:$('cl-notes').value};
+priceS:numVal('cl-ps'),priceM:numVal('cl-pm'),priceL:numVal('cl-pl'),
+priceXL:numVal('cl-pxl'),priceJumbo:numVal('cl-pj'),notes:$('cl-notes').value};
 const v=validateForm({'cl-name':{value:o.name,rules:{required:true,maxLength:100}},'cl-email':{value:o.email,rules:{email:true}},'cl-phone':{value:o.phone,rules:{phone:true}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.clients.findIndex(c=>c.id===id);if(i>=0){logAudit('update','clients','Edit client: '+o.name,D.clients[i],o);D.clients[i]={...D.clients[i],...o};}}
@@ -3742,7 +4089,7 @@ openModal(i?t('edit'):t('fin_add_income'),`
 function saveIncome(id){
 clearFieldErrors();
 const D=loadData();const o={date:$('fi-date').value,type:$('fi-type').value,
-quantity:parseFloat($('fi-qty').value)||0,unitPrice:parseFloat($('fi-price').value)||0,
+quantity:numVal('fi-qty'),unitPrice:numVal('fi-price'),
 eggType:$('fi-eggtype')?.value||'',marketChannel:$('fi-channel')?.value||'',
 clientId:$('fi-client').value,notes:$('fi-notes').value};
 const v=validateForm({'fi-date':{value:o.date,rules:{required:true,date:true}},'fi-qty':{value:$('fi-qty').value,rules:{required:true,numeric:true,min:1}},'fi-price':{value:$('fi-price').value,rules:{required:true,numeric:true,min:0.01}}});
@@ -3792,7 +4139,7 @@ openModal(e?t('edit'):t('fin_add_expense'),`
 function saveExpense(id){
 clearFieldErrors();
 const D=loadData();const o={date:$('fe-date').value,category:$('fe-cat').value,
-description:$('fe-desc').value,amount:parseFloat($('fe-amt').value)||0,flockId:$('fe-flock').value||null,notes:$('fe-notes').value};
+description:$('fe-desc').value,amount:numVal('fe-amt'),flockId:$('fe-flock').value||null,notes:$('fe-notes').value};
 const v=validateForm({'fe-date':{value:o.date,rules:{required:true,date:true}},'fe-cat':{value:o.category,rules:{required:true}},'fe-amt':{value:$('fe-amt').value,rules:{required:true,numeric:true,min:0.01}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(!_vengWarningsShown){const vr=VENG.gate.expense(o,D);if(!vr.ok){vr.errors.forEach(e=>{if(e.field)showFieldError(e.field,e.msg);});showVengPanel(vr.errors,vr.warnings);return;}if(vr.warnings.length){showVengPanel([],vr.warnings);_vengWarningsShown=true;return;}}_vengWarningsShown=false;
@@ -3834,7 +4181,7 @@ openModal(r?t('edit'):t('fin_add_receivable'),`
 function saveReceivable(id){
 clearFieldErrors();
 const D=loadData();const o={date:$('fr-date').value,dueDate:$('fr-due').value,clientId:$('fr-client').value,
-amount:parseFloat($('fr-amt').value)||0,description:$('fr-desc').value,paid:false};
+amount:numVal('fr-amt'),description:$('fr-desc').value,paid:false};
 const v=validateForm({'fr-date':{value:o.date,rules:{required:true,date:true}},'fr-client':{value:o.clientId,rules:{required:true}},'fr-amt':{value:$('fr-amt').value,rules:{required:true,numeric:true,min:0.01}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
 if(id){const i=D.finances.receivables.findIndex(r=>r.id===id);if(i>=0){o.paid=D.finances.receivables[i].paid;D.finances.receivables[i]={...D.finances.receivables[i],...o};}}
@@ -4300,7 +4647,7 @@ openModal(p?t('edit'):t('ops_per_add'),`
 function savePersonnel(id){
 clearFieldErrors();
 const D=loadData();const o={name:$('pe-name').value,role:$('pe-role').value,
-salary:parseFloat($('pe-salary').value)||0,startDate:$('pe-start').value,
+salary:numVal('pe-salary'),startDate:$('pe-start').value,
 active:$('pe-active').value==='1',notes:$('pe-notes').value};
 const v=validateForm({'pe-name':{value:o.name,rules:{required:true,maxLength:100}},'pe-role':{value:o.role,rules:{required:true}},'pe-salary':{value:$('pe-salary').value,rules:{numeric:true,min:0}},'pe-start':{value:o.startDate,rules:{required:true,date:true}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
@@ -4318,11 +4665,13 @@ const D=loadData();
 let h=`<div class="page-header"><h2>${t('env_title')}</h2></div>`;
 h+=`<div class="tabs"><div class="tab${currentEnvTab==='manual'?' active':''}" onclick="currentEnvTab='manual';renderEnvironment()">📝 ${t('env_manual')}</div>
 <div class="tab${currentEnvTab==='iot'?' active':''}" onclick="currentEnvTab='iot';renderEnvironment()">📡 ${t('iot_title')}</div>
-<div class="tab${currentEnvTab==='history'?' active':''}" onclick="currentEnvTab='history';renderEnvironment()">📊 ${t('env_history')}</div></div>`;
+<div class="tab${currentEnvTab==='history'?' active':''}" onclick="currentEnvTab='history';renderEnvironment()">📊 ${t('env_history')}</div>
+<div class="tab${currentEnvTab==='control'?' active':''}" onclick="currentEnvTab='control';renderEnvironment()">🎛️ ${t('iot_control_panel')}</div></div>`;
 if(currentEnvTab==='manual')h+=renderEnvManual(D);
 else if(currentEnvTab==='iot')h+=renderEnvIoT(D);
+else if(currentEnvTab==='control')h+=renderEnvControl(D);
 else h+=renderEnvHistory(D);
-$('sec-ambiente').innerHTML=h;if(currentEnvTab==='iot')updateIoTGauges();
+$('sec-ambiente').innerHTML=h;if(currentEnvTab==='iot')updateIoTGauges();if(currentEnvTab==='control')updateIoTControlPanel();
 }
 function renderEnvManual(D){
 let h=`<div style="text-align:right;margin-bottom:8px"><button class="btn btn-primary" onclick="showEnvForm()">${t('env_add')}</button></div>`;
@@ -4407,9 +4756,9 @@ openModal(e?t('edit'):t('env_add'),`
 }
 function saveEnv(id){
 clearFieldErrors();
-const D=loadData();const o={date:$('en-date').value,temperature:parseFloat($('en-temp').value)||null,
-humidity:parseFloat($('en-hum').value)||null,lightHours:parseFloat($('en-light').value)||null,
-ammoniaLevel:parseFloat($('en-ammonia')?.value)||null,
+const D=loadData();const o={date:$('en-date').value,temperature:numVal('en-temp')||null,
+humidity:numVal('en-hum')||null,lightHours:numVal('en-light')||null,
+ammoniaLevel:numVal('en-ammonia')||null,
 ventilation:$('en-vent').value,notes:$('en-notes').value};
 const v=validateForm({'en-date':{value:o.date,rules:{required:true,date:true}},'en-temp':{value:$('en-temp').value,rules:{numeric:true}},'en-hum':{value:$('en-hum').value,rules:{numeric:true,min:0,max:100}},'en-light':{value:$('en-light').value,rules:{numeric:true,min:0,max:24}},'en-ammonia':{value:$('en-ammonia')?.value||'',rules:{numeric:true,min:0}}});
 if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
@@ -5831,8 +6180,8 @@ D.farm.capacity=parseInt($('cfg-cap').value)||0;D.farm.currency=$('cfg-cur').val
 saveData(D);toast(t('cfg_saved'));
 }
 function saveAlertConfig(){
-const D=loadData();D.settings.minFeedStock=parseFloat($('cfg-minfeed').value)||50;
-D.settings.maxMortality=parseFloat($('cfg-maxmort').value)||5;
+const D=loadData();D.settings.minFeedStock=numVal('cfg-minfeed')||50;
+D.settings.maxMortality=numVal('cfg-maxmort')||5;
 D.settings.alertDaysBefore=parseInt($('cfg-alertdays').value)||3;
 saveData(D);toast(t('cfg_saved'));
 }
@@ -5840,9 +6189,9 @@ function addChecklistItem(){const v=$('cfg-newtask')?.value;if(!v)return;const D
 function removeChecklistItem(i){const D=loadData();D.settings.defaultChecklist.splice(i,1);saveData(D);renderConfig();}
 // Tax & Depreciation config save (A5)
 function saveTaxConfig(){
-const D=loadData();D.settings.taxRate=parseFloat($('cfg-taxrate').value)||0;
+const D=loadData();D.settings.taxRate=numVal('cfg-taxrate');
 D.settings.depreciationYears=parseInt($('cfg-depyears').value)||5;
-D.settings.assetValue=parseFloat($('cfg-assetval').value)||0;
+D.settings.assetValue=numVal('cfg-assetval');
 logAudit('update','config','Tax/Depreciation settings updated',null,{taxRate:D.settings.taxRate,depreciationYears:D.settings.depreciationYears,assetValue:D.settings.assetValue});
 saveData(D);toast(t('cfg_saved'));
 }
@@ -5851,7 +6200,7 @@ const D=loadData();const before=JSON.parse(JSON.stringify(D.settings.plan||{}));
 if(!D.settings.plan)D.settings.plan={};
 D.settings.ownerEmail=($('cfg-owner-email')?.value||'').trim();
 D.settings.plan.includedUsers=parseInt($('cfg-plan-users')?.value)||3;
-D.settings.plan.extraUserCost=parseFloat($('cfg-plan-extra-cost')?.value)||5;
+D.settings.plan.extraUserCost=numVal('cfg-plan-extra-cost')||5;
 D.settings.plan.billingCycle=$('cfg-plan-cycle')?.value||'monthly';
 D.settings.plan.currency=$('cfg-plan-currency')?.value||'USD';
 logAudit('update','config','Plan settings updated',before,D.settings.plan);
@@ -6388,7 +6737,7 @@ geoMarker=L.marker([lat,lng]).addTo(geoMap);}
 },err=>toast('GPS Error: '+err.message,true));
 }
 function saveGeoLocation(){
-const D=loadData();D.farm.lat=parseFloat($('geo-lat').value)||null;D.farm.lng=parseFloat($('geo-lng').value)||null;
+const D=loadData();D.farm.lat=numVal('geo-lat')||null;D.farm.lng=numVal('geo-lng')||null;
 saveData(D);closeModal();toast(t('cfg_saved'));renderConfig();
 }
 
@@ -6400,7 +6749,9 @@ try{
 mqttClient=mqtt.connect(D.farm.mqttBroker,{username:D.farm.mqttUser||undefined,password:D.farm.mqttPass||undefined,
 reconnectPeriod:5000,connectTimeout:10000});
 mqttClient.on('connect',()=>{mqttConnected=true;
-mqttClient.subscribe(D.farm.mqttTopicPrefix+'sensors/#');updateMqttStatus();toast(t('iot_connect')+' OK');});
+mqttClient.subscribe(D.farm.mqttTopicPrefix+'sensors/#');
+mqttClient.subscribe(D.farm.mqttTopicPrefix+'actuators/+/status');
+updateMqttStatus();toast(t('iot_connect')+' OK');});
 mqttClient.on('message',(topic,payload)=>{onMqttMessage(topic,payload);});
 mqttClient.on('error',()=>{mqttConnected=false;updateMqttStatus();});
 mqttClient.on('close',()=>{mqttConnected=false;updateMqttStatus();});
@@ -6412,10 +6763,23 @@ if(mqttClient){mqttClient.end();mqttClient=null;}mqttConnected=false;updateMqttS
 function onMqttMessage(topic,payload){
 try{const data=JSON.parse(payload.toString());const D=loadData();
 const prefix=D.farm.mqttTopicPrefix||'egglogu/';
+if(topic.includes('/actuators/')&&topic.endsWith('/status')){
+// Actuator status feedback
+const deviceId=topic.replace(prefix+'actuators/','').replace('/status','');
+updateDeviceStatus(D,deviceId,data);
+const pending=D.iotCommandLog.find(c=>c.deviceId===deviceId&&!c.acked);
+if(pending){pending.acked=true;pending.ackedAt=Date.now();}
+saveData(D);updateIoTControlPanel();
+}else{
+// Sensor data
 const sensor=topic.replace(prefix+'sensors/','');
 const reading={id:genId(),ts:Date.now(),sensor,value:data.value,unit:data.unit||''};
 D.iotReadings.push(reading);if(D.iotReadings.length>500)D.iotReadings=D.iotReadings.slice(-300);
 saveData(D);updateIoTGauges();
+// Build latest snapshot and evaluate automation rules
+const latest={};D.iotReadings.slice(-50).forEach(r=>{latest[r.sensor]={value:r.value,unit:r.unit,ts:r.ts};});
+evaluateIoTRules(D,latest);
+}
 }catch(e){}
 }
 function updateMqttStatus(){
@@ -6454,6 +6818,206 @@ ammoniaLevel:latest.ammonia?.value||null,notes:'IoT auto-save'};
 D.environment.push(o);saveData(D);toast(t('cfg_saved'));
 }
 
+// ============ IoT BIDIRECTIONAL CONTROL ============
+function publishMQTT(topic,payload){
+if(!mqttClient||!mqttConnected){toast(t('iot_not_connected'),true);return false;}
+const D=loadData();const limits=D.iotSafetyLimits||{};
+// Extract device from topic
+const parts=topic.split('/');const deviceId=parts[parts.length-1]||'';
+const limit=limits[deviceId];
+if(limit&&payload.value!==undefined){
+if(limit.min!==undefined&&payload.value<limit.min){toast(t('iot_safety_blocked')+': min='+limit.min,true);return false;}
+if(limit.max!==undefined&&payload.value>limit.max){toast(t('iot_safety_blocked')+': max='+limit.max,true);return false;}}
+try{mqttClient.publish(topic,JSON.stringify(payload),{qos:1});return true;}
+catch(e){toast('MQTT publish error: '+sanitizeHTML(e.message),true);return false;}
+}
+
+function logIoTCommand(D,deviceId,command,value,trigger){
+const entry={id:genId(),ts:Date.now(),deviceId,command,value,trigger:trigger||'manual',acked:false};
+D.iotCommandLog.push(entry);
+if(D.iotCommandLog.length>500)D.iotCommandLog=D.iotCommandLog.slice(-300);
+saveData(D);return entry;
+}
+
+function updateDeviceStatus(D,deviceId,state){
+let dev=D.iotDevices.find(d=>d.id===deviceId);
+if(!dev){dev={id:deviceId,lastState:null,online:false,lastSeen:0};D.iotDevices.push(dev);}
+dev.lastState=state.value!==undefined?state.value:state;
+dev.online=true;dev.lastSeen=Date.now();
+}
+
+function evaluateIoTRules(D,sensorData){
+if(!D.iotRules||!D.iotRules.length)return;
+const now=Date.now();
+D.iotRules.filter(r=>r.enabled).forEach(r=>{
+const sensor=sensorData[r.sensor];if(!sensor)return;
+const val=sensor.value;let fired=false;
+if(r.operator==='>'&&val>r.threshold)fired=true;
+else if(r.operator==='>='&&val>=r.threshold)fired=true;
+else if(r.operator==='<'&&val<r.threshold)fired=true;
+else if(r.operator==='<='&&val<=r.threshold)fired=true;
+else if(r.operator==='=='&&val===r.threshold)fired=true;
+if(fired){
+// Check cooldown
+if(r.lastFired&&(now-r.lastFired)<(r.cooldown||60)*1000)return;
+const prefix=D.farm.mqttTopicPrefix||'egglogu/';
+const topic=prefix+'actuators/'+r.deviceId+'/set';
+const ok=publishMQTT(topic,{value:r.actionValue,source:'rule',ruleId:r.id});
+if(ok){r.lastFired=now;logIoTCommand(D,r.deviceId,'set',r.actionValue,'rule:'+r.name);
+toast(t('iot_rule_fired')+': '+sanitizeHTML(r.name));}
+}});
+saveData(D);
+}
+
+function sendActuatorCommand(deviceId,value,unit){
+const D=loadData();const prefix=D.farm.mqttTopicPrefix||'egglogu/';
+const topic=prefix+'actuators/'+deviceId+'/set';
+const numVal=parseFloat(value);if(isNaN(numVal)){toast(t('iot_safety_invalid'),true);return;}
+const ok=publishMQTT(topic,{value:numVal,unit:unit||'',source:'manual'});
+if(ok){logIoTCommand(D,deviceId,'set',numVal,'manual');toast(t('iot_command_sent'));}
+}
+
+function saveSafetyLimit(deviceId){
+const minEl=document.getElementById('safety-min-'+deviceId);
+const maxEl=document.getElementById('safety-max-'+deviceId);
+if(!minEl||!maxEl)return;
+const D=loadData();
+if(!D.iotSafetyLimits)D.iotSafetyLimits={};
+D.iotSafetyLimits[deviceId]={min:parseFloat(minEl.value)||0,max:parseFloat(maxEl.value)||100};
+saveData(D);logAudit('iot_safety_update',{deviceId,limits:D.iotSafetyLimits[deviceId]});
+toast(t('cfg_saved'));
+}
+
+function showIoTRuleForm(ruleId){
+const D=loadData();const rule=ruleId?D.iotRules.find(r=>r.id===ruleId):null;
+const sensors=['temperature','humidity','ammonia','co2','light','pressure'];
+const devices=[{id:'ventilation',label:t('iot_act_ventilation')},{id:'heating',label:t('iot_act_heating')},
+{id:'lighting',label:t('iot_act_lighting')},{id:'feeding',label:t('iot_act_feeding')},{id:'misting',label:t('iot_act_misting')}];
+const operators=['>','>=','<','<=','=='];
+let form=`<div class="form-group"><label>${t('cfg_name')}</label><input id="rule-name" class="form-control" value="${escapeAttr(rule?.name||'')}"></div>`;
+form+=`<div class="form-group"><label>${t('iot_rule_condition')}</label><div style="display:flex;gap:8px">`;
+form+=`<select id="rule-sensor" class="form-control">${sensors.map(s=>`<option value="${s}"${rule?.sensor===s?' selected':''}>${s}</option>`).join('')}</select>`;
+form+=`<select id="rule-op" class="form-control" style="width:80px">${operators.map(o=>`<option value="${escapeAttr(o)}"${rule?.operator===o?' selected':''}>${o}</option>`).join('')}</select>`;
+form+=`<input id="rule-threshold" type="number" class="form-control" style="width:100px" value="${rule?.threshold||0}">`;
+form+='</div></div>';
+form+=`<div class="form-group"><label>${t('iot_rule_action')}</label><div style="display:flex;gap:8px">`;
+form+=`<select id="rule-device" class="form-control">${devices.map(d=>`<option value="${d.id}"${rule?.deviceId===d.id?' selected':''}>${d.label}</option>`).join('')}</select>`;
+form+=`<input id="rule-value" type="number" class="form-control" style="width:100px" value="${rule?.actionValue||0}">`;
+form+='</div></div>';
+form+=`<div class="form-group"><label>${t('iot_rule_cooldown')} (s)</label><input id="rule-cooldown" type="number" class="form-control" value="${rule?.cooldown||60}"></div>`;
+openModal(ruleId?t('iot_rule')+' — '+t('edit'):t('iot_rule_add'),form,()=>{
+const D2=loadData();const name=document.getElementById('rule-name').value.trim();
+if(!name){toast(t('required_field'),true);return;}
+const obj={id:ruleId||genId(),name,sensor:document.getElementById('rule-sensor').value,
+operator:document.getElementById('rule-op').value,threshold:parseFloat(document.getElementById('rule-threshold').value)||0,
+deviceId:document.getElementById('rule-device').value,actionValue:parseFloat(document.getElementById('rule-value').value)||0,
+cooldown:parseInt(document.getElementById('rule-cooldown').value)||60,enabled:rule?rule.enabled:true,lastFired:rule?.lastFired||null};
+if(ruleId){const idx=D2.iotRules.findIndex(r=>r.id===ruleId);if(idx>=0)D2.iotRules[idx]=obj;}
+else{D2.iotRules.push(obj);}
+saveData(D2);logAudit('iot_rule_save',{ruleId:obj.id});closeModal();renderEnvironment();
+});
+}
+
+function toggleIoTRule(ruleId){
+const D=loadData();const r=D.iotRules.find(x=>x.id===ruleId);if(r){r.enabled=!r.enabled;saveData(D);renderEnvironment();}
+}
+
+async function deleteIoTRule(ruleId){
+if(!await showConfirm(t('confirm_delete')))return;
+const D=loadData();D.iotRules=D.iotRules.filter(r=>r.id!==ruleId);saveData(D);renderEnvironment();
+}
+
+function updateIoTControlPanel(){
+const D=loadData();
+D.iotDevices.forEach(dev=>{
+const badge=document.getElementById('dev-status-'+dev.id);
+if(badge){badge.className='badge badge-'+(dev.online?'success':'secondary');badge.textContent=dev.online?'Online':'Offline';}
+const val=document.getElementById('dev-value-'+dev.id);
+if(val&&dev.lastState!==null)val.textContent=dev.lastState;
+});
+}
+
+// ============ IoT CONTROL PANEL UI ============
+function renderEnvControl(D){
+// Feature gate: enterprise only
+const tier=D.subscription?.plan||'hobby';
+if(tier!=='enterprise'&&tier!=='pro'){
+return `<div class="card" style="text-align:center;padding:40px">
+<h3>🎛️ ${t('iot_control_title')}</h3>
+<p style="color:var(--text-secondary)">${t('plan_upgrade_needed')}</p>
+<button class="btn btn-primary" onclick="showModule('admin')">${t('plan_upgrade')}</button></div>`;}
+if(!mqttConnected){
+return `<div class="card" style="text-align:center;padding:40px">
+<h3>🎛️ ${t('iot_control_title')}</h3>
+<p style="color:var(--text-secondary)">⚠️ ${t('iot_not_connected')}</p>
+<button class="btn btn-primary" onclick="connectMQTT()">📡 ${t('iot_connect')}</button></div>`;}
+let h='';
+// === 1. Device Control Panel ===
+h+=`<div class="card"><h3>🎛️ ${t('iot_control_panel')}</h3><div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))">`;
+const actuators=[
+{id:'ventilation',icon:'🌬️',label:t('iot_act_ventilation'),unit:'%',min:0,max:100},
+{id:'heating',icon:'🔥',label:t('iot_act_heating'),unit:'°C',min:15,max:40},
+{id:'lighting',icon:'💡',label:t('iot_act_lighting'),unit:'%',min:0,max:100},
+{id:'feeding',icon:'🌾',label:t('iot_act_feeding'),unit:'g',min:0,max:200},
+{id:'misting',icon:'💧',label:t('iot_act_misting'),unit:'%',min:0,max:100}];
+actuators.forEach(a=>{
+const dev=D.iotDevices.find(d=>d.id===a.id);
+const online=dev?.online||false;const lastVal=dev?.lastState||0;
+h+=`<div class="card" style="padding:12px;text-align:center">
+<div style="font-size:1.8em">${a.icon}</div>
+<div style="font-weight:600;margin:4px 0">${a.label}</div>
+<span id="dev-status-${a.id}" class="badge badge-${online?'success':'secondary'}">${online?'Online':'Offline'}</span>
+<div style="margin:8px 0;font-size:1.4em;font-weight:700" id="dev-value-${a.id}">${lastVal}${a.unit}</div>
+<input type="range" id="ctrl-${a.id}" min="${a.min}" max="${a.max}" value="${lastVal}" style="width:100%"
+oninput="document.getElementById('ctrl-val-${a.id}').textContent=this.value+'${a.unit}'">
+<div id="ctrl-val-${a.id}" style="font-size:.85em;color:var(--text-secondary)">${lastVal}${a.unit}</div>
+<button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%" onclick="sendActuatorCommand('${a.id}',document.getElementById('ctrl-${a.id}').value,'${a.unit}')">
+${t('iot_send')} ${a.icon}</button></div>`;});
+h+='</div></div>';
+// === 2. Automation Rules ===
+h+=`<div class="card"><h3>⚙️ ${t('iot_rules_title')}</h3>
+<div style="text-align:right;margin-bottom:8px"><button class="btn btn-primary btn-sm" onclick="showIoTRuleForm()">${t('iot_rule_add')}</button></div>`;
+if(!D.iotRules||!D.iotRules.length){h+=emptyState('⚙️',t('iot_no_rules'));}
+else{
+h+='<div class="table-wrap"><table><thead><tr><th>'+t('cfg_name')+'</th><th>'+t('iot_rule_condition')+'</th><th>'+t('iot_rule_action')+'</th><th>'+t('iot_rule_cooldown')+'</th><th>'+t('status')+'</th><th></th></tr></thead><tbody>';
+D.iotRules.forEach(r=>{
+h+=`<tr><td><strong>${sanitizeHTML(r.name)}</strong></td>
+<td>${r.sensor} ${escapeAttr(r.operator)} ${r.threshold}</td>
+<td>${r.deviceId} → ${r.actionValue}</td>
+<td>${r.cooldown}s</td>
+<td>${statusBadge(r.enabled?'active':'inactive')}</td>
+<td><button class="btn btn-sm btn-secondary" onclick="toggleIoTRule('${r.id}')">${r.enabled?t('iot_rule_disable'):t('iot_rule_enable')}</button>
+<button class="btn btn-sm btn-secondary" onclick="showIoTRuleForm('${r.id}')">✏️</button>
+<button class="btn btn-sm btn-danger" onclick="deleteIoTRule('${r.id}')">🗑️</button></td></tr>`;});
+h+='</tbody></table></div>';}
+h+='</div>';
+// === 3. Safety Limits ===
+h+=`<div class="card"><h3>🛡️ ${t('iot_safety_title')}</h3>
+<p style="color:var(--text-secondary);margin-bottom:8px">${t('iot_safety_desc')}</p>
+<div class="table-wrap"><table><thead><tr><th>${t('iot_device')}</th><th>Min</th><th>Max</th><th></th></tr></thead><tbody>`;
+actuators.forEach(a=>{
+const lim=D.iotSafetyLimits?.[a.id]||{min:a.min,max:a.max};
+h+=`<tr><td>${a.icon} ${a.label}</td>
+<td><input id="safety-min-${a.id}" type="number" class="form-control" style="width:80px" value="${lim.min}"></td>
+<td><input id="safety-max-${a.id}" type="number" class="form-control" style="width:80px" value="${lim.max}"></td>
+<td><button class="btn btn-sm btn-secondary" onclick="saveSafetyLimit('${a.id}')">${t('cfg_save')}</button></td></tr>`;});
+h+='</tbody></table></div></div>';
+// === 4. Command History ===
+h+=`<div class="card"><h3>📜 ${t('iot_history_title')}</h3>`;
+const cmds=(D.iotCommandLog||[]).slice(-50).reverse();
+if(!cmds.length){h+=emptyState('📜',t('iot_no_commands'));}
+else{
+h+='<div class="table-wrap"><table><thead><tr><th>'+t('date')+'</th><th>'+t('iot_device')+'</th><th>'+t('iot_command')+'</th><th>'+t('iot_value')+'</th><th>'+t('iot_trigger')+'</th><th>ACK</th></tr></thead><tbody>';
+cmds.forEach(c=>{
+h+=`<tr><td>${new Date(c.ts).toLocaleString()}</td><td>${sanitizeHTML(c.deviceId)}</td>
+<td>${sanitizeHTML(c.command)}</td><td>${c.value}</td>
+<td>${statusBadge(c.trigger==='manual'?'active':'info',c.trigger)}</td>
+<td>${c.acked?'✅':'⏳'}</td></tr>`;});
+h+='</tbody></table></div>';}
+h+='</div>';
+return h;
+}
+
 // ============ ML / PREDICTIVE ANALYTICS ============
 let forecastDays=7;
 function renderPredictionsTab(D){
@@ -6485,7 +7049,7 @@ h+=`<div class="card"><h3>📈 ${t('pred_forecast')}</h3>
 <div class="chart-container"><canvas id="chart-forecast"></canvas></div></div>`;
 setTimeout(()=>{
 const c=document.getElementById('chart-forecast');if(!c)return;
-const fc=computeForecast(D,forecastDays);
+const fc=computeBestForecast(D,forecastDays);
 const allLabels=last30.map(p=>p.date.substring(5));
 for(let i=1;i<=forecastDays;i++){const d=new Date();d.setDate(d.getDate()+i);allLabels.push(d.toISOString().substring(5,10));}
 const actual=last30.map(p=>p.eggsCollected||0);
@@ -6531,6 +7095,72 @@ h+=`<div class="stat-row"><span class="stat-label">${f.name} (${breed})</span>
 <span style="color:${gapColor}">Gap: ${gap>0?'+':''}${fmtNum(gap,1)}%</span></span></div>`;
 });
 h+='</div>';}
+// === CUSUM Change-Point Detection ===
+if(last30.length>=14&&typeof ss!=='undefined'){
+const eggVals=sorted.map(p=>p.eggsCollected||0);
+const cusumChanges=computeCUSUM(eggVals);
+if(cusumChanges.length){
+h+=`<div class="card"><h3>📊 ${t('pred_cusum_title')}</h3><p style="color:var(--text-secondary);margin-bottom:8px">${t('pred_cusum_desc')}</p>`;
+h+='<div class="table-wrap"><table><thead><tr><th>'+t('date')+'</th><th>'+t('pred_cusum_type')+'</th><th>'+t('pred_cusum_magnitude')+'</th></tr></thead><tbody>';
+cusumChanges.forEach(c=>{const d=sorted[c.index]?sorted[c.index].date:'—';
+const typeLabel=c.type==='increase'?'↑ '+t('pred_cusum_increase'):'↓ '+t('pred_cusum_decrease');
+const color=c.type==='increase'?'var(--success)':'var(--danger)';
+h+=`<tr><td>${fmtDate(d)}</td><td style="color:${color};font-weight:600">${typeLabel}</td><td>${c.magnitude}</td></tr>`;});
+h+='</tbody></table></div></div>';}
+}
+// === Multi-Variable Anomaly Score ===
+if(last30.length>=7&&typeof ss!=='undefined'){
+const anomaly=computeAnomalyScore(D);
+const aColor=anomaly.score>50?'var(--danger)':anomaly.score>30?'var(--warning)':'var(--success)';
+const aLabel=anomaly.alert?t('pred_anomaly_alert'):t('pred_anomaly_normal');
+h+=`<div class="card"><h3>🎯 ${t('pred_anomaly_composite')}</h3>
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+<div style="font-size:2.2em;font-weight:700;color:${aColor}">${anomaly.score}</div>
+<div><span class="badge badge-${anomaly.alert?'danger':'success'}">${aLabel}</span>
+<div style="margin-top:4px;color:var(--text-secondary)">${t('pred_anomaly_score')} 0-100</div></div></div>`;
+h+='<div class="kpi-grid">';
+h+=kpi(t('prod_eggs')+' Z',anomaly.breakdown.eggs,'','');
+h+=kpi(t('health_mortality')+' Z',anomaly.breakdown.mortality,'','');
+h+=kpi('FCR Z',anomaly.breakdown.fcr,'','');
+h+=kpi('THI Z',anomaly.breakdown.thi,'','');
+h+='</div>';
+h+=`<div style="margin-top:8px;font-size:.85em;color:var(--text-secondary)">${t('pred_anomaly_var')}: ${t('prod_eggs')}(35%) + ${t('health_mortality')}(30%) + FCR(20%) + THI(15%)</div></div>`;
+}
+// === Feed Conversion Optimization ===
+if(typeof ss!=='undefined'){
+const feedOpt=computeFeedOptimization(D);
+if(feedOpt.currentFCR!==null){
+h+=`<div class="card"><h3>⚡ ${t('pred_feed_opt')}</h3><div class="kpi-grid">`;
+h+=kpi(t('pred_feed_current_fcr'),feedOpt.currentFCR,'','');
+h+=kpi(t('pred_feed_optimal_fcr'),feedOpt.optimalFCR,'','');
+h+=kpi(t('pred_feed_optimal_kg'),feedOpt.optimalKgDay+' kg','','');
+h+=kpi(t('pred_feed_savings'),feedOpt.savingsPercent+'%','','');
+h+=kpi(t('pred_feed_per_hen'),feedOpt.feedPerHen+'g','','');
+h+=kpi('R²',feedOpt.rSquared,'','');
+h+='</div></div>';}
+}
+// === Production Lifecycle Predictor ===
+if(activeFlocks.length){
+h+=`<div class="card"><h3>🔄 ${t('pred_lifecycle')}</h3>`;
+h+='<div class="table-wrap"><table><thead><tr><th>'+t('flock')+'</th><th>'+t('pred_lc_current_week')+'</th><th>'+t('pred_lc_peak_week')+'</th><th>'+t('pred_lc_current_hd')+'</th><th>'+t('pred_lc_persistence')+'</th><th>'+t('pred_lc_cull_week')+'</th><th>'+t('pred_lc_weeks_left')+'</th><th>'+t('pred_lc_projected_eggs')+'</th></tr></thead><tbody>';
+activeFlocks.forEach(f=>{const lc=computeLifecyclePredictor(D,f);
+if(lc.peakWeek!==null){
+const hdColor=lc.currentHD>=80?'var(--success)':lc.currentHD>=60?'var(--warning)':'var(--danger)';
+h+=`<tr><td><strong>${sanitizeHTML(f.name)}</strong></td><td>${lc.currentWeek}</td><td>${lc.peakWeek}</td>
+<td style="color:${hdColor};font-weight:600">${lc.currentHD}%</td><td>${lc.persistence} ${t('pred_lc_weeks_left').split(' ')[0]||'sem'}</td>
+<td>${lc.cullWeek}</td><td>${lc.weeksLeft}</td><td>${fmtNum(lc.projectedEggs,0)}</td></tr>`;}});
+h+='</tbody></table></div></div>';
+}
+// === Forecast Accuracy Comparison ===
+if(last30.length>=21&&typeof ss!=='undefined'){
+const acc=computeForecastAccuracy(D,7);
+if(acc.best){
+h+=`<div class="card"><h3>📏 ${t('pred_accuracy_title')}</h3><p style="color:var(--text-secondary);margin-bottom:8px">${t('pred_accuracy_desc')}</p>`;
+h+='<div class="table-wrap"><table><thead><tr><th>'+t('pred_accuracy_method')+'</th><th>MAPE %</th><th>RMSE</th><th>'+t('pred_accuracy_best')+'</th></tr></thead><tbody>';
+h+=`<tr><td>WMA + LR</td><td>${acc.wma.mape!==null?acc.wma.mape:'—'}</td><td>${acc.wma.rmse!==null?acc.wma.rmse:'—'}</td><td>${acc.best==='wma'?'⭐':''}</td></tr>`;
+h+=`<tr><td>Holt-Winters</td><td>${acc.hw.mape!==null?acc.hw.mape:'—'}</td><td>${acc.hw.rmse!==null?acc.hw.rmse:'—'}</td><td>${acc.best==='hw'?'⭐':''}</td></tr>`;
+h+='</tbody></table></div></div>';}
+}
 return h;
 }
 function computeDropRisk(D){
@@ -6875,6 +7505,442 @@ saveData(D);closeModal();toast(t('cfg_saved'));renderBiosecurity();
 function completeBioProtocol(id){const D=loadData();const p=D.biosecurity.protocols.find(x=>x.id===id);if(p){p.lastCompleted=todayStr();saveData(D);toast(t('cfg_saved'));renderBiosecurity();}}
 async function deleteBioProtocol(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.protocols=D.biosecurity.protocols.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderBiosecurity();}
 
+// ============ WELFARE QUALITY ASSESSMENT MODULE ============
+// Scoring engine — Welfare Quality Protocol v2.0 (simplified weighted averages)
+const WQ_QBA_KEYS=['active','relaxed','fearful','agitated','calm','content','frustrated','friendly','bored','positively_occupied','energetic','distressed','happy','uncomfortable','sociable','apathetic','curious','withdrawn','confident','depressed'];
+function wqDistributionScore(dist){const total=(dist.s0||0)+(dist.s1||0)+(dist.s2||0);if(!total)return 100;const pct1=((dist.s1||0)/total);const pct2=((dist.s2||0)/total);return Math.max(0,Math.min(100,Math.round(100-(pct1*40+pct2*100))));}
+function wqBinaryScore(dist){const total=(dist.s0||0)+(dist.s1||0);if(!total)return 100;return Math.round(((dist.s0||0)/total)*100);}
+function computeWQCriteria(a){
+const c={};
+// C1: Body Condition — distribution score of BCS
+c.c1=a.bodyCondition&&a.bodyCondition.summary?wqDistributionScore(a.bodyCondition.summary):50;
+// C2: Water Availability — composite of functional/clean/space
+const w=a.waterAvailability||{};let wScore=50;
+if(w.cmPerHen!==undefined){wScore=Math.min(100,w.cmPerHen>=2.5?100:Math.round((w.cmPerHen/2.5)*100));if(!w.clean)wScore=Math.max(0,wScore-20);if(!w.functional)wScore=Math.max(0,wScore-30);}
+c.c2=wScore;
+// C3: Resting Comfort — perch + nest + dust bathing
+const perch=a.perchSpace?Math.min(100,(a.perchSpace.cmPerHen||0)>=15?100:Math.round(((a.perchSpace.cmPerHen||0)/15)*100)):50;
+const nest=a.nestBoxes?((a.nestBoxes.hensPerNest||999)<=7?100:Math.max(0,Math.round(100-((a.nestBoxes.hensPerNest-7)*10)))):50;
+const dust=a.dustBathing?(a.dustBathing.substrateAvailable?Math.min(100,50+(a.dustBathing.percentBathing||0)):20):50;
+c.c3=Math.round((perch+nest+dust)/3);
+// C4: Thermal Comfort — panting/huddling
+const th=a.thermalComfort||{};c.c4=th.score!==undefined?th.score:Math.max(0,100-((th.panting||0)*5+(th.huddling||0)*5));
+// C5: Ease of Movement — stocking density
+const sd=a.stockingDensity||{};
+if(sd.cm2PerHen!==undefined){c.c5=sd.cm2PerHen>=750?100:Math.round((sd.cm2PerHen/750)*100);}else{c.c5=50;}
+// C6: Injuries — plumage + skin + foot + toe
+const plum=a.plumageCondition||{};const regions=['neck','back','belly','wings','tail'];
+let plumScore=0;regions.forEach(r=>{if(plum[r])plumScore+=wqDistributionScore(plum[r]);else plumScore+=50;});plumScore=Math.round(plumScore/5);
+const skinS=a.skinLesions?wqDistributionScore(a.skinLesions):80;
+const footS=a.footPadDermatitis?wqDistributionScore(a.footPadDermatitis):80;
+const toeS=a.toeDamage?wqBinaryScore(a.toeDamage):80;
+c.c6=Math.round((plumScore+skinS+footS+toeS)/4);
+// C7: Disease — keel, comb, eye, respiratory, red mites, mortality
+const keelS=a.keelBoneDamage?wqDistributionScore(a.keelBoneDamage):80;
+const combS=a.combWounds?wqDistributionScore(a.combWounds):80;
+const eyeS=a.eyePathology?wqDistributionScore(a.eyePathology):80;
+const respS=a.respiratoryProblems?wqBinaryScore(a.respiratoryProblems):90;
+const miteS=a.redMites?(Math.max(0,100-(a.redMites.dustSheetScore||0)*25)):90;
+const mortS=a.mortalityCulling?Math.max(0,100-((a.mortalityCulling.mortalityPct||0)*10+(a.mortalityCulling.cullingPct||0)*5)):90;
+c.c7=Math.round((keelS+combS+eyeS+respS+miteS+mortS)/6);
+// C8: Pain — beak trimming quality
+const bk=a.beakTrimming||{};
+if(bk.quality){c.c8=wqDistributionScore(bk.quality);}else{const trimPct=bk.trimmed?((bk.trimmed)/((bk.trimmed||0)+(bk.notTrimmed||1)))*100:0;c.c8=Math.round(100-trimPct*0.3);}
+// C9: Social Behaviour — space/density proxy
+c.c9=Math.min(100,Math.round((c.c5*0.5+c.c3*0.5)));
+// C10: Other Behaviours — dust bathing + foraging proxy
+c.c10=dust;
+// C11: Human-Animal Relationship — ADT
+const adt=a.avoidanceDistanceTest||{};
+if(adt.avgDistance!==undefined){c.c11=adt.avgDistance<=30?100:adt.avgDistance>=200?0:Math.round(100-((adt.avgDistance-30)/170)*100);}else{c.c11=50;}
+// C12: Emotional State — QBA (positive - negative descriptors)
+const qba=a.qualitativeBehaviourAssessment||{};
+const posKeys=['active','relaxed','calm','content','friendly','positively_occupied','energetic','happy','sociable','curious','confident'];
+const negKeys=['fearful','agitated','frustrated','bored','distressed','uncomfortable','apathetic','withdrawn','depressed'];
+let posSum=0,negSum=0;posKeys.forEach(k=>{posSum+=(qba[k]||0);});negKeys.forEach(k=>{negSum+=(qba[k]||0);});
+const maxPos=posKeys.length*125;const maxNeg=negKeys.length*125;
+c.c12=Math.round(((posSum/maxPos)*60+((maxNeg-negSum)/maxNeg)*40));
+return c;
+}
+function computeWQPrinciples(c){return{
+goodFeeding:Math.round(c.c1*0.5+c.c2*0.5),
+goodHousing:Math.round(c.c3*0.34+c.c4*0.33+c.c5*0.33),
+goodHealth:Math.round(c.c6*0.33+c.c7*0.34+c.c8*0.33),
+appropriateBehaviour:Math.round((c.c9+c.c10+c.c11+c.c12)/4)
+};}
+function computeWQCategory(p){
+const vals=Object.values(p);const sorted=[...vals].sort((a,b)=>b-a);
+if(sorted.filter(v=>v>80).length>=2&&vals.every(v=>v>55))return'excellent';
+if(sorted.filter(v=>v>55).length>=2&&vals.every(v=>v>20))return'enhanced';
+if(sorted.filter(v=>v>20).length>=3&&vals.every(v=>v>10))return'acceptable';
+return'not_classified';
+}
+function scoreWelfareAssessment(a){
+a.criteriaScores=computeWQCriteria(a);
+a.principleScores=computeWQPrinciples(a.criteriaScores);
+a.overallCategory=computeWQCategory(a.principleScores);
+a.overallScore=Math.round((a.principleScores.goodFeeding+a.principleScores.goodHousing+a.principleScores.goodHealth+a.principleScores.appropriateBehaviour)/4);
+return a;
+}
+// Welfare category badge
+function wqCategoryBadge(cat){
+const cls={excellent:'success',enhanced:'info',acceptable:'warning',not_classified:'danger'};
+return`<span class="badge badge-${cls[cat]||'secondary'}">${t('wql_'+cat)}</span>`;
+}
+// ============ WELFARE RENDER + CRUD ============
+function renderWelfare(){
+const D=loadData();const assessments=D.welfareAssessments||[];
+let h=`<div class="page-header"><h2>🐾 ${t('wql_title')}</h2></div>`;
+// KPIs
+const latest=assessments.length?[...assessments].sort((a,b)=>b.date.localeCompare(a.date))[0]:null;
+const avgScore=assessments.length?Math.round(assessments.reduce((s,a)=>s+(a.overallScore||0),0)/assessments.length):0;
+const prev=assessments.length>1?[...assessments].sort((a,b)=>b.date.localeCompare(a.date))[1]:null;
+const trend=latest&&prev?(latest.overallScore||0)-(prev.overallScore||0):0;
+h+=`<div class="kpi-grid">`;
+h+=kpi(t('wql_kpi_category'),latest?wqCategoryBadge(latest.overallCategory):'—','','');
+h+=kpi(t('wql_kpi_avg_score'),avgScore+'/100','',avgScore<40?'danger':avgScore<60?'warning':'');
+h+=kpi(t('wql_kpi_count'),assessments.length.toString(),t('total'),'');
+h+=kpi(t('wql_kpi_trend'),(trend>=0?'+':'')+trend,'',trend<0?'warning':'');
+h+=`</div>`;
+// Tabs
+h+=`<div class="tabs">
+<div class="tab${currentWelfareTab==='assessment'?' active':''}" onclick="currentWelfareTab='assessment';renderWelfare()">📋 ${t('wql_tab_assessment')}</div>
+<div class="tab${currentWelfareTab==='body'?' active':''}" onclick="currentWelfareTab='body';renderWelfare()">🏋️ ${t('wql_tab_body')}</div>
+<div class="tab${currentWelfareTab==='behavior'?' active':''}" onclick="currentWelfareTab='behavior';renderWelfare()">🧠 ${t('wql_tab_behavior')}</div>
+<div class="tab${currentWelfareTab==='results'?' active':''}" onclick="currentWelfareTab='results';renderWelfare()">📊 ${t('wql_tab_results')}</div>
+<div class="tab${currentWelfareTab==='history'?' active':''}" onclick="currentWelfareTab='history';renderWelfare()">📜 ${t('wql_tab_history')}</div></div>`;
+if(currentWelfareTab==='assessment')h+=renderWelfareAssessmentTab(D);
+else if(currentWelfareTab==='body')h+=renderWelfareBodyTab(D);
+else if(currentWelfareTab==='behavior')h+=renderWelfareBehaviorTab(D);
+else if(currentWelfareTab==='results')h+=renderWelfareResultsTab(D);
+else h+=renderWelfareHistoryTab(D);
+$('sec-bienestar').innerHTML=h;
+}
+// ============ WELFARE ASSESSMENT TAB ============
+function renderWelfareAssessmentTab(D){
+const assessments=(D.welfareAssessments||[]).sort((a,b)=>b.date.localeCompare(a.date));
+let h=`<div class="card"><div class="card-header"><h3>${t('wql_tab_assessment')}</h3>
+<button class="btn btn-primary" onclick="showWelfareAssessmentForm()">+ ${t('wql_new_assessment')}</button></div>`;
+if(!assessments.length){h+=emptyState('🐾',t('wql_no_assessments'));h+=`</div>`;return h;}
+h+=`<div class="table-responsive"><table class="table"><thead><tr><th>${t('date')}</th><th>${t('wql_flock')}</th><th>${t('wql_assessor')}</th><th>${t('wql_category')}</th><th>${t('wql_overall_score')}</th><th>${t('actions')}</th></tr></thead><tbody>`;
+assessments.forEach(a=>{
+const f=D.flocks.find(x=>x.id===a.flockId);
+h+=`<tr><td>${fmtDate(a.date)}</td><td>${f?sanitizeHTML(f.name):'—'}</td><td>${sanitizeHTML(a.assessor||'')}</td><td>${wqCategoryBadge(a.overallCategory)}</td><td>${a.overallScore||0}/100</td>
+<td><button class="btn btn-sm" onclick="showWelfareAssessmentForm('${escapeAttr(a.id)}')">${t('edit')}</button> <button class="btn btn-sm btn-danger" onclick="deleteWelfareAssessment('${escapeAttr(a.id)}')">${t('delete')}</button></td></tr>`;
+});
+h+=`</tbody></table></div></div>`;return h;
+}
+// ============ WELFARE ASSESSMENT FORM ============
+function showWelfareAssessmentForm(id){
+const D=loadData();const a=id?D.welfareAssessments.find(x=>x.id===id):null;
+const flocks=D.flocks.filter(f=>f.status!=='descarte');
+let body=`<div style="max-height:70vh;overflow-y:auto;padding:0 8px">`;
+// Header
+body+=`<div class="form-row"><div class="form-group"><label>${t('wql_flock')}</label><select id="wf-flock">${flocks.map(f=>`<option value="${escapeAttr(f.id)}"${a&&a.flockId===f.id?' selected':''}>${sanitizeHTML(f.name)}</option>`).join('')}</select></div>
+<div class="form-group"><label>${t('date')}</label><input type="date" id="wf-date" value="${a?a.date:todayStr()}"></div>
+<div class="form-group"><label>${t('wql_assessor')}</label><input id="wf-assessor" value="${a?escapeAttr(a.assessor||''):''}"></div>
+<div class="form-group"><label>${t('wql_sample_size')}</label><input type="number" id="wf-sample" min="1" value="${a?a.sampleSize||30:30}"></div></div>`;
+// P1: Good Feeding
+body+=`<details open><summary><strong>${t('wql_p1_title')}</strong></summary>`;
+body+=`<fieldset><legend>${t('wql_body_condition')}</legend><div class="form-row">`;
+const bcs=a&&a.bodyCondition&&a.bodyCondition.summary?a.bodyCondition.summary:{s0:0,s1:0,s2:0};
+body+=`<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-bcs0" min="0" value="${bcs.s0}"></div>`;
+body+=`<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-bcs1" min="0" value="${bcs.s1}"></div>`;
+body+=`<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-bcs2" min="0" value="${bcs.s2}"></div></div></fieldset>`;
+const wa=a&&a.waterAvailability?a.waterAvailability:{type:'nipple',functional:true,clean:true,cmPerHen:2.5};
+body+=`<fieldset><legend>${t('wql_water_type')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_water_type')}</label><select id="wf-wtype"><option value="nipple"${wa.type==='nipple'?' selected':''}>${t('wql_water_nipple')}</option><option value="bell"${wa.type==='bell'?' selected':''}>${t('wql_water_bell')}</option><option value="cup"${wa.type==='cup'?' selected':''}>${t('wql_water_cup')}</option><option value="trough"${wa.type==='trough'?' selected':''}>${t('wql_water_trough')}</option></select></div>
+<div class="form-group"><label>${t('wql_water_cm')}</label><input type="number" id="wf-wcm" step="0.1" min="0" value="${wa.cmPerHen||2.5}"></div>
+<div class="form-group"><label>${t('wql_water_functional')}</label><input type="checkbox" id="wf-wfunc"${wa.functional?' checked':''}></div>
+<div class="form-group"><label>${t('wql_water_clean')}</label><input type="checkbox" id="wf-wclean"${wa.clean?' checked':''}></div></div></fieldset></details>`;
+// P2: Good Housing
+body+=`<details><summary><strong>${t('wql_p2_title')}</strong></summary>`;
+const sd=a&&a.stockingDensity?a.stockingDensity:{totalArea:0,henCount:0};
+body+=`<fieldset><legend>${t('wql_stocking_density')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_total_area')}</label><input type="number" id="wf-sdarea" step="0.1" min="0" value="${sd.totalArea||''}"></div>
+<div class="form-group"><label>${t('wql_hen_count')}</label><input type="number" id="wf-sdcount" min="0" value="${sd.henCount||''}"></div></div></fieldset>`;
+const ps=a&&a.perchSpace?a.perchSpace:{totalCm:0};
+body+=`<fieldset><legend>${t('wql_perch_space')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_perch_total_cm')}</label><input type="number" id="wf-perch" min="0" value="${ps.totalCm||''}"></div></div></fieldset>`;
+const nb=a&&a.nestBoxes?a.nestBoxes:{count:0};
+body+=`<fieldset><legend>${t('wql_nest_boxes')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_nest_count')}</label><input type="number" id="wf-nests" min="0" value="${nb.count||''}"></div></div></fieldset>`;
+const db=a&&a.dustBathing?a.dustBathing:{substrateAvailable:true,percentBathing:0};
+body+=`<fieldset><legend>${t('wql_dust_bathing')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_substrate_available')}</label><input type="checkbox" id="wf-dustsub"${db.substrateAvailable?' checked':''}></div>
+<div class="form-group"><label>${t('wql_percent_bathing')}</label><input type="number" id="wf-dustpct" min="0" max="100" value="${db.percentBathing||0}"></div></div></fieldset>`;
+const tc=a&&a.thermalComfort?a.thermalComfort:{panting:0,huddling:0};
+body+=`<fieldset><legend>${t('wql_thermal_comfort')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_panting')}</label><input type="number" id="wf-panting" min="0" value="${tc.panting||0}"></div>
+<div class="form-group"><label>${t('wql_huddling')}</label><input type="number" id="wf-huddling" min="0" value="${tc.huddling||0}"></div></div></fieldset></details>`;
+// P3: Good Health
+body+=`<details><summary><strong>${t('wql_p3_title')}</strong></summary>`;
+const regions=['neck','back','belly','wings','tail'];const regionKeys=['wql_region_neck','wql_region_back','wql_region_belly','wql_region_wings','wql_region_tail'];
+body+=`<fieldset><legend>${t('wql_plumage')}</legend>`;
+regions.forEach((r,i)=>{
+const pd=a&&a.plumageCondition&&a.plumageCondition[r]?a.plumageCondition[r]:{s0:0,s1:0,s2:0};
+body+=`<div class="form-row"><div class="form-group"><label>${t(regionKeys[i])}</label></div>
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-plum-${r}-0" min="0" value="${pd.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-plum-${r}-1" min="0" value="${pd.s1}"></div>
+<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-plum-${r}-2" min="0" value="${pd.s2}"></div></div>`;
+});body+=`</fieldset>`;
+// Skin, foot, toe, keel
+const skinD=a&&a.skinLesions?a.skinLesions:{s0:0,s1:0,s2:0};
+body+=`<fieldset><legend>${t('wql_skin_lesions')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-skin0" min="0" value="${skinD.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-skin1" min="0" value="${skinD.s1}"></div>
+<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-skin2" min="0" value="${skinD.s2}"></div></div></fieldset>`;
+const fpD=a&&a.footPadDermatitis?a.footPadDermatitis:{s0:0,s1:0,s2:0};
+body+=`<fieldset><legend>${t('wql_foot_pad')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-foot0" min="0" value="${fpD.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-foot1" min="0" value="${fpD.s1}"></div>
+<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-foot2" min="0" value="${fpD.s2}"></div></div></fieldset>`;
+const tdD=a&&a.toeDamage?a.toeDamage:{s0:0,s1:0};
+body+=`<fieldset><legend>${t('wql_toe_damage')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-toe0" min="0" value="${tdD.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-toe1" min="0" value="${tdD.s1}"></div></div></fieldset>`;
+const kbD=a&&a.keelBoneDamage?a.keelBoneDamage:{s0:0,s1:0,s2:0};
+body+=`<fieldset><legend>${t('wql_keel_damage')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-keel0" min="0" value="${kbD.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-keel1" min="0" value="${kbD.s1}"></div>
+<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-keel2" min="0" value="${kbD.s2}"></div></div></fieldset>`;
+// Beak trimming
+const bt=a&&a.beakTrimming?a.beakTrimming:{trimmed:0,notTrimmed:0,quality:{s0:0,s1:0,s2:0}};
+body+=`<fieldset><legend>${t('wql_beak_trimming')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_beak_trimmed')}</label><input type="number" id="wf-btrim" min="0" value="${bt.trimmed||0}"></div>
+<div class="form-group"><label>${t('wql_beak_not_trimmed')}</label><input type="number" id="wf-bnotrim" min="0" value="${bt.notTrimmed||0}"></div></div>
+<div class="form-row"><div class="form-group"><label>${t('wql_beak_quality')} ${t('wql_score_0')}</label><input type="number" id="wf-bq0" min="0" value="${bt.quality?bt.quality.s0:0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-bq1" min="0" value="${bt.quality?bt.quality.s1:0}"></div>
+<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-bq2" min="0" value="${bt.quality?bt.quality.s2:0}"></div></div></fieldset>`;
+// Comb, eye, respiratory, mites, mortality
+const cwD=a&&a.combWounds?a.combWounds:{s0:0,s1:0,s2:0};
+body+=`<fieldset><legend>${t('wql_comb_wounds')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-comb0" min="0" value="${cwD.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-comb1" min="0" value="${cwD.s1}"></div>
+<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-comb2" min="0" value="${cwD.s2}"></div></div></fieldset>`;
+const eyD=a&&a.eyePathology?a.eyePathology:{s0:0,s1:0,s2:0};
+body+=`<fieldset><legend>${t('wql_eye_pathology')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-eye0" min="0" value="${eyD.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-eye1" min="0" value="${eyD.s1}"></div>
+<div class="form-group"><label>${t('wql_score_2')}</label><input type="number" id="wf-eye2" min="0" value="${eyD.s2}"></div></div></fieldset>`;
+const rpD=a&&a.respiratoryProblems?a.respiratoryProblems:{s0:0,s1:0};
+body+=`<fieldset><legend>${t('wql_respiratory')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-resp0" min="0" value="${rpD.s0}"></div>
+<div class="form-group"><label>${t('wql_score_1')}</label><input type="number" id="wf-resp1" min="0" value="${rpD.s1}"></div></div></fieldset>`;
+const rmD=a&&a.redMites?a.redMites:{dustSheetScore:0};
+body+=`<fieldset><legend>${t('wql_red_mites')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_dust_sheet')} (0-4)</label><input type="number" id="wf-mites" min="0" max="4" value="${rmD.dustSheetScore||0}"></div></div></fieldset>`;
+const mcD=a&&a.mortalityCulling?a.mortalityCulling:{mortalityPct:0,cullingPct:0};
+body+=`<fieldset><legend>${t('wql_mortality_pct')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_mortality_pct')}</label><input type="number" id="wf-mort" step="0.1" min="0" value="${mcD.mortalityPct||0}"></div>
+<div class="form-group"><label>${t('wql_culling_pct')}</label><input type="number" id="wf-cull" step="0.1" min="0" value="${mcD.cullingPct||0}"></div></div></fieldset></details>`;
+// P4: Appropriate Behaviour
+body+=`<details><summary><strong>${t('wql_p4_title')}</strong></summary>`;
+const adtD=a&&a.avoidanceDistanceTest?a.avoidanceDistanceTest:{distances:[]};
+body+=`<fieldset><legend>${t('wql_adt_title')}</legend><div class="form-row">
+<div class="form-group" style="flex:2"><label>${t('wql_adt_distances')}</label><input id="wf-adt" placeholder="50,80,120,..." value="${adtD.distances?adtD.distances.join(','):''}"></div></div></fieldset>`;
+const notD=a&&a.novelObjectTest?a.novelObjectTest:{hensApproaching:0,totalInArea:0};
+body+=`<fieldset><legend>${t('wql_not_title')}</legend><div class="form-row">
+<div class="form-group"><label>${t('wql_not_approaching')}</label><input type="number" id="wf-not-app" min="0" value="${notD.hensApproaching||0}"></div>
+<div class="form-group"><label>${t('wql_not_total_area')}</label><input type="number" id="wf-not-tot" min="0" value="${notD.totalInArea||0}"></div></div></fieldset>`;
+body+=`<fieldset><legend>${t('wql_qba_title')}</legend>`;
+WQ_QBA_KEYS.forEach(k=>{
+const val=a&&a.qualitativeBehaviourAssessment?a.qualitativeBehaviourAssessment[k]||0:0;
+body+=`<div class="form-row" style="align-items:center"><div class="form-group" style="flex:1"><label>${t('wql_qba_'+k)}</label></div>
+<div class="form-group" style="flex:2"><input type="range" id="wf-qba-${k}" min="0" max="125" value="${val}" oninput="this.nextElementSibling.textContent=this.value"><span style="min-width:30px;text-align:right">${val}</span></div></div>`;
+});
+body+=`</fieldset></details>`;
+// Notes
+body+=`<div class="form-group"><label>${t('notes')}</label><textarea id="wf-notes" rows="2">${a?escapeAttr(a.notes||''):''}</textarea></div>`;
+body+=`</div>`;
+body+=`<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
+<button class="btn btn-primary" onclick="saveWelfareAssessment('${id||''}')">${t('save')}</button></div>`;
+openModal(id?t('edit')+' '+t('wql_tab_assessment'):t('wql_new_assessment'),body);
+}
+// ============ SAVE WELFARE ASSESSMENT ============
+function saveWelfareAssessment(id){
+clearFieldErrors();
+const D=loadData();
+const flockId=$('wf-flock').value;const date=$('wf-date').value;const assessor=$('wf-assessor').value;const sampleSize=parseInt($('wf-sample').value)||30;
+const v=validateForm({'wf-flock':{value:flockId,rules:{required:true}},'wf-date':{value:date,rules:{required:true}}});
+if(!v.valid){Object.entries(v.errors).forEach(([k,e])=>showFieldError(k,e[0]));return;}
+const henCount=parseInt($('wf-sdcount').value)||0;const totalArea=parseFloat($('wf-sdarea').value)||0;
+const perchTotalCm=parseInt($('wf-perch').value)||0;const nestCount=parseInt($('wf-nests').value)||0;
+const obj={
+flockId,date,assessor,sampleSize,
+bodyCondition:{summary:{s0:parseInt($('wf-bcs0').value)||0,s1:parseInt($('wf-bcs1').value)||0,s2:parseInt($('wf-bcs2').value)||0}},
+waterAvailability:{type:$('wf-wtype').value,cmPerHen:parseFloat($('wf-wcm').value)||0,functional:$('wf-wfunc').checked,clean:$('wf-wclean').checked},
+stockingDensity:{totalArea,henCount,cm2PerHen:henCount>0?Math.round((totalArea*10000)/henCount):0,euCompliant:henCount>0&&totalArea>0?((totalArea*10000)/henCount)>=750:false},
+perchSpace:{totalCm:perchTotalCm,cmPerHen:henCount>0?Math.round(perchTotalCm/henCount*10)/10:0},
+nestBoxes:{count:nestCount,hensPerNest:nestCount>0?Math.round(henCount/nestCount*10)/10:0},
+dustBathing:{substrateAvailable:$('wf-dustsub').checked,percentBathing:parseInt($('wf-dustpct').value)||0},
+thermalComfort:{panting:parseInt($('wf-panting').value)||0,huddling:parseInt($('wf-huddling').value)||0},
+plumageCondition:{},
+skinLesions:{s0:parseInt($('wf-skin0').value)||0,s1:parseInt($('wf-skin1').value)||0,s2:parseInt($('wf-skin2').value)||0},
+footPadDermatitis:{s0:parseInt($('wf-foot0').value)||0,s1:parseInt($('wf-foot1').value)||0,s2:parseInt($('wf-foot2').value)||0},
+toeDamage:{s0:parseInt($('wf-toe0').value)||0,s1:parseInt($('wf-toe1').value)||0},
+keelBoneDamage:{s0:parseInt($('wf-keel0').value)||0,s1:parseInt($('wf-keel1').value)||0,s2:parseInt($('wf-keel2').value)||0},
+beakTrimming:{trimmed:parseInt($('wf-btrim').value)||0,notTrimmed:parseInt($('wf-bnotrim').value)||0,quality:{s0:parseInt($('wf-bq0').value)||0,s1:parseInt($('wf-bq1').value)||0,s2:parseInt($('wf-bq2').value)||0}},
+combWounds:{s0:parseInt($('wf-comb0').value)||0,s1:parseInt($('wf-comb1').value)||0,s2:parseInt($('wf-comb2').value)||0},
+eyePathology:{s0:parseInt($('wf-eye0').value)||0,s1:parseInt($('wf-eye1').value)||0,s2:parseInt($('wf-eye2').value)||0},
+respiratoryProblems:{s0:parseInt($('wf-resp0').value)||0,s1:parseInt($('wf-resp1').value)||0},
+redMites:{dustSheetScore:parseInt($('wf-mites').value)||0},
+mortalityCulling:{mortalityPct:parseFloat($('wf-mort').value)||0,cullingPct:parseFloat($('wf-cull').value)||0},
+avoidanceDistanceTest:{distances:$('wf-adt').value.split(',').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n))},
+novelObjectTest:{hensApproaching:parseInt($('wf-not-app').value)||0,totalInArea:parseInt($('wf-not-tot').value)||0},
+qualitativeBehaviourAssessment:{},
+notes:$('wf-notes').value
+};
+// Plumage regions
+['neck','back','belly','wings','tail'].forEach(r=>{
+obj.plumageCondition[r]={s0:parseInt($('wf-plum-'+r+'-0').value)||0,s1:parseInt($('wf-plum-'+r+'-1').value)||0,s2:parseInt($('wf-plum-'+r+'-2').value)||0};
+});
+// QBA
+WQ_QBA_KEYS.forEach(k=>{obj.qualitativeBehaviourAssessment[k]=parseInt($('wf-qba-'+k).value)||0;});
+// ADT computed
+if(obj.avoidanceDistanceTest.distances.length){obj.avoidanceDistanceTest.avgDistance=Math.round(obj.avoidanceDistanceTest.distances.reduce((s,v)=>s+v,0)/obj.avoidanceDistanceTest.distances.length);}
+// NOT computed
+const notTot=obj.novelObjectTest.totalInArea||0;
+obj.novelObjectTest.percentApproaching=notTot>0?Math.round((obj.novelObjectTest.hensApproaching/notTot)*100):0;
+// Score
+scoreWelfareAssessment(obj);
+if(id){const i=D.welfareAssessments.findIndex(x=>x.id===id);if(i>=0){obj.id=id;D.welfareAssessments[i]=obj;}}
+else{obj.id=genId();D.welfareAssessments.push(obj);}
+saveData(D);logAudit(id?'edit':'create','welfare',`${obj.overallCategory} ${obj.overallScore}/100`);
+closeModal();toast(t('save'));renderWelfare();
+}
+async function deleteWelfareAssessment(id){
+if(!await showConfirm(t('wql_delete_confirm')))return;
+const D=loadData();D.welfareAssessments=D.welfareAssessments.filter(a=>a.id!==id);
+saveData(D);logAudit('delete','welfare',id);toast(t('delete'));renderWelfare();
+}
+// ============ WELFARE BODY CONDITION TAB ============
+function renderWelfareBodyTab(D){
+const assessments=(D.welfareAssessments||[]).sort((a,b)=>a.date.localeCompare(b.date));
+let h=`<div class="card"><div class="card-header"><h3>${t('wql_body_condition')}</h3></div>`;
+if(!assessments.length){h+=emptyState('🏋️',t('wql_no_assessments'));h+=`</div>`;return h;}
+h+=`<div style="max-width:600px;margin:16px auto"><canvas id="wf-bcs-chart"></canvas></div>`;
+h+=`<div class="table-responsive"><table class="table"><thead><tr><th>${t('date')}</th><th>${t('wql_flock')}</th><th>${t('wql_score_0')}</th><th>${t('wql_score_1')}</th><th>${t('wql_score_2')}</th></tr></thead><tbody>`;
+assessments.forEach(a=>{
+const f=D.flocks.find(x=>x.id===a.flockId);const bcs=a.bodyCondition&&a.bodyCondition.summary?a.bodyCondition.summary:{s0:0,s1:0,s2:0};
+const total=(bcs.s0||0)+(bcs.s1||0)+(bcs.s2||0)||1;
+h+=`<tr><td>${fmtDate(a.date)}</td><td>${f?sanitizeHTML(f.name):'—'}</td><td>${Math.round((bcs.s0/total)*100)}%</td><td>${Math.round((bcs.s1/total)*100)}%</td><td>${Math.round((bcs.s2/total)*100)}%</td></tr>`;
+});
+h+=`</tbody></table></div></div>`;
+setTimeout(()=>{
+const ctx=document.getElementById('wf-bcs-chart');if(!ctx)return;
+if(CHARTS['wf-bcs'])CHARTS['wf-bcs'].destroy();
+const labels=assessments.map(a=>fmtDate(a.date));
+const d0=assessments.map(a=>{const b=a.bodyCondition&&a.bodyCondition.summary?a.bodyCondition.summary:{};const t=(b.s0||0)+(b.s1||0)+(b.s2||0)||1;return Math.round(((b.s0||0)/t)*100);});
+const d1=assessments.map(a=>{const b=a.bodyCondition&&a.bodyCondition.summary?a.bodyCondition.summary:{};const t=(b.s0||0)+(b.s1||0)+(b.s2||0)||1;return Math.round(((b.s1||0)/t)*100);});
+const d2=assessments.map(a=>{const b=a.bodyCondition&&a.bodyCondition.summary?a.bodyCondition.summary:{};const t=(b.s0||0)+(b.s1||0)+(b.s2||0)||1;return Math.round(((b.s2||0)/t)*100);});
+CHARTS['wf-bcs']=new Chart(ctx,{type:'line',data:{labels,datasets:[
+{label:t('wql_score_0'),data:d0,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.1)',fill:true,tension:0.3},
+{label:t('wql_score_1'),data:d1,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,0.1)',fill:true,tension:0.3},
+{label:t('wql_score_2'),data:d2,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.1)',fill:true,tension:0.3}
+]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{min:0,max:100,title:{display:true,text:'%'}}}}});
+},100);
+return h;
+}
+// ============ WELFARE BEHAVIOR TAB ============
+function renderWelfareBehaviorTab(D){
+const assessments=(D.welfareAssessments||[]).sort((a,b)=>a.date.localeCompare(b.date));
+let h=`<div class="card"><div class="card-header"><h3>${t('wql_tab_behavior')}</h3></div>`;
+if(!assessments.length){h+=emptyState('🧠',t('wql_no_assessments'));h+=`</div>`;return h;}
+h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0">
+<div><h4>${t('wql_adt_title')}</h4><canvas id="wf-adt-chart"></canvas></div>
+<div><h4>${t('wql_qba_title')}</h4><canvas id="wf-qba-chart"></canvas></div></div></div>`;
+setTimeout(()=>{
+// ADT chart
+const adtCtx=document.getElementById('wf-adt-chart');if(adtCtx){
+if(CHARTS['wf-adt'])CHARTS['wf-adt'].destroy();
+const labels=assessments.map(a=>fmtDate(a.date));
+const data=assessments.map(a=>a.avoidanceDistanceTest?a.avoidanceDistanceTest.avgDistance||0:0);
+CHARTS['wf-adt']=new Chart(adtCtx,{type:'line',data:{labels,datasets:[{label:t('wql_adt_avg')+' (cm)',data,borderColor:themeRgba(1),backgroundColor:themeRgba(0.1),fill:true,tension:0.3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,title:{display:true,text:'cm'}}}}});}
+// QBA radar
+const qbaCtx=document.getElementById('wf-qba-chart');if(qbaCtx&&assessments.length){
+if(CHARTS['wf-qba'])CHARTS['wf-qba'].destroy();
+const latest=assessments[assessments.length-1];const qba=latest.qualitativeBehaviourAssessment||{};
+CHARTS['wf-qba']=new Chart(qbaCtx,{type:'radar',data:{labels:WQ_QBA_KEYS.map(k=>t('wql_qba_'+k)),datasets:[{label:fmtDate(latest.date),data:WQ_QBA_KEYS.map(k=>qba[k]||0),borderColor:themeRgba(1),backgroundColor:themeRgba(0.2),pointRadius:3}]},options:{responsive:true,scales:{r:{min:0,max:125,ticks:{stepSize:25}}},plugins:{legend:{position:'bottom'}}}});}
+},100);
+return h;
+}
+// ============ WELFARE RESULTS TAB ============
+function renderWelfareResultsTab(D){
+const assessments=(D.welfareAssessments||[]).sort((a,b)=>b.date.localeCompare(a.date));
+let h=`<div class="card"><div class="card-header"><h3>${t('wql_tab_results')}</h3></div>`;
+if(!assessments.length){h+=emptyState('📊',t('wql_no_assessments'));h+=`</div>`;return h;}
+const latest=assessments[0];
+h+=`<div style="text-align:center;padding:16px"><div style="font-size:2em;margin:8px 0">${wqCategoryBadge(latest.overallCategory)}</div>
+<div style="font-size:1.5em;font-weight:600">${latest.overallScore||0}/100</div>
+<div style="color:var(--text-secondary)">${fmtDate(latest.date)}</div></div>`;
+h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0">
+<div><h4>${t('wql_principles')}</h4><canvas id="wf-radar-chart"></canvas></div>
+<div><h4>${t('wql_criteria')}</h4><canvas id="wf-criteria-chart"></canvas></div></div>`;
+// Detail table
+if(latest.principleScores){
+h+=`<div class="table-responsive"><table class="table"><thead><tr><th>${t('wql_principles')}</th><th>${t('wql_overall_score')}</th></tr></thead><tbody>`;
+const pNames=['goodFeeding','goodHousing','goodHealth','appropriateBehaviour'];
+const pLabels=[t('wql_p1_title'),t('wql_p2_title'),t('wql_p3_title'),t('wql_p4_title')];
+pNames.forEach((p,i)=>{h+=`<tr><td>${pLabels[i]}</td><td>${latest.principleScores[p]||0}/100</td></tr>`;});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+setTimeout(()=>{
+// Radar
+const rCtx=document.getElementById('wf-radar-chart');if(rCtx&&latest.principleScores){
+if(CHARTS['wf-radar'])CHARTS['wf-radar'].destroy();
+const p=latest.principleScores;
+CHARTS['wf-radar']=new Chart(rCtx,{type:'radar',data:{labels:[t('wql_p1_title').replace(/Principio? \d+: ?/i,''),t('wql_p2_title').replace(/Principio? \d+: ?/i,''),t('wql_p3_title').replace(/Principio? \d+: ?/i,''),t('wql_p4_title').replace(/Principio? \d+: ?/i,'')],datasets:[{label:t('wql_overall_score'),data:[p.goodFeeding,p.goodHousing,p.goodHealth,p.appropriateBehaviour],borderColor:themeRgba(1),backgroundColor:themeRgba(0.2),pointRadius:4}]},options:{responsive:true,scales:{r:{min:0,max:100,ticks:{stepSize:20}}},plugins:{legend:{display:false}}}});}
+// Criteria bar
+const cCtx=document.getElementById('wf-criteria-chart');if(cCtx&&latest.criteriaScores){
+if(CHARTS['wf-criteria'])CHARTS['wf-criteria'].destroy();
+const cs=latest.criteriaScores;const cKeys=['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'];
+const colors=cKeys.map(k=>cs[k]>=60?'rgba(34,197,94,0.7)':cs[k]>=40?'rgba(245,158,11,0.7)':'rgba(239,68,68,0.7)');
+CHARTS['wf-criteria']=new Chart(cCtx,{type:'bar',data:{labels:cKeys.map(k=>t('wql_'+k)),datasets:[{label:t('wql_overall_score'),data:cKeys.map(k=>cs[k]||0),backgroundColor:colors}]},options:{responsive:true,indexAxis:'y',scales:{x:{min:0,max:100}},plugins:{legend:{display:false}}}});}
+},100);
+return h;
+}
+// ============ WELFARE HISTORY TAB ============
+function renderWelfareHistoryTab(D){
+const assessments=(D.welfareAssessments||[]).sort((a,b)=>b.date.localeCompare(a.date));
+let h=`<div class="card"><div class="card-header"><h3>${t('wql_tab_history')}</h3>
+<button class="btn btn-secondary" onclick="exportWelfareCSV()">📥 ${t('wql_export_csv')}</button></div>`;
+if(!assessments.length){h+=emptyState('📜',t('wql_no_assessments'));h+=`</div>`;return h;}
+h+=`<div style="max-width:600px;margin:16px auto"><canvas id="wf-trend-chart"></canvas></div>`;
+assessments.forEach(a=>{
+const f=D.flocks.find(x=>x.id===a.flockId);
+h+=`<div class="card" style="margin:8px 0;padding:12px;border-left:4px solid ${a.overallCategory==='excellent'?'#22c55e':a.overallCategory==='enhanced'?'#3b82f6':a.overallCategory==='acceptable'?'#f59e0b':'#ef4444'}">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><strong>${fmtDate(a.date)}</strong> — ${f?sanitizeHTML(f.name):'—'} — ${sanitizeHTML(a.assessor||'')}</div>
+<div>${wqCategoryBadge(a.overallCategory)} <strong>${a.overallScore||0}/100</strong></div>
+</div>
+<div style="display:flex;gap:16px;margin-top:8px;font-size:0.85em;color:var(--text-secondary)">
+${a.principleScores?`<span>P1:${a.principleScores.goodFeeding}</span><span>P2:${a.principleScores.goodHousing}</span><span>P3:${a.principleScores.goodHealth}</span><span>P4:${a.principleScores.appropriateBehaviour}</span>`:''}
+</div>
+<div style="margin-top:8px"><button class="btn btn-sm" onclick="showWelfareAssessmentForm('${escapeAttr(a.id)}')">${t('edit')}</button> <button class="btn btn-sm btn-danger" onclick="deleteWelfareAssessment('${escapeAttr(a.id)}')">${t('delete')}</button></div></div>`;
+});
+h+=`</div>`;
+setTimeout(()=>{
+const ctx=document.getElementById('wf-trend-chart');if(!ctx)return;
+if(CHARTS['wf-trend'])CHARTS['wf-trend'].destroy();
+const sorted=[...assessments].sort((a,b)=>a.date.localeCompare(b.date));
+CHARTS['wf-trend']=new Chart(ctx,{type:'line',data:{labels:sorted.map(a=>fmtDate(a.date)),datasets:[{label:t('wql_overall_score'),data:sorted.map(a=>a.overallScore||0),borderColor:themeRgba(1),backgroundColor:themeRgba(0.1),fill:true,tension:0.3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,title:{display:true,text:t('wql_overall_score')}}}}});
+},100);
+return h;
+}
+// ============ WELFARE CSV EXPORT ============
+function exportWelfareCSV(){
+const D=loadData();const assessments=D.welfareAssessments||[];if(!assessments.length)return;
+const headers=['Date','Flock','Assessor','P1_GoodFeeding','P2_GoodHousing','P3_GoodHealth','P4_AppropriateBehaviour','Category','OverallScore'];
+let csv=headers.join(',')+'\n';
+assessments.sort((a,b)=>b.date.localeCompare(a.date)).forEach(a=>{
+const f=D.flocks.find(x=>x.id===a.flockId);const p=a.principleScores||{};
+csv+=[a.date,f?f.name:'',a.assessor||'',p.goodFeeding||0,p.goodHousing||0,p.goodHealth||0,p.appropriateBehaviour||0,a.overallCategory||'',a.overallScore||0].join(',')+'\n';
+});
+const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+const link=document.createElement('a');link.href=url;link.download='welfare_assessments.csv';link.click();URL.revokeObjectURL(url);
+}
+
 // ============ EGG TRACEABILITY MODULE ============
 function renderTraceability(){
 const D=loadData();const batches=D.traceability.batches;
@@ -7085,7 +8151,7 @@ $('btn-vet')?.classList.toggle('active',D.settings.vetMode);
 document.querySelectorAll('#main-nav a').forEach(a=>{
 const s=a.dataset.section;
 if(D.settings.campoMode&&!['dashboard','produccion','lotes','alimento','ambiente'].includes(s)){a.classList.add('campo-hide');}
-else if(D.settings.vetMode&&!['dashboard','lotes','ambiente','sanidad','bioseguridad','trazabilidad'].includes(s)){a.classList.add('campo-hide');}
+else if(D.settings.vetMode&&!['dashboard','lotes','ambiente','sanidad','bioseguridad','bienestar','trazabilidad'].includes(s)){a.classList.add('campo-hide');}
 else{a.classList.remove('campo-hide');}
 });
 // Hide group labels + group containers whose modules are all hidden
@@ -7267,6 +8333,162 @@ const dates=[];const lastDate=new Date(last14[last14.length-1].date+'T12:00:00')
 for(let i=1;i<=days;i++){const d=new Date(lastDate);d.setDate(d.getDate()+i);dates.push(d.toISOString().substring(0,10));}
 const actualDates=last14.map(p=>p.date);
 return{dates,actual:values,actualDates,forecast:ensemble,upper,lower,wma:wmaForecast,lr:lrForecast};
+}
+
+// ============ HOLT-WINTERS TRIPLE EXPONENTIAL SMOOTHING ============
+function computeHoltWinters(values,period=7,days=7){
+if(!values||values.length<period*2)return{forecast:[],upper:[],lower:[]};
+const n=values.length;const alpha=0.3,beta=0.1,gamma=0.3;
+// Initialize level, trend, seasonal
+let level=0;for(let i=0;i<period;i++)level+=values[i];level/=period;
+let trend=0;for(let i=0;i<period;i++)trend+=(values[period+i]-values[i]);trend/=period*period;
+const seasonal=new Array(period);for(let i=0;i<period;i++)seasonal[i]=values[i]-level;
+// Fit
+const fitted=[];
+for(let i=0;i<n;i++){const si=i%period;
+const val=values[i];const prevLevel=level;
+level=alpha*(val-seasonal[si])+(1-alpha)*(level+trend);
+trend=beta*(level-prevLevel)+(1-beta)*trend;
+seasonal[si]=gamma*(val-prevLevel-trend)+(1-gamma)*seasonal[si];
+fitted.push(prevLevel+trend+seasonal[si]);}
+// RMSE for confidence bands
+let sse=0;for(let i=0;i<n;i++){const e=values[i]-fitted[i];sse+=e*e;}
+const rmse=Math.sqrt(sse/n);
+// Forecast
+const forecast=[],upper=[],lower=[];
+for(let i=1;i<=days;i++){const si=(n+i-1)%period;
+const f=level+i*trend+seasonal[si];
+forecast.push(Math.max(0,f));upper.push(Math.max(0,f+1.96*rmse));lower.push(Math.max(0,f-1.96*rmse));}
+return{forecast,upper,lower};
+}
+
+// ============ CUSUM CHANGE-POINT DETECTION ============
+function computeCUSUM(values,threshold=4,drift=0.5){
+if(!values||values.length<7)return[];
+const mean=ss.mean(values);const std=ss.standardDeviation(values);
+if(std===0)return[];
+const changes=[];let SH=0,SL=0;
+for(let i=0;i<values.length;i++){
+const z=(values[i]-mean)/std;
+SH=Math.max(0,SH+z-drift);SL=Math.min(0,SL+z+drift);
+if(SH>threshold){changes.push({index:i,type:'increase',magnitude:+(SH).toFixed(2)});SH=0;}
+if(SL<-threshold){changes.push({index:i,type:'decrease',magnitude:+(Math.abs(SL)).toFixed(2)});SL=0;}}
+return changes;
+}
+
+// ============ FEED CONVERSION OPTIMIZATION ============
+function computeFeedOptimization(D){
+const hens=activeHens();if(hens<1)return{currentFCR:null,optimalFCR:null,optimalKgDay:null,savingsPercent:null,rSquared:null,feedPerHen:null};
+const d60=new Date();d60.setDate(d60.getDate()-60);const cutoff=d60.toISOString().substring(0,10);
+const prodByDate={};D.dailyProduction.filter(p=>p.date>=cutoff).forEach(p=>{
+if(!prodByDate[p.date])prodByDate[p.date]={eggs:0,feed:0};prodByDate[p.date].eggs+=(p.eggsCollected||0);});
+D.feedConsumption.filter(f=>f.date>=cutoff).forEach(f=>{
+if(!prodByDate[f.date])prodByDate[f.date]={eggs:0,feed:0};prodByDate[f.date].feed+=(f.quantityKg||0)*1000;});
+const pairs=Object.values(prodByDate).filter(d=>d.feed>0&&d.eggs>0);
+if(pairs.length<10)return{currentFCR:null,optimalFCR:null,optimalKgDay:null,savingsPercent:null,rSquared:null,feedPerHen:null};
+const points=pairs.map(d=>[d.feed,d.eggs]);
+const reg=ss.linearRegression(points);const line=ss.linearRegressionLine(reg);
+const totalFeed=pairs.reduce((s,d)=>s+d.feed,0);const totalEggs=pairs.reduce((s,d)=>s+d.eggs,0);
+const currentFCR=totalFeed/totalEggs;const feedPerHen=totalFeed/(pairs.length*hens);
+// Optimal: find feed/hen in 100-130g range that maximizes eggs/feed
+let bestFCR=currentFCR,bestFPH=feedPerHen;
+for(let g=100;g<=130;g+=1){const tf=g*hens;const pe=line(tf);if(pe>0){const fcr=tf/pe;if(fcr<bestFCR){bestFCR=fcr;bestFPH=g;}}}
+const optKg=bestFPH*hens/1000;
+// R² approximation
+const meanY=ss.mean(pairs.map(d=>d.eggs));
+const ssTot=pairs.reduce((s,d)=>s+Math.pow(d.eggs-meanY,2),0);
+const ssRes=pairs.reduce((s,d)=>s+Math.pow(d.eggs-line(d.feed),2),0);
+const r2=ssTot>0?1-(ssRes/ssTot):0;
+const savings=currentFCR>0?((currentFCR-bestFCR)/currentFCR*100):0;
+return{currentFCR:+currentFCR.toFixed(3),optimalFCR:+bestFCR.toFixed(3),optimalKgDay:+optKg.toFixed(2),
+savingsPercent:+Math.max(0,savings).toFixed(1),rSquared:+Math.max(0,r2).toFixed(3),feedPerHen:+feedPerHen.toFixed(1)};
+}
+
+// ============ MULTI-VARIABLE ANOMALY SCORE ============
+function computeAnomalyScore(D){
+const d30=new Date();d30.setDate(d30.getDate()-30);const cutoff=d30.toISOString().substring(0,10);
+const prod=D.dailyProduction.filter(p=>p.date>=cutoff).sort((a,b)=>a.date.localeCompare(b.date));
+if(prod.length<7)return{score:0,breakdown:{eggs:0,mortality:0,fcr:0,thi:0},alert:false};
+const hens=activeHens()||1;
+const eggVals=prod.map(p=>(p.eggsCollected||0)/hens*100);
+const mortVals=prod.map(p=>(p.mortality||0)/hens*100);
+// FCR from feed
+const feedByDate={};D.feedConsumption.filter(f=>f.date>=cutoff).forEach(f=>{
+feedByDate[f.date]=(feedByDate[f.date]||0)+(f.quantityKg||0);});
+const fcrVals=prod.map(p=>{const f=feedByDate[p.date];const e=p.eggsCollected||0;return f&&e>0?(f*1000/e):0;}).filter(v=>v>0);
+// THI
+const envByDate={};D.environment.filter(e=>e.date>=cutoff).forEach(e=>{envByDate[e.date]=e;});
+const thiVals=prod.map(p=>{const e=envByDate[p.date];return e&&e.temperature!=null&&e.humidity!=null?calcTHI(e.temperature,e.humidity):null;}).filter(v=>v!==null);
+// Z-scores (last 7 vs baseline)
+function zLast(vals){if(vals.length<7)return 0;const recent=vals.slice(-7);const baseline=vals.slice(0,-7);
+if(baseline.length<3)return 0;const m=ss.mean(baseline);const s=ss.standardDeviation(baseline);
+return s>0?Math.abs(ss.mean(recent)-m)/s:0;}
+const zEggs=zLast(eggVals);const zMort=zLast(mortVals);const zFcr=zLast(fcrVals);const zThi=zLast(thiVals);
+// Weighted composite (inverted eggs: lower eggs = higher anomaly)
+const score=Math.min(100,Math.round((zEggs*0.35+zMort*0.30+zFcr*0.20+zThi*0.15)*20));
+return{score,breakdown:{eggs:+zEggs.toFixed(2),mortality:+zMort.toFixed(2),fcr:+zFcr.toFixed(2),thi:+zThi.toFixed(2)},
+alert:score>50};
+}
+
+// ============ PRODUCTION LIFECYCLE PREDICTOR ============
+function computeLifecyclePredictor(D,flock){
+const age=flockAge(flock);const wk=age.weeks;
+const bkey=flock.breed&&BREED_CURVES[flock.breed]?flock.breed:(flock.targetCurve&&BREED_CURVES[flock.targetCurve]?flock.targetCurve:'generic');
+const curve=BREED_CURVES[bkey];
+if(!curve||wk<18)return{currentWeek:wk,peakWeek:null,currentHD:null,expectedHD:null,persistence:null,cullWeek:null,weeksLeft:null,projectedEggs:null};
+const idx=Math.min(wk-18,curve.length-1);const currentHD=curve[idx];
+// Peak
+let peakWk=18,peakHD=0;for(let i=0;i<curve.length;i++){if(curve[i]>peakHD){peakHD=curve[i];peakWk=18+i;}}
+// Persistence: weeks above 80%
+let persistence=0;for(let i=0;i<curve.length;i++){if(curve[i]>=80)persistence++;}
+// Cull week: first week below 45% after current position
+let cullWeek=null;for(let i=Math.max(0,idx);i<curve.length;i++){if(curve[i]<45){cullWeek=18+i;break;}}
+if(!cullWeek)cullWeek=18+curve.length;
+const weeksLeft=Math.max(0,cullWeek-wk);
+// Projected remaining eggs
+const hens=flock.currentBirds||activeHensByFlock(flock.id);
+let projEggs=0;for(let i=Math.max(0,idx);i<curve.length;i++){if(curve[i]>=45)projEggs+=hens*curve[i]/100*7;else break;}
+const expectedHD=idx+1<curve.length?curve[idx+1]:null;
+return{currentWeek:wk,peakWeek:peakWk,currentHD:+currentHD.toFixed(1),expectedHD,persistence,cullWeek,weeksLeft,projectedEggs:Math.round(projEggs)};
+}
+
+// ============ FORECAST ACCURACY COMPARISON ============
+function computeForecastAccuracy(D,days=7){
+const sorted=[...D.dailyProduction].sort((a,b)=>a.date.localeCompare(b.date));
+if(sorted.length<days+14)return{wma:{mape:null,rmse:null},hw:{mape:null,rmse:null},best:null};
+// Aggregate by date
+const byDate={};sorted.forEach(p=>{byDate[p.date]=(byDate[p.date]||0)+(p.eggsCollected||0);});
+const dates=Object.keys(byDate).sort();const vals=dates.map(d=>byDate[d]);
+if(vals.length<days+14)return{wma:{mape:null,rmse:null},hw:{mape:null,rmse:null},best:null};
+const train=vals.slice(0,vals.length-days);const test=vals.slice(-days);
+// WMA+LR forecast on training data
+const wmaW=train.slice(-14).map((_,i)=>Math.exp(i*0.2));const wmaS=wmaW.reduce((a,b)=>a+b,0);
+const wmaBase=train.slice(-14).reduce((s,v,i)=>s+v*wmaW[i],0)/wmaS;
+const pts=train.slice(-14).map((v,i)=>[i,v]);const reg=ss.linearRegression(pts);const ln=ss.linearRegressionLine(reg);
+const wmaFC=[];for(let i=0;i<days;i++)wmaFC.push(Math.max(0,(wmaBase+ln(14+i))/2));
+// Holt-Winters on training data
+const hw=computeHoltWinters(train,7,days);const hwFC=hw.forecast;
+// MAPE + RMSE
+function mape(actual,pred){if(!pred.length)return null;let s=0,c=0;actual.forEach((a,i)=>{if(a>0&&i<pred.length){s+=Math.abs((a-pred[i])/a);c++;}});return c>0?+(s/c*100).toFixed(2):null;}
+function rmse(actual,pred){if(!pred.length)return null;let s=0,c=0;actual.forEach((a,i)=>{if(i<pred.length){s+=Math.pow(a-pred[i],2);c++;}});return c>0?+Math.sqrt(s/c).toFixed(0):null;}
+const wM=mape(test,wmaFC),wR=rmse(test,wmaFC);
+const hM=mape(test,hwFC),hR=rmse(test,hwFC);
+let best=null;if(wM!==null&&hM!==null)best=wM<=hM?'wma':'hw';else if(hM!==null)best='hw';else if(wM!==null)best='wma';
+return{wma:{mape:wM,rmse:wR},hw:{mape:hM,rmse:hR},best};
+}
+
+// ============ BEST FORECAST SELECTOR ============
+function computeBestForecast(D,days=7){
+const acc=computeForecastAccuracy(D,days);
+const base=computeForecast(D,days);
+if(acc.best==='hw'){
+const sorted=[...D.dailyProduction].sort((a,b)=>a.date.localeCompare(b.date));
+const byDate={};sorted.forEach(p=>{byDate[p.date]=(byDate[p.date]||0)+(p.eggsCollected||0);});
+const vals=Object.keys(byDate).sort().map(d=>byDate[d]);
+const hw=computeHoltWinters(vals,7,days);
+if(hw.forecast.length){return{dates:base.dates,actual:base.actual,actualDates:base.actualDates,forecast:hw.forecast,upper:hw.upper,lower:hw.lower,method:'hw',accuracy:acc};}
+}
+return{...base,method:'wma',accuracy:acc};
 }
 
 // ============ RECOMMENDATION ENGINE ============
