@@ -34,9 +34,14 @@ async def list_vaccines(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(Vaccine).where(Vaccine.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(Vaccine)
+        .where(Vaccine.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -118,9 +123,14 @@ async def list_medications(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(Medication).where(Medication.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(Medication)
+        .where(Medication.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -202,9 +212,14 @@ async def list_outbreaks(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(Outbreak).where(Outbreak.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(Outbreak)
+        .where(Outbreak.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -286,9 +301,14 @@ async def list_stress_events(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(StressEvent).where(StressEvent.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(StressEvent)
+        .where(StressEvent.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 

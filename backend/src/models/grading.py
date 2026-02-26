@@ -3,9 +3,7 @@ import uuid
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import (
-    String, Float, Integer, Date, ForeignKey, Text
-)
+from sqlalchemy import String, Float, Integer, Date, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base

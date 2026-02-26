@@ -29,13 +29,18 @@ from src.models.support import (  # noqa: F401
 from src.models.lead import Lead  # noqa: F401
 
 from src.models.inventory import (  # noqa: F401
-    WarehouseLocation, EggStock, StockMovement, PackagingMaterial,
+    WarehouseLocation,
+    EggStock,
+    StockMovement,
+    PackagingMaterial,
 )
 from src.models.grading import GradingSession  # noqa: F401
 from src.models.purchase_order import Supplier, PurchaseOrder, PurchaseOrderItem  # noqa: F401
 from src.models.audit import AuditLog  # noqa: F401
 from src.models.compliance import (  # noqa: F401
-    ComplianceCertification, ComplianceInspection, SalmonellaTest,
+    ComplianceCertification,
+    ComplianceInspection,
+    SalmonellaTest,
 )
 from src.models.cost_center import CostCenter, CostAllocation, ProfitLossSnapshot  # noqa: F401
 from src.models.market_intelligence import MarketIntelligence, PriceTrend  # noqa: F401

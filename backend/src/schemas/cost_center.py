@@ -15,6 +15,7 @@ class CostCenterCreate(BaseModel):
     budget_monthly: Optional[float] = None
     notes: Optional[str] = None
 
+
 class CostCenterUpdate(BaseModel):
     name: Optional[str] = None
     code: Optional[str] = None
@@ -25,6 +26,7 @@ class CostCenterUpdate(BaseModel):
     is_active: Optional[bool] = None
     budget_monthly: Optional[float] = None
     notes: Optional[str] = None
+
 
 class CostCenterRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -39,6 +41,7 @@ class CostCenterRead(BaseModel):
     budget_monthly: Optional[float]
     notes: Optional[str]
 
+
 # ── Cost Allocation ──
 class CostAllocationCreate(BaseModel):
     cost_center_id: uuid.UUID
@@ -52,6 +55,7 @@ class CostAllocationCreate(BaseModel):
     source_po_id: Optional[uuid.UUID] = None
     notes: Optional[str] = None
 
+
 class CostAllocationUpdate(BaseModel):
     category: Optional[str] = None
     description: Optional[str] = None
@@ -59,6 +63,7 @@ class CostAllocationUpdate(BaseModel):
     allocation_method: Optional[str] = None
     allocation_pct: Optional[float] = None
     notes: Optional[str] = None
+
 
 class CostAllocationRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -74,6 +79,7 @@ class CostAllocationRead(BaseModel):
     source_po_id: Optional[uuid.UUID]
     notes: Optional[str]
 
+
 # ── P&L Snapshot ──
 class ProfitLossSnapshotCreate(BaseModel):
     cost_center_id: uuid.UUID
@@ -84,6 +90,7 @@ class ProfitLossSnapshotCreate(BaseModel):
     eggs_produced: Optional[int] = None
     eggs_sold: Optional[int] = None
     notes: Optional[str] = None
+
 
 class ProfitLossSnapshotRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)

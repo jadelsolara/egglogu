@@ -35,9 +35,7 @@ def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
 
 
-def create_access_token(
-    user_id: uuid.UUID, org_id: uuid.UUID | None, role: str
-) -> str:
+def create_access_token(user_id: uuid.UUID, org_id: uuid.UUID | None, role: str) -> str:
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
     )

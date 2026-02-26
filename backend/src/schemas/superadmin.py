@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 
 # ── Market Intelligence ──────────────────────────────────────────
 
+
 class MarketIntelligenceCreate(BaseModel):
     report_date: date
     region: str = Field(..., min_length=1, max_length=100)
@@ -49,6 +50,7 @@ class MarketSummary(BaseModel):
 
 # ── Global Inventory ─────────────────────────────────────────────
 
+
 class GlobalInventoryItem(BaseModel):
     organization_id: uuid.UUID
     organization_name: str
@@ -59,6 +61,7 @@ class GlobalInventoryItem(BaseModel):
 
 
 # ── Organizations ────────────────────────────────────────────────
+
 
 class OrganizationOverview(BaseModel):
     id: uuid.UUID
@@ -92,6 +95,7 @@ class OrganizationPatch(BaseModel):
 
 # ── Users ────────────────────────────────────────────────────────
 
+
 class UserOverview(BaseModel):
     id: uuid.UUID
     email: str
@@ -109,6 +113,7 @@ class UserOverview(BaseModel):
 
 # ── Churn Analysis ───────────────────────────────────────────────
 
+
 class ChurnDataPoint(BaseModel):
     month: str
     churned: int
@@ -124,6 +129,7 @@ class ChurnAnalysis(BaseModel):
 
 
 # ── Platform Stats ───────────────────────────────────────────────
+
 
 class PlatformStats(BaseModel):
     total_organizations: int = 0
@@ -150,6 +156,7 @@ class PlatformStats(BaseModel):
 
 
 # ── Tickets (cross-tenant) ───────────────────────────────────────
+
 
 class TicketOverview(BaseModel):
     id: uuid.UUID

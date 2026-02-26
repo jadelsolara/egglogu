@@ -14,6 +14,7 @@ class CertificationCreate(BaseModel):
     notes: Optional[str] = None
     document_ref: Optional[str] = None
 
+
 class CertificationUpdate(BaseModel):
     name: Optional[str] = None
     certificate_number: Optional[str] = None
@@ -21,6 +22,7 @@ class CertificationUpdate(BaseModel):
     status: Optional[str] = None
     notes: Optional[str] = None
     document_ref: Optional[str] = None
+
 
 class CertificationRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -35,12 +37,14 @@ class CertificationRead(BaseModel):
     notes: Optional[str]
     document_ref: Optional[str]
 
+
 class InspectionCreate(BaseModel):
     framework: str
     inspection_type: str
     scheduled_date: date
     inspector_name: Optional[str] = None
     notes: Optional[str] = None
+
 
 class InspectionUpdate(BaseModel):
     status: Optional[str] = None
@@ -50,6 +54,7 @@ class InspectionUpdate(BaseModel):
     score: Optional[str] = None
     next_inspection: Optional[date] = None
     notes: Optional[str] = None
+
 
 class InspectionRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -66,6 +71,7 @@ class InspectionRead(BaseModel):
     next_inspection: Optional[date]
     notes: Optional[str]
 
+
 class SalmonellaTestCreate(BaseModel):
     flock_id: uuid.UUID
     sample_date: date
@@ -73,11 +79,13 @@ class SalmonellaTestCreate(BaseModel):
     sample_type: str = "environment"
     notes: Optional[str] = None
 
+
 class SalmonellaTestUpdate(BaseModel):
     result: Optional[str] = None
     result_date: Optional[date] = None
     serotype: Optional[str] = None
     notes: Optional[str] = None
+
 
 class SalmonellaTestRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)

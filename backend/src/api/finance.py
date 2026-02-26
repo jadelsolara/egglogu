@@ -31,9 +31,14 @@ async def list_income(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(Income).where(Income.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(Income)
+        .where(Income.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -113,9 +118,14 @@ async def list_expenses(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(Expense).where(Expense.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(Expense)
+        .where(Expense.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -197,9 +207,14 @@ async def list_receivables(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(Receivable).where(Receivable.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(Receivable)
+        .where(Receivable.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 

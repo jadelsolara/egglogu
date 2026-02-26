@@ -94,7 +94,10 @@ async def sync_data(
 
     logger.info(
         "Sync request from user=%s org=%s entities=%d last_synced=%s",
-        user.id, user.organization_id, len(payload.data), payload.last_synced_at,
+        user.id,
+        user.organization_id,
+        len(payload.data),
+        payload.last_synced_at,
     )
 
     # ── Phase 1: Upsert client changes ──
@@ -170,7 +173,9 @@ async def sync_data(
 
     logger.info(
         "Sync complete: synced=%d conflicts=%d changes_returned=%d",
-        synced, len(conflicts), sum(len(v) for v in server_changes.values()),
+        synced,
+        len(conflicts),
+        sum(len(v) for v in server_changes.values()),
     )
 
     return SyncResponse(

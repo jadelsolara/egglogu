@@ -525,7 +525,9 @@ async def change_password(
     db: AsyncSession = Depends(get_db),
 ):
     if not user.hashed_password:
-        raise ConflictError("Account uses social login. Set a password via forgot-password first.")
+        raise ConflictError(
+            "Account uses social login. Set a password via forgot-password first."
+        )
     if not verify_password(data.current_password, user.hashed_password):
         raise UnauthorizedError("Current password is incorrect")
     try:

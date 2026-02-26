@@ -22,6 +22,7 @@ class GradingSessionCreate(BaseModel):
     machine_id: Optional[str] = None
     notes: Optional[str] = None
 
+
 class GradingSessionUpdate(BaseModel):
     total_graded: Optional[int] = None
     grade_aa: Optional[int] = None
@@ -37,6 +38,7 @@ class GradingSessionUpdate(BaseModel):
     grader_id: Optional[str] = None
     machine_id: Optional[str] = None
     notes: Optional[str] = None
+
 
 class GradingSessionRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)

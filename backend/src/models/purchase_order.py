@@ -3,10 +3,7 @@ import uuid
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import (
-    String, Float, Integer, Date, Enum,
-    ForeignKey, Text, Boolean
-)
+from sqlalchemy import String, Float, Integer, Date, Enum, ForeignKey, Text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
@@ -48,7 +45,9 @@ class Supplier(TimestampMixin, TenantMixin, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
-    purchase_orders: Mapped[list["PurchaseOrder"]] = relationship(back_populates="supplier")
+    purchase_orders: Mapped[list["PurchaseOrder"]] = relationship(
+        back_populates="supplier"
+    )
 
 
 class PurchaseOrder(TimestampMixin, TenantMixin, Base):
@@ -60,7 +59,9 @@ class PurchaseOrder(TimestampMixin, TenantMixin, Base):
         ForeignKey("suppliers.id", ondelete="CASCADE"), index=True
     )
     status: Mapped[POStatus] = mapped_column(Enum(POStatus), default=POStatus.draft)
-    category: Mapped[POCategory] = mapped_column(Enum(POCategory), default=POCategory.other)
+    category: Mapped[POCategory] = mapped_column(
+        Enum(POCategory), default=POCategory.other
+    )
     order_date: Mapped[date] = mapped_column(Date)
     expected_delivery: Mapped[Optional[date]] = mapped_column(Date, default=None)
     actual_delivery: Mapped[Optional[date]] = mapped_column(Date, default=None)

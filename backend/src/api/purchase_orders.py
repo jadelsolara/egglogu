@@ -10,20 +10,24 @@ from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.purchase_order import (
-    Supplier, PurchaseOrder, PurchaseOrderItem,
+    Supplier,
+    PurchaseOrder,
+    PurchaseOrderItem,
 )
 from src.schemas.purchase_order import (
-    SupplierCreate, SupplierUpdate, SupplierRead,
-    PurchaseOrderCreate, PurchaseOrderUpdate, PurchaseOrderRead,
+    SupplierCreate,
+    SupplierUpdate,
+    SupplierRead,
+    PurchaseOrderCreate,
+    PurchaseOrderUpdate,
+    PurchaseOrderRead,
 )
 
 router = APIRouter(prefix="/procurement", tags=["procurement"])
 
 
 async def _generate_po_number(db: AsyncSession) -> str:
-    result = await db.execute(
-        select(func.count()).select_from(PurchaseOrder)
-    )
+    result = await db.execute(select(func.count()).select_from(PurchaseOrder))
     seq = (result.scalar() or 0) + 1
     return f"PO-{seq:06d}"
 
@@ -45,7 +49,10 @@ async def list_suppliers(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/suppliers", response_model=SupplierRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/suppliers", response_model=SupplierRead, status_code=status.HTTP_201_CREATED
+)
 async def create_supplier(
     data: SupplierCreate,
     db: AsyncSession = Depends(get_db),
@@ -55,6 +62,7 @@ async def create_supplier(
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.put("/suppliers/{supplier_id}", response_model=SupplierRead)
 async def update_supplier(
@@ -77,6 +85,7 @@ async def update_supplier(
     await db.flush()
     return obj
 
+
 # ── Purchase Orders ──
 @router.get("/orders", response_model=list[PurchaseOrderRead])
 async def list_orders(
@@ -98,7 +107,10 @@ async def list_orders(
     result = await db.execute(stmt)
     return result.scalars().unique().all()
 
-@router.post("/orders", response_model=PurchaseOrderRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/orders", response_model=PurchaseOrderRead, status_code=status.HTTP_201_CREATED
+)
 async def create_order(
     data: PurchaseOrderCreate,
     db: AsyncSession = Depends(get_db),
@@ -143,6 +155,7 @@ async def create_order(
         .where(PurchaseOrder.id == po.id)
     )
     return result.scalar_one()
+
 
 @router.put("/orders/{order_id}", response_model=PurchaseOrderRead)
 async def update_order(

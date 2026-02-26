@@ -61,7 +61,9 @@ def main():
     parser = argparse.ArgumentParser(description="Create EGGlogU superadmin user")
     parser.add_argument("--email", required=True, help="Superadmin email")
     parser.add_argument("--name", required=True, help="Full name")
-    parser.add_argument("--password", default=None, help="Password (or enter via stdin)")
+    parser.add_argument(
+        "--password", default=None, help="Password (or enter via stdin)"
+    )
     args = parser.parse_args()
 
     password = args.password

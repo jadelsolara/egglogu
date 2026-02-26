@@ -19,9 +19,14 @@ async def list_clients(
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user)
+    user: User = Depends(get_current_user),
 ):
-    stmt = select(Client).where(Client.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(Client)
+        .where(Client.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 

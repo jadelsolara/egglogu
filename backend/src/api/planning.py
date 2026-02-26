@@ -25,7 +25,12 @@ async def list_plans(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("planning")),
 ):
-    stmt = select(ProductionPlan).where(ProductionPlan.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(ProductionPlan)
+        .where(ProductionPlan.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 

@@ -9,15 +9,24 @@ from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.compliance import (
-    ComplianceCertification, ComplianceInspection, SalmonellaTest,
+    ComplianceCertification,
+    ComplianceInspection,
+    SalmonellaTest,
 )
 from src.schemas.compliance import (
-    CertificationCreate, CertificationUpdate, CertificationRead,
-    InspectionCreate, InspectionUpdate, InspectionRead,
-    SalmonellaTestCreate, SalmonellaTestUpdate, SalmonellaTestRead,
+    CertificationCreate,
+    CertificationUpdate,
+    CertificationRead,
+    InspectionCreate,
+    InspectionUpdate,
+    InspectionRead,
+    SalmonellaTestCreate,
+    SalmonellaTestUpdate,
+    SalmonellaTestRead,
 )
 
 router = APIRouter(prefix="/compliance", tags=["compliance"])
+
 
 # ── Certifications ──
 @router.get("/certifications", response_model=list[CertificationRead])
@@ -36,16 +45,24 @@ async def list_certifications(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/certifications", response_model=CertificationRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/certifications",
+    response_model=CertificationRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_certification(
     data: CertificationCreate,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = ComplianceCertification(**data.model_dump(), organization_id=user.organization_id)
+    obj = ComplianceCertification(
+        **data.model_dump(), organization_id=user.organization_id
+    )
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.put("/certifications/{cert_id}", response_model=CertificationRead)
 async def update_certification(
@@ -68,6 +85,7 @@ async def update_certification(
     await db.flush()
     return obj
 
+
 # ── Inspections ──
 @router.get("/inspections", response_model=list[InspectionRead])
 async def list_inspections(
@@ -86,16 +104,22 @@ async def list_inspections(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/inspections", response_model=InspectionRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/inspections", response_model=InspectionRead, status_code=status.HTTP_201_CREATED
+)
 async def create_inspection(
     data: InspectionCreate,
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = ComplianceInspection(**data.model_dump(), organization_id=user.organization_id)
+    obj = ComplianceInspection(
+        **data.model_dump(), organization_id=user.organization_id
+    )
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.put("/inspections/{insp_id}", response_model=InspectionRead)
 async def update_inspection(
@@ -118,6 +142,7 @@ async def update_inspection(
     await db.flush()
     return obj
 
+
 # ── Salmonella Tests ──
 @router.get("/salmonella", response_model=list[SalmonellaTestRead])
 async def list_salmonella_tests(
@@ -136,7 +161,12 @@ async def list_salmonella_tests(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/salmonella", response_model=SalmonellaTestRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/salmonella",
+    response_model=SalmonellaTestRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_salmonella_test(
     data: SalmonellaTestCreate,
     db: AsyncSession = Depends(get_db),
@@ -146,6 +176,7 @@ async def create_salmonella_test(
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.put("/salmonella/{test_id}", response_model=SalmonellaTestRead)
 async def update_salmonella_test(

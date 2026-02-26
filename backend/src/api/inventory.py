@@ -9,16 +9,27 @@ from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.inventory import (
-    WarehouseLocation, EggStock, StockMovement, PackagingMaterial,
+    WarehouseLocation,
+    EggStock,
+    StockMovement,
+    PackagingMaterial,
 )
 from src.schemas.inventory import (
-    WarehouseLocationCreate, WarehouseLocationUpdate, WarehouseLocationRead,
-    EggStockCreate, EggStockUpdate, EggStockRead,
-    StockMovementCreate, StockMovementRead,
-    PackagingMaterialCreate, PackagingMaterialUpdate, PackagingMaterialRead,
+    WarehouseLocationCreate,
+    WarehouseLocationUpdate,
+    WarehouseLocationRead,
+    EggStockCreate,
+    EggStockUpdate,
+    EggStockRead,
+    StockMovementCreate,
+    StockMovementRead,
+    PackagingMaterialCreate,
+    PackagingMaterialUpdate,
+    PackagingMaterialRead,
 )
 
 router = APIRouter(prefix="/inventory", tags=["inventory"])
+
 
 # ── Warehouse Locations ──
 @router.get("/locations", response_model=list[WarehouseLocationRead])
@@ -37,7 +48,12 @@ async def list_locations(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/locations", response_model=WarehouseLocationRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/locations",
+    response_model=WarehouseLocationRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_location(
     data: WarehouseLocationCreate,
     db: AsyncSession = Depends(get_db),
@@ -47,6 +63,7 @@ async def create_location(
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.put("/locations/{location_id}", response_model=WarehouseLocationRead)
 async def update_location(
@@ -69,6 +86,7 @@ async def update_location(
     await db.flush()
     return obj
 
+
 # ── Egg Stock ──
 @router.get("/stock", response_model=list[EggStockRead])
 async def list_stock(
@@ -86,6 +104,7 @@ async def list_stock(
     result = await db.execute(stmt)
     return result.scalars().all()
 
+
 @router.post("/stock", response_model=EggStockRead, status_code=status.HTTP_201_CREATED)
 async def create_stock(
     data: EggStockCreate,
@@ -96,6 +115,7 @@ async def create_stock(
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.put("/stock/{stock_id}", response_model=EggStockRead)
 async def update_stock(
@@ -118,6 +138,7 @@ async def update_stock(
     await db.flush()
     return obj
 
+
 # ── Stock Movements ──
 @router.get("/movements", response_model=list[StockMovementRead])
 async def list_movements(
@@ -136,7 +157,10 @@ async def list_movements(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/movements", response_model=StockMovementRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/movements", response_model=StockMovementRead, status_code=status.HTTP_201_CREATED
+)
 async def create_movement(
     data: StockMovementCreate,
     db: AsyncSession = Depends(get_db),
@@ -158,6 +182,7 @@ async def create_movement(
     await db.flush()
     return obj
 
+
 # ── Packaging Materials ──
 @router.get("/packaging", response_model=list[PackagingMaterialRead])
 async def list_packaging(
@@ -175,7 +200,12 @@ async def list_packaging(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/packaging", response_model=PackagingMaterialRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/packaging",
+    response_model=PackagingMaterialRead,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_packaging(
     data: PackagingMaterialCreate,
     db: AsyncSession = Depends(get_db),
@@ -185,6 +215,7 @@ async def create_packaging(
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.put("/packaging/{item_id}", response_model=PackagingMaterialRead)
 async def update_packaging(

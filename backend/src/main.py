@@ -19,12 +19,15 @@ from src.config import settings
 if settings.SENTRY_DSN:
     from sentry_sdk.integrations.fastapi import FastApiIntegration
     from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+
     sentry_sdk.init(
         dsn=settings.SENTRY_DSN,
         integrations=[FastApiIntegration(), SqlalchemyIntegration()],
         traces_sample_rate=0.05,
         profiles_sample_rate=0.05,
-        environment="production" if "egglogu.com" in settings.FRONTEND_URL else "development",
+        environment="production"
+        if "egglogu.com" in settings.FRONTEND_URL
+        else "development",
         send_default_pii=False,
     )
 from src.core.rate_limit import init_redis, close_redis

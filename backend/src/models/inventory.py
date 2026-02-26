@@ -3,10 +3,7 @@ import uuid
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import (
-    String, Float, Integer, Date, Enum,
-    ForeignKey, Text, Boolean
-)
+from sqlalchemy import String, Float, Integer, Date, Enum, ForeignKey, Text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
@@ -54,7 +51,8 @@ class EggStock(TimestampMixin, TenantMixin, Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     location_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("warehouse_locations.id", ondelete="SET NULL"),
-        index=True, default=None
+        index=True,
+        default=None,
     )
     flock_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("flocks.id", ondelete="SET NULL"), index=True, default=None
@@ -65,7 +63,9 @@ class EggStock(TimestampMixin, TenantMixin, Base):
     quality_grade: Mapped[Optional[str]] = mapped_column(String(10), default=None)
     quantity: Mapped[int] = mapped_column(Integer, default=0)
     packaging: Mapped[Optional[str]] = mapped_column(String(50), default=None)
-    batch_code: Mapped[Optional[str]] = mapped_column(String(100), index=True, default=None)
+    batch_code: Mapped[Optional[str]] = mapped_column(
+        String(100), index=True, default=None
+    )
     best_before: Mapped[Optional[date]] = mapped_column(Date, default=None)
     unit_cost: Mapped[Optional[float]] = mapped_column(Float, default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
@@ -82,9 +82,7 @@ class StockMovement(TimestampMixin, TenantMixin, Base):
     stock_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("egg_stock.id", ondelete="SET NULL"), index=True, default=None
     )
-    movement_type: Mapped[StockMovementType] = mapped_column(
-        Enum(StockMovementType)
-    )
+    movement_type: Mapped[StockMovementType] = mapped_column(Enum(StockMovementType))
     quantity: Mapped[int] = mapped_column(Integer)
     date: Mapped[date] = mapped_column(Date, index=True)
     reference: Mapped[Optional[str]] = mapped_column(String(200), default=None)

@@ -16,6 +16,7 @@ class SupplierCreate(BaseModel):
     payment_terms_days: int = 30
     notes: Optional[str] = None
 
+
 class SupplierUpdate(BaseModel):
     name: Optional[str] = None
     contact_name: Optional[str] = None
@@ -27,6 +28,7 @@ class SupplierUpdate(BaseModel):
     payment_terms_days: Optional[int] = None
     is_active: Optional[bool] = None
     notes: Optional[str] = None
+
 
 class SupplierRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -42,6 +44,7 @@ class SupplierRead(BaseModel):
     is_active: bool
     notes: Optional[str]
 
+
 # ── PO Item ──
 class POItemCreate(BaseModel):
     description: str
@@ -49,6 +52,7 @@ class POItemCreate(BaseModel):
     unit: str = "kg"
     unit_price: float
     notes: Optional[str] = None
+
 
 class POItemRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -61,6 +65,7 @@ class POItemRead(BaseModel):
     received_quantity: float
     notes: Optional[str]
 
+
 # ── Purchase Order ──
 class PurchaseOrderCreate(BaseModel):
     supplier_id: uuid.UUID
@@ -71,11 +76,13 @@ class PurchaseOrderCreate(BaseModel):
     notes: Optional[str] = None
     items: list[POItemCreate] = []
 
+
 class PurchaseOrderUpdate(BaseModel):
     status: Optional[str] = None
     expected_delivery: Optional[date] = None
     actual_delivery: Optional[date] = None
     notes: Optional[str] = None
+
 
 class PurchaseOrderRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)

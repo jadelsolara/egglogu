@@ -42,7 +42,12 @@ async def list_visitors(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = select(BiosecurityVisitor).where(BiosecurityVisitor.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(BiosecurityVisitor)
+        .where(BiosecurityVisitor.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -113,7 +118,12 @@ async def list_zones(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = select(BiosecurityZone).where(BiosecurityZone.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(BiosecurityZone)
+        .where(BiosecurityZone.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -182,7 +192,12 @@ async def list_pests(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = select(PestSighting).where(PestSighting.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(PestSighting)
+        .where(PestSighting.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -251,7 +266,12 @@ async def list_protocols(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = select(BiosecurityProtocol).where(BiosecurityProtocol.organization_id == user.organization_id).offset((page - 1) * size).limit(size)
+    stmt = (
+        select(BiosecurityProtocol)
+        .where(BiosecurityProtocol.organization_id == user.organization_id)
+        .offset((page - 1) * size)
+        .limit(size)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
 

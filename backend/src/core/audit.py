@@ -33,5 +33,9 @@ async def log_audit(
     db.add(entry)
     logger.info(
         "AUDIT: %s %s/%s by user=%s org=%s",
-        action, resource, resource_id, user_id, organization_id,
+        action,
+        resource,
+        resource_id,
+        user_id,
+        organization_id,
     )

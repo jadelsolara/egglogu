@@ -4,8 +4,15 @@ from datetime import date
 from typing import Optional
 
 from sqlalchemy import (
-    String, Float, Integer, Date, Enum,
-    ForeignKey, Text, Boolean, JSON
+    String,
+    Float,
+    Integer,
+    Date,
+    Enum,
+    ForeignKey,
+    Text,
+    Boolean,
+    JSON,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -23,11 +30,11 @@ class CostCenterType(str, enum.Enum):
 
 
 class AllocationMethod(str, enum.Enum):
-    direct = "direct"                # 100% to one center
+    direct = "direct"  # 100% to one center
     proportional_birds = "proportional_birds"  # Split by hen count
     proportional_production = "proportional_production"  # Split by egg output
-    equal_split = "equal_split"      # Split equally
-    manual = "manual"                # User-defined %
+    equal_split = "equal_split"  # Split equally
+    manual = "manual"  # User-defined %
 
 
 class CostCategory(str, enum.Enum):
@@ -70,8 +77,7 @@ class CostCenter(TimestampMixin, TenantMixin, Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
     allocations: Mapped[list["CostAllocation"]] = relationship(
-        back_populates="cost_center",
-        foreign_keys="CostAllocation.cost_center_id"
+        back_populates="cost_center", foreign_keys="CostAllocation.cost_center_id"
     )
 
 
@@ -99,8 +105,7 @@ class CostAllocation(TimestampMixin, TenantMixin, Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
     cost_center: Mapped["CostCenter"] = relationship(
-        back_populates="allocations",
-        foreign_keys=[cost_center_id]
+        back_populates="allocations", foreign_keys=[cost_center_id]
     )
 
 
@@ -119,9 +124,7 @@ class ProfitLossSnapshot(TimestampMixin, TenantMixin, Base):
     margin_pct: Mapped[float] = mapped_column(Float, default=0.0)
     # Breakdown by category (JSON for flexibility)
     cost_breakdown: Mapped[Optional[dict]] = mapped_column(JSON, default=None)
-    revenue_breakdown: Mapped[Optional[dict]] = mapped_column(
-        JSON, default=None
-    )
+    revenue_breakdown: Mapped[Optional[dict]] = mapped_column(JSON, default=None)
     eggs_produced: Mapped[Optional[int]] = mapped_column(Integer, default=None)
     eggs_sold: Mapped[Optional[int]] = mapped_column(Integer, default=None)
     cost_per_egg: Mapped[Optional[float]] = mapped_column(Float, default=None)

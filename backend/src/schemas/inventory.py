@@ -15,6 +15,7 @@ class WarehouseLocationCreate(BaseModel):
     temp_max_c: Optional[float] = None
     notes: Optional[str] = None
 
+
 class WarehouseLocationUpdate(BaseModel):
     name: Optional[str] = None
     code: Optional[str] = None
@@ -25,6 +26,7 @@ class WarehouseLocationUpdate(BaseModel):
     temp_max_c: Optional[float] = None
     is_active: Optional[bool] = None
     notes: Optional[str] = None
+
 
 class WarehouseLocationRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -38,6 +40,7 @@ class WarehouseLocationRead(BaseModel):
     temp_max_c: Optional[float]
     is_active: bool
     notes: Optional[str]
+
 
 # ── Egg Stock ──
 class EggStockCreate(BaseModel):
@@ -54,6 +57,7 @@ class EggStockCreate(BaseModel):
     unit_cost: Optional[float] = None
     notes: Optional[str] = None
 
+
 class EggStockUpdate(BaseModel):
     location_id: Optional[uuid.UUID] = None
     quantity: Optional[int] = None
@@ -62,6 +66,7 @@ class EggStockUpdate(BaseModel):
     best_before: Optional[date] = None
     unit_cost: Optional[float] = None
     notes: Optional[str] = None
+
 
 class EggStockRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -79,6 +84,7 @@ class EggStockRead(BaseModel):
     unit_cost: Optional[float]
     notes: Optional[str]
 
+
 # ── Stock Movement ──
 class StockMovementCreate(BaseModel):
     stock_id: Optional[uuid.UUID] = None
@@ -89,6 +95,7 @@ class StockMovementCreate(BaseModel):
     from_location_id: Optional[uuid.UUID] = None
     to_location_id: Optional[uuid.UUID] = None
     notes: Optional[str] = None
+
 
 class StockMovementRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -102,6 +109,7 @@ class StockMovementRead(BaseModel):
     to_location_id: Optional[uuid.UUID]
     notes: Optional[str]
 
+
 # ── Packaging Material ──
 class PackagingMaterialCreate(BaseModel):
     name: str
@@ -112,6 +120,7 @@ class PackagingMaterialCreate(BaseModel):
     supplier: Optional[str] = None
     notes: Optional[str] = None
 
+
 class PackagingMaterialUpdate(BaseModel):
     name: Optional[str] = None
     quantity_on_hand: Optional[int] = None
@@ -119,6 +128,7 @@ class PackagingMaterialUpdate(BaseModel):
     unit_cost: Optional[float] = None
     supplier: Optional[str] = None
     notes: Optional[str] = None
+
 
 class PackagingMaterialRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)

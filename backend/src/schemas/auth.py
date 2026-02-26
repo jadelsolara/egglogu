@@ -92,7 +92,9 @@ class ResendVerificationRequest(BaseModel):
 class TeamInviteRequest(BaseModel):
     email: EmailStr
     member_name: str = Field(..., min_length=1, max_length=200)
-    role: str = Field(..., min_length=1, max_length=50, pattern=r"^(owner|manager|vet|viewer)$")
+    role: str = Field(
+        ..., min_length=1, max_length=50, pattern=r"^(owner|manager|vet|viewer)$"
+    )
     organization_name: str = Field(..., min_length=1, max_length=200)
     invited_by: str = Field(..., min_length=1, max_length=200)
 

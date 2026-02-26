@@ -10,10 +10,13 @@ from src.database import get_db
 from src.models.auth import User
 from src.models.grading import GradingSession
 from src.schemas.grading import (
-    GradingSessionCreate, GradingSessionUpdate, GradingSessionRead,
+    GradingSessionCreate,
+    GradingSessionUpdate,
+    GradingSessionRead,
 )
 
 router = APIRouter(prefix="/grading", tags=["grading"])
+
 
 @router.get("/sessions", response_model=list[GradingSessionRead])
 async def list_grading_sessions(
@@ -32,7 +35,10 @@ async def list_grading_sessions(
     result = await db.execute(stmt)
     return result.scalars().all()
 
-@router.post("/sessions", response_model=GradingSessionRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/sessions", response_model=GradingSessionRead, status_code=status.HTTP_201_CREATED
+)
 async def create_grading_session(
     data: GradingSessionCreate,
     db: AsyncSession = Depends(get_db),
@@ -42,6 +48,7 @@ async def create_grading_session(
     db.add(obj)
     await db.flush()
     return obj
+
 
 @router.get("/sessions/{session_id}", response_model=GradingSessionRead)
 async def get_grading_session(
@@ -59,6 +66,7 @@ async def get_grading_session(
     if not obj:
         raise NotFoundError("Grading session not found")
     return obj
+
 
 @router.put("/sessions/{session_id}", response_model=GradingSessionRead)
 async def update_grading_session(
@@ -80,6 +88,7 @@ async def update_grading_session(
         setattr(obj, key, value)
     await db.flush()
     return obj
+
 
 @router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_grading_session(

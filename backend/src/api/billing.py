@@ -281,7 +281,9 @@ async def billing_status(
 
         if sub.is_trial and sub.trial_end:
             trial_end = sub.trial_end.isoformat()
-            delta = sub.trial_end.replace(tzinfo=timezone.utc) - datetime.now(timezone.utc)
+            delta = sub.trial_end.replace(tzinfo=timezone.utc) - datetime.now(
+                timezone.utc
+            )
             trial_days_left = max(0, delta.days)
 
         # Effective price calculation

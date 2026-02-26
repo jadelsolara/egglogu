@@ -42,6 +42,7 @@ SUPERADMIN = Depends(require_superadmin())
 
 # ── Helpers ──────────────────────────────────────────────────────
 
+
 async def _audit(
     db: AsyncSession,
     user: User,
@@ -68,6 +69,7 @@ async def _audit(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 3E — Platform Stats (full KPIs)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 @router.get("/platform-stats", response_model=PlatformStats)
 async def platform_stats(
@@ -118,17 +120,19 @@ async def platform_stats(
     open_tickets = (
         await db.execute(
             select(func.count(SupportTicket.id)).where(
-                SupportTicket.status.in_([
-                    TicketStatus.open, TicketStatus.in_progress, TicketStatus.waiting_user
-                ])
+                SupportTicket.status.in_(
+                    [
+                        TicketStatus.open,
+                        TicketStatus.in_progress,
+                        TicketStatus.waiting_user,
+                    ]
+                )
             )
         )
     ).scalar() or 0
     resolved_30d = (
         await db.execute(
-            select(func.count(SupportTicket.id)).where(
-                SupportTicket.resolved_at >= d30
-            )
+            select(func.count(SupportTicket.id)).where(SupportTicket.resolved_at >= d30)
         )
     ).scalar() or 0
     bug_tickets = (
@@ -147,9 +151,7 @@ async def platform_stats(
         await db.execute(
             select(func.count(SupportTicket.id)).where(
                 SupportTicket.priority == "critical",
-                SupportTicket.status.in_([
-                    TicketStatus.open, TicketStatus.in_progress
-                ]),
+                SupportTicket.status.in_([TicketStatus.open, TicketStatus.in_progress]),
             )
         )
     ).scalar() or 0
@@ -191,12 +193,16 @@ async def platform_stats(
     first_responses = await db.execute(
         select(
             func.avg(
-                func.extract("epoch", first_resp_sub.c.first_resp - first_resp_sub.c.created)
+                func.extract(
+                    "epoch", first_resp_sub.c.first_resp - first_resp_sub.c.created
+                )
             )
         )
     )
     first_resp_avg = first_responses.scalar()
-    ticket_response_avg_hours = round(first_resp_avg / 3600, 1) if first_resp_avg else None
+    ticket_response_avg_hours = (
+        round(first_resp_avg / 3600, 1) if first_resp_avg else None
+    )
 
     # SLA compliance (% tickets resolved before sla_deadline)
     sla_total_q = await db.execute(
@@ -214,7 +220,9 @@ async def platform_stats(
         )
     )
     sla_met = sla_met_q.scalar() or 0
-    sla_compliance_pct = round((sla_met / sla_total) * 100, 1) if sla_total > 0 else None
+    sla_compliance_pct = (
+        round((sla_met / sla_total) * 100, 1) if sla_total > 0 else None
+    )
 
     # Avg support rating
     avg_rating_q = await db.execute(select(func.avg(SupportRating.rating)))
@@ -224,9 +232,9 @@ async def platform_stats(
     # MRR estimation
     price_map = {"hobby": 9, "starter": 19, "pro": 49, "enterprise": 99}
     subs_result = await db.execute(
-        select(Subscription.plan, func.count(Subscription.id)).where(
-            Subscription.status == SubscriptionStatus.active
-        ).group_by(Subscription.plan)
+        select(Subscription.plan, func.count(Subscription.id))
+        .where(Subscription.status == SubscriptionStatus.active)
+        .group_by(Subscription.plan)
     )
     plan_dist = {}
     mrr = 0.0
@@ -277,6 +285,7 @@ async def platform_stats(
 # 3A — Global Inventory
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+
 @router.get("/inventory/overview", response_model=list[GlobalInventoryItem])
 async def inventory_overview(
     user: User = SUPERADMIN,
@@ -286,10 +295,14 @@ async def inventory_overview(
     result = []
     for org in orgs:
         stocks = (
-            await db.execute(
-                select(EggStock).where(EggStock.organization_id == org.id)
+            (
+                await db.execute(
+                    select(EggStock).where(EggStock.organization_id == org.id)
+                )
             )
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
 
         total = sum(s.quantity for s in stocks)
         by_size: dict[str, int] = {}
@@ -327,10 +340,10 @@ async def inventory_by_org(
     db: AsyncSession = Depends(get_db),
 ):
     stocks = (
-        await db.execute(
-            select(EggStock).where(EggStock.organization_id == org_id)
-        )
-    ).scalars().all()
+        (await db.execute(select(EggStock).where(EggStock.organization_id == org_id)))
+        .scalars()
+        .all()
+    )
     return [
         {
             "id": str(s.id),
@@ -349,6 +362,7 @@ async def inventory_by_org(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 3B — Tickets (cross-tenant)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 @router.get("/tickets", response_model=list[TicketOverview])
 async def list_tickets(
@@ -380,7 +394,9 @@ async def list_tickets(
     orgs_map = {}
     if org_ids:
         orgs_res = await db.execute(
-            select(Organization.id, Organization.name).where(Organization.id.in_(org_ids))
+            select(Organization.id, Organization.name).where(
+                Organization.id.in_(org_ids)
+            )
         )
         orgs_map = {r[0]: r[1] for r in orgs_res.all()}
     users_map = {}
@@ -424,7 +440,12 @@ async def delete_ticket(
         raise NotFoundError("Ticket not found")
 
     await _audit(
-        db, user, "DELETE", "support_ticket", str(ticket_id), request,
+        db,
+        user,
+        "DELETE",
+        "support_ticket",
+        str(ticket_id),
+        request,
         changes={"ticket_number": ticket.ticket_number, "subject": ticket.subject},
     )
     await db.execute(delete(SupportTicket).where(SupportTicket.id == ticket_id))
@@ -439,28 +460,39 @@ async def bulk_delete_tickets(
     db: AsyncSession = Depends(get_db),
 ):
     tickets = (
-        await db.execute(
-            select(SupportTicket).where(SupportTicket.id.in_(body.ticket_ids))
+        (
+            await db.execute(
+                select(SupportTicket).where(SupportTicket.id.in_(body.ticket_ids))
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     deleted_numbers = []
     for t in tickets:
         await _audit(
-            db, user, "DELETE", "support_ticket", str(t.id), request,
+            db,
+            user,
+            "DELETE",
+            "support_ticket",
+            str(t.id),
+            request,
             changes={"ticket_number": t.ticket_number, "subject": t.subject},
         )
         deleted_numbers.append(t.ticket_number)
 
-    await db.execute(
-        delete(SupportTicket).where(SupportTicket.id.in_(body.ticket_ids))
-    )
-    return {"detail": f"{len(deleted_numbers)} tickets deleted", "ticket_numbers": deleted_numbers}
+    await db.execute(delete(SupportTicket).where(SupportTicket.id.in_(body.ticket_ids)))
+    return {
+        "detail": f"{len(deleted_numbers)} tickets deleted",
+        "ticket_numbers": deleted_numbers,
+    }
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 3C — Market Intelligence
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 @router.get("/market-intelligence", response_model=list[MarketIntelligenceRead])
 async def list_market_intelligence(
@@ -509,7 +541,12 @@ async def create_market_intelligence(
     await db.refresh(entry)
 
     await _audit(
-        db, user, "CREATE", "market_intelligence", str(entry.id), request,
+        db,
+        user,
+        "CREATE",
+        "market_intelligence",
+        str(entry.id),
+        request,
         changes={"region": body.region, "egg_type": body.egg_type},
     )
     return MarketIntelligenceRead.model_validate(entry)
@@ -565,6 +602,7 @@ async def market_summary(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 3D — Organizations + Users + Churn
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 @router.get("/organizations", response_model=list[OrganizationOverview])
 async def list_organizations(
@@ -648,11 +686,15 @@ async def organization_details(
         raise NotFoundError("Organization not found")
 
     users = (
-        await db.execute(select(User).where(User.organization_id == org_id))
-    ).scalars().all()
+        (await db.execute(select(User).where(User.organization_id == org_id)))
+        .scalars()
+        .all()
+    )
     farms = (
-        await db.execute(select(Farm).where(Farm.organization_id == org_id))
-    ).scalars().all()
+        (await db.execute(select(Farm).where(Farm.organization_id == org_id)))
+        .scalars()
+        .all()
+    )
     flocks_count = (
         await db.execute(
             select(func.count(Flock.id)).where(Flock.organization_id == org_id)
@@ -669,9 +711,7 @@ async def organization_details(
         await db.execute(
             select(func.count(SupportTicket.id)).where(
                 SupportTicket.organization_id == org_id,
-                SupportTicket.status.in_([
-                    TicketStatus.open, TicketStatus.in_progress
-                ]),
+                SupportTicket.status.in_([TicketStatus.open, TicketStatus.in_progress]),
             )
         )
     ).scalar() or 0
@@ -705,21 +745,25 @@ async def organization_details(
         is_active=org_is_active,
         last_activity=last_act,
         users=[
-            {"id": str(u.id), "email": u.email, "name": u.full_name,
-             "role": u.role.value, "active": u.is_active}
+            {
+                "id": str(u.id),
+                "email": u.email,
+                "name": u.full_name,
+                "role": u.role.value,
+                "active": u.is_active,
+            }
             for u in users
         ],
-        farms=[
-            {"id": str(f.id), "name": f.name}
-            for f in farms
-        ],
+        farms=[{"id": str(f.id), "name": f.name} for f in farms],
         subscription={
             "plan": sub.plan.value,
             "status": sub.status.value,
             "is_trial": sub.is_trial,
             "trial_end": sub.trial_end.isoformat() if sub.trial_end else None,
             "months_subscribed": sub.months_subscribed,
-        } if sub else None,
+        }
+        if sub
+        else None,
         total_flocks=flocks_count,
         total_eggs_in_stock=eggs,
         open_tickets=open_tix,
@@ -740,7 +784,12 @@ async def delete_organization(
         raise NotFoundError("Organization not found")
 
     await _audit(
-        db, user, "DELETE", "organization", str(org_id), request,
+        db,
+        user,
+        "DELETE",
+        "organization",
+        str(org_id),
+        request,
         changes={"name": org.name, "slug": org.slug},
     )
     await db.delete(org)
@@ -771,13 +820,20 @@ async def patch_organization(
         if sub:
             old_status = sub.status.value
             sub.status = (
-                SubscriptionStatus.active if body.is_active
+                SubscriptionStatus.active
+                if body.is_active
                 else SubscriptionStatus.suspended
             )
             changes["status"] = {"from": old_status, "to": sub.status.value}
 
     await _audit(
-        db, user, "UPDATE", "organization", str(org_id), request, changes=changes,
+        db,
+        user,
+        "UPDATE",
+        "organization",
+        str(org_id),
+        request,
+        changes=changes,
     )
     return {"detail": "Organization updated", "changes": changes}
 
@@ -793,7 +849,11 @@ async def list_users(
     user: User = SUPERADMIN,
     db: AsyncSession = Depends(get_db),
 ):
-    q = select(User).where(User.role != Role.superadmin).order_by(User.created_at.desc())
+    q = (
+        select(User)
+        .where(User.role != Role.superadmin)
+        .order_by(User.created_at.desc())
+    )
     if is_active is not None:
         q = q.where(User.is_active == is_active)
     if role:
@@ -851,7 +911,12 @@ async def delete_user(
         raise ForbiddenError("Cannot delete another superadmin")
 
     await _audit(
-        db, user, "DELETE", "user", str(user_id), request,
+        db,
+        user,
+        "DELETE",
+        "user",
+        str(user_id),
+        request,
         changes={"email": target.email, "name": target.full_name},
     )
     await db.delete(target)
@@ -877,7 +942,12 @@ async def deactivate_user(
     target.is_active = not target.is_active
 
     await _audit(
-        db, user, "UPDATE", "user", str(user_id), request,
+        db,
+        user,
+        "UPDATE",
+        "user",
+        str(user_id),
+        request,
         changes={"is_active": {"from": old_active, "to": target.is_active}},
     )
     return {
@@ -945,12 +1015,14 @@ async def churn_analysis(
         )
     ).all()
     for sub, org_name in suspended_subs:
-        churned_orgs.append({
-            "organization_id": str(sub.organization_id),
-            "name": org_name,
-            "suspended_at": sub.updated_at.isoformat() if sub.updated_at else None,
-            "was_trial": sub.is_trial,
-        })
+        churned_orgs.append(
+            {
+                "organization_id": str(sub.organization_id),
+                "name": org_name,
+                "suspended_at": sub.updated_at.isoformat() if sub.updated_at else None,
+                "was_trial": sub.is_trial,
+            }
+        )
 
     latest_rate = trend[-1].churn_rate if trend else 0.0
     return ChurnAnalysis(
