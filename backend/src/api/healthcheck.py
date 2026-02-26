@@ -9,6 +9,7 @@ import time
 from datetime import datetime, timezone
 
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from src.config import settings
@@ -90,8 +91,9 @@ async def system_health():
 
     uptime_secs = time.monotonic() - _start_time
 
-    return {
-        "status": "ok" if all_ok else "degraded",
+    status = "ok" if all_ok else "degraded"
+    payload = {
+        "status": status,
         "version": APP_VERSION,
         "environment": "production"
         if settings.FRONTEND_URL == "https://egglogu.com"
@@ -103,3 +105,15 @@ async def system_health():
         "uptime_seconds": round(uptime_secs, 2),
         "boot_time": _boot_utc,
     }
+
+    # Return 503 when degraded so external monitors detect failures via HTTP status
+    return JSONResponse(
+        content=payload,
+        status_code=200 if all_ok else 503,
+    )
+
+
+@router.get("/ping")
+async def ping():
+    """Lightweight liveness probe — no dependency checks."""
+    return {"ping": "pong"}

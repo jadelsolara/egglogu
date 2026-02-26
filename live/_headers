@@ -20,3 +20,9 @@
 
 /manual.html
   Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; frame-ancestors 'none'
+
+/egglogu.html
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'sha256-RT2YKwJL79q7cHt5mwHpekUz4UjuVwBsxkLOleKOv2w=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'
+
+/app/egglogu.html
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'sha256-RT2YKwJL79q7cHt5mwHpekUz4UjuVwBsxkLOleKOv2w=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'
