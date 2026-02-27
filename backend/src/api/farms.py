@@ -24,6 +24,7 @@ async def list_farms(
     stmt = (
         select(Farm)
         .where(Farm.organization_id == user.organization_id)
+        .order_by(Farm.id)
         .offset((page - 1) * size)
         .limit(size)
     )

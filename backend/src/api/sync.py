@@ -80,6 +80,7 @@ class SyncResponse(BaseModel):
     conflicts: list[str]
     server_changes: dict[str, list[dict[str, Any]]]
     server_now: str
+    sync_cursor: str | None = None
 
 
 @router.post("/", response_model=SyncResponse)
@@ -100,7 +101,7 @@ async def sync_data(
         payload.last_synced_at,
     )
 
-    # ── Phase 1: Upsert client changes ──
+    # ── Phase 1: Upsert client changes (batch per entity) ──
     for entity_key, records in payload.data.items():
         model_cls = MODEL_MAP.get(entity_key)
         if not model_cls:
@@ -110,32 +111,61 @@ async def sync_data(
 
         valid_cols = {c.key for c in model_cls.__table__.columns}
 
+        # Separate records with IDs (potential updates) from new inserts
+        updates_by_id: dict[str, dict[str, Any]] = {}
+        inserts: list[dict[str, Any]] = []
+
         for record_data in records:
             record_id = record_data.pop("id", None)
             record_data["organization_id"] = user.organization_id
             filtered = {k: v for k, v in record_data.items() if k in valid_cols}
 
+            if record_id:
+                updates_by_id[str(record_id)] = {"_raw": filtered, "_client_updated": record_data.get("updated_at")}
+            else:
+                filtered.pop("id", None)
+                inserts.append(filtered)
+
+        # Batch fetch existing records for updates
+        if updates_by_id:
             try:
-                if record_id:
-                    existing = await db.get(model_cls, record_id)
-                    if existing and existing.organization_id == user.organization_id:
-                        client_updated = record_data.get("updated_at")
+                import uuid as _sync_uuid
+                id_uuids = [_sync_uuid.UUID(rid) for rid in updates_by_id.keys()]
+                result_existing = await db.execute(
+                    select(model_cls).where(
+                        model_cls.id.in_(id_uuids),
+                        model_cls.organization_id == user.organization_id,
+                    )
+                )
+                existing_map = {str(obj.id): obj for obj in result_existing.scalars().all()}
+
+                for rid, meta in updates_by_id.items():
+                    existing = existing_map.get(rid)
+                    if existing:
+                        client_updated = meta["_client_updated"]
                         if client_updated and existing.updated_at:
                             if isinstance(client_updated, str):
                                 client_updated = datetime.fromisoformat(client_updated)
                             if client_updated <= existing.updated_at:
-                                conflicts.append(
-                                    f"{entity_key}/{record_id}: server is newer"
-                                )
+                                conflicts.append(f"{entity_key}/{rid}: server is newer")
                                 continue
-                        for k, v in filtered.items():
+                        for k, v in meta["_raw"].items():
                             if k not in ("id", "organization_id", "created_at"):
                                 setattr(existing, k, v)
                         synced += 1
-                        continue
+                    else:
+                        # Record ID not found on server — insert as new
+                        data = meta["_raw"]
+                        data.pop("id", None)
+                        inserts.append(data)
+            except Exception as e:
+                conflicts.append(f"{entity_key}: batch update error — {e}")
+                logger.error("Sync batch update error on %s: %s", entity_key, e)
 
-                filtered.pop("id", None)
-                obj = model_cls(**filtered)
+        # Batch insert new records
+        for ins_data in inserts:
+            try:
+                obj = model_cls(**ins_data)
                 db.add(obj)
                 synced += 1
             except IntegrityError as e:
@@ -171,11 +201,23 @@ async def sync_data(
         if rows:
             server_changes[entity_key] = [_row_to_dict(r) for r in rows]
 
+    # Compute sync_cursor: the most recent updated_at across all returned changes
+    max_cursor: datetime | None = None
+    for entity_rows in server_changes.values():
+        for row_dict in entity_rows:
+            ts = row_dict.get("updated_at")
+            if ts:
+                if isinstance(ts, str):
+                    ts = datetime.fromisoformat(ts)
+                if max_cursor is None or ts > max_cursor:
+                    max_cursor = ts
+
     logger.info(
-        "Sync complete: synced=%d conflicts=%d changes_returned=%d",
+        "Sync complete: synced=%d conflicts=%d changes_returned=%d cursor=%s",
         synced,
         len(conflicts),
         sum(len(v) for v in server_changes.values()),
+        max_cursor,
     )
 
     return SyncResponse(
@@ -183,6 +225,7 @@ async def sync_data(
         conflicts=conflicts,
         server_changes=server_changes,
         server_now=server_now.isoformat(),
+        sync_cursor=max_cursor.isoformat() if max_cursor else None,
     )
 
 

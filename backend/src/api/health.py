@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
+from src.core.cache import invalidate_prefix
 from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
@@ -39,6 +40,7 @@ async def list_vaccines(
     stmt = (
         select(Vaccine)
         .where(Vaccine.organization_id == user.organization_id)
+        .order_by(Vaccine.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -74,6 +76,7 @@ async def create_vaccine(
     item = Vaccine(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -95,6 +98,7 @@ async def update_vaccine(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -113,6 +117,7 @@ async def delete_vaccine(
     if not item:
         raise NotFoundError("Vaccine not found")
     await db.delete(item)
+    await invalidate_prefix(f"economics:{user.organization_id}")
 
 
 # --- Medications ---
@@ -128,6 +133,7 @@ async def list_medications(
     stmt = (
         select(Medication)
         .where(Medication.organization_id == user.organization_id)
+        .order_by(Medication.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -163,6 +169,7 @@ async def create_medication(
     item = Medication(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -184,6 +191,7 @@ async def update_medication(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -202,6 +210,7 @@ async def delete_medication(
     if not item:
         raise NotFoundError("Medication not found")
     await db.delete(item)
+    await invalidate_prefix(f"economics:{user.organization_id}")
 
 
 # --- Outbreaks ---
@@ -217,6 +226,7 @@ async def list_outbreaks(
     stmt = (
         select(Outbreak)
         .where(Outbreak.organization_id == user.organization_id)
+        .order_by(Outbreak.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -306,6 +316,7 @@ async def list_stress_events(
     stmt = (
         select(StressEvent)
         .where(StressEvent.organization_id == user.organization_id)
+        .order_by(StressEvent.id)
         .offset((page - 1) * size)
         .limit(size)
     )

@@ -24,6 +24,7 @@ async def list_clients(
     stmt = (
         select(Client)
         .where(Client.organization_id == user.organization_id)
+        .order_by(Client.id)
         .offset((page - 1) * size)
         .limit(size)
     )

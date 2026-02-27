@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
+from src.core.cache import invalidate_prefix
 from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
@@ -33,6 +34,7 @@ async def list_purchases(
     stmt = (
         select(FeedPurchase)
         .where(FeedPurchase.organization_id == user.organization_id)
+        .order_by(FeedPurchase.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -69,6 +71,7 @@ async def create_purchase(
     item = FeedPurchase(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -91,6 +94,7 @@ async def update_purchase(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -110,6 +114,7 @@ async def delete_purchase(
     if not item:
         raise NotFoundError("Feed purchase not found")
     await db.delete(item)
+    await invalidate_prefix(f"economics:{user.organization_id}")
 
 
 # --- Consumption ---
@@ -125,6 +130,7 @@ async def list_consumption(
     stmt = (
         select(FeedConsumption)
         .where(FeedConsumption.organization_id == user.organization_id)
+        .order_by(FeedConsumption.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -163,6 +169,7 @@ async def create_consumption(
     item = FeedConsumption(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -185,6 +192,7 @@ async def update_consumption(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -204,3 +212,4 @@ async def delete_consumption(
     if not item:
         raise NotFoundError("Feed consumption not found")
     await db.delete(item)
+    await invalidate_prefix(f"economics:{user.organization_id}")

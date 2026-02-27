@@ -36,6 +36,7 @@ async def list_checklist(
     stmt = (
         select(ChecklistItem)
         .where(ChecklistItem.organization_id == user.organization_id)
+        .order_by(ChecklistItem.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -128,6 +129,7 @@ async def list_logbook(
     stmt = (
         select(LogbookEntry)
         .where(LogbookEntry.organization_id == user.organization_id)
+        .order_by(LogbookEntry.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -220,6 +222,7 @@ async def list_personnel(
     stmt = (
         select(Personnel)
         .where(Personnel.organization_id == user.organization_id)
+        .order_by(Personnel.id)
         .offset((page - 1) * size)
         .limit(size)
     )

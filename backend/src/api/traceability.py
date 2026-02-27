@@ -53,6 +53,7 @@ async def list_batches(
     stmt = (
         select(TraceabilityBatch)
         .where(TraceabilityBatch.organization_id == user.organization_id)
+        .order_by(TraceabilityBatch.id)
         .offset((page - 1) * size)
         .limit(size)
     )

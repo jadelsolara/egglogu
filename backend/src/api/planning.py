@@ -28,6 +28,7 @@ async def list_plans(
     stmt = (
         select(ProductionPlan)
         .where(ProductionPlan.organization_id == user.organization_id)
+        .order_by(ProductionPlan.id)
         .offset((page - 1) * size)
         .limit(size)
     )

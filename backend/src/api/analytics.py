@@ -7,6 +7,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
+from src.core.cache import get_cached, set_cached
 from src.database import get_db
 from src.models.auth import User
 from src.models.feed import FeedConsumption, FeedPurchase
@@ -33,6 +34,12 @@ async def get_economics(
     flock_id: Optional[uuid.UUID] = Query(default=None),
 ):
     org_id = user.organization_id
+
+    # Check cache (TTL 5 min)
+    cache_key = f"economics:{org_id}:{flock_id or 'all'}"
+    cached = await get_cached(cache_key)
+    if cached:
+        return EconomicsResponse(**cached)
 
     # Fetch flocks
     flock_q = select(Flock).where(
@@ -64,6 +71,85 @@ async def get_economics(
     )
     total_revenue = rev_result.scalar()
 
+    # ── Pre-aggregate all cost data in 5 bulk queries (fixes N+1) ──
+
+    flock_ids = [f.id for f in flocks]
+
+    # 1. Feed kg per flock (FeedConsumption has flock_id)
+    feed_agg = await db.execute(
+        select(
+            FeedConsumption.flock_id,
+            func.sum(FeedConsumption.feed_kg).label("total_kg"),
+        )
+        .where(
+            FeedConsumption.flock_id.in_(flock_ids),
+            FeedConsumption.organization_id == org_id,
+        )
+        .group_by(FeedConsumption.flock_id)
+    )
+    feed_by_flock = {row.flock_id: row.total_kg for row in feed_agg}
+
+    # 2. Vaccine costs per flock
+    vax_agg = await db.execute(
+        select(
+            Vaccine.flock_id,
+            func.sum(Vaccine.cost).label("total_cost"),
+        )
+        .where(
+            Vaccine.flock_id.in_(flock_ids),
+            Vaccine.organization_id == org_id,
+            Vaccine.cost.isnot(None),
+        )
+        .group_by(Vaccine.flock_id)
+    )
+    vax_by_flock = {row.flock_id: row.total_cost for row in vax_agg}
+
+    # 3. Medication costs per flock
+    med_agg = await db.execute(
+        select(
+            Medication.flock_id,
+            func.sum(Medication.cost).label("total_cost"),
+        )
+        .where(
+            Medication.flock_id.in_(flock_ids),
+            Medication.organization_id == org_id,
+            Medication.cost.isnot(None),
+        )
+        .group_by(Medication.flock_id)
+    )
+    med_by_flock = {row.flock_id: row.total_cost for row in med_agg}
+
+    # 4. Direct expenses per flock
+    exp_agg = await db.execute(
+        select(
+            Expense.flock_id,
+            func.sum(Expense.amount).label("total_amount"),
+        )
+        .where(
+            Expense.flock_id.in_(flock_ids),
+            Expense.organization_id == org_id,
+            Expense.flock_id.isnot(None),
+        )
+        .group_by(Expense.flock_id)
+    )
+    exp_by_flock = {row.flock_id: row.total_amount for row in exp_agg}
+
+    # 5. Total eggs per flock
+    eggs_agg = await db.execute(
+        select(
+            DailyProduction.flock_id,
+            func.sum(DailyProduction.total_eggs).label("total_eggs"),
+        )
+        .where(
+            DailyProduction.flock_id.in_(flock_ids),
+            DailyProduction.organization_id == org_id,
+        )
+        .group_by(DailyProduction.flock_id)
+    )
+    eggs_by_flock = {row.flock_id: row.total_eggs for row in eggs_agg}
+
+    # ── Build per-flock results from pre-aggregated data ──
+
     flock_results: list[FlockEconomics] = []
     org_total_eggs = 0
     org_total_costs = 0.0
@@ -82,60 +168,26 @@ async def get_economics(
             acquisition = flock.purchase_cost_per_bird * flock.initial_count
             org_total_investment += acquisition
 
-        # 2. Feed cost for this flock
-        feed_kg_result = await db.execute(
-            select(func.sum(FeedConsumption.feed_kg)).where(
-                FeedConsumption.flock_id == flock.id,
-                FeedConsumption.organization_id == org_id,
-            )
-        )
-        flock_feed_kg = feed_kg_result.scalar()
+        # 2. Feed cost
+        flock_feed_kg = feed_by_flock.get(flock.id)
         feed_cost = None
         if flock_feed_kg and avg_feed_price:
             feed_cost = round(flock_feed_kg * avg_feed_price, 2)
 
-        # 3. Health costs (vaccines + medications with cost != null)
-        vax_cost_result = await db.execute(
-            select(func.sum(Vaccine.cost)).where(
-                Vaccine.flock_id == flock.id,
-                Vaccine.organization_id == org_id,
-                Vaccine.cost.isnot(None),
-            )
-        )
-        vax_cost = vax_cost_result.scalar()
-
-        med_cost_result = await db.execute(
-            select(func.sum(Medication.cost)).where(
-                Medication.flock_id == flock.id,
-                Medication.organization_id == org_id,
-                Medication.cost.isnot(None),
-            )
-        )
-        med_cost = med_cost_result.scalar()
-
+        # 3. Health costs
+        vax_cost = vax_by_flock.get(flock.id)
+        med_cost = med_by_flock.get(flock.id)
         health_cost = None
         if vax_cost is not None or med_cost is not None:
             health_cost = round((vax_cost or 0) + (med_cost or 0), 2)
 
-        # 4. Direct expenses assigned to this flock
-        exp_result = await db.execute(
-            select(func.sum(Expense.amount)).where(
-                Expense.flock_id == flock.id,
-                Expense.organization_id == org_id,
-            )
-        )
-        direct_expenses = exp_result.scalar()
+        # 4. Direct expenses
+        direct_expenses = exp_by_flock.get(flock.id)
         if direct_expenses is not None:
             direct_expenses = round(direct_expenses, 2)
 
         # 5. Total eggs
-        eggs_result = await db.execute(
-            select(func.sum(DailyProduction.total_eggs)).where(
-                DailyProduction.flock_id == flock.id,
-                DailyProduction.organization_id == org_id,
-            )
-        )
-        total_eggs = eggs_result.scalar()
+        total_eggs = eggs_by_flock.get(flock.id)
         if total_eggs is not None:
             total_eggs = int(total_eggs)
             org_total_eggs += total_eggs
@@ -167,8 +219,6 @@ async def get_economics(
             and total_revenue is not None
             and total_cost_with_acq is not None
         ):
-            # Proportional revenue estimate per flock
-            # (total_revenue is org-wide; we approximate per-flock share by egg count)
             if org_total_eggs > 0 and total_eggs and total_eggs > 0:
                 flock_revenue = total_revenue * (total_eggs / org_total_eggs)
                 roi_per_bird = round(
@@ -250,4 +300,9 @@ async def get_economics(
         net_result=net_result,
     )
 
-    return EconomicsResponse(flocks=flock_results, org_summary=org_summary)
+    response = EconomicsResponse(flocks=flock_results, org_summary=org_summary)
+
+    # Cache the result for 5 minutes
+    await set_cached(cache_key, response.model_dump(), ttl=300)
+
+    return response

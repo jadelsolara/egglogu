@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
+from src.core.cache import invalidate_prefix
 from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
@@ -28,6 +29,7 @@ async def list_production(
     stmt = (
         select(DailyProduction)
         .where(DailyProduction.organization_id == user.organization_id)
+        .order_by(DailyProduction.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -64,6 +66,7 @@ async def create_production(
     record = DailyProduction(**data.model_dump(), organization_id=user.organization_id)
     db.add(record)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return record
 
 
@@ -86,6 +89,7 @@ async def update_production(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(record, key, value)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return record
 
 
@@ -105,3 +109,4 @@ async def delete_production(
     if not record:
         raise NotFoundError("Production record not found")
     await db.delete(record)
+    await invalidate_prefix(f"economics:{user.organization_id}")

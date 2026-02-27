@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
+from src.core.cache import invalidate_prefix
 from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
@@ -36,6 +37,7 @@ async def list_income(
     stmt = (
         select(Income)
         .where(Income.organization_id == user.organization_id)
+        .order_by(Income.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -69,6 +71,7 @@ async def create_income(
     item = Income(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -90,6 +93,7 @@ async def update_income(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -108,6 +112,7 @@ async def delete_income(
     if not item:
         raise NotFoundError("Income not found")
     await db.delete(item)
+    await invalidate_prefix(f"economics:{user.organization_id}")
 
 
 # --- Expenses ---
@@ -123,6 +128,7 @@ async def list_expenses(
     stmt = (
         select(Expense)
         .where(Expense.organization_id == user.organization_id)
+        .order_by(Expense.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -158,6 +164,7 @@ async def create_expense(
     item = Expense(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -179,6 +186,7 @@ async def update_expense(
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(item, key, value)
     await db.flush()
+    await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
 
@@ -197,6 +205,7 @@ async def delete_expense(
     if not item:
         raise NotFoundError("Expense not found")
     await db.delete(item)
+    await invalidate_prefix(f"economics:{user.organization_id}")
 
 
 # --- Receivables ---
@@ -212,6 +221,7 @@ async def list_receivables(
     stmt = (
         select(Receivable)
         .where(Receivable.organization_id == user.organization_id)
+        .order_by(Receivable.id)
         .offset((page - 1) * size)
         .limit(size)
     )

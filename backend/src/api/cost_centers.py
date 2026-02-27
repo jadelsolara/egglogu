@@ -39,7 +39,7 @@ async def list_cost_centers(
     stmt = select(CostCenter).where(CostCenter.organization_id == user.organization_id)
     if center_type:
         stmt = stmt.where(CostCenter.center_type == center_type)
-    stmt = stmt.offset((page - 1) * size).limit(size)
+    stmt = stmt.order_by(CostCenter.id).offset((page - 1) * size).limit(size)
     result = await db.execute(stmt)
     return result.scalars().all()
 

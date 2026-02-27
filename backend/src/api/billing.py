@@ -1,18 +1,19 @@
 import logging
 import uuid as _uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.deps import get_current_user, get_org_plan, get_subscription
+from src.api.deps import get_current_user, get_org_plan, get_subscription, require_superadmin
 from src.config import settings
 from src.core.exceptions import ForbiddenError, NotFoundError
 from src.core.plans import get_allowed_modules, PLAN_LIMITS
 from src.core.stripe import (
     DISCOUNT_PHASES,
+    TIER_BASE_PRICES,
     apply_phase_coupon,
     compute_phase,
     construct_webhook_event,
@@ -316,6 +317,100 @@ async def billing_status(
         discount_pct=discount_pct,
         discount_label=discount_label,
     )
+
+
+# ── MRR Admin Dashboard ──
+
+
+@router.get("/mrr", dependencies=[Depends(require_superadmin())])
+async def get_mrr_dashboard(db: AsyncSession = Depends(get_db)):
+    """Revenue dashboard: MRR, ARR, churn, tier distribution. Superadmin only."""
+    now = datetime.now(timezone.utc)
+
+    # All subscriptions grouped by plan, interval, phase, status
+    result = await db.execute(
+        select(
+            Subscription.plan,
+            Subscription.billing_interval,
+            Subscription.discount_phase,
+            Subscription.status,
+            Subscription.is_trial,
+            func.count().label("count"),
+        )
+        .group_by(
+            Subscription.plan,
+            Subscription.billing_interval,
+            Subscription.discount_phase,
+            Subscription.status,
+            Subscription.is_trial,
+        )
+    )
+    rows = result.all()
+
+    # Calculate MRR from active subscriptions
+    mrr = 0.0
+    total_active = 0
+    total_trial = 0
+    total_past_due = 0
+    total_suspended = 0
+    tier_distribution: dict[str, int] = {}
+
+    for row in rows:
+        plan = row.plan.value if hasattr(row.plan, "value") else row.plan
+        interval = row.billing_interval or "month"
+        phase = row.discount_phase
+        sub_status = row.status.value if hasattr(row.status, "value") else row.status
+        is_trial = row.is_trial
+        count = row.count
+
+        if sub_status == "active" and not is_trial:
+            total_active += count
+            tier_distribution[plan] = tier_distribution.get(plan, 0) + count
+
+            # Calculate effective monthly revenue for this group
+            price_info = get_effective_price(plan, phase, interval)
+            if interval == "year":
+                monthly_equiv = round(price_info["effective_price"] / 12, 2)
+            else:
+                monthly_equiv = price_info["effective_price"]
+            mrr += monthly_equiv * count
+
+        elif is_trial:
+            total_trial += count
+        elif sub_status == "past_due":
+            total_past_due += count
+        elif sub_status in ("suspended", "cancelled"):
+            total_suspended += count
+
+    mrr = round(mrr, 2)
+    arr = round(mrr * 12, 2)
+
+    # Churned last 30 days: subscriptions that became suspended recently
+    # (approximation: count suspended subs updated in last 30 days)
+    thirty_days_ago = now - timedelta(days=30)
+    churn_result = await db.execute(
+        select(func.count()).where(
+            Subscription.status == SubscriptionStatus.suspended,
+            Subscription.updated_at >= thirty_days_ago,
+        )
+    )
+    churned_last_30d = churn_result.scalar() or 0
+
+    # Average revenue per user (ARPU)
+    arpu = round(mrr / total_active, 2) if total_active > 0 else 0.0
+
+    return {
+        "mrr": mrr,
+        "arr": arr,
+        "arpu": arpu,
+        "total_active": total_active,
+        "total_trial": total_trial,
+        "total_past_due": total_past_due,
+        "total_suspended": total_suspended,
+        "churned_last_30d": churned_last_30d,
+        "tier_distribution": tier_distribution,
+        "generated_at": now.isoformat(),
+    }
 
 
 # ── Helpers ──

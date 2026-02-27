@@ -42,6 +42,7 @@ async def list_locations(
     stmt = (
         select(WarehouseLocation)
         .where(WarehouseLocation.organization_id == user.organization_id)
+        .order_by(WarehouseLocation.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -98,6 +99,7 @@ async def list_stock(
     stmt = (
         select(EggStock)
         .where(EggStock.organization_id == user.organization_id)
+        .order_by(EggStock.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -194,6 +196,7 @@ async def list_packaging(
     stmt = (
         select(PackagingMaterial)
         .where(PackagingMaterial.organization_id == user.organization_id)
+        .order_by(PackagingMaterial.id)
         .offset((page - 1) * size)
         .limit(size)
     )

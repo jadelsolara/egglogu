@@ -24,6 +24,7 @@ async def list_flocks(
     stmt = (
         select(Flock)
         .where(Flock.organization_id == user.organization_id)
+        .order_by(Flock.id)
         .offset((page - 1) * size)
         .limit(size)
     )

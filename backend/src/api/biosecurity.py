@@ -45,6 +45,7 @@ async def list_visitors(
     stmt = (
         select(BiosecurityVisitor)
         .where(BiosecurityVisitor.organization_id == user.organization_id)
+        .order_by(BiosecurityVisitor.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -121,6 +122,7 @@ async def list_zones(
     stmt = (
         select(BiosecurityZone)
         .where(BiosecurityZone.organization_id == user.organization_id)
+        .order_by(BiosecurityZone.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -195,6 +197,7 @@ async def list_pests(
     stmt = (
         select(PestSighting)
         .where(PestSighting.organization_id == user.organization_id)
+        .order_by(PestSighting.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -269,6 +272,7 @@ async def list_protocols(
     stmt = (
         select(BiosecurityProtocol)
         .where(BiosecurityProtocol.organization_id == user.organization_id)
+        .order_by(BiosecurityProtocol.id)
         .offset((page - 1) * size)
         .limit(size)
     )

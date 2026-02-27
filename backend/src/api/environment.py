@@ -36,6 +36,7 @@ async def list_environment(
     stmt = (
         select(EnvironmentReading)
         .where(EnvironmentReading.organization_id == user.organization_id)
+        .order_by(EnvironmentReading.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -130,6 +131,7 @@ async def list_iot(
     stmt = (
         select(IoTReading)
         .where(IoTReading.organization_id == user.organization_id)
+        .order_by(IoTReading.id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -219,6 +221,7 @@ async def list_weather(
     stmt = (
         select(WeatherCache)
         .where(WeatherCache.organization_id == user.organization_id)
+        .order_by(WeatherCache.id)
         .offset((page - 1) * size)
         .limit(size)
     )
