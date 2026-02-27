@@ -121,7 +121,10 @@ async def sync_data(
             filtered = {k: v for k, v in record_data.items() if k in valid_cols}
 
             if record_id:
-                updates_by_id[str(record_id)] = {"_raw": filtered, "_client_updated": record_data.get("updated_at")}
+                updates_by_id[str(record_id)] = {
+                    "_raw": filtered,
+                    "_client_updated": record_data.get("updated_at"),
+                }
             else:
                 filtered.pop("id", None)
                 inserts.append(filtered)
@@ -130,6 +133,7 @@ async def sync_data(
         if updates_by_id:
             try:
                 import uuid as _sync_uuid
+
                 id_uuids = [_sync_uuid.UUID(rid) for rid in updates_by_id.keys()]
                 result_existing = await db.execute(
                     select(model_cls).where(
@@ -137,7 +141,9 @@ async def sync_data(
                         model_cls.organization_id == user.organization_id,
                     )
                 )
-                existing_map = {str(obj.id): obj for obj in result_existing.scalars().all()}
+                existing_map = {
+                    str(obj.id): obj for obj in result_existing.scalars().all()
+                }
 
                 for rid, meta in updates_by_id.items():
                     existing = existing_map.get(rid)

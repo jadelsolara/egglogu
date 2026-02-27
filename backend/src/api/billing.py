@@ -7,7 +7,12 @@ from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.deps import get_current_user, get_org_plan, get_subscription, require_superadmin
+from src.api.deps import (
+    get_current_user,
+    get_org_plan,
+    get_subscription,
+    require_superadmin,
+)
 from src.config import settings
 from src.core.exceptions import ForbiddenError, NotFoundError
 from src.core.plans import get_allowed_modules, PLAN_LIMITS
@@ -335,8 +340,7 @@ async def get_mrr_dashboard(db: AsyncSession = Depends(get_db)):
             Subscription.status,
             Subscription.is_trial,
             func.count().label("count"),
-        )
-        .group_by(
+        ).group_by(
             Subscription.plan,
             Subscription.billing_interval,
             Subscription.discount_phase,
