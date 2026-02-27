@@ -13,7 +13,6 @@ from src.core.exceptions import ForbiddenError, NotFoundError
 from src.core.plans import get_allowed_modules, PLAN_LIMITS
 from src.core.stripe import (
     DISCOUNT_PHASES,
-    TIER_BASE_PRICES,
     apply_phase_coupon,
     compute_phase,
     construct_webhook_event,

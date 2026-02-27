@@ -3,8 +3,6 @@
 import json
 import logging
 
-from src.core.rate_limit import _redis as _get_redis_ref
-
 logger = logging.getLogger("egglogu.cache")
 
 
