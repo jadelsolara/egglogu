@@ -9364,7 +9364,7 @@ _bugUpdateBadge();
 
 const panel=document.createElement('div');
 panel.id='bug-panel';
-panel.style.cssText='position:fixed;bottom:80px;right:20px;width:min(400px,calc(100vw - 40px));max-height:80vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
+panel.style.cssText='position:fixed;bottom:80px;right:20px;width:min(400px,calc(100vw - 40px));max-height:80vh;background:var(--card,#fff);border:1px solid var(--border,#ddd);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#212121)';
 document.body.appendChild(panel);
 }
 
@@ -9399,21 +9399,21 @@ ${unsent.length?`<span style="background:rgba(255,255,255,.25);padding:2px 8px;b
 <button onclick="document.getElementById('bug-panel').style.display='none'" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0 4px">✕</button>
 </div></div>`;
 
-h+=`<div style="padding:10px 16px;background:rgba(255,152,0,.08);border-bottom:1px solid var(--border,#333);font-size:11px">
+h+=`<div style="padding:10px 16px;background:rgba(255,152,0,.08);border-bottom:1px solid var(--border,#ddd);font-size:11px">
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<span><strong>Seccion:</strong> <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">${section}</code></span>
+<span><strong>Seccion:</strong> <code style="background:var(--bg-secondary,#f0f0f0);padding:1px 6px;border-radius:4px">${section}</code></span>
 <span><strong>Usuario:</strong> ${sanitizeHTML(user)}</span>
 <span><strong>Errores JS:</strong> <span style="color:${errCount?'#f44336':'#4caf50'};font-weight:700">${errCount}</span></span>
 </div></div>`;
 
-h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#333)">
-<div style="margin-bottom:8px"><select id="bug-severity" style="width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px">
+h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#ddd)">
+<div style="margin-bottom:8px"><select id="bug-severity" style="width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--border,#ddd);background:var(--bg,#f5f5f5);color:var(--text,#212121);font-size:12px">
 <option value="low">🟡 Bajo — Visual/cosmetico</option>
 <option value="medium" selected>🟠 Medio — Funcionalidad parcial</option>
 <option value="high">🔴 Alto — Funcionalidad rota</option>
 <option value="critical">💀 Critico — Perdida de datos/crash</option>
 </select></div>
-<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Describe el problema..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
+<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Describe el problema..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#ddd);background:var(--bg,#f5f5f5);color:var(--text,#212121);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
 <div style="display:flex;gap:8px">
 <button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">+ Reportar Bug</button>
 ${errCount?`<button onclick="_attachErrors()" style="padding:8px 12px;border:none;border-radius:8px;background:rgba(255,152,0,.2);color:#ff9800;cursor:pointer;font-size:11px;font-weight:600" title="Adjuntar errores capturados">📎 ${errCount} err</button>`:''}
@@ -9438,18 +9438,18 @@ const ts=new Date(b.ts).toLocaleString();
 const errBadge=b.errors?.length?`<span style="background:rgba(244,67,54,.15);color:#f44336;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">${b.errors.length} err</span>`:'';
 const sentBadge=isSent?`<span style="background:rgba(76,175,80,.15);color:#4caf50;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">✓ Enviado</span>`:`<span style="background:rgba(255,152,0,.15);color:#ff9800;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">Pendiente</span>`;
 const opacity=isSent?'0.55':'1';
-h+=`<div style="padding:10px 16px;border-bottom:1px solid var(--border,#222);opacity:${opacity}">
+h+=`<div style="padding:10px 16px;border-bottom:1px solid var(--border,#ddd);opacity:${opacity}">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
 <div style="flex:1;min-width:0">
-<div style="font-size:11px;color:var(--text-muted,#666);margin-bottom:3px">${ts} · <code style="font-size:10px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">${sanitizeHTML(b.section)}</code> ${errBadge} ${sentBadge}</div>
+<div style="font-size:11px;color:var(--text-muted,#666);margin-bottom:3px">${ts} · <code style="font-size:10px;background:var(--bg-secondary,#f0f0f0);padding:1px 5px;border-radius:4px">${sanitizeHTML(b.section)}</code> ${errBadge} ${sentBadge}</div>
 <div style="font-size:12px;line-height:1.4">${sevIcon} ${sanitizeHTML(b.desc)}</div>`;
 if(b.errors?.length){
 h+=`<details style="margin-top:4px"><summary style="font-size:10px;color:#f44336;cursor:pointer">Ver errores adjuntos (${b.errors.length})</summary>
-<div style="margin-top:4px;font-size:10px;font-family:monospace;background:rgba(0,0,0,.3);padding:6px 8px;border-radius:6px;max-height:120px;overflow-y:auto">`;
+<div style="margin-top:4px;font-size:10px;font-family:monospace;background:var(--bg-secondary,#f0f0f0);padding:6px 8px;border-radius:6px;max-height:120px;overflow-y:auto">`;
 b.errors.forEach(e=>{
-h+=`<div style="margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:3px">
-<span style="color:#f44336">${sanitizeHTML(e.type)}</span> @ <span style="color:#64b5f6">${sanitizeHTML(e.src)}:${e.line}:${e.col}</span><br>
-<span style="color:#fff">${sanitizeHTML(e.msg)}</span>
+h+=`<div style="margin-bottom:4px;border-bottom:1px solid var(--border,#ddd);padding-bottom:3px">
+<span style="color:#f44336">${sanitizeHTML(e.type)}</span> @ <span style="color:#1976d2">${sanitizeHTML(e.src)}:${e.line}:${e.col}</span><br>
+<span style="color:var(--text,#212121)">${sanitizeHTML(e.msg)}</span>
 ${e.stack?'<br><span style="color:#888">'+sanitizeHTML(e.stack.substring(0,150))+'</span>':''}
 </div>`;
 });
@@ -9466,11 +9466,11 @@ ${!isSent?`<button onclick="_sendBug(${idx})" style="background:none;border:1px 
 h+=`</div>`;
 
 if(bugs.length>0){
-h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#333);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#ddd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
 <span style="font-size:11px;color:var(--text-muted,#666)">${bugs.length} bug${bugs.length!==1?'s':''} · ${unsent.length} pendiente${unsent.length!==1?'s':''}</span>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
 ${unsent.length>0?`<button onclick="_sendAllBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:linear-gradient(135deg,#4caf50,#388e3c);color:#fff;cursor:pointer;font-size:11px;font-weight:600">📨 Enviar ${unsent.length>1?'todos ('+unsent.length+')':'1'}</button>`:''}
-<button onclick="_exportBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(255,255,255,.08);color:var(--text,#eee);cursor:pointer;font-size:11px">📋 Exportar</button>
+<button onclick="_exportBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:var(--bg-secondary,#f0f0f0);color:var(--text,#212121);cursor:pointer;font-size:11px">📋 Exportar</button>
 <button onclick="_clearBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(244,67,54,.1);color:#f44336;cursor:pointer;font-size:11px">🗑 Limpiar</button>
 </div></div>`;
 }
