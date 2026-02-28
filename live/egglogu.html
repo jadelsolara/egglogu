@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1A3C6E">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'sha256-saPD5+xax5EFiH6HurJFZ57Mg1ZqGG4yTM3g3Gxh14o=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' http://localhost:8000 https://egglogu-api.up.railway.app https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'unsafe-inline' 'sha256-Jrr1rxHd1Hx454ToMCZspHsN2UzEEvQu8pKEaiMvLfE=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' http://localhost:8000 https://egglogu-api.up.railway.app https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -19,7 +19,7 @@
 <script defer src="https://unpkg.com/simple-statistics@7.8.8/dist/simple-statistics.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-:root{--primary:#1A3C6E;--primary-light:#4A7AB5;--primary-dark:#0E2240;--secondary:#FF8F00;--accent:#2E7D32;--danger:#C62828;--danger-light:#EF5350;--warning:#F9A825;--success:#2E7D32;--bg:#F5F5F5;--card:#FFF;--text:#212121;--text-light:#757575;--sidebar-bg:#0E2240;--sidebar-width:240px;--border:#E0E0E0;--radius:8px;--primary-hover:rgba(26,60,110,.04);--primary-ring:rgba(26,60,110,.15);--primary-fill:rgba(26,60,110,.1)}
+:root{--primary:#1A3C6E;--primary-light:#4A7AB5;--primary-dark:#0E2240;--secondary:#FF8F00;--accent:#2E7D32;--danger:#C62828;--danger-light:#EF5350;--warning:#F9A825;--success:#2E7D32;--bg:#F5F5F5;--card:#FFF;--text:#212121;--text-light:#757575;--text-secondary:#666;--text-muted:#999;--sidebar-bg:#0E2240;--sidebar-width:240px;--border:#E0E0E0;--radius:8px;--primary-hover:rgba(26,60,110,.04);--primary-ring:rgba(26,60,110,.15);--primary-fill:rgba(26,60,110,.1);--accent-fill:rgba(46,125,50,.1);--warning-fill:rgba(249,168,37,.1);--bg-secondary:#F0F0F0;--bg-tertiary:#E8E8E8;--card-bg:#FFF;--info:#1976D2}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .app{display:flex;min-height:100vh}
@@ -228,9 +228,9 @@ body.campo-mode .campo-hide,body.vet-mode .campo-hide{display:none!important}
 .campo-kpi{font-size:48px;font-weight:800;text-align:center;color:var(--primary)}
 .campo-btn-big{display:block;width:100%;padding:24px;font-size:24px;font-weight:700;border:none;border-radius:var(--radius);background:var(--secondary);color:#fff;cursor:pointer;margin-top:16px}
 /* Dark mode */
-body.dark-mode{--bg:#1E1E1E;--card:#2D2D2D;--text:#E0E0E0;--text-light:#BDBDBD;--border:#424242}
+body.dark-mode{--bg:#1E1E1E;--card:#2D2D2D;--text:#E0E0E0;--text-light:#BDBDBD;--text-secondary:#AAA;--text-muted:#888;--border:#424242;--primary-fill:rgba(74,122,181,.15);--accent-fill:rgba(46,125,50,.15);--warning-fill:rgba(249,168,37,.15);--bg-secondary:#252525;--bg-tertiary:#333;--card-bg:#2D2D2D;--info:#42A5F5}
 body.dark-mode .sidebar{background:#121212}
-body.dark-mode .kpi-card{background:#2D2D2D;border-color:#424242}
+body.dark-mode .kpi-card{background:#2D2D2D;border-top-color:#424242;border-right-color:#424242;border-bottom-color:#424242}
 body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:#383838;color:#E0E0E0;border-color:#555}
 body.dark-mode .modal{background:#2D2D2D;color:#E0E0E0}
 body.dark-mode .rec-card{background:#1A237E;border-color:#3949AB}

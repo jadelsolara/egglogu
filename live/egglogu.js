@@ -5558,26 +5558,26 @@ return apiService.request('GET','/superadmin'+path);
 
 async function _saRenderDashboard(ct,lbl){
 const stats=await _saFetch('/platform-stats');
-let h=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">`;
+let h=`<div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px">`;
 const kpis=[
-{label:lbl.total_orgs,value:stats.total_organizations,color:'var(--primary)'},
-{label:lbl.total_users,value:stats.total_users,color:'var(--info)'},
-{label:lbl.active_users,value:stats.active_users,color:'var(--success)'},
-{label:lbl.mrr,value:'$'+((stats.mrr_estimated||0).toFixed(2)),color:'var(--warning)'},
-{label:lbl.total_eggs,value:(stats.total_eggs_in_stock||0).toLocaleString(),color:'#8B4513'},
-{label:lbl.open_tickets,value:stats.open_tickets||0,color:'var(--danger)'},
-{label:lbl.bug_tickets,value:stats.bug_tickets||0,color:'#f44336'},
-{label:lbl.feature_requests,value:stats.feature_requests||0,color:'#2196F3'},
-{label:lbl.critical_tickets,value:stats.critical_tickets||0,color:'#d32f2f'},
-{label:lbl.avg_resolution,value:((stats.avg_resolution_hours||0).toFixed(1))+' '+lbl.hours,color:'var(--info)'},
-{label:lbl.response_avg,value:((stats.ticket_response_avg_hours||0).toFixed(1))+' '+lbl.hours,color:'#673AB7'},
-{label:lbl.sla,value:((stats.sla_compliance_pct||0).toFixed(1))+'%',color:stats.sla_compliance_pct>=90?'var(--success)':'var(--danger)'},
-{label:lbl.support_rating,value:((stats.avg_support_rating||0).toFixed(1))+'/5',color:'#FF9800'},
-{label:lbl.new_orgs_30d,value:stats.new_orgs_30d||0,color:'var(--primary)'},
-{label:lbl.new_users_30d,value:stats.new_users_30d||0,color:'var(--info)'}
+{label:lbl.total_orgs,value:stats.total_organizations,color:'var(--primary)',border:'var(--primary)'},
+{label:lbl.total_users,value:stats.total_users,color:'var(--info)',border:'var(--info)'},
+{label:lbl.active_users,value:stats.active_users,color:'var(--success)',border:'var(--success)'},
+{label:lbl.mrr,value:'$'+((stats.mrr_estimated||0).toFixed(2)),color:'var(--warning)',border:'var(--warning)'},
+{label:lbl.total_eggs,value:(stats.total_eggs_in_stock||0).toLocaleString(),color:'#8B4513',border:'#8B4513'},
+{label:lbl.open_tickets,value:stats.open_tickets||0,color:'var(--danger)',border:'var(--danger)'},
+{label:lbl.bug_tickets,value:stats.bug_tickets||0,color:'#f44336',border:'#f44336'},
+{label:lbl.feature_requests,value:stats.feature_requests||0,color:'#2196F3',border:'#2196F3'},
+{label:lbl.critical_tickets,value:stats.critical_tickets||0,color:'#d32f2f',border:'#d32f2f'},
+{label:lbl.avg_resolution,value:((stats.avg_resolution_hours||0).toFixed(1))+' '+lbl.hours,color:'var(--info)',border:'var(--info)'},
+{label:lbl.response_avg,value:((stats.ticket_response_avg_hours||0).toFixed(1))+' '+lbl.hours,color:'#673AB7',border:'#673AB7'},
+{label:lbl.sla,value:((stats.sla_compliance_pct||0).toFixed(1))+'%',color:stats.sla_compliance_pct>=90?'var(--success)':'var(--danger)',border:stats.sla_compliance_pct>=90?'var(--success)':'var(--danger)'},
+{label:lbl.support_rating,value:((stats.avg_support_rating||0).toFixed(1))+'/5',color:'#FF9800',border:'#FF9800'},
+{label:lbl.new_orgs_30d,value:stats.new_orgs_30d||0,color:'var(--primary)',border:'var(--primary)'},
+{label:lbl.new_users_30d,value:stats.new_users_30d||0,color:'var(--info)',border:'var(--info)'}
 ];
 kpis.forEach(k=>{
-h+=`<div class="kpi-card"><div class="kpi-label">${k.label}</div><div class="kpi-value" style="color:${k.color}">${k.value}</div></div>`;
+h+=`<div class="kpi-card" style="border-left-color:${k.border}"><div class="kpi-label">${k.label}</div><div class="kpi-value" style="color:${k.color}">${k.value}</div></div>`;
 });
 h+=`</div>`;
 
@@ -5586,7 +5586,7 @@ if(stats.plan_distribution){
 h+=`<div class="card"><h3>${lbl.plan_dist}</h3><div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px">`;
 Object.entries(stats.plan_distribution).forEach(([plan,count])=>{
 const colors={hobby:'#78909C',starter:'#42A5F5',pro:'#AB47BC',enterprise:'#FF7043'};
-h+=`<div style="text-align:center;padding:12px 20px;background:var(--bg-card);border-radius:8px;border:2px solid ${colors[plan]||'var(--border)'}">
+h+=`<div style="text-align:center;padding:12px 20px;background:var(--card);border-radius:8px;border:2px solid ${colors[plan]||'var(--border)'}">
 <div style="font-size:24px;font-weight:700;color:${colors[plan]||'var(--text)'}">${count}</div>
 <div style="font-size:12px;color:var(--text-light);text-transform:uppercase">${plan}</div></div>`;
 });
@@ -5619,7 +5619,7 @@ const [orgs,churn]=await Promise.all([_saFetch('/organizations'),_saFetch('/chur
 
 // Churn KPIs
 h+=`<div class="card" style="margin-bottom:16px"><h3>📉 ${lbl.churn_title}</h3>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px">
+<div class="kpi-grid" style="gap:12px;margin-top:12px">
 <div class="kpi-card"><div class="kpi-label">${lbl.monthly_churn}</div><div class="kpi-value" style="color:${churn.monthly_churn_rate>5?'var(--danger)':'var(--success)'}">${(churn.monthly_churn_rate||0).toFixed(1)}%</div></div>
 <div class="kpi-card"><div class="kpi-label">${lbl.retention}</div><div class="kpi-value" style="color:${churn.retention_rate>=90?'var(--success)':'var(--warning)'}">${(churn.retention_rate||0).toFixed(1)}%</div></div>
 <div class="kpi-card"><div class="kpi-label">${lbl.churned_orgs}</div><div class="kpi-value" style="color:var(--danger)">${(churn.churned_orgs||[]).length}</div></div>
@@ -5719,7 +5719,7 @@ const items=data.items||data||[];
 
 // Summary cards
 if(summary&&summary.length){
-h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px">`;
+h+=`<div class="kpi-grid" style="gap:12px;margin-bottom:16px">`;
 summary.forEach(s=>{
 const trendIcon={up:'📈',down:'📉',stable:'➡️'};
 h+=`<div class="kpi-card"><div class="kpi-label">${s.region}</div>
@@ -5781,7 +5781,7 @@ showToast('Entrada creada');renderSuperadmin();
 function _saRenderSettings(ct,lbl){
 const u=_currentUser||{};
 let h=`<div class="card" style="margin-bottom:16px"><h3>👤 ${lbl.account_info}</h3>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
+<div class="kpi-grid" style="gap:12px;margin-top:12px">
 <div class="kpi-card"><div class="kpi-label">Email</div><div class="kpi-value" style="font-size:0.95rem">${u.email||'-'}</div></div>
 <div class="kpi-card"><div class="kpi-label">Nombre</div><div class="kpi-value" style="font-size:0.95rem">${u.full_name||'-'}</div></div>
 <div class="kpi-card"><div class="kpi-label">Rol</div><div class="kpi-value" style="font-size:0.95rem;color:var(--primary)">SUPERADMIN</div></div>
@@ -6044,97 +6044,107 @@ const plan=D.settings.plan||{};
 const lang=document.documentElement.lang||'es';
 const isEs=lang.startsWith('es');
 const isPaying=plan.status==='active'&&!plan.is_trial;
-const phase=plan.discount_phase||0;
 const currentTier=plan.tier||'';
-const billingInt=plan.billing_interval||'month';
 
 const tiers=[
-{id:'hobby',name:'Hobby',mo:9,yr:90,farms:'1',flocks:'3',users:'2',
+{id:'hobby',name:'Hobby',mo:9,yr:90,farms:'1',flocks:'3',users:'2',icon:'🌱',color:'#78909C',
 feat:isEs?['Panel de control','Produccion basica','Alimentacion']:['Dashboard','Basic production','Feed tracking'],
 sla:isEs?'Solo FAQ':'FAQ only'},
-{id:'starter',name:'Starter',mo:19,yr:190,farms:'3',flocks:'10',users:'5',
+{id:'starter',name:'Starter',mo:19,yr:190,farms:'3',flocks:'10',users:'5',icon:'🚀',color:'#42A5F5',
 feat:isEs?['Todo en Hobby +','Sanidad','Clientes','Finanzas','Ambiental']:['Everything in Hobby +','Health','Clients','Finance','Environment'],
 sla:isEs?'Soporte 48h':'48h support'},
-{id:'pro',name:'Pro',mo:49,yr:490,farms:'10',flocks:isEs?'Ilimitados':'Unlimited',users:'15',popular:true,
+{id:'pro',name:'Pro',mo:49,yr:490,farms:'10',flocks:isEs?'Ilimitados':'Unlimited',users:'15',icon:'⭐',color:'#AB47BC',popular:true,
 feat:isEs?['Todo en Starter +','Todos los modulos','AI analytics','Reportes avanzados']:['Everything in Starter +','All modules','AI analytics','Advanced reports'],
 sla:isEs?'Soporte 12h':'12h support'},
-{id:'enterprise',name:'Enterprise',mo:99,yr:990,farms:isEs?'Ilimitado':'Unlimited',flocks:isEs?'Ilimitado':'Unlimited',users:isEs?'Ilimitado':'Unlimited',
+{id:'enterprise',name:'Enterprise',mo:99,yr:990,farms:isEs?'Ilimitado':'Unlimited',flocks:isEs?'Ilimitado':'Unlimited',users:isEs?'Ilimitado':'Unlimited',icon:'🏢',color:'#FF7043',
 feat:isEs?['Todo en Pro +','IoT sensores','Bioseguridad','Trazabilidad','API access']:['Everything in Pro +','IoT sensors','Biosecurity','Traceability','API access'],
 sla:isEs?'Soporte prioritario 4h':'Priority 4h SLA'}
 ];
 
 const uid='_upg'+Date.now();
-let body=`<div style="text-align:center;padding:16px 8px">`;
+let body=`<div style="text-align:center;padding:8px 0">`;
 
 // Monthly/Annual toggle
-body+=`<div style="display:inline-flex;background:var(--bg-secondary);border-radius:8px;padding:3px;margin-bottom:20px" id="${uid}_toggle">
-<button id="${uid}_mo" onclick="document.getElementById('${uid}_mo').classList.add('active');document.getElementById('${uid}_yr').classList.remove('active');document.querySelectorAll('.upg-yr').forEach(e=>e.style.display='none');document.querySelectorAll('.upg-mo').forEach(e=>e.style.display='')" class="btn active" style="padding:6px 18px;font-size:.9em;border-radius:6px">${isEs?'Mensual':'Monthly'}</button>
-<button id="${uid}_yr" onclick="document.getElementById('${uid}_yr').classList.add('active');document.getElementById('${uid}_mo').classList.remove('active');document.querySelectorAll('.upg-mo').forEach(e=>e.style.display='none');document.querySelectorAll('.upg-yr').forEach(e=>e.style.display='')" class="btn" style="padding:6px 18px;font-size:.9em;border-radius:6px">${isEs?'Anual — 2 meses gratis':'Annual — 2 months free'}</button>
+body+=`<div style="display:inline-flex;background:var(--bg-secondary);border-radius:24px;padding:4px;margin-bottom:16px">
+<button id="${uid}_mo" onclick="document.getElementById('${uid}_mo').className='btn btn-primary';document.getElementById('${uid}_yr').className='btn';document.querySelectorAll('.upg-yr').forEach(e=>e.style.display='none');document.querySelectorAll('.upg-mo').forEach(e=>e.style.display='')" class="btn btn-primary" style="padding:8px 20px;font-size:.85em;border-radius:20px">${isEs?'Mensual':'Monthly'}</button>
+<button id="${uid}_yr" onclick="document.getElementById('${uid}_yr').className='btn btn-primary';document.getElementById('${uid}_mo').className='btn';document.querySelectorAll('.upg-mo').forEach(e=>e.style.display='none');document.querySelectorAll('.upg-yr').forEach(e=>e.style.display='')" class="btn" style="padding:8px 20px;font-size:.85em;border-radius:20px">${isEs?'Anual':'Annual'} <span style="background:#059669;color:#fff;padding:1px 8px;border-radius:10px;font-size:.8em;margin-left:4px">-17%</span></button>
 </div>`;
 
 if(!isPaying){
-body+=`<div style="display:inline-block;background:#dcfce7;color:#166534;padding:4px 14px;border-radius:12px;font-size:.85rem;margin-bottom:16px">40% off — ${isEs?'primeros 3 meses':'first 3 months'}</div>`;
+body+=`<div style="display:inline-block;background:linear-gradient(135deg,#dcfce7,#d1fae5);color:#166534;padding:6px 16px;border-radius:20px;font-size:.82rem;margin-bottom:16px;font-weight:600">🎉 40% off — ${isEs?'primeros 3 meses':'first 3 months'}</div>`;
 }
 
 // Tier cards grid
-body+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px">`;
+body+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:16px">`;
 tiers.forEach(tier=>{
 const q1mo=Math.round(tier.mo*0.6);
 const yrMo=Math.round(tier.yr/12);
 const isCurrent=isPaying&&currentTier===tier.id;
 const pop=tier.popular;
-const border=pop?'border:2px solid var(--primary);':'border:1px solid var(--border);';
-const highlight=isCurrent?'background:var(--primary-fill);':'';
 
-body+=`<div style="${border}${highlight}border-radius:12px;padding:16px 12px;position:relative;text-align:center">`;
-if(pop)body+=`<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:2px 12px;border-radius:10px;font-size:.75em;white-space:nowrap">${isEs?'Mas popular':'Most popular'}</div>`;
-if(isCurrent)body+=`<div style="position:absolute;top:-10px;right:8px;background:#059669;color:#fff;padding:2px 10px;border-radius:10px;font-size:.7em">${isEs?'Tu plan':'Current'}</div>`;
+body+=`<div style="border:${pop?'2px solid '+tier.color:'1px solid var(--border)'};${isCurrent?'background:var(--primary-fill);':'background:var(--card);'}border-radius:16px;padding:20px 12px 16px;position:relative;text-align:center;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.12)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">`;
 
-body+=`<div style="font-weight:700;font-size:1.05em;margin-bottom:8px">${tier.name}</div>`;
+if(pop)body+=`<div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:${tier.color};color:#fff;padding:3px 14px;border-radius:12px;font-size:.72em;font-weight:700;white-space:nowrap;letter-spacing:.5px;text-transform:uppercase">${isEs?'Popular':'Popular'}</div>`;
+if(isCurrent)body+=`<div style="position:absolute;top:-11px;right:8px;background:#059669;color:#fff;padding:3px 10px;border-radius:12px;font-size:.7em;font-weight:600">${isEs?'Actual':'Current'}</div>`;
+
+// Icon + Name
+body+=`<div style="font-size:1.8em;margin-bottom:4px">${tier.icon}</div>`;
+body+=`<div style="font-weight:700;font-size:1em;margin-bottom:10px;color:${tier.color}">${tier.name}</div>`;
 
 // Monthly prices
-body+=`<div class="upg-mo">`;
+body+=`<div class="upg-mo" style="margin-bottom:12px">`;
 if(!isPaying){
-body+=`<div style="text-decoration:line-through;color:var(--text-muted);font-size:.85em">$${tier.mo}/mo</div>
-<div style="font-size:1.8em;font-weight:900;color:#059669">$${q1mo}<small style="font-size:.5em;font-weight:400">/mo</small></div>`;
+body+=`<div style="text-decoration:line-through;color:var(--text-muted);font-size:.8em">$${tier.mo}/mo</div>
+<div style="font-size:2em;font-weight:800;color:var(--text);line-height:1.1">$${q1mo}<span style="font-size:.35em;font-weight:400;color:var(--text-muted)">/mo</span></div>`;
 }else{
-body+=`<div style="font-size:1.8em;font-weight:900">$${tier.mo}<small style="font-size:.5em;font-weight:400">/mo</small></div>`;
+body+=`<div style="font-size:2em;font-weight:800;color:var(--text);line-height:1.1">$${tier.mo}<span style="font-size:.35em;font-weight:400;color:var(--text-muted)">/mo</span></div>`;
 }
 body+=`</div>`;
 
 // Annual prices
-body+=`<div class="upg-yr" style="display:none">`;
-body+=`<div style="text-decoration:line-through;color:var(--text-muted);font-size:.85em">$${tier.mo*12}/yr</div>
-<div style="font-size:1.8em;font-weight:900;color:#059669">$${tier.yr}<small style="font-size:.5em;font-weight:400">/yr</small></div>
-<div style="font-size:.75em;color:var(--text-muted)">= $${yrMo}/mo</div>`;
+body+=`<div class="upg-yr" style="display:none;margin-bottom:12px">`;
+body+=`<div style="text-decoration:line-through;color:var(--text-muted);font-size:.8em">$${tier.mo*12}/yr</div>
+<div style="font-size:2em;font-weight:800;color:var(--text);line-height:1.1">$${tier.yr}<span style="font-size:.35em;font-weight:400;color:var(--text-muted)">/yr</span></div>
+<div style="font-size:.75em;color:var(--text-muted);margin-top:2px">= $${yrMo}/mo</div>`;
 body+=`</div>`;
 
-// Features
-body+=`<div style="text-align:left;font-size:.8em;margin:12px 0;line-height:1.8">`;
-body+=`<div>🏠 ${tier.farms} ${isEs?'granjas':'farms'}</div>`;
-body+=`<div>🐔 ${tier.flocks} ${isEs?'lotes':'flocks'}</div>`;
-body+=`<div>👥 ${tier.users} ${isEs?'usuarios':'users'}</div>`;
-tier.feat.forEach(f=>body+=`<div style="color:var(--text-muted)">✓ ${f}</div>`);
+// Divider
+body+=`<div style="border-top:1px solid var(--border);margin:0 -4px 10px;opacity:.5"></div>`;
+
+// Limits
+body+=`<div style="text-align:left;font-size:.78em;line-height:2;flex:1">`;
+body+=`<div>🏠 <strong>${tier.farms}</strong> ${isEs?'granjas':'farms'}</div>`;
+body+=`<div>🐔 <strong>${tier.flocks}</strong> ${isEs?'lotes':'flocks'}</div>`;
+body+=`<div>👥 <strong>${tier.users}</strong> ${isEs?'usuarios':'users'}</div>`;
+tier.feat.forEach(f=>body+=`<div style="color:var(--text-secondary)">✓ ${f}</div>`);
 body+=`<div>🎧 ${tier.sla}</div>`;
 body+=`</div>`;
 
 // CTA button
+body+=`<div style="margin-top:12px">`;
 if(isCurrent){
-body+=`<button class="btn btn-secondary" onclick="openBillingPortal()" style="width:100%;padding:8px;font-size:.9em">${isEs?'Gestionar':'Manage'}</button>`;
+body+=`<button class="btn btn-secondary" onclick="openBillingPortal()" style="width:100%;padding:10px;font-size:.85em;border-radius:10px">${isEs?'Gestionar':'Manage'}</button>`;
 }else{
-body+=`<button class="btn ${pop?'btn-primary':'btn-secondary'}" onclick="startSubscription('${tier.id}',document.querySelector('.upg-yr')&&document.querySelector('.upg-yr').style.display!=='none'?'year':'month')" style="width:100%;padding:8px;font-size:.9em">${isEs?'Elegir plan':'Choose plan'}</button>`;
+body+=`<button class="btn ${pop?'btn-primary':'btn-secondary'}" onclick="startSubscription('${tier.id}',document.querySelector('.upg-yr')&&document.querySelector('.upg-yr').style.display!=='none'?'year':'month')" style="width:100%;padding:10px;font-size:.85em;border-radius:10px;${pop?'box-shadow:0 4px 12px rgba(0,0,0,.15);':''}">${isEs?'Elegir':'Choose'}</button>`;
 }
-body+=`</div>`;
+body+=`</div></div>`;
 });
 body+=`</div>`;
 
 // Soft landing info
 if(!isPaying){
-body+=`<p style="font-size:.78em;color:var(--text-muted);margin:0">${isEs?'El descuento de bienvenida disminuye gradualmente: 40% off (3 meses) → 25% off → 15% off → precio completo':'Welcome discount decreases gradually: 40% off (3 months) → 25% off → 15% off → full price'}</p>`;
+body+=`<div style="font-size:.75em;color:var(--text-muted);margin:0;padding:8px 12px;background:var(--bg-secondary);border-radius:10px;line-height:1.5">
+${isEs?'💡 Descuento de bienvenida: <strong>40% off</strong> (3 meses) → 25% off → 15% off → precio completo':'💡 Welcome discount: <strong>40% off</strong> (3 months) → 25% off → 15% off → full price'}</div>`;
 }
 
 body+=`</div>`;
+
 openModal(isEs?'Planes EGGlogU':'EGGlogU Plans',body);
+// Widen modal for 4-column pricing grid
+const _upgModal=$('modal-overlay').querySelector('.modal');
+_upgModal.style.maxWidth='820px';
+const _upgObs=new MutationObserver(()=>{if(!$('modal-overlay').classList.contains('open')){_upgModal.style.maxWidth='';_upgObs.disconnect();}});
+_upgObs.observe($('modal-overlay'),{attributes:true,attributeFilter:['class']});
 }
 
 async function openBillingPortal(){
@@ -7130,7 +7140,7 @@ if(tier!=='enterprise'&&tier!=='pro'){
 return `<div class="card" style="text-align:center;padding:40px">
 <h3>🎛️ ${t('iot_control_title')}</h3>
 <p style="color:var(--text-secondary)">${t('plan_upgrade_needed')}</p>
-<button class="btn btn-primary" onclick="showModule('admin')">${t('plan_upgrade')}</button></div>`;}
+<button class="btn btn-primary" onclick="nav('admin')">${t('plan_upgrade')}</button></div>`;}
 if(!mqttConnected){
 return `<div class="card" style="text-align:center;padding:40px">
 <h3>🎛️ ${t('iot_control_title')}</h3>
@@ -8674,7 +8684,7 @@ const hens=activeHens();if(hens<1)return{currentFCR:null,optimalFCR:null,optimal
 const d60=new Date();d60.setDate(d60.getDate()-60);const cutoff=d60.toISOString().substring(0,10);
 const prodByDate={};D.dailyProduction.filter(p=>p.date>=cutoff).forEach(p=>{
 if(!prodByDate[p.date])prodByDate[p.date]={eggs:0,feed:0};prodByDate[p.date].eggs+=(p.eggsCollected||0);});
-D.feedConsumption.filter(f=>f.date>=cutoff).forEach(f=>{
+(D.feed&&D.feed.consumption||[]).filter(f=>f.date>=cutoff).forEach(f=>{
 if(!prodByDate[f.date])prodByDate[f.date]={eggs:0,feed:0};prodByDate[f.date].feed+=(f.quantityKg||0)*1000;});
 const pairs=Object.values(prodByDate).filter(d=>d.feed>0&&d.eggs>0);
 if(pairs.length<10)return{currentFCR:null,optimalFCR:null,optimalKgDay:null,savingsPercent:null,rSquared:null,feedPerHen:null};
@@ -8705,7 +8715,7 @@ const hens=activeHens()||1;
 const eggVals=prod.map(p=>(p.eggsCollected||0)/hens*100);
 const mortVals=prod.map(p=>(p.mortality||0)/hens*100);
 // FCR from feed
-const feedByDate={};D.feedConsumption.filter(f=>f.date>=cutoff).forEach(f=>{
+const feedByDate={};(D.feed&&D.feed.consumption||[]).filter(f=>f.date>=cutoff).forEach(f=>{
 feedByDate[f.date]=(feedByDate[f.date]||0)+(f.quantityKg||0);});
 const fcrVals=prod.map(p=>{const f=feedByDate[p.date];const e=p.eggsCollected||0;return f&&e>0?(f*1000/e):0;}).filter(v=>v>0);
 // THI
