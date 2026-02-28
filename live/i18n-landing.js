@@ -794,5 +794,7 @@ vi:"EGGlogU — Quản lý gia cầm thông minh"
 document.title=titles[l]||titles.es;
 document.querySelectorAll('.lang-option').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
 }
+const langNames={es:"Español",en:"English",pt:"Português",fr:"Français",de:"Deutsch",it:"Italiano",ja:"日本語",zh:"中文",ko:"한국어",ru:"Русский",id:"Bahasa",ar:"العربية",th:"ไทย",vi:"Tiếng Việt"};
+document.querySelectorAll('.lang-option').forEach(b=>{const n=langNames[b.dataset.lang];if(n)b.textContent=n;});
 window.setLang=setLang;
 setLang(document.querySelector('.lang-option.active')?.dataset.lang||'es');
