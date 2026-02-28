@@ -42,9 +42,7 @@ img,svg{max-width:100%;display:block}
 .btn-ghost{border:2px solid rgba(255,255,255,.3);color:var(--white);background:transparent}
 .btn-ghost:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.05)}
 .btn-lg{padding:.85rem 2.2rem;font-size:1.1rem;border-radius:10px}
-.nav-lang-picker{margin-left:auto;flex-shrink:0}
-.nav-lang-picker .lang-globe{width:36px;height:36px}
-.nav-lang-picker .lang-globe svg{width:18px;height:18px}
+.lang-picker-fixed{position:fixed;top:1.25rem;right:1.5rem;z-index:300}
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
 .hamburger span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:.3s}
 
@@ -211,8 +209,6 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
   .hamburger.open span:nth-child(2){opacity:0}
   .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-  .hamburger{order:4}
-  .nav-lang-picker{order:3;margin-left:auto}
   .features-grid,.diff-grid,.pricing-grid,.problems-grid{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr 1fr}
   .hero{padding:6.5rem 1.5rem 3.5rem}
@@ -232,31 +228,33 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
 </head>
 <body>
 
+<!-- GLOBAL LANGUAGE PICKER — fixed position, never moves -->
+<div class="lang-picker lang-picker-fixed">
+  <button class="lang-globe" aria-label="Idioma">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/><ellipse cx="12" cy="7" rx="8.5" ry="0" /><path d="M3.5 7c2.5.8 5.3 1.2 8.5 1.2s6-.4 8.5-1.2"/><path d="M3.5 17c2.5-.8 5.3-1.2 8.5-1.2s6 .4 8.5 1.2"/></svg>
+  </button>
+  <div class="lang-dropdown">
+    <button class="lang-option active" data-lang="es">Español</button>
+    <button class="lang-option" data-lang="en">English</button>
+    <button class="lang-option" data-lang="pt">Português</button>
+    <button class="lang-option" data-lang="fr">Français</button>
+    <button class="lang-option" data-lang="de">Deutsch</button>
+    <button class="lang-option" data-lang="it">Italiano</button>
+    <button class="lang-option" data-lang="ja">日本語</button>
+    <button class="lang-option" data-lang="zh">中文</button>
+    <button class="lang-option" data-lang="ru">Русский</button>
+    <button class="lang-option" data-lang="id">Bahasa</button>
+    <button class="lang-option" data-lang="ar">العربية</button>
+    <button class="lang-option" data-lang="ko">한국어</button>
+    <button class="lang-option" data-lang="th">ไทย</button>
+    <button class="lang-option" data-lang="vi">Tiếng Việt</button>
+  </div>
+</div>
+
 <!-- CURTAIN / TEASER -->
 <section class="curtain" id="curtain">
   <div class="curtain-topbar">
     <div></div>
-    <div class="lang-picker">
-      <button class="lang-globe" id="langGlobe" aria-label="Idioma">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/><ellipse cx="12" cy="7" rx="8.5" ry="0" /><path d="M3.5 7c2.5.8 5.3 1.2 8.5 1.2s6-.4 8.5-1.2"/><path d="M3.5 17c2.5-.8 5.3-1.2 8.5-1.2s6 .4 8.5 1.2"/></svg>
-      </button>
-      <div class="lang-dropdown" id="langDropdown">
-        <button class="lang-option active" data-lang="es">Español</button>
-        <button class="lang-option" data-lang="en">English</button>
-        <button class="lang-option" data-lang="pt">Português</button>
-        <button class="lang-option" data-lang="fr">Français</button>
-        <button class="lang-option" data-lang="de">Deutsch</button>
-        <button class="lang-option" data-lang="it">Italiano</button>
-        <button class="lang-option" data-lang="ja">日本語</button>
-        <button class="lang-option" data-lang="zh">中文</button>
-        <button class="lang-option" data-lang="ru">Русский</button>
-        <button class="lang-option" data-lang="id">Bahasa</button>
-        <button class="lang-option" data-lang="ar">العربية</button>
-        <button class="lang-option" data-lang="ko">한국어</button>
-        <button class="lang-option" data-lang="th">ไทย</button>
-        <button class="lang-option" data-lang="vi">Tiếng Việt</button>
-      </div>
-    </div>
   </div>
   <span class="question-mark q1">?</span>
   <span class="question-mark q2">?</span>
@@ -295,27 +293,6 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <a href="#how" data-i18n="nav_how">Como funciona</a>
       <a href="#pricing" data-i18n="nav_pricing">Precios</a>
       <a href="egglogu.html" class="btn btn-outline" data-i18n="nav_login">&#x1F511; Acceso Clientes</a>
-    </div>
-    <div class="lang-picker nav-lang-picker">
-      <button class="lang-globe" aria-label="Idioma">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/><ellipse cx="12" cy="7" rx="8.5" ry="0" /><path d="M3.5 7c2.5.8 5.3 1.2 8.5 1.2s6-.4 8.5-1.2"/><path d="M3.5 17c2.5-.8 5.3-1.2 8.5-1.2s6 .4 8.5 1.2"/></svg>
-      </button>
-      <div class="lang-dropdown">
-        <button class="lang-option active" data-lang="es">Español</button>
-        <button class="lang-option" data-lang="en">English</button>
-        <button class="lang-option" data-lang="pt">Português</button>
-        <button class="lang-option" data-lang="fr">Français</button>
-        <button class="lang-option" data-lang="de">Deutsch</button>
-        <button class="lang-option" data-lang="it">Italiano</button>
-        <button class="lang-option" data-lang="ja">日本語</button>
-        <button class="lang-option" data-lang="zh">中文</button>
-        <button class="lang-option" data-lang="ru">Русский</button>
-        <button class="lang-option" data-lang="id">Bahasa</button>
-        <button class="lang-option" data-lang="ar">العربية</button>
-        <button class="lang-option" data-lang="ko">한국어</button>
-        <button class="lang-option" data-lang="th">ไทย</button>
-        <button class="lang-option" data-lang="vi">Tiếng Việt</button>
-      </div>
     </div>
   </div>
 </nav>
@@ -679,6 +656,6 @@ document.querySelectorAll('.lang-option').forEach(btn=>{
   });
 });
 </script>
-<script src="i18n-landing.js?v=14lang3"></script>
+<script src="i18n-landing.js?v=14lang4"></script>
 </body>
 </html>
