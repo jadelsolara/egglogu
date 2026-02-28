@@ -1,4 +1,4 @@
-const CACHE_NAME = 'egglogu-v9';
+const CACHE_NAME = 'egglogu-v10';
 const CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.7',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -34,8 +34,8 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Network-first for API calls (OpenWeatherMap, MQTT)
-  if (url.hostname.includes('openweathermap.org') || url.hostname.includes('mqtt')) {
+  // Network-first for API calls (backend, OpenWeatherMap, MQTT)
+  if (url.hostname.includes('api.egglogu.com') || url.hostname.includes('openweathermap.org') || url.hostname.includes('mqtt')) {
     event.respondWith(
       fetch(event.request).then(response => {
         const clone = response.clone();

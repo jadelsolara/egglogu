@@ -1240,6 +1240,9 @@ document.addEventListener('focusin',function(e){const inp=e.target;if(inp.datase
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5);}
 function currency(){return(DATA||loadData()).farm.currency||'$';}
 function todayStr(){return new Date().toISOString().substring(0,10);}
+function debounce(fn,ms=300){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};}
+function throttle(fn,ms=16){let last=0;return(...a)=>{const now=Date.now();if(now-last>=ms){last=now;fn(...a);};};}
+
 
 // ============ SECURITY: XSS Prevention ============
 function sanitizeHTML(str){
@@ -1962,6 +1965,46 @@ function onMedSelect(){const sel=$('m-name');if(!sel)return;const med=CATALOGS.m
 function onExpenseCatChange(){const cat=$('fe-cat')?.value;const descEl=$('fe-desc');if(!descEl||!cat)return;const opts=CATALOGS.expenseDescriptions[cat]||[];descEl.innerHTML=catalogSelect(opts,descEl.value,true);}
 function onHouseChange(){const house=$('tb-house')?.value;const rackEl=$('tb-rack');if(!rackEl)return;rackEl.innerHTML=rackSelect(house,rackEl.value);}
 function onProdFlockChange(){const fid=$('p-flock')?.value;const shellEl=$('p-shell');if(!fid||!shellEl)return;const D=loadData();const f=D.flocks.find(x=>x.id===fid);if(f){const b=COMMERCIAL_BREEDS.find(x=>x.id===f.breed);if(b&&b.eggColor){const colorMap={'Blanco':'blanco','Marrón':'marron','Marrón oscuro':'marron','Crema':'crema','Azul/Verde':'crema','Verde oliva':'crema'};shellEl.value=colorMap[b.eggColor]||'';}}}
+// ============ INDEXEDDB PERSISTENCE LAYER ============
+const IDB_NAME='egglogu_db';const IDB_VERSION=1;const IDB_STORE='data';
+let _idb=null;let _idbReady=false;
+function _openIDB(){return new Promise((resolve,reject)=>{
+if(_idb){resolve(_idb);return;}
+try{
+const req=indexedDB.open(IDB_NAME,IDB_VERSION);
+req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains(IDB_STORE))db.createObjectStore(IDB_STORE);};
+req.onsuccess=e=>{_idb=e.target.result;_idbReady=true;resolve(_idb);};
+req.onerror=()=>{console.warn('[IDB] Open failed');reject(req.error);};
+}catch(e){reject(e);}
+});}
+function _idbGet(key){return new Promise((resolve,reject)=>{
+_openIDB().then(db=>{
+const tx=db.transaction(IDB_STORE,'readonly');const s=tx.objectStore(IDB_STORE);
+const req=s.get(key);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+}).catch(reject);
+});}
+function _idbPut(key,val){return new Promise((resolve,reject)=>{
+_openIDB().then(db=>{
+const tx=db.transaction(IDB_STORE,'readwrite');const s=tx.objectStore(IDB_STORE);
+const req=s.put(val,key);req.onsuccess=()=>resolve();req.onerror=()=>reject(req.error);
+}).catch(reject);
+});}
+async function _migrateToIDB(){
+try{
+const existing=await _idbGet('egglogu_data');
+if(existing)return;
+const ls=localStorage.getItem('egglogu_data');
+if(ls){await _idbPut('egglogu_data',ls);console.log('[IDB] Migrated from localStorage');}
+}catch(e){console.warn('[IDB] Migration skipped:',e.message);}
+}
+async function _persistToIDB(){
+if(!DATA)return;
+try{const json=JSON.stringify(DATA);await _idbPut('egglogu_data',json);localStorage.setItem('egglogu_data',json);}
+catch(e){try{localStorage.setItem('egglogu_data',JSON.stringify(DATA));}catch(e2){console.warn('[IDB] Persist failed:',e2.message);}}
+}
+// Init IDB on load (non-blocking)
+_openIDB().then(()=>_migrateToIDB()).catch(()=>{});
+
 function loadData(){
 if(DATA)return DATA;
 try{const r=localStorage.getItem('egglogu_data');
@@ -2012,10 +2055,15 @@ if(DATA.settings.darkMode===undefined)DATA.settings.darkMode=false;
 }catch(e){DATA=JSON.parse(JSON.stringify(DEFAULT_DATA));}
 return DATA;
 }
-function saveData(d){DATA=d||DATA;localStorage.setItem('egglogu_data',JSON.stringify(DATA));scheduleAutoBackup();scheduleSyncToServer();}
+let _saveTimer=null;
+function saveData(d){DATA=d||DATA;_syncDirty=true;_debouncedPersist();scheduleSyncToServer();}
+function _debouncedPersist(){if(_saveTimer)clearTimeout(_saveTimer);_saveTimer=setTimeout(()=>{_persistToIDB().then(()=>scheduleAutoBackup()).catch(()=>{});},300);}
+function saveDataImmediate(){DATA=DATA||loadData();try{localStorage.setItem('egglogu_data',JSON.stringify(DATA));}catch(e){console.warn('[EGGlogU] Persist failed:',e.message);}}
+window.addEventListener('beforeunload',()=>{if(_saveTimer){clearTimeout(_saveTimer);saveDataImmediate();}});
 
 // ============ SERVER SYNC (dual-write: localStorage + API) — Delta Sync ============
-let _syncTimer=null;let _lastSyncTime=localStorage.getItem('egglogu_last_sync')||null;let _isSyncing=false;
+let _syncTimer=null;let _lastSyncTime=localStorage.getItem('egglogu_last_sync')||null;let _isSyncing=false;let _syncDirty=false;
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&_syncDirty){_syncDirty=false;scheduleSyncToServer();}});
 const ENTITY_MAP={
   farms:D=>([D.farm]),flocks:D=>(D.flocks||[]),production:D=>(D.dailyProduction||[]),
   vaccines:D=>(D.vaccines||[]),medications:D=>(D.medications||[]),outbreaks:D=>(D.outbreaks||[]),
@@ -3103,6 +3151,7 @@ const _p=(loadData().settings.plan||{});
 if(_p.status==='suspended'&&section!=='dashboard'&&section!=='config'){
 section='dashboard';showToast('Tu prueba ha terminado. Suscribete para continuar.','error');
 }
+destroyCharts();
 currentSection=section;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
 $('sec-'+section).classList.add('active');
 document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',a.dataset.section===section));
@@ -4891,6 +4940,8 @@ let _supportAdminFilter={status:'',category:'',priority:''};
 const _offlineTicketQueue=JSON.parse(localStorage.getItem('egglogu_offline_tickets')||'[]');
 let _assistantMessages=[];
 let _assistantAwaitingClarification=null;
+let _assistantTroubleshootStep=null; // {kbIdx, stepIdx} tracks multi-step troubleshooting
+const _AST_ISSUE_LOG=JSON.parse(localStorage.getItem('egglogu_ast_issues')||'{}'); // {hash: {count,firstSeen,lastSeen,desc}}
 
 const _TICKET_CATEGORIES=['production','health','feed','iot','billing','bug','sync','feature_request','access','general'];
 const _TICKET_PRIORITIES=['low','medium','high','urgent'];
@@ -4898,14 +4949,14 @@ const _TICKET_STATUSES=['open','in_progress','waiting_user','resolved','closed']
 
 function _sL(){
 const _SL={
-es:{faq_title:'Centro de Ayuda',faq_search:'Buscar articulos...',faq_helpful:'Te fue util?',faq_yes:'Si',faq_no:'No',faq_empty:'No hay articulos disponibles',faq_no_results:'Sin resultados para',tab_assistant:'Asistente',tab_faq:'FAQ',tab_new_ticket:'Nuevo Ticket',tab_my_tickets:'Mis Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Sugerencias',ast_welcome:'Hola! Soy el asistente de EGGlogU. Preguntame cualquier cosa sobre el sistema y te guio paso a paso.',ast_placeholder:'Escribe tu duda o lo que necesitas hacer...',ast_send:'Enviar',ast_nav_go:'Ir a',ast_ticket:'Crear ticket',ast_tour:'Ver tour guiado',ast_bug:'Reportar bug',ast_suggestion:'Enviar sugerencia',ast_ask:'Necesito mas detalle. Puedes ser mas especifico sobre lo que necesitas?',ast_multiple:'He encontrado varias opciones. Cual se acerca mas a lo que necesitas?',ast_no_match:'No encontre una respuesta exacta. Te puedo ayudar a: crear un ticket de soporte, reportar un bug, o ver el tour guiado. Que prefieres?',ticket_subject:'Asunto',ticket_desc:'Descripcion del problema',ticket_priority:'Prioridad',ticket_send:'Enviar Ticket',ticket_empty:'No tienes tickets',ticket_status:'Estado',ticket_created:'Creado',ticket_category:'Categoria',ticket_close:'Cerrar Ticket',ticket_rate:'Calificar',ticket_reply:'Responder',ticket_msg_placeholder:'Escribe tu mensaje...',ticket_send_msg:'Enviar',ticket_rated:'Calificado',ticket_offline:'Guardado offline — se enviara al reconectar',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abiertos',admin_progress:'En Progreso',admin_resolved:'Resueltos',admin_avg_time:'Tiempo Promedio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Actualizar',admin_faq_manage:'Gestionar FAQ',pri_low:'Baja',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Abierto',st_in_progress:'En Progreso',st_waiting_user:'Esperando Respuesta',st_resolved:'Resuelto',st_closed:'Cerrado',cat_production:'Produccion',cat_health:'Sanidad',cat_feed:'Alimento',cat_iot:'IoT',cat_billing:'Facturacion',cat_bug:'Bug',cat_sync:'Sincronizacion',cat_feature_request:'Solicitud',cat_access:'Acceso',cat_general:'General',all:'Todos',sug_title:'Sugerencias y Mejoras',sug_submit:'Enviar Sugerencia',sug_idea_title:'Titulo de tu idea',sug_idea_desc:'Describe tu sugerencia en detalle...',sug_category:'Categoria',sug_cat_feature:'Nueva funcion',sug_cat_improvement:'Mejora existente',sug_cat_ui:'Interfaz / UX',sug_cat_performance:'Rendimiento',sug_cat_docs:'Documentacion',sug_cat_other:'Otro',sug_empty:'Aun no hay sugerencias. Se el primero en compartir una idea!',sug_votes:'votos',sug_voted:'Votado',sug_vote:'Votar',sug_status_new:'Nueva',sug_status_review:'En revision',sug_status_planned:'Planeada',sug_status_done:'Implementada',sug_status_declined:'Descartada',sug_submitted:'Sugerencia enviada correctamente',sug_my:'Mis sugerencias',sug_all:'Todas',sug_sort_votes:'Mas votadas',sug_sort_recent:'Mas recientes'},
-en:{faq_title:'Help Center',faq_search:'Search articles...',faq_helpful:'Was this helpful?',faq_yes:'Yes',faq_no:'No',faq_empty:'No articles available',faq_no_results:'No results for',tab_assistant:'Assistant',tab_faq:'FAQ',tab_new_ticket:'New Ticket',tab_my_tickets:'My Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Suggestions',ast_welcome:'Hi! I\'m the EGGlogU assistant. Ask me anything about the system and I\'ll guide you step by step.',ast_placeholder:'Type your question or what you need to do...',ast_send:'Send',ast_nav_go:'Go to',ast_ticket:'Create ticket',ast_tour:'Watch guided tour',ast_bug:'Report bug',ast_suggestion:'Send suggestion',ast_ask:'I need more detail. Can you be more specific about what you need?',ast_multiple:'I found several options. Which one is closest to what you need?',ast_no_match:'I couldn\'t find an exact answer. I can help you: create a support ticket, report a bug, or watch the guided tour. What would you prefer?',ticket_subject:'Subject',ticket_desc:'Describe the issue',ticket_priority:'Priority',ticket_send:'Submit Ticket',ticket_empty:'No tickets yet',ticket_status:'Status',ticket_created:'Created',ticket_category:'Category',ticket_close:'Close Ticket',ticket_rate:'Rate',ticket_reply:'Reply',ticket_msg_placeholder:'Type your message...',ticket_send_msg:'Send',ticket_rated:'Rated',ticket_offline:'Saved offline — will sync when online',ticket_synced:'Tickets synced',admin_total:'Total Tickets',admin_open:'Open',admin_progress:'In Progress',admin_resolved:'Resolved',admin_avg_time:'Avg Resolution',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'hours',admin_filter:'Filter',admin_internal:'Internal note',admin_notes:'Admin notes',admin_update:'Update',admin_faq_manage:'Manage FAQ',pri_low:'Low',pri_medium:'Medium',pri_high:'High',pri_urgent:'Urgent',st_open:'Open',st_in_progress:'In Progress',st_waiting_user:'Waiting Response',st_resolved:'Resolved',st_closed:'Closed',cat_production:'Production',cat_health:'Health',cat_feed:'Feed',cat_iot:'IoT',cat_billing:'Billing',cat_bug:'Bug',cat_sync:'Sync',cat_feature_request:'Feature Request',cat_access:'Access',cat_general:'General',all:'All',sug_title:'Suggestions & Improvements',sug_submit:'Submit Suggestion',sug_idea_title:'Title of your idea',sug_idea_desc:'Describe your suggestion in detail...',sug_category:'Category',sug_cat_feature:'New feature',sug_cat_improvement:'Existing improvement',sug_cat_ui:'Interface / UX',sug_cat_performance:'Performance',sug_cat_docs:'Documentation',sug_cat_other:'Other',sug_empty:'No suggestions yet. Be the first to share an idea!',sug_votes:'votes',sug_voted:'Voted',sug_vote:'Vote',sug_status_new:'New',sug_status_review:'Under review',sug_status_planned:'Planned',sug_status_done:'Implemented',sug_status_declined:'Declined',sug_submitted:'Suggestion submitted successfully',sug_my:'My suggestions',sug_all:'All',sug_sort_votes:'Most voted',sug_sort_recent:'Most recent'},
-fr:{faq_title:'Centre d\'Aide',faq_search:'Rechercher...',faq_helpful:'Cela vous a aide?',faq_yes:'Oui',faq_no:'Non',faq_empty:'Aucun article disponible',faq_no_results:'Aucun resultat pour',tab_assistant:'Assistant',tab_faq:'FAQ',tab_new_ticket:'Nouveau Ticket',tab_my_tickets:'Mes Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Suggestions',ast_welcome:'Bonjour! Je suis l\'assistant EGGlogU. Posez-moi vos questions et je vous guiderai pas a pas.',ast_placeholder:'Tapez votre question...',ast_send:'Envoyer',ast_nav_go:'Aller a',ast_ticket:'Creer un ticket',ast_tour:'Voir le tour guide',ast_bug:'Signaler un bug',ast_suggestion:'Envoyer une suggestion',ast_ask:'J\'ai besoin de plus de details. Pouvez-vous etre plus precis?',ast_multiple:'J\'ai trouve plusieurs options. Laquelle correspond le mieux a votre besoin?',ast_no_match:'Je n\'ai pas trouve de reponse exacte. Je peux vous aider a: creer un ticket, signaler un bug, ou voir le tour guide.',ticket_subject:'Objet',ticket_desc:'Decrivez le probleme',ticket_priority:'Priorite',ticket_send:'Envoyer le Ticket',ticket_empty:'Aucun ticket',ticket_status:'Statut',ticket_created:'Cree le',ticket_category:'Categorie',ticket_close:'Fermer le Ticket',ticket_rate:'Evaluer',ticket_reply:'Repondre',ticket_msg_placeholder:'Ecrivez votre message...',ticket_send_msg:'Envoyer',ticket_rated:'Evalue',ticket_offline:'Sauvegarde hors ligne — sera synchronise',ticket_synced:'Tickets synchronises',admin_total:'Total Tickets',admin_open:'Ouverts',admin_progress:'En Cours',admin_resolved:'Resolus',admin_avg_time:'Temps Moyen',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'heures',admin_filter:'Filtrer',admin_internal:'Note interne',admin_notes:'Notes admin',admin_update:'Mettre a jour',admin_faq_manage:'Gerer FAQ',pri_low:'Faible',pri_medium:'Moyenne',pri_high:'Haute',pri_urgent:'Urgente',st_open:'Ouvert',st_in_progress:'En Cours',st_waiting_user:'En Attente',st_resolved:'Resolu',st_closed:'Ferme',cat_production:'Production',cat_health:'Sante',cat_feed:'Alimentation',cat_iot:'IoT',cat_billing:'Facturation',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Demande',cat_access:'Acces',cat_general:'General',all:'Tous',sug_title:'Suggestions et Ameliorations',sug_submit:'Envoyer une suggestion',sug_idea_title:'Titre de votre idee',sug_idea_desc:'Decrivez votre suggestion en detail...',sug_category:'Categorie',sug_cat_feature:'Nouvelle fonction',sug_cat_improvement:'Amelioration existante',sug_cat_ui:'Interface / UX',sug_cat_performance:'Performance',sug_cat_docs:'Documentation',sug_cat_other:'Autre',sug_empty:'Aucune suggestion pour le moment. Soyez le premier a partager une idee!',sug_votes:'votes',sug_voted:'Vote',sug_vote:'Voter',sug_status_new:'Nouvelle',sug_status_review:'En revision',sug_status_planned:'Planifiee',sug_status_done:'Implementee',sug_status_declined:'Refusee',sug_submitted:'Suggestion envoyee avec succes',sug_my:'Mes suggestions',sug_all:'Toutes',sug_sort_votes:'Plus votees',sug_sort_recent:'Plus recentes'},
-pt:{faq_title:'Central de Ajuda',faq_search:'Pesquisar artigos...',faq_helpful:'Foi util?',faq_yes:'Sim',faq_no:'Nao',faq_empty:'Nenhum artigo disponivel',faq_no_results:'Sem resultados para',tab_assistant:'Assistente',tab_faq:'FAQ',tab_new_ticket:'Novo Ticket',tab_my_tickets:'Meus Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Sugestoes',ast_welcome:'Ola! Sou o assistente do EGGlogU. Pergunte qualquer coisa sobre o sistema e eu guio voce passo a passo.',ast_placeholder:'Digite sua duvida ou o que precisa fazer...',ast_send:'Enviar',ast_nav_go:'Ir para',ast_ticket:'Criar ticket',ast_tour:'Ver tour guiado',ast_bug:'Reportar bug',ast_suggestion:'Enviar sugestao',ast_ask:'Preciso de mais detalhes. Pode ser mais especifico?',ast_multiple:'Encontrei varias opcoes. Qual se aproxima mais do que voce precisa?',ast_no_match:'Nao encontrei uma resposta exata. Posso ajudar a: criar um ticket, reportar um bug, ou ver o tour guiado.',ticket_subject:'Assunto',ticket_desc:'Descreva o problema',ticket_priority:'Prioridade',ticket_send:'Enviar Ticket',ticket_empty:'Nenhum ticket',ticket_status:'Estado',ticket_created:'Criado',ticket_category:'Categoria',ticket_close:'Fechar Ticket',ticket_rate:'Avaliar',ticket_reply:'Responder',ticket_msg_placeholder:'Digite sua mensagem...',ticket_send_msg:'Enviar',ticket_rated:'Avaliado',ticket_offline:'Salvo offline — sera sincronizado',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abertos',admin_progress:'Em Progresso',admin_resolved:'Resolvidos',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Atualizar',admin_faq_manage:'Gerenciar FAQ',pri_low:'Baixa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aberto',st_in_progress:'Em Progresso',st_waiting_user:'Aguardando Resposta',st_resolved:'Resolvido',st_closed:'Fechado',cat_production:'Producao',cat_health:'Saude',cat_feed:'Alimentacao',cat_iot:'IoT',cat_billing:'Faturamento',cat_bug:'Bug',cat_sync:'Sincronizacao',cat_feature_request:'Solicitacao',cat_access:'Acesso',cat_general:'Geral',all:'Todos',sug_title:'Sugestoes e Melhorias',sug_submit:'Enviar Sugestao',sug_idea_title:'Titulo da sua ideia',sug_idea_desc:'Descreva sua sugestao em detalhe...',sug_category:'Categoria',sug_cat_feature:'Nova funcao',sug_cat_improvement:'Melhoria existente',sug_cat_ui:'Interface / UX',sug_cat_performance:'Desempenho',sug_cat_docs:'Documentacao',sug_cat_other:'Outro',sug_empty:'Nenhuma sugestao ainda. Seja o primeiro a compartilhar uma ideia!',sug_votes:'votos',sug_voted:'Votado',sug_vote:'Votar',sug_status_new:'Nova',sug_status_review:'Em revisao',sug_status_planned:'Planejada',sug_status_done:'Implementada',sug_status_declined:'Recusada',sug_submitted:'Sugestao enviada com sucesso',sug_my:'Minhas sugestoes',sug_all:'Todas',sug_sort_votes:'Mais votadas',sug_sort_recent:'Mais recentes'},
-de:{faq_title:'Hilfezentrum',faq_search:'Artikel suchen...',faq_helpful:'War das hilfreich?',faq_yes:'Ja',faq_no:'Nein',faq_empty:'Keine Artikel verfugbar',faq_no_results:'Keine Ergebnisse fur',tab_assistant:'Assistent',tab_faq:'FAQ',tab_new_ticket:'Neues Ticket',tab_my_tickets:'Meine Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Vorschlage',ast_welcome:'Hallo! Ich bin der EGGlogU-Assistent. Fragen Sie mich alles uber das System und ich fuhre Sie Schritt fur Schritt.',ast_placeholder:'Geben Sie Ihre Frage ein...',ast_send:'Senden',ast_nav_go:'Gehe zu',ast_ticket:'Ticket erstellen',ast_tour:'Tour ansehen',ast_bug:'Bug melden',ast_suggestion:'Vorschlag einreichen',ast_ask:'Ich brauche mehr Details. Konnen Sie genauer beschreiben, was Sie brauchen?',ast_multiple:'Ich habe mehrere Optionen gefunden. Welche passt am besten?',ast_no_match:'Ich habe keine genaue Antwort gefunden. Ich kann helfen: Ticket erstellen, Bug melden, oder Tour ansehen.',ticket_subject:'Betreff',ticket_desc:'Beschreiben Sie das Problem',ticket_priority:'Prioritat',ticket_send:'Ticket senden',ticket_empty:'Keine Tickets',ticket_status:'Status',ticket_created:'Erstellt',ticket_category:'Kategorie',ticket_close:'Ticket schliessen',ticket_rate:'Bewerten',ticket_reply:'Antworten',ticket_msg_placeholder:'Nachricht eingeben...',ticket_send_msg:'Senden',ticket_rated:'Bewertet',ticket_offline:'Offline gespeichert — wird synchronisiert',ticket_synced:'Tickets synchronisiert',admin_total:'Gesamt Tickets',admin_open:'Offen',admin_progress:'In Bearbeitung',admin_resolved:'Gelost',admin_avg_time:'Durchschnittliche Losung',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'Stunden',admin_filter:'Filtern',admin_internal:'Interne Notiz',admin_notes:'Admin-Notizen',admin_update:'Aktualisieren',admin_faq_manage:'FAQ verwalten',pri_low:'Niedrig',pri_medium:'Mittel',pri_high:'Hoch',pri_urgent:'Dringend',st_open:'Offen',st_in_progress:'In Bearbeitung',st_waiting_user:'Warte auf Antwort',st_resolved:'Gelost',st_closed:'Geschlossen',cat_production:'Produktion',cat_health:'Gesundheit',cat_feed:'Futter',cat_iot:'IoT',cat_billing:'Abrechnung',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Anfrage',cat_access:'Zugang',cat_general:'Allgemein',all:'Alle',sug_title:'Vorschlage und Verbesserungen',sug_submit:'Vorschlag einreichen',sug_idea_title:'Titel Ihrer Idee',sug_idea_desc:'Beschreiben Sie Ihren Vorschlag im Detail...',sug_category:'Kategorie',sug_cat_feature:'Neue Funktion',sug_cat_improvement:'Bestehende Verbesserung',sug_cat_ui:'Oberflache / UX',sug_cat_performance:'Leistung',sug_cat_docs:'Dokumentation',sug_cat_other:'Sonstiges',sug_empty:'Noch keine Vorschlage. Seien Sie der Erste!',sug_votes:'Stimmen',sug_voted:'Abgestimmt',sug_vote:'Abstimmen',sug_status_new:'Neu',sug_status_review:'In Prufung',sug_status_planned:'Geplant',sug_status_done:'Umgesetzt',sug_status_declined:'Abgelehnt',sug_submitted:'Vorschlag erfolgreich eingereicht',sug_my:'Meine Vorschlage',sug_all:'Alle',sug_sort_votes:'Meiste Stimmen',sug_sort_recent:'Neueste'},
-it:{faq_title:'Centro Assistenza',faq_search:'Cerca articoli...',faq_helpful:'Ti e stato utile?',faq_yes:'Si',faq_no:'No',faq_empty:'Nessun articolo disponibile',faq_no_results:'Nessun risultato per',tab_assistant:'Assistente',tab_faq:'FAQ',tab_new_ticket:'Nuovo Ticket',tab_my_tickets:'I Miei Ticket',tab_contact_center:'Contact Center',tab_suggestions:'Suggerimenti',ast_welcome:'Ciao! Sono l\'assistente EGGlogU. Chiedimi qualsiasi cosa sul sistema e ti guidero passo dopo passo.',ast_placeholder:'Scrivi la tua domanda...',ast_send:'Invia',ast_nav_go:'Vai a',ast_ticket:'Crea ticket',ast_tour:'Guarda il tour',ast_bug:'Segnala bug',ast_suggestion:'Invia suggerimento',ast_ask:'Ho bisogno di piu dettagli. Puoi essere piu specifico?',ast_multiple:'Ho trovato diverse opzioni. Quale si avvicina di piu a cio che ti serve?',ast_no_match:'Non ho trovato una risposta esatta. Posso aiutarti a: creare un ticket, segnalare un bug, o guardare il tour guidato.',ticket_subject:'Oggetto',ticket_desc:'Descrivi il problema',ticket_priority:'Priorita',ticket_send:'Invia Ticket',ticket_empty:'Nessun ticket',ticket_status:'Stato',ticket_created:'Creato',ticket_category:'Categoria',ticket_close:'Chiudi Ticket',ticket_rate:'Valuta',ticket_reply:'Rispondi',ticket_msg_placeholder:'Scrivi il tuo messaggio...',ticket_send_msg:'Invia',ticket_rated:'Valutato',ticket_offline:'Salvato offline — verra sincronizzato',ticket_synced:'Ticket sincronizzati',admin_total:'Totale Ticket',admin_open:'Aperti',admin_progress:'In Corso',admin_resolved:'Risolti',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'ore',admin_filter:'Filtra',admin_internal:'Nota interna',admin_notes:'Note admin',admin_update:'Aggiorna',admin_faq_manage:'Gestisci FAQ',pri_low:'Bassa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aperto',st_in_progress:'In Corso',st_waiting_user:'In Attesa',st_resolved:'Risolto',st_closed:'Chiuso',cat_production:'Produzione',cat_health:'Sanita',cat_feed:'Mangime',cat_iot:'IoT',cat_billing:'Fatturazione',cat_bug:'Bug',cat_sync:'Sincronizzazione',cat_feature_request:'Richiesta',cat_access:'Accesso',cat_general:'Generale',all:'Tutti',sug_title:'Suggerimenti e Miglioramenti',sug_submit:'Invia Suggerimento',sug_idea_title:'Titolo della tua idea',sug_idea_desc:'Descrivi il tuo suggerimento in dettaglio...',sug_category:'Categoria',sug_cat_feature:'Nuova funzione',sug_cat_improvement:'Miglioramento esistente',sug_cat_ui:'Interfaccia / UX',sug_cat_performance:'Prestazioni',sug_cat_docs:'Documentazione',sug_cat_other:'Altro',sug_empty:'Nessun suggerimento ancora. Sii il primo a condividere un\'idea!',sug_votes:'voti',sug_voted:'Votato',sug_vote:'Vota',sug_status_new:'Nuovo',sug_status_review:'In revisione',sug_status_planned:'Pianificato',sug_status_done:'Implementato',sug_status_declined:'Rifiutato',sug_submitted:'Suggerimento inviato con successo',sug_my:'I miei suggerimenti',sug_all:'Tutti',sug_sort_votes:'Piu votati',sug_sort_recent:'Piu recenti'},
-ja:{faq_title:'ヘルプセンター',faq_search:'記事を検索...',faq_helpful:'役に立ちましたか？',faq_yes:'はい',faq_no:'いいえ',faq_empty:'記事がありません',faq_no_results:'結果なし',tab_assistant:'アシスタント',tab_faq:'FAQ',tab_new_ticket:'新規チケット',tab_my_tickets:'マイチケット',tab_contact_center:'コンタクトセンター',tab_suggestions:'提案',ast_welcome:'こんにちは！EGGlogUアシスタントです。システムについて何でも聞いてください。ステップバイステップでご案内します。',ast_placeholder:'質問を入力してください...',ast_send:'送信',ast_nav_go:'移動',ast_ticket:'チケット作成',ast_tour:'ガイドツアー',ast_bug:'バグ報告',ast_suggestion:'提案を送信',ast_ask:'詳しく教えてください。何が必要ですか？',ast_multiple:'いくつかの選択肢があります。どれが最も近いですか？',ast_no_match:'正確な回答が見つかりませんでした。チケット作成、バグ報告、ガイドツアーのいずれかをお手伝いできます。',ticket_subject:'件名',ticket_desc:'問題を説明してください',ticket_priority:'優先度',ticket_send:'チケット送信',ticket_empty:'チケットなし',ticket_status:'状態',ticket_created:'作成日',ticket_category:'カテゴリ',ticket_close:'チケットを閉じる',ticket_rate:'評価',ticket_reply:'返信',ticket_msg_placeholder:'メッセージを入力...',ticket_send_msg:'送信',ticket_rated:'評価済み',ticket_offline:'オフライン保存 — オンライン時に同期',ticket_synced:'チケット同期完了',admin_total:'チケット合計',admin_open:'未対応',admin_progress:'対応中',admin_resolved:'解決済み',admin_avg_time:'平均解決時間',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'時間',admin_filter:'フィルター',admin_internal:'内部メモ',admin_notes:'管理者メモ',admin_update:'更新',admin_faq_manage:'FAQ管理',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'緊急',st_open:'未対応',st_in_progress:'対応中',st_waiting_user:'返答待ち',st_resolved:'解決済み',st_closed:'終了',cat_production:'生産',cat_health:'衛生',cat_feed:'飼料',cat_iot:'IoT',cat_billing:'請求',cat_bug:'バグ',cat_sync:'同期',cat_feature_request:'機能要望',cat_access:'アクセス',cat_general:'一般',all:'すべて',sug_title:'提案と改善',sug_submit:'提案を送信',sug_idea_title:'アイデアのタイトル',sug_idea_desc:'提案を詳しく説明してください...',sug_category:'カテゴリ',sug_cat_feature:'新機能',sug_cat_improvement:'既存の改善',sug_cat_ui:'インターフェース / UX',sug_cat_performance:'パフォーマンス',sug_cat_docs:'ドキュメント',sug_cat_other:'その他',sug_empty:'まだ提案がありません。最初のアイデアを共有しましょう！',sug_votes:'票',sug_voted:'投票済み',sug_vote:'投票',sug_status_new:'新規',sug_status_review:'レビュー中',sug_status_planned:'計画済み',sug_status_done:'実装済み',sug_status_declined:'却下',sug_submitted:'提案が正常に送信されました',sug_my:'自分の提案',sug_all:'すべて',sug_sort_votes:'最多投票',sug_sort_recent:'最新'},
-zh:{faq_title:'帮助中心',faq_search:'搜索文章...',faq_helpful:'对您有帮助吗？',faq_yes:'是',faq_no:'否',faq_empty:'暂无文章',faq_no_results:'无结果',tab_assistant:'助手',tab_faq:'FAQ',tab_new_ticket:'新建工单',tab_my_tickets:'我的工单',tab_contact_center:'联系中心',tab_suggestions:'建议',ast_welcome:'你好！我是EGGlogU助手。有关系统的任何问题都可以问我，我会一步步指导你。',ast_placeholder:'输入你的问题...',ast_send:'发送',ast_nav_go:'前往',ast_ticket:'创建工单',ast_tour:'观看引导教程',ast_bug:'报告Bug',ast_suggestion:'提交建议',ast_ask:'我需要更多细节。能否更具体地描述你的需求？',ast_multiple:'我找到了几个选项。哪个最接近你的需求？',ast_no_match:'我没有找到确切答案。我可以帮助你：创建工单、报告Bug或观看引导教程。',ticket_subject:'主题',ticket_desc:'描述您的问题',ticket_priority:'优先级',ticket_send:'提交工单',ticket_empty:'暂无工单',ticket_status:'状态',ticket_created:'创建时间',ticket_category:'分类',ticket_close:'关闭工单',ticket_rate:'评价',ticket_reply:'回复',ticket_msg_placeholder:'输入消息...',ticket_send_msg:'发送',ticket_rated:'已评价',ticket_offline:'已离线保存 — 联网后自动同步',ticket_synced:'工单已同步',admin_total:'工单总数',admin_open:'待处理',admin_progress:'处理中',admin_resolved:'已解决',admin_avg_time:'平均解决时间',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'小时',admin_filter:'筛选',admin_internal:'内部备注',admin_notes:'管理员备注',admin_update:'更新',admin_faq_manage:'管理FAQ',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'紧急',st_open:'待处理',st_in_progress:'处理中',st_waiting_user:'等待回复',st_resolved:'已解决',st_closed:'已关闭',cat_production:'生产',cat_health:'卫生',cat_feed:'饲料',cat_iot:'IoT',cat_billing:'账单',cat_bug:'Bug',cat_sync:'同步',cat_feature_request:'功能需求',cat_access:'访问',cat_general:'通用',all:'全部',sug_title:'建议与改进',sug_submit:'提交建议',sug_idea_title:'您的想法标题',sug_idea_desc:'详细描述您的建议...',sug_category:'分类',sug_cat_feature:'新功能',sug_cat_improvement:'现有改进',sug_cat_ui:'界面 / UX',sug_cat_performance:'性能',sug_cat_docs:'文档',sug_cat_other:'其他',sug_empty:'暂无建议。成为第一个分享想法的人！',sug_votes:'票',sug_voted:'已投票',sug_vote:'投票',sug_status_new:'新建',sug_status_review:'审核中',sug_status_planned:'已计划',sug_status_done:'已实现',sug_status_declined:'已拒绝',sug_submitted:'建议提交成功',sug_my:'我的建议',sug_all:'全部',sug_sort_votes:'最多投票',sug_sort_recent:'最新'}
+es:{faq_title:'Centro de Ayuda',faq_search:'Buscar articulos...',faq_helpful:'Te fue util?',faq_yes:'Si',faq_no:'No',faq_empty:'No hay articulos disponibles',faq_no_results:'Sin resultados para',tab_assistant:'Asistente',tab_faq:'FAQ',tab_new_ticket:'Nuevo Ticket',tab_my_tickets:'Mis Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Sugerencias',ast_welcome:'Hola! Soy el asistente de EGGlogU. Preguntame cualquier cosa sobre el sistema y te guio paso a paso.',ast_placeholder:'Escribe tu duda o lo que necesitas hacer...',ast_send:'Enviar',ast_nav_go:'Ir a',ast_ticket:'Crear ticket',ast_tour:'Ver tour guiado',ast_bug:'Reportar bug',ast_suggestion:'Enviar sugerencia',ast_ask:'Necesito mas detalle. Puedes ser mas especifico sobre lo que necesitas?',ast_multiple:'He encontrado varias opciones. Cual se acerca mas a lo que necesitas?',ast_no_match:'No encontre una respuesta exacta, pero no te preocupes — voy a ayudarte.',ast_try_this:'Intenta lo siguiente:',ast_did_it_work:'Se soluciono tu problema?',ast_yes_solved:'Si, resuelto!',ast_no_next:'No, siguiente paso',ast_still_stuck:'Sigo con el problema',ast_creating_ticket:'Entiendo. Voy a crear un ticket de soporte para que nuestro equipo te ayude personalmente.',ast_ticket_created:'Ticket creado automaticamente con toda la informacion de esta conversacion. Nuestro equipo lo revisara pronto.',ast_severity_cosmetic:'Cosmetico — visual menor que no afecta funcionalidad',ast_severity_functional:'Funcional — una funcion no trabaja correctamente',ast_severity_critical:'Critico — funcionalidad importante no disponible',ast_severity_blocker:'Bloqueante — no se puede usar el sistema',ast_classify_bug:'Para darte mejor atencion, como clasificarias el problema?',ast_readonly_warn:'Por seguridad, el asistente no puede modificar la apariencia ni los procesos del sistema. Solo te guia y resuelve dudas.',ast_escalate:'Este problema requiere revision del equipo tecnico. Creando ticket prioritario...',ast_similar_issue:'Otros usuarios reportaron un problema similar. Nuestro equipo ya esta trabajando en ello.',ast_greeting:'Gracias por contactarnos! Estoy aqui para ayudarte con cualquier duda sobre EGGlogU.',ast_anything_else:'Hay algo mas en lo que pueda ayudarte?',ast_auto_ticket:'Crear ticket automatico',ast_describe_issue:'Describe brevemente que esta pasando:',ticket_subject:'Asunto',ticket_desc:'Descripcion del problema',ticket_priority:'Prioridad',ticket_send:'Enviar Ticket',ticket_empty:'No tienes tickets',ticket_status:'Estado',ticket_created:'Creado',ticket_category:'Categoria',ticket_close:'Cerrar Ticket',ticket_rate:'Calificar',ticket_reply:'Responder',ticket_msg_placeholder:'Escribe tu mensaje...',ticket_send_msg:'Enviar',ticket_rated:'Calificado',ticket_offline:'Guardado offline — se enviara al reconectar',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abiertos',admin_progress:'En Progreso',admin_resolved:'Resueltos',admin_avg_time:'Tiempo Promedio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Actualizar',admin_faq_manage:'Gestionar FAQ',pri_low:'Baja',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Abierto',st_in_progress:'En Progreso',st_waiting_user:'Esperando Respuesta',st_resolved:'Resuelto',st_closed:'Cerrado',cat_production:'Produccion',cat_health:'Sanidad',cat_feed:'Alimento',cat_iot:'IoT',cat_billing:'Facturacion',cat_bug:'Bug',cat_sync:'Sincronizacion',cat_feature_request:'Solicitud',cat_access:'Acceso',cat_general:'General',all:'Todos',sug_title:'Sugerencias y Mejoras',sug_submit:'Enviar Sugerencia',sug_idea_title:'Titulo de tu idea',sug_idea_desc:'Describe tu sugerencia en detalle...',sug_category:'Categoria',sug_cat_feature:'Nueva funcion',sug_cat_improvement:'Mejora existente',sug_cat_ui:'Interfaz / UX',sug_cat_performance:'Rendimiento',sug_cat_docs:'Documentacion',sug_cat_other:'Otro',sug_empty:'Aun no hay sugerencias. Se el primero en compartir una idea!',sug_votes:'votos',sug_voted:'Votado',sug_vote:'Votar',sug_status_new:'Nueva',sug_status_review:'En revision',sug_status_planned:'Planeada',sug_status_done:'Implementada',sug_status_declined:'Descartada',sug_submitted:'Sugerencia enviada correctamente',sug_my:'Mis sugerencias',sug_all:'Todas',sug_sort_votes:'Mas votadas',sug_sort_recent:'Mas recientes'},
+en:{faq_title:'Help Center',faq_search:'Search articles...',faq_helpful:'Was this helpful?',faq_yes:'Yes',faq_no:'No',faq_empty:'No articles available',faq_no_results:'No results for',tab_assistant:'Assistant',tab_faq:'FAQ',tab_new_ticket:'New Ticket',tab_my_tickets:'My Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Suggestions',ast_welcome:'Hi! I\'m the EGGlogU assistant. Ask me anything about the system and I\'ll guide you step by step.',ast_placeholder:'Type your question or what you need to do...',ast_send:'Send',ast_nav_go:'Go to',ast_ticket:'Create ticket',ast_tour:'Watch guided tour',ast_bug:'Report bug',ast_suggestion:'Send suggestion',ast_ask:'I need more detail. Can you be more specific about what you need?',ast_multiple:'I found several options. Which one is closest to what you need?',ast_no_match:'I couldn\'t find an exact answer, but don\'t worry — I\'m here to help.',ast_try_this:'Try the following:',ast_did_it_work:'Did that solve your issue?',ast_yes_solved:'Yes, solved!',ast_no_next:'No, next step',ast_still_stuck:'Still having the issue',ast_creating_ticket:'I understand. I\'m creating a support ticket so our team can help you personally.',ast_ticket_created:'Ticket created automatically with all the conversation info. Our team will review it soon.',ast_severity_cosmetic:'Cosmetic — minor visual issue, doesn\'t affect functionality',ast_severity_functional:'Functional — a feature is not working correctly',ast_severity_critical:'Critical — important functionality is unavailable',ast_severity_blocker:'Blocker — cannot use the system',ast_classify_bug:'To assist you better, how would you classify this issue?',ast_readonly_warn:'For security, the assistant cannot modify the system\'s appearance or processes. It only guides and answers questions.',ast_escalate:'This issue requires technical team review. Creating priority ticket...',ast_similar_issue:'Other users reported a similar issue. Our team is already working on it.',ast_greeting:'Thank you for reaching out! I\'m here to help you with anything about EGGlogU.',ast_anything_else:'Is there anything else I can help you with?',ast_auto_ticket:'Create automatic ticket',ast_describe_issue:'Briefly describe what\'s happening:',ticket_subject:'Subject',ticket_desc:'Describe the issue',ticket_priority:'Priority',ticket_send:'Submit Ticket',ticket_empty:'No tickets yet',ticket_status:'Status',ticket_created:'Created',ticket_category:'Category',ticket_close:'Close Ticket',ticket_rate:'Rate',ticket_reply:'Reply',ticket_msg_placeholder:'Type your message...',ticket_send_msg:'Send',ticket_rated:'Rated',ticket_offline:'Saved offline — will sync when online',ticket_synced:'Tickets synced',admin_total:'Total Tickets',admin_open:'Open',admin_progress:'In Progress',admin_resolved:'Resolved',admin_avg_time:'Avg Resolution',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'hours',admin_filter:'Filter',admin_internal:'Internal note',admin_notes:'Admin notes',admin_update:'Update',admin_faq_manage:'Manage FAQ',pri_low:'Low',pri_medium:'Medium',pri_high:'High',pri_urgent:'Urgent',st_open:'Open',st_in_progress:'In Progress',st_waiting_user:'Waiting Response',st_resolved:'Resolved',st_closed:'Closed',cat_production:'Production',cat_health:'Health',cat_feed:'Feed',cat_iot:'IoT',cat_billing:'Billing',cat_bug:'Bug',cat_sync:'Sync',cat_feature_request:'Feature Request',cat_access:'Access',cat_general:'General',all:'All',sug_title:'Suggestions & Improvements',sug_submit:'Submit Suggestion',sug_idea_title:'Title of your idea',sug_idea_desc:'Describe your suggestion in detail...',sug_category:'Category',sug_cat_feature:'New feature',sug_cat_improvement:'Existing improvement',sug_cat_ui:'Interface / UX',sug_cat_performance:'Performance',sug_cat_docs:'Documentation',sug_cat_other:'Other',sug_empty:'No suggestions yet. Be the first to share an idea!',sug_votes:'votes',sug_voted:'Voted',sug_vote:'Vote',sug_status_new:'New',sug_status_review:'Under review',sug_status_planned:'Planned',sug_status_done:'Implemented',sug_status_declined:'Declined',sug_submitted:'Suggestion submitted successfully',sug_my:'My suggestions',sug_all:'All',sug_sort_votes:'Most voted',sug_sort_recent:'Most recent'},
+fr:{faq_title:'Centre d\'Aide',faq_search:'Rechercher...',faq_helpful:'Cela vous a aide?',faq_yes:'Oui',faq_no:'Non',faq_empty:'Aucun article disponible',faq_no_results:'Aucun resultat pour',tab_assistant:'Assistant',tab_faq:'FAQ',tab_new_ticket:'Nouveau Ticket',tab_my_tickets:'Mes Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Suggestions',ast_welcome:'Bonjour! Je suis l\'assistant EGGlogU. Posez-moi vos questions et je vous guiderai pas a pas.',ast_placeholder:'Tapez votre question...',ast_send:'Envoyer',ast_nav_go:'Aller a',ast_ticket:'Creer un ticket',ast_tour:'Voir le tour guide',ast_bug:'Signaler un bug',ast_suggestion:'Envoyer une suggestion',ast_ask:'J\'ai besoin de plus de details. Pouvez-vous etre plus precis?',ast_multiple:'J\'ai trouve plusieurs options. Laquelle correspond le mieux a votre besoin?',ast_no_match:'Je n\'ai pas trouve de reponse exacte, mais ne vous inquietez pas — je suis la pour vous aider.',ast_try_this:'Essayez ceci:',ast_did_it_work:'Cela a-t-il resolu votre probleme?',ast_yes_solved:'Oui, resolu!',ast_no_next:'Non, etape suivante',ast_still_stuck:'Le probleme persiste',ast_creating_ticket:'Je comprends. Je cree un ticket de support pour que notre equipe vous aide personnellement.',ast_ticket_created:'Ticket cree automatiquement avec toutes les informations. Notre equipe le traitera rapidement.',ast_severity_cosmetic:'Cosmetique — probleme visuel mineur',ast_severity_functional:'Fonctionnel — une fonction ne marche pas correctement',ast_severity_critical:'Critique — fonctionnalite importante indisponible',ast_severity_blocker:'Bloquant — impossible d\'utiliser le systeme',ast_classify_bug:'Pour mieux vous aider, comment classeriez-vous ce probleme?',ast_readonly_warn:'Par securite, l\'assistant ne peut pas modifier l\'apparence ni les processus du systeme.',ast_escalate:'Ce probleme necessite une revision technique. Creation d\'un ticket prioritaire...',ast_similar_issue:'D\'autres utilisateurs ont signale un probleme similaire. Notre equipe y travaille deja.',ast_greeting:'Merci de nous contacter! Je suis la pour vous aider avec EGGlogU.',ast_anything_else:'Puis-je vous aider avec autre chose?',ast_auto_ticket:'Creer un ticket automatique',ast_describe_issue:'Decrivez brievement ce qui se passe:',ticket_subject:'Objet',ticket_desc:'Decrivez le probleme',ticket_priority:'Priorite',ticket_send:'Envoyer le Ticket',ticket_empty:'Aucun ticket',ticket_status:'Statut',ticket_created:'Cree le',ticket_category:'Categorie',ticket_close:'Fermer le Ticket',ticket_rate:'Evaluer',ticket_reply:'Repondre',ticket_msg_placeholder:'Ecrivez votre message...',ticket_send_msg:'Envoyer',ticket_rated:'Evalue',ticket_offline:'Sauvegarde hors ligne — sera synchronise',ticket_synced:'Tickets synchronises',admin_total:'Total Tickets',admin_open:'Ouverts',admin_progress:'En Cours',admin_resolved:'Resolus',admin_avg_time:'Temps Moyen',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'heures',admin_filter:'Filtrer',admin_internal:'Note interne',admin_notes:'Notes admin',admin_update:'Mettre a jour',admin_faq_manage:'Gerer FAQ',pri_low:'Faible',pri_medium:'Moyenne',pri_high:'Haute',pri_urgent:'Urgente',st_open:'Ouvert',st_in_progress:'En Cours',st_waiting_user:'En Attente',st_resolved:'Resolu',st_closed:'Ferme',cat_production:'Production',cat_health:'Sante',cat_feed:'Alimentation',cat_iot:'IoT',cat_billing:'Facturation',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Demande',cat_access:'Acces',cat_general:'General',all:'Tous',sug_title:'Suggestions et Ameliorations',sug_submit:'Envoyer une suggestion',sug_idea_title:'Titre de votre idee',sug_idea_desc:'Decrivez votre suggestion en detail...',sug_category:'Categorie',sug_cat_feature:'Nouvelle fonction',sug_cat_improvement:'Amelioration existante',sug_cat_ui:'Interface / UX',sug_cat_performance:'Performance',sug_cat_docs:'Documentation',sug_cat_other:'Autre',sug_empty:'Aucune suggestion pour le moment. Soyez le premier a partager une idee!',sug_votes:'votes',sug_voted:'Vote',sug_vote:'Voter',sug_status_new:'Nouvelle',sug_status_review:'En revision',sug_status_planned:'Planifiee',sug_status_done:'Implementee',sug_status_declined:'Refusee',sug_submitted:'Suggestion envoyee avec succes',sug_my:'Mes suggestions',sug_all:'Toutes',sug_sort_votes:'Plus votees',sug_sort_recent:'Plus recentes'},
+pt:{faq_title:'Central de Ajuda',faq_search:'Pesquisar artigos...',faq_helpful:'Foi util?',faq_yes:'Sim',faq_no:'Nao',faq_empty:'Nenhum artigo disponivel',faq_no_results:'Sem resultados para',tab_assistant:'Assistente',tab_faq:'FAQ',tab_new_ticket:'Novo Ticket',tab_my_tickets:'Meus Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Sugestoes',ast_welcome:'Ola! Sou o assistente do EGGlogU. Pergunte qualquer coisa sobre o sistema e eu guio voce passo a passo.',ast_placeholder:'Digite sua duvida ou o que precisa fazer...',ast_send:'Enviar',ast_nav_go:'Ir para',ast_ticket:'Criar ticket',ast_tour:'Ver tour guiado',ast_bug:'Reportar bug',ast_suggestion:'Enviar sugestao',ast_ask:'Preciso de mais detalhes. Pode ser mais especifico?',ast_multiple:'Encontrei varias opcoes. Qual se aproxima mais do que voce precisa?',ast_no_match:'Nao encontrei uma resposta exata, mas nao se preocupe — vou te ajudar.',ast_try_this:'Tente o seguinte:',ast_did_it_work:'Isso resolveu seu problema?',ast_yes_solved:'Sim, resolvido!',ast_no_next:'Nao, proximo passo',ast_still_stuck:'Ainda com o problema',ast_creating_ticket:'Entendo. Vou criar um ticket de suporte para que nossa equipe ajude voce pessoalmente.',ast_ticket_created:'Ticket criado automaticamente com todas as informacoes. Nossa equipe revisara em breve.',ast_severity_cosmetic:'Cosmetico — problema visual menor',ast_severity_functional:'Funcional — uma funcao nao esta funcionando corretamente',ast_severity_critical:'Critico — funcionalidade importante indisponivel',ast_severity_blocker:'Bloqueante — nao e possivel usar o sistema',ast_classify_bug:'Para melhor ajuda-lo, como voce classificaria este problema?',ast_readonly_warn:'Por seguranca, o assistente nao pode modificar a aparencia nem os processos do sistema.',ast_escalate:'Este problema requer revisao da equipe tecnica. Criando ticket prioritario...',ast_similar_issue:'Outros usuarios reportaram um problema similar. Nossa equipe ja esta trabalhando nisso.',ast_greeting:'Obrigado por entrar em contato! Estou aqui para ajudar com qualquer duvida sobre EGGlogU.',ast_anything_else:'Posso ajudar com mais alguma coisa?',ast_auto_ticket:'Criar ticket automatico',ast_describe_issue:'Descreva brevemente o que esta acontecendo:',ticket_subject:'Assunto',ticket_desc:'Descreva o problema',ticket_priority:'Prioridade',ticket_send:'Enviar Ticket',ticket_empty:'Nenhum ticket',ticket_status:'Estado',ticket_created:'Criado',ticket_category:'Categoria',ticket_close:'Fechar Ticket',ticket_rate:'Avaliar',ticket_reply:'Responder',ticket_msg_placeholder:'Digite sua mensagem...',ticket_send_msg:'Enviar',ticket_rated:'Avaliado',ticket_offline:'Salvo offline — sera sincronizado',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abertos',admin_progress:'Em Progresso',admin_resolved:'Resolvidos',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Atualizar',admin_faq_manage:'Gerenciar FAQ',pri_low:'Baixa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aberto',st_in_progress:'Em Progresso',st_waiting_user:'Aguardando Resposta',st_resolved:'Resolvido',st_closed:'Fechado',cat_production:'Producao',cat_health:'Saude',cat_feed:'Alimentacao',cat_iot:'IoT',cat_billing:'Faturamento',cat_bug:'Bug',cat_sync:'Sincronizacao',cat_feature_request:'Solicitacao',cat_access:'Acesso',cat_general:'Geral',all:'Todos',sug_title:'Sugestoes e Melhorias',sug_submit:'Enviar Sugestao',sug_idea_title:'Titulo da sua ideia',sug_idea_desc:'Descreva sua sugestao em detalhe...',sug_category:'Categoria',sug_cat_feature:'Nova funcao',sug_cat_improvement:'Melhoria existente',sug_cat_ui:'Interface / UX',sug_cat_performance:'Desempenho',sug_cat_docs:'Documentacao',sug_cat_other:'Outro',sug_empty:'Nenhuma sugestao ainda. Seja o primeiro a compartilhar uma ideia!',sug_votes:'votos',sug_voted:'Votado',sug_vote:'Votar',sug_status_new:'Nova',sug_status_review:'Em revisao',sug_status_planned:'Planejada',sug_status_done:'Implementada',sug_status_declined:'Recusada',sug_submitted:'Sugestao enviada com sucesso',sug_my:'Minhas sugestoes',sug_all:'Todas',sug_sort_votes:'Mais votadas',sug_sort_recent:'Mais recentes'},
+de:{faq_title:'Hilfezentrum',faq_search:'Artikel suchen...',faq_helpful:'War das hilfreich?',faq_yes:'Ja',faq_no:'Nein',faq_empty:'Keine Artikel verfugbar',faq_no_results:'Keine Ergebnisse fur',tab_assistant:'Assistent',tab_faq:'FAQ',tab_new_ticket:'Neues Ticket',tab_my_tickets:'Meine Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Vorschlage',ast_welcome:'Hallo! Ich bin der EGGlogU-Assistent. Fragen Sie mich alles uber das System und ich fuhre Sie Schritt fur Schritt.',ast_placeholder:'Geben Sie Ihre Frage ein...',ast_send:'Senden',ast_nav_go:'Gehe zu',ast_ticket:'Ticket erstellen',ast_tour:'Tour ansehen',ast_bug:'Bug melden',ast_suggestion:'Vorschlag einreichen',ast_ask:'Ich brauche mehr Details. Konnen Sie genauer beschreiben, was Sie brauchen?',ast_multiple:'Ich habe mehrere Optionen gefunden. Welche passt am besten?',ast_no_match:'Ich habe keine genaue Antwort gefunden, aber keine Sorge — ich helfe Ihnen weiter.',ast_try_this:'Versuchen Sie Folgendes:',ast_did_it_work:'Hat das Ihr Problem gelost?',ast_yes_solved:'Ja, gelost!',ast_no_next:'Nein, nachster Schritt',ast_still_stuck:'Problem besteht weiterhin',ast_creating_ticket:'Ich verstehe. Ich erstelle ein Support-Ticket, damit unser Team Ihnen personlich hilft.',ast_ticket_created:'Ticket automatisch erstellt. Unser Team wird es in Kurze prufen.',ast_severity_cosmetic:'Kosmetisch — kleineres visuelles Problem',ast_severity_functional:'Funktional — eine Funktion arbeitet nicht korrekt',ast_severity_critical:'Kritisch — wichtige Funktionalitat nicht verfugbar',ast_severity_blocker:'Blockierend — System nicht nutzbar',ast_classify_bug:'Um Ihnen besser zu helfen, wie wurden Sie dieses Problem einstufen?',ast_readonly_warn:'Aus Sicherheitsgrunden kann der Assistent weder das Erscheinungsbild noch die Prozesse des Systems andern.',ast_escalate:'Dieses Problem erfordert eine technische Uberprufung. Prioritats-Ticket wird erstellt...',ast_similar_issue:'Andere Benutzer haben ein ahnliches Problem gemeldet. Unser Team arbeitet bereits daran.',ast_greeting:'Danke fur Ihre Kontaktaufnahme! Ich bin hier, um Ihnen bei allem rund um EGGlogU zu helfen.',ast_anything_else:'Kann ich Ihnen noch mit etwas anderem helfen?',ast_auto_ticket:'Automatisches Ticket erstellen',ast_describe_issue:'Beschreiben Sie kurz, was passiert:',ticket_subject:'Betreff',ticket_desc:'Beschreiben Sie das Problem',ticket_priority:'Prioritat',ticket_send:'Ticket senden',ticket_empty:'Keine Tickets',ticket_status:'Status',ticket_created:'Erstellt',ticket_category:'Kategorie',ticket_close:'Ticket schliessen',ticket_rate:'Bewerten',ticket_reply:'Antworten',ticket_msg_placeholder:'Nachricht eingeben...',ticket_send_msg:'Senden',ticket_rated:'Bewertet',ticket_offline:'Offline gespeichert — wird synchronisiert',ticket_synced:'Tickets synchronisiert',admin_total:'Gesamt Tickets',admin_open:'Offen',admin_progress:'In Bearbeitung',admin_resolved:'Gelost',admin_avg_time:'Durchschnittliche Losung',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'Stunden',admin_filter:'Filtern',admin_internal:'Interne Notiz',admin_notes:'Admin-Notizen',admin_update:'Aktualisieren',admin_faq_manage:'FAQ verwalten',pri_low:'Niedrig',pri_medium:'Mittel',pri_high:'Hoch',pri_urgent:'Dringend',st_open:'Offen',st_in_progress:'In Bearbeitung',st_waiting_user:'Warte auf Antwort',st_resolved:'Gelost',st_closed:'Geschlossen',cat_production:'Produktion',cat_health:'Gesundheit',cat_feed:'Futter',cat_iot:'IoT',cat_billing:'Abrechnung',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Anfrage',cat_access:'Zugang',cat_general:'Allgemein',all:'Alle',sug_title:'Vorschlage und Verbesserungen',sug_submit:'Vorschlag einreichen',sug_idea_title:'Titel Ihrer Idee',sug_idea_desc:'Beschreiben Sie Ihren Vorschlag im Detail...',sug_category:'Kategorie',sug_cat_feature:'Neue Funktion',sug_cat_improvement:'Bestehende Verbesserung',sug_cat_ui:'Oberflache / UX',sug_cat_performance:'Leistung',sug_cat_docs:'Dokumentation',sug_cat_other:'Sonstiges',sug_empty:'Noch keine Vorschlage. Seien Sie der Erste!',sug_votes:'Stimmen',sug_voted:'Abgestimmt',sug_vote:'Abstimmen',sug_status_new:'Neu',sug_status_review:'In Prufung',sug_status_planned:'Geplant',sug_status_done:'Umgesetzt',sug_status_declined:'Abgelehnt',sug_submitted:'Vorschlag erfolgreich eingereicht',sug_my:'Meine Vorschlage',sug_all:'Alle',sug_sort_votes:'Meiste Stimmen',sug_sort_recent:'Neueste'},
+it:{faq_title:'Centro Assistenza',faq_search:'Cerca articoli...',faq_helpful:'Ti e stato utile?',faq_yes:'Si',faq_no:'No',faq_empty:'Nessun articolo disponibile',faq_no_results:'Nessun risultato per',tab_assistant:'Assistente',tab_faq:'FAQ',tab_new_ticket:'Nuovo Ticket',tab_my_tickets:'I Miei Ticket',tab_contact_center:'Contact Center',tab_suggestions:'Suggerimenti',ast_welcome:'Ciao! Sono l\'assistente EGGlogU. Chiedimi qualsiasi cosa sul sistema e ti guidero passo dopo passo.',ast_placeholder:'Scrivi la tua domanda...',ast_send:'Invia',ast_nav_go:'Vai a',ast_ticket:'Crea ticket',ast_tour:'Guarda il tour',ast_bug:'Segnala bug',ast_suggestion:'Invia suggerimento',ast_ask:'Ho bisogno di piu dettagli. Puoi essere piu specifico?',ast_multiple:'Ho trovato diverse opzioni. Quale si avvicina di piu a cio che ti serve?',ast_no_match:'Non ho trovato una risposta esatta, ma non preoccuparti — sono qui per aiutarti.',ast_try_this:'Prova quanto segue:',ast_did_it_work:'Il problema e risolto?',ast_yes_solved:'Si, risolto!',ast_no_next:'No, passo successivo',ast_still_stuck:'Il problema persiste',ast_creating_ticket:'Capisco. Sto creando un ticket di supporto affinche il nostro team ti aiuti personalmente.',ast_ticket_created:'Ticket creato automaticamente con tutte le informazioni. Il nostro team lo esaminer presto.',ast_severity_cosmetic:'Cosmetico — problema visivo minore',ast_severity_functional:'Funzionale — una funzione non funziona correttamente',ast_severity_critical:'Critico — funzionalita importante non disponibile',ast_severity_blocker:'Bloccante — impossibile usare il sistema',ast_classify_bug:'Per aiutarti meglio, come classificheresti questo problema?',ast_readonly_warn:'Per sicurezza, l\'assistente non puo modificare l\'aspetto ne i processi del sistema.',ast_escalate:'Questo problema richiede una revisione tecnica. Creazione ticket prioritario...',ast_similar_issue:'Altri utenti hanno segnalato un problema simile. Il nostro team ci sta gia lavorando.',ast_greeting:'Grazie per averci contattato! Sono qui per aiutarti con qualsiasi cosa su EGGlogU.',ast_anything_else:'Posso aiutarti con qualcos\'altro?',ast_auto_ticket:'Crea ticket automatico',ast_describe_issue:'Descrivi brevemente cosa sta succedendo:',ticket_subject:'Oggetto',ticket_desc:'Descrivi il problema',ticket_priority:'Priorita',ticket_send:'Invia Ticket',ticket_empty:'Nessun ticket',ticket_status:'Stato',ticket_created:'Creato',ticket_category:'Categoria',ticket_close:'Chiudi Ticket',ticket_rate:'Valuta',ticket_reply:'Rispondi',ticket_msg_placeholder:'Scrivi il tuo messaggio...',ticket_send_msg:'Invia',ticket_rated:'Valutato',ticket_offline:'Salvato offline — verra sincronizzato',ticket_synced:'Ticket sincronizzati',admin_total:'Totale Ticket',admin_open:'Aperti',admin_progress:'In Corso',admin_resolved:'Risolti',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'ore',admin_filter:'Filtra',admin_internal:'Nota interna',admin_notes:'Note admin',admin_update:'Aggiorna',admin_faq_manage:'Gestisci FAQ',pri_low:'Bassa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aperto',st_in_progress:'In Corso',st_waiting_user:'In Attesa',st_resolved:'Risolto',st_closed:'Chiuso',cat_production:'Produzione',cat_health:'Sanita',cat_feed:'Mangime',cat_iot:'IoT',cat_billing:'Fatturazione',cat_bug:'Bug',cat_sync:'Sincronizzazione',cat_feature_request:'Richiesta',cat_access:'Accesso',cat_general:'Generale',all:'Tutti',sug_title:'Suggerimenti e Miglioramenti',sug_submit:'Invia Suggerimento',sug_idea_title:'Titolo della tua idea',sug_idea_desc:'Descrivi il tuo suggerimento in dettaglio...',sug_category:'Categoria',sug_cat_feature:'Nuova funzione',sug_cat_improvement:'Miglioramento esistente',sug_cat_ui:'Interfaccia / UX',sug_cat_performance:'Prestazioni',sug_cat_docs:'Documentazione',sug_cat_other:'Altro',sug_empty:'Nessun suggerimento ancora. Sii il primo a condividere un\'idea!',sug_votes:'voti',sug_voted:'Votato',sug_vote:'Vota',sug_status_new:'Nuovo',sug_status_review:'In revisione',sug_status_planned:'Pianificato',sug_status_done:'Implementato',sug_status_declined:'Rifiutato',sug_submitted:'Suggerimento inviato con successo',sug_my:'I miei suggerimenti',sug_all:'Tutti',sug_sort_votes:'Piu votati',sug_sort_recent:'Piu recenti'},
+ja:{faq_title:'ヘルプセンター',faq_search:'記事を検索...',faq_helpful:'役に立ちましたか？',faq_yes:'はい',faq_no:'いいえ',faq_empty:'記事がありません',faq_no_results:'結果なし',tab_assistant:'アシスタント',tab_faq:'FAQ',tab_new_ticket:'新規チケット',tab_my_tickets:'マイチケット',tab_contact_center:'コンタクトセンター',tab_suggestions:'提案',ast_welcome:'こんにちは！EGGlogUアシスタントです。システムについて何でも聞いてください。ステップバイステップでご案内します。',ast_placeholder:'質問を入力してください...',ast_send:'送信',ast_nav_go:'移動',ast_ticket:'チケット作成',ast_tour:'ガイドツアー',ast_bug:'バグ報告',ast_suggestion:'提案を送信',ast_ask:'詳しく教えてください。何が必要ですか？',ast_multiple:'いくつかの選択肢があります。どれが最も近いですか？',ast_no_match:'正確な回答が見つかりませんでしたが、ご安心ください — お手伝いします。',ast_try_this:'以下をお試しください：',ast_did_it_work:'問題は解決しましたか？',ast_yes_solved:'はい、解決しました！',ast_no_next:'いいえ、次のステップ',ast_still_stuck:'まだ問題があります',ast_creating_ticket:'承知しました。サポートチケットを作成して、チームが直接お手伝いします。',ast_ticket_created:'会話情報を含むチケットが自動作成されました。チームがすぐに確認します。',ast_severity_cosmetic:'外観的 — 機能に影響しない軽微な表示問題',ast_severity_functional:'機能的 — 機能が正しく動作しない',ast_severity_critical:'重大 — 重要な機能が利用不可',ast_severity_blocker:'ブロッカー — システムが使用不可',ast_classify_bug:'より良いサポートのため、この問題をどのように分類しますか？',ast_readonly_warn:'セキュリティのため、アシスタントはシステムの外観やプロセスを変更できません。',ast_escalate:'この問題は技術チームの確認が必要です。優先チケットを作成中...',ast_similar_issue:'他のユーザーも同様の問題を報告しています。チームはすでに対応中です。',ast_greeting:'お問い合わせありがとうございます！EGGlogUに関するご質問にお答えします。',ast_anything_else:'他にお手伝いできることはありますか？',ast_auto_ticket:'自動チケット作成',ast_describe_issue:'発生している状況を簡単に説明してください：',ticket_subject:'件名',ticket_desc:'問題を説明してください',ticket_priority:'優先度',ticket_send:'チケット送信',ticket_empty:'チケットなし',ticket_status:'状態',ticket_created:'作成日',ticket_category:'カテゴリ',ticket_close:'チケットを閉じる',ticket_rate:'評価',ticket_reply:'返信',ticket_msg_placeholder:'メッセージを入力...',ticket_send_msg:'送信',ticket_rated:'評価済み',ticket_offline:'オフライン保存 — オンライン時に同期',ticket_synced:'チケット同期完了',admin_total:'チケット合計',admin_open:'未対応',admin_progress:'対応中',admin_resolved:'解決済み',admin_avg_time:'平均解決時間',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'時間',admin_filter:'フィルター',admin_internal:'内部メモ',admin_notes:'管理者メモ',admin_update:'更新',admin_faq_manage:'FAQ管理',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'緊急',st_open:'未対応',st_in_progress:'対応中',st_waiting_user:'返答待ち',st_resolved:'解決済み',st_closed:'終了',cat_production:'生産',cat_health:'衛生',cat_feed:'飼料',cat_iot:'IoT',cat_billing:'請求',cat_bug:'バグ',cat_sync:'同期',cat_feature_request:'機能要望',cat_access:'アクセス',cat_general:'一般',all:'すべて',sug_title:'提案と改善',sug_submit:'提案を送信',sug_idea_title:'アイデアのタイトル',sug_idea_desc:'提案を詳しく説明してください...',sug_category:'カテゴリ',sug_cat_feature:'新機能',sug_cat_improvement:'既存の改善',sug_cat_ui:'インターフェース / UX',sug_cat_performance:'パフォーマンス',sug_cat_docs:'ドキュメント',sug_cat_other:'その他',sug_empty:'まだ提案がありません。最初のアイデアを共有しましょう！',sug_votes:'票',sug_voted:'投票済み',sug_vote:'投票',sug_status_new:'新規',sug_status_review:'レビュー中',sug_status_planned:'計画済み',sug_status_done:'実装済み',sug_status_declined:'却下',sug_submitted:'提案が正常に送信されました',sug_my:'自分の提案',sug_all:'すべて',sug_sort_votes:'最多投票',sug_sort_recent:'最新'},
+zh:{faq_title:'帮助中心',faq_search:'搜索文章...',faq_helpful:'对您有帮助吗？',faq_yes:'是',faq_no:'否',faq_empty:'暂无文章',faq_no_results:'无结果',tab_assistant:'助手',tab_faq:'FAQ',tab_new_ticket:'新建工单',tab_my_tickets:'我的工单',tab_contact_center:'联系中心',tab_suggestions:'建议',ast_welcome:'你好！我是EGGlogU助手。有关系统的任何问题都可以问我，我会一步步指导你。',ast_placeholder:'输入你的问题...',ast_send:'发送',ast_nav_go:'前往',ast_ticket:'创建工单',ast_tour:'观看引导教程',ast_bug:'报告Bug',ast_suggestion:'提交建议',ast_ask:'我需要更多细节。能否更具体地描述你的需求？',ast_multiple:'我找到了几个选项。哪个最接近你的需求？',ast_no_match:'我没有找到确切答案，但别担心——我会帮助你。',ast_try_this:'请尝试以下操作：',ast_did_it_work:'您的问题解决了吗？',ast_yes_solved:'是的，已解决！',ast_no_next:'没有，下一步',ast_still_stuck:'问题仍然存在',ast_creating_ticket:'明白了。我正在创建支持工单，我们的团队将亲自为您提供帮助。',ast_ticket_created:'已自动创建包含所有对话信息的工单。我们的团队将很快处理。',ast_severity_cosmetic:'外观性 — 不影响功能的轻微显示问题',ast_severity_functional:'功能性 — 某项功能无法正常工作',ast_severity_critical:'严重 — 重要功能不可用',ast_severity_blocker:'阻断性 — 无法使用系统',ast_classify_bug:'为了更好地帮助您，您如何分类此问题？',ast_readonly_warn:'出于安全考虑，助手无法修改系统的外观或流程。',ast_escalate:'此问题需要技术团队审查。正在创建优先工单...',ast_similar_issue:'其他用户也报告了类似问题。我们的团队已在处理中。',ast_greeting:'感谢您的联系！我随时为您解答关于EGGlogU的任何问题。',ast_anything_else:'还有其他需要帮助的吗？',ast_auto_ticket:'自动创建工单',ast_describe_issue:'请简要描述发生了什么：',ticket_subject:'主题',ticket_desc:'描述您的问题',ticket_priority:'优先级',ticket_send:'提交工单',ticket_empty:'暂无工单',ticket_status:'状态',ticket_created:'创建时间',ticket_category:'分类',ticket_close:'关闭工单',ticket_rate:'评价',ticket_reply:'回复',ticket_msg_placeholder:'输入消息...',ticket_send_msg:'发送',ticket_rated:'已评价',ticket_offline:'已离线保存 — 联网后自动同步',ticket_synced:'工单已同步',admin_total:'工单总数',admin_open:'待处理',admin_progress:'处理中',admin_resolved:'已解决',admin_avg_time:'平均解决时间',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'小时',admin_filter:'筛选',admin_internal:'内部备注',admin_notes:'管理员备注',admin_update:'更新',admin_faq_manage:'管理FAQ',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'紧急',st_open:'待处理',st_in_progress:'处理中',st_waiting_user:'等待回复',st_resolved:'已解决',st_closed:'已关闭',cat_production:'生产',cat_health:'卫生',cat_feed:'饲料',cat_iot:'IoT',cat_billing:'账单',cat_bug:'Bug',cat_sync:'同步',cat_feature_request:'功能需求',cat_access:'访问',cat_general:'通用',all:'全部',sug_title:'建议与改进',sug_submit:'提交建议',sug_idea_title:'您的想法标题',sug_idea_desc:'详细描述您的建议...',sug_category:'分类',sug_cat_feature:'新功能',sug_cat_improvement:'现有改进',sug_cat_ui:'界面 / UX',sug_cat_performance:'性能',sug_cat_docs:'文档',sug_cat_other:'其他',sug_empty:'暂无建议。成为第一个分享想法的人！',sug_votes:'票',sug_voted:'已投票',sug_vote:'投票',sug_status_new:'新建',sug_status_review:'审核中',sug_status_planned:'已计划',sug_status_done:'已实现',sug_status_declined:'已拒绝',sug_submitted:'建议提交成功',sug_my:'我的建议',sug_all:'全部',sug_sort_votes:'最多投票',sug_sort_recent:'最新'}
 };
 const d=_SL[LANG]||_SL.es;const es=_SL.es;const en=_SL.en;
 return new Proxy({},{get:(_,k)=>d[k]||es[k]||en[k]||k});
@@ -4990,6 +5041,73 @@ const _AST_KB=[
 {keys:['soporte','support','ayuda','help','ticket','faq','sugerencia','suggestion','contacto','contact','problema','problem'],section:'soporte',tour:-1,step:-1,answer:{es:'En Soporte tienes: FAQ (base de conocimiento), crear tickets de soporte con prioridad, ver tus tickets y su estado, enviar sugerencias de mejora, y este asistente que te guia.',en:'In Support you have: FAQ (knowledge base), create support tickets with priority, view your tickets and status, send improvement suggestions, and this assistant to guide you.',fr:'Dans Support: FAQ, tickets de support, suivi de tickets, suggestions et cet assistant.',pt:'Em Suporte: FAQ, criar tickets, acompanhar tickets, enviar sugestoes e este assistente.',de:'In Support: FAQ, Support-Tickets, Ticket-Verfolgung, Vorschlage und dieser Assistent.',it:'In Supporto: FAQ, ticket di supporto, monitoraggio ticket, suggerimenti e questo assistente.',ja:'サポートにはFAQ、サポートチケット、チケット追跡、提案機能、このアシスタントがあります。',zh:'支持模块包含：FAQ、创建工单、查看工单状态、发送建议，以及这个助手。'}}
 ];
 
+// ── Troubleshooting steps for common issues ──
+const _AST_TROUBLESHOOT=[
+{keys:['no carga','not loading','no abre','no funciona','error','falla','crash','blank','blanco','pantalla','screen'],steps:{
+es:['1. Recarga la pagina (Ctrl+F5 o Cmd+Shift+R)','2. Borra la cache del navegador: Ajustes > Privacidad > Borrar datos','3. Verifica tu conexion a internet','4. Intenta en otro navegador (Chrome, Firefox, Edge)','5. Si usas VPN, desactivala temporalmente'],
+en:['1. Hard reload the page (Ctrl+F5 or Cmd+Shift+R)','2. Clear browser cache: Settings > Privacy > Clear data','3. Check your internet connection','4. Try a different browser (Chrome, Firefox, Edge)','5. If using a VPN, temporarily disable it']},category:'bug'},
+{keys:['sync','sincronizar','sincronizacion','datos no aparecen','data missing','perdido','lost','desaparecio','disappeared'],steps:{
+es:['1. Verifica que tengas conexion a internet activa','2. Ve a Configuracion > presiona "Sincronizar ahora"','3. Espera 30 segundos y recarga la pagina','4. Revisa que estes logueado con la cuenta correcta','5. Los datos offline se sincronizan automaticamente al reconectar'],
+en:['1. Verify you have an active internet connection','2. Go to Settings > press "Sync now"','3. Wait 30 seconds and reload the page','4. Check you are logged in with the correct account','5. Offline data syncs automatically when reconnected']},category:'sync'},
+{keys:['login','iniciar sesion','contrasena','password','acceso','access','no puedo entrar','cant login','locked','bloqueado'],steps:{
+es:['1. Verifica que el email y contrasena sean correctos','2. Usa "Olvidaste tu contrasena?" para resetear','3. Revisa tu bandeja de spam para el email de verificacion','4. Intenta con Google/Apple Sign-In si lo configuraste','5. Borra cookies del sitio y reintenta'],
+en:['1. Verify your email and password are correct','2. Use "Forgot password?" to reset','3. Check your spam folder for the verification email','4. Try Google/Apple Sign-In if configured','5. Clear site cookies and retry']},category:'access'},
+{keys:['lento','slow','demora','takes long','rendimiento','performance','tarda','lag'],steps:{
+es:['1. Cierra otras pestanas del navegador para liberar memoria','2. Verifica tu velocidad de internet (minimo 1 Mbps)','3. Limpia la cache del navegador','4. Si tienes muchos datos, usa los filtros de fecha','5. Actualiza tu navegador a la ultima version'],
+en:['1. Close other browser tabs to free memory','2. Check your internet speed (minimum 1 Mbps)','3. Clear browser cache','4. If you have lots of data, use date filters','5. Update your browser to the latest version']},category:'general'},
+{keys:['imprimir','print','pdf','exportar','export','descargar','download','reporte','report'],steps:{
+es:['1. Ve a la seccion que deseas exportar','2. Usa el boton de exportar/imprimir en la parte superior','3. Para PDF: Ctrl+P > "Guardar como PDF"','4. Verifica que los datos esten cargados antes de exportar','5. Si el archivo no descarga, revisa los permisos del navegador'],
+en:['1. Go to the section you want to export','2. Use the export/print button at the top','3. For PDF: Ctrl+P > "Save as PDF"','4. Verify data is loaded before exporting','5. If file doesn\'t download, check browser permissions']},category:'general'},
+{keys:['notificacion','notification','alerta','alert','aviso','no llegan','not receiving'],steps:{
+es:['1. Verifica que las notificaciones del navegador esten habilitadas','2. Revisa Configuracion > Notificaciones en EGGlogU','3. Asegurate de que el navegador no bloquee las notificaciones','4. Verifica que el email registrado sea correcto para alertas por correo'],
+en:['1. Verify browser notifications are enabled','2. Check Settings > Notifications in EGGlogU','3. Make sure the browser is not blocking notifications','4. Verify the registered email is correct for email alerts']},category:'general'},
+{keys:['iot','sensor','lectura','reading','temperatura','temperature','humedad','humidity','no conecta','not connecting','dispositivo','device'],steps:{
+es:['1. Verifica que el sensor/dispositivo este encendido y en rango','2. Revisa la configuracion del sensor en Ambiente > IoT','3. Verifica que el API key del sensor este correcto','4. Reinicia el dispositivo IoT','5. Contacta al fabricante del sensor si persiste'],
+en:['1. Verify the sensor/device is on and in range','2. Check sensor config in Environment > IoT','3. Verify the sensor API key is correct','4. Restart the IoT device','5. Contact the sensor manufacturer if it persists']},category:'iot'},
+{keys:['pago','payment','cobro','charge','factura','invoice','suscripcion','subscription','plan','billing','tarjeta','card'],steps:{
+es:['1. Verifica que tu tarjeta no este vencida','2. Revisa tu plan actual en Configuracion > Suscripcion','3. Si el pago fallo, intenta con otro metodo de pago','4. Los cambios de plan se aplican al siguiente ciclo de facturacion','5. Para reembolsos, contacta a soporte con tu numero de factura'],
+en:['1. Verify your card is not expired','2. Check your current plan in Settings > Subscription','3. If payment failed, try a different payment method','4. Plan changes apply on the next billing cycle','5. For refunds, contact support with your invoice number']},category:'billing'}
+];
+
+// ── Bug severity classification ──
+const _BUG_SEVERITY={
+cosmetic:{level:1,priority:'low',label:'cosmetic',auto_fix:true},
+functional:{level:2,priority:'medium',label:'functional',auto_fix:true},
+critical:{level:3,priority:'high',label:'critical',auto_fix:false},
+blocker:{level:4,priority:'urgent',label:'blocker',auto_fix:false}
+};
+
+// ── Issue deduplication & crowd urgency ──
+function _astLogIssue(desc){
+const hash=desc.toLowerCase().replace(/[^a-z0-9]/g,'').substring(0,40);
+const existing=_AST_ISSUE_LOG[hash];
+if(existing){
+existing.count++;
+existing.lastSeen=Date.now();
+}else{
+_AST_ISSUE_LOG[hash]={count:1,firstSeen:Date.now(),lastSeen:Date.now(),desc:desc.substring(0,100)};
+}
+localStorage.setItem('egglogu_ast_issues',JSON.stringify(_AST_ISSUE_LOG));
+return _AST_ISSUE_LOG[hash];
+}
+
+function _astGetCrowdUrgency(desc){
+const hash=desc.toLowerCase().replace(/[^a-z0-9]/g,'').substring(0,40);
+const issue=_AST_ISSUE_LOG[hash];
+if(!issue)return {count:0,priority:'medium'};
+if(issue.count>=10)return {count:issue.count,priority:'urgent'};
+if(issue.count>=5)return {count:issue.count,priority:'high'};
+if(issue.count>=2)return {count:issue.count,priority:'medium'};
+return {count:issue.count,priority:'low'};
+}
+
+// ── Detect read-only / change requests ──
+function _astIsChangeRequest(input){
+const changeWords=['cambiar','change','modify','modificar','color','font','fuente','tamano','size','mover','move','quitar','remove','agregar','add','eliminar','delete','ocultar','hide','redisenar','redesign','estilo','style','css','layout','posicion','position','proceso','process','flujo','flow','workflow','reordenar','reorder'];
+const q=input.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+return changeWords.some(w=>q.includes(w))&&!q.includes('como')&&!q.includes('how')&&!q.includes('donde')&&!q.includes('where');
+}
+
 function _assistantMatchKB(input){
 const q=input.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const words=q.split(/\s+/).filter(w=>w.length>2);
@@ -5007,31 +5125,77 @@ return {idx,score,entry};
 return scored;
 }
 
+function _assistantMatchTroubleshoot(input){
+const q=input.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const words=q.split(/\s+/).filter(w=>w.length>2);
+const scored=_AST_TROUBLESHOOT.map((entry,idx)=>{
+let score=0;
+for(const w of words){
+for(const k of entry.keys){
+if(k===w){score+=3;}
+else if(k.includes(w)||w.includes(k)){score+=2;}
+}
+}
+return {idx,score,entry};
+}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+return scored;
+}
+
 function _assistantProcessMsg(input){
 const L=_sL();
 const lang=LANG||'es';
+
+// ── Check for change/modification requests (read-only policy) ──
+if(_astIsChangeRequest(input)){
+return {text:L.ast_readonly_warn+'\n\n'+L.ast_anything_else,actions:[
+{label:L.ast_ticket,action:'_supportTab="new_ticket";renderSoporte()'},
+{label:L.ast_suggestion,action:'_supportTab="suggestions";renderSoporte()'}
+]};
+}
+
+// ── Check troubleshooting match first (problem-solving oriented) ──
+const tsMatches=_assistantMatchTroubleshoot(input);
+if(tsMatches.length>0&&tsMatches[0].score>=3){
+const best=tsMatches[0];
+const steps=best.entry.steps[lang]||best.entry.steps.es||best.entry.steps.en;
+const stepsText=L.ast_try_this+'\n\n'+steps.join('\n');
+_assistantTroubleshootStep={tsIdx:best.idx,stepIdx:0,input:input};
+// Log the issue for crowd urgency
+_astLogIssue(input);
+const crowd=_astGetCrowdUrgency(input);
+let extra='';
+if(crowd.count>=3){extra='\n\nℹ️ '+L.ast_similar_issue+' ('+crowd.count+' reportes)';}
+return {text:L.ast_greeting+'\n\n'+stepsText+extra+'\n\n'+L.ast_did_it_work,actions:[
+{label:'✅ '+L.ast_yes_solved,action:"_assistantResolved()"},
+{label:'❌ '+L.ast_still_stuck,action:"_assistantEscalate()"}
+]};
+}
+
+// ── Standard KB match ──
 const matches=_assistantMatchKB(input);
 if(matches.length===0){
-return {text:L.ast_no_match,actions:[
-{label:L.ast_ticket,action:'_supportTab="new_ticket";renderSoporte()'},
-{label:L.ast_bug,action:'toggleBugPanel()'},
-{label:L.ast_tour,action:'startWalkthrough()'}
+// No match — offer helpful options with excellent CS tone
+_astLogIssue(input);
+return {text:L.ast_greeting+'\n\n'+L.ast_no_match+'\n\n'+L.ast_anything_else,actions:[
+{label:'🎫 '+L.ast_auto_ticket,action:"_assistantAutoTicket()"},
+{label:'🐛 '+L.ast_bug,action:'toggleBugPanel()'},
+{label:'🎬 '+L.ast_tour,action:'startWalkthrough()'}
 ]};
 }
 if(matches.length===1||matches[0].score>=4||(matches[0].score>matches[1]?.score*1.5)){
 const best=matches[0].entry;
 const answer=best.answer[lang]||best.answer.es||best.answer.en;
 const actions=[];
-if(best.section){actions.push({label:L.ast_nav_go+' '+_sectionName(best.section),action:"nav('"+best.section+"')"});}
-if(best.tour>=0){actions.push({label:L.ast_tour,action:'startWalkthrough('+best.tour+')'});}
+if(best.section){actions.push({label:'📍 '+L.ast_nav_go+' '+_sectionName(best.section),action:"nav('"+best.section+"')"});}
+if(best.tour>=0){actions.push({label:'🎬 '+L.ast_tour,action:'startWalkthrough('+best.tour+')'});}
+actions.push({label:'💬 '+L.ast_anything_else.split('?')[0]+'?',action:"_assistantFollowUp()"});
 return {text:answer,actions};
 }
 // Multiple matches — ask for clarification
 const top3=matches.slice(0,3);
 let text=L.ast_multiple;
 const actions=top3.map(m=>{
-const ans=m.entry.answer[lang]||m.entry.answer.es;
-const label=m.entry.section?_sectionName(m.entry.section):ans.substring(0,40)+'...';
+const label=m.entry.section?_sectionName(m.entry.section):(m.entry.answer[lang]||m.entry.answer.es).substring(0,40)+'...';
 return {label,action:"_assistantShowKBAnswer("+m.idx+")"};
 });
 return {text,actions};
@@ -5058,6 +5222,111 @@ _assistantMessages.push({from:'bot',text:answer,actions,ts:Date.now()});
 _renderAssistantMessages();
 }
 
+// ── Resolution & Escalation handlers ──
+function _assistantResolved(){
+const L=_sL();
+_assistantTroubleshootStep=null;
+_assistantMessages.push({from:'user',text:'✅ '+L.ast_yes_solved,ts:Date.now()});
+_assistantMessages.push({from:'bot',text:'🎉 '+L.ast_anything_else,actions:[
+{label:'📍 Dashboard',action:"nav('dashboard')"},
+{label:'🎬 '+L.ast_tour,action:'startWalkthrough()'}
+],ts:Date.now()});
+_renderAssistantMessages();
+}
+
+function _assistantEscalate(){
+const L=_sL();
+const lang=LANG||'es';
+_assistantMessages.push({from:'user',text:'❌ '+L.ast_still_stuck,ts:Date.now()});
+// Check if it's a simple or invasive bug — classify
+_assistantMessages.push({from:'bot',text:L.ast_classify_bug,actions:[
+{label:L.ast_severity_cosmetic.split(' — ')[0],action:"_assistantClassifyAndTicket('cosmetic')"},
+{label:L.ast_severity_functional.split(' — ')[0],action:"_assistantClassifyAndTicket('functional')"},
+{label:L.ast_severity_critical.split(' — ')[0],action:"_assistantClassifyAndTicket('critical')"},
+{label:L.ast_severity_blocker.split(' — ')[0],action:"_assistantClassifyAndTicket('blocker')"}
+],ts:Date.now()});
+_renderAssistantMessages();
+}
+
+function _assistantClassifyAndTicket(severity){
+const L=_sL();
+const sev=_BUG_SEVERITY[severity]||_BUG_SEVERITY.functional;
+const crowd=_assistantTroubleshootStep?_astGetCrowdUrgency(_assistantTroubleshootStep.input):{count:0,priority:sev.priority};
+// Crowd urgency overrides if higher
+const finalPriority=_TICKET_PRIORITIES.indexOf(crowd.priority)>_TICKET_PRIORITIES.indexOf(sev.priority)?crowd.priority:sev.priority;
+
+// Build conversation transcript for ticket
+const transcript=_assistantMessages.map(m=>(m.from==='user'?'👤 ':'🤖 ')+m.text).join('\n');
+const desc=_assistantTroubleshootStep?_assistantTroubleshootStep.input:'Issue reported via AI assistant';
+
+_assistantMessages.push({from:'user',text:L['ast_severity_'+severity],ts:Date.now()});
+
+if(sev.auto_fix){
+// Simple bug — auto-create ticket, team handles it
+_assistantMessages.push({from:'bot',text:L.ast_creating_ticket+'\n\n📋 '+L.ticket_priority+': '+L['pri_'+finalPriority]+
+(crowd.count>=3?'\n👥 '+crowd.count+' '+L.ast_similar_issue.split('.')[0]:''),ts:Date.now()});
+}else{
+// Invasive bug — flag for joint review
+_assistantMessages.push({from:'bot',text:'⚠️ '+L.ast_escalate+'\n\n📋 '+L.ticket_priority+': '+L['pri_'+finalPriority]+
+(crowd.count>=3?'\n👥 '+crowd.count+' reportes similares':''),ts:Date.now()});
+}
+
+// Auto-create the ticket via API
+_assistantCreateTicketAuto(desc,severity,finalPriority,transcript);
+_assistantTroubleshootStep=null;
+_renderAssistantMessages();
+}
+
+async function _assistantCreateTicketAuto(desc,severity,priority,transcript){
+const L=_sL();
+const subject='[AI-'+severity.toUpperCase()+'] '+desc.substring(0,80);
+const fullDesc='Severidad: '+severity+'\nPrioridad: '+priority+'\n\n--- Conversacion del Asistente ---\n'+transcript;
+
+if(!navigator.onLine){
+_offlineTicketQueue.push({subject,description:fullDesc,priority,category:'bug',created_offline:new Date().toISOString(),auto_created:true,notify_on_resolve:true});
+localStorage.setItem('egglogu_offline_tickets',JSON.stringify(_offlineTicketQueue));
+_assistantMessages.push({from:'bot',text:'📴 '+L.ticket_offline,ts:Date.now()});
+_renderAssistantMessages();
+return;
+}
+if(!apiService.isLoggedIn()){
+_assistantMessages.push({from:'bot',text:L.ast_ticket_created+'\n\n💡 '+L.ast_anything_else,actions:[
+{label:'🎫 '+L.tab_my_tickets,action:'_supportTab="my_tickets";renderSoporte()'}
+],ts:Date.now()});
+_renderAssistantMessages();
+return;
+}
+try{
+const tk=await apiService.createTicket(subject,fullDesc,priority);
+_assistantMessages.push({from:'bot',text:'✅ '+L.ast_ticket_created+' (#'+tk.ticket_number+')\n\n'+L.ast_anything_else,actions:[
+{label:'🎫 '+L.tab_my_tickets,action:'_supportTab="my_tickets";renderSoporte();_loadMyTickets()'}
+],ts:Date.now()});
+}catch(e){
+_assistantMessages.push({from:'bot',text:'⚠️ Error: '+e.message+'. '+L.ast_ticket,actions:[
+{label:L.ast_ticket,action:'_supportTab="new_ticket";renderSoporte()'}
+],ts:Date.now()});
+}
+_renderAssistantMessages();
+}
+
+function _assistantAutoTicket(){
+const L=_sL();
+_assistantMessages.push({from:'user',text:'🎫 '+L.ast_auto_ticket,ts:Date.now()});
+_assistantMessages.push({from:'bot',text:L.ast_describe_issue,actions:[],ts:Date.now()});
+_assistantAwaitingClarification='auto_ticket';
+_renderAssistantMessages();
+}
+
+function _assistantFollowUp(){
+const L=_sL();
+_assistantMessages.push({from:'bot',text:L.ast_greeting+' '+L.ast_anything_else,actions:[
+{label:'🥚 '+_sectionName('produccion'),action:"_assistantQuickQ('produccion')"},
+{label:'💰 '+_sectionName('finanzas'),action:"_assistantQuickQ('finanzas')"},
+{label:'📊 Dashboard',action:"_assistantQuickQ('dashboard')"}
+],ts:Date.now()});
+_renderAssistantMessages();
+}
+
 function _assistantSend(){
 const inp=document.getElementById('ast-input');
 if(!inp)return;
@@ -5065,6 +5334,17 @@ const msg=inp.value.trim();
 if(!msg)return;
 inp.value='';
 _assistantMessages.push({from:'user',text:msg,ts:Date.now()});
+
+// Handle pending auto-ticket creation
+if(_assistantAwaitingClarification==='auto_ticket'){
+_assistantAwaitingClarification=null;
+const transcript=_assistantMessages.map(m=>(m.from==='user'?'👤 ':'🤖 ')+m.text).join('\n');
+_astLogIssue(msg);
+const crowd=_astGetCrowdUrgency(msg);
+_assistantCreateTicketAuto(msg,'functional',crowd.priority,transcript);
+return;
+}
+
 const response=_assistantProcessMsg(msg);
 _assistantMessages.push({from:'bot',text:response.text,actions:response.actions||[],ts:Date.now()});
 _renderAssistantMessages();
@@ -5096,21 +5376,22 @@ container.scrollTop=container.scrollHeight;
 }
 
 function _renderAssistantTab(L){
-// Welcome message if empty
+// Welcome message if empty — excellent CS greeting
 if(_assistantMessages.length===0){
-_assistantMessages.push({from:'bot',text:L.ast_welcome,actions:[
+_assistantMessages.push({from:'bot',text:L.ast_greeting+'\n\n'+L.ast_welcome,actions:[
 {label:'🥚 '+_sectionName('produccion'),action:"_assistantQuickQ('produccion')"},
 {label:'💉 '+_sectionName('sanidad'),action:"_assistantQuickQ('sanidad')"},
 {label:'💰 '+_sectionName('finanzas'),action:"_assistantQuickQ('finanzas')"},
-{label:'📊 Dashboard',action:"_assistantQuickQ('dashboard')"}
+{label:'📊 Dashboard',action:"_assistantQuickQ('dashboard')"},
+{label:'🔧 '+_sectionName('config'),action:"_assistantQuickQ('config')"}
 ],ts:Date.now()});
 }
-let h=`<div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;height:min(60vh,500px)">`;
-// Header
+let h=`<div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;height:min(65vh,550px)">`;
+// Header with status indicator
 h+=`<div style="padding:12px 16px;background:var(--primary);color:#fff;display:flex;align-items:center;gap:8px">
 <span style="font-size:1.3em">🤖</span>
 <span style="font-weight:700;font-size:1.05em">EGGlogU ${L.tab_assistant}</span>
-<span style="margin-left:auto;font-size:.8em;opacity:.7">v1.0</span>
+<span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:.8em;opacity:.85"><span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block"></span> Online</span>
 </div>`;
 // Messages area
 h+=`<div id="ast-messages" style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px">`;
@@ -5138,9 +5419,9 @@ h+=`<div style="padding:8px 12px;border-top:1px solid var(--border);display:flex
 <button class="btn btn-primary" onclick="_assistantSend()" style="padding:8px 16px">${L.ast_send}</button>
 </div>`;
 h+=`</div>`;
-// Quick actions
+// Quick actions bar
 h+=`<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-<button class="btn btn-secondary" onclick="_supportTab='new_ticket';renderSoporte()" style="padding:6px 12px;font-size:.85em">🎫 ${L.ast_ticket}</button>
+<button class="btn btn-secondary" onclick="_assistantAutoTicket()" style="padding:6px 12px;font-size:.85em">🎫 ${L.ast_auto_ticket}</button>
 <button class="btn btn-secondary" onclick="toggleBugPanel()" style="padding:6px 12px;font-size:.85em">🐛 ${L.ast_bug}</button>
 <button class="btn btn-secondary" onclick="_supportTab='suggestions';renderSoporte()" style="padding:6px 12px;font-size:.85em">💡 ${L.ast_suggestion}</button>
 <button class="btn btn-secondary" onclick="startWalkthrough()" style="padding:6px 12px;font-size:.85em">🎬 ${L.ast_tour}</button>
@@ -9626,14 +9907,18 @@ h+=`<div style="padding:10px 16px;background:rgba(255,152,0,.08);border-bottom:1
 
 h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#ddd)">
 <div style="margin-bottom:8px"><select id="bug-severity" style="width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--border,#ddd);background:var(--bg,#f5f5f5);color:var(--text,#212121);font-size:12px">
-<option value="low">🟡 Bajo — Visual/cosmetico</option>
-<option value="medium" selected>🟠 Medio — Funcionalidad parcial</option>
-<option value="high">🔴 Alto — Funcionalidad rota</option>
-<option value="critical">💀 Critico — Perdida de datos/crash</option>
+<option value="low">🟡 Cosmetico — Visual menor, no afecta funcionalidad</option>
+<option value="medium" selected>🟠 Funcional — Una funcion no trabaja correctamente</option>
+<option value="high">🔴 Critico — Funcionalidad importante no disponible</option>
+<option value="critical">💀 Bloqueante — No se puede usar el sistema</option>
 </select></div>
-<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Describe el problema..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#ddd);background:var(--bg,#f5f5f5);color:var(--text,#212121);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
+<div style="margin-bottom:6px;padding:6px 8px;background:rgba(33,150,243,.06);border-radius:6px;font-size:10px;color:var(--text-muted,#666)">
+<strong>Criterios:</strong> Cosmetico = fix automatico | Funcional = fix automatico | Critico = revision conjunta | Bloqueante = escalacion inmediata
+</div>
+<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Describe el problema con el mayor detalle posible..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#ddd);background:var(--bg,#f5f5f5);color:var(--text,#212121);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
 <div style="display:flex;gap:8px">
 <button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">+ Reportar Bug</button>
+<button onclick="_submitBugAndTicket()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#1976d2,#1565c0);color:#fff;font-weight:700;cursor:pointer;font-size:12px" title="Reportar y crear ticket automatico">🎫 + Ticket</button>
 ${errCount?`<button onclick="_attachErrors()" style="padding:8px 12px;border:none;border-radius:8px;background:rgba(255,152,0,.2);color:#ff9800;cursor:pointer;font-size:11px;font-weight:600" title="Adjuntar errores capturados">📎 ${errCount} err</button>`:''}
 </div></div>`;
 
@@ -9675,7 +9960,9 @@ h+=`</div></details>`;
 }
 h+=`</div>
 <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-${!isSent?`<button onclick="_sendBug(${idx})" style="background:none;border:1px solid rgba(76,175,80,.4);color:#4caf50;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap" title="Enviar este bug">📨</button>`:''}
+${!isSent?`<button onclick="_sendBugToAI(${idx})" style="background:none;border:1px solid rgba(33,150,243,.4);color:#1976d2;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap" title="AI diagnostica y clasifica este bug">🤖</button>
+<button onclick="_sendBugAsTicket(${idx})" style="background:none;border:1px solid rgba(255,152,0,.4);color:#ff9800;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap" title="Crear ticket directo">🎫</button>
+<button onclick="_sendBug(${idx})" style="background:none;border:1px solid rgba(76,175,80,.4);color:#4caf50;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap" title="Copiar al portapapeles">📨</button>`:''}
 <button onclick="_deleteBug(${idx})" style="background:none;border:none;color:var(--text-muted,#666);cursor:pointer;font-size:14px;padding:2px;text-align:center" title="Eliminar">🗑</button>
 </div>
 </div></div>`;
@@ -9687,7 +9974,8 @@ if(bugs.length>0){
 h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#ddd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
 <span style="font-size:11px;color:var(--text-muted,#666)">${bugs.length} bug${bugs.length!==1?'s':''} · ${unsent.length} pendiente${unsent.length!==1?'s':''}</span>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
-${unsent.length>0?`<button onclick="_sendAllBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:linear-gradient(135deg,#4caf50,#388e3c);color:#fff;cursor:pointer;font-size:11px;font-weight:600">📨 Enviar ${unsent.length>1?'todos ('+unsent.length+')':'1'}</button>`:''}
+${unsent.length>0?`<button onclick="_sendAllBugsAsTickets()" style="padding:4px 10px;border:none;border-radius:6px;background:linear-gradient(135deg,#1976d2,#1565c0);color:#fff;cursor:pointer;font-size:11px;font-weight:600">🎫 Tickets (${unsent.length})</button>
+<button onclick="_sendAllBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:linear-gradient(135deg,#4caf50,#388e3c);color:#fff;cursor:pointer;font-size:11px;font-weight:600">📨 Enviar ${unsent.length>1?'todos ('+unsent.length+')':'1'}</button>`:''}
 <button onclick="_exportBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:var(--bg-secondary,#f0f0f0);color:var(--text,#212121);cursor:pointer;font-size:11px">📋 Exportar</button>
 <button onclick="_clearBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(244,67,54,.1);color:#f44336;cursor:pointer;font-size:11px">🗑 Limpiar</button>
 </div></div>`;
@@ -9724,6 +10012,170 @@ toast?.('🐛 Bug #'+(bugs.filter(x=>!x.sent).length)+' guardado — sigue naveg
 renderBugPanel();
 };
 
+// Submit bug AND create support ticket automatically
+window._submitBugAndTicket=async function(){
+const desc=document.getElementById('bug-desc')?.value?.trim()||'';
+const severity=document.getElementById('bug-severity')?.value||'medium';
+const section=typeof currentSection!=='undefined'?currentSection:'?';
+if(!desc){toast?.('Describe el problema para crear el ticket',true);document.getElementById('bug-desc')?.focus();return;}
+
+// Save bug locally first
+const bug={
+id:typeof genId!=='undefined'?genId():Date.now().toString(36),
+ts:new Date().toISOString(),
+section:section,
+user:typeof _currentUser!=='undefined'&&_currentUser?_currentUser.name:'anon',
+severity:severity,
+desc:desc,
+errors:window._bugAttachedErrors||null,
+ua:navigator.userAgent.substring(0,100),
+viewport:window.innerWidth+'x'+window.innerHeight,
+lang:typeof LANG!=='undefined'?LANG:'?',
+sent:false
+};
+const bugs=loadBugs();
+bugs.push(bug);
+saveBugs(bugs);
+window._bugAttachedErrors=null;
+
+// Log for crowd urgency
+if(typeof _astLogIssue==='function')_astLogIssue(desc);
+const crowd=typeof _astGetCrowdUrgency==='function'?_astGetCrowdUrgency(desc):{count:0,priority:severity};
+const severityMap={low:'low',medium:'medium',high:'high',critical:'urgent'};
+const basePriority=severityMap[severity]||'medium';
+const priorities=['low','medium','high','urgent'];
+const finalPriority=priorities.indexOf(crowd.priority)>priorities.indexOf(basePriority)?crowd.priority:basePriority;
+
+// Determine triage: cosmetic+functional = auto-fix, critical+blocker = team review
+const isInvasive=severity==='high'||severity==='critical';
+const triageLabel=isInvasive?'⚠️ REQUIERE REVISION CONJUNTA':'✅ AUTO-FIX PATH';
+const crowdInfo=crowd.count>=2?' | 👥 '+crowd.count+' reportes similares':'';
+
+const subject='[BUG-'+severity.toUpperCase()+'] '+desc.substring(0,80);
+const fullDesc='Severidad: '+severity+'\nPrioridad: '+finalPriority+'\nTriage: '+triageLabel+crowdInfo+
+'\nSeccion: '+section+'\nUsuario: '+bug.user+'\nViewport: '+bug.viewport+'\nNavegador: '+bug.ua+
+(bug.errors?.length?'\n\nErrores JS adjuntos: '+bug.errors.map(e=>e.type+' @ '+e.src+':'+e.line+' — '+e.msg).join('\n'):'');
+
+// Create ticket via API
+if(navigator.onLine&&typeof apiService!=='undefined'&&apiService.isLoggedIn()){
+try{
+const tk=await apiService.createTicket(subject,fullDesc,finalPriority);
+bugs[bugs.length-1].sent=true;
+bugs[bugs.length-1].sentAt=new Date().toISOString();
+bugs[bugs.length-1].ticketNumber=tk.ticket_number;
+saveBugs(bugs);
+toast?.('🎫 Ticket '+tk.ticket_number+' creado ('+triageLabel+')');
+}catch(e){
+toast?.('Bug guardado. Error creando ticket: '+e.message,true);
+}
+}else{
+// Save offline ticket
+const offQ=JSON.parse(localStorage.getItem('egglogu_offline_tickets')||'[]');
+offQ.push({subject,description:fullDesc,priority:finalPriority,created_offline:new Date().toISOString(),auto_created:true,notify_on_resolve:true});
+localStorage.setItem('egglogu_offline_tickets',JSON.stringify(offQ));
+toast?.('📴 Bug + ticket guardados offline — se envian al reconectar');
+}
+document.getElementById('bug-desc').value='';
+renderBugPanel();
+};
+
+// Send single bug as ticket via API
+window._sendBugAsTicket=async function(idx){
+const bugs=loadBugs();
+if(!bugs[idx])return;
+const b=bugs[idx];
+const severityMap={low:'low',medium:'medium',high:'high',critical:'urgent'};
+const priority=severityMap[b.severity]||'medium';
+const isInvasive=b.severity==='high'||b.severity==='critical';
+const triageLabel=isInvasive?'⚠️ REQUIERE REVISION CONJUNTA':'✅ AUTO-FIX PATH';
+const subject='[BUG-'+b.severity.toUpperCase()+'] '+b.desc.substring(0,80);
+const fullDesc=_formatBugText(b)+'\nTriage: '+triageLabel;
+
+if(navigator.onLine&&typeof apiService!=='undefined'&&apiService.isLoggedIn()){
+try{
+const tk=await apiService.createTicket(subject,fullDesc,priority);
+bugs[idx].sent=true;bugs[idx].sentAt=new Date().toISOString();bugs[idx].ticketNumber=tk.ticket_number;
+saveBugs(bugs);
+toast?.('🎫 Ticket '+tk.ticket_number+' creado');
+renderBugPanel();
+}catch(e){toast?.('Error: '+e.message,true);}
+}else{
+// Fallback: copy to clipboard
+const txt=_formatBugText(b);
+navigator.clipboard.writeText(txt).then(()=>toast?.('📋 Bug copiado — sin conexion para crear ticket')).catch(()=>toast?.('Error al copiar',true));
+}
+};
+
+// Send bug to AI assistant for guided diagnosis + auto-classification
+window._sendBugToAI=function(idx){
+const bugs=loadBugs();
+if(!bugs[idx])return;
+const b=bugs[idx];
+// Close bug panel
+document.getElementById('bug-panel').style.display='none';
+// Navigate to support section, assistant tab
+if(typeof nav==='function')nav('soporte');
+setTimeout(()=>{
+_supportTab='assistant';
+if(typeof renderSoporte==='function')renderSoporte();
+setTimeout(()=>{
+// Inject bug description as user message and process it
+const bugContext='[Bug #'+(idx+1)+'] '+b.desc+' (Seccion: '+b.section+', Severidad reportada: '+b.severity+')';
+_assistantMessages.push({from:'user',text:'🐛 '+bugContext,ts:Date.now()});
+// Log for crowd urgency
+if(typeof _astLogIssue==='function')_astLogIssue(b.desc);
+const crowd=typeof _astGetCrowdUrgency==='function'?_astGetCrowdUrgency(b.desc):{count:0,priority:'medium'};
+// Process through AI — try troubleshoot first, then KB
+const response=_assistantProcessMsg(b.desc);
+// Enhance response with bug context
+let enhancedText=response.text;
+if(crowd.count>=2){enhancedText+='\n\n👥 '+crowd.count+' usuarios han reportado algo similar.';}
+// Add severity-aware actions
+const actions=response.actions||[];
+if(!actions.some(a=>a.action&&a.action.includes('Escalate'))){
+actions.push({label:'🎫 Clasificar y crear ticket',action:"_assistantEscalateFromBug("+idx+")"});
+}
+_assistantMessages.push({from:'bot',text:enhancedText,actions:actions,ts:Date.now()});
+_renderAssistantMessages();
+},200);
+},100);
+};
+
+// Escalate from a bug widget bug → classify severity and auto-create ticket
+window._assistantEscalateFromBug=function(idx){
+const L=_sL();
+const bugs=loadBugs();
+if(!bugs[idx])return;
+const b=bugs[idx];
+// Map bug widget severity to classification
+const sevMap={low:'cosmetic',medium:'functional',high:'critical',critical:'blocker'};
+const severity=sevMap[b.severity]||'functional';
+const sev=_BUG_SEVERITY[severity]||_BUG_SEVERITY.functional;
+const crowd=typeof _astGetCrowdUrgency==='function'?_astGetCrowdUrgency(b.desc):{count:0,priority:sev.priority};
+const priorities=['low','medium','high','urgent'];
+const finalPriority=priorities.indexOf(crowd.priority)>priorities.indexOf(sev.priority)?crowd.priority:sev.priority;
+const transcript=_assistantMessages.map(m=>(m.from==='user'?'👤 ':'🤖 ')+m.text).join('\n');
+const isInvasive=severity==='critical'||severity==='blocker';
+const triageLabel=isInvasive?'⚠️ REQUIERE REVISION CONJUNTA':'✅ AUTO-FIX PATH';
+
+_assistantMessages.push({from:'user',text:'🎫 Clasificar: '+L['ast_severity_'+severity],ts:Date.now()});
+
+if(sev.auto_fix){
+_assistantMessages.push({from:'bot',text:L.ast_creating_ticket+' ('+triageLabel+')\n📋 Prioridad: '+finalPriority+
+(crowd.count>=2?'\n👥 '+crowd.count+' reportes similares':''),ts:Date.now()});
+}else{
+_assistantMessages.push({from:'bot',text:'⚠️ '+L.ast_escalate+' ('+triageLabel+')\n📋 Prioridad: '+finalPriority+
+(crowd.count>=2?'\n👥 '+crowd.count+' reportes similares':''),ts:Date.now()});
+}
+
+// Create the ticket
+_assistantCreateTicketAuto(b.desc,severity,finalPriority,transcript);
+// Mark bug as sent
+bugs[idx].sent=true;bugs[idx].sentAt=new Date().toISOString();
+saveBugs(bugs);
+_renderAssistantMessages();
+};
+
 // Send single bug (copy to clipboard + mark sent)
 window._sendBug=function(idx){
 const bugs=loadBugs();
@@ -9739,6 +10191,40 @@ toast?.('📋 Bug copiado al portapapeles');
 bugs[idx].sent=true;
 bugs[idx].sentAt=new Date().toISOString();
 saveBugs(bugs);
+renderBugPanel();
+};
+
+// Send all unsent bugs as tickets (batch)
+window._sendAllBugsAsTickets=async function(){
+const bugs=loadBugs();
+const unsent=bugs.map((b,i)=>({...b,_idx:i})).filter(x=>!x.sent);
+if(!unsent.length){toast?.('No hay bugs pendientes',true);return;}
+if(!navigator.onLine||typeof apiService==='undefined'||!apiService.isLoggedIn()){
+toast?.('📴 Sin conexion — usa 🤖 AI para diagnostico offline',true);return;
+}
+let created=0;let failed=0;
+for(const b of unsent){
+const sevMap={low:'low',medium:'medium',high:'high',critical:'urgent'};
+const priority=sevMap[b.severity]||'medium';
+const isInvasive=b.severity==='high'||b.severity==='critical';
+const triageLabel=isInvasive?'⚠️ REQUIERE REVISION CONJUNTA':'✅ AUTO-FIX PATH';
+if(typeof _astLogIssue==='function')_astLogIssue(b.desc);
+const crowd=typeof _astGetCrowdUrgency==='function'?_astGetCrowdUrgency(b.desc):{count:0,priority:priority};
+const priorities=['low','medium','high','urgent'];
+const finalPriority=priorities.indexOf(crowd.priority)>priorities.indexOf(priority)?crowd.priority:priority;
+const crowdInfo=crowd.count>=2?' | 👥 '+crowd.count+' reportes similares':'';
+const subject='[BUG-'+b.severity.toUpperCase()+'] '+b.desc.substring(0,80);
+const fullDesc='Severidad: '+b.severity+'\nPrioridad: '+finalPriority+'\nTriage: '+triageLabel+crowdInfo+
+'\nSeccion: '+b.section+'\nUsuario: '+b.user+'\nViewport: '+b.viewport+
+(b.errors?.length?'\n\nErrores JS: '+b.errors.map(e=>e.type+' @ '+e.src+':'+e.line+' — '+e.msg).join('\n'):'');
+try{
+const tk=await apiService.createTicket(subject,fullDesc,finalPriority);
+bugs[b._idx].sent=true;bugs[b._idx].sentAt=new Date().toISOString();bugs[b._idx].ticketNumber=tk.ticket_number;
+created++;
+}catch(e){failed++;}
+}
+saveBugs(bugs);
+toast?.('🎫 '+created+' ticket(s) creados'+(failed?' ('+failed+' fallidos)':''));
 renderBugPanel();
 };
 
