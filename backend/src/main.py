@@ -9,6 +9,7 @@ import sentry_sdk
 from fastapi import FastAPI, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -228,7 +229,10 @@ app.add_middleware(SecurityHeadersMiddleware)
 # 3) Global rate limit (before CORS so abusive IPs are cut early)
 app.add_middleware(GlobalRateLimitMiddleware)
 
-# 3) CORS — restricted origins, never wildcard
+# 4) GZip compression for responses > 500 bytes
+app.add_middleware(GZipMiddleware, minimum_size=500)
+
+# 5) CORS — restricted origins, never wildcard
 allowed_origins = [settings.FRONTEND_URL]
 if settings.FRONTEND_URL != "https://egglogu.com":
     allowed_origins.append("http://localhost:3000")
@@ -313,4 +317,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 # Keep a minimal /health for backwards-compatible container health checks
 @app.get("/health")
 async def health_check():
-    return {"status": "ok"}
+    return JSONResponse(
+        content={"status": "ok"},
+        headers={"Cache-Control": "no-cache, no-store"},
+    )

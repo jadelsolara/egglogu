@@ -9,22 +9,41 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c max_connections=200
+      -c work_mem=4MB
+      -c effective_cache_size=768MB
+      -c log_min_duration_statement=500
+      -c log_connections=on
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U egglogu"]
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     restart: unless-stopped
 
   redis:
     image: redis:7-alpine
     ports:
       - "127.0.0.1:6379:6379"
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru --appendonly yes --appendfsync everysec
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
+    volumes:
+      - redisdata:/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
     restart: unless-stopped
 
   app:
@@ -38,6 +57,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '2.0'
     restart: unless-stopped
 
   backup:
@@ -74,4 +98,5 @@ services:
 
 volumes:
   pgdata:
+  redisdata:
   backups:

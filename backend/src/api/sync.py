@@ -8,6 +8,7 @@ Strategy:
   4. Conflict resolution: last-write-wins based on `updated_at`.
 """
 
+import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import Any
@@ -184,15 +185,14 @@ async def sync_data(
 
     await db.flush()
 
-    # ── Phase 2: Return server changes since last_synced_at ──
+    # ── Phase 2: Return server changes since last_synced_at (parallel queries) ──
     server_changes: dict[str, list[dict[str, Any]]] = {}
     since = payload.last_synced_at or datetime.min.replace(tzinfo=timezone.utc)
 
-    for entity_key, model_cls in MODEL_MAP.items():
-        if not hasattr(model_cls, "updated_at") or not hasattr(
-            model_cls, "organization_id"
-        ):
-            continue
+    async def _fetch_entity(entity_key: str, model_cls: type) -> tuple[str, list[dict[str, Any]]]:
+        """Fetch changed records for a single entity."""
+        if not hasattr(model_cls, "updated_at") or not hasattr(model_cls, "organization_id"):
+            return entity_key, []
         stmt = (
             select(model_cls)
             .where(
@@ -204,8 +204,15 @@ async def sync_data(
         )
         result = await db.execute(stmt)
         rows = result.scalars().all()
+        return entity_key, [_row_to_dict(r) for r in rows]
+
+    # Run all 19 entity queries in parallel
+    results = await asyncio.gather(
+        *[_fetch_entity(k, m) for k, m in MODEL_MAP.items()]
+    )
+    for entity_key, rows in results:
         if rows:
-            server_changes[entity_key] = [_row_to_dict(r) for r in rows]
+            server_changes[entity_key] = rows
 
     # Compute sync_cursor: the most recent updated_at across all returned changes
     max_cursor: datetime | None = None

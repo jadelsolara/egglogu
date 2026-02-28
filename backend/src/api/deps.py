@@ -1,3 +1,5 @@
+import json
+import logging
 import uuid
 from datetime import datetime, timezone
 from typing import Callable
@@ -13,6 +15,8 @@ from src.core.security import decode_token
 from src.database import get_db
 from src.models.auth import Role, User
 from src.models.subscription import Subscription, SubscriptionStatus
+
+logger = logging.getLogger("egglogu.deps")
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -67,11 +71,77 @@ def get_org_filter(user: User):
     return user.organization_id
 
 
+_SUB_CACHE_TTL = 600  # 10 minutes
+
+
 async def get_subscription(org_id: uuid.UUID, db: AsyncSession) -> Subscription | None:
+    """Fetch subscription with Redis cache (TTL 10 min). Falls back to DB on cache miss."""
+    from src.core.rate_limit import _redis
+
+    cache_key = f"sub:{org_id}"
+
+    # Try cache first
+    if _redis:
+        try:
+            cached = await _redis.get(cache_key)
+            if cached:
+                data = json.loads(cached)
+                # Reconstruct Subscription from cached data
+                sub = Subscription()
+                for k, v in data.items():
+                    if k == "plan":
+                        from src.models.subscription import PlanTier
+                        v = PlanTier(v)
+                    elif k == "status":
+                        v = SubscriptionStatus(v)
+                    elif k in ("trial_end", "current_period_end", "created_at", "updated_at") and v:
+                        v = datetime.fromisoformat(v)
+                    elif k in ("id", "organization_id") and v:
+                        v = uuid.UUID(v)
+                    setattr(sub, k, v)
+                return sub
+        except Exception as e:
+            logger.debug("Sub cache read failed (key=%s): %s", cache_key, e)
+
+    # DB fallback
     result = await db.execute(
         select(Subscription).where(Subscription.organization_id == org_id)
     )
-    return result.scalar_one_or_none()
+    sub = result.scalar_one_or_none()
+
+    # Write to cache
+    if sub and _redis:
+        try:
+            cache_data = {
+                "id": str(sub.id),
+                "organization_id": str(sub.organization_id),
+                "plan": sub.plan.value,
+                "status": sub.status.value,
+                "is_trial": sub.is_trial,
+                "trial_end": sub.trial_end.isoformat() if sub.trial_end else None,
+                "stripe_subscription_id": sub.stripe_subscription_id,
+                "stripe_customer_id": sub.stripe_customer_id,
+                "discount_phase": sub.discount_phase,
+                "months_subscribed": sub.months_subscribed,
+                "billing_interval": sub.billing_interval,
+                "current_period_end": sub.current_period_end.isoformat() if sub.current_period_end else None,
+            }
+            await _redis.setex(cache_key, _SUB_CACHE_TTL, json.dumps(cache_data))
+        except Exception as e:
+            logger.debug("Sub cache write failed (key=%s): %s", cache_key, e)
+
+    return sub
+
+
+async def invalidate_subscription_cache(org_id: uuid.UUID) -> None:
+    """Call this after Stripe webhook or plan change to bust cache."""
+    from src.core.rate_limit import _redis
+
+    if _redis:
+        try:
+            await _redis.delete(f"sub:{org_id}")
+        except Exception:
+            pass
 
 
 def _is_trial_expired(sub: Subscription) -> bool:
@@ -97,6 +167,7 @@ async def _resolve_plan(sub: Subscription | None, db: AsyncSession) -> str:
         sub.status = SubscriptionStatus.suspended
         sub.is_trial = False
         await db.flush()
+        await invalidate_subscription_cache(sub.organization_id)
         return "suspended"
     return sub.plan.value
 

@@ -11,6 +11,7 @@ from src.api.deps import (
     get_current_user,
     get_org_plan,
     get_subscription,
+    invalidate_subscription_cache,
     require_superadmin,
 )
 from src.config import settings
@@ -173,6 +174,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                 sub.months_subscribed = 0
                 sub.billing_interval = interval
                 await db.flush()
+                await invalidate_subscription_cache(org_uuid)
                 logger.info(
                     "Checkout completed: org %s → %s/%s (Q1 40%% off)",
                     org_uuid,
@@ -185,12 +187,14 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
         if sub:
             _apply_subscription_data(sub, data_obj)
             await db.flush()
+            await invalidate_subscription_cache(sub.organization_id)
 
     elif event_type == "customer.subscription.updated":
         sub = await _find_sub_by_stripe_id(data_obj.get("id"), db)
         if sub:
             _apply_subscription_data(sub, data_obj)
             await db.flush()
+            await invalidate_subscription_cache(sub.organization_id)
 
     elif event_type == "customer.subscription.deleted":
         sub = await _find_sub_by_stripe_id(data_obj.get("id"), db)
@@ -199,6 +203,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
             sub.stripe_subscription_id = None
             sub.current_period_end = None
             await db.flush()
+            await invalidate_subscription_cache(sub.organization_id)
 
     elif event_type == "invoice.paid":
         stripe_sub_id = data_obj.get("subscription")
@@ -215,6 +220,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                 if new_phase != sub.discount_phase:
                     sub.discount_phase = new_phase
                     await db.flush()
+                    await invalidate_subscription_cache(sub.organization_id)
                     # Apply the new coupon for next billing cycles
                     await apply_phase_coupon(sub.stripe_subscription_id, new_phase)
                     logger.info(
@@ -226,6 +232,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                     )
                 else:
                     await db.flush()
+                    await invalidate_subscription_cache(sub.organization_id)
 
     elif event_type == "invoice.payment_failed":
         stripe_sub_id = data_obj.get("subscription")
@@ -234,6 +241,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
             if sub:
                 sub.status = SubscriptionStatus.past_due
                 await db.flush()
+                await invalidate_subscription_cache(sub.organization_id)
 
     return {"status": "ok"}
 
