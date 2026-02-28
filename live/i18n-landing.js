@@ -55,7 +55,7 @@ footer_privacy:"Privacidad",footer_terms:"Términos",footer_cookies:"Cookies",
 footer_copy:"\u00A9 2026 EGGlogU. Todos los derechos reservados.",footer_made:"Hecho con cuidado para el campo."
 },
 en:{
-curtain_question:"<em>What came first...</em><br>the egg or the chicken?",
+curtain_question:"<em>What came first...</em><br>the chicken or the egg?",
 curtain_360:"360",
 curtain_sub:"The platform that was born before the problem.",
 nav_features:"Features",nav_how:"How it works",nav_pricing:"Pricing",nav_login:"Sign in",
@@ -220,7 +220,7 @@ footer_privacy:"Confidentialit\u00E9",footer_terms:"Conditions",footer_cookies:"
 footer_copy:"\u00A9 2026 EGGlogU. Tous droits r\u00E9serv\u00E9s.",footer_made:"Fait avec soin pour le terrain."
 },
 de:{
-curtain_question:"<em>Was war zuerst da\u2026</em><br>das Ei oder das Huhn?",
+curtain_question:"<em>Was war zuerst da\u2026</em><br>das Huhn oder das Ei?",
 curtain_360:"360",
 curtain_sub:"Die Plattform, die vor dem Problem geboren wurde.",
 nav_features:"Funktionen",nav_how:"So funktioniert\u2019s",nav_pricing:"Preise",nav_login:"Anmelden",
@@ -330,7 +330,7 @@ footer_privacy:"Privacy",footer_terms:"Termini",footer_cookies:"Cookie",
 footer_copy:"\u00A9 2026 EGGlogU. Tutti i diritti riservati.",footer_made:"Fatto con cura per il campo."
 },
 ja:{
-curtain_question:"<em>どちらが先か\u2026</em><br>卵かニワトリか？",
+curtain_question:"<em>どちらが先か\u2026</em><br>ニワトリか卵か？",
 curtain_360:"360",
 curtain_sub:"問題が生まれる前に生まれたプラットフォーム。",
 nav_features:"機能",nav_how:"使い方",nav_pricing:"料金",nav_login:"ログイン",
@@ -495,7 +495,7 @@ footer_privacy:"개인정보처리방침",footer_terms:"이용약관",footer_coo
 footer_copy:"\u00A9 2026 EGGlogU. All rights reserved.",footer_made:"현장을 위한 정성으로."
 },
 ru:{
-curtain_question:"<em>Что было первым...</em><br>яйцо или курица?",
+curtain_question:"<em>Что было первым...</em><br>курица или яйцо?",
 curtain_360:"360",
 curtain_sub:"Платформа, которая появилась раньше проблемы.",
 nav_features:"Возможности",nav_how:"Как это работает",nav_pricing:"Тарифы",nav_login:"Войти",
@@ -550,7 +550,7 @@ footer_privacy:"Конфиденциальность",footer_terms:"Услови
 footer_copy:"\u00A9 2026 EGGlogU. Все права защищены.",footer_made:"Сделано с заботой о поле."
 },
 id:{
-curtain_question:"<em>Mana yang lebih dulu...</em><br>telur atau ayam?",
+curtain_question:"<em>Mana yang lebih dulu...</em><br>ayam atau telur?",
 curtain_360:"360",
 curtain_sub:"Platform yang lahir sebelum masalahnya.",
 nav_features:"Fitur",nav_how:"Cara kerja",nav_pricing:"Harga",nav_login:"Masuk",
