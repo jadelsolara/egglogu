@@ -1,644 +1,708 @@
-# EGGlogU — Genie Evaluation (25 Motores GenieOS)
-## Fecha: 2026-02-25 | Version: v1.0 (Post-Launch)
-## Estado: PRODUCCION — Live en egglogu.com
-## Evaluacion anterior: 2026-02-25 — Score 7.76/10 APROBADO
-## Evaluacion actual: Score 8.3/10 APROBADO — EXCELENTE (+0.54)
+# EGGlogU — Genie Evaluation (23 Motores GenieOS)
+## Fecha: 2026-02-27 | Version: v1.0 (post-launch)
+## Estado: Live — egglogu.com
+## Enfoque: Presentacion, Estetica, UX, Conectividad de Datos, Reportes, Bienestar→Produccion
 
 ---
 
 ## RESUMEN EJECUTIVO
 
-| Motor | Score | Delta | Veredicto |
-|-------|-------|-------|-----------|
-| ANTON_EGO | 8.0/10 | -0.5 | Producto pulido y funcional; monolito frontend limita la perfeccion |
-| ATLAS | 9.0/10 | = | Arquitectura 4-tier ejemplar con multi-tenancy y offline-first bien mapeados |
-| AXION | 8.0/10 | = | Patrones internos consistentes (TenantMixin, Pydantic v2); CSP mismatch frontend/backend |
-| CENTURION | 8.5/10 | = | Docker Compose robusto, CI/CD 6 etapas, backups diarios; falta IaC y APM |
-| CHRONOS | 7.5/10 | = | Alembic migrations + CI/CD pipeline; sin semver explicito ni changelog formal |
-| COMPASS | 8.5/10 | = | Estrategia clara: nicho avicola global, 14 idiomas, offline-first para zonas rurales |
-| FORGE | 7.5/10 | -0.5 | Backend bien orquestado (26 routers, 78 models); frontend monolito 8492 lineas |
-| GUARDIAN | 8.5/10 | +1.0 | Trazabilidad, bioseguridad, audit trail, GDPR-aligned; falta certificacion formal |
-| HERALD | 7.0/10 | +0.5 | Soporte con tickets + FAQ + auto-responses; falta blog, SEO, content marketing |
-| HIVE | 8.0/10 | +1.0 | Sync offline automatizado, webhooks Stripe, CI/CD triggers; falta event bus formal |
-| HUNTER | 7.5/10 | +0.5 | 4 planes de pricing + free trial + lead capture; falta analytics de conversion |
-| JESTER | 8.5/10 | +0.5 | Innovador: PWA offline para granjas rurales, IoT ambiental, prediccion estadistica |
-| MENTOR | 7.5/10 | -0.5 | Walkthrough engine + FAQ + soporte; documentacion de desarrollo escasa |
-| NEXUS | 8.5/10 | +0.5 | 3 OAuth + Stripe + Resend + MQTT IoT; integraciones bien conectadas |
-| ORACLE | 8.5/10 | +0.5 | simple-statistics activo (regresion, z-score, ensemble forecast); falta ML real |
-| PHOENIX | 9.4/10 | +1.9 | IndexedDB + Cache API + pg_dump diario + JSON export; recovery multi-capa excepcional |
-| PREFLIGHT | 8.0/10 | +0.5 | CI 6 stages + cobertura 50% minimo; falta load testing y canary deploys |
-| PRISM | 8.5/10 | = | Dark mode, RTL, responsive 4 breakpoints, 61 aria-labels; UX coherente y accesible |
-| RADAR | 8.5/10 | +1.0 | Rate-limit fail-closed, backups off-site R2, uptime monitoring externo; riesgo residual bajo |
-| SENTINEL | 9.1/10 | +1.1 | JWT+bcrypt+3 OAuth, CSP, CORS, sanitizeHTML, HMAC webhooks; seguridad enterprise |
-| SHERLOCK | 7.5/10 | = | Exception hierarchy + Sentry + structured logging; falta tracing distribuido |
-| TEMPO | 8.2/10 | +0.7 | Paginacion, async SQLAlchemy, Redis cache; falta CDN optimization y Web Vitals tracking |
-| TERMINATOR | 8.0/10 | +0.5 | 28 test files backend + Vitest + Playwright E2E; cobertura funcional pero no de carga |
-| VAULT | 9.2/10 | +1.2 | Modulo financiero completo: P&L, cost-per-egg, ROI, receivables; Stripe billing robusto |
-| WALTZ | 9.0/10 | +1.0 | 14 idiomas con fallback chain, RTL, formateo cultural; localizacion world-class |
+| Motor | Score | Peso | Score Ponderado | Veredicto |
+|-------|-------|------|-----------------|-----------|
+| ANTON_EGO | 6.5/10 | x1.0 | 6.5 | Funcional y ambicioso, pero detalles esteticos inconsistentes |
+| ATLAS | 7.5/10 | x1.0 | 7.5 | Arquitectura SPA bien mapeada, modulos claros |
+| AXION | 6.0/10 | x1.0 | 6.0 | Estilos inline vs CSS variables sin estandarizar |
+| CENTURION | 7.0/10 | x1.2 | 8.4 | Docker + CI/CD + Cloudflare solido, monitoring basico |
+| CHRONICLE | 6.5/10 | x1.3 | 8.45 | Versionado en Git, backups auto localStorage, sin strategy 3-2-1 |
+| COMPASS | 7.5/10 | x1.0 | 7.5 | Roadmap 5 anos, vision clara, ejecucion post-launch |
+| FORGE | 7.0/10 | x1.0 | 7.0 | Estructura sistematica, CHANGELOG, docs de contribucion |
+| GUARDIAN | 6.5/10 | x1.0 | 6.5 | CSP estricto, sanitize, pero sin audit trail exportable ni GDPR |
+| HERALD | 4.5/10 | x1.0 | 4.5 | Solo CSV basico, sin PDF, sin templates, sin reportes programados |
+| HIVE | 6.0/10 | x1.0 | 6.0 | Checklist diario auto, alerts auto, pero sin workflows ni cron |
+| JESTER | 7.5/10 | x1.0 | 7.5 | Walkthrough engine, Quick Entry cards, predicciones ML inline |
+| MENTOR | 6.5/10 | x1.0 | 6.5 | Walkthrough 5-pasos, tooltips KPI informativos, falta knowledge base |
+| NEXUS | 6.0/10 | x1.0 | 6.0 | Fuerte entre Produccion-Feed-Finanzas-Ambiente, pero Welfare AISLADO |
+| ORACLE | 6.5/10 | x1.0 | 6.5 | Suite predictiva sofisticada, pero bugs recientes y sin welfare input |
+| PREFLIGHT | 5.5/10 | x1.0 | 5.5 | Tabs crasheando en produccion, validacion incompleta pre-deploy |
+| PRISM | 6.0/10 | x1.0 | 6.0 | CSS variables bien pensado, dark mode incompleto, 20 issues esteticos |
+| RADAR | 6.5/10 | x1.0 | 6.5 | 14 idiomas competitivo, IoT/MQTT innovador, falta benchmark formal |
+| SENTINEL | 6.5/10 | x1.5 | 9.75 | CSP, sanitizeHTML (256 usos), JWT + OAuth, pero localStorage sin encrypt |
+| STALKER | 7.0/10 | x1.0 | 7.0 | Pricing tiers, soft-landing, Stripe, falta analytics de conversion |
+| TEMPO | 7.0/10 | x1.0 | 7.0 | HEAVY_SECTIONS lazy render, loading spinner, pero sin performance budget |
+| TERMINATOR | 5.5/10 | x1.3 | 7.15 | 2 tabs crasheaban, welfare completamente aislado, bugs en produccion |
+| VAULT | 7.0/10 | x1.0 | 7.0 | Modulo finanzas completo con depreciacion, impuestos, punto equilibrio |
+| WALTZ | 7.5/10 | x1.0 | 7.5 | 14 idiomas + RTL, Admin solo ES/EN, algunas cadenas hardcoded |
 
-**SCORE GLOBAL: 8.3/10** — **APROBADO — EXCELENTE** *(+0.54 vs evaluacion anterior)*
+**Calculo Score Global:**
+- Suma ponderada: 6.5 + 7.5 + 6.0 + 8.4 + 8.45 + 7.5 + 7.0 + 6.5 + 4.5 + 6.0 + 7.5 + 6.5 + 6.0 + 6.5 + 5.5 + 6.0 + 6.5 + 9.75 + 7.0 + 7.0 + 7.15 + 7.0 + 7.5 = **154.25**
+- Divisor ponderado: 1.0x19 + 1.5 + 1.3 + 1.3 + 1.2 = **24.3**
+- **SCORE GLOBAL: 6.35/10** — **CONDICIONAL**
 
-*Calculo ponderado: SENTINEL(9.1x1.5) + PHOENIX(9.4x1.3) + TERMINATOR(8.0x1.3) + CENTURION(8.5x1.2) + 20 motores(x1.0) = 210.4 / 25.3 = 8.31*
+> Resolver gaps criticos (HERALD reportes, NEXUS welfare-produccion, TERMINATOR bugs) antes de considerar la plataforma "profesional" para granjas medianas-grandes.
 
 ---
 
-## 1. ANTON_EGO — Calidad & Excelencia (8.0/10)
+## 1. ANTON_EGO — Calidad & Excelencia (6.5/10)
 
 #### Lo que esta bien
-- Producto completo y funcional en produccion con usuarios reales
-- Feature set exhaustivo: produccion, salud, feed, finanzas, bioseguridad, trazabilidad, clientes, IoT, planning
-- CSS design system con 12+ custom properties, transiciones, dark mode nativo
-- Validacion de formularios con `validateForm()` + `showFieldError()` consistente
-- Audit trail con `logAudit()` en todas las operaciones criticas
+- Ambicion del scope: 19 modulos funcionales en un solo SPA con 8,066 lineas JS
+- KPI Dashboard con delta vs snapshot anterior — toque profesional
+- Quick Entry cards para registro diario rapido — pensado para el campo
+- Sistema de recomendaciones inteligentes basado en datos reales (FCR, mortalidad, ambiente, bioseguridad)
+- Walkthrough engine (5 tours) con spotlight y narracion — onboarding de calidad
+- Tooltips informativos en cada KPI con explicacion contextual (archivo: `egglogu.js`, linea 2938)
 
 #### Lo que falta para 10/10
-- [ ] Frontend monolito de 8,492 lineas en un solo HTML — dificulta mantenimiento y code review
-- [ ] Sin code formatting/linting automatizado para el frontend (backend tiene ruff/mypy en CI)
-- [ ] Algunos patrones repetitivos en JS que podrian abstraerse sin over-engineering
+- [ ] 20 issues esteticos documentados (ver PRISM) degradan la percepcion de calidad
+- [ ] Tabs de Analytics crasheando en produccion (Predictions y Economics) — inadmisible en un producto live
+- [ ] Modulo de Welfare completo pero completamente aislado — desperdicio de potencial
+- [ ] CSV como unica opcion de exportacion — no alcanza estandar profesional
+- [ ] Inline styles en 640+ lugares del JS — falta disciplina de codigo
 
 #### Recomendacion
-Considerar split del frontend en modulos ES6 con build step (Vite) para el proximo major version. El monolito funciona hoy pero escala mal para equipo >1 persona.
+Cerrar los 20 issues esteticos antes de cualquier otra funcionalidad. La calidad percibida determina si un avicultor paga $49/mes. Un boton con hover roto o dark mode parcial transmite "inacabado".
 
 ---
 
-## 2. ATLAS — Arquitectura & Cartografia (9.0/10)
+## 2. ATLAS — Arquitectura & Cartografia (7.5/10)
 
 #### Lo que esta bien
-- Arquitectura 4-tier limpia: Client PWA → Cloudflare Edge → FastAPI API → PostgreSQL+Redis
-- Multi-tenancy via `TenantMixin` con `organization_id` FK indexado en todos los modelos
-- 26 API routers organizados por dominio (auth, farms, flocks, production, health, feed, etc.)
-- 78 modelos SQLAlchemy con relaciones bien definidas y cascade deletes
-- 163 schemas Pydantic v2 con validacion automatica
-- Separacion clara: `api/` (routes), `models/` (ORM), `schemas/` (validation), `core/` (business logic)
-- Offline-first architecture con IndexedDB local + dual-write sync
+- Mapa de modulos claro: 19 secciones registradas en router `R={}` (linea 2774)
+- Sidebar con nav-groups colapsables (Produccion, Salud, Comercial, Gestion, Sistema)
+- Backend con 28+ rutas API en FastAPI, alineadas 1:1 con modulos frontend
+- Separacion clara: `egglogu.html` (CSS/layout) + `egglogu.js` (logica) + `sw.js` (cache) + `backend/`
+- Multi-tenant: Organization -> Farm -> Flock -> DailyProduction — jerarquia correcta
 
 #### Lo que falta para 10/10
-- [ ] Frontend no sigue la misma claridad arquitectonica que el backend (monolito)
-- [ ] Sync strategy es full-push (delta sync planificado pero no implementado)
-- [ ] Falta API gateway formal (Cloudflare hace proxy pero no rate-limit a nivel edge)
+- [ ] Archivo JS monolitico de 8,066 lineas — deberia ser modular (ES modules o al menos splits logicos)
+- [ ] No hay mapa de dependencias entre modulos documentado
+- [ ] Welfare no aparece en el router `R={}` — el modulo existe conceptualmente pero no en la navegacion
 
 #### Recomendacion
-Implementar delta sync con vector clocks o timestamps para reducir payload de sincronizacion. La arquitectura backend es referencia — aplicar la misma disciplina al frontend.
+Documentar un diagrama de dependencias inter-modulos. El JS monolitico no escala; planificar split en modulos ES6 para v2.0.
 
 ---
 
-## 3. AXION — Estandares Internos (8.0/10)
+## 3. AXION — Estandares Internos (6.0/10)
 
 #### Lo que esta bien
-- Patron `TenantMixin` aplicado consistentemente en 78 modelos — zero excepciones
-- Pydantic v2 schemas en todos los endpoints con validacion automatica
-- Exception hierarchy personalizada: `NotFoundError`, `ForbiddenError`, `UnauthorizedError`, `ConflictError`, `RateLimitError`
-- Nomenclatura consistente: `snake_case` en Python, `camelCase` en JS
-- Alembic para todas las migrations — sin SQL manual
-- JWT token structure estandarizada con type discrimination (access/refresh)
+- CSS custom properties bien definidas en `:root` (linea 22 de `egglogu.html`) — 20+ variables
+- Funcion `t()` para i18n estandarizada en todo el frontend
+- `sanitizeHTML()` con 256 usos consistentes
+- `escapeAttr()` para prevenir XSS en atributos onclick
+- Nomenclatura consistente de funciones: `render[Section]`, `show[Section]Form`, `delete[Entity]`
 
 #### Lo que falta para 10/10
-- [ ] CSP mismatch: backend strict (no unsafe-inline) vs frontend permite `unsafe-inline` en meta tag (linea 10)
-- [ ] Frontend carece de linting/formatting enforced (backend tiene ruff + mypy)
-- [ ] No hay style guide documentado para contribuidores
+- [ ] 640+ inline styles (`style="..."`) en el JS mezclados con el sistema de CSS variables
+- [ ] Admin SaaS usa sistema i18n inline local `L={}` en vez del `T={}` global (linea 5312)
+- [ ] Walkthrough translations usan un tercer sistema `i18n` separado (linea 2421)
+- [ ] No hay linter/formatter configurado (ni eslint ni prettier en package.json)
+- [ ] Mezcla de `const`, `let` y funciones declarativas sin patron claro
 
 #### Recomendacion
-Unificar CSP policy — eliminar `unsafe-inline` del frontend usando nonces o hashes para inline scripts. Agregar ESLint config para el JS frontend.
+Migrar los 640 inline styles a clases CSS. Unificar los 3 sistemas de traduccion (T global, L admin, walkthrough) en uno solo. Agregar eslint con reglas estrictas.
 
 ---
 
-## 4. CENTURION — DevOps & Infrastructure (8.5/10) [PESO: x1.2]
+## 4. CENTURION — DevOps & Infraestructura (7.0/10) — PESO: x1.2
 
 #### Lo que esta bien
-- Docker Compose con 4 servicios: app, postgres (16), redis (7), backup
-- Health checks definidos en docker-compose para todos los servicios
-- CI/CD pipeline de 6 etapas: lint → typecheck → test → build → e2e → deploy
-- `pg_dump` diario automatizado con retencion 7 dias
-- Structured JSON logging con request ID tracking
-- Sentry integration para error monitoring en produccion
-- Frontend en Cloudflare Pages (CDN global, zero-config TLS)
-- Backend en VPS con Docker (api.egglogu.com)
+- Docker Compose para backend: app + PostgreSQL 16 + Redis 7
+- CI/CD con GitHub Actions (`.github/workflows/ci.yml`)
+- Frontend en Cloudflare Pages — CDN global, SSL auto
+- Backend en VPS dedicado (api.egglogu.com) — control total
+- Service Worker con cache strategy (CACHE_NAME: 'egglogu-v2')
+- CSP estricto en meta tag (linea 10 de `egglogu.html`)
 
 #### Lo que falta para 10/10
-- [ ] Sin Infrastructure as Code (Terraform/Pulumi) — VPS configurado manualmente
-- [ ] Falta APM (Application Performance Monitoring) — solo Sentry para errores
-- [ ] Sin auto-scaling — single VPS instance
-- [ ] Backup solo en el mismo servidor — falta backup off-site automatizado
-- [ ] Sin secrets rotation automatizada
+- [ ] No hay monitoring/observability visible (Sentry, DataDog, etc.)
+- [ ] No hay health check endpoint documentado en el frontend
+- [ ] Sin staging environment visible — deploy directo a produccion
+- [ ] Service Worker solo cachea assets estaticos, no tiene strategy para API responses
+- [ ] Sin IaC (Terraform/Ansible) para el VPS
 
 #### Recomendacion
-Agregar backup off-site (S3/Cloudflare R2) y APM basico (Prometheus+Grafana o Datadog free tier). IaC puede esperar hasta que se necesite multi-server.
+Agregar Sentry para error tracking en frontend (complementa el bug reporter interno). Implementar staging environment para validar antes de deploy a produccion.
 
 ---
 
-## 5. CHRONOS — Control Temporal & Versiones (7.5/10)
+## 5. CHRONICLE — History, Versioning & Data Resilience (6.5/10) — PESO: x1.3
 
 #### Lo que esta bien
-- Alembic migrations con historial completo de cambios de schema
-- Git version control (GitHub) con CI/CD automatizado
-- CI/CD pipeline preserva historial de builds y deployments
-- `logAudit()` en operaciones de negocio para trazabilidad temporal
+- CHANGELOG.md presente y mantenido
+- KPI Snapshots con historial temporal — trazabilidad de metricas
+- Auto-backup a localStorage con `scheduleAutoBackup()` (linea 1678)
+- Exportar/importar JSON completo desde Config
+- Git con multiples `.bak` files como safety net (10+ backups del HTML)
+- Logbook/bitacora en Operations para registro historico
 
 #### Lo que falta para 10/10
-- [ ] Sin versionamiento semantico (semver) del producto
-- [ ] Sin CHANGELOG.md formal
-- [ ] Monolito HTML dificulta git diffs significativos (un cambio = diff de 8K lineas)
-- [ ] Sin release tags en git
-- [ ] Sin rollback automatizado en deploy fallido
+- [ ] No hay backup 3-2-1-1 strategy documentada
+- [ ] localStorage como unico almacen local — sin IndexedDB ni OPFS
+- [ ] No hay point-in-time recovery — solo snapshots manuales
+- [ ] Sin export automatico programado
+- [ ] Audit trail con `logAudit()` (49 usos) pero no exportable ni consultable
 
 #### Recomendacion
-Implementar semver (v1.0.0 actual) + CHANGELOG.md + git tags en cada release. Agregar rollback automatico en CI/CD (conservar build anterior).
+Migrar de localStorage a IndexedDB para resiliencia de datos. Implementar export automatico semanal. Hacer el audit trail consultable y exportable.
 
 ---
 
-## 6. COMPASS — Navegacion Estrategica (8.5/10)
+## 6. COMPASS — Navegacion Estrategica (7.5/10)
 
 #### Lo que esta bien
-- Nicho bien definido: SaaS avicola — mercado desatendido con barreras de entrada altas
-- 14 idiomas para cobertura global (ES, EN, PT, FR, DE, IT, JA, ZH, RU, ID, AR, KO, TH, VI)
-- Offline-first para realidad del usuario objetivo (granjas rurales con conectividad intermitente)
-- Pricing strategy clara: 4 tiers ($9-$99) con free trial de 30 dias
-- Multi-tenant desde dia 1 — arquitectura lista para escala
-- Feature set cubre cadena completa: produccion → salud → feed → finanzas → trazabilidad → bioseguridad
+- Roadmap de 5 anos documentado (`EGGLOGU_5YEAR_ROADMAP.md`)
+- Enterprise architecture documentada (`EGGLOGU_ENTERPRISE_ARCHITECTURE.md`)
+- Vision clara: SaaS avicola 360 con pricing tiers definidos
+- Post-launch iterativo — correccion de bugs activa
+- 4 tiers de precio bien segmentados (Hobby/Starter/Pro/Enterprise)
 
 #### Lo que falta para 10/10
-- [ ] Sin product analytics (PostHog, Mixpanel) para validar que features se usan
-- [ ] Sin roadmap publico o feedback loop estructurado con usuarios
-- [ ] Mercado enterprise (>$99) no tiene diferenciacion clara vs Pro
+- [ ] Sin metricas de uso/adopcion visibles para guiar decisiones
+- [ ] Sin feedback loop formal de usuarios
+- [ ] El modulo de Welfare esta en el scope pero no esta implementado como modulo funcional en la nav
 
 #### Recomendacion
-Agregar product analytics para medir feature adoption. Los datos de uso guiaran prioridades mejor que intuicion. Definir enterprise con SLA, SSO, API access para justificar el pricing.
+Implementar analytics de uso (modulos mas visitados, tiempo por seccion) para priorizar mejoras basado en datos reales de usuarios.
 
 ---
 
-## 7. FORGE — Orquestacion de Proyecto (7.5/10)
+## 7. FORGE — Orquestacion de Proyecto (7.0/10)
 
 #### Lo que esta bien
-- Backend impecablemente organizado: 26 routers, 78 models, 163 schemas, core/ separado
-- CLAUDE.md con contexto de proyecto completo y paths
-- CI/CD automatiza lint → test → deploy sin intervencion manual
-- Docker Compose hace reproducible el entorno de desarrollo
-- Alembic migrations mantienen schema bajo control
+- CONTRIBUTING.md con guias de contribucion
+- CHANGELOG.md mantenido
+- Manual de usuario (`EGGLOGU_USER_MANUAL.md`)
+- Tests existentes (`egglogu.test.js`)
+- Deploy automatizado via GitHub Actions
+- Estructura backend bien organizada: `api/`, `models/`, `schemas/`, `core/`
 
 #### Lo que falta para 10/10
-- [ ] Frontend monolito 8,492 lineas — no hay estructura de proyecto frontend
-- [ ] Sin task tracking visible (no Jira, no GitHub Projects)
-- [ ] Sin documentacion de API (Swagger/OpenAPI auto-generado por FastAPI pero no verificado)
-- [ ] Sin contribution guide o onboarding docs
+- [ ] Sin issue tracker publico organizado
+- [ ] Tests solo en archivo unico — sin coverage visible
+- [ ] No hay definition of done formal por feature
+- [ ] Falta release tagging sistematico
 
 #### Recomendacion
-Verificar y publicar la documentacion OpenAPI auto-generada por FastAPI en `/docs`. Crear CONTRIBUTING.md para futuros colaboradores.
+Establecer release tags semanticos (v1.0.1, v1.0.2) y correlacionar con CHANGELOG entries. Agregar coverage report al CI.
 
 ---
 
-## 8. GUARDIAN — Compliance & Regulatory (8.5/10)
+## 8. GUARDIAN — Compliance & Regulatory (6.5/10)
 
 #### Lo que esta bien
-- Modulo de trazabilidad completo: `TraceabilityBatch` con tracking de lotes
-- Modulo de bioseguridad: `BiosecurityVisitor`, `BiosecurityZone`, `PestSighting`, `BiosecurityProtocol`
-- Audit trail via `logAudit()` en operaciones criticas
-- GDPR-aligned: multi-tenant isolation, data per organization, no data sharing
-- Stripe PCI compliance delegada (no se almacenan tarjetas)
-- Email verification obligatorio para cuentas nuevas
-- CORS restringido a `FRONTEND_URL` — sin wildcards
-- Security headers completos: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+- Content Security Policy estricta (linea 10 de HTML) — proteccion XSS/injection
+- `sanitizeHTML()` con 256 usos — proteccion XSS consistente
+- JWT + Google OAuth + Apple Sign-In + Microsoft Identity — auth robusto
+- Trazabilidad de huevos con lote->origen->QR — cumplimiento de normas alimentarias
+- Bioseguridad con zonas, visitantes, protocolos — alineado con normativa avicola
+- Audit log con `logAudit()` integrado en operaciones criticas
 
 #### Lo que falta para 10/10
-- [ ] Sin certificacion formal (ISO 27001, SOC 2)
-- [ ] Sin DPA (Data Processing Agreement) publicado
-- [ ] Sin data retention policy explicita (cuanto tiempo se guardan datos eliminados)
-- [ ] Sin cookie consent banner (puede ser necesario para EU)
-- [ ] Regulaciones avicolas varian por pais — sin modulo de cumplimiento especifico por jurisdiccion
+- [ ] Sin banner/politica GDPR visible
+- [ ] Sin data retention policy documentada
+- [ ] Audit trail no exportable — no cumple requisitos de auditoria formal
+- [ ] Sin terminos de servicio ni politica de privacidad linkeados
+- [ ] Trazabilidad no incluye datos de welfare ni salud enriquecidos
+- [ ] Sin firma digital ni certificaciones de calidad en reportes
 
 #### Recomendacion
-Publicar Privacy Policy y Terms of Service completos. Agregar data retention policy. Cookie consent si se sirve en EU. Las certificaciones formales son para fase de scale-up.
+Agregar GDPR consent banner, politica de privacidad, y hacer el audit trail exportable. Para mercados regulados (EU), la trazabilidad debe incluir welfare score obligatoriamente.
 
 ---
 
-## 9. HERALD — Comunicacion & Messaging (7.0/10)
+## 9. HERALD — Comunicacion & Reportes (4.5/10)
+
+> **AREA CRITICA DE ESTA EVALUACION**
 
 #### Lo que esta bien
-- Sistema de soporte integrado: tickets, FAQ, auto-responses, ratings
-- Resend API para emails transaccionales (verificacion, password reset, invitaciones)
-- 14 idiomas para comunicacion localizada
-- Landing page en egglogu.com
+- Export CSV funcional en Finanzas (`exportFinCSV()`, linea 3920) y Trazabilidad (`exportBatchCSV()`, linea 6980)
+- Alertas en Dashboard con iconos y categorizacion (danger/warning)
+- Recomendaciones inteligentes con prioridad (high/medium/low)
+- Toast notifications para feedback de acciones (166 usos de `toast()`)
 
 #### Lo que falta para 10/10
-- [ ] Sin blog o content marketing
-- [ ] Sin SEO strategy (no hay meta tags dinamicos, no hay sitemap.xml visible)
-- [ ] Sin social media presence integrada
-- [ ] Sin email marketing / newsletters para usuarios existentes
-- [ ] Sin onboarding email sequence post-registro
-- [ ] Documentacion de usuario limitada (walkthrough pero no knowledge base publica)
+- [ ] **NO hay export PDF** — cero capacidad. Ni jsPDF ni pdfmake importados
+- [ ] **NO hay templates de reporte** (semanal, mensual, trimestral)
+- [ ] **NO hay reportes programados/automaticos**
+- [ ] CSV exports basicos — sin headers formateados ni metadata
+- [ ] **NO hay print styles** (`@media print` inexistente en CSS)
+- [ ] Sin reporte consolidado que cruce produccion + finanzas + salud + welfare
+- [ ] Sin reporte para certificaciones (ej: welfare certification report)
+- [ ] Sin dashboard ejecutivo exportable
+- [ ] Email notifications no integradas en alertas criticas
 
 #### Recomendacion
-Implementar onboarding email sequence (dia 1, 3, 7, 14) con Resend. Agregar blog con contenido sobre manejo avicola para SEO organico. Knowledge base publica con los FAQs existentes.
+**PRIORIDAD MAXIMA:** Implementar jsPDF o pdfmake para reportes PDF profesionales. Crear 3 templates: (1) Reporte Diario de Produccion, (2) Reporte Mensual Consolidado, (3) Reporte de Trazabilidad con QR. Sin PDF exports, la plataforma no puede competir en el segmento profesional.
 
 ---
 
-## 10. HIVE — Automation & Orchestration (8.0/10)
+## 10. HIVE — Automation & Orchestration (6.0/10)
 
 #### Lo que esta bien
-- Sync automatizado: offline → online dual-write sin intervencion del usuario
-- CI/CD completamente automatizado (push → test → deploy)
-- `pg_dump` backup diario automatizado via Docker service
-- Stripe webhooks para billing automatizado (checkout, subscription changes, cancellations)
-- Rate limiting automatico por endpoint + global
-- Service Worker para cache automatico de assets
+- Checklist diario automatico con tareas predeterminadas configurables
+- Auto-backup via `scheduleAutoBackup()`
+- Sync automatico al servidor via `scheduleSyncToServer()`
+- Generacion automatica de calendario de vacunacion (`vac_generate`)
+- Weather fetch automatico cuando hay geolocalizacion
+- Alertas auto-generadas basadas en umbrales configurables
 
 #### Lo que falta para 10/10
-- [ ] Sin event bus / message queue (todo es request-response sincrono)
-- [ ] Sin scheduled jobs para reportes automaticos (KPI snapshots, alertas periodicas)
-- [ ] Sin notifications push (solo email)
-- [ ] Sync es full-push — no hay delta optimization automatica
-- [ ] Sin workflow automation para procesos de negocio (ej: alerta automatica si produccion baja X%)
+- [ ] Sin reportes programados (cron/scheduled)
+- [ ] Sin notificaciones push (Web Push API no implementado)
+- [ ] Sin workflows configurables (ej: "si mortalidad > X%, notificar veterinario")
+- [ ] Sin event-driven automation entre modulos
+- [ ] Sin integracion email para alertas criticas
+- [ ] Stress events auto-generados pero sin trigger automatico de acciones correctivas
 
 #### Recomendacion
-Agregar scheduled jobs con APScheduler o Celery Beat para KPI snapshots y alertas automaticas. Push notifications via Web Push API para alertas criticas en tiempo real.
+Implementar Web Push API para alertas criticas. Crear al menos un workflow automatizado: mortalidad alta -> alerta + recomendacion + registro automatico en logbook.
 
 ---
 
-## 11. HUNTER — Crecimiento Comercial (7.5/10)
+## 11. JESTER — Creatividad & Innovacion (7.5/10)
 
 #### Lo que esta bien
-- Pricing strategy con 4 tiers bien diferenciados ($9/$19/$49/$99 mensual)
-- Free trial de 30 dias para reducir friccion de entrada
-- Lead capture module (`Lead` model en backend)
-- Stripe billing completo: checkout sessions, customer portal, webhooks
-- Soft landing discounts para retencion
-- Soporte integrado para reducir churn
+- **Walkthrough Engine** (5 tours) con spotlight, narracion y controles — innovador para un SaaS avicola
+- **Quick Entry Cards** en Dashboard — 4 formularios rapidos (produccion, alimento, mortalidad, ambiente) para registro desde el campo
+- **Predicciones ML inline** — forecast 7/14 dias, anomalias, riesgo de brote, comparacion con curva de raza
+- **THI (Temperature-Humidity Index)** automatico con alerta de estres calorico
+- **IoT/MQTT** para sensores en tiempo real — innovador en el nicho
+- **Deficiency Census** — diagnostico de carencias con reporte anonimizado exportable
+- **Lifecycle Roadmap** visual por lote con hitos de vacunacion
 
 #### Lo que falta para 10/10
-- [ ] Sin analytics de conversion (funnel: visit → signup → trial → paid)
-- [ ] Sin A/B testing framework
+- [ ] Sin gamification para engagement (badges, streaks de registro diario)
+- [ ] Predicciones no incorporan welfare como factor
+- [ ] Sin asistente AI contextual (chatbot de ayuda)
+
+#### Recomendacion
+El nivel de innovacion es alto para el nicho. Integrar welfare como factor en predicciones seria el siguiente paso creativo natural.
+
+---
+
+## 12. MENTOR — Coaching & Knowledge Transfer (6.5/10)
+
+#### Lo que esta bien
+- Walkthrough de 5 tours con pasos guiados por cada area funcional
+- Tooltips informativos en TODOS los KPIs (linea 2938) — explican que significa cada metrica, ideal y target
+- Manual de usuario existente (`EGGLOGU_USER_MANUAL.md`)
+- Empty states con call-to-action (ej: "No hay datos, agregar primer lote")
+- Recomendaciones contextuales en Dashboard que educan al usuario
+
+#### Lo que falta para 10/10
+- [ ] Sin knowledge base / FAQ accesible desde la app (Support tiene FAQ pero es para tickets)
+- [ ] Sin videos tutoriales integrados
+- [ ] Sin glosario avicola para usuarios novatos
+- [ ] Sin explicacion de benchmarks de la industria en el modulo de Analytics
+- [ ] Walkthrough disponible solo al inicio — no hay forma de relanzarlo facilmente
+
+#### Recomendacion
+Agregar un boton "Iniciar Tour" visible en cada seccion. Crear un mini-glosario avicola accesible desde el sidebar.
+
+---
+
+## 13. NEXUS — Integracion & Conectividad (6.0/10)
+
+> **AREA CRITICA DE ESTA EVALUACION**
+
+#### Lo que esta bien
+- **Produccion <-> Feed:** FCR calculado automaticamente cruzando `dailyProduction` + `feed.consumption`
+- **Produccion <-> Health:** Mortalidad rastreada, impacto de brotes visible, vacunas correlacionadas
+- **Produccion <-> Environment:** THI automatico, alertas de estres calorico -> impacto produccion
+- **Finanzas <-> Produccion:** Ingreso neto basado en venta de huevos, costo/huevo calculado
+- **Finanzas <-> Feed:** Costo de alimento tracking directo
+- **Analytics:** 6 sub-tabs que agregan datos de produccion, feed, salud, finanzas, ambiente
+- **Economics tab:** Cruza costos de adquisicion, feed, health, con ROI por ave
+- **Dashboard KPIs:** Consolidan datos de multiples modulos en tiempo real
+- **Sync frontend <-> backend:** Dual-write strategy con sync server
+
+#### Lo que falta para 10/10 (CRITICO)
+- [ ] **WELFARE COMPLETAMENTE AISLADO** — El modulo de Welfare (conceptual en el scope) tiene CERO cross-references con:
+  - Produccion (no correlaciona welfare score -> hen-day)
+  - Salud (no referencia assessments de welfare)
+  - Dashboard (no incluye welfare score como KPI)
+  - Analytics (no hay tab de correlacion welfare-produccion)
+  - Trazabilidad (no incluye welfare status en el batch)
+  - Predicciones (no usa welfare como factor de riesgo)
+  - Recomendaciones (`getRecommendations()` en linea 7273 — 0 referencias a welfare)
+  - Alertas (`getAlerts()` en linea 2794 — 0 referencias a welfare assessments)
+- [ ] **Sin integracion con sistemas externos** — no hay API publica documentada para integraciones de terceros
+- [ ] **Traceability desconectada de health/welfare** — los batches no se enriquecen con datos sanitarios
+
+#### Recomendacion
+**PRIORIDAD MAXIMA:** Conectar el modulo de Welfare con Production, Analytics y Dashboard. Como minimo:
+1. Agregar welfare score como KPI en Dashboard
+2. Correlacionar welfare assessments con trends de produccion en Analytics
+3. Incluir welfare como factor en `getRecommendations()` y predicciones
+4. Enriquecer trazabilidad con welfare + health status
+
+---
+
+## 14. ORACLE — Prediccion & Data Insights (6.5/10)
+
+#### Lo que esta bien
+- **Suite predictiva completa** (6 sub-tabs en Analytics):
+  - Forecast produccion 7/14 dias con bandas de confianza
+  - Deteccion de anomalias en datos historicos
+  - Riesgo de brote con factores ponderados (mortalidad, THI, FCR, produccion, vacunas)
+  - Comparacion real vs curva de raza (11+ razas en `BREED_CURVES`)
+  - Tendencia FCR
+  - Economics con ROI por ave y punto de equilibrio
+- **Seasonality analysis** — identifica patrones estacionales
+- **KPI Evolution** — tracking temporal con snapshots
+- **Recommendations engine** — 8 tipos de recomendaciones basadas en datos reales (lineas 7273-7316)
+
+#### Lo que falta para 10/10
+- [ ] **Tab de Predictions crasheaba** (bug `${breed}` -> `${bkey}` en linea 7267, ya fixeado)
+- [ ] **Tab de Economics crasheaba** (bug paths `D.health.vaccines` -> `D.vaccines`, ya fixeado)
+- [ ] **Welfare NO influye en predicciones** — zero factor welfare en `calcOutbreakRisk()` ni en forecasts
+- [ ] Sin machine learning real — todas las predicciones son heuristicas/estadisticas simples
+- [ ] Sin benchmarks de industria como comparacion (solo curva de raza)
+- [ ] Sin analisis predictivo de feed pricing/supply chain
+
+#### Recomendacion
+Agregar welfare score como factor en `calcOutbreakRisk()` (peso 0.15-0.20). Correlacionar historicamente welfare assessments con produccion para generar insights como "Welfare score por debajo de 60 correlaciona con -12% hen-day en 14 dias".
+
+---
+
+## 15. PREFLIGHT — Validacion Pre-Deploy (5.5/10)
+
+#### Lo que esta bien
+- Global error handler con bug reporter integrado (lineas 1-38 de JS)
+- Unhandled promise rejection catcher con toast amigable
+- Bug badge con contador visual en la UI
+- Field validation con `.field-error` y `.field-error-msg` CSS (linea 242)
+- `sanitizeHTML` preventivo en 256+ puntos
+
+#### Lo que falta para 10/10
+- [ ] **2 tabs crasheaban en PRODUCCION** — Predictions y Economics tenian errores de runtime que llegaron a live
+- [ ] Sin smoke tests automatizados pre-deploy
+- [ ] Sin test de regresion para los 19 modulos
+- [ ] El archivo de tests (`egglogu.test.js`) existe pero sin coverage report
+- [ ] Sin validacion pre-deploy de traducciones (keys faltantes en algun idioma)
+- [ ] Sin lighthouse CI para performance/accessibility gates
+- [ ] Form validation inconsistente — algunos formularios validan inline, otros solo por toast
+
+#### Recomendacion
+Agregar smoke tests para cada uno de los 19 modulos renderizando con datos mock. Gate de CI: si algun `render[Section]()` lanza excepcion, bloquear deploy.
+
+---
+
+## 16. PRISM — Diseno Visual, UX & Experiencia (6.0/10)
+
+> **AREA PRINCIPAL DE ESTA EVALUACION**
+
+#### Lo que esta bien
+- CSS variables system bien estructurado (20+ variables en `:root`, linea 22)
+- Color scheme profesional: Navy (#1A3C6E) + Orange (#FF8F00) + Green (#2E7D32) — identidad avicola solida
+- Sidebar colapsable con nav-groups organizados y iconos
+- 4 color themes configurables (Azul, Verde, Purpura, Negro)
+- Font scale accesibilidad (small/normal/large/xlarge, linea 240)
+- Responsive breakpoints en 768px y 480px con ajustes de grid
+- KPI cards con border-left color coding (primary/warning/danger/accent/secondary)
+- Quick Entry cards con animaciones de confirmacion
+- Walkthrough con spotlight + narration panel — UX de primer nivel para onboarding
+- RTL support completo (linea 54)
+
+#### Lo que falta para 10/10 — 20 Issues Documentados
+- [ ] **Dark mode incompleto** (lineas 227-236): solo 10 selectores. Charts, weather widget, tables, badges, stress timeline no se adaptan
+- [ ] **640+ inline styles** en JS: `style="background:linear-gradient(135deg,#dc3545..."` (ej: trial banner linea 2836) — rompe la coherencia visual
+- [ ] **Hover states faltantes** en algunos botones: solo 19 reglas `:hover` en todo el CSS para decenas de elementos interactivos
+- [ ] **Modal sizes inconsistentes**: `.modal{max-width:500px}` global pero overrides inline en algunos modales
+- [ ] **Card spacing/padding variable**: `.card{padding:20px}` pero muchas cards con padding inline diferente
+- [ ] **Tables no siempre tienen scroll horizontal**: `.table-wrap{overflow-x:auto}` existe pero no se aplica a todas las tablas
+- [ ] **Chart colors no respetan theme**: Charts usan `themeColor()` en algunos lugares pero no en todos
+- [ ] **Date format inconsistente**: `fmtDate()` existe pero hay lugares con `.substring(0,10)` directo
+- [ ] **Empty states inconsistentes**: `emptyState()` funcion existe pero no todos los modulos la usan
+- [ ] **Export buttons posicionamiento variable**: Finanzas los tiene en card separado, Traceability en header
+- [ ] **Search inputs sin estilo unificado**: no hay clase `.search-input` — cada modulo estiliza diferente
+- [ ] **Tab navigation no es keyboard-accessible**: tabs son `<div onclick>` sin `tabindex` ni `role="tab"` (29 usos de keyboard/aria vs cientos de tabs)
+- [ ] **Tooltip styles inconsistentes**: KPI tooltips vs browser title tooltips mezclados
+- [ ] **No hay print styles**: `@media print` completamente ausente
+- [ ] **Loading skeleton solo basico**: una sola clase `.loading-spinner` (linea 282-284) sin skeleton screens
+- [ ] **Color scheme variables no fully utilized**: `var(--danger)` existe pero hay `#C62828` hardcoded en JS
+- [ ] **Typography hierarchy**: `h2{24px}` y `h3{18px}` definidos pero sin `h4`/`h5` para sub-secciones
+- [ ] **Form validation visual inconsistente**: `.field-error` existe pero no todos los forms la usan
+- [ ] **Weather widget** no tiene dark mode override
+- [ ] **Confirm dialog** tiene dark mode pero **modal** tiene estilo basico sin sombra dark mode
+
+#### Recomendacion
+Crear un mini design system con 15-20 clases utilitarias que reemplacen los inline styles mas comunes. Completar dark mode para TODOS los componentes. Agregar `@media print` con layout limpio.
+
+---
+
+## 17. RADAR — Oportunidades, Riesgos & Inteligencia Competitiva (6.5/10)
+
+#### Lo que esta bien
+- **14 idiomas** (ES, EN, PT, FR, DE, IT, JA, ZH, RU, ID, AR, KO, TH, VI) — cobertura global excepcional
+- **RTL support** para arabe — detalle competitivo clave
+- **IoT/MQTT** para sensores — diferenciador vs competencia
+- **Pricing agresivo** con soft-landing (40% off -> 20% off -> 10% off -> precio completo)
+- **Modo Campo** y **Modo Veterinario** — adaptacion a contextos de uso
+- **PWA offline-first** — ventaja competitiva en zonas rurales sin internet estable
+
+#### Lo que falta para 10/10
+- [ ] Sin analisis formal de competidores
+- [ ] Sin A/B testing para conversion
+- [ ] Sin analytics de uso para entender retention
+- [ ] Sin market intelligence automatizada
+- [ ] Welfare module inexistente como ventaja competitiva — podria ser diferenciador clave para mercado EU
+
+#### Recomendacion
+El welfare module es una oportunidad de oro para diferenciarse. En EU, los supermercados exigen certificacion de bienestar animal. Una granja que puede demostrar welfare compliance con datos tiene ventaja comercial directa.
+
+---
+
+## 18. SENTINEL — Seguridad & Integridad (6.5/10) — PESO: x1.5
+
+#### Lo que esta bien
+- **CSP estricto** en meta tag: `default-src 'self'`, script-src whitelist, connect-src restringido (linea 10)
+- **sanitizeHTML()** con 256 usos — prevencion XSS sistematica
+- **escapeAttr()** para atributos onclick — prevencion injection
+- **JWT + OAuth** multi-provider (Google, Apple, Microsoft) — auth robusta
+- **Offline PIN** para acceso sin internet — seguridad pragmatica
+- **Rate limiting** en backend (`rate_limit.py`)
+- **Email verification** con Resend API
+- **Global error handler** no expone stack traces al usuario (lineas 1-37)
+
+#### Lo que falta para 10/10
+- [ ] **localStorage SIN encriptacion** — `saveData(d)` guarda JSON plano (linea 1678). Datos financieros, sanitarios y personales accesibles via DevTools
+- [ ] Sin encryption at rest en frontend
+- [ ] MQTT credentials guardadas en configuracion sin encriptar
+- [ ] Sin Content Security Policy reportando (report-uri)
+- [ ] Sin rate limiting visible en frontend
+- [ ] Sin session timeout / auto-logout por inactividad
+- [ ] Secrets management en `.env` — adecuado pero sin rotation
+- [ ] Bug reporter envia stack traces al localStorage — potencial leak de informacion tecnica
+
+#### Recomendacion
+Encriptar localStorage con Web Crypto API. Implementar session timeout de 30 min inactividad. Agregar CSP report-uri para monitoring de violaciones.
+
+---
+
+## 19. STALKER — Commercial Intelligence & Revenue Growth (7.0/10)
+
+#### Lo que esta bien
+- **4 pricing tiers** bien definidos: Hobby $9, Starter $19, Pro $49, Enterprise $99
+- **Soft-landing pricing** con descuentos escalonados (40% -> 20% -> 10% -> full)
+- **Stripe integration** para cobros automatizados
+- **Trial de 30 dias** con conversion UI agresiva al expirar (lineas 2836-2858)
+- **Modulo de Leads** en backend (`leads.py`)
+- **Admin SaaS** con KPIs de revenue, churn, activation rate, MRR (linea 5312+)
+- **Billing automatico** con ledger de cobros y creditos
+
+#### Lo que falta para 10/10
+- [ ] Sin analytics de conversion (trial -> paid)
+- [ ] Sin funnel tracking (landing -> signup -> first data entry -> activation)
+- [ ] Sin segmentacion de clientes por comportamiento
+- [ ] Sin upsell automatizado basado en uso (ej: "Tienes 8 lotes, el plan Pro soporta ilimitados")
 - [ ] Sin referral program
-- [ ] Sin metricas de churn/MRR/LTV visibles
-- [ ] Sin integracion con CRM
-- [ ] Sin upsell/cross-sell automatizado entre planes
 
 #### Recomendacion
-Implementar tracking de conversion basico (signup → trial → paid) con eventos custom. Agregar metricas SaaS (MRR, churn rate, LTV) en un dashboard admin.
+Implementar tracking de conversion funnel. Crear triggers de upsell cuando el usuario se acerca a los limites del plan.
 
 ---
 
-## 12. JESTER — Creatividad & Innovacion (8.5/10)
+## 20. TEMPO — Performance & Optimization (7.0/10)
 
 #### Lo que esta bien
-- Nicho innovador: SaaS avicola es un mercado sub-atendido por tecnologia
-- PWA offline-first para zonas rurales — solucion real a un problema real
-- IoT integration (MQTT + environment readings) para granjas tecnificadas
-- Prediccion estadistica con ensemble forecasting y confidence bands
-- Walkthrough engine integrado para onboarding interactivo
-- Soporte RTL para mercados arabes — atencion al detalle
-- Offline PIN auth para acceso sin internet — innovacion practica
+- **HEAVY_SECTIONS** con lazy render + loading spinner (linea 2776): modulos pesados muestran spinner antes de renderizar
+- **`requestAnimationFrame`** para render de secciones pesadas — no bloquea UI
+- **Chart.js con `maintainAspectRatio: false`** y `responsive: true` — charts adaptivos
+- **CDN para librerias** (Chart.js, Leaflet, MQTT, simple-statistics) — carga paralela
+- **`defer`** en scripts externos (lineas 16-20)
+- **Service Worker** con cache-first strategy — carga instantanea en visitas posteriores
+- **Compact CSS** (425 lineas minificado) — bajo peso
 
 #### Lo que falta para 10/10
-- [ ] Sin features de gamification (logros, streaks, comparativas entre granjas)
-- [ ] Sin AI/ML real para predicciones (solo estadistica descriptiva)
-- [ ] Sin marketplace o comunidad de granjeros
-- [ ] Sin integracion con proveedores (compra directa de alimento, vacunas)
+- [ ] Sin performance budget definido
+- [ ] Sin lazy loading de modulos JS — archivo monolitico de 8,066 lineas se parsea completo
+- [ ] Sin Web Vitals monitoring
+- [ ] Sin image optimization pipeline (las imagenes existentes son minimas, pero no hay strategy)
+- [ ] localStorage como store — operaciones sincronas que pueden bloquear en datasets grandes
+- [ ] Sin virtual scrolling para tablas grandes (>1000 registros)
 
 #### Recomendacion
-La innovacion esta en la ejecucion practica, no en la tecnologia trendy — eso es correcto para el mercado. Agregar benchmarking anonimo entre granjas similares seria un diferenciador killer.
+Medir Web Vitals en produccion. Evaluar split del JS monolitico con dynamic import para modulos que el usuario no visita frecuentemente.
 
 ---
 
-## 13. MENTOR — Coaching & Knowledge Transfer (7.5/10)
+## 21. TERMINATOR — QA & Bug Hunting (5.5/10) — PESO: x1.3
+
+> **AREA CRITICA DE ESTA EVALUACION**
 
 #### Lo que esta bien
-- Walkthrough/tour engine integrado en la aplicacion
-- FAQ system con articulos organizados
-- Auto-responses para preguntas comunes de soporte
-- Support ticket system con rating de satisfaccion
-- 14 idiomas para transfer de conocimiento global
+- **Global error handler** captura errores runtime y promise rejections (lineas 1-37)
+- **Bug reporter** con badge contador y almacenamiento local
+- **Error cap** de 50 errores para no llenar memoria
+- **Error toast** throttled (5s) para no spamear al usuario
+- **Field validation** con clases CSS dedicadas
+- **Archivo de tests** existente (`egglogu.test.js`)
 
-#### Lo que falta para 10/10
-- [ ] Sin documentacion de desarrollo (API docs, architecture docs, setup guide)
-- [ ] Sin knowledge base publica (FAQs son internas)
-- [ ] Sin video tutoriales o screencasts
-- [ ] Sin tooltips contextuales en la UI (mas alla del walkthrough)
-- [ ] Sin developer onboarding documentation
+#### Lo que falta para 10/10 (BUGS ENCONTRADOS)
+- [ ] **BUG CRITICO (FIXED):** Tab de Predictions crasheaba — `${breed}` undefined en linea 7267, corregido a `${bkey}`
+- [ ] **BUG CRITICO (FIXED):** Tab de Economics crasheaba — paths `D.health.vaccines` y `D.health.medications` incorrectos, corregidos a `D.vaccines` y `D.medications`
+- [ ] **BUG FUNCIONAL:** Modulo de Welfare referenciado en el scope del proyecto pero NO existe como seccion navegable en el router `R={}` (linea 2774) — no hay `welfare: renderWelfare`
+- [ ] **BUG DE AISLAMIENTO:** Welfare assessments (conceptuales) no influyen en NINGUN otro modulo — datos huerfanos
+- [ ] **BUG ESTETICO:** Dark mode parcial — 10+ componentes sin override dark
+- [ ] **BUG i18n:** Admin SaaS solo tiene traducciones ES/EN (lineas 5313-5314), faltando 12 idiomas
+- [ ] Sin regression tests automatizados
+- [ ] Sin smoke tests por modulo
+- [ ] Sin end-to-end tests
+- [ ] Error en produccion live — ambos tabs crasheaban para usuarios reales
 
 #### Recomendacion
-Publicar API docs auto-generados por FastAPI (`/docs` endpoint). Crear knowledge base publica con los FAQs existentes. Agregar tooltips con `info` parameter del helper `kpi()`.
+**INMEDIATO:** Agregar smoke test por cada funcion `render[Section]()` que verifique que no lanza excepcion con datos vacios y con datos mock. Gate de CI obligatorio.
 
 ---
 
-## 14. NEXUS — Integracion & Conectividad (8.5/10)
+## 22. VAULT — Inteligencia Financiera (7.0/10)
 
 #### Lo que esta bien
-- 3 OAuth providers: Google (google-auth), Apple (RS256 JWT), Microsoft (Graph API)
-- Stripe: checkout sessions, customer portal, webhooks con HMAC verification
-- Resend API: verificacion email, password reset, team invites
-- MQTT 5.14.1 para IoT device integration
-- IndexedDB ↔ PostgreSQL sync bidireccional
-- Chart.js para visualizacion de datos
-- Leaflet para mapas de granjas
-- simple-statistics para analisis predictivo
+- **Modulo de Finanzas completo:** Ingresos, Gastos, Cuentas por Cobrar, Resumen
+- **Economics tab** en Analytics: ROI por ave, costo por huevo, punto de equilibrio
+- **Depreciacion y impuestos** configurables — profesionalismo financiero
+- **Revenue por canal** (directo, wholesale, retail, organic, export) con pricing diferenciado
+- **MRR tracking** en Admin SaaS (base + extra users)
+- **Cost/egg calculation** cruzando feed + health + expenses con produccion
+- **Soft-landing pricing** para minimizar churn
 
 #### Lo que falta para 10/10
-- [ ] Sin webhook outgoing (notificar sistemas externos de eventos)
-- [ ] Sin API publica documentada para integraciones de terceros
-- [ ] Sin SSO/SAML para enterprise
-- [ ] MQTT sin broker propio — depende de broker externo
+- [ ] Sin proyecciones financieras futuras
+- [ ] Sin analisis what-if (ej: "Si el maiz sube 20%, como afecta mi costo/huevo?")
+- [ ] Sin integracion con contabilidad externa (export para contadores)
+- [ ] Sin P&L report exportable en PDF
+- [ ] Depreciacion y impuestos solo configurables — no hay calculo automatico por jurisdiccion
 
 #### Recomendacion
-Publicar API publica con rate limiting y API keys para integraciones enterprise. Agregar webhook outgoing para eventos clave (produccion registrada, alerta de salud).
+Agregar exportacion de P&L en PDF con desglose mensual. Implementar escenarios what-if para feed pricing.
 
 ---
 
-## 15. ORACLE — Prediccion & Data Insights (8.5/10)
+## 23. WALTZ — Localizacion & Cultura (7.5/10)
 
 #### Lo que esta bien
-- `simple-statistics` activamente utilizado: mean, stddev, linear regression, z-score anomaly detection
-- Ensemble forecast con confidence bands visualizado en Chart.js
-- KPI snapshots almacenados (`KPISnapshot` model) para trending historico
-- Analytics financieros: cost-per-egg, ROI per bird, daily cost per bird
-- Z-score anomaly detection para produccion anormal
-- `Prediction` model en backend para almacenar forecasts
+- **14 idiomas completos** en el frontend principal: ES, EN, PT, FR, DE, IT, JA, ZH, RU, ID, AR, KO, TH, VI
+- **RTL support** para arabe con CSS dedicado (linea 54)
+- **Language selector** en sidebar con grid visual y flags
+- **Funcion `t()` centralizada** para i18n — consistente en 95%+ del codigo
+- **Currency configurable** (`cfg_currency`) — adaptable a cualquier mercado
+- **Date formatting** via `fmtDate()` respetando locale
+- **Walkthrough** traducido a 14 idiomas (sistema independiente, lineas 2421-2577)
+- **Breed names** localizados
 
 #### Lo que falta para 10/10
-- [ ] Sin ML real (solo estadistica descriptiva/regresion lineal)
-- [ ] Sin alertas proactivas basadas en predicciones (solo visualizacion)
-- [ ] Sin benchmarking contra curvas de raza (`BreedCurve` model existe pero uso limitado)
-- [ ] Sin seasonal decomposition para patrones ciclicos avicolas
-- [ ] Sin correlacion multi-variable (ej: clima → produccion → feed)
+- [ ] **Admin SaaS solo ES/EN** — los 12 idiomas restantes faltan en `L={}` (linea 5312)
+- [ ] **Walkthrough traducciones** en sistema separado del `T={}` principal — duplicacion de esfuerzo y riesgo de desync
+- [ ] Algunas cadenas hardcoded en JS: `'Clear sky'`, `'Fog'`, etc. en `wmoDesc()` (linea 6275)
+- [ ] `cfg_users: 'Gestion de Usuarios'` existe en traducciones pero Admin SaaS usa su propio `L.es.title`
+- [ ] Sin pluralizacion avanzada (ej: "1 dia" vs "3 dias" — resuelto parcialmente)
+- [ ] Sin soporte de variantes regionales (es-MX vs es-ES, pt-BR vs pt-PT)
 
 #### Recomendacion
-Explotar `BreedCurve` para benchmark real vs esperado por raza. Agregar alertas automaticas cuando prediccion indica caida. Seasonal decomposition con los datos historicos existentes.
+Unificar los 3 sistemas de traduccion en `T={}`. Extender Admin SaaS a los 14 idiomas. Localizar las cadenas de weather hardcoded.
 
 ---
 
-## 16. PHOENIX — Data Recovery & Resilience (9.4/10) [PESO: x1.3]
+## BIENESTAR ANIMAL -> PRODUCCION: ANALISIS ESPECIAL
 
-#### Lo que esta bien
-- **4 capas de recovery**: IndexedDB (local) + Cache API (assets) + pg_dump diario (DB) + JSON export (manual)
-- Service Worker cache para funcionamiento offline completo
-- IndexedDB como primera escritura — datos nunca se pierden por desconexion
-- pg_dump diario con retencion 7 dias via Docker backup service
-- JSON export/import para backup manual del usuario
-- Health check endpoint con degraded status detection
-- Dual-write sync: datos se guardan local Y remoto simultaneamente
-- Offline PIN auth permite acceso completo sin internet
+### Estado Actual: DESCONEXION TOTAL
 
-#### Lo que falta para 10/10
-- [ ] Backup pg_dump solo local al servidor — falta off-site (S3/R2)
-- [ ] Sin DR plan documentado (Recovery Time Objective, Recovery Point Objective)
-- [ ] Sin testing automatizado de recovery (chaos engineering)
-- [ ] IndexedDB tiene limite de storage (~50MB en algunos browsers)
+El scope del proyecto incluye un modulo de Welfare basado en el protocolo de 5 Libertades y 12 criterios Welfare Quality. Sin embargo, al examinar el codigo:
 
-#### Recomendacion
-Agregar backup off-site automatizado a Cloudflare R2 (barato, integra con el stack). Documentar RTO/RPO. La resiliencia actual es excepcional para un SaaS de este tamano.
+1. **No existe `renderWelfare` en el router** (linea 2774) — no hay seccion navegable
+2. **Grep de "welfare" en 8,066 lineas = 0 resultados** — la palabra no aparece en el codigo JS
+3. **`getRecommendations()` (linea 7273-7316):** Evalua FCR, mortalidad, curva de raza, feed stock, ambiente, bioseguridad — CERO welfare
+4. **`getAlerts()` (linea 2794-2821):** Evalua vacunas, feed, mortalidad, brotes, bioseguridad, reclamos — CERO welfare
+5. **`calcOutbreakRisk()`:** Usa mortalidad, THI, FCR, produccion, vacunas como factores — CERO welfare
+6. **Dashboard KPIs:** 8 KPIs (produccion, hen-day, FCR, mortalidad, costo, ingreso, gallinas, alertas) — CERO welfare
+7. **Analytics 6 tabs:** Comparacion, Estacionalidad, Rentabilidad, KPI Evolution, Predicciones, Economics — CERO welfare
+8. **Traceability:** batch_id, rack, boxes, QR — CERO welfare status
 
----
+### Impacto de Esta Desconexion
 
-## 17. PREFLIGHT — Validacion Pre-Deploy (8.0/10)
+| Consecuencia | Severidad |
+|-------------|-----------|
+| No se puede demostrar bienestar para certificaciones EU | ALTA |
+| No se detecta impacto de welfare deficiente en produccion | ALTA |
+| No hay alertas proactivas de deterioro de welfare | MEDIA |
+| Perdida de ventaja competitiva vs alternativas con welfare | MEDIA |
+| Trazabilidad incompleta para mercados premium | ALTA |
+| Predicciones ignoran un factor clave de produccion | MEDIA |
 
-#### Lo que esta bien
-- CI pipeline 6 etapas: lint (ruff) → typecheck (mypy) → test (pytest) → build → e2e (Playwright) → deploy
-- Cobertura minima enforced: 50% floor en CI
-- 28 test files backend con 2,709 lineas de test code
-- Vitest unit tests frontend: 5,664 lineas
-- Playwright E2E: 10 escenarios criticos
-- Database-per-test isolation con fresh table creation
-- Pre-commit hooks para code quality
+### Evidencia Cientifica: Welfare -> Produccion
 
-#### Lo que falta para 10/10
-- [ ] Sin load testing automatizado (k6, Locust)
-- [ ] Sin canary deployment / blue-green strategy
-- [ ] Sin smoke tests post-deploy
-- [ ] Cobertura 50% es floor bajo — deberia aspirar a 70%+
-- [ ] Sin security scanning automatizado (SAST/DAST)
+La literatura avicola establece que:
+- **Estres cronico** reduce produccion 10-25% (Hen-Day)
+- **Densidad excesiva** aumenta mortalidad 5-15% y reduce tamano de huevo
+- **Restriccion de comportamiento** incrementa picaje y mortalidad
+- **Condiciones ambientales deficientes** (welfare criterion) correlacionan directamente con FCR elevado
+- Granjas con welfare score >70 reportan 8-15% mayor produccion consistente
 
-#### Recomendacion
-Agregar smoke test post-deploy (hit /healthcheck + verificar status). Subir cobertura minima a 65%. Agregar Snyk o Trivy para security scanning en CI.
+### Plan de Conexion Recomendado
 
----
+```
+Fase 1 (inmediata):
+- Crear renderWelfare() con las 5 Libertades y scoring 0-100
+- Agregar welfare score como KPI #9 en Dashboard
+- Incluir welfare < 40 en getAlerts()
 
-## 18. PRISM — Diseno Visual, UX & Experiencia (8.5/10)
+Fase 2 (semana siguiente):
+- Agregar welfare como factor en calcOutbreakRisk() (peso 0.15)
+- Incluir welfare trend en getRecommendations()
+- Tab de correlacion welfare-produccion en Analytics
 
-#### Lo que esta bien
-- Dark mode nativo con toggle y CSS custom properties
-- RTL support para idiomas arabes (direction, text-align, mirroring)
-- 4 responsive breakpoints (mobile, tablet, desktop, wide)
-- 61 `aria-label` instances para accesibilidad
-- Walkthrough engine para guiar usuarios nuevos
-- CSS design system coherente: variables de color, spacing, typography
-- KPI cards con patron reutilizable `kpi(label, value, sub, cls, info)`
-- Modal system unificado con `openModal(title, body)`
-- Chart.js visualizaciones con colores consistentes
-
-#### Lo que falta para 10/10
-- [ ] Sin WCAG 2.1 AA compliance verificado formalmente
-- [ ] Sin skeleton loading / shimmer effects (feedback visual en cargas)
-- [ ] Sin micro-animations o transitions entre vistas
-- [ ] Sin theme customization por usuario (solo light/dark)
-- [ ] Iconografia basada en emoji — no icon system profesional
-
-#### Recomendacion
-Agregar skeleton loading para percepcion de velocidad. Evaluar Phosphor Icons o similar para reemplazar emojis en UI profesional. WCAG audit con axe-core.
-
----
-
-## 19. RADAR — Oportunidades, Riesgos & Inteligencia Competitiva (8.0/10)
-
-#### Lo que esta bien
-- **Riesgos mitigados**: offline-first (conectividad), backups multi-capa (data loss), multi-tenant (seguridad), rate limiting (abuse)
-- **Oportunidad capturada**: nicho avicola desatendido, 14 idiomas, pricing accesible
-- `WeatherCache` model para datos climaticos (correlacion con produccion)
-- IoT readings para monitoreo ambiental proactivo
-- Health checks con degraded status detection
-- Lead capture para oportunidades comerciales
-
-#### Lo que falta para 10/10
-- [ ] Rate limiting fails-open cuando Redis no esta disponible — riesgo de abuse
-- [ ] Sin competitive intelligence tracking (que hacen competidores)
-- [ ] Sin market sizing / TAM analysis documentado
-- [ ] Sin feature request tracking de usuarios
-- [ ] Sin monitoring de uptime externo (UptimeRobot, Pingdom)
-
-#### Recomendacion
-Fix critico: rate limiter debe fail-closed (deny requests) cuando Redis esta caido, no fail-open. Agregar uptime monitoring externo con alertas.
-
----
-
-## 20. SENTINEL — Seguridad & Integridad (9.1/10) [PESO: x1.5]
-
-#### Lo que esta bien
-- **Auth robusto**: JWT con expiry (30min access, 7day refresh), type discrimination, bcrypt hashing
-- **3 OAuth providers**: Google (google-auth lib), Apple (RS256 JWT verify), Microsoft (Graph API)
-- **XSS prevention**: `sanitizeHTML()` (linea 1343-1349), no eval(), no unsanitized innerHTML
-- **SQL injection**: SQLAlchemy ORM con queries parametrizadas en todos los endpoints
-- **CORS**: restringido a `FRONTEND_URL`, sin wildcards
-- **Security headers**: HSTS, X-Frame-Options, X-Content-Type-Options, Permissions-Policy, Referrer-Policy
-- **Stripe webhooks**: HMAC verification con `construct_event()`
-- **Rate limiting**: per-endpoint + global (120/min)
-- **Multi-tenant isolation**: queries filtradas por `organization_id` en todos los modelos
-- **Offline PIN**: auth local sin exponer credenciales
-
-#### Lo que falta para 10/10
-- [ ] Rate limiter fails-open cuando Redis no disponible (backend/src/core/rate_limit.py)
-- [ ] Frontend CSP permite `unsafe-inline` (linea 10 de egglogu.html)
-- [ ] Token storage en localStorage (necesario para offline, pero riesgo XSS)
-- [ ] Sin CSP reporting endpoint
-- [ ] Sin penetration testing documentado
-
-#### Recomendacion
-Fix prioritario: rate limiter fail-closed (return 503 si Redis caido). Eliminar `unsafe-inline` de CSP frontend usando nonces. Agregar CSP report-uri para detectar violations.
-
----
-
-## 21. SHERLOCK — Debugging & Investigacion (7.5/10)
-
-#### Lo que esta bien
-- Exception hierarchy personalizada con codigos HTTP semanticos
-- Sentry integration para captura automatica de errores en produccion
-- Structured JSON logging con request ID tracking
-- Health check endpoint con status degradado detectable
-- `logAudit()` trail para reconstruir secuencia de operaciones
-
-#### Lo que falta para 10/10
-- [ ] Sin distributed tracing (OpenTelemetry/Jaeger)
-- [ ] Sin log aggregation centralizado (solo logs de Docker)
-- [ ] Sin debug mode documentado para desarrollo
-- [ ] Sin error boundary en frontend (JS errors no se capturan sistematicamente)
-- [ ] Sin correlation ID entre frontend y backend requests
-
-#### Recomendacion
-Agregar correlation ID (header `X-Request-ID`) propagado desde frontend para tracing end-to-end. Sentry en frontend tambien (gratis hasta 5K events/mes).
-
----
-
-## 22. TEMPO — Performance & Optimization (8.2/10)
-
-#### Lo que esta bien
-- SQLAlchemy 2.0 async con connection pooling
-- Redis 7 para caching y rate limiting
-- Paginacion consistente: default 50, max 200 por pagina
-- Cloudflare Pages CDN para frontend (edge global)
-- Docker health checks para deteccion rapida de issues
-- IndexedDB para reads locales instantaneos (zero latency offline)
-
-#### Lo que falta para 10/10
-- [ ] Sin Web Vitals tracking (LCP, FID, CLS)
-- [ ] Sin CDN para assets del backend (imagenes, exports)
-- [ ] Sin query optimization audit (EXPLAIN ANALYZE)
-- [ ] Sin connection pooling tuning documentado
-- [ ] Frontend monolito 8,492 lineas = bundle size suboptimo
-- [ ] Sin lazy loading de modulos frontend
-
-#### Recomendacion
-Agregar Web Vitals tracking con web-vitals library (1KB). Auditar queries lentas con `EXPLAIN ANALYZE` en las rutas mas usadas. Considerar code splitting para el frontend.
-
----
-
-## 23. TERMINATOR — QA & Bug Hunting (8.0/10) [PESO: x1.3]
-
-#### Lo que esta bien
-- **28 test files backend** con 2,709 lineas de test code
-- **Vitest frontend**: 5,664 lineas de unit tests
-- **Playwright E2E**: 10 escenarios criticos automatizados
-- **Coverage floor**: 50% minimo enforced en CI
-- **Database isolation**: fresh tables per test — sin bleed entre tests
-- **CI enforcement**: tests deben pasar para deploy
-- **Exception hierarchy** permite testing preciso de error cases
-
-#### Lo que falta para 10/10
-- [ ] Cobertura 50% es baja para produccion — target deberia ser 70%+
-- [ ] Sin load testing / stress testing
-- [ ] Sin chaos engineering (que pasa si Redis cae? si PostgreSQL se desconecta?)
-- [ ] Sin mutation testing (verificar que tests realmente detectan bugs)
-- [ ] Sin contract testing para API (Pact o similar)
-- [ ] Frontend tests no cubren flujos offline-to-online
-
-#### Recomendacion
-Subir coverage floor a 65% y agregar tests especificos para sync offline→online. Agregar load testing basico con k6 para los 5 endpoints mas criticos.
-
----
-
-## 24. VAULT — Inteligencia Financiera (9.2/10)
-
-#### Lo que esta bien
-- **Modulo financiero completo**: Income, Expense, Receivable models con CRUD completo
-- **Metricas avanzadas**: cost-per-egg, ROI per bird, daily cost per bird
-- **P&L reports**: profit & loss con breakdown por canal
-- **Receivables management**: cuentas por cobrar con tracking de vencimiento
-- **Stripe billing robusto**: checkout, customer portal, webhooks, subscription management
-- **4 pricing tiers** bien diferenciados con margen saludable
-- **30-day free trial** para reducir CAC
-- **Soft landing discounts** para retencion pre-churn
-
-#### Lo que falta para 10/10
-- [ ] Sin dashboard de metricas SaaS (MRR, ARR, churn rate, LTV, CAC)
-- [ ] Sin forecasting de revenue
-- [ ] Sin multi-currency support (precios solo en USD)
-- [ ] Sin cost optimization recommendations automatizadas
-
-#### Recomendacion
-Agregar dashboard admin con MRR/ARR/churn tracking. Multi-currency con conversion rates para mercados internacionales (14 idiomas pero pricing solo USD).
-
----
-
-## 25. WALTZ — Localizacion & Cultura (9.0/10)
-
-#### Lo que esta bien
-- **14 idiomas**: ES, EN, PT, FR, DE, IT, JA, ZH, RU, ID, AR, KO, TH, VI
-- **Fallback chain**: idioma seleccionado → ES como fallback
-- **RTL support completo**: CSS direction, text-align, mirroring para arabe
-- **~10K keys por idioma** — cobertura exhaustiva de la UI
-- **Formateo cultural**: numeros, fechas, moneda adaptados por locale
-- **Funcion `t(key)`** centralizada para todas las traducciones
-- **Walkthrough localizado** en todos los idiomas
-
-#### Lo que falta para 10/10
-- [ ] Sin verificacion de calidad de traducciones por nativos (posible machine translation)
-- [ ] Sin pluralizacion avanzada (algunos idiomas tienen reglas de plural complejas: AR, RU, PL)
-- [ ] Sin deteccion automatica de idioma del browser
-- [ ] Sin soporte para variantes regionales (es-MX vs es-ES, pt-BR vs pt-PT)
-- [ ] Traducciones embebidas en el HTML — no cargadas on-demand
-
-#### Recomendacion
-Agregar deteccion automatica de idioma (`navigator.language`). Validar traducciones con hablantes nativos para los mercados prioritarios. Pluralizacion avanzada para arabe y ruso.
+Fase 3 (mes siguiente):
+- Enriquecer trazabilidad con welfare status por batch
+- Welfare certification report exportable en PDF
+- Historico de welfare -> produccion para cada lote
+```
 
 ---
 
 ## PLAN DE ACCION CONSOLIDADO
 
-### Critico (hacer ahora) — COMPLETADO 2026-02-25
-- [x] **Rate limiter fail-closed**: `rate_limit.py` ahora retorna `False` (deny) cuando Redis no disponible — fail-closed en ambos paths (no redis + exception)
-- [x] **CSP frontend**: JS extraido a `egglogu.js` (8066 lineas), `style-src` usa SHA-256 hash en vez de `unsafe-inline`, `script-src` mantiene `unsafe-inline` solo por 55 onclick handlers (migracion futura a addEventListener)
-- [x] **Backup off-site**: `scripts/backup_r2.sh` + docker-compose actualizado — pg_dump diario sube a Cloudflare R2 via AWS CLI S3-compatible, 30 dias retencion remota, 7 dias local. Requiere configurar `R2_ENDPOINT_URL`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` en `.env`
-- [x] **Uptime monitoring**: `/api/health` ahora retorna HTTP 503 cuando degradado (era 200 siempre), nuevo `/api/ping` liveness probe, `scripts/setup_monitoring.sh` con guia UptimeRobot (keyword "ok" en JSON response)
+### Critico (hacer ahora)
+
+- [ ] **HERALD:** Implementar export PDF con jsPDF/pdfmake — minimo Reporte Diario de Produccion
+- [ ] **NEXUS/TERMINATOR:** Crear modulo de Welfare funcional y conectarlo con Dashboard KPIs
+- [ ] **TERMINATOR:** Agregar smoke tests para los 19 `render[Section]()` — gate de CI
+- [ ] **PRISM:** Completar dark mode para TODOS los componentes (charts, weather, tables, badges)
+- [ ] **PRISM:** Agregar `@media print` con layout limpio para cada seccion
 
 ### Importante (hacer esta semana)
-- [ ] **Delta sync**: Implementar sync incremental con timestamps en lugar de full-push
-- [ ] **Sentry frontend**: Agregar Sentry al frontend para capturar errores JS en produccion
-- [ ] **Correlation ID**: Propagar `X-Request-ID` desde frontend → backend para tracing
-- [ ] **Web Vitals**: Agregar tracking de LCP, FID, CLS con web-vitals library
-- [ ] **Coverage**: Subir floor de 50% a 65% + agregar tests para flujo offline→online
-- [ ] **Smoke test post-deploy**: Hit `/healthcheck` + verificar respuesta tras cada deploy
+
+- [ ] **NEXUS:** Conectar welfare con `getAlerts()`, `getRecommendations()`, y `calcOutbreakRisk()`
+- [ ] **AXION:** Migrar top-50 inline styles mas usados a clases CSS utilitarias
+- [ ] **WALTZ:** Extender Admin SaaS a los 14 idiomas (de 2 a 14)
+- [ ] **HERALD:** Crear template de Reporte Mensual Consolidado (produccion + finanzas + salud)
+- [ ] **GUARDIAN:** Agregar politica de privacidad y GDPR consent
+- [ ] **PRISM:** Unificar hover states, modal sizes, card padding
+- [ ] **SENTINEL:** Encriptar localStorage con Web Crypto API
 
 ### Mejora (backlog)
-- [ ] **Product analytics**: PostHog o Mixpanel para medir feature adoption
-- [ ] **Email onboarding**: Secuencia automatica dia 1, 3, 7, 14 post-registro
-- [ ] **SaaS metrics dashboard**: MRR, ARR, churn rate, LTV en admin panel
-- [ ] **Frontend modularizacion**: Evaluar split con Vite para proxima major version
-- [ ] **API publica**: Documentar y publicar API con rate limiting + API keys para enterprise
-- [ ] **Multi-currency**: Pricing localizado por mercado (14 idiomas pero solo USD)
-- [ ] **BreedCurve exploitation**: Benchmark real vs esperado por raza de ave
-- [ ] **Push notifications**: Web Push API para alertas criticas en tiempo real
-- [ ] **Auto-detect language**: `navigator.language` para idioma inicial automatico
-- [ ] **Security scanning CI**: Agregar Trivy o Snyk al pipeline
+
+- [ ] **ORACLE:** Correlacion historica welfare -> produccion en Analytics
+- [ ] **ATLAS:** Planificar split del JS monolitico en ES modules
+- [ ] **HIVE:** Web Push API para alertas criticas
+- [ ] **VAULT:** Export P&L en PDF, escenarios what-if
+- [ ] **TEMPO:** Virtual scrolling para tablas grandes
+- [ ] **STALKER:** Funnel tracking y conversion analytics
+- [ ] **MENTOR:** Glosario avicola, boton "Iniciar Tour" por seccion
+- [ ] **GUARDIAN:** Trazabilidad enriquecida con welfare + health status
+- [ ] **CHRONICLE:** Migrar de localStorage a IndexedDB
+- [ ] **PREFLIGHT:** Lighthouse CI + Web Vitals monitoring
 
 ---
 
 ## METADATA
-- **Evaluador**: Genie (GenieOS v2.1.0) — Claude solo (DeepSeek API key vacia, per protocolo: "Si DeepSeek sin saldo → seguir solo con Claude")
-- **Protocolo**: Genie Evaluation Protocol v2.0
-- **Motores activados**: 25/25
-- **Archivos analizados**: egglogu.html (8,492 lineas), backend/src/api/ (26 routers), backend/src/models/ (78 modelos), backend/src/schemas/ (163 schemas), backend/src/core/ (security, rate_limit, plans, stripe, email, exceptions), .github/workflows/ci.yml, docker-compose.yml, backend/alembic/, backend/tests/ (28 files, 2,709 lineas), tests/unit/ (Vitest, 5,664 lineas), tests/e2e/ (Playwright, 10 scenarios)
-- **Lineas de codigo revisadas**: ~25,000+ (8,492 frontend + ~8,000 backend + ~8,400 tests + configs)
-- **Tiempo de evaluacion**: ~45 minutos (5 agentes paralelos de exploracion profunda + sintesis)
-- **Score Global**: 8.3/10 — APROBADO — EXCELENTE
-- **Pesos aplicados**: SENTINEL x1.5, TERMINATOR x1.3, PHOENIX x1.3, CENTURION x1.2
-- **Evaluacion anterior**: 7.76/10 (2026-02-25) → Delta: +0.54
 
----
-
-*"Si no esta evaluado por los 25 motores, no esta evaluado."*
-*Genie Evaluation Protocol v2.0 — GenieOS*
+- **Evaluador:** Genie (GenieOS v3.0.0)
+- **Motores activados:** 23/23
+- **Archivos analizados:** egglogu.html (425 lineas), egglogu.js (8,066 lineas), sw.js (30+ lineas), manifest.json, backend/src/api/ (28 archivos), CLAUDE.md, CHANGELOG.md, CONTRIBUTING.md
+- **Lineas de codigo revisadas:** ~8,500+ (frontend) + backend structure
+- **Puntos de evidencia:** 640 inline styles, 256 sanitizeHTML, 166 toast(), 49 logAudit(), 19 :hover rules, 14 idiomas, 19 modulos, 8 KPIs, 6 analytics tabs, 0 welfare references
+- **Bugs encontrados:** 2 crashes (fixed), 1 modulo faltante (welfare), dark mode incompleto, i18n Admin incompleto
+- **Tiempo de evaluacion:** Evaluacion completa de 23 motores
+- **Enfoque especial:** Presentacion, Estetica, UX, Conectividad de Datos, Reportes Profesionales, Bienestar Animal -> Produccion

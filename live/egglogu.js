@@ -61,7 +61,7 @@ ops_title:'Operaciones',ops_checklist:'Checklist Diario',ops_logbook:'Bitácora'
 ops_log_cat_general:'General',ops_log_cat_health:'Sanidad',ops_log_cat_production:'Producción',ops_log_cat_maintenance:'Mantenimiento',ops_log_cat_observation:'Observación',
 ops_per_name:'Nombre',ops_per_role:'Cargo',ops_per_salary:'Salario',ops_per_start:'Fecha Inicio',ops_per_active:'Activo',ops_per_add:'Agregar Personal',
 env_title:'Condiciones Ambientales',env_add:'Nuevo Registro',env_temp:'Temperatura (°C)',env_humidity:'Humedad (%)',env_light:'Horas Luz',env_ventilation:'Ventilación',env_density:'Densidad (aves/m²)',env_optimal:'Rango Óptimo',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 hrs',env_density_range:'4-5 aves/m²',
-cfg_title:'Configuración',cfg_farm:'Datos de la Granja',cfg_farm_name:'Nombre Granja',cfg_location:'Ubicación',cfg_capacity:'Capacidad (aves)',cfg_currency:'Moneda',cfg_alerts:'Umbrales de Alertas',cfg_min_feed:'Stock Mín. Alimento (kg)',cfg_max_mortality:'Mortalidad Máx. (%)',cfg_alert_days:'Días Anticipación',cfg_data:'Datos',cfg_export:'Exportar (JSON)',cfg_import:'Importar (JSON)',cfg_reset:'Borrar Todo',cfg_reset_confirm:'¿Eliminar TODOS los datos?',cfg_saved:'Guardado',cfg_exported:'Datos exportados',cfg_imported:'Datos importados',cfg_reset_done:'Datos eliminados',cfg_checklist:'Checklist Predeterminado',cfg_checklist_items:'Tareas del checklist',cfg_theme:'Tema de Color',cfg_theme_blue:'Azul Marino',cfg_theme_green:'Verde',cfg_theme_purple:'Púrpura',cfg_theme_black:'Negro',
+cfg_title:'Configuración',cfg_farm:'Datos de la Granja',cfg_farm_name:'Nombre Granja',cfg_location:'Ubicación',cfg_capacity:'Capacidad (aves)',cfg_currency:'Moneda',cfg_alerts:'Umbrales de Alertas',cfg_min_feed:'Stock Mín. Alimento (kg)',cfg_max_mortality:'Mortalidad Máx. (%)',cfg_alert_days:'Días Anticipación',cfg_data:'Datos',cfg_export:'Exportar (JSON)',cfg_import:'Importar (JSON)',cfg_reset:'Borrar Todo',cfg_reset_confirm:'¿Eliminar TODOS los datos?',cfg_saved:'Guardado',cfg_exported:'Datos exportados',cfg_imported:'Datos importados',cfg_reset_done:'Datos eliminados',cfg_checklist:'Checklist Predeterminado',cfg_checklist_items:'Tareas del checklist',cfg_houses:'Galpones y Racks',cfg_house_name:'Nombre del Galpón',cfg_house_add:'Agregar Galpón',cfg_rack_add:'Agregar Rack',cfg_rack_name:'Nombre del Rack',cfg_no_houses:'No hay galpones configurados. Agrégalos para usar en trazabilidad.',cfg_theme:'Tema de Color',cfg_theme_blue:'Azul Marino',cfg_theme_green:'Verde',cfg_theme_purple:'Púrpura',cfg_theme_black:'Negro',
 sidebar_subtitle:'Sistema Avícola 360°',prod_shell_white:'Blanco',prod_shell_brown:'Marrón',prod_shell_cream:'Crema',required:'Campo requerido',no_flocks_birthdate:'No hay lotes con fecha de nacimiento',vac_select_flocks:'Seleccione lotes para generar calendario:',feed_type_placeholder:'Postura, Iniciador, etc.',avg_per_day:'Prom/día',per_flock:'Lote',history:'Historial',env_latest_reading:'Última Lectura',env_ok:'OK',env_out_of_range:'Fuera de rango',data_stats:'Estadísticas de Datos',final_warning:'⚠️ ADVERTENCIA FINAL — Se eliminarán TODOS los datos',total_salaries:'Total Salarios',eggs_unit:'huevos',csv_income:'Ingreso',csv_expense:'Gasto',fcr_unit:'kg alimento/kg huevo',lc_feed_starter:'Iniciador',lc_feed_grower:'Crecimiento',lc_feed_developer:'Desarrollo',lc_feed_prelay:'Pre-postura',lc_feed_layer:'Postura',lc_feed_lowlay:'Postura baja',lc_prod_label:'Prod',lc_prod_first:'Primeros huevos',lc_mile_1:'Vacunas Marek, Newcastle+BI, Gumboro',lc_mile_2:'Newcastle refuerzo, desarrollo plumaje',lc_mile_3:'Viruela, Encefalomielitis, Coriza, Salmonella',lc_mile_4:'Newcastle+BI refuerzo, cambio dieta, 16h luz',lc_mile_5:'Pico producción sem 26-30, monitorear FCR',lc_mile_6:'Newcastle refuerzo c/8-12 sem, evaluar rentabilidad',lc_mile_7:'Evaluar descarte vs muda forzada',lc_mile_8:'Venta ave descarte, limpieza galpón',vac_route_injection:'Inyección',vac_route_ocular:'Ocular/spray',vac_route_water:'Agua',vac_route_wing:'Punción alar',snapshots:'snapshots',error_prefix:'Error',chk_collect_eggs:'Recolectar huevos',chk_feed_birds:'Alimentar aves',chk_check_water:'Verificar agua',chk_check_health:'Revisar salud',chk_cleaning:'Limpieza',chk_record_temp:'Registrar temperatura',
 weather_title:'Clima',weather_temp:'Temperatura',weather_humidity:'Humedad',weather_wind:'Viento',weather_forecast:'Pronóstico 3 Días',weather_no_key:'Establece la ubicación de la granja para ver el clima',weather_heat_alert:'Alerta de Estrés Calórico',weather_thi:'Índice THI',weather_feels:'Sensación',weather_last_update:'Última actualización',weather_test:'Probar',
 geo_set_location:'Ubicación de la Granja',geo_use_gps:'Usar mi GPS',geo_click_map:'Clic en el mapa para ubicar',geo_lat:'Latitud',geo_lng:'Longitud',geo_saved:'Ubicación guardada',
@@ -151,7 +151,7 @@ ops_title:'Operations',ops_checklist:'Daily Checklist',ops_logbook:'Logbook',ops
 ops_log_cat_general:'General',ops_log_cat_health:'Health',ops_log_cat_production:'Production',ops_log_cat_maintenance:'Maintenance',ops_log_cat_observation:'Observation',
 ops_per_name:'Name',ops_per_role:'Role',ops_per_salary:'Salary',ops_per_start:'Start Date',ops_per_active:'Active',ops_per_add:'Add Personnel',
 env_title:'Environmental Conditions',env_add:'New Record',env_temp:'Temperature (°C)',env_humidity:'Humidity (%)',env_light:'Light Hours',env_ventilation:'Ventilation',env_density:'Density (birds/m²)',env_optimal:'Optimal Range',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 hrs',env_density_range:'4-5 birds/m²',
-cfg_title:'Settings',cfg_farm:'Farm Details',cfg_farm_name:'Farm Name',cfg_location:'Location',cfg_capacity:'Capacity (birds)',cfg_currency:'Currency',cfg_alerts:'Alert Thresholds',cfg_min_feed:'Min Feed Stock (kg)',cfg_max_mortality:'Max Mortality (%)',cfg_alert_days:'Alert Days Ahead',cfg_data:'Data',cfg_export:'Export (JSON)',cfg_import:'Import (JSON)',cfg_reset:'Delete All',cfg_reset_confirm:'Delete ALL data permanently?',cfg_saved:'Saved',cfg_exported:'Data exported',cfg_imported:'Data imported',cfg_reset_done:'Data deleted',cfg_checklist:'Default Checklist',cfg_checklist_items:'Daily checklist tasks',cfg_theme:'Color Theme',cfg_theme_blue:'Navy Blue',cfg_theme_green:'Green',cfg_theme_purple:'Purple',cfg_theme_black:'Black',
+cfg_title:'Settings',cfg_farm:'Farm Details',cfg_farm_name:'Farm Name',cfg_location:'Location',cfg_capacity:'Capacity (birds)',cfg_currency:'Currency',cfg_alerts:'Alert Thresholds',cfg_min_feed:'Min Feed Stock (kg)',cfg_max_mortality:'Max Mortality (%)',cfg_alert_days:'Alert Days Ahead',cfg_data:'Data',cfg_export:'Export (JSON)',cfg_import:'Import (JSON)',cfg_reset:'Delete All',cfg_reset_confirm:'Delete ALL data permanently?',cfg_saved:'Saved',cfg_exported:'Data exported',cfg_imported:'Data imported',cfg_reset_done:'Data deleted',cfg_checklist:'Default Checklist',cfg_checklist_items:'Daily checklist tasks',cfg_houses:'Houses & Racks',cfg_house_name:'House Name',cfg_house_add:'Add House',cfg_rack_add:'Add Rack',cfg_rack_name:'Rack Name',cfg_no_houses:'No houses configured. Add them for traceability.',cfg_theme:'Color Theme',cfg_theme_blue:'Navy Blue',cfg_theme_green:'Green',cfg_theme_purple:'Purple',cfg_theme_black:'Black',
 sidebar_subtitle:'Poultry System 360°',prod_shell_white:'White',prod_shell_brown:'Brown',prod_shell_cream:'Cream',required:'Required field',no_flocks_birthdate:'No flocks with birth date',vac_select_flocks:'Select flocks to generate calendar:',feed_type_placeholder:'Layer, Starter, etc.',avg_per_day:'Avg/day',per_flock:'Flock',history:'History',env_latest_reading:'Latest Reading',env_ok:'OK',env_out_of_range:'Out of range',data_stats:'Data Statistics',final_warning:'⚠️ FINAL WARNING — ALL data will be deleted',total_salaries:'Total Salaries',eggs_unit:'eggs',csv_income:'Income',csv_expense:'Expense',fcr_unit:'kg feed/kg egg',lc_feed_starter:'Starter',lc_feed_grower:'Grower',lc_feed_developer:'Developer',lc_feed_prelay:'Pre-lay',lc_feed_layer:'Layer',lc_feed_lowlay:'Low-lay',lc_prod_label:'Prod',lc_prod_first:'First eggs',lc_mile_1:'Marek, Newcastle+IB, Gumboro vaccines',lc_mile_2:'Newcastle booster, feather development',lc_mile_3:'Fowl Pox, AE, Coryza, Salmonella',lc_mile_4:'Newcastle+IB booster, diet change, 16h light',lc_mile_5:'Peak production wk 26-30, monitor FCR',lc_mile_6:'Newcastle booster every 8-12 wk, evaluate profitability',lc_mile_7:'Evaluate culling vs forced molting',lc_mile_8:'Sell culled birds, clean house',vac_route_injection:'Injection',vac_route_ocular:'Ocular/spray',vac_route_water:'Water',vac_route_wing:'Wing web',snapshots:'snapshots',error_prefix:'Error',chk_collect_eggs:'Collect eggs',chk_feed_birds:'Feed birds',chk_check_water:'Check water',chk_check_health:'Check health',chk_cleaning:'Cleaning',chk_record_temp:'Record temperature',
 weather_title:'Weather',weather_temp:'Temperature',weather_humidity:'Humidity',weather_wind:'Wind',weather_forecast:'3-Day Forecast',weather_no_key:'Set farm location to see weather',weather_heat_alert:'Heat Stress Alert',weather_thi:'THI Index',weather_feels:'Feels like',weather_last_update:'Last updated',weather_test:'Test',
 geo_set_location:'Farm Location',geo_use_gps:'Use my GPS',geo_click_map:'Click map to set location',geo_lat:'Latitude',geo_lng:'Longitude',geo_saved:'Location saved',
@@ -1692,6 +1692,7 @@ biosecurity:{visitors:[],zones:[],pestSightings:[],protocols:[]},
 traceability:{batches:[]},
 productionPlans:[],
 welfareAssessments:[],
+suggestions:[],
 auditLog:[],
 users:[],pendingActivations:[],
 settings:{minFeedStock:50,maxMortality:5,alertDaysBefore:3,campoMode:false,vetMode:false,fontScale:'normal',darkMode:false,plan:{tier:'enterprise',status:'active',is_trial:true,modules:[]},ownerEmail:'',
@@ -1994,6 +1995,7 @@ if(!DATA.inventory)DATA.inventory=[];
 if(!DATA.auditLog)DATA.auditLog=[];
 if(!DATA.clientClaims)DATA.clientClaims=[];
 if(!DATA.welfareAssessments)DATA.welfareAssessments=[];
+if(!DATA.suggestions)DATA.suggestions=[];
 if(!DATA.users)DATA.users=[];
 if(!DATA.iotDevices)DATA.iotDevices=[];
 if(!DATA.iotRules)DATA.iotRules=[];
@@ -4422,14 +4424,14 @@ const feedKg=(D.feed.consumption||[]).filter(c=>c.flockId===f.id).reduce((s,c)=>
 const feedCost=(feedKg>0&&avgFeedPrice!=null)?Math.round(feedKg*avgFeedPrice*100)/100:null;
 // Health
 let vaxCost=null,medCost=null;
-(D.health.vaccines||[]).filter(v=>v.flockId===f.id&&v.cost!=null).forEach(v=>{vaxCost=(vaxCost||0)+v.cost;});
-(D.health.medications||[]).filter(m=>m.flockId===f.id&&m.cost!=null).forEach(m=>{medCost=(medCost||0)+m.cost;});
+(D.vaccines||[]).filter(v=>v.flockId===f.id&&v.cost!=null).forEach(v=>{vaxCost=(vaxCost||0)+v.cost;});
+(D.medications||[]).filter(m=>m.flockId===f.id&&m.cost!=null).forEach(m=>{medCost=(medCost||0)+m.cost;});
 const healthCost=(vaxCost!=null||medCost!=null)?Math.round(((vaxCost||0)+(medCost||0))*100)/100:null;
 // Direct expenses
 const directExp=D.finances.expenses.filter(e=>e.flockId===f.id);
 const directExpTotal=directExp.length?Math.round(directExp.reduce((s,e)=>s+(e.amount||0),0)*100)/100:null;
 // Eggs
-const prods=D.production.filter(p=>p.flockId===f.id);
+const prods=D.dailyProduction.filter(p=>p.flockId===f.id);
 const totalEggs=prods.reduce((s,p)=>s+(p.totalEggs||0),0);
 if(totalEggs>0){orgTotalEggs+=totalEggs;orgHasEggs=true;}
 // Total cost
@@ -4797,12 +4799,13 @@ const items=c.findings.filter(f=>f.cat===cat);if(items.length===0)return;
 const m=catMeta[cat];
 h+='<div class="card" style="border-left:4px solid '+m.color+'">';
 h+='<h3>'+m.icon+' '+m.label+' ('+items.length+')</h3>';
-h+='<div class="table-wrap"><table><thead><tr><th style="width:80px">Severity</th><th style="width:140px">Code</th><th>Finding</th><th>Metric</th><th>Benchmark</th></tr></thead><tbody>';
+h+='<div class="table-wrap"><table><thead><tr><th style="width:80px">Severity</th><th style="width:160px">Deficiency</th><th>Finding</th><th>Metric</th><th>Benchmark</th></tr></thead><tbody>';
 items.forEach(f=>{
 const sevColor=f.sev==='critical'?'#c62828':f.sev==='warning'?'#e65100':'#1565c0';
 const sevBg=f.sev==='critical'?'#ffcdd2':f.sev==='warning'?'#fff9c4':'#e3f2fd';
 h+='<tr><td><span style="background:'+sevBg+';color:'+sevColor+';padding:2px 8px;border-radius:8px;font-size:12px;font-weight:600">'+f.sev.toUpperCase()+'</span></td>';
-h+='<td style="font-family:monospace;font-size:12px;color:var(--text-light)">'+f.code+'</td>';
+const codeLabels={NO_VACCINE_PROGRAM:'No vaccine program',HIGH_MORTALITY:'High mortality',ELEVATED_MORTALITY:'Elevated mortality',UNTREATED_OUTBREAKS:'Untreated outbreaks',NO_BIOSECURITY_LOGS:'No biosecurity logs',HIGH_FEED_PER_HEN:'High feed/hen',LOW_FEED_PER_HEN:'Low feed/hen',HIGH_FCR:'High FCR',ELEVATED_FCR:'Elevated FCR',NO_FEED_TRACKING:'No feed tracking',NEGATIVE_MARGIN:'Negative margin',LOW_MARGIN:'Low margin',NO_INCOME_RECORDS:'No income records',SINGLE_CHANNEL:'Single sales channel',LARGE_PRODUCTION_GAP:'Large data gap',PRODUCTION_GAP:'Data gap',LOW_HENDAY:'Low hen-day %',UNUSED_MODULES:'Unused modules',NO_ENVIRONMENT:'No environment data',LOW_XVAL_SCORE:'Low data integrity',MODERATE_XVAL_SCORE:'Moderate data integrity',MATHV_FAILURES:'Math verification issues'};
+h+='<td style="font-size:12px;color:var(--text-light)">'+sanitizeHTML(codeLabels[f.code]||f.code)+'</td>';
 h+='<td>'+sanitizeHTML(f.msg)+'<br><small style="color:var(--primary)">→ '+sanitizeHTML(f.rec)+'</small></td>';
 h+='<td style="font-weight:600;text-align:center">'+f.metric+' '+f.unit+'</td>';
 h+='<td style="text-align:center;color:var(--text-light)">'+f.bench+' '+f.unit+'</td></tr>';});
@@ -4831,9 +4834,40 @@ logAudit('export','census','Exported anonymized deficiency report');
 function showCensusAnon(){
 const el=$('census-anon-preview');if(!el)return;
 if(el.style.display!=='none'){el.style.display='none';return;}
-const D=loadData();const c=VENG.census(D);
+const D=loadData();const c=VENG.census(D);const a=c.anonymized;
 el.style.display='block';
-el.innerHTML='<pre style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;overflow-x:auto;max-height:400px">'+sanitizeHTML(JSON.stringify(c.anonymized,null,2))+'</pre>';
+const oc=a.overall>=80?'var(--success)':a.overall>=60?'var(--warning)':'var(--danger)';
+const catMeta={sanitary:{icon:'💉',label:'Sanitary'},nutritional:{icon:'🌾',label:'Nutritional'},financial:{icon:'💰',label:'Financial'},operational:{icon:'📋',label:'Operational'},data:{icon:'🔒',label:'Data'}};
+let h='<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;max-height:500px;overflow-y:auto">';
+h+='<div style="text-align:center;margin-bottom:12px"><div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-light)">Anonymized Deficiency Report</div><div style="font-size:10px;color:var(--text-light)">'+a.ts.split('T')[0]+'</div></div>';
+// Farm profile row
+h+='<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px">';
+h+='<span style="background:var(--primary-fill);color:var(--primary);padding:4px 12px;border-radius:16px;font-size:12px;font-weight:600">🏠 '+a.farmSize.charAt(0).toUpperCase()+a.farmSize.slice(1)+' Farm</span>';
+h+='<span style="background:var(--primary-fill);color:var(--primary);padding:4px 12px;border-radius:16px;font-size:12px">🐔 ~'+a.totalHens.toLocaleString()+' hens</span>';
+h+='<span style="background:var(--primary-fill);color:var(--primary);padding:4px 12px;border-radius:16px;font-size:12px">🏷️ '+a.activeFlocks+' flocks</span>';
+if(a.hasVet)h+='<span style="background:#c8e6c9;color:#2e7d32;padding:4px 12px;border-radius:16px;font-size:12px">🩺 Vet care active</span>';
+h+='</div>';
+// Overall score
+h+='<div style="text-align:center;margin-bottom:16px"><div style="display:inline-block;width:72px;height:72px;border-radius:50%;border:4px solid '+oc+';line-height:72px;font-size:28px;font-weight:800;color:'+oc+'">'+a.overall+'</div><div style="font-size:11px;color:var(--text-light);margin-top:4px">Overall /100</div></div>';
+// Category scores grid
+h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:16px">';
+Object.keys(catMeta).forEach(k=>{const m=catMeta[k];const s=a.scores[k];
+const sc=s>=80?'var(--success)':s>=60?'var(--warning)':'var(--danger)';
+h+='<div style="text-align:center;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 4px"><div style="font-size:20px;font-weight:700;color:'+sc+'">'+s+'</div><div style="font-size:10px;color:var(--text-light)">'+m.icon+' '+m.label+'</div></div>';});
+h+='</div>';
+// Deficiency codes as pills
+if(a.codes.length>0){
+const codeLabels={NO_VACCINE_PROGRAM:'No vaccine program',HIGH_MORTALITY:'High mortality',ELEVATED_MORTALITY:'Elevated mortality',UNTREATED_OUTBREAKS:'Untreated outbreaks',NO_BIOSECURITY_LOGS:'No biosecurity logs',HIGH_FEED_PER_HEN:'High feed/hen',LOW_FEED_PER_HEN:'Low feed/hen',HIGH_FCR:'High FCR',ELEVATED_FCR:'Elevated FCR',NO_FEED_TRACKING:'No feed tracking',NEGATIVE_MARGIN:'Negative margin',LOW_MARGIN:'Low margin',NO_INCOME_RECORDS:'No income records',SINGLE_CHANNEL:'Single sales channel',LARGE_PRODUCTION_GAP:'Large data gap',PRODUCTION_GAP:'Data gap',LOW_HENDAY:'Low hen-day %',UNUSED_MODULES:'Unused modules',NO_ENVIRONMENT:'No environment data',LOW_XVAL_SCORE:'Low data integrity',MODERATE_XVAL_SCORE:'Moderate data integrity',MATHV_FAILURES:'Math verification issues'};
+h+='<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:600;color:var(--text-light);margin-bottom:6px">DEFICIENCIES FOUND ('+a.codes.length+')</div><div style="display:flex;flex-wrap:wrap;gap:4px">';
+a.codes.forEach(code=>{h+='<span style="background:#ffebee;color:#c62828;padding:2px 8px;border-radius:10px;font-size:11px">'+sanitizeHTML(codeLabels[code]||code)+'</span>';});
+h+='</div></div>';}
+// Modules used
+h+='<div><div style="font-size:11px;font-weight:600;color:var(--text-light);margin-bottom:6px">MODULES IN USE ('+a.modulesUsed.length+')</div><div style="display:flex;flex-wrap:wrap;gap:4px">';
+a.modulesUsed.forEach(m=>{h+='<span style="background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:10px;font-size:11px">'+sanitizeHTML(m)+'</span>';});
+h+='</div></div>';
+h+='<div style="text-align:center;margin-top:12px;font-size:10px;color:var(--text-light)">📊 '+a.channelCount+' sales channel'+(a.channelCount!==1?'s':'')+' · No identifying data included</div>';
+h+='</div>';
+el.innerHTML=h;
 }
 
 // === ADMIN SaaS MODULE ===
@@ -4862,14 +4896,14 @@ const _TICKET_STATUSES=['open','in_progress','waiting_user','resolved','closed']
 
 function _sL(){
 const _SL={
-es:{faq_title:'Centro de Ayuda',faq_search:'Buscar articulos...',faq_helpful:'Te fue util?',faq_yes:'Si',faq_no:'No',faq_empty:'No hay articulos disponibles',faq_no_results:'Sin resultados para',tab_faq:'FAQ',tab_new_ticket:'Nuevo Ticket',tab_my_tickets:'Mis Tickets',tab_contact_center:'Contact Center',ticket_subject:'Asunto',ticket_desc:'Descripcion del problema',ticket_priority:'Prioridad',ticket_send:'Enviar Ticket',ticket_empty:'No tienes tickets',ticket_status:'Estado',ticket_created:'Creado',ticket_category:'Categoria',ticket_close:'Cerrar Ticket',ticket_rate:'Calificar',ticket_reply:'Responder',ticket_msg_placeholder:'Escribe tu mensaje...',ticket_send_msg:'Enviar',ticket_rated:'Calificado',ticket_offline:'Guardado offline — se enviara al reconectar',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abiertos',admin_progress:'En Progreso',admin_resolved:'Resueltos',admin_avg_time:'Tiempo Promedio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Actualizar',admin_faq_manage:'Gestionar FAQ',pri_low:'Baja',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Abierto',st_in_progress:'En Progreso',st_waiting_user:'Esperando Respuesta',st_resolved:'Resuelto',st_closed:'Cerrado',cat_production:'Produccion',cat_health:'Sanidad',cat_feed:'Alimento',cat_iot:'IoT',cat_billing:'Facturacion',cat_bug:'Bug',cat_sync:'Sincronizacion',cat_feature_request:'Solicitud',cat_access:'Acceso',cat_general:'General',all:'Todos'},
-en:{faq_title:'Help Center',faq_search:'Search articles...',faq_helpful:'Was this helpful?',faq_yes:'Yes',faq_no:'No',faq_empty:'No articles available',faq_no_results:'No results for',tab_faq:'FAQ',tab_new_ticket:'New Ticket',tab_my_tickets:'My Tickets',tab_contact_center:'Contact Center',ticket_subject:'Subject',ticket_desc:'Describe the issue',ticket_priority:'Priority',ticket_send:'Submit Ticket',ticket_empty:'No tickets yet',ticket_status:'Status',ticket_created:'Created',ticket_category:'Category',ticket_close:'Close Ticket',ticket_rate:'Rate',ticket_reply:'Reply',ticket_msg_placeholder:'Type your message...',ticket_send_msg:'Send',ticket_rated:'Rated',ticket_offline:'Saved offline — will sync when online',ticket_synced:'Tickets synced',admin_total:'Total Tickets',admin_open:'Open',admin_progress:'In Progress',admin_resolved:'Resolved',admin_avg_time:'Avg Resolution',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'hours',admin_filter:'Filter',admin_internal:'Internal note',admin_notes:'Admin notes',admin_update:'Update',admin_faq_manage:'Manage FAQ',pri_low:'Low',pri_medium:'Medium',pri_high:'High',pri_urgent:'Urgent',st_open:'Open',st_in_progress:'In Progress',st_waiting_user:'Waiting Response',st_resolved:'Resolved',st_closed:'Closed',cat_production:'Production',cat_health:'Health',cat_feed:'Feed',cat_iot:'IoT',cat_billing:'Billing',cat_bug:'Bug',cat_sync:'Sync',cat_feature_request:'Feature Request',cat_access:'Access',cat_general:'General',all:'All'},
-fr:{faq_title:'Centre d\'Aide',faq_search:'Rechercher...',faq_helpful:'Cela vous a aide?',faq_yes:'Oui',faq_no:'Non',faq_empty:'Aucun article disponible',faq_no_results:'Aucun resultat pour',tab_faq:'FAQ',tab_new_ticket:'Nouveau Ticket',tab_my_tickets:'Mes Tickets',tab_contact_center:'Contact Center',ticket_subject:'Objet',ticket_desc:'Decrivez le probleme',ticket_priority:'Priorite',ticket_send:'Envoyer le Ticket',ticket_empty:'Aucun ticket',ticket_status:'Statut',ticket_created:'Cree le',ticket_category:'Categorie',ticket_close:'Fermer le Ticket',ticket_rate:'Evaluer',ticket_reply:'Repondre',ticket_msg_placeholder:'Ecrivez votre message...',ticket_send_msg:'Envoyer',ticket_rated:'Evalue',ticket_offline:'Sauvegarde hors ligne — sera synchronise',ticket_synced:'Tickets synchronises',admin_total:'Total Tickets',admin_open:'Ouverts',admin_progress:'En Cours',admin_resolved:'Resolus',admin_avg_time:'Temps Moyen',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'heures',admin_filter:'Filtrer',admin_internal:'Note interne',admin_notes:'Notes admin',admin_update:'Mettre a jour',admin_faq_manage:'Gerer FAQ',pri_low:'Faible',pri_medium:'Moyenne',pri_high:'Haute',pri_urgent:'Urgente',st_open:'Ouvert',st_in_progress:'En Cours',st_waiting_user:'En Attente',st_resolved:'Resolu',st_closed:'Ferme',cat_production:'Production',cat_health:'Sante',cat_feed:'Alimentation',cat_iot:'IoT',cat_billing:'Facturation',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Demande',cat_access:'Acces',cat_general:'General',all:'Tous'},
-pt:{faq_title:'Central de Ajuda',faq_search:'Pesquisar artigos...',faq_helpful:'Foi util?',faq_yes:'Sim',faq_no:'Nao',faq_empty:'Nenhum artigo disponivel',faq_no_results:'Sem resultados para',tab_faq:'FAQ',tab_new_ticket:'Novo Ticket',tab_my_tickets:'Meus Tickets',tab_contact_center:'Contact Center',ticket_subject:'Assunto',ticket_desc:'Descreva o problema',ticket_priority:'Prioridade',ticket_send:'Enviar Ticket',ticket_empty:'Nenhum ticket',ticket_status:'Estado',ticket_created:'Criado',ticket_category:'Categoria',ticket_close:'Fechar Ticket',ticket_rate:'Avaliar',ticket_reply:'Responder',ticket_msg_placeholder:'Digite sua mensagem...',ticket_send_msg:'Enviar',ticket_rated:'Avaliado',ticket_offline:'Salvo offline — sera sincronizado',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abertos',admin_progress:'Em Progresso',admin_resolved:'Resolvidos',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Atualizar',admin_faq_manage:'Gerenciar FAQ',pri_low:'Baixa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aberto',st_in_progress:'Em Progresso',st_waiting_user:'Aguardando Resposta',st_resolved:'Resolvido',st_closed:'Fechado',cat_production:'Producao',cat_health:'Saude',cat_feed:'Alimentacao',cat_iot:'IoT',cat_billing:'Faturamento',cat_bug:'Bug',cat_sync:'Sincronizacao',cat_feature_request:'Solicitacao',cat_access:'Acesso',cat_general:'Geral',all:'Todos'},
-de:{faq_title:'Hilfezentrum',faq_search:'Artikel suchen...',faq_helpful:'War das hilfreich?',faq_yes:'Ja',faq_no:'Nein',faq_empty:'Keine Artikel verfugbar',faq_no_results:'Keine Ergebnisse fur',tab_faq:'FAQ',tab_new_ticket:'Neues Ticket',tab_my_tickets:'Meine Tickets',tab_contact_center:'Contact Center',ticket_subject:'Betreff',ticket_desc:'Beschreiben Sie das Problem',ticket_priority:'Prioritat',ticket_send:'Ticket senden',ticket_empty:'Keine Tickets',ticket_status:'Status',ticket_created:'Erstellt',ticket_category:'Kategorie',ticket_close:'Ticket schliessen',ticket_rate:'Bewerten',ticket_reply:'Antworten',ticket_msg_placeholder:'Nachricht eingeben...',ticket_send_msg:'Senden',ticket_rated:'Bewertet',ticket_offline:'Offline gespeichert — wird synchronisiert',ticket_synced:'Tickets synchronisiert',admin_total:'Gesamt Tickets',admin_open:'Offen',admin_progress:'In Bearbeitung',admin_resolved:'Gelost',admin_avg_time:'Durchschnittliche Losung',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'Stunden',admin_filter:'Filtern',admin_internal:'Interne Notiz',admin_notes:'Admin-Notizen',admin_update:'Aktualisieren',admin_faq_manage:'FAQ verwalten',pri_low:'Niedrig',pri_medium:'Mittel',pri_high:'Hoch',pri_urgent:'Dringend',st_open:'Offen',st_in_progress:'In Bearbeitung',st_waiting_user:'Warte auf Antwort',st_resolved:'Gelost',st_closed:'Geschlossen',cat_production:'Produktion',cat_health:'Gesundheit',cat_feed:'Futter',cat_iot:'IoT',cat_billing:'Abrechnung',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Anfrage',cat_access:'Zugang',cat_general:'Allgemein',all:'Alle'},
-it:{faq_title:'Centro Assistenza',faq_search:'Cerca articoli...',faq_helpful:'Ti e stato utile?',faq_yes:'Si',faq_no:'No',faq_empty:'Nessun articolo disponibile',faq_no_results:'Nessun risultato per',tab_faq:'FAQ',tab_new_ticket:'Nuovo Ticket',tab_my_tickets:'I Miei Ticket',tab_contact_center:'Contact Center',ticket_subject:'Oggetto',ticket_desc:'Descrivi il problema',ticket_priority:'Priorita',ticket_send:'Invia Ticket',ticket_empty:'Nessun ticket',ticket_status:'Stato',ticket_created:'Creato',ticket_category:'Categoria',ticket_close:'Chiudi Ticket',ticket_rate:'Valuta',ticket_reply:'Rispondi',ticket_msg_placeholder:'Scrivi il tuo messaggio...',ticket_send_msg:'Invia',ticket_rated:'Valutato',ticket_offline:'Salvato offline — verra sincronizzato',ticket_synced:'Ticket sincronizzati',admin_total:'Totale Ticket',admin_open:'Aperti',admin_progress:'In Corso',admin_resolved:'Risolti',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'ore',admin_filter:'Filtra',admin_internal:'Nota interna',admin_notes:'Note admin',admin_update:'Aggiorna',admin_faq_manage:'Gestisci FAQ',pri_low:'Bassa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aperto',st_in_progress:'In Corso',st_waiting_user:'In Attesa',st_resolved:'Risolto',st_closed:'Chiuso',cat_production:'Produzione',cat_health:'Sanita',cat_feed:'Mangime',cat_iot:'IoT',cat_billing:'Fatturazione',cat_bug:'Bug',cat_sync:'Sincronizzazione',cat_feature_request:'Richiesta',cat_access:'Accesso',cat_general:'Generale',all:'Tutti'},
-ja:{faq_title:'ヘルプセンター',faq_search:'記事を検索...',faq_helpful:'役に立ちましたか？',faq_yes:'はい',faq_no:'いいえ',faq_empty:'記事がありません',faq_no_results:'結果なし',tab_faq:'FAQ',tab_new_ticket:'新規チケット',tab_my_tickets:'マイチケット',tab_contact_center:'コンタクトセンター',ticket_subject:'件名',ticket_desc:'問題を説明してください',ticket_priority:'優先度',ticket_send:'チケット送信',ticket_empty:'チケットなし',ticket_status:'状態',ticket_created:'作成日',ticket_category:'カテゴリ',ticket_close:'チケットを閉じる',ticket_rate:'評価',ticket_reply:'返信',ticket_msg_placeholder:'メッセージを入力...',ticket_send_msg:'送信',ticket_rated:'評価済み',ticket_offline:'オフライン保存 — オンライン時に同期',ticket_synced:'チケット同期完了',admin_total:'チケット合計',admin_open:'未対応',admin_progress:'対応中',admin_resolved:'解決済み',admin_avg_time:'平均解決時間',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'時間',admin_filter:'フィルター',admin_internal:'内部メモ',admin_notes:'管理者メモ',admin_update:'更新',admin_faq_manage:'FAQ管理',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'緊急',st_open:'未対応',st_in_progress:'対応中',st_waiting_user:'返答待ち',st_resolved:'解決済み',st_closed:'終了',cat_production:'生産',cat_health:'衛生',cat_feed:'飼料',cat_iot:'IoT',cat_billing:'請求',cat_bug:'バグ',cat_sync:'同期',cat_feature_request:'機能要望',cat_access:'アクセス',cat_general:'一般',all:'すべて'},
-zh:{faq_title:'帮助中心',faq_search:'搜索文章...',faq_helpful:'对您有帮助吗？',faq_yes:'是',faq_no:'否',faq_empty:'暂无文章',faq_no_results:'无结果',tab_faq:'FAQ',tab_new_ticket:'新建工单',tab_my_tickets:'我的工单',tab_contact_center:'联系中心',ticket_subject:'主题',ticket_desc:'描述您的问题',ticket_priority:'优先级',ticket_send:'提交工单',ticket_empty:'暂无工单',ticket_status:'状态',ticket_created:'创建时间',ticket_category:'分类',ticket_close:'关闭工单',ticket_rate:'评价',ticket_reply:'回复',ticket_msg_placeholder:'输入消息...',ticket_send_msg:'发送',ticket_rated:'已评价',ticket_offline:'已离线保存 — 联网后自动同步',ticket_synced:'工单已同步',admin_total:'工单总数',admin_open:'待处理',admin_progress:'处理中',admin_resolved:'已解决',admin_avg_time:'平均解决时间',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'小时',admin_filter:'筛选',admin_internal:'内部备注',admin_notes:'管理员备注',admin_update:'更新',admin_faq_manage:'管理FAQ',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'紧急',st_open:'待处理',st_in_progress:'处理中',st_waiting_user:'等待回复',st_resolved:'已解决',st_closed:'已关闭',cat_production:'生产',cat_health:'卫生',cat_feed:'饲料',cat_iot:'IoT',cat_billing:'账单',cat_bug:'Bug',cat_sync:'同步',cat_feature_request:'功能需求',cat_access:'访问',cat_general:'通用',all:'全部'}
+es:{faq_title:'Centro de Ayuda',faq_search:'Buscar articulos...',faq_helpful:'Te fue util?',faq_yes:'Si',faq_no:'No',faq_empty:'No hay articulos disponibles',faq_no_results:'Sin resultados para',tab_faq:'FAQ',tab_new_ticket:'Nuevo Ticket',tab_my_tickets:'Mis Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Sugerencias',ticket_subject:'Asunto',ticket_desc:'Descripcion del problema',ticket_priority:'Prioridad',ticket_send:'Enviar Ticket',ticket_empty:'No tienes tickets',ticket_status:'Estado',ticket_created:'Creado',ticket_category:'Categoria',ticket_close:'Cerrar Ticket',ticket_rate:'Calificar',ticket_reply:'Responder',ticket_msg_placeholder:'Escribe tu mensaje...',ticket_send_msg:'Enviar',ticket_rated:'Calificado',ticket_offline:'Guardado offline — se enviara al reconectar',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abiertos',admin_progress:'En Progreso',admin_resolved:'Resueltos',admin_avg_time:'Tiempo Promedio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Actualizar',admin_faq_manage:'Gestionar FAQ',pri_low:'Baja',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Abierto',st_in_progress:'En Progreso',st_waiting_user:'Esperando Respuesta',st_resolved:'Resuelto',st_closed:'Cerrado',cat_production:'Produccion',cat_health:'Sanidad',cat_feed:'Alimento',cat_iot:'IoT',cat_billing:'Facturacion',cat_bug:'Bug',cat_sync:'Sincronizacion',cat_feature_request:'Solicitud',cat_access:'Acceso',cat_general:'General',all:'Todos',sug_title:'Sugerencias y Mejoras',sug_submit:'Enviar Sugerencia',sug_idea_title:'Titulo de tu idea',sug_idea_desc:'Describe tu sugerencia en detalle...',sug_category:'Categoria',sug_cat_feature:'Nueva funcion',sug_cat_improvement:'Mejora existente',sug_cat_ui:'Interfaz / UX',sug_cat_performance:'Rendimiento',sug_cat_docs:'Documentacion',sug_cat_other:'Otro',sug_empty:'Aun no hay sugerencias. Se el primero en compartir una idea!',sug_votes:'votos',sug_voted:'Votado',sug_vote:'Votar',sug_status_new:'Nueva',sug_status_review:'En revision',sug_status_planned:'Planeada',sug_status_done:'Implementada',sug_status_declined:'Descartada',sug_submitted:'Sugerencia enviada correctamente',sug_my:'Mis sugerencias',sug_all:'Todas',sug_sort_votes:'Mas votadas',sug_sort_recent:'Mas recientes'},
+en:{faq_title:'Help Center',faq_search:'Search articles...',faq_helpful:'Was this helpful?',faq_yes:'Yes',faq_no:'No',faq_empty:'No articles available',faq_no_results:'No results for',tab_faq:'FAQ',tab_new_ticket:'New Ticket',tab_my_tickets:'My Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Suggestions',ticket_subject:'Subject',ticket_desc:'Describe the issue',ticket_priority:'Priority',ticket_send:'Submit Ticket',ticket_empty:'No tickets yet',ticket_status:'Status',ticket_created:'Created',ticket_category:'Category',ticket_close:'Close Ticket',ticket_rate:'Rate',ticket_reply:'Reply',ticket_msg_placeholder:'Type your message...',ticket_send_msg:'Send',ticket_rated:'Rated',ticket_offline:'Saved offline — will sync when online',ticket_synced:'Tickets synced',admin_total:'Total Tickets',admin_open:'Open',admin_progress:'In Progress',admin_resolved:'Resolved',admin_avg_time:'Avg Resolution',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'hours',admin_filter:'Filter',admin_internal:'Internal note',admin_notes:'Admin notes',admin_update:'Update',admin_faq_manage:'Manage FAQ',pri_low:'Low',pri_medium:'Medium',pri_high:'High',pri_urgent:'Urgent',st_open:'Open',st_in_progress:'In Progress',st_waiting_user:'Waiting Response',st_resolved:'Resolved',st_closed:'Closed',cat_production:'Production',cat_health:'Health',cat_feed:'Feed',cat_iot:'IoT',cat_billing:'Billing',cat_bug:'Bug',cat_sync:'Sync',cat_feature_request:'Feature Request',cat_access:'Access',cat_general:'General',all:'All',sug_title:'Suggestions & Improvements',sug_submit:'Submit Suggestion',sug_idea_title:'Title of your idea',sug_idea_desc:'Describe your suggestion in detail...',sug_category:'Category',sug_cat_feature:'New feature',sug_cat_improvement:'Existing improvement',sug_cat_ui:'Interface / UX',sug_cat_performance:'Performance',sug_cat_docs:'Documentation',sug_cat_other:'Other',sug_empty:'No suggestions yet. Be the first to share an idea!',sug_votes:'votes',sug_voted:'Voted',sug_vote:'Vote',sug_status_new:'New',sug_status_review:'Under review',sug_status_planned:'Planned',sug_status_done:'Implemented',sug_status_declined:'Declined',sug_submitted:'Suggestion submitted successfully',sug_my:'My suggestions',sug_all:'All',sug_sort_votes:'Most voted',sug_sort_recent:'Most recent'},
+fr:{faq_title:'Centre d\'Aide',faq_search:'Rechercher...',faq_helpful:'Cela vous a aide?',faq_yes:'Oui',faq_no:'Non',faq_empty:'Aucun article disponible',faq_no_results:'Aucun resultat pour',tab_faq:'FAQ',tab_new_ticket:'Nouveau Ticket',tab_my_tickets:'Mes Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Suggestions',ticket_subject:'Objet',ticket_desc:'Decrivez le probleme',ticket_priority:'Priorite',ticket_send:'Envoyer le Ticket',ticket_empty:'Aucun ticket',ticket_status:'Statut',ticket_created:'Cree le',ticket_category:'Categorie',ticket_close:'Fermer le Ticket',ticket_rate:'Evaluer',ticket_reply:'Repondre',ticket_msg_placeholder:'Ecrivez votre message...',ticket_send_msg:'Envoyer',ticket_rated:'Evalue',ticket_offline:'Sauvegarde hors ligne — sera synchronise',ticket_synced:'Tickets synchronises',admin_total:'Total Tickets',admin_open:'Ouverts',admin_progress:'En Cours',admin_resolved:'Resolus',admin_avg_time:'Temps Moyen',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'heures',admin_filter:'Filtrer',admin_internal:'Note interne',admin_notes:'Notes admin',admin_update:'Mettre a jour',admin_faq_manage:'Gerer FAQ',pri_low:'Faible',pri_medium:'Moyenne',pri_high:'Haute',pri_urgent:'Urgente',st_open:'Ouvert',st_in_progress:'En Cours',st_waiting_user:'En Attente',st_resolved:'Resolu',st_closed:'Ferme',cat_production:'Production',cat_health:'Sante',cat_feed:'Alimentation',cat_iot:'IoT',cat_billing:'Facturation',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Demande',cat_access:'Acces',cat_general:'General',all:'Tous',sug_title:'Suggestions et Ameliorations',sug_submit:'Envoyer une suggestion',sug_idea_title:'Titre de votre idee',sug_idea_desc:'Decrivez votre suggestion en detail...',sug_category:'Categorie',sug_cat_feature:'Nouvelle fonction',sug_cat_improvement:'Amelioration existante',sug_cat_ui:'Interface / UX',sug_cat_performance:'Performance',sug_cat_docs:'Documentation',sug_cat_other:'Autre',sug_empty:'Aucune suggestion pour le moment. Soyez le premier a partager une idee!',sug_votes:'votes',sug_voted:'Vote',sug_vote:'Voter',sug_status_new:'Nouvelle',sug_status_review:'En revision',sug_status_planned:'Planifiee',sug_status_done:'Implementee',sug_status_declined:'Refusee',sug_submitted:'Suggestion envoyee avec succes',sug_my:'Mes suggestions',sug_all:'Toutes',sug_sort_votes:'Plus votees',sug_sort_recent:'Plus recentes'},
+pt:{faq_title:'Central de Ajuda',faq_search:'Pesquisar artigos...',faq_helpful:'Foi util?',faq_yes:'Sim',faq_no:'Nao',faq_empty:'Nenhum artigo disponivel',faq_no_results:'Sem resultados para',tab_faq:'FAQ',tab_new_ticket:'Novo Ticket',tab_my_tickets:'Meus Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Sugestoes',ticket_subject:'Assunto',ticket_desc:'Descreva o problema',ticket_priority:'Prioridade',ticket_send:'Enviar Ticket',ticket_empty:'Nenhum ticket',ticket_status:'Estado',ticket_created:'Criado',ticket_category:'Categoria',ticket_close:'Fechar Ticket',ticket_rate:'Avaliar',ticket_reply:'Responder',ticket_msg_placeholder:'Digite sua mensagem...',ticket_send_msg:'Enviar',ticket_rated:'Avaliado',ticket_offline:'Salvo offline — sera sincronizado',ticket_synced:'Tickets sincronizados',admin_total:'Total Tickets',admin_open:'Abertos',admin_progress:'Em Progresso',admin_resolved:'Resolvidos',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'horas',admin_filter:'Filtrar',admin_internal:'Nota interna',admin_notes:'Notas admin',admin_update:'Atualizar',admin_faq_manage:'Gerenciar FAQ',pri_low:'Baixa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aberto',st_in_progress:'Em Progresso',st_waiting_user:'Aguardando Resposta',st_resolved:'Resolvido',st_closed:'Fechado',cat_production:'Producao',cat_health:'Saude',cat_feed:'Alimentacao',cat_iot:'IoT',cat_billing:'Faturamento',cat_bug:'Bug',cat_sync:'Sincronizacao',cat_feature_request:'Solicitacao',cat_access:'Acesso',cat_general:'Geral',all:'Todos',sug_title:'Sugestoes e Melhorias',sug_submit:'Enviar Sugestao',sug_idea_title:'Titulo da sua ideia',sug_idea_desc:'Descreva sua sugestao em detalhe...',sug_category:'Categoria',sug_cat_feature:'Nova funcao',sug_cat_improvement:'Melhoria existente',sug_cat_ui:'Interface / UX',sug_cat_performance:'Desempenho',sug_cat_docs:'Documentacao',sug_cat_other:'Outro',sug_empty:'Nenhuma sugestao ainda. Seja o primeiro a compartilhar uma ideia!',sug_votes:'votos',sug_voted:'Votado',sug_vote:'Votar',sug_status_new:'Nova',sug_status_review:'Em revisao',sug_status_planned:'Planejada',sug_status_done:'Implementada',sug_status_declined:'Recusada',sug_submitted:'Sugestao enviada com sucesso',sug_my:'Minhas sugestoes',sug_all:'Todas',sug_sort_votes:'Mais votadas',sug_sort_recent:'Mais recentes'},
+de:{faq_title:'Hilfezentrum',faq_search:'Artikel suchen...',faq_helpful:'War das hilfreich?',faq_yes:'Ja',faq_no:'Nein',faq_empty:'Keine Artikel verfugbar',faq_no_results:'Keine Ergebnisse fur',tab_faq:'FAQ',tab_new_ticket:'Neues Ticket',tab_my_tickets:'Meine Tickets',tab_contact_center:'Contact Center',tab_suggestions:'Vorschlage',ticket_subject:'Betreff',ticket_desc:'Beschreiben Sie das Problem',ticket_priority:'Prioritat',ticket_send:'Ticket senden',ticket_empty:'Keine Tickets',ticket_status:'Status',ticket_created:'Erstellt',ticket_category:'Kategorie',ticket_close:'Ticket schliessen',ticket_rate:'Bewerten',ticket_reply:'Antworten',ticket_msg_placeholder:'Nachricht eingeben...',ticket_send_msg:'Senden',ticket_rated:'Bewertet',ticket_offline:'Offline gespeichert — wird synchronisiert',ticket_synced:'Tickets synchronisiert',admin_total:'Gesamt Tickets',admin_open:'Offen',admin_progress:'In Bearbeitung',admin_resolved:'Gelost',admin_avg_time:'Durchschnittliche Losung',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'Stunden',admin_filter:'Filtern',admin_internal:'Interne Notiz',admin_notes:'Admin-Notizen',admin_update:'Aktualisieren',admin_faq_manage:'FAQ verwalten',pri_low:'Niedrig',pri_medium:'Mittel',pri_high:'Hoch',pri_urgent:'Dringend',st_open:'Offen',st_in_progress:'In Bearbeitung',st_waiting_user:'Warte auf Antwort',st_resolved:'Gelost',st_closed:'Geschlossen',cat_production:'Produktion',cat_health:'Gesundheit',cat_feed:'Futter',cat_iot:'IoT',cat_billing:'Abrechnung',cat_bug:'Bug',cat_sync:'Synchronisation',cat_feature_request:'Anfrage',cat_access:'Zugang',cat_general:'Allgemein',all:'Alle',sug_title:'Vorschlage und Verbesserungen',sug_submit:'Vorschlag einreichen',sug_idea_title:'Titel Ihrer Idee',sug_idea_desc:'Beschreiben Sie Ihren Vorschlag im Detail...',sug_category:'Kategorie',sug_cat_feature:'Neue Funktion',sug_cat_improvement:'Bestehende Verbesserung',sug_cat_ui:'Oberflache / UX',sug_cat_performance:'Leistung',sug_cat_docs:'Dokumentation',sug_cat_other:'Sonstiges',sug_empty:'Noch keine Vorschlage. Seien Sie der Erste!',sug_votes:'Stimmen',sug_voted:'Abgestimmt',sug_vote:'Abstimmen',sug_status_new:'Neu',sug_status_review:'In Prufung',sug_status_planned:'Geplant',sug_status_done:'Umgesetzt',sug_status_declined:'Abgelehnt',sug_submitted:'Vorschlag erfolgreich eingereicht',sug_my:'Meine Vorschlage',sug_all:'Alle',sug_sort_votes:'Meiste Stimmen',sug_sort_recent:'Neueste'},
+it:{faq_title:'Centro Assistenza',faq_search:'Cerca articoli...',faq_helpful:'Ti e stato utile?',faq_yes:'Si',faq_no:'No',faq_empty:'Nessun articolo disponibile',faq_no_results:'Nessun risultato per',tab_faq:'FAQ',tab_new_ticket:'Nuovo Ticket',tab_my_tickets:'I Miei Ticket',tab_contact_center:'Contact Center',tab_suggestions:'Suggerimenti',ticket_subject:'Oggetto',ticket_desc:'Descrivi il problema',ticket_priority:'Priorita',ticket_send:'Invia Ticket',ticket_empty:'Nessun ticket',ticket_status:'Stato',ticket_created:'Creato',ticket_category:'Categoria',ticket_close:'Chiudi Ticket',ticket_rate:'Valuta',ticket_reply:'Rispondi',ticket_msg_placeholder:'Scrivi il tuo messaggio...',ticket_send_msg:'Invia',ticket_rated:'Valutato',ticket_offline:'Salvato offline — verra sincronizzato',ticket_synced:'Ticket sincronizzati',admin_total:'Totale Ticket',admin_open:'Aperti',admin_progress:'In Corso',admin_resolved:'Risolti',admin_avg_time:'Tempo Medio',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'ore',admin_filter:'Filtra',admin_internal:'Nota interna',admin_notes:'Note admin',admin_update:'Aggiorna',admin_faq_manage:'Gestisci FAQ',pri_low:'Bassa',pri_medium:'Media',pri_high:'Alta',pri_urgent:'Urgente',st_open:'Aperto',st_in_progress:'In Corso',st_waiting_user:'In Attesa',st_resolved:'Risolto',st_closed:'Chiuso',cat_production:'Produzione',cat_health:'Sanita',cat_feed:'Mangime',cat_iot:'IoT',cat_billing:'Fatturazione',cat_bug:'Bug',cat_sync:'Sincronizzazione',cat_feature_request:'Richiesta',cat_access:'Accesso',cat_general:'Generale',all:'Tutti',sug_title:'Suggerimenti e Miglioramenti',sug_submit:'Invia Suggerimento',sug_idea_title:'Titolo della tua idea',sug_idea_desc:'Descrivi il tuo suggerimento in dettaglio...',sug_category:'Categoria',sug_cat_feature:'Nuova funzione',sug_cat_improvement:'Miglioramento esistente',sug_cat_ui:'Interfaccia / UX',sug_cat_performance:'Prestazioni',sug_cat_docs:'Documentazione',sug_cat_other:'Altro',sug_empty:'Nessun suggerimento ancora. Sii il primo a condividere un\'idea!',sug_votes:'voti',sug_voted:'Votato',sug_vote:'Vota',sug_status_new:'Nuovo',sug_status_review:'In revisione',sug_status_planned:'Pianificato',sug_status_done:'Implementato',sug_status_declined:'Rifiutato',sug_submitted:'Suggerimento inviato con successo',sug_my:'I miei suggerimenti',sug_all:'Tutti',sug_sort_votes:'Piu votati',sug_sort_recent:'Piu recenti'},
+ja:{faq_title:'ヘルプセンター',faq_search:'記事を検索...',faq_helpful:'役に立ちましたか？',faq_yes:'はい',faq_no:'いいえ',faq_empty:'記事がありません',faq_no_results:'結果なし',tab_faq:'FAQ',tab_new_ticket:'新規チケット',tab_my_tickets:'マイチケット',tab_contact_center:'コンタクトセンター',tab_suggestions:'提案',ticket_subject:'件名',ticket_desc:'問題を説明してください',ticket_priority:'優先度',ticket_send:'チケット送信',ticket_empty:'チケットなし',ticket_status:'状態',ticket_created:'作成日',ticket_category:'カテゴリ',ticket_close:'チケットを閉じる',ticket_rate:'評価',ticket_reply:'返信',ticket_msg_placeholder:'メッセージを入力...',ticket_send_msg:'送信',ticket_rated:'評価済み',ticket_offline:'オフライン保存 — オンライン時に同期',ticket_synced:'チケット同期完了',admin_total:'チケット合計',admin_open:'未対応',admin_progress:'対応中',admin_resolved:'解決済み',admin_avg_time:'平均解決時間',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'時間',admin_filter:'フィルター',admin_internal:'内部メモ',admin_notes:'管理者メモ',admin_update:'更新',admin_faq_manage:'FAQ管理',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'緊急',st_open:'未対応',st_in_progress:'対応中',st_waiting_user:'返答待ち',st_resolved:'解決済み',st_closed:'終了',cat_production:'生産',cat_health:'衛生',cat_feed:'飼料',cat_iot:'IoT',cat_billing:'請求',cat_bug:'バグ',cat_sync:'同期',cat_feature_request:'機能要望',cat_access:'アクセス',cat_general:'一般',all:'すべて',sug_title:'提案と改善',sug_submit:'提案を送信',sug_idea_title:'アイデアのタイトル',sug_idea_desc:'提案を詳しく説明してください...',sug_category:'カテゴリ',sug_cat_feature:'新機能',sug_cat_improvement:'既存の改善',sug_cat_ui:'インターフェース / UX',sug_cat_performance:'パフォーマンス',sug_cat_docs:'ドキュメント',sug_cat_other:'その他',sug_empty:'まだ提案がありません。最初のアイデアを共有しましょう！',sug_votes:'票',sug_voted:'投票済み',sug_vote:'投票',sug_status_new:'新規',sug_status_review:'レビュー中',sug_status_planned:'計画済み',sug_status_done:'実装済み',sug_status_declined:'却下',sug_submitted:'提案が正常に送信されました',sug_my:'自分の提案',sug_all:'すべて',sug_sort_votes:'最多投票',sug_sort_recent:'最新'},
+zh:{faq_title:'帮助中心',faq_search:'搜索文章...',faq_helpful:'对您有帮助吗？',faq_yes:'是',faq_no:'否',faq_empty:'暂无文章',faq_no_results:'无结果',tab_faq:'FAQ',tab_new_ticket:'新建工单',tab_my_tickets:'我的工单',tab_contact_center:'联系中心',tab_suggestions:'建议',ticket_subject:'主题',ticket_desc:'描述您的问题',ticket_priority:'优先级',ticket_send:'提交工单',ticket_empty:'暂无工单',ticket_status:'状态',ticket_created:'创建时间',ticket_category:'分类',ticket_close:'关闭工单',ticket_rate:'评价',ticket_reply:'回复',ticket_msg_placeholder:'输入消息...',ticket_send_msg:'发送',ticket_rated:'已评价',ticket_offline:'已离线保存 — 联网后自动同步',ticket_synced:'工单已同步',admin_total:'工单总数',admin_open:'待处理',admin_progress:'处理中',admin_resolved:'已解决',admin_avg_time:'平均解决时间',admin_csat:'CSAT',admin_sla:'SLA %',admin_hours:'小时',admin_filter:'筛选',admin_internal:'内部备注',admin_notes:'管理员备注',admin_update:'更新',admin_faq_manage:'管理FAQ',pri_low:'低',pri_medium:'中',pri_high:'高',pri_urgent:'紧急',st_open:'待处理',st_in_progress:'处理中',st_waiting_user:'等待回复',st_resolved:'已解决',st_closed:'已关闭',cat_production:'生产',cat_health:'卫生',cat_feed:'饲料',cat_iot:'IoT',cat_billing:'账单',cat_bug:'Bug',cat_sync:'同步',cat_feature_request:'功能需求',cat_access:'访问',cat_general:'通用',all:'全部',sug_title:'建议与改进',sug_submit:'提交建议',sug_idea_title:'您的想法标题',sug_idea_desc:'详细描述您的建议...',sug_category:'分类',sug_cat_feature:'新功能',sug_cat_improvement:'现有改进',sug_cat_ui:'界面 / UX',sug_cat_performance:'性能',sug_cat_docs:'文档',sug_cat_other:'其他',sug_empty:'暂无建议。成为第一个分享想法的人！',sug_votes:'票',sug_voted:'已投票',sug_vote:'投票',sug_status_new:'新建',sug_status_review:'审核中',sug_status_planned:'已计划',sug_status_done:'已实现',sug_status_declined:'已拒绝',sug_submitted:'建议提交成功',sug_my:'我的建议',sug_all:'全部',sug_sort_votes:'最多投票',sug_sort_recent:'最新'}
 };
 const d=_SL[LANG]||_SL.es;const es=_SL.es;const en=_SL.en;
 return new Proxy({},{get:(_,k)=>d[k]||es[k]||en[k]||k});
@@ -4885,7 +4919,7 @@ let h=`<div class="page-header"><h2>🎧 ${L.faq_title}</h2></div>`;
 
 // Tabs
 h+=`<div style="display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap">`;
-['faq','new_ticket','my_tickets'].forEach(tab=>{
+['faq','new_ticket','my_tickets','suggestions'].forEach(tab=>{
 h+=`<button class="btn ${_supportTab===tab?'btn-primary':'btn-secondary'}" onclick="_supportTab='${tab}';renderSoporte()" style="padding:8px 16px;font-size:.9em">${L['tab_'+tab]}</button>`;
 });
 if(isAdmin){
@@ -4899,6 +4933,7 @@ if(_supportTab==='faq') h+=_renderFaqTab(L);
 else if(_supportTab==='new_ticket') h+=_renderNewTicketTab(L,plan);
 else if(_supportTab==='my_tickets') h+=_renderMyTicketsTab(L);
 else if(_supportTab==='contact_center'&&isAdmin) h+=_renderContactCenterTab(L);
+else if(_supportTab==='suggestions') h+=`<div id="sug-tab-content">`+_renderSuggestionsTab(L,D)+`</div>`;
 
 $('sec-soporte').innerHTML=h;
 
@@ -5326,6 +5361,135 @@ closeModal();_loadAdminData();
 }catch(e){showToast('Error: '+e.message,'error');}
 }
 
+// ============ SUGGESTIONS / SUGERENCIAS ============
+let _sugSort='recent';
+let _sugFilter='all';
+const _SUG_CATEGORIES=['feature','improvement','ui','performance','docs','other'];
+const _SUG_STATUSES=['new','review','planned','done','declined'];
+
+function _renderSuggestionsTab(L,D){
+const sugs=D.suggestions||[];
+const isAdmin=(D.settings.role==='owner'||D.settings.role==='manager');
+let h='';
+
+// Submit form
+h+=`<div class="card" style="padding:16px;margin-bottom:16px">
+<h3 style="margin:0 0 12px">${L.sug_submit}</h3>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+<input type="text" id="sug-title" class="form-input" placeholder="${L.sug_idea_title}" style="flex:2;min-width:200px">
+<select id="sug-cat" class="form-input" style="flex:1;min-width:140px">`;
+_SUG_CATEGORIES.forEach(c=>{h+=`<option value="${c}">${L['sug_cat_'+c]||c}</option>`;});
+h+=`</select></div>
+<textarea id="sug-desc" class="form-input" rows="3" placeholder="${L.sug_idea_desc}" style="width:100%;resize:vertical;margin-bottom:8px"></textarea>
+<button class="btn btn-primary" onclick="_submitSuggestion()" style="padding:8px 20px">${L.sug_submit}</button>
+</div>`;
+
+// Filters + sort
+h+=`<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+<button class="btn ${_sugFilter==='all'?'btn-primary':'btn-secondary'}" onclick="_sugFilter='all';_refreshSuggestions()" style="padding:4px 12px;font-size:.85em">${L.sug_all}</button>
+<button class="btn ${_sugFilter==='my'?'btn-primary':'btn-secondary'}" onclick="_sugFilter='my';_refreshSuggestions()" style="padding:4px 12px;font-size:.85em">${L.sug_my}</button>
+<span style="margin-left:auto"></span>
+<button class="btn ${_sugSort==='votes'?'btn-primary':'btn-secondary'}" onclick="_sugSort='votes';_refreshSuggestions()" style="padding:4px 12px;font-size:.85em">${L.sug_sort_votes}</button>
+<button class="btn ${_sugSort==='recent'?'btn-primary':'btn-secondary'}" onclick="_sugSort='recent';_refreshSuggestions()" style="padding:4px 12px;font-size:.85em">${L.sug_sort_recent}</button>
+</div>`;
+
+// Filter + sort
+let filtered=sugs.slice();
+if(_sugFilter==='my'){
+const uid=D.settings.ownerEmail||'local';
+filtered=filtered.filter(s=>s.author===uid);
+}
+if(_sugSort==='votes')filtered.sort((a,b)=>(b.votes||0)-(a.votes||0));
+else filtered.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+
+if(filtered.length===0){
+h+=`<div class="empty-state"><div class="empty-icon">💡</div><p>${L.sug_empty}</p></div>`;
+}else{
+filtered.forEach(s=>{
+const statusColors={new:'#2196f3',review:'#ff9800',planned:'#9c27b0',done:'#4caf50',declined:'#757575'};
+const voted=(s.votedBy||[]).includes(D.settings.ownerEmail||'local');
+h+=`<div class="card" style="padding:16px;margin-bottom:8px">
+<div style="display:flex;gap:12px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;align-items:center;min-width:48px">
+<button class="btn ${voted?'btn-primary':'btn-secondary'}" onclick="_voteSuggestion('${s.id}')" style="padding:4px 8px;font-size:1.1em;line-height:1" ${voted?'disabled':''}>▲</button>
+<span style="font-weight:700;font-size:1.1em;margin:4px 0">${s.votes||0}</span>
+<span style="font-size:.7em;color:var(--text-muted)">${L.sug_votes}</span>
+</div>
+<div style="flex:1">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px">
+<span style="font-weight:600;font-size:1.05em">${sanitizeHTML(s.title)}</span>
+<span style="background:${statusColors[s.status]||'#666'};color:#fff;padding:1px 8px;border-radius:10px;font-size:.75em">${L['sug_status_'+s.status]||s.status}</span>
+<span style="background:var(--primary-fill);color:var(--primary);padding:1px 8px;border-radius:6px;font-size:.75em">${L['sug_cat_'+s.category]||s.category}</span>
+</div>
+<p style="margin:4px 0;color:var(--text-muted);font-size:.9em;line-height:1.5">${sanitizeHTML(s.description)}</p>
+<div style="font-size:.8em;color:var(--text-muted);margin-top:4px">${fmtDate(s.createdAt)}</div>`;
+if(isAdmin&&s.status==='new'){
+h+=`<div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap">`;
+['review','planned','declined'].forEach(st=>{
+h+=`<button class="btn btn-secondary" onclick="_updateSugStatus('${s.id}','${st}')" style="padding:2px 10px;font-size:.8em">${L['sug_status_'+st]}</button>`;
+});
+h+=`</div>`;
+}
+h+=`</div></div></div>`;
+});
+}
+return h;
+}
+
+function _refreshSuggestions(){
+const el=$('sug-tab-content');if(!el){renderSoporte();return;}
+const D=loadData();const L=_sL();
+el.innerHTML=_renderSuggestionsTab(L,D);
+}
+
+function _submitSuggestion(){
+const title=$('sug-title')?.value?.trim();
+const desc=$('sug-desc')?.value?.trim();
+const cat=$('sug-cat')?.value||'other';
+if(!title||!desc){showToast('Completa titulo y descripcion','error');return;}
+const D=loadData();
+const sug={
+id:genId(),
+title:title,
+description:desc,
+category:cat,
+status:'new',
+votes:0,
+votedBy:[],
+author:D.settings.ownerEmail||'local',
+createdAt:todayStr()
+};
+D.suggestions.push(sug);
+saveData(D);
+logAudit('suggestion_created',{id:sug.id,title:sug.title});
+const L=_sL();
+showToast(L.sug_submitted,'success');
+renderSoporte();
+}
+
+function _voteSuggestion(sugId){
+const D=loadData();
+const s=D.suggestions.find(x=>x.id===sugId);
+if(!s)return;
+const uid=D.settings.ownerEmail||'local';
+if(!s.votedBy)s.votedBy=[];
+if(s.votedBy.includes(uid))return;
+s.votedBy.push(uid);
+s.votes=(s.votes||0)+1;
+saveData(D);
+renderSoporte();
+}
+
+function _updateSugStatus(sugId,newStatus){
+const D=loadData();
+const s=D.suggestions.find(x=>x.id===sugId);
+if(!s)return;
+s.status=newStatus;
+saveData(D);
+logAudit('suggestion_status',{id:sugId,status:newStatus});
+renderSoporte();
+}
+
 // Auto-sync offline tickets on reconnect
 window.addEventListener('online',()=>{if(_offlineTicketQueue.length)_syncOfflineTickets();});
 
@@ -5705,47 +5869,57 @@ let h=`<div class="page-header"><h2>👑 ${lbl.title}</h2></div>`;
 
 // Plan Overview Card
 h+=`<div class="card" style="margin-bottom:16px"><h3>📋 ${lbl.plan_overview}</h3>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px">
-<div class="kpi-card"><div class="kpi-label">${lbl.current_plan}</div><div class="kpi-value" style="font-size:1.3rem;color:var(--primary)">${tierInfo.name.toUpperCase()}</div></div>
-<div class="kpi-card"><div class="kpi-label">${lbl.monthly_cost}</div><div class="kpi-value">$${tierInfo.baseCost}<small>/${cur}</small></div></div>
-<div class="kpi-card"><div class="kpi-label">${lbl.max_flocks}</div><div class="kpi-value">${tierInfo.maxFlocks===Infinity?'∞':tierInfo.maxFlocks}</div></div>
-<div class="kpi-card"><div class="kpi-label">${lbl.included_users}</div><div class="kpi-value">${tierInfo.includedUsers}</div></div>
-<div class="kpi-card"><div class="kpi-label">${lbl.extra_cost}</div><div class="kpi-value">$${tierInfo.extraUserCost}</div></div>
-<div class="kpi-card"><div class="kpi-label">${lbl.billing}</div><div class="kpi-value">${plan.billingCycle||'monthly'}</div></div>
+<div style="display:flex;align-items:center;gap:12px;margin:12px 0 8px">
+<span style="font-size:1.4rem;font-weight:800;color:var(--primary)">${tierInfo.name.toUpperCase()}</span>
+<span style="font-size:1.1rem;font-weight:600">$${tierInfo.baseCost}<small style="font-weight:400;color:var(--text-light)">/${cur}/mo</small></span>
+<button class="btn btn-sm" onclick="showUpgradeModal()" style="margin-left:auto">⬆ ${lbl.upgrade_plan}</button>
 </div>
-<div style="margin-top:12px;text-align:right"><button class="btn btn-sm" onclick="showUpgradeModal()">⬆ ${lbl.upgrade_plan}</button></div>
+<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--text-light)">
+<span>📦 ${lbl.max_flocks}: <strong style="color:var(--text)">${tierInfo.maxFlocks===Infinity?'∞':tierInfo.maxFlocks}</strong></span>
+<span>👥 ${lbl.included_users}: <strong style="color:var(--text)">${tierInfo.includedUsers}</strong></span>
+<span>💲 ${lbl.extra_cost}: <strong style="color:var(--text)">$${tierInfo.extraUserCost}</strong></span>
+<span>🔄 ${lbl.billing}: <strong style="color:var(--text)">${plan.billingCycle||'monthly'}</strong></span>
+</div>
 </div>`;
 
 // KPI Row: Users + Activation + Churn + Revenue
 h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:16px">`;
 
 // User KPIs
-h+=`<div class="card"><h3>👥 ${lbl.user_kpis}</h3>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.total_users}</div><div class="kpi-value">${users.length}</div></div>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.active_users}</div><div class="kpi-value" style="color:#4caf50">${activeUsers.length}</div></div>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.inactive_users}</div><div class="kpi-value" style="color:#f44336">${inactiveUsers.length}</div></div>
-<div style="margin-top:8px;font-size:0.85rem;color:var(--text-muted)"><strong>${lbl.by_role}:</strong> ${Object.entries(roleCounts).map(([r,c])=>`${r}: ${c}`).join(' · ')||'—'}</div>
+h+=`<div class="card" style="padding:12px 16px"><h3 style="margin:0 0 8px;font-size:.95rem">👥 ${lbl.user_kpis}</h3>
+<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem">
+<span>${lbl.total_users}: <strong>${users.length}</strong></span>
+<span>${lbl.active_users}: <strong style="color:#4caf50">${activeUsers.length}</strong></span>
+<span>${lbl.inactive_users}: <strong style="color:#f44336">${inactiveUsers.length}</strong></span>
+</div>
+<div style="margin-top:6px;font-size:.8rem;color:var(--text-muted)">${lbl.by_role}: ${Object.entries(roleCounts).map(([r,c])=>`${r}: ${c}`).join(' · ')||'—'}</div>
 </div>`;
 
 // Activation KPIs
-h+=`<div class="card"><h3>🚀 ${lbl.activation_kpis}</h3>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.activation_rate}</div><div class="kpi-value">${activationRate}%</div></div>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.avg_time_activate}</div><div class="kpi-value">${avgActivationDays} ${lbl.days}</div></div>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.pending_activations}</div><div class="kpi-value" style="color:${pending.length?'#ff9800':'#4caf50'}">${pending.length}</div></div>
+h+=`<div class="card" style="padding:12px 16px"><h3 style="margin:0 0 8px;font-size:.95rem">🚀 ${lbl.activation_kpis}</h3>
+<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem">
+<span>${lbl.activation_rate}: <strong>${activationRate}%</strong></span>
+<span>${lbl.avg_time_activate}: <strong>${avgActivationDays} ${lbl.days}</strong></span>
+<span>${lbl.pending_activations}: <strong style="color:${pending.length?'#ff9800':'#4caf50'}">${pending.length}</strong></span>
+</div>
 </div>`;
 
 // Churn KPIs
-h+=`<div class="card"><h3>📉 ${lbl.churn_kpis}</h3>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.monthly_churn}</div><div class="kpi-value" style="color:${churnRate>10?'#f44336':churnRate>5?'#ff9800':'#4caf50'}">${churnRate}%</div></div>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.retention}</div><div class="kpi-value" style="color:${retention>=90?'#4caf50':'#ff9800'}">${retention}%</div></div>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.deactivated_30d}</div><div class="kpi-value">${deactivated30d.length}</div></div>
+h+=`<div class="card" style="padding:12px 16px"><h3 style="margin:0 0 8px;font-size:.95rem">📉 ${lbl.churn_kpis}</h3>
+<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem">
+<span>${lbl.monthly_churn}: <strong style="color:${churnRate>10?'#f44336':churnRate>5?'#ff9800':'#4caf50'}">${churnRate}%</strong></span>
+<span>${lbl.retention}: <strong style="color:${retention>=90?'#4caf50':'#ff9800'}">${retention}%</strong></span>
+<span>${lbl.deactivated_30d}: <strong>${deactivated30d.length}</strong></span>
+</div>
 </div>`;
 
 // Revenue KPIs
-h+=`<div class="card"><h3>💰 ${lbl.revenue_kpis}</h3>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.base_revenue}</div><div class="kpi-value">$${baseRevenue.toFixed(2)}</div></div>
-<div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.extra_user_revenue}</div><div class="kpi-value">$${extraRevenue.toFixed(2)} <small>(${extraUsers} extra)</small></div></div>
-<div class="kpi-card" style="margin:8px 0;border:2px solid var(--primary);border-radius:8px;padding:10px"><div class="kpi-label">${lbl.total_mrr}</div><div class="kpi-value" style="font-size:1.4rem;color:var(--primary)">$${totalMRR.toFixed(2)}</div></div>
+h+=`<div class="card" style="padding:12px 16px"><h3 style="margin:0 0 8px;font-size:.95rem">💰 ${lbl.revenue_kpis}</h3>
+<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;font-size:.85rem">
+<span>${lbl.base_revenue}: <strong>$${baseRevenue.toFixed(2)}</strong></span>
+<span>${lbl.extra_user_revenue}: <strong>$${extraRevenue.toFixed(2)}</strong> <small>(${extraUsers} extra)</small></span>
+<span style="font-size:1rem;font-weight:700;color:var(--primary)">${lbl.total_mrr}: $${totalMRR.toFixed(2)}</span>
+</div>
 </div>`;
 
 h+=`</div>`;
@@ -6033,6 +6207,25 @@ h+=`<div class="card"><h3>${t('cfg_farm')}</h3>
 <div class="form-row"><div class="form-group"><label>${t('cfg_capacity')}</label><input type="number" id="cfg-cap" value="${D.farm.capacity||''}" min="0"></div>
 <div class="form-group"><label>${t('cfg_currency')}</label><input id="cfg-cur" value="${escapeAttr(D.farm.currency||'$')}" maxlength="5"></div></div>
 <button class="btn btn-primary" onclick="saveConfig()">${t('save')}</button></div>`;
+// Houses & Racks
+h+=`<div class="card"><h3>🏠 ${t('cfg_houses')}</h3>`;
+const cfgHouses=D.farm.houses||[];
+if(!cfgHouses.length){h+=`<p style="color:var(--text-light);font-size:13px;margin-bottom:12px">${t('cfg_no_houses')}</p>`;}
+else{cfgHouses.forEach((ho,hi)=>{
+h+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<strong>${sanitizeHTML(ho.name)}</strong>
+<button class="btn btn-danger btn-sm" onclick="removeHouse(${hi})">✕</button></div>`;
+if(ho.racks&&ho.racks.length){ho.racks.forEach((r,ri)=>{
+h+=`<div style="display:flex;align-items:center;gap:8px;margin-left:20px;margin-bottom:4px">
+<span style="font-size:13px">📦 ${sanitizeHTML(r.name)}</span>
+<button class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:10px" onclick="removeRack(${hi},${ri})">✕</button></div>`;});}
+h+=`<div style="display:flex;gap:8px;margin-left:20px;margin-top:8px">
+<input id="rack-input-${hi}" placeholder="${t('cfg_rack_name')}" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px">
+<button class="btn btn-secondary btn-sm" onclick="addRack(${hi})">${t('cfg_rack_add')}</button></div></div>`;});}
+h+=`<div style="display:flex;gap:8px;margin-top:12px">
+<input id="house-input" placeholder="${t('cfg_house_name')}" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius)">
+<button class="btn btn-primary btn-sm" onclick="addHouse()">${t('cfg_house_add')}</button></div></div>`;
 // Geolocation
 h+=`<div class="card"><h3>${t('geo_set_location')}</h3>
 <p style="color:var(--text-light);margin-bottom:8px">${D.farm.lat?t('geo_lat')+': '+D.farm.lat+' | '+t('geo_lng')+': '+D.farm.lng:t('geo_click_map')}</p>
@@ -6179,6 +6372,10 @@ const D=loadData();D.farm.name=$('cfg-name').value;D.farm.location=$('cfg-loc').
 D.farm.capacity=parseInt($('cfg-cap').value)||0;D.farm.currency=$('cfg-cur').value||'$';
 saveData(D);toast(t('cfg_saved'));
 }
+function addHouse(){const v=$('house-input')?.value?.trim();if(!v)return;const D=loadData();if(!D.farm.houses)D.farm.houses=[];if(D.farm.houses.some(h=>h.name===v)){toast('⚠️ '+v+' already exists','warning');return;}D.farm.houses.push({name:v,racks:[]});saveData(D);renderConfig();}
+function removeHouse(i){const D=loadData();D.farm.houses.splice(i,1);saveData(D);renderConfig();}
+function addRack(hi){const v=$('rack-input-'+hi)?.value?.trim();if(!v)return;const D=loadData();const ho=D.farm.houses[hi];if(!ho)return;if(!ho.racks)ho.racks=[];if(ho.racks.some(r=>r.name===v)){toast('⚠️ '+v+' already exists','warning');return;}ho.racks.push({name:v});saveData(D);renderConfig();}
+function removeRack(hi,ri){const D=loadData();D.farm.houses[hi].racks.splice(ri,1);saveData(D);renderConfig();}
 function saveAlertConfig(){
 const D=loadData();D.settings.minFeedStock=numVal('cfg-minfeed')||50;
 D.settings.maxMortality=numVal('cfg-maxmort')||5;
@@ -7090,7 +7287,7 @@ const l7=D.dailyProduction.filter(p=>p.flockId===f.id).sort((a,b)=>b.date.locale
 const avgE=l7.length>0?l7.reduce((s,p)=>s+(p.eggsCollected||0),0)/l7.length:0;
 const actual=hens>0?(avgE/hens*100):0;
 const gap=actual-expected;const gapColor=gap>=0?'var(--success)':'var(--danger)';
-h+=`<div class="stat-row"><span class="stat-label">${f.name} (${breed})</span>
+h+=`<div class="stat-row"><span class="stat-label">${f.name} (${bkey})</span>
 <span class="stat-value">${t('actual')}: ${fmtNum(actual,1)}% | ${t('expected')}: ${expected}% |
 <span style="color:${gapColor}">Gap: ${gap>0?'+':''}${fmtNum(gap,1)}%</span></span></div>`;
 });
@@ -7332,7 +7529,7 @@ openModal(v?t('edit'):t('bio_add_visitor'),`
 <div class="form-row"><div class="form-group"><label>${t('bio_visitor_zone')}</label><select id="bv-zone"><option value="">--</option>${zoneOpts}</select></div>
 <div class="form-group"><label>${t('bio_visitor_plate')}</label><input id="bv-plate" value="${v?escapeAttr(v.vehiclePlate||''):''}"></div></div>
 <div class="form-row"><div class="form-group"><label>${t('bio_visitor_disinfected')}</label><select id="bv-disinf">
-<option value="true"${v&&v.disinfected?' selected':''}>✅</option><option value="false"${v&&!v.disinfected?' selected':''}>❌</option></select></div>
+<option value="true"${v&&v.disinfected?' selected':''}>✅ ${t('yes')||'Sí'}</option><option value="false"${v&&!v.disinfected?' selected':''}>❌ ${t('no')||'No'}</option></select></div>
 <div class="form-group"><label>${t('bio_visitor_from_farm')}</label><select id="bv-farm">
 <option value="">--</option>
 <option value="internal"${v&&v.fromFarmId==='internal'?' selected':''}>${escapeAttr(D.farm.name||'Mi Granja')} (interna)</option>
@@ -7635,13 +7832,15 @@ function showWelfareAssessmentForm(id){
 const D=loadData();const a=id?D.welfareAssessments.find(x=>x.id===id):null;
 const flocks=D.flocks.filter(f=>f.status!=='descarte');
 let body=`<div style="max-height:70vh;overflow-y:auto;padding:0 8px">`;
-// Header
-body+=`<div class="form-row"><div class="form-group"><label>${t('wql_flock')}</label><select id="wf-flock">${flocks.map(f=>`<option value="${escapeAttr(f.id)}"${a&&a.flockId===f.id?' selected':''}>${sanitizeHTML(f.name)}</option>`).join('')}</select></div>
-<div class="form-group"><label>${t('date')}</label><input type="date" id="wf-date" value="${a?a.date:todayStr()}"></div>
-<div class="form-group"><label>${t('wql_assessor')}</label><input id="wf-assessor" value="${a?escapeAttr(a.assessor||''):''}"></div>
-<div class="form-group"><label>${t('wql_sample_size')}</label><input type="number" id="wf-sample" min="1" value="${a?a.sampleSize||30:30}"></div></div>`;
+// Header — compact 2x2 grid
+body+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;padding:12px;background:var(--primary-fill);border-radius:8px">
+<div><label style="font-size:.75rem;color:var(--text-light)">${t('wql_flock')}</label><select id="wf-flock" style="width:100%">${flocks.map(f=>`<option value="${escapeAttr(f.id)}"${a&&a.flockId===f.id?' selected':''}>${sanitizeHTML(f.name)}</option>`).join('')}</select></div>
+<div><label style="font-size:.75rem;color:var(--text-light)">${t('date')}</label><input type="date" id="wf-date" value="${a?a.date:todayStr()}" style="width:100%"></div>
+<div><label style="font-size:.75rem;color:var(--text-light)">${t('wql_assessor')}</label><input id="wf-assessor" value="${a?escapeAttr(a.assessor||''):''}" style="width:100%"></div>
+<div><label style="font-size:.75rem;color:var(--text-light)">${t('wql_sample_size')}</label><input type="number" id="wf-sample" min="1" value="${a?a.sampleSize||30:30}" style="width:100%"></div>
+</div>`;
 // P1: Good Feeding
-body+=`<details open><summary><strong>${t('wql_p1_title')}</strong></summary>`;
+body+=`<details open><summary style="padding:8px 12px;background:#e8f5e9;border-radius:8px;cursor:pointer;font-weight:700;color:#2e7d32">🥗 ${t('wql_p1_title')}</summary><div style="padding:8px 0">`;
 body+=`<fieldset><legend>${t('wql_body_condition')}</legend><div class="form-row">`;
 const bcs=a&&a.bodyCondition&&a.bodyCondition.summary?a.bodyCondition.summary:{s0:0,s1:0,s2:0};
 body+=`<div class="form-group"><label>${t('wql_score_0')}</label><input type="number" id="wf-bcs0" min="0" value="${bcs.s0}"></div>`;
@@ -7652,9 +7851,9 @@ body+=`<fieldset><legend>${t('wql_water_type')}</legend><div class="form-row">
 <div class="form-group"><label>${t('wql_water_type')}</label><select id="wf-wtype"><option value="nipple"${wa.type==='nipple'?' selected':''}>${t('wql_water_nipple')}</option><option value="bell"${wa.type==='bell'?' selected':''}>${t('wql_water_bell')}</option><option value="cup"${wa.type==='cup'?' selected':''}>${t('wql_water_cup')}</option><option value="trough"${wa.type==='trough'?' selected':''}>${t('wql_water_trough')}</option></select></div>
 <div class="form-group"><label>${t('wql_water_cm')}</label><input type="number" id="wf-wcm" step="0.1" min="0" value="${wa.cmPerHen||2.5}"></div>
 <div class="form-group"><label>${t('wql_water_functional')}</label><input type="checkbox" id="wf-wfunc"${wa.functional?' checked':''}></div>
-<div class="form-group"><label>${t('wql_water_clean')}</label><input type="checkbox" id="wf-wclean"${wa.clean?' checked':''}></div></div></fieldset></details>`;
+<div class="form-group"><label>${t('wql_water_clean')}</label><input type="checkbox" id="wf-wclean"${wa.clean?' checked':''}></div></div></fieldset></div></details>`;
 // P2: Good Housing
-body+=`<details><summary><strong>${t('wql_p2_title')}</strong></summary>`;
+body+=`<details><summary style="padding:8px 12px;background:#e3f2fd;border-radius:8px;cursor:pointer;font-weight:700;color:#1565c0">🏠 ${t('wql_p2_title')}</summary><div style="padding:8px 0">`;
 const sd=a&&a.stockingDensity?a.stockingDensity:{totalArea:0,henCount:0};
 body+=`<fieldset><legend>${t('wql_stocking_density')}</legend><div class="form-row">
 <div class="form-group"><label>${t('wql_total_area')}</label><input type="number" id="wf-sdarea" step="0.1" min="0" value="${sd.totalArea||''}"></div>
@@ -7672,9 +7871,9 @@ body+=`<fieldset><legend>${t('wql_dust_bathing')}</legend><div class="form-row">
 const tc=a&&a.thermalComfort?a.thermalComfort:{panting:0,huddling:0};
 body+=`<fieldset><legend>${t('wql_thermal_comfort')}</legend><div class="form-row">
 <div class="form-group"><label>${t('wql_panting')}</label><input type="number" id="wf-panting" min="0" value="${tc.panting||0}"></div>
-<div class="form-group"><label>${t('wql_huddling')}</label><input type="number" id="wf-huddling" min="0" value="${tc.huddling||0}"></div></div></fieldset></details>`;
+<div class="form-group"><label>${t('wql_huddling')}</label><input type="number" id="wf-huddling" min="0" value="${tc.huddling||0}"></div></div></fieldset></div></details>`;
 // P3: Good Health
-body+=`<details><summary><strong>${t('wql_p3_title')}</strong></summary>`;
+body+=`<details><summary style="padding:8px 12px;background:#fff3e0;border-radius:8px;cursor:pointer;font-weight:700;color:#e65100">🏥 ${t('wql_p3_title')}</summary><div style="padding:8px 0">`;
 const regions=['neck','back','belly','wings','tail'];const regionKeys=['wql_region_neck','wql_region_back','wql_region_belly','wql_region_wings','wql_region_tail'];
 body+=`<fieldset><legend>${t('wql_plumage')}</legend>`;
 regions.forEach((r,i)=>{
@@ -7733,9 +7932,9 @@ body+=`<fieldset><legend>${t('wql_red_mites')}</legend><div class="form-row">
 const mcD=a&&a.mortalityCulling?a.mortalityCulling:{mortalityPct:0,cullingPct:0};
 body+=`<fieldset><legend>${t('wql_mortality_pct')}</legend><div class="form-row">
 <div class="form-group"><label>${t('wql_mortality_pct')}</label><input type="number" id="wf-mort" step="0.1" min="0" value="${mcD.mortalityPct||0}"></div>
-<div class="form-group"><label>${t('wql_culling_pct')}</label><input type="number" id="wf-cull" step="0.1" min="0" value="${mcD.cullingPct||0}"></div></div></fieldset></details>`;
+<div class="form-group"><label>${t('wql_culling_pct')}</label><input type="number" id="wf-cull" step="0.1" min="0" value="${mcD.cullingPct||0}"></div></div></fieldset></div></details>`;
 // P4: Appropriate Behaviour
-body+=`<details><summary><strong>${t('wql_p4_title')}</strong></summary>`;
+body+=`<details><summary style="padding:8px 12px;background:#f3e5f5;border-radius:8px;cursor:pointer;font-weight:700;color:#6a1b9a">🧠 ${t('wql_p4_title')}</summary><div style="padding:8px 0">`;
 const adtD=a&&a.avoidanceDistanceTest?a.avoidanceDistanceTest:{distances:[]};
 body+=`<fieldset><legend>${t('wql_adt_title')}</legend><div class="form-row">
 <div class="form-group" style="flex:2"><label>${t('wql_adt_distances')}</label><input id="wf-adt" placeholder="50,80,120,..." value="${adtD.distances?adtD.distances.join(','):''}"></div></div></fieldset>`;
@@ -7749,7 +7948,7 @@ const val=a&&a.qualitativeBehaviourAssessment?a.qualitativeBehaviourAssessment[k
 body+=`<div class="form-row" style="align-items:center"><div class="form-group" style="flex:1"><label>${t('wql_qba_'+k)}</label></div>
 <div class="form-group" style="flex:2"><input type="range" id="wf-qba-${k}" min="0" max="125" value="${val}" oninput="this.nextElementSibling.textContent=this.value"><span style="min-width:30px;text-align:right">${val}</span></div></div>`;
 });
-body+=`</fieldset></details>`;
+body+=`</fieldset></div></details>`;
 // Notes
 body+=`<div class="form-group"><label>${t('notes')}</label><textarea id="wf-notes" rows="2">${a?escapeAttr(a.notes||''):''}</textarea></div>`;
 body+=`</div>`;
@@ -7941,6 +8140,81 @@ const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob)
 const link=document.createElement('a');link.href=url;link.download='welfare_assessments.csv';link.click();URL.revokeObjectURL(url);
 }
 
+// ============ QR CODE GENERATOR (Lightweight, no deps) ============
+// Minimal QR encoder — supports alphanumeric, version 2-6 auto-select
+const QRGen=(function(){
+const EC_L=[7,10,15,20,26,36],EC_M=[10,16,26,36,48,64];
+function makeQR(text){
+const data=new TextEncoder().encode(text);const len=data.length;
+// Select version (1-6) based on byte capacity at EC level L
+const caps=[17,32,53,78,106,134];let ver=1;
+for(let i=0;i<caps.length;i++){if(len<=caps[i]){ver=i+1;break;}}
+if(len>caps[caps.length-1])ver=6;
+const size=17+ver*4;const modules=Array.from({length:size},()=>new Uint8Array(size));
+const reserved=Array.from({length:size},()=>new Uint8Array(size));
+// Finder patterns
+function finderPattern(r,c){for(let dr=-3;dr<=3;dr++)for(let dc=-3;dc<=3;dc++){
+const rr=r+dr,cc=c+dc;if(rr<0||rr>=size||cc<0||cc>=size)continue;
+const v=(Math.abs(dr)===3||Math.abs(dc)===3||
+(Math.abs(dr)<=1&&Math.abs(dc)<=1))?1:0;
+modules[rr][cc]=v;reserved[rr][cc]=1;}}
+finderPattern(3,3);finderPattern(3,size-4);finderPattern(size-4,3);
+// Separators
+for(let i=0;i<8;i++){
+for(const [r,c] of [[i,7],[7,i],[i,size-8],[7,size-1-i],[size-8,i],[size-1-i,7]]){
+if(r>=0&&r<size&&c>=0&&c<size){modules[r][c]=0;reserved[r][c]=1;}}}
+// Timing patterns
+for(let i=8;i<size-8;i++){modules[6][i]=i%2===0?1:0;modules[i][6]=i%2===0?1:0;reserved[6][i]=1;reserved[i][6]=1;}
+// Dark module
+modules[size-8][8]=1;reserved[size-8][8]=1;
+// Format info placeholder
+for(let i=0;i<15;i++){const r=i<6?i:(i<8?i+1:size-15+i);const c=i<8?8:8;
+reserved[r]?reserved[r][8]=1:0;reserved[8]?reserved[8][i<8?size-1-i:(i<9?8-i+8:14-i)]=1:0;}
+// Encode data with byte mode indicator
+const codewords=[];codewords.push(0x40|(len>>4));codewords.push(((len&0xF)<<4)|(data[0]>>4));
+for(let i=0;i<len-1;i++)codewords.push(((data[i]&0xF)<<4)|(data[i+1]>>4));
+if(len>0)codewords.push((data[len-1]&0xF)<<4);
+const totalCW=caps[ver-1]+EC_L[ver-1];while(codewords.length<totalCW){codewords.push(0xEC);if(codewords.length<totalCW)codewords.push(0x11);}
+// Place data (simplified — fills from bottom-right, skipping reserved)
+let bitIdx=0;const allBits=[];
+codewords.forEach(b=>{for(let i=7;i>=0;i--)allBits.push((b>>i)&1);});
+for(let right=size-1;right>=1;right-=2){
+if(right===6)right=5;
+for(let vert=0;vert<size;vert++){for(let j=0;j<2;j++){
+const c=right-j;const r=((Math.floor((size-1-right)/2))%2===0)?size-1-vert:vert;
+if(r>=0&&r<size&&c>=0&&c<size&&!reserved[r][c]){
+modules[r][c]=bitIdx<allBits.length?allBits[bitIdx]:0;bitIdx++;}}}}
+// Apply mask 0 (checkerboard)
+for(let r=0;r<size;r++)for(let c=0;c<size;c++){
+if(!reserved[r][c]&&(r+c)%2===0)modules[r][c]^=1;}
+return{modules,size};}
+function toCanvas(text,pixelSize){
+pixelSize=pixelSize||6;const qr=makeQR(text);const quiet=4;
+const canvasSize=(qr.size+quiet*2)*pixelSize;
+const canvas=document.createElement('canvas');canvas.width=canvasSize;canvas.height=canvasSize;
+const ctx=canvas.getContext('2d');ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,canvasSize,canvasSize);
+ctx.fillStyle='#000000';
+for(let r=0;r<qr.size;r++)for(let c=0;c<qr.size;c++){
+if(qr.modules[r][c])ctx.fillRect((c+quiet)*pixelSize,(r+quiet)*pixelSize,pixelSize,pixelSize);}
+return canvas;}
+return{toCanvas};
+})();
+function renderQRCode(containerId,text,pixelSize){
+const el=$(containerId);if(!el)return;el.innerHTML='';
+const canvas=QRGen.toCanvas(text,pixelSize||5);canvas.style.display='block';canvas.style.margin='0 auto';
+el.appendChild(canvas);}
+function downloadQR(text,filename){
+const canvas=QRGen.toCanvas(text,10);const link=document.createElement('a');
+link.download=filename||'qr-code.png';link.href=canvas.toDataURL('image/png');link.click();}
+function printQR(text,batchInfo){
+const canvas=QRGen.toCanvas(text,8);const w=window.open('','_blank','width=400,height=500');
+w.document.write('<html><head><title>QR - '+sanitizeHTML(batchInfo)+'</title><style>body{font-family:sans-serif;text-align:center;padding:20px}img{margin:20px auto}p{font-size:12px;color:#666}h3{margin:0 0 4px}@media print{button{display:none}}</style></head><body>');
+w.document.write('<h3>EGGlogU — '+sanitizeHTML(batchInfo)+'</h3>');
+w.document.write('<img src="'+canvas.toDataURL('image/png')+'" width="200" height="200">');
+w.document.write('<p style="font-family:monospace;font-size:10px;word-break:break-all">'+sanitizeHTML(text)+'</p>');
+w.document.write('<button onclick="window.print()" style="margin-top:16px;padding:8px 24px;cursor:pointer">🖨️ Print</button>');
+w.document.write('</body></html>');w.document.close();}
+
 // ============ EGG TRACEABILITY MODULE ============
 function renderTraceability(){
 const D=loadData();const batches=D.traceability.batches;
@@ -8016,16 +8290,24 @@ const breed=f?f.breed||'generic':'generic';
 const l7=D.dailyProduction.filter(p=>p.flockId===b.flockId&&p.date<=b.date).sort((a,c)=>c.date.localeCompare(a.date)).slice(0,7);
 const avgFCR=l7.length>0?'~':'N/A';
 const hs=f?computeFlockHealthScore(f.id,D):'N/A';
+const qrText=b.qrCode||'EGGLOGU|BATCH:'+b.id;
+const batchLabel='Lote '+b.id.substring(0,8);
 openModal('🔍 '+t('trace_origin'),`
 <div class="card" style="margin:0"><h4>${t('trace_batch_id')}: ${b.id.substring(0,8)}</h4>
 <div class="stat-row"><span class="stat-label">${t('trace_house')}</span><span class="stat-value">${b.house||'-'}</span></div>
+<div class="stat-row"><span class="stat-label">${t('trace_rack')}</span><span class="stat-value">${b.rackNumber||'-'}</span></div>
 <div class="stat-row"><span class="stat-label">${t('prod_flock')}</span><span class="stat-value">${f?sanitizeHTML(f.name)+' ('+sanitizeHTML(breed)+')':'-'}</span></div>
 <div class="stat-row"><span class="stat-label">${t('date')}</span><span class="stat-value">${fmtDate(b.date)}</span></div>
 <div class="stat-row"><span class="stat-label">${t('flock_health')}</span><span class="stat-value">${hs}</span></div>
 <div class="stat-row"><span class="stat-label">${t('prod_egg_type')}</span><span class="stat-value">${t('prod_type_'+b.eggType)||sanitizeHTML(b.eggType)}</span></div>
 <div class="stat-row"><span class="stat-label">${t('fin_client')}</span><span class="stat-value">${c?sanitizeHTML(c.name):'-'}</span></div>
-<hr><div class="qr-display">${sanitizeHTML(b.qrCode||'N/A')}</div>
+<hr><div style="text-align:center;padding:16px 0"><div id="qr-canvas-container"></div>
+<p style="font-family:monospace;font-size:10px;color:var(--text-light);margin-top:8px;word-break:break-all">${sanitizeHTML(qrText)}</p>
+<div class="btn-group" style="justify-content:center;margin-top:12px">
+<button class="btn btn-primary btn-sm" onclick="printQR('${escapeAttr(qrText)}','${escapeAttr(batchLabel)}')">🖨️ ${t('print')||'Imprimir'}</button>
+<button class="btn btn-secondary btn-sm" onclick="downloadQR('${escapeAttr(qrText)}','${escapeAttr('EGGlogU_QR_'+b.id.substring(0,8)+'.png')}')">⬇️ ${t('cfg_export')||'Descargar'}</button></div></div>
 </div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('close')}</button></div>`);
+setTimeout(()=>renderQRCode('qr-canvas-container',qrText,5),50);
 }
 function computeFlockHealthScore(fid,D){
 let score=100;
@@ -9062,7 +9344,7 @@ _bugUpdateBadge();
 
 const panel=document.createElement('div');
 panel.id='bug-panel';
-panel.style.cssText='position:fixed;bottom:80px;right:20px;width:400px;max-height:80vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
+panel.style.cssText='position:fixed;bottom:80px;right:20px;width:min(400px,calc(100vw - 40px));max-height:80vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
 document.body.appendChild(panel);
 }
 
@@ -9111,7 +9393,7 @@ h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#333)">
 <option value="high">🔴 Alto — Funcionalidad rota</option>
 <option value="critical">💀 Critico — Perdida de datos/crash</option>
 </select></div>
-<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Opcional — describe que paso (requerido si ya reportaste en esta seccion)" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
+<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Describe el problema..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
 <div style="display:flex;gap:8px">
 <button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">+ Reportar Bug</button>
 ${errCount?`<button onclick="_attachErrors()" style="padding:8px 12px;border:none;border-radius:8px;background:rgba(255,152,0,.2);color:#ff9800;cursor:pointer;font-size:11px;font-weight:600" title="Adjuntar errores capturados">📎 ${errCount} err</button>`:''}
