@@ -6638,8 +6638,9 @@ const D=loadData();
 const plan=D.settings.plan||{};
 const lang=document.documentElement.lang||'es';
 const isEs=lang.startsWith('es');
-const isPaying=plan.status==='active'&&!plan.is_trial;
-const currentTier=plan.tier||'';
+const isSuperadmin=_currentUser&&_currentUser.role==='superadmin';
+const isPaying=isSuperadmin||( plan.status==='active'&&!plan.is_trial);
+const currentTier=isSuperadmin?'enterprise':(plan.tier||'');
 
 const tiers=[
 {id:'hobby',name:'Hobby',mo:9,yr:90,farms:'1',flocks:'3',users:'2',icon:'🌱',color:'#78909C',
@@ -6757,10 +6758,11 @@ try{
   if(!status)return;
   const D=loadData();
   D.settings.plan=D.settings.plan||{};
-  D.settings.plan.tier=status.plan||'enterprise';
+  const isSA=_currentUser&&_currentUser.role==='superadmin';
+  D.settings.plan.tier=isSA?'enterprise':(status.plan||'enterprise');
   D.settings.plan.modules=status.modules||[];
-  D.settings.plan.status=status.status||'active';
-  D.settings.plan.is_trial=status.is_trial||false;
+  D.settings.plan.status=isSA?'active':(status.status||'active');
+  D.settings.plan.is_trial=isSA?false:(status.is_trial||false);
   D.settings.plan.trial_end=status.trial_end||null;
   D.settings.plan.trial_days_left=status.trial_days_left;
   D.settings.plan.discount_phase=status.discount_phase||0;
