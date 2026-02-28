@@ -1,7 +1,7 @@
 # EGGlogU — Poultry Farm Management SaaS
 
 ## Stack
-Frontend: Single HTML (egglogu.html, 7,272 lines), vanilla JS, IndexedDB offline, Service Worker PWA
+Frontend: Single HTML (egglogu.html, 7,272 lines), vanilla JS (egglogu.js, 10,040 lines), IndexedDB offline, Service Worker PWA
 Backend: Python 3.12 + FastAPI 0.115 + SQLAlchemy 2.0 async + PostgreSQL 16 + Redis 7, Docker Compose
 Auth: JWT + Google OAuth + Apple Sign-In + Microsoft Identity + Resend email verification + offline PIN
 
@@ -27,7 +27,17 @@ Auth: JWT + Google OAuth + Apple Sign-In + Microsoft Identity + Resend email ver
 - Payments: Stripe (checkout sessions, customer portal, webhooks)
 - Email: Resend API (verification, password reset, team invites)
 
+## AI Assistant (Support Chat v2.0)
+- Troubleshooting KB: 8 common issue categories with step-by-step resolution
+- Bug classification: cosmetic/functional/critical/blocker with auto-priority
+- Auto-ticket creation: AI creates tickets with full conversation transcript when unresolved
+- Crowd urgency: localStorage-based issue dedup, auto-escalates priority (2+ medium, 5+ high, 10+ urgent)
+- Read-only policy: blocks aesthetic/process change requests, redirects to suggestions
+- Email notification flags: tickets marked for notify_on_resolve (backend integration pending)
+- Bug triage: cosmetic+functional = auto-fix path, critical+blocker = team review escalation
+- 8-language support with 17 new translation keys per language
+
 ## Active Work
 - Post-launch: live at egglogu.com, monitoring and iterating
-- Support module operational (tickets, FAQ, auto-responses)
+- Support module operational (tickets, FAQ, auto-responses, AI assistant v2.0)
 - Sync strategy refinement (delta sync planned, currently full-push)

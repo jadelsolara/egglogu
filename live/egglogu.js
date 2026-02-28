@@ -1966,13 +1966,13 @@ function onExpenseCatChange(){const cat=$('fe-cat')?.value;const descEl=$('fe-de
 function onHouseChange(){const house=$('tb-house')?.value;const rackEl=$('tb-rack');if(!rackEl)return;rackEl.innerHTML=rackSelect(house,rackEl.value);}
 function onProdFlockChange(){const fid=$('p-flock')?.value;const shellEl=$('p-shell');if(!fid||!shellEl)return;const D=loadData();const f=D.flocks.find(x=>x.id===fid);if(f){const b=COMMERCIAL_BREEDS.find(x=>x.id===f.breed);if(b&&b.eggColor){const colorMap={'Blanco':'blanco','Marrón':'marron','Marrón oscuro':'marron','Crema':'crema','Azul/Verde':'crema','Verde oliva':'crema'};shellEl.value=colorMap[b.eggColor]||'';}}}
 // ============ INDEXEDDB PERSISTENCE LAYER ============
-const IDB_NAME='egglogu_db';const IDB_VERSION=1;const IDB_STORE='data';
+const IDB_NAME='egglogu_db';const IDB_VERSION=2;const IDB_STORE='data';const IDB_SYNC_STORE='sync_snapshot';
 let _idb=null;let _idbReady=false;
 function _openIDB(){return new Promise((resolve,reject)=>{
 if(_idb){resolve(_idb);return;}
 try{
 const req=indexedDB.open(IDB_NAME,IDB_VERSION);
-req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains(IDB_STORE))db.createObjectStore(IDB_STORE);};
+req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains(IDB_STORE))db.createObjectStore(IDB_STORE);if(!db.objectStoreNames.contains(IDB_SYNC_STORE))db.createObjectStore(IDB_SYNC_STORE,{keyPath:'id'});};
 req.onsuccess=e=>{_idb=e.target.result;_idbReady=true;resolve(_idb);};
 req.onerror=()=>{console.warn('[IDB] Open failed');reject(req.error);};
 }catch(e){reject(e);}
@@ -2061,9 +2061,11 @@ function _debouncedPersist(){if(_saveTimer)clearTimeout(_saveTimer);_saveTimer=s
 function saveDataImmediate(){DATA=DATA||loadData();try{localStorage.setItem('egglogu_data',JSON.stringify(DATA));}catch(e){console.warn('[EGGlogU] Persist failed:',e.message);}}
 window.addEventListener('beforeunload',()=>{if(_saveTimer){clearTimeout(_saveTimer);saveDataImmediate();}});
 
-// ============ SERVER SYNC (dual-write: localStorage + API) — Delta Sync ============
+// ============ SERVER SYNC (dual-write: IndexedDB + API) — Delta Sync v2 ============
 let _syncTimer=null;let _lastSyncTime=localStorage.getItem('egglogu_last_sync')||null;let _isSyncing=false;let _syncDirty=false;
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&_syncDirty){_syncDirty=false;scheduleSyncToServer();}});
+let _syncRetryCount=0;const SYNC_MAX_RETRY=5;const SYNC_BATCH_SIZE=50;
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&_syncDirty){_syncDirty=false;_syncRetryCount=0;scheduleSyncToServer();}});
+navigator.connection&&navigator.connection.addEventListener&&navigator.connection.addEventListener('change',()=>{if(navigator.onLine&&_syncDirty){_syncDirty=false;_syncRetryCount=0;scheduleSyncToServer();}});
 const ENTITY_MAP={
   farms:D=>([D.farm]),flocks:D=>(D.flocks||[]),production:D=>(D.dailyProduction||[]),
   vaccines:D=>(D.vaccines||[]),medications:D=>(D.medications||[]),outbreaks:D=>(D.outbreaks||[]),
@@ -2074,55 +2076,129 @@ const ENTITY_MAP={
   checklist_items:D=>(D.checklist||[]),logbook_entries:D=>(D.logbook||[]),personnel:D=>(D.personnel||[]),
 };
 function scheduleSyncToServer(){if(_syncTimer)clearTimeout(_syncTimer);_syncTimer=setTimeout(syncToServer,3000);}
+function _syncBackoffDelay(){return Math.min(1000*Math.pow(2,_syncRetryCount),30000);}
+async function _loadSyncSnapshot(){
+  try{
+    const db=await _openIDB();
+    return await new Promise((resolve)=>{
+      const tx=db.transaction(IDB_SYNC_STORE,'readonly');const store=tx.objectStore(IDB_SYNC_STORE);
+      const req=store.get('snapshot');
+      req.onsuccess=()=>resolve(req.result&&req.result.data?req.result.data:{});
+      req.onerror=()=>resolve({});
+    });
+  }catch(e){
+    try{return JSON.parse(localStorage.getItem('egglogu_sync_snapshot')||'{}');}catch(e2){return {};}
+  }
+}
+async function _saveSyncSnapshotIDB(snap){
+  try{
+    const db=await _openIDB();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(IDB_SYNC_STORE,'readwrite');const store=tx.objectStore(IDB_SYNC_STORE);
+      store.put({id:'snapshot',data:snap});
+      tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);
+    });
+    // Clean up localStorage snapshot if migrated
+    try{localStorage.removeItem('egglogu_sync_snapshot');}catch(e){}
+  }catch(e){
+    // Fallback to localStorage
+    try{localStorage.setItem('egglogu_sync_snapshot',JSON.stringify(snap));}catch(e2){console.warn('[Sync] Snapshot save failed:',e2.message);}
+  }
+}
 async function syncToServer(){
   if(!apiService.isLoggedIn()||!navigator.onLine||_isSyncing)return;
   _isSyncing=true;
   try{
     const D=loadData();
-    let delta={};let deltaCount=0;
+    let allChanges={};let totalCount=0;
     if(!_lastSyncTime){
-      // First sync — send everything (full push)
-      for(const[key,fn]of Object.entries(ENTITY_MAP)){delta[key]=fn(D);}
-      deltaCount=Object.values(delta).reduce((s,a)=>s+a.length,0);
+      for(const[key,fn]of Object.entries(ENTITY_MAP)){allChanges[key]=fn(D);}
+      totalCount=Object.values(allChanges).reduce((s,a)=>s+a.length,0);
     }else{
-      // Delta: compare current vs last-synced snapshot
-      let snap={};
-      try{snap=JSON.parse(localStorage.getItem('egglogu_sync_snapshot')||'{}');}catch(e){snap={};}
+      const snap=await _loadSyncSnapshot();
       for(const[key,fn]of Object.entries(ENTITY_MAP)){
         const records=fn(D);const snapEntity=snap[key]||{};const changed=[];
         for(const r of records){
           const rid=r.id||r.date||JSON.stringify(r).substring(0,64);
           if(snapEntity[rid]!==JSON.stringify(r))changed.push(r);
         }
-        if(changed.length)delta[key]=changed;
-        deltaCount+=changed.length;
+        if(changed.length)allChanges[key]=changed;
+        totalCount+=changed.length;
       }
     }
-    if(deltaCount===0){console.log('[Sync] Δ 0 records — skipped');_isSyncing=false;return;}
-    const payload={last_synced_at:_lastSyncTime,data:delta};
-    const resp=await apiService.syncToServer(payload);
-    if(resp&&resp.synced>0)console.log('[Sync] Δ '+resp.synced+' records synced');
-    if(resp&&resp.conflicts&&resp.conflicts.length)console.warn('[Sync] Conflicts:',resp.conflicts);
-    // Merge server changes back into local data
-    if(resp&&resp.server_changes)_mergeServerChanges(D,resp.server_changes);
-    _lastSyncTime=resp&&resp.server_now?resp.server_now:new Date().toISOString();
+    if(totalCount===0){console.log('[Sync] Δ 0 records — skipped');_syncRetryCount=0;_isSyncing=false;return;}
+    // Batch: split into chunks of SYNC_BATCH_SIZE if needed
+    let batchNum=0;let totalSynced=0;
+    if(totalCount<=SYNC_BATCH_SIZE){
+      // Single batch — most common case
+      const payload={last_synced_at:_lastSyncTime,data:allChanges};
+      const resp=await apiService.syncToServer(payload);
+      if(resp&&resp.synced>0)totalSynced=resp.synced;
+      if(resp&&resp.conflicts&&resp.conflicts.length)console.warn('[Sync] Conflicts:',resp.conflicts);
+      if(resp&&resp.server_changes)_mergeServerChanges(D,resp.server_changes);
+      _lastSyncTime=resp&&resp.server_now?resp.server_now:new Date().toISOString();
+      batchNum=1;
+    }else{
+      // Multi-batch: split delta into batches of SYNC_BATCH_SIZE
+      let batch={};let batchCount=0;
+      const entries=Object.entries(allChanges);
+      for(const[key,records]of entries){
+        for(let i=0;i<records.length;i++){
+          if(!batch[key])batch[key]=[];
+          batch[key].push(records[i]);
+          batchCount++;
+          if(batchCount>=SYNC_BATCH_SIZE||( i===records.length-1 && key===entries[entries.length-1][0])){
+            batchNum++;
+            const payload={last_synced_at:_lastSyncTime,data:batch};
+            const resp=await apiService.syncToServer(payload);
+            if(resp&&resp.synced>0)totalSynced+=resp.synced;
+            if(resp&&resp.conflicts&&resp.conflicts.length)console.warn('[Sync] Batch '+batchNum+' conflicts:',resp.conflicts);
+            if(resp&&resp.server_changes)_mergeServerChanges(D,resp.server_changes);
+            _lastSyncTime=resp&&resp.server_now?resp.server_now:new Date().toISOString();
+            batch={};batchCount=0;
+          }
+        }
+      }
+      // Flush remaining batch
+      if(batchCount>0){
+        batchNum++;
+        const payload={last_synced_at:_lastSyncTime,data:batch};
+        const resp=await apiService.syncToServer(payload);
+        if(resp&&resp.synced>0)totalSynced+=resp.synced;
+        if(resp&&resp.server_changes)_mergeServerChanges(D,resp.server_changes);
+        _lastSyncTime=resp&&resp.server_now?resp.server_now:new Date().toISOString();
+      }
+    }
     localStorage.setItem('egglogu_last_sync',_lastSyncTime);
-    _saveSyncSnapshot(D);
-    // Save merged data locally (bypass scheduleSyncToServer to avoid loop)
-    DATA=D;localStorage.setItem('egglogu_data',JSON.stringify(DATA));
-    console.log('[Sync] Δ '+deltaCount+' records pushed');
+    await _saveSyncSnapshotIDB(_buildSyncSnap(D));
+    DATA=D;_debouncedPersist();
+    _syncRetryCount=0;
+    console.log('[Sync] Δ '+totalCount+' records pushed'+(batchNum>1?' in '+batchNum+' batches':''));
   }catch(e){
-    console.warn('[Sync] Failed, will retry:',e.message);
+    console.warn('[Sync] Failed (attempt '+(_syncRetryCount+1)+'/'+SYNC_MAX_RETRY+'):',e.message);
+    _syncRetryCount++;
+    if(_syncRetryCount<SYNC_MAX_RETRY){
+      const delay=_syncBackoffDelay();
+      console.log('[Sync] Retrying in '+(delay/1000)+'s...');
+      _syncTimer=setTimeout(syncToServer,delay);
+    }else{
+      console.error('[Sync] Max retries reached. Will retry on next user action or tab focus.');
+      _syncDirty=true;_syncRetryCount=0;
+    }
   }finally{_isSyncing=false;}
 }
-function _saveSyncSnapshot(D){
+function _buildSyncSnap(D){
   const snap={};
   for(const[key,fn]of Object.entries(ENTITY_MAP)){
     const records=fn(D);const m={};
     for(const r of records){const rid=r.id||r.date||JSON.stringify(r).substring(0,64);m[rid]=JSON.stringify(r);}
     snap[key]=m;
   }
-  try{localStorage.setItem('egglogu_sync_snapshot',JSON.stringify(snap));}catch(e){console.warn('[Sync] Snapshot save failed:',e.message);}
+  return snap;
+}
+function _saveSyncSnapshot(D){
+  const snap=_buildSyncSnap(D);
+  _saveSyncSnapshotIDB(snap);
 }
 function _mergeServerChanges(D,changes){
   const REVERSE_MAP={
@@ -3495,7 +3571,7 @@ h+=`<tr><td>${fmtDate(p.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td><td><st
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showProdForm('${escapeAttr(p.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteProd('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';
-h+=paginationControls('production',pg.page,pg.totalPages,function(p){_pageState.production=p;filterProd();});
+h+=paginationControls('production',pg.page,pg.totalPages,'filterProd');
 const w=$('prod-table');if(w)w.innerHTML=h;
 }
 function showProdForm(id){
@@ -3590,17 +3666,20 @@ const today=todayStr();
 vacs=vacs.map(v=>{const eff=v.status==='applied'?'applied':v.scheduledDate<today?'overdue':'pending';return{...v,effectiveStatus:eff};});
 if(st)vacs=vacs.filter(v=>v.effectiveStatus===st);
 if(!vacs.length)return h+emptyState('💉',t('no_data'));
+const pgV=paginate(vacs,_pageState.vaccines||1,PAGE_SIZE);
 h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('prod_flock')}</th><th>${t('vac_vaccine')}</th><th>${t('vac_route')}</th><th>${t('vac_scheduled')}</th><th>${t('vac_applied')}</th><th>${t('vac_batch')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
-vacs.forEach(v=>{const f=D.flocks.find(x=>x.id===v.flockId);
+pgV.items.forEach(v=>{const f=D.flocks.find(x=>x.id===v.flockId);
 h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(v.vaccineName)}</td><td>${v.route?t(v.route):'-'}</td><td>${fmtDate(v.scheduledDate)}</td>
 <td>${v.appliedDate?fmtDate(v.appliedDate):'-'}</td><td>${sanitizeHTML(v.batchNumber||'-')}</td>
 <td>${statusBadge(v.effectiveStatus)}</td>
 <td><div class="btn-group">${v.effectiveStatus!=='applied'?`<button class="btn btn-primary btn-sm" onclick="markVaccineApplied('${escapeAttr(v.id)}')">${t('vac_mark_applied')}</button>`:''}
 <button class="btn btn-secondary btn-sm" onclick="showVaccineForm('${escapeAttr(v.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteVaccine('${escapeAttr(v.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+h+='</tbody></table></div></div>';
+h+=paginationControls('vaccines',pgV.page,pgV.totalPages,'renderSanidad');
+return h;
 }
 function showGenVaccines(){
 const D=loadData();const flocks=D.flocks.filter(f=>f.birthDate&&f.status!=='descarte');
@@ -3659,10 +3738,11 @@ let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('med_title')}
 <button class="btn btn-primary btn-sm" onclick="showMedForm()">${t('med_add')}</button></div>`;
 if(!D.medications.length)return h+emptyState('💊',t('no_data'));
 const today=todayStr();
+const pgM=paginate(D.medications,_pageState.medications||1,PAGE_SIZE);
 h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('prod_flock')}</th><th>${t('med_name')}</th><th>${t('med_reason')}</th><th>${t('med_dosage')}</th><th>${t('med_start')}</th><th>${t('med_end')}</th><th>${t('med_withdrawal')}</th><th>${t('med_withdrawal_end')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
-D.medications.forEach(m=>{const f=D.flocks.find(x=>x.id===m.flockId);
+pgM.items.forEach(m=>{const f=D.flocks.find(x=>x.id===m.flockId);
 const inWD=m.withdrawalEnd&&m.withdrawalEnd>=today;
 h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(m.name)}</td><td>${sanitizeHTML(m.reason||'-')}</td><td>${sanitizeHTML(m.dosage||'-')}</td>
 <td>${fmtDate(m.startDate)}</td><td>${fmtDate(m.endDate)}</td><td>${m.withdrawalDays||'-'}</td>
@@ -3670,7 +3750,9 @@ h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(m.name)}</td><t
 <td>${inWD?'<span class="badge badge-warning">'+t('med_in_withdrawal')+'</span>':'<span class="badge badge-success">OK</span>'}</td>
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showMedForm('${escapeAttr(m.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteMed('${escapeAttr(m.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+h+='</tbody></table></div></div>';
+h+=paginationControls('medications',pgM.page,pgM.totalPages,'renderSanidad');
+return h;
 }
 function showMedForm(id){
 const D=loadData();const m=id?D.medications.find(x=>x.id===id):null;
@@ -3705,16 +3787,19 @@ function renderOutbreaksTab(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('out_title')}</h3>
 <button class="btn btn-primary btn-sm" onclick="showOutbreakForm()">${t('out_add')}</button></div>`;
 if(!D.outbreaks.length)return h+emptyState('🦠',t('no_data'));
+const pgO=paginate(D.outbreaks,_pageState.outbreaks||1,PAGE_SIZE);
 h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('prod_flock')}</th><th>${t('out_disease')}</th><th>${t('out_start')}</th><th>${t('out_end')}</th><th>${t('out_affected')}</th><th>${t('out_deaths')}</th><th>${t('out_loss')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
-D.outbreaks.forEach(o=>{const f=D.flocks.find(x=>x.id===o.flockId);
+pgO.items.forEach(o=>{const f=D.flocks.find(x=>x.id===o.flockId);
 h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(o.disease)}</td><td>${fmtDate(o.startDate)}</td><td>${fmtDate(o.endDate)}</td>
 <td>${fmtNum(o.affected||0)}</td><td>${o.deaths?'<span style="color:var(--danger)">'+o.deaths+'</span>':'-'}</td>
 <td>${fmtMoney(o.economicLoss||0)}</td><td>${statusBadge(o.status)}</td>
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showOutbreakForm('${escapeAttr(o.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteOutbreak('${escapeAttr(o.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+h+='</tbody></table></div></div>';
+h+=paginationControls('outbreaks',pgO.page,pgO.totalPages,'renderSanidad');
+return h;
 }
 function showOutbreakForm(id){
 const D=loadData();const o=id?D.outbreaks.find(x=>x.id===id):null;
@@ -3890,7 +3975,7 @@ h+=`<tr><td><strong>${sanitizeHTML(c.name)}</strong></td><td>${sanitizeHTML(c.ph
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showClientForm('${escapeAttr(c.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteClient('${escapeAttr(c.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';
-h+=paginationControls('clients',pg.page,pg.totalPages,function(p){_pageState.clients=p;renderClients();});
+h+=paginationControls('clients',pg.page,pg.totalPages,'renderClients');
 return h;
 }
 function renderClaimsList(D){
@@ -4067,7 +4152,7 @@ h+=`<tr><td>${fmtDate(r.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td><td>${r
 <td style="color:var(--danger)">${r.qtyOut?'-'+fmtNum(r.qtyOut):'-'}</td>
 <td>${sanitizeHTML(r.source||'-')}</td></tr>`;});
 h+='</tbody></table></div></div>';
-h+=paginationControls('inventory',pg.page,pg.totalPages,function(p){_pageState.inventory=p;filterInventory();});
+h+=paginationControls('inventory',pg.page,pg.totalPages,'filterInventory');
 const w=$('inv-table');if(w)w.innerHTML=h;
 }
 // === END INVENTORY ===
@@ -4104,7 +4189,7 @@ h+=`<tr><td>${fmtDate(i.date)}</td><td>${t('fin_type_'+i.type)||sanitizeHTML(i.t
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showIncomeForm('${escapeAttr(i.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteIncome('${escapeAttr(i.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';
-h+=paginationControls('income',pgI.page,pgI.totalPages,function(p){_pageState.income=p;renderFinances();});
+h+=paginationControls('income',pgI.page,pgI.totalPages,'renderFinances');
 return h;
 }
 function showIncomeForm(id){
@@ -4170,7 +4255,7 @@ h+=`<tr><td>${fmtDate(e.date)}</td><td>${t('fin_cat_'+e.category)||sanitizeHTML(
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showExpenseForm('${escapeAttr(e.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteExpense('${escapeAttr(e.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';
-h+=paginationControls('expenses',pgE.page,pgE.totalPages,function(p){_pageState.expenses=p;renderFinances();});
+h+=paginationControls('expenses',pgE.page,pgE.totalPages,'renderFinances');
 return h;
 }
 function showExpenseForm(id){
@@ -4635,13 +4720,16 @@ h+=`<div class="filter-bar"><select id="lf-cat" onchange="renderOperations()"><o
 const selCat=document.getElementById('lf-cat')?.value||'';
 let logs=D.logbook.sort((a,b)=>b.date.localeCompare(a.date));
 if(selCat)logs=logs.filter(l=>l.category===selCat);
+const pgL=paginate(logs,_pageState.logbook||1,PAGE_SIZE);
 h+='<div class="card">';
-logs.forEach(l=>{
+pgL.items.forEach(l=>{
 h+=`<div class="alert-card alert-info" style="flex-wrap:wrap"><div style="flex:1"><strong>${fmtDate(l.date)}</strong> — <span class="badge badge-info">${t('ops_log_cat_'+l.category)||sanitizeHTML(l.category)}</span>
 <p style="margin-top:4px">${sanitizeHTML(l.entry)}</p></div>
 <div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showLogForm('${escapeAttr(l.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteLog('${escapeAttr(l.id)}')">${t('delete')}</button></div></div>`;});
-h+='</div>';return h;
+h+='</div>';
+h+=paginationControls('logbook',pgL.page,pgL.totalPages,'renderOperations');
+return h;
 }
 function showLogForm(id){
 const D=loadData();const l=id?D.logbook.find(x=>x.id===id):null;
@@ -4668,15 +4756,17 @@ function renderOpsPersonnel(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('ops_personnel')}</h3>
 <button class="btn btn-primary btn-sm" onclick="showPersonnelForm()">${t('ops_per_add')}</button></div>`;
 if(!D.personnel.length)return h+emptyState('👷',t('no_data'));
+const pgPe=paginate(D.personnel,_pageState.personnel||1,PAGE_SIZE);
 h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('ops_per_name')}</th><th>${t('ops_per_role')}</th><th>${t('ops_per_salary')}</th><th>${t('ops_per_start')}</th><th>${t('ops_per_active')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
-D.personnel.forEach(p=>{
+pgPe.items.forEach(p=>{
 h+=`<tr><td><strong>${sanitizeHTML(p.name)}</strong></td><td>${sanitizeHTML(p.role||'-')}</td><td>${fmtMoney(p.salary||0)}</td><td>${fmtDate(p.startDate)}</td>
 <td>${p.active?'<span class="badge badge-success">'+t('active')+'</span>':'<span class="badge badge-secondary">'+t('inactive')+'</span>'}</td>
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showPersonnelForm('${escapeAttr(p.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deletePersonnel('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
 h+='</tbody></table></div></div>';
+h+=paginationControls('personnel',pgPe.page,pgPe.totalPages,'renderOperations');
 const totalSalary=D.personnel.filter(p=>p.active).reduce((s,p)=>s+(p.salary||0),0);
 h+=`<div class="kpi-grid">${kpi(t('total_salaries'),fmtMoney(totalSalary),D.personnel.filter(p=>p.active).length+' '+t('active').toLowerCase())}</div>`;
 return h;
@@ -4744,10 +4834,12 @@ h+=`<div class="kpi-card ${thi>28?'danger':thi>25?'warning':''}"><div class="kpi
 h+='</div></div>';}
 if(!D.environment.length)h+=emptyState('🌡️',t('no_data'),t('env_add'),'showEnvForm()');
 else{
+const envSorted=D.environment.sort((a,b)=>b.date.localeCompare(a.date));
+const pgEnv=paginate(envSorted,_pageState.envManual||1,PAGE_SIZE);
 h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('date')}</th><th>${t('env_temp')}</th><th>${t('env_humidity')}</th><th>${t('env_light')}</th><th>${t('env_ammonia')}</th><th>THI</th><th>${t('notes')}</th><th>${t('actions')}</th>`;
 h+='</tr></thead><tbody>';
-D.environment.sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20).forEach(e=>{
+pgEnv.items.forEach(e=>{
 const tOk=e.temperature>=18&&e.temperature<=24;const hOk=e.humidity>=40&&e.humidity<=70;
 const thi=(e.temperature&&e.humidity)?calcTHI(e.temperature,e.humidity):null;
 h+=`<tr><td>${fmtDate(e.date)}</td><td style="color:${tOk?'var(--success)':'var(--danger)'}">${e.temperature||'-'}°C</td>
@@ -4756,7 +4848,8 @@ h+=`<tr><td>${fmtDate(e.date)}</td><td style="color:${tOk?'var(--success)':'var(
 <td>${thi?thi.toFixed(1):'-'}</td><td>${sanitizeHTML(e.notes||'-')}</td>
 <td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showEnvForm('${escapeAttr(e.id)}')">${t('edit')}</button>
 <button class="btn btn-danger btn-sm" onclick="deleteEnv('${escapeAttr(e.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';}
+h+='</tbody></table></div></div>';
+h+=paginationControls('envManual',pgEnv.page,pgEnv.totalPages,'renderEnvironment');}
 return h;
 }
 function renderEnvIoT(D){
@@ -4783,13 +4876,16 @@ CHARTS.env=new Chart(c,{type:'line',data:{labels:recs.map(r=>r.date.substring(5)
 ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
 scales:{y:{position:'left',title:{display:true,text:'°C'}},y1:{position:'right',title:{display:true,text:'%'},grid:{drawOnChartArea:false}}}}});
 },100);
+const envHistSorted=D.environment.sort((a,b)=>b.date.localeCompare(a.date));
+const pgHist=paginate(envHistSorted,_pageState.envHistory||1,PAGE_SIZE);
 h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
 h+=`<th>${t('date')}</th><th>${t('env_temp')}</th><th>${t('env_humidity')}</th><th>${t('env_light')}</th><th>${t('env_ammonia')}</th><th>THI</th><th>${t('notes')}</th></tr></thead><tbody>`;
-D.environment.sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
+pgHist.items.forEach(e=>{
 const thi=(e.temperature&&e.humidity)?calcTHI(e.temperature,e.humidity):null;
 h+=`<tr><td>${fmtDate(e.date)}</td><td>${e.temperature||'-'}°C</td><td>${e.humidity||'-'}%</td>
 <td>${e.lightHours||'-'} hrs</td><td>${e.ammoniaLevel||'-'} ppm</td><td>${thi?thi.toFixed(1):'-'}</td><td>${sanitizeHTML(e.notes||'-')}</td></tr>`;});
 h+='</tbody></table></div></div>';
+h+=paginationControls('envHistory',pgHist.page,pgHist.totalPages,'renderEnvironment');
 return h;
 }
 function showEnvForm(id){
@@ -7286,7 +7382,7 @@ pg.items.forEach(r=>{h+=`<tr><td style="font-size:12px;white-space:nowrap">${(r.
 <td><span class="badge badge-${r.action==='create'?'success':r.action==='delete'?'danger':'info'}">${r.action}</span></td>
 <td>${sanitizeHTML(r.module||'-')}</td><td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis">${sanitizeHTML(r.detail||'-')}</td></tr>`;});
 h+='</tbody></table></div>';
-h+=paginationControls('auditLog',pg.page,pg.totalPages,function(p){_pageState.auditLog=p;renderAuditLog();});
+h+=paginationControls('auditLog',pg.page,pg.totalPages,'renderAuditLog');
 const el=$('audit-log-table');if(el)el.innerHTML=h;
 }
 function exportData(){
@@ -7888,9 +7984,11 @@ function renderStressEventsTab(D){
 let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('stress_title')}</h3>
 <button class="btn btn-primary btn-sm" onclick="showStressForm()">${t('add')}</button></div>`;
 if(!D.stressEvents.length)return h+emptyState('⚡',t('no_data'));
+const stressSorted=D.stressEvents.sort((a,b)=>b.date.localeCompare(a.date));
+const pgSt=paginate(stressSorted,_pageState.stress||1,PAGE_SIZE);
 // Timeline view
 h+='<div class="card"><div class="stress-timeline">';
-D.stressEvents.sort((a,b)=>b.date.localeCompare(a.date)).forEach(ev=>{
+pgSt.items.forEach(ev=>{
 const sColor=['','#4CAF50','#FFC107','#FF9800','#F44336','#9C27B0'][ev.severity]||'#999';
 const f=D.flocks.find(x=>x.id===ev.flockId);
 // Production impact
@@ -7911,6 +8009,7 @@ h+=`<div class="stress-event" style="border-left:4px solid ${sColor}">
 <button class="btn btn-danger btn-sm" onclick="deleteStress('${escapeAttr(ev.id)}')">${t('delete')}</button></div></div>`;
 });
 h+='</div></div>';
+h+=paginationControls('stress',pgSt.page,pgSt.totalPages,'renderSanidad');
 return h;
 }
 function showStressForm(id){

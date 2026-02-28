@@ -1,8 +1,10 @@
 import json
 import logging
+import os
 import time
 import traceback
 import uuid as _uuid
+from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 
 import sentry_sdk
@@ -98,6 +100,17 @@ setup_logging()
 logger = logging.getLogger("egglogu")
 
 
+# ── In-Memory Metrics Collector ─────────────────────────────────────
+_METRICS_WINDOW = 1000  # Keep last 1000 request latencies
+_metrics = {
+    "request_count": 0,
+    "error_count": 0,
+    "latencies": deque(maxlen=_METRICS_WINDOW),
+    "status_codes": defaultdict(int),
+    "started_at": time.time(),
+}
+
+
 # ── Request ID + Logging Middleware ─────────────────────────────────
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """Assigns a request_id, logs method/path/status/duration for every request."""
@@ -109,6 +122,13 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         start = time.perf_counter()
         response: Response = await call_next(request)
         duration_ms = round((time.perf_counter() - start) * 1000)
+
+        # Collect metrics
+        _metrics["request_count"] += 1
+        _metrics["latencies"].append(duration_ms)
+        _metrics["status_codes"][response.status_code] += 1
+        if response.status_code >= 500:
+            _metrics["error_count"] += 1
 
         logger.info(
             "%s %s → %d (%dms)",
@@ -319,5 +339,38 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 async def health_check():
     return JSONResponse(
         content={"status": "ok"},
+        headers={"Cache-Control": "no-cache, no-store"},
+    )
+
+
+@app.get("/metrics")
+async def metrics():
+    """Internal metrics endpoint for monitoring. Not public — behind reverse proxy."""
+    latencies = list(_metrics["latencies"])
+    if latencies:
+        latencies_sorted = sorted(latencies)
+        n = len(latencies_sorted)
+        p50 = latencies_sorted[int(n * 0.50)]
+        p95 = latencies_sorted[int(n * 0.95)]
+        p99 = latencies_sorted[min(int(n * 0.99), n - 1)]
+        avg = round(sum(latencies_sorted) / n, 1)
+    else:
+        p50 = p95 = p99 = avg = 0
+
+    uptime_s = round(time.time() - _metrics["started_at"])
+    total = _metrics["request_count"]
+    errors = _metrics["error_count"]
+    error_rate = round((errors / total * 100), 2) if total > 0 else 0
+
+    return JSONResponse(
+        content={
+            "uptime_seconds": uptime_s,
+            "total_requests": total,
+            "error_count": errors,
+            "error_rate_pct": error_rate,
+            "latency_ms": {"p50": p50, "p95": p95, "p99": p99, "avg": avg},
+            "status_codes": dict(_metrics["status_codes"]),
+            "workers": int(os.environ.get("WEB_CONCURRENCY", 4)),
+        },
         headers={"Cache-Control": "no-cache, no-store"},
     )
