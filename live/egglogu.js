@@ -6196,9 +6196,9 @@ const D=loadData();
 let h=`<div class="page-header"><h2>${t('cfg_title')}</h2></div>`;
 // Theme picker
 const curTheme=localStorage.getItem('egglogu_theme')||'blue';
-h+='<div class="card"><h3>'+t('cfg_theme')+'</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">';
+h+='<div class="card"><h3>'+t('cfg_theme')+'</h3><div style="display:flex;gap:12px;flex-wrap:wrap">';
 Object.keys(THEMES).forEach(name=>{const th=THEMES[name];const active=curTheme===name;
-h+='<button onclick="applyTheme(\''+name+'\');nav(\'config\')" style="border-radius:12px;border:'+(active?'3px solid '+th.primary:'2px solid var(--border)')+';background:var(--card);cursor:pointer;padding:0;overflow:hidden;transition:all .25s;box-shadow:'+(active?'0 4px 16px rgba(0,0,0,.2)':'0 2px 6px rgba(0,0,0,.08)')+';transform:'+(active?'scale(1.03)':'scale(1)')+'"><div style="height:48px;background:linear-gradient(135deg,'+th['sidebar-bg']+' 0%,'+th.primary+' 50%,'+th['primary-light']+' 100%)"></div><div style="padding:10px 8px;display:flex;align-items:center;gap:8px;background:'+(active?'rgba('+th.rgb+',.06)':'var(--bg)')+'"><span style="width:20px;height:20px;border-radius:50%;background:'+th.primary+';border:2px solid '+th['primary-light']+';flex-shrink:0"></span><span style="font-size:13px;font-weight:'+(active?'700':'500')+';color:'+(active?th.primary:'var(--text)')+'">'+(active?'✓ ':'')+t('cfg_theme_'+name)+'</span></div></button>';});
+h+='<button onclick="applyTheme(\''+name+'\');nav(\'config\')" style="width:90px;height:64px;border-radius:var(--radius);border:'+(active?'3px solid var(--secondary)':'2px solid var(--border)')+';background:'+th['sidebar-bg']+';color:#fff;cursor:pointer;font-weight:'+(active?'700':'400')+';font-size:13px;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><span style="width:24px;height:24px;border-radius:50%;background:'+th.primary+';border:2px solid rgba(255,255,255,.5)"></span>'+t('cfg_theme_'+name)+'</button>';});
 h+='</div></div>';
 // Accessibility: Font size + Dark mode
 const curScale=D.settings.fontScale||'normal';
