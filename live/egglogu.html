@@ -159,7 +159,10 @@ tr:hover{background:var(--primary-hover)}
 .lifecycle-bar{flex-wrap:wrap;height:auto}.lifecycle-stage{padding:8px}
 }
 @media(max-width:480px){.kpi-grid{grid-template-columns:1fr}.kpi-card .kpi-value{font-size:22px}}
-.leaflet-container{height:400px;width:100%;border-radius:var(--radius);z-index:1}
+.leaflet-container{height:400px;width:100%;border-radius:var(--radius);z-index:1;overflow:hidden;position:relative}
+.modal-body .leaflet-container{height:350px;border:1px solid var(--border);margin-bottom:12px}
+.modal-body .leaflet-container .leaflet-tile-pane{position:absolute}
+.leaflet-control-container .leaflet-top{z-index:2}.leaflet-control-container .leaflet-bottom{z-index:2}
 .weather-widget{background:linear-gradient(135deg,#4A7AB5,#1A3C6E);color:#fff;border-radius:var(--radius);padding:20px;margin-bottom:20px}
 .weather-widget .weather-main{display:flex;align-items:center;gap:16px;margin-bottom:12px}
 .weather-widget .weather-temp{font-size:42px;font-weight:700}.weather-widget .weather-desc{font-size:14px;opacity:.9}

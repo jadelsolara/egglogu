@@ -6186,9 +6186,9 @@ const D=loadData();
 let h=`<div class="page-header"><h2>${t('cfg_title')}</h2></div>`;
 // Theme picker
 const curTheme=localStorage.getItem('egglogu_theme')||'blue';
-h+='<div class="card"><h3>'+t('cfg_theme')+'</h3><div style="display:flex;gap:12px;flex-wrap:wrap">';
+h+='<div class="card"><h3>'+t('cfg_theme')+'</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">';
 Object.keys(THEMES).forEach(name=>{const th=THEMES[name];const active=curTheme===name;
-h+='<button onclick="applyTheme(\''+name+'\');nav(\'config\')" style="width:90px;height:64px;border-radius:var(--radius);border:'+(active?'3px solid var(--secondary)':'2px solid var(--border)')+';background:'+th['sidebar-bg']+';color:#fff;cursor:pointer;font-weight:'+(active?'700':'400')+';font-size:13px;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px"><span style="width:24px;height:24px;border-radius:50%;background:'+th.primary+';border:2px solid rgba(255,255,255,.5)"></span>'+t('cfg_theme_'+name)+'</button>';});
+h+='<button onclick="applyTheme(\''+name+'\');nav(\'config\')" style="border-radius:12px;border:'+(active?'3px solid '+th.primary:'2px solid var(--border)')+';background:#fff;cursor:pointer;padding:0;overflow:hidden;transition:all .25s;box-shadow:'+(active?'0 4px 16px rgba(0,0,0,.2)':'0 2px 6px rgba(0,0,0,.08)')+';transform:'+(active?'scale(1.03)':'scale(1)')+'"><div style="height:48px;background:linear-gradient(135deg,'+th['sidebar-bg']+' 0%,'+th.primary+' 50%,'+th['primary-light']+' 100%)"></div><div style="padding:10px 8px;display:flex;align-items:center;gap:8px;background:'+(active?'rgba('+th.rgb+',.06)':'var(--bg)')+'"><span style="width:20px;height:20px;border-radius:50%;background:'+th.primary+';border:2px solid '+th['primary-light']+';flex-shrink:0"></span><span style="font-size:13px;font-weight:'+(active?'700':'500')+';color:'+(active?th.primary:'var(--text)')+'">'+(active?'✓ ':'')+t('cfg_theme_'+name)+'</span></div></button>';});
 h+='</div></div>';
 // Accessibility: Font size + Dark mode
 const curScale=D.settings.fontScale||'normal';
@@ -6207,34 +6207,16 @@ h+=`<div class="card"><h3>${t('cfg_farm')}</h3>
 <div class="form-row"><div class="form-group"><label>${t('cfg_capacity')}</label><input type="number" id="cfg-cap" value="${D.farm.capacity||''}" min="0"></div>
 <div class="form-group"><label>${t('cfg_currency')}</label><input id="cfg-cur" value="${escapeAttr(D.farm.currency||'$')}" maxlength="5"></div></div>
 <button class="btn btn-primary" onclick="saveConfig()">${t('save')}</button></div>`;
-// Houses & Racks
-h+=`<div class="card"><h3>🏠 ${t('cfg_houses')}</h3>`;
-const cfgHouses=D.farm.houses||[];
-if(!cfgHouses.length){h+=`<p style="color:var(--text-light);font-size:13px;margin-bottom:12px">${t('cfg_no_houses')}</p>`;}
-else{cfgHouses.forEach((ho,hi)=>{
-h+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<strong>${sanitizeHTML(ho.name)}</strong>
-<button class="btn btn-danger btn-sm" onclick="removeHouse(${hi})">✕</button></div>`;
-if(ho.racks&&ho.racks.length){ho.racks.forEach((r,ri)=>{
-h+=`<div style="display:flex;align-items:center;gap:8px;margin-left:20px;margin-bottom:4px">
-<span style="font-size:13px">📦 ${sanitizeHTML(r.name)}</span>
-<button class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:10px" onclick="removeRack(${hi},${ri})">✕</button></div>`;});}
-h+=`<div style="display:flex;gap:8px;margin-left:20px;margin-top:8px">
-<input id="rack-input-${hi}" placeholder="${t('cfg_rack_name')}" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px">
-<button class="btn btn-secondary btn-sm" onclick="addRack(${hi})">${t('cfg_rack_add')}</button></div></div>`;});}
-h+=`<div style="display:flex;gap:8px;margin-top:12px">
-<input id="house-input" placeholder="${t('cfg_house_name')}" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius)">
-<button class="btn btn-primary btn-sm" onclick="addHouse()">${t('cfg_house_add')}</button></div></div>`;
 // Geolocation
 h+=`<div class="card"><h3>${t('geo_set_location')}</h3>
 <p style="color:var(--text-light);margin-bottom:8px">${D.farm.lat?t('geo_lat')+': '+D.farm.lat+' | '+t('geo_lng')+': '+D.farm.lng:t('geo_click_map')}</p>
 <button class="btn btn-secondary" onclick="showGeoModal()">${t('geo_set_location')}</button></div>`;
 // Weather API
 h+=`<div class="card"><h3>${t('weather_title')} — OpenWeatherMap (${t('optional')||'Optional'})</h3>
+${!D.farm.lat?`<div class="alert-card alert-info" style="margin-bottom:12px">📍 ${t('weather_no_key')}</div>`:''}
 <p style="color:var(--text-light);margin-bottom:8px;font-size:13px">Open-Meteo provides weather data by default — no API key needed. Add an OpenWeatherMap key below only if you prefer OWM.</p>
 <div class="form-row"><div class="form-group"><label>API Key (OWM)</label><input id="cfg-owm" value="${escapeAttr(D.farm.owmApiKey||'')}" placeholder="Optional"></div>
-<div class="form-group" style="display:flex;align-items:flex-end"><button class="btn btn-secondary" onclick="testWeatherApi()">${t('weather_test')}</button></div></div>
+<div class="form-group" style="display:flex;align-items:flex-end"><button class="btn btn-secondary" onclick="testWeatherApi()"${!D.farm.lat?' disabled':''}>${t('weather_test')}</button></div></div>
 <button class="btn btn-primary" onclick="saveWeatherConfig()">${t('save')}</button></div>`;
 // MQTT / IoT
 h+=`<div class="card"><h3>${t('iot_title')} (MQTT)</h3>
@@ -6372,10 +6354,10 @@ const D=loadData();D.farm.name=$('cfg-name').value;D.farm.location=$('cfg-loc').
 D.farm.capacity=parseInt($('cfg-cap').value)||0;D.farm.currency=$('cfg-cur').value||'$';
 saveData(D);toast(t('cfg_saved'));
 }
-function addHouse(){const v=$('house-input')?.value?.trim();if(!v)return;const D=loadData();if(!D.farm.houses)D.farm.houses=[];if(D.farm.houses.some(h=>h.name===v)){toast('⚠️ '+v+' already exists','warning');return;}D.farm.houses.push({name:v,racks:[]});saveData(D);renderConfig();}
-function removeHouse(i){const D=loadData();D.farm.houses.splice(i,1);saveData(D);renderConfig();}
-function addRack(hi){const v=$('rack-input-'+hi)?.value?.trim();if(!v)return;const D=loadData();const ho=D.farm.houses[hi];if(!ho)return;if(!ho.racks)ho.racks=[];if(ho.racks.some(r=>r.name===v)){toast('⚠️ '+v+' already exists','warning');return;}ho.racks.push({name:v});saveData(D);renderConfig();}
-function removeRack(hi,ri){const D=loadData();D.farm.houses[hi].racks.splice(ri,1);saveData(D);renderConfig();}
+function addHouse(){const v=$('house-input')?.value?.trim();if(!v)return;const D=loadData();if(!D.farm.houses)D.farm.houses=[];if(D.farm.houses.some(h=>h.name===v)){toast('⚠️ '+v+' already exists','warning');return;}D.farm.houses.push({name:v,racks:[]});saveData(D);renderTraceability();}
+function removeHouse(i){const D=loadData();D.farm.houses.splice(i,1);saveData(D);renderTraceability();}
+function addRack(hi){const v=$('rack-input-'+hi)?.value?.trim();if(!v)return;const D=loadData();const ho=D.farm.houses[hi];if(!ho)return;if(!ho.racks)ho.racks=[];if(ho.racks.some(r=>r.name===v)){toast('⚠️ '+v+' already exists','warning');return;}ho.racks.push({name:v});saveData(D);renderTraceability();}
+function removeRack(hi,ri){const D=loadData();D.farm.houses[hi].racks.splice(ri,1);saveData(D);renderTraceability();}
 function saveAlertConfig(){
 const D=loadData();D.settings.minFeedStock=numVal('cfg-minfeed')||50;
 D.settings.maxMortality=numVal('cfg-maxmort')||5;
@@ -6882,7 +6864,9 @@ ${kpi('THI',thi.toFixed(1),thi>28?t('weather_heat_alert'):'OK',thiClass)}
 </div>`;
 }
 async function testWeatherApi(){
-const key=$('cfg-owm')?.value;const D=loadData();const lat=D.farm.lat||0;const lng=D.farm.lng||0;
+const key=$('cfg-owm')?.value;const D=loadData();
+const lat=D.farm.lat;const lng=D.farm.lng;
+if(lat===null||lat===undefined||lng===null||lng===undefined){toast(t('weather_no_key'),true);return;}
 try{
 if(key){
 const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&appid=${encodeURIComponent(key)}&units=metric`);
@@ -6901,28 +6885,32 @@ let geoMap=null;let geoMarker=null;
 function showGeoModal(){
 const D=loadData();
 openModal(t('geo_set_location'),`
-<div style="margin-bottom:8px"><button class="btn btn-secondary btn-sm" onclick="useGPS()">${t('geo_use_gps')}</button>
-<span style="margin-left:8px;color:var(--text-light)">${t('geo_click_map')}</span></div>
-<div id="geo-map" class="leaflet-container" style="height:400px;border-radius:var(--radius)"></div>
-<div class="form-row" style="margin-top:8px">
-<div class="form-group"><label>${t('geo_lat')}</label><input id="geo-lat" type="number" step="any" value="${D.farm.lat||''}"></div>
-<div class="form-group"><label>${t('geo_lng')}</label><input id="geo-lng" type="number" step="any" value="${D.farm.lng||''}"></div></div>
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+<button class="btn btn-secondary btn-sm" onclick="useGPS()">📍 ${t('geo_use_gps')}</button>
+<span style="color:var(--text-light);font-size:13px">${t('geo_click_map')}</span></div>
+<div style="position:relative;width:100%;height:350px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:16px">
+<div id="geo-map" style="position:absolute;top:0;left:0;right:0;bottom:0;z-index:1"></div></div>
+<div class="form-row">
+<div class="form-group"><label>${t('geo_lat')}</label><input id="geo-lat" type="number" step="any" value="${D.farm.lat||''}" placeholder="-33.4569"></div>
+<div class="form-group"><label>${t('geo_lng')}</label><input id="geo-lng" type="number" step="any" value="${D.farm.lng||''}" placeholder="-70.6483"></div></div>
 <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
 <button class="btn btn-primary" onclick="saveGeoLocation()">${t('save')}</button></div>`);
 setTimeout(()=>{
 const lat=D.farm.lat||0;const lng=D.farm.lng||0;
 const el=document.getElementById('geo-map');if(!el)return;
-if(geoMap){geoMap.remove();geoMap=null;}
-geoMap=L.map(el).setView([lat||20,lng||-70],lat?10:2);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'OSM'}).addTo(geoMap);
+if(geoMap){try{geoMap.remove();}catch(e){}geoMap=null;}
+geoMap=L.map(el,{zoomControl:true,attributionControl:false}).setView([lat||20,lng||-70],lat?10:2);
+L.control.attribution({position:'bottomright',prefix:false}).addAttribution('OSM').addTo(geoMap);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(geoMap);
 if(lat&&lng){geoMarker=L.marker([lat,lng]).addTo(geoMap);}
 geoMap.on('click',function(e){
 if(geoMarker)geoMap.removeLayer(geoMarker);
 geoMarker=L.marker([e.latlng.lat,e.latlng.lng]).addTo(geoMap);
 $('geo-lat').value=e.latlng.lat.toFixed(6);$('geo-lng').value=e.latlng.lng.toFixed(6);
 });
-setTimeout(()=>{geoMap.invalidateSize();},300);
-},300);
+setTimeout(()=>{geoMap.invalidateSize();},200);
+setTimeout(()=>{geoMap.invalidateSize();},600);
+},350);
 }
 function useGPS(){
 if(!navigator.geolocation){toast('GPS '+t('not_available'),true);return;}
@@ -8221,6 +8209,28 @@ const D=loadData();const batches=D.traceability.batches;
 let h=`<div class="page-header"><h2>${t('trace_title')}</h2>
 <div class="btn-group"><button class="btn btn-primary" onclick="showBatchForm()">${t('trace_add')}</button>
 <button class="btn btn-secondary" onclick="exportBatchCSV()">${t('export_csv')}</button></div></div>`;
+// Houses & Racks management
+const trHouses=D.farm.houses||[];
+h+=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="const el=$('houses-panel');el.style.display=el.style.display==='none'?'block':'none'">
+<h3 style="margin:0">🏠 ${t('cfg_houses')} <span style="font-size:12px;color:var(--text-light)">(${trHouses.length})</span></h3>
+<span style="font-size:18px;color:var(--text-light)">▾</span></div>
+<div id="houses-panel" style="display:none;margin-top:12px">`;
+if(!trHouses.length){h+=`<p style="color:var(--text-light);font-size:13px;margin-bottom:12px">${t('cfg_no_houses')}</p>`;}
+else{trHouses.forEach((ho,hi)=>{
+h+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<strong>🏠 ${sanitizeHTML(ho.name)}</strong>
+<button class="btn btn-danger btn-sm" onclick="removeHouse(${hi})">✕</button></div>`;
+if(ho.racks&&ho.racks.length){ho.racks.forEach((r,ri)=>{
+h+=`<div style="display:flex;align-items:center;gap:8px;margin-left:20px;margin-bottom:4px">
+<span style="font-size:13px">📦 ${sanitizeHTML(r.name)}</span>
+<button class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:10px" onclick="removeRack(${hi},${ri})">✕</button></div>`;});}
+h+=`<div style="display:flex;gap:8px;margin-left:20px;margin-top:8px">
+<input id="rack-input-${hi}" placeholder="${t('cfg_rack_name')}" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px">
+<button class="btn btn-secondary btn-sm" onclick="addRack(${hi})">${t('cfg_rack_add')}</button></div></div>`;});}
+h+=`<div style="display:flex;gap:8px;margin-top:12px">
+<input id="house-input" placeholder="${t('cfg_house_name')}" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius)">
+<button class="btn btn-primary btn-sm" onclick="addHouse()">${t('cfg_house_add')}</button></div></div></div>`;
 // Search
 h+=`<div class="card"><div class="form-row"><div class="form-group" style="flex:1">
 <input id="trace-search" placeholder="${t('trace_search')}" oninput="filterBatches()"></div></div></div>`;
