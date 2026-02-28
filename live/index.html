@@ -2,705 +2,655 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>What came first? | EGGlogU 360</title>
-<meta name="theme-color" content="#1B2E4B">
-<meta name="description" content="What came first, the chicken or the egg? Answer: EGGlogU 360 — Gestión Avícola Inteligente">
-<meta property="og:title" content="What came first, the chicken or the egg?">
-<meta property="og:description" content="Answer: EGGlogU 360 — La plataforma que nació antes que el problema.">
-<meta property="og:image" content="https://egglogu.com/campaign-logo.webp">
-<meta property="og:url" content="https://egglogu.com/">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://egglogu.com/">
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGGlogU — Gestion avicola inteligente</title>
+<meta name="description" content="Plataforma digital para granjas avicolas. Produccion, salud, alimentacion, finanzas y trazabilidad. Funciona offline. Prueba gratis 30 dias.">
+<link rel="icon" href="favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#1B2E4B;--navy-deep:#0F2137;--orange:#F5A623;--red:#E74C3C;--white:#FFFFFF;--cream:#FFF8E1}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:var(--white);min-height:100vh;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2E4B;--navy-deep:#0F2137;--navy-light:#243B55;
+  --orange:#F5A623;--orange-dark:#E09200;--orange-glow:rgba(245,166,35,.15);
+  --red:#E74C3C;--cream:#FFF8E1;
+  --white:#FFFFFF;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.12);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--white);line-height:1.6;overflow-x:hidden;background:var(--navy-deep)}
+a{color:inherit;text-decoration:none}
+img,svg{max-width:100%;display:block}
 
-/* Phase 1: Teaser */
-.phase-teaser{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;background:radial-gradient(ellipse at center,#243B55 0%,var(--navy-deep) 70%)}
-.phase-teaser::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M20 10c-3 0-6 5-6 10s3 10 6 10 6-5 6-10-3-10-6-10z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,33,55,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);padding:.75rem 0;transition:box-shadow .3s}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.25rem;color:var(--white)}
+.nav-brand img{width:36px;height:36px;border-radius:8px}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{font-size:.95rem;color:rgba(255,255,255,.7);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--orange)}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.65rem 1.5rem;border-radius:8px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-primary{background:var(--orange);color:var(--navy-deep)}
+.btn-primary:hover{background:var(--orange-dark);transform:translateY(-1px);box-shadow:0 4px 20px rgba(245,166,35,.4)}
+.btn-outline{border:2px solid var(--orange);color:var(--orange);background:transparent}
+.btn-outline:hover{background:rgba(245,166,35,.1)}
+.btn-white{background:var(--white);color:var(--navy-deep)}
+.btn-white:hover{background:var(--gray-100);transform:translateY(-1px)}
+.btn-ghost{border:2px solid rgba(255,255,255,.3);color:var(--white);background:transparent}
+.btn-ghost:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.05)}
+.btn-lg{padding:.85rem 2.2rem;font-size:1.1rem;border-radius:10px}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:.3s}
 
-.question-mark{font-size:120px;opacity:.06;position:absolute;font-weight:900}
-.q1{top:10%;left:8%;transform:rotate(-15deg)}
-.q2{top:20%;right:12%;transform:rotate(20deg)}
-.q3{bottom:15%;left:15%;transform:rotate(10deg)}
-.q4{bottom:25%;right:8%;transform:rotate(-25deg)}
-
-.logo-container{margin-bottom:48px;position:relative;z-index:1}
-.logo-container img{width:280px;height:280px;border-radius:40px;box-shadow:0 20px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);transition:transform .6s cubic-bezier(.16,1,.3,1)}
-.logo-container img:hover{transform:scale(1.05) rotate(-2deg)}
-.logo-glow{position:absolute;inset:-20px;border-radius:60px;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 70%);z-index:-1;animation:glow 3s ease-in-out infinite alternate}
+/* HERO */
+.hero{padding:8rem 1.5rem 5rem;background:radial-gradient(ellipse at center,var(--navy-light) 0%,var(--navy-deep) 70%);text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:rgba(245,166,35,.04)}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:rgba(245,166,35,.03)}
+.hero-content{max-width:800px;margin:0 auto;position:relative;z-index:1}
+.hero-logo{margin:0 auto 2rem;position:relative;width:180px;height:180px}
+.hero-logo img{width:180px;height:180px;border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);position:relative;z-index:1}
+.hero-logo .logo-glow{position:absolute;inset:-15px;border-radius:45px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);animation:glow 3s ease-in-out infinite alternate}
 @keyframes glow{0%{opacity:.5;transform:scale(.95)}100%{opacity:1;transform:scale(1.05)}}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem}
+.hero-badge span{background:var(--orange);color:var(--navy-deep);padding:.15rem .5rem;border-radius:50px;font-size:.75rem;font-weight:700}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;line-height:1.15;margin-bottom:1.25rem;color:var(--white)}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p{font-size:1.2rem;color:rgba(255,255,255,.6);max-width:600px;margin:0 auto 2rem;line-height:1.7}
+.hero-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:3.5rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat strong{display:block;font-size:1.8rem;color:var(--orange);font-weight:800}
+.hero-stat span{font-size:.85rem;color:rgba(255,255,255,.5)}
 
-.question{position:relative;z-index:1}
-.question h1{font-size:clamp(28px,5vw,52px);font-weight:300;line-height:1.3;margin-bottom:12px;letter-spacing:-1px}
-.question h1 em{font-style:italic;color:rgba(255,255,255,.6)}
-.question .dots{font-size:40px;letter-spacing:8px;opacity:.4;margin:20px 0;animation:pulse 2s ease-in-out infinite}
+/* CURTAIN / TEASER */
+.curtain{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#243B55 0%,var(--navy-deep) 70%);text-align:center;position:relative;overflow:hidden;padding:40px 24px;z-index:200}
+.curtain::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='30' y='35' text-anchor='middle' font-size='14' font-weight='700' fill='rgba(255,255,255,0.03)' font-family='Inter,sans-serif'%3E%3F%3C/text%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.curtain .question-mark{font-size:120px;opacity:.06;position:absolute;font-weight:900;color:var(--white);pointer-events:none}
+.curtain .q1{top:10%;left:8%;transform:rotate(-15deg)}
+.curtain .q2{top:20%;right:12%;transform:rotate(20deg)}
+.curtain .q3{bottom:15%;left:15%;transform:rotate(10deg)}
+.curtain .q4{bottom:25%;right:8%;transform:rotate(-25deg)}
+.curtain-topbar{position:absolute;top:1.25rem;left:1.5rem;right:1.5rem;display:flex;justify-content:space-between;align-items:center;z-index:5}
+.curtain-access{display:inline-flex;align-items:center;gap:.5rem;border:2px solid var(--orange);color:var(--orange);background:transparent;padding:.55rem 1.2rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none}
+.curtain-access:hover{background:rgba(245,166,35,.12)}
+.lang-picker{position:relative}
+.lang-globe{width:40px;height:40px;border-radius:50%;background:transparent;border:2px solid rgba(255,255,255,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s}
+.lang-globe:hover{border-color:var(--white);background:rgba(255,255,255,.08)}
+.lang-globe svg{width:20px;height:20px;color:var(--white)}
+.lang-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--navy);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.5rem 0;min-width:160px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:all .25s ease;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:10}
+.lang-dropdown.open{opacity:1;visibility:visible;transform:translateY(0)}
+.lang-option{display:block;width:100%;padding:.55rem 1.1rem;font-size:.88rem;font-weight:500;color:rgba(255,255,255,.65);background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;transition:all .15s}
+.lang-option:hover{background:rgba(255,255,255,.06);color:var(--white)}
+.lang-option.active{color:var(--orange);font-weight:600}
+.curtain-body{position:relative;z-index:2;max-width:700px;display:flex;flex-direction:column;align-items:center}
+.curtain-logo-wrap{margin:0 auto 48px;position:relative;z-index:1}
+.curtain-logo-wrap .logo-glow{position:absolute;inset:-20px;border-radius:60px;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 70%);z-index:-1;animation:glow 3s ease-in-out infinite alternate}
+.curtain-logo{width:280px;height:280px;border-radius:40px;box-shadow:0 20px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);transition:transform .6s cubic-bezier(.16,1,.3,1);cursor:pointer}
+.curtain-logo:hover{transform:scale(1.05) rotate(-2deg)}
+.curtain-question{position:relative;z-index:1}
+.curtain-question h2{font-size:clamp(28px,5vw,52px);font-weight:300;line-height:1.3;margin-bottom:12px;letter-spacing:-1px;color:var(--white)}
+.curtain-question h2 em{font-style:italic;color:rgba(255,255,255,.6)}
+.curtain-dots{font-size:40px;letter-spacing:8px;opacity:.4;margin:20px 0;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}}
-
-.answer-reveal{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal 1s ease-out 2.5s forwards}
+.curtain-answer{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal 1s ease-out 2.5s forwards}
 @keyframes reveal{to{opacity:1;transform:translateY(0)}}
+.curtain-brand{font-size:clamp(42px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1;color:var(--white)}
+.curtain-brand span.light{font-weight:300;color:rgba(255,255,255,.6)}
+.curtain-360{font-size:clamp(24px,4vw,48px);font-weight:800;color:var(--orange);letter-spacing:6px;margin-top:4px}
+.curtain-sub{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.6);margin-top:20px;font-weight:300;font-style:italic}
+.curtain-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;animation:bounce 2s infinite}
+.curtain-scroll svg{width:28px;height:28px;color:rgba(255,255,255,.3)}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
-.answer-label{font-size:14px;text-transform:uppercase;letter-spacing:4px;color:rgba(255,255,255,.5);margin-bottom:16px;font-weight:600}
-.answer-brand{font-size:clamp(42px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1}
-.answer-brand .egg{color:var(--white)}
-.answer-brand .log{font-weight:300;color:rgba(255,255,255,.7)}
-.answer-brand .u{color:var(--white)}
-.answer-360{font-size:clamp(24px,4vw,48px);font-weight:800;color:var(--orange);letter-spacing:6px;margin-top:4px}
-.answer-tagline{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.6);margin-top:20px;font-weight:300;font-style:italic}
+/* SECTION COMMON */
+section{padding:5rem 1.5rem}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-header{text-align:center;max-width:650px;margin:0 auto 3.5rem}
+.section-header h2{font-size:2.2rem;font-weight:700;margin-bottom:.75rem;color:var(--white)}
+.section-header p{color:rgba(255,255,255,.5);font-size:1.1rem}
 
-/* Divider */
-.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);margin:0}
+/* PROBLEMS */
+.problems{background:var(--navy)}
+.problems-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:900px;margin:0 auto}
+.problem-card{display:flex;gap:1rem;align-items:flex-start;background:rgba(255,255,255,.04);padding:1.5rem;border-radius:var(--radius);border:1px solid rgba(255,255,255,.08)}
+.problem-icon{flex-shrink:0;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.problem-icon.red{background:rgba(231,76,60,.12);color:var(--red)}
+.problem-icon.green{background:rgba(245,166,35,.12);color:var(--orange)}
+.problem-card h3{font-size:1rem;font-weight:600;margin-bottom:.25rem;color:var(--white)}
+.problem-card p{font-size:.9rem;color:rgba(255,255,255,.5)}
 
-/* Phase 2: The Pitch */
-.phase-pitch{padding:80px 24px;text-align:center;background:var(--navy)}
-.pitch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:32px;max-width:960px;margin:48px auto 0}
-.pitch-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px 24px;transition:all .3s}
-.pitch-card:hover{background:rgba(255,255,255,.08);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.2)}
-.pitch-icon{font-size:40px;margin-bottom:16px}
-.pitch-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
-.pitch-card p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6}
+/* FEATURES */
+.features-section{background:var(--navy-deep)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feature-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:2rem;transition:all .25s}
+.feature-card:hover{border-color:var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.1);transform:translateY(-3px)}
+.feature-icon{width:52px;height:52px;border-radius:12px;background:rgba(245,166,35,.1);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem}
+.feature-card h3{font-size:1.15rem;font-weight:600;margin-bottom:.5rem;color:var(--white)}
+.feature-card p{font-size:.92rem;color:rgba(255,255,255,.5);line-height:1.6}
 
-.section-title{font-size:clamp(22px,3.5vw,36px);font-weight:800;margin-bottom:8px}
-.section-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,.5);font-weight:300}
+/* HOW IT WORKS */
+.how{background:var(--navy)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;position:relative}
+.steps::before{content:'';position:absolute;top:36px;left:calc(12.5% + 24px);right:calc(12.5% + 24px);height:2px;background:rgba(255,255,255,.1)}
+.step{text-align:center;position:relative}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--orange);color:var(--navy-deep);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;margin:0 auto 1.25rem;position:relative;z-index:1}
+.step h3{font-size:1.05rem;font-weight:600;margin-bottom:.4rem;color:var(--white)}
+.step p{font-size:.88rem;color:rgba(255,255,255,.5)}
 
-/* Pricing — Side-by-Side Cards */
-.phase-pricing{padding:80px 24px;text-align:center;background:var(--navy-deep)}
-.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1200px;margin:48px auto 0;text-align:left}
-@media(max-width:1024px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.pricing-grid{grid-template-columns:1fr;max-width:400px}}
-.plan-card{border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 24px;display:flex;flex-direction:column;transition:transform .2s,border-color .2s;position:relative;background:rgba(255,255,255,.02)}
-.plan-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.2)}
-.plan-card.featured{border-color:var(--orange);background:rgba(245,166,35,.05)}
-.plan-card.featured:hover{border-color:var(--orange)}
-.plan-badge{position:absolute;top:-12px;right:20px;background:var(--orange);color:var(--navy-deep);font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap}
-.plan-tier{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:12px}
-.plan-card.featured .plan-tier{color:var(--orange)}
-.plan-price{font-size:36px;font-weight:900;line-height:1;margin-bottom:4px}
-.plan-price span{font-size:15px;font-weight:400;color:rgba(255,255,255,.5)}
-.plan-desc{font-size:14px;color:rgba(255,255,255,.45);margin-bottom:20px}
-.price-features{list-style:none;text-align:left;margin-bottom:24px;flex:1}
-.price-features li{padding:7px 0;font-size:13.5px;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.05)}
-.price-features li::before{content:'\2713  ';color:var(--orange);font-weight:700}
-.btn-price{display:block;padding:12px 20px;background:transparent;border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;transition:all .2s;cursor:pointer}
-.btn-price:hover{border-color:#fff;background:rgba(255,255,255,.05)}
-.btn-price-main{background:var(--orange);border-color:var(--orange);color:var(--navy-deep)}
-.btn-price-main:hover{background:#FFB84D;border-color:#FFB84D}
-.pricing-note{max-width:1200px;margin:28px auto 0;padding:16px 24px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:12px;font-size:14px;color:rgba(255,255,255,.8);line-height:1.6;text-align:center}
-.pricing-note strong{color:var(--orange)}
-.contact-strip{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-email{padding:14px 32px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-.btn-email:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4)}
+/* DIFFERENTIATORS */
+.diff-section{background:var(--navy-deep)}
+.diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.diff-card{background:linear-gradient(135deg,rgba(245,166,35,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:2rem;text-align:center;transition:all .25s}
+.diff-card:hover{border-color:var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.08);transform:translateY(-3px)}
+.diff-card .diff-icon{font-size:2.5rem;margin-bottom:1rem}
+.diff-card h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--white)}
+.diff-card p{font-size:.9rem;color:rgba(255,255,255,.5)}
 
-/* Phase 3: CTA */
-.phase-cta{padding:80px 24px;text-align:center;background:linear-gradient(135deg,var(--navy-deep) 0%,#243B55 100%);position:relative}
-.taglines{display:flex;flex-direction:column;gap:16px;max-width:600px;margin:40px auto 48px;align-items:center}
-.tagline{font-size:clamp(16px,2.5vw,22px);padding:12px 28px;border-radius:40px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-weight:300;transition:all .3s;cursor:default}
-.tagline:hover{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);color:var(--orange)}
-.tagline strong{font-weight:700;color:var(--orange)}
+/* PRICING */
+.pricing{background:var(--navy)}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;align-items:start}
+.price-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:2rem 1.5rem;text-align:left;transition:all .25s;position:relative;display:flex;flex-direction:column}
+.price-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.2);border-color:rgba(255,255,255,.15)}
+.price-card.featured{border:2px solid var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.15)}
+.price-card.featured::before{content:'Mas Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:var(--navy-deep);padding:.2rem 1rem;border-radius:50px;font-size:.78rem;font-weight:700}
+.price-card h3{font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem;color:rgba(255,255,255,.6)}
+.price-card.featured h3{color:var(--orange)}
+.price-card .price{font-size:2.8rem;font-weight:800;color:var(--white);margin:0 0 .15rem}
+.price-card .price span{font-size:1rem;font-weight:400;color:rgba(255,255,255,.5)}
+.price-card .price-period{font-size:.85rem;color:rgba(255,255,255,.4);margin-bottom:1.5rem}
+.price-card ul{list-style:none;text-align:left;margin-bottom:1.5rem;flex:1}
+.price-card li{font-size:.88rem;color:rgba(255,255,255,.7);padding:.35rem 0;display:flex;align-items:flex-start;gap:.5rem}
+.price-card li::before{content:'\2713';color:var(--orange);font-weight:700;font-size:.85rem;flex-shrink:0}
+.price-card .btn{width:100%}
+.pricing-included{margin-top:3rem;border:2px solid var(--orange);border-radius:var(--radius);padding:2.5rem 2rem;text-align:center}
+.pricing-included h3{font-size:1.1rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:1.5rem}
+.pricing-included-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.pricing-included-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1.25rem;text-align:left}
+.pricing-included-card h4{font-size:.95rem;font-weight:700;color:var(--orange);margin-bottom:.4rem}
+.pricing-included-card p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5}
+.pricing-note{margin-top:1.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1rem 1.5rem;text-align:center;font-size:.9rem;color:rgba(255,255,255,.6)}
+.pricing-note strong{color:var(--orange);font-weight:700}
 
-.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
-.btn-main{padding:16px 40px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
-.btn-main:hover{background:#FFB84D;transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,166,35,.3)}
-.btn-ghost{padding:16px 40px;background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.3);border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
-.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.05)}
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy-light) 100%);color:var(--white);text-align:center;padding:5rem 1.5rem;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.06) 0%,transparent 70%)}
+.cta-section h2{font-size:2.2rem;font-weight:700;margin-bottom:.75rem;position:relative;z-index:1}
+.cta-section p{font-size:1.15rem;opacity:.6;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
 
-/* Promo Banner */
-.promo-banner{max-width:1200px;margin:32px auto 0;background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(245,166,35,.04));border:2px solid var(--orange);border-radius:16px;padding:28px 32px;text-align:center}
-.promo-banner h3{font-size:clamp(18px,3vw,22px);font-weight:800;color:var(--orange);margin-bottom:16px;text-transform:uppercase;letter-spacing:2px}
-.promo-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0;text-align:left}
-.promo-item{background:rgba(255,255,255,.04);border-radius:10px;padding:14px 16px;border:1px solid rgba(255,255,255,.06)}
-.promo-item strong{color:var(--orange);display:block;font-size:15px;margin-bottom:4px}
-.promo-item span{font-size:13px;color:rgba(255,255,255,.6);line-height:1.5}
-.promo-bottom{margin-top:16px;font-size:14px;color:rgba(255,255,255,.75);line-height:1.6}
-.promo-bottom strong{color:var(--orange)}
-.promo-ref{margin-top:10px;font-size:13px;color:rgba(255,255,255,.6)}
-.promo-ref strong{color:#7ed957}
-.promo-highlight{border-color:rgba(126,217,87,.3);background:rgba(126,217,87,.06)}
-.promo-highlight strong{color:#7ed957!important}
-.promo-reward{border-color:rgba(100,181,246,.3);background:rgba(100,181,246,.06)}
-.promo-reward strong{color:#64B5F6!important}
-.promo-rewards{margin-top:14px;padding:12px 18px;background:rgba(255,255,255,.04);border-radius:10px;font-size:13px;color:rgba(255,255,255,.7);line-height:1.8}
-.promo-rewards strong{color:var(--orange)}
-/* Founding Farmer */
-.founding-farmer{max-width:1200px;margin:28px auto 0;background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(184,134,11,.04));border:2px solid #DAA520;border-radius:16px;padding:32px;text-align:center;position:relative;overflow:hidden}
-.founding-farmer::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23DAA520' fill-opacity='0.03'%3E%3Cpath d='M30 10 L32 25 L30 22 L28 25Z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
-.ff-seal{margin-bottom:16px;display:flex;justify-content:center}
-.ff-seal-outer{width:140px;height:140px;position:relative;border-radius:50%;background:conic-gradient(from 0deg,#DAA520,#FFD700,#C0C0C0,#E8D5B7,#B8860B,#FFD700,#DAA520);padding:3px;animation:ff-holo-rotate 6s linear infinite}
-@keyframes ff-holo-rotate{to{filter:hue-rotate(360deg)}}
-.ff-seal-ring{position:absolute;inset:3px;border-radius:50%;border:2px dashed rgba(218,165,32,.4);pointer-events:none;animation:ff-ring-spin 20s linear infinite}
-@keyframes ff-ring-spin{to{transform:rotate(360deg)}}
-.ff-seal-shimmer{position:absolute;inset:-2px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0%,rgba(255,255,255,.3) 10%,transparent 20%,transparent 50%,rgba(255,255,255,.2) 60%,transparent 70%);animation:ff-shimmer 3s linear infinite;pointer-events:none;z-index:2}
-@keyframes ff-shimmer{to{transform:rotate(360deg)}}
-.ff-seal-inner{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,215,0,.15),rgba(15,33,55,.95) 70%);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 30px rgba(218,165,32,.15),0 0 40px rgba(218,165,32,.2)}
-.ff-seal-svg{width:110px;height:110px;filter:drop-shadow(0 0 6px rgba(218,165,32,.4))}
-.founding-farmer h3{font-size:clamp(20px,3vw,26px);font-weight:900;color:#DAA520;text-transform:uppercase;letter-spacing:3px;margin-bottom:8px}
-.ff-sub{font-size:14px;color:rgba(255,255,255,.65);max-width:600px;margin:0 auto 24px;line-height:1.6}
-.ff-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-@media(max-width:700px){.ff-slots{grid-template-columns:repeat(2,1fr)}}
-.ff-slot{background:rgba(255,255,255,.04);border:1px solid rgba(218,165,32,.2);border-radius:12px;padding:16px 12px}
-.ff-slot-pop{border-color:var(--orange);background:rgba(245,166,35,.06)}
-.ff-slot-ent{border-color:#DAA520;background:rgba(218,165,32,.08)}
-.ff-tier{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:6px}
-.ff-count{font-size:22px;font-weight:900;color:#DAA520;margin-bottom:4px}
-.ff-price{font-size:14px;color:rgba(255,255,255,.6)}
-.ff-price span{font-size:12px;color:rgba(255,255,255,.4)}
-.ff-fine{font-size:13px;color:rgba(255,255,255,.55);line-height:1.7;max-width:800px;margin:0 auto}
+/* FOOTER */
+footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5rem 1.5rem;border-top:1px solid rgba(255,255,255,.06)}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem}
+.footer-brand{font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.footer-brand img{width:28px;height:28px;border-radius:6px}
+.footer-brand-text{font-size:.88rem;color:rgba(255,255,255,.4);line-height:1.6}
+.footer-col h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:1rem;font-weight:600}
+.footer-col a{display:block;font-size:.9rem;color:rgba(255,255,255,.5);padding:.3rem 0;transition:color .2s}
+.footer-col a:hover{color:var(--orange)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:rgba(255,255,255,.35);flex-wrap:wrap;gap:.5rem}
 
-/* Lead Capture */
-.phase-lead{padding:80px 24px;text-align:center;background:var(--navy)}
-.lead-form{max-width:520px;margin:40px auto 0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px 28px}
-.lead-form .lf-row{display:flex;gap:12px;margin-bottom:14px}
-.lead-form input,.lead-form select{flex:1;padding:12px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-size:14px;font-family:inherit;transition:border-color .2s}
-.lead-form input::placeholder{color:rgba(255,255,255,.3)}
-.lead-form input:focus,.lead-form select:focus{outline:none;border-color:var(--orange)}
-.lead-form select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,.4)' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
-.lead-form select option{background:var(--navy-deep);color:#fff}
-.lf-submit{width:100%;padding:14px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
-.lf-submit:hover{background:#FFB84D;transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,166,35,.3)}
-.lf-privacy{margin-top:12px;font-size:11px;color:rgba(255,255,255,.3)}
-.lf-msg{margin-top:16px;padding:14px;background:rgba(126,217,87,.1);border:1px solid rgba(126,217,87,.3);border-radius:10px;color:#7ed957;font-size:14px;font-weight:600;display:none}
-
-/* Footer */
-.footer{padding:32px 24px;text-align:center;background:var(--navy-deep);border-top:1px solid rgba(255,255,255,.05)}
-.footer p{font-size:13px;color:rgba(255,255,255,.3)}
-.footer a{color:var(--orange);text-decoration:none}
-
-/* Social share cards */
-.share-strip{display:flex;gap:12px;justify-content:center;margin-top:32px}
-.share-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .2s;text-decoration:none;color:#fff}
-.share-btn:hover{background:var(--orange);border-color:var(--orange);color:var(--navy-deep);transform:scale(1.1)}
-
-/* Language switcher */
-.top-bar{position:fixed;top:16px;left:16px;right:16px;z-index:200;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
-.top-bar>*{pointer-events:auto}
-.lang-bar{display:flex;gap:6px;align-items:center;background:rgba(15,33,55,.85);backdrop-filter:blur(8px);padding:6px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.1)}
-.lang-bar button{padding:5px 14px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
-.lang-bar button.active{background:#fff;color:var(--navy-deep);border-color:#fff}
-.lang-bar button:hover:not(.active){background:rgba(255,255,255,.1);color:#fff}
-.lang-bar .badge-more{font-size:10px;color:var(--orange);font-weight:500;padding:0 4px}
-.btn-client-access{display:inline-flex;align-items:center;gap:6px;padding:7px 18px;background:rgba(245,166,35,.15);border:1px solid var(--orange);color:var(--orange);border-radius:30px;font-size:12px;font-weight:700;text-decoration:none;transition:all .2s;backdrop-filter:blur(8px)}
-.btn-client-access:hover{background:var(--orange);color:var(--navy-deep)}
-
-@media(max-width:600px){
-  .logo-container{display:flex;justify-content:center;width:100%}
-  .logo-container img{width:200px;height:200px;border-radius:30px}
-  .question-mark{font-size:80px}
-  .phase-teaser{padding:32px 20px;align-items:center;text-align:center;width:100%}
-  .phase-pitch,.phase-cta,.phase-pricing{padding:60px 20px;width:100%;box-sizing:border-box}
-  .price-amount{font-size:36px}
-  .top-bar{top:10px;left:10px;right:10px}
-  .btn-client-access{font-size:11px;padding:6px 12px}
-  .lang-bar button{padding:4px 10px;font-size:11px}
-  .section-title{width:100%}
-  .section-sub{width:100%}
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .features-grid,.diff-grid{grid-template-columns:repeat(2,1fr)}
+  .pricing-grid{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .steps::before{display:none}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--navy-deep);flex-direction:column;padding:1.5rem;gap:1rem;border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .nav-links.open{display:flex}
+  .hamburger{display:block}
+  .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+  .features-grid,.diff-grid,.pricing-grid,.problems-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .hero{padding:6.5rem 1.5rem 3.5rem}
+  .hero h1{font-size:2rem}
+  .hero-logo{width:140px;height:140px}
+  .hero-logo img{width:140px;height:140px}
+  .hero-stats{gap:1.5rem}
+  .curtain-topbar{position:relative;top:auto;left:auto;right:auto;margin-bottom:1.5rem;justify-content:flex-end}
+  .curtain-access{justify-content:center}
+  .curtain{padding-top:1.5rem}
+  .curtain-logo{width:200px;height:200px}
+  .curtain .question-mark{font-size:80px}
+  .footer-grid{grid-template-columns:1fr}
+  section{padding:3.5rem 1.5rem}
 }
 </style>
-<!-- Plausible Analytics — privacy-first, no cookies, GDPR compliant -->
-<!-- Geo tracking (country/region/city), UTM params, custom events included -->
-<script defer data-domain="egglogu.com" src="https://plausible.io/js/script.tagged-events.outbound-links.file-downloads.js"></script>
-<script>window.plausible=window.plausible||function(){(window.plausible.q=window.plausible.q||[]).push(arguments)}</script>
 </head>
 <body>
 
-<!-- Top bar: Client access + Language switcher -->
-<div class="top-bar">
-  <a href="egglogu.html" class="btn-client-access" data-t="btn_access">🔑 <span data-t="client_access">Acceso Clientes</span></a>
-  <div class="lang-bar">
-    <button class="active" onclick="setLang('es',true)">ES</button>
-    <button onclick="setLang('en',true)">EN</button>
-    <button onclick="setLang('pt',true)">PT</button>
+<!-- CURTAIN / TEASER -->
+<section class="curtain" id="curtain">
+  <div class="curtain-topbar">
+    <div></div>
+    <div class="lang-picker">
+      <button class="lang-globe" id="langGlobe" aria-label="Idioma">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/><ellipse cx="12" cy="7" rx="8.5" ry="0" /><path d="M3.5 7c2.5.8 5.3 1.2 8.5 1.2s6-.4 8.5-1.2"/><path d="M3.5 17c2.5-.8 5.3-1.2 8.5-1.2s6 .4 8.5 1.2"/></svg>
+      </button>
+      <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-option active" data-lang="es">Espanol</button>
+        <button class="lang-option" data-lang="en">English</button>
+        <button class="lang-option" data-lang="pt">Portugues</button>
+        <button class="lang-option" data-lang="fr">Francais</button>
+        <button class="lang-option" data-lang="de">Deutsch</button>
+        <button class="lang-option" data-lang="it">Italiano</button>
+        <button class="lang-option" data-lang="ja">日本語</button>
+        <button class="lang-option" data-lang="zh">中文</button>
+        <button class="lang-option" data-lang="ru">Русский</button>
+        <button class="lang-option" data-lang="id">Bahasa</button>
+        <button class="lang-option" data-lang="ar">العربية</button>
+        <button class="lang-option" data-lang="ko">한국어</button>
+        <button class="lang-option" data-lang="th">ไทย</button>
+        <button class="lang-option" data-lang="vi">Tieng Viet</button>
+      </div>
+    </div>
   </div>
-</div>
-
-<!-- PHASE 1: THE QUESTION -->
-<section class="phase-teaser">
   <span class="question-mark q1">?</span>
   <span class="question-mark q2">?</span>
   <span class="question-mark q3">?</span>
   <span class="question-mark q4">?</span>
-
-  <div class="logo-container">
-    <img src="campaign-logo.webp" alt="Chicken inside an egg — EGGlogU 360">
-    <div class="logo-glow"></div>
-  </div>
-
-  <div class="question">
-    <h1><em data-t="q_what">Que fue primero...</em><br><span data-t="q_chicken_egg">el huevo o la gallina?</span></h1>
-    <div class="dots">...</div>
-  </div>
-
-  <div class="answer-reveal">
-    <div class="answer-brand">
-      <span class="egg">EGG</span><span class="log">log</span><span class="u">U</span>
+  <div class="curtain-body">
+    <div class="curtain-logo-wrap">
+      <div class="logo-glow"></div>
+      <img src="campaign-logo.webp" alt="EGGlogU" class="curtain-logo" width="280" height="280">
     </div>
-    <div class="answer-360">360</div>
-    <div class="answer-tagline" data-t="tagline_main">La plataforma que nacio antes que el problema.</div>
+    <div class="curtain-question">
+      <h2 data-i18n="curtain_question"><em>Que fue primero...</em><br>el huevo o la gallina?</h2>
+    </div>
+    <div class="curtain-dots">. . .</div>
+    <div class="curtain-answer">
+      <div class="curtain-brand"><strong>EGG</strong><span class="light">log</span><strong>U</strong></div>
+      <div class="curtain-360" data-i18n="curtain_360">360</div>
+      <div class="curtain-sub" data-i18n="curtain_sub">La plataforma que nacio antes que el problema.</div>
+    </div>
+  </div>
+  <a href="#nav" class="curtain-scroll" aria-label="Scroll down">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10l5 5 5-5"/></svg>
+  </a>
+</section>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <img src="campaign-logo.webp" alt="EGGlogU" width="36" height="36">
+      EGGlogU
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="nav-links" id="navLinks">
+      <a href="#features" data-i18n="nav_features">Funcionalidades</a>
+      <a href="#how" data-i18n="nav_how">Como funciona</a>
+      <a href="#pricing" data-i18n="nav_pricing">Precios</a>
+      <a href="egglogu.html" class="btn btn-outline" data-i18n="nav_login">&#x1F511; Acceso Clientes</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-logo">
+      <div class="logo-glow"></div>
+      <img src="campaign-logo.webp" alt="EGGlogU" width="180" height="180">
+    </div>
+    <div class="hero-badge"><span>Live</span> <span data-i18n="hero_badge">Parte de la plataforma FarmLogU</span></div>
+    <h1 data-i18n="hero_title">Gestion avicola <em>inteligente y sin complicaciones</em></h1>
+    <p data-i18n="hero_desc">Produccion de huevos, salud de parvadas, alimentacion, finanzas y trazabilidad en una sola plataforma. Funciona sin internet.</p>
+    <div class="hero-buttons">
+      <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 dias</a>
+      <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>100%</strong><span data-i18n="stat_offline">Offline-first</span></div>
+      <div class="hero-stat"><strong>14</strong><span data-i18n="stat_langs">Idiomas</span></div>
+      <div class="hero-stat"><strong>30</strong><span data-i18n="stat_trial">Dias gratis</span></div>
+      <div class="hero-stat"><strong>24/7</strong><span data-i18n="stat_support">Soporte IA</span></div>
+    </div>
   </div>
 </section>
 
-<div class="divider"></div>
 
-<!-- PHASE 2: WHY US -->
-<section class="phase-pitch">
-  <div class="section-title" data-t="pitch_title">Ni el huevo ni la gallina.</div>
-  <div class="section-sub" data-t="pitch_sub">Nosotros llegamos primero.</div>
-
-  <div class="pitch-grid">
-    <div class="pitch-card">
-      <div class="pitch-icon">🧠</div>
-      <h3 data-t="card1_t">IA Predictiva</h3>
-      <p data-t="card1_p">Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.</p>
+<!-- PROBLEMS -->
+<section class="problems">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="problems_title">El problema que resolvemos</h2>
+      <p data-i18n="problems_desc">La gestion manual de granjas avicolas cuesta tiempo, dinero y trazabilidad</p>
     </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">🛡️</div>
-      <h3 data-t="card2_t">Bioseguridad Total</h3>
-      <p data-t="card2_p">Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">📦</div>
-      <h3 data-t="card3_t">Trazabilidad Completa</h3>
-      <p data-t="card3_p">Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">📊</div>
-      <h3 data-t="card4_t">20 Modulos Integrados</h3>
-      <p data-t="card4_p">Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, trazabilidad, bioseguridad, IA y mas. Todo en una sola plataforma.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">🌾</div>
-      <h3 data-t="card5_t">Modo Campo</h3>
-      <p data-t="card5_p">Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">🔒</div>
-      <h3 data-t="card6_t">Validacion Zero Tolerance</h3>
-      <p data-t="card6_p">4 procesadores validan cada dato. Cero errores financieros. Confianza total para contadores y auditores.</p>
+    <div class="problems-grid">
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob1_title">Produccion registrada en cuadernos</h3><p data-i18n="prob1_desc">Datos de huevos por galpon anotados a mano, perdidos entre hojas y carpetas.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob2_title">Registro digital por parvada</h3><p data-i18n="prob2_desc">Produccion diaria con grados, roturas, mortalidad y notas. Todo desde el celular.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob3_title">Salud sin trazabilidad</h3><p data-i18n="prob3_desc">Vacunas, medicamentos y brotes sin historial. Imposible auditar.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob4_title">Historial sanitario completo</h3><p data-i18n="prob4_desc">Vacunas, medicaciones, brotes y eventos de estres con fechas y responsables.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob5_title">Costos de alimento descontrolados</h3><p data-i18n="prob5_desc">Sin saber cuanto consume cada parvada ni el costo real por huevo producido.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob6_title">Alimentacion optimizada</h3><p data-i18n="prob6_desc">Compras, consumo por parvada, conversion alimenticia y costo por huevo automatico.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob7_title">Finanzas en Excel desactualizado</h3><p data-i18n="prob7_desc">Ingresos, gastos y cuentas por cobrar en hojas de calculo que nadie actualiza.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob8_title">Finanzas en tiempo real</h3><p data-i18n="prob8_desc">Ingresos, gastos, cuentas por cobrar y dashboard financiero siempre actualizado.</p></div>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="features_title">Todo lo que necesitas para tu granja</h2>
+      <p data-i18n="features_desc">Desde el galpon hasta la venta, todo en un solo lugar</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F95A;</div>
+        <h3 data-i18n="feat1_title">Produccion diaria</h3>
+        <p data-i18n="feat1_desc">Registro por parvada: huevos totales, grados (AA, A, B, C), roturas, mortalidad. Curvas de produccion vs estandar de raza.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F3E5;</div>
+        <h3 data-i18n="feat2_title">Salud y sanidad</h3>
+        <p data-i18n="feat2_desc">Calendario de vacunas, medicaciones con dosis y retiro, brotes con aislamiento, eventos de estres y bioseguridad.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F33E;</div>
+        <h3 data-i18n="feat3_title">Alimentacion</h3>
+        <p data-i18n="feat3_desc">Compras de alimento con proveedor y costo. Consumo diario por parvada. Conversion alimenticia automatica.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4B0;</div>
+        <h3 data-i18n="feat4_title">Finanzas</h3>
+        <p data-i18n="feat4_desc">Ingresos por venta, gastos operativos, cuentas por cobrar con vencimiento. Dashboard de rentabilidad por granja.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F50D;</div>
+        <h3 data-i18n="feat5_title">Trazabilidad</h3>
+        <p data-i18n="feat5_desc">Lotes con QR desde el galpon hasta el cliente. Historial completo de produccion, calidad y despacho.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4CA;</div>
+        <h3 data-i18n="feat6_title">Analytics y KPIs</h3>
+        <p data-i18n="feat6_desc">Tasa de postura, mortalidad, conversion alimenticia, costo por huevo, predicciones con IA. Todo en dashboards interactivos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F30D;</div>
+        <h3 data-i18n="feat7_title">Ambiente e IoT</h3>
+        <p data-i18n="feat7_desc">Temperatura, humedad, amoniaco, iluminacion. Integracion con sensores IoT y datos climaticos automaticos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
+        <h3 data-i18n="feat8_title">Bioseguridad</h3>
+        <p data-i18n="feat8_desc">Registro de visitantes, zonas de bioseguridad, protocolos de ingreso, avistamiento de plagas y auditorias.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4CB;</div>
+        <h3 data-i18n="feat9_title">Operaciones</h3>
+        <p data-i18n="feat9_desc">Checklists diarios, bitacora de galpon, personal con roles y turnos. Planificacion de produccion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="how_title">Empieza en minutos</h2>
+      <p data-i18n="how_desc">Sin instalacion, sin hardware especial. Solo un navegador.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 data-i18n="step1_title">Crea tu cuenta</h3>
+        <p data-i18n="step1_desc">Registro gratuito. 30 dias de prueba sin tarjeta de credito.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 data-i18n="step2_title">Configura tu granja</h3>
+        <p data-i18n="step2_desc">Agrega galpones, parvadas y personal. Importa datos si ya tienes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 data-i18n="step3_title">Registra a diario</h3>
+        <p data-i18n="step3_desc">Produccion, salud, alimento y gastos desde cualquier dispositivo. Sin internet.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3 data-i18n="step4_title">Analiza y decide</h3>
+        <p data-i18n="step4_desc">Dashboards con KPIs, tendencias, predicciones IA y alertas automaticas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATORS -->
+<section class="diff-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="diff_title">Por que EGGlogU</h2>
+      <p data-i18n="diff_desc">Disenado por y para avicultores</p>
+    </div>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F4F4;</div>
+        <h3 data-i18n="diff1_title">Funciona sin internet</h3>
+        <p data-i18n="diff1_desc">PWA offline-first. Registra datos en el galpon sin cobertura. Se sincroniza automaticamente al reconectarse.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F30E;</div>
+        <h3 data-i18n="diff2_title">14 idiomas</h3>
+        <p data-i18n="diff2_desc">Espanol, ingles, portugues, frances, aleman, italiano, japones, chino y 6 mas. Tu equipo trabaja en su idioma.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F9E9;</div>
+        <h3 data-i18n="diff3_title">Plataforma modular</h3>
+        <p data-i18n="diff3_desc">Parte de FarmLogU. Integra con HarvestLogU, CowLogU y mas. Paga solo lo que necesitas.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- PRICING -->
-<section class="phase-pricing" id="pricing">
-  <div class="section-title" data-t="pricing_title">Planes y Precios</div>
-  <div class="section-sub" data-t="pricing_sub">Sin contratos. Cancela cuando quieras. 30 dias de prueba completa.</div>
-
-  <div class="pricing-grid">
-    <div class="plan-card">
-      <div class="plan-tier" data-t="tier0_name">Hobbyist</div>
-      <div class="plan-price">$19<span data-t="price_mo">/mes</span></div>
-      <div class="plan-desc" data-t="tier0_desc">Productor independiente</div>
-      <ul class="price-features">
-        <li data-t="t0f1">Hasta 2 lotes</li>
-        <li data-t="t0f2">1 usuario · +$4.99/extra</li>
-        <li data-t="t0f3">Produccion + Dashboard</li>
-        <li data-t="t0f4">Modo Campo</li>
-        <li data-t="t0f5">Funciona sin internet</li>
-      </ul>
-      <a href="egglogu.html" class="btn-price" data-t="btn_trial">Empezar + Enterprise 30 Dias</a>
+<section class="pricing" id="pricing">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="pricing_title">Planes y Precios</h2>
+      <p data-i18n="pricing_desc">Sin contratos. Cancela cuando quieras. Todos incluyen 30 dias Enterprise.</p>
     </div>
-
-    <div class="plan-card">
-      <div class="plan-tier" data-t="tier1_name">Starter</div>
-      <div class="plan-price">$49<span data-t="price_mo">/mes</span></div>
-      <div class="plan-desc" data-t="tier1_desc">Operacion comercial</div>
-      <ul class="price-features">
-        <li data-t="t1f1">Hasta 5 lotes</li>
-        <li data-t="t1f2">1 usuario · +$3.99/extra</li>
-        <li data-t="t1f3">Produccion + Alimentacion + Salud</li>
-        <li data-t="t1f4">Finanzas + Clientes</li>
-        <li data-t="t1f5">Modo Campo + Dashboard</li>
-      </ul>
-      <a href="egglogu.html" class="btn-price" data-t="btn_trial">Empezar + Enterprise 30 Dias</a>
-    </div>
-
-    <div class="plan-card featured">
-      <span class="plan-badge" data-t="badge_pop">Mas Popular</span>
-      <div class="plan-tier" data-t="tier2_name">Professional</div>
-      <div class="plan-price">$99<span data-t="price_mo">/mes</span></div>
-      <div class="plan-desc" data-t="tier2_desc">Operacion completa con IA</div>
-      <ul class="price-features">
-        <li data-t="t2f1">Hasta 15 lotes</li>
-        <li data-t="t2f2">1 usuario · +$2.99/extra</li>
-        <li data-t="t2f3">20 modulos completos</li>
-        <li data-t="t2f4">IA predictiva + Analytics</li>
-        <li data-t="t2f5">Bioseguridad + Trazabilidad</li>
-        <li data-t="t2f6">Validacion Zero Tolerance</li>
-      </ul>
-      <a href="egglogu.html" class="btn-price btn-price-main" data-t="btn_trial">Empezar + Enterprise 30 Dias</a>
-    </div>
-
-    <div class="plan-card">
-      <div class="plan-tier" data-t="tier3_name">Enterprise</div>
-      <div class="plan-price">$199<span data-t="price_mo">/mes</span></div>
-      <div class="plan-desc" data-t="tier3_desc">Multi-granja, sin limites</div>
-      <ul class="price-features">
-        <li data-t="t3f1">Lotes ilimitados</li>
-        <li data-t="t3f2">1 usuario · +$2.49/extra (-50%)</li>
-        <li data-t="t3f3">Multi-granja centralizada</li>
-        <li data-t="t3f4">Todo en Professional +</li>
-        <li data-t="t3f5">Soporte dedicado 24/7</li>
-        <li data-t="t3f6">Onboarding personalizado</li>
-      </ul>
-      <a href="egglogu.html" class="btn-price btn-price-main" data-t="btn_trial_ent">Probar Enterprise</a>
-    </div>
-  </div>
-
-  <div class="promo-banner">
-    <h3 data-t="promo_title">Incluido en todos los planes</h3>
-    <div class="promo-details">
-      <div class="promo-item">
-        <strong data-t="promo_trial">30 dias Enterprise completo</strong>
-        <span data-t="promo_trial_desc">Empieza con todas las funcionalidades. Sin restricciones. Elige tu plan cuando estes listo.</span>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3 data-i18n="hobby_name">Hobbyist</h3>
+        <div class="price">$19<span>/mes</span></div>
+        <div class="price-period" data-i18n="hobby_limit">Productor independiente</div>
+        <ul>
+          <li data-i18n="hobby_f1">Hasta 2 lotes</li>
+          <li data-i18n="hobby_f2">1 usuario · +$4.99/extra</li>
+          <li data-i18n="hobby_f3">Produccion + Dashboard</li>
+          <li data-i18n="hobby_f4">Modo Campo</li>
+          <li data-i18n="hobby_f5">Funciona sin internet</li>
+        </ul>
+        <a href="egglogu.html" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Dias</a>
       </div>
-      <div class="promo-item">
-        <strong data-t="promo_offline">Funciona sin internet</strong>
-        <span data-t="promo_offline_desc">Registra produccion en el campo. Se sincroniza automaticamente cuando hay conexion.</span>
+      <div class="price-card">
+        <h3 data-i18n="starter_name">Starter</h3>
+        <div class="price">$49<span>/mes</span></div>
+        <div class="price-period" data-i18n="starter_limit">Operacion comercial</div>
+        <ul>
+          <li data-i18n="starter_f1">Hasta 5 lotes</li>
+          <li data-i18n="starter_f2">1 usuario · +$3.99/extra</li>
+          <li data-i18n="starter_f3">Produccion + Alimentacion + Salud</li>
+          <li data-i18n="starter_f4">Finanzas + Clientes</li>
+          <li data-i18n="starter_f5">Modo Campo + Dashboard</li>
+        </ul>
+        <a href="egglogu.html" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Dias</a>
       </div>
-      <div class="promo-item">
-        <strong data-t="promo_cancel">Sin contratos, sin compromiso</strong>
-        <span data-t="promo_cancel_desc">Cancela cuando quieras. Tu data se exporta completa.</span>
+      <div class="price-card featured">
+        <h3 data-i18n="pro_name">Professional</h3>
+        <div class="price">$99<span>/mes</span></div>
+        <div class="price-period" data-i18n="pro_limit">Operacion completa con IA</div>
+        <ul>
+          <li data-i18n="pro_f1">Hasta 15 lotes</li>
+          <li data-i18n="pro_f2">1 usuario · +$2.99/extra</li>
+          <li data-i18n="pro_f3">20 modulos completos</li>
+          <li data-i18n="pro_f4">IA predictiva + Analytics</li>
+          <li data-i18n="pro_f5">Bioseguridad + Trazabilidad</li>
+          <li data-i18n="pro_f6">Validacion Zero Tolerance</li>
+        </ul>
+        <a href="egglogu.html" class="btn btn-primary" data-i18n="plan_cta">Empezar + Enterprise 30 Dias</a>
+      </div>
+      <div class="price-card">
+        <h3 data-i18n="ent_name">Enterprise</h3>
+        <div class="price">$199<span>/mes</span></div>
+        <div class="price-period" data-i18n="ent_limit">Multi-granja, sin limites</div>
+        <ul>
+          <li data-i18n="ent_f1">Lotes ilimitados</li>
+          <li data-i18n="ent_f2">1 usuario · +$2.49/extra (-50%)</li>
+          <li data-i18n="ent_f3">Multi-granja centralizada</li>
+          <li data-i18n="ent_f4">Todo en Professional +</li>
+          <li data-i18n="ent_f5">Soporte dedicado 24/7</li>
+          <li data-i18n="ent_f6">Onboarding personalizado</li>
+        </ul>
+        <a href="egglogu.html" class="btn btn-outline" data-i18n="ent_cta">Probar Enterprise</a>
       </div>
     </div>
-  </div>
-
-
-  <div class="pricing-note" data-t="pricing_note">Sin contratos. Cancela cuando quieras. Pago anual = <strong>2 meses gratis</strong>.</div>
-
-  <div class="contact-strip">
-    <a href="mailto:contacto@egglogu.com?subject=EGGlogU%20-%20Consulta" class="btn-email">✉ contacto@egglogu.com</a>
+    <div class="pricing-included">
+      <h3 data-i18n="included_title">Incluido en todos los planes</h3>
+      <div class="pricing-included-grid">
+        <div class="pricing-included-card">
+          <h4 data-i18n="included_1_title">30 dias Enterprise completo</h4>
+          <p data-i18n="included_1_desc">Empieza con todas las funcionalidades. Sin restricciones. Elige tu plan cuando estes listo.</p>
+        </div>
+        <div class="pricing-included-card">
+          <h4 data-i18n="included_2_title">Funciona sin internet</h4>
+          <p data-i18n="included_2_desc">Registra produccion en el campo. Se sincroniza automaticamente cuando hay conexion.</p>
+        </div>
+        <div class="pricing-included-card">
+          <h4 data-i18n="included_3_title">Sin contratos, sin compromiso</h4>
+          <p data-i18n="included_3_desc">Cancela cuando quieras. Tu data se exporta completa.</p>
+        </div>
+      </div>
+    </div>
+    <div class="pricing-note" data-i18n="pricing_note">Sin contratos. Cancela cuando quieras. Pago anual = <strong>2 meses gratis</strong>.</div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<!-- LEAD CAPTURE -->
-<section class="phase-lead" id="early-access">
-  <div class="section-title" data-t="lead_title">Acceso Anticipado</div>
-  <div class="section-sub" data-t="lead_sub">Registrate y recibe informacion personalizada para tu operacion.</div>
-
-  <form class="lead-form" id="leadForm" data-source="index">
-    <input type="text" name="_gotcha" style="display:none">
-    <div class="lf-row">
-      <input type="email" name="email" required placeholder="correo@ejemplo.com" data-ph-t="lf_email_ph">
-    </div>
-    <div class="lf-row">
-      <input type="text" name="farm_name" placeholder="Nombre de tu granja" data-ph-t="lf_farm_ph">
-      <input type="text" name="country" placeholder="Pais" data-ph-t="lf_country_ph">
-    </div>
-    <div class="lf-row">
-      <select name="operation_size">
-        <option value="" disabled selected data-t="lf_size_default">Tamano de operacion</option>
-        <option value="hobbyist" data-t="lf_size_hobby">1-2 lotes (Hobbyist)</option>
-        <option value="starter" data-t="lf_size_starter">3-5 lotes (Starter)</option>
-        <option value="professional" data-t="lf_size_pro">6-15 lotes (Professional)</option>
-        <option value="enterprise" data-t="lf_size_ent">15+ lotes (Enterprise)</option>
-      </select>
-    </div>
-    <div class="lf-row">
-      <select name="primary_need">
-        <option value="" disabled selected data-t="lf_need_default">Necesidad principal</option>
-        <option value="production" data-t="lf_need_prod">Control de produccion</option>
-        <option value="traceability" data-t="lf_need_trace">Trazabilidad</option>
-        <option value="ai_analytics" data-t="lf_need_ai">IA y Analytics</option>
-        <option value="biosecurity" data-t="lf_need_bio">Bioseguridad</option>
-      </select>
-    </div>
-    <button type="submit" class="lf-submit" data-t="lf_btn">Quiero Acceso Anticipado</button>
-    <div class="lf-privacy" data-t="lf_privacy">Tu informacion es confidencial. No spam, solo valor.</div>
-    <div class="lf-msg" id="lfMsg" data-t="lf_thanks">Listo! Recibiras informacion personalizada para tu operacion.</div>
-  </form>
-</section>
-
-<div class="divider"></div>
-
-<!-- PHASE 3: THE PUNCHLINE CTA -->
-<section class="phase-cta">
-  <div class="section-title" data-t="cta_title">La eterna pregunta, resuelta.</div>
-
-  <div class="taglines">
-    <div class="tagline" data-t="tl1">Ni el huevo ni la gallina. <strong>EGGlogU 360.</strong></div>
-    <div class="tagline" data-t="tl2">Antes del huevo. Antes de la gallina. <strong>EGGlogU 360.</strong></div>
-    <div class="tagline" data-t="tl3">La respuesta que la industria avicola estaba esperando.</div>
-    <div class="tagline" data-t="tl4"><strong>EGGlogU 360</strong> — Nacimos primero.</div>
-  </div>
-
+<!-- CTA -->
+<section class="cta-section">
+  <h2 data-i18n="cta_title">Digitaliza tu granja avicola hoy</h2>
+  <p data-i18n="cta_desc">Unete a avicultores que ya controlan su operacion de galpon a cliente.</p>
   <div class="cta-buttons">
-    <a href="egglogu.html" class="btn-main" data-t="btn_start">Probar 30 Dias</a>
-    <a href="#pricing" class="btn-ghost" data-t="btn_plans">Ver Planes y Precios</a>
-  </div>
-
-  <div class="share-strip">
-    <a class="share-btn" title="Share on X" href="https://twitter.com/intent/tweet?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A&url=https://egglogu.com/campaign" target="_blank">&#120143;</a>
-    <a class="share-btn" title="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://egglogu.com/campaign" target="_blank">in</a>
-    <a class="share-btn" title="Share on WhatsApp" href="https://wa.me/?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A%20https://egglogu.com/campaign" target="_blank">💬</a>
-    <a class="share-btn" title="Copy link" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='\u2713';setTimeout(()=>this.textContent='\uD83D\uDD17',2000)" href="javascript:void(0)">🔗</a>
+    <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 dias</a>
+    <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
   </div>
 </section>
 
-<footer class="footer">
-  <p>&copy; 2026 <a href="/">EGGlogU 360</a> — Gestion Avicola Inteligente</p>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="campaign-logo.webp" alt="EGGlogU" width="28" height="28">
+          EGGlogU
+        </div>
+        <p class="footer-brand-text" data-i18n="footer_desc">Plataforma de gestion avicola. Parte del ecosistema FarmLogU — ERP modular para agricultura.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_product">Producto</h4>
+        <a href="#features" data-i18n="nav_features">Funcionalidades</a>
+        <a href="#pricing" data-i18n="nav_pricing">Precios</a>
+        <a href="#how" data-i18n="nav_how">Como funciona</a>
+        <a href="egglogu.html" data-i18n="nav_login">Iniciar sesion</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_platform">Plataforma</h4>
+        <a href="#">FarmLogU</a>
+        <a href="#">HarvestLogU</a>
+        <a href="#">CowLogU</a>
+        <a href="#">SwineLogU</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_legal">Legal</h4>
+        <a href="#" data-i18n="footer_privacy">Privacidad</a>
+        <a href="#" data-i18n="footer_terms">Terminos</a>
+        <a href="#" data-i18n="footer_cookies">Cookies</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-i18n="footer_copy">&copy; 2026 EGGlogU. Todos los derechos reservados.</span>
+      <span data-i18n="footer_made">Hecho con cuidado para el campo.</span>
+    </div>
+  </div>
 </footer>
 
 <script>
-const T={
-es:{
-  client_access:'Acceso Clientes',
-  q_what:'Que fue primero...',q_chicken_egg:'el huevo o la gallina?',
-  tagline_main:'La plataforma que nacio antes que el problema.',
-  pitch_title:'Ni el huevo ni la gallina.',pitch_sub:'Nosotros llegamos primero.',
-  card1_t:'IA Predictiva',card1_p:'Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.',
-  card2_t:'Bioseguridad Total',card2_p:'Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.',
-  card3_t:'Trazabilidad Completa',card3_p:'Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.',
-  card4_t:'20 Modulos Integrados',card4_p:'Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, trazabilidad, bioseguridad, IA y mas. Todo en una sola plataforma.',
-  card5_t:'Modo Campo',card5_p:'Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.',
-  card6_t:'Validacion Zero Tolerance',card6_p:'4 procesadores validan cada dato. Cero errores financieros. Confianza total para contadores y auditores.',
-  cta_title:'La eterna pregunta, resuelta.',
-  tl1:'Ni el huevo ni la gallina. <strong>EGGlogU 360.</strong>',
-  tl2:'Antes del huevo. Antes de la gallina. <strong>EGGlogU 360.</strong>',
-  tl3:'La respuesta que la industria avicola estaba esperando.',
-  tl4:'<strong>EGGlogU 360</strong> — Nacimos primero.',
-  btn_start:'Empezar Ahora',btn_plans:'Ver Planes y Precios',
-  pricing_title:'Planes y Precios',pricing_sub:'Sin contratos. Cancela cuando quieras. Todos incluyen 30 dias Enterprise.',
-  badge_pop:'Mas Popular',btn_trial:'Empezar + Enterprise 30 Dias',btn_contact:'Contactar',btn_trial_ent:'Probar Enterprise',price_mo:'/mes',
-  tier0_name:'Hobbyist',tier0_desc:'Productor independiente',
-  t0f1:'Hasta 2 lotes',t0f2:'1 usuario · +$4.99/extra',t0f3:'Produccion + Dashboard',t0f4:'Modo Campo',t0f5:'Funciona sin internet',
-  tier1_name:'Starter',tier1_desc:'Operacion comercial',
-  t1f1:'Hasta 5 lotes',t1f2:'1 usuario · +$3.99/extra',t1f3:'Produccion + Alimentacion + Salud',t1f4:'Finanzas + Clientes',t1f5:'Modo Campo + Dashboard',
-  tier2_name:'Professional',tier2_desc:'Operacion completa con IA',
-  t2f1:'Hasta 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA predictiva + Analytics',t2f5:'Bioseguridad + Trazabilidad',t2f6:'Validacion Zero Tolerance',
-  tier3_name:'Enterprise',tier3_desc:'Multi-granja, sin limites',
-  t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Todo en Professional +',t3f5:'Soporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Sin contratos. Cancela cuando quieras. Pago anual = <strong>2 meses gratis</strong>.',
-  promo_title:'Incluido en todos los planes',promo_trial:'30 dias Enterprise completo',promo_trial_desc:'Empieza con todas las funcionalidades. Sin restricciones. Elige tu plan cuando estes listo.',promo_offline:'Funciona sin internet',promo_offline_desc:'Registra produccion en el campo. Se sincroniza automaticamente cuando hay conexion.',promo_cancel:'Sin contratos, sin compromiso',promo_cancel_desc:'Cancela cuando quieras. Tu data se exporta completa.',btn_trial_ent:'Probar Enterprise',
-  lead_title:'Acceso Anticipado',lead_sub:'Registrate y recibe informacion personalizada para tu operacion.',
-  lf_size_default:'Tamano de operacion',lf_size_hobby:'1-2 lotes (Hobbyist)',lf_size_starter:'3-5 lotes (Starter)',lf_size_pro:'6-15 lotes (Professional)',lf_size_ent:'15+ lotes (Enterprise)',
-  lf_need_default:'Necesidad principal',lf_need_prod:'Control de produccion',lf_need_trace:'Trazabilidad',lf_need_ai:'IA y Analytics',lf_need_bio:'Bioseguridad',
-  lf_btn:'Quiero Acceso Anticipado',lf_privacy:'Tu informacion es confidencial. No spam, solo valor.',lf_thanks:'Listo! Recibiras informacion personalizada para tu operacion.'
-},
-en:{
-  client_access:'Client Login',
-  q_what:'What came first...',q_chicken_egg:'the chicken or the egg?',
-  tagline_main:'The platform that was born before the problem.',
-  pitch_title:'Neither the chicken nor the egg.',pitch_sub:'We got here first.',
-  card1_t:'Predictive AI',card1_p:'Outbreak risk classifier, forecasting with confidence bands, and automatic recommendations before the problem occurs.',
-  card2_t:'Total Biosecurity',card2_p:'Visitor control, risk zones, pest sightings, and disinfection protocols. Real-time Pest Score.',
-  card3_t:'Full Traceability',card3_p:'From batch to client. Every egg tracked with QR: farm, house, flock, date, FCR, health score.',
-  card4_t:'20 Integrated Modules',card4_p:'Production, health, feed, environment, vaccines, clients, finances, traceability, biosecurity, AI and more. All in one platform.',
-  card5_t:'Field Mode',card5_p:'Simplified interface for daily use. One button, log eggs, done. Designed to use with work boots on.',
-  card6_t:'Zero Tolerance Validation',card6_p:'4 processors validate every data point. Zero financial errors. Total confidence for accountants and auditors.',
-  cta_title:'The eternal question, answered.',
-  tl1:'Neither the chicken nor the egg. <strong>EGGlogU 360.</strong>',
-  tl2:'Before the chicken. Before the egg. <strong>EGGlogU 360.</strong>',
-  tl3:'The answer the poultry industry was waiting for.',
-  tl4:'<strong>EGGlogU 360</strong> — We were born first.',
-  btn_start:'Start Now',btn_plans:'See Plans & Pricing',
-  pricing_title:'Plans & Pricing',pricing_sub:'No contracts. Cancel anytime. All plans include 30-day Enterprise trial.',
-  badge_pop:'Most Popular',btn_trial:'Start + Enterprise 30 Days',btn_contact:'Contact Us',btn_trial_ent:'Try Enterprise',price_mo:'/mo',
-  tier0_name:'Hobbyist',tier0_desc:'Independent producer',
-  t0f1:'Up to 2 flocks',t0f2:'1 user · +$4.99/extra',t0f3:'Production + Dashboard',t0f4:'Field Mode',t0f5:'Works offline',
-  tier1_name:'Starter',tier1_desc:'Commercial operation',
-  t1f1:'Up to 5 flocks',t1f2:'1 user · +$3.99/extra',t1f3:'Production + Feed + Health',t1f4:'Finances + Clients',t1f5:'Field Mode + Dashboard',
-  tier2_name:'Professional',tier2_desc:'Full operation with AI',
-  t2f1:'Up to 15 flocks',t2f2:'1 user · +$2.99/extra',t2f3:'All 20 modules',t2f4:'Predictive AI + Analytics',t2f5:'Biosecurity + Traceability',t2f6:'Zero Tolerance Validation',
-  tier3_name:'Enterprise',tier3_desc:'Multi-farm, no limits',
-  t3f1:'Unlimited flocks',t3f2:'1 user · +$2.49/extra (-50%)',t3f3:'Centralized multi-farm',t3f4:'Everything in Professional +',t3f5:'Dedicated support 24/7',t3f6:'Personalized onboarding',
-  pricing_note:'No contracts. Cancel anytime. Annual billing = <strong>2 months free</strong>.',
-  promo_title:'Included in every plan',promo_trial:'30 days full Enterprise',promo_trial_desc:'Start with every feature unlocked. No restrictions. Choose your plan when you are ready.',promo_offline:'Works offline',promo_offline_desc:'Log production in the field. Syncs automatically when connected.',promo_cancel:'No contracts, no commitment',promo_cancel_desc:'Cancel anytime. Your data exports completely.',btn_trial_ent:'Try Enterprise',
-  lead_title:'Early Access',lead_sub:'Sign up and receive personalized info for your operation.',
-  lf_size_default:'Operation size',lf_size_hobby:'1-2 flocks (Hobbyist)',lf_size_starter:'3-5 flocks (Starter)',lf_size_pro:'6-15 flocks (Professional)',lf_size_ent:'15+ flocks (Enterprise)',
-  lf_need_default:'Primary need',lf_need_prod:'Production tracking',lf_need_trace:'Traceability',lf_need_ai:'AI & Analytics',lf_need_bio:'Biosecurity',
-  lf_btn:'Get Early Access',lf_privacy:'Your info is confidential. No spam, only value.',lf_thanks:'Done! You will receive personalized info for your operation.'
-},
-pt:{
-  client_access:'Acesso Clientes',
-  q_what:'O que veio primeiro...',q_chicken_egg:'o ovo ou a galinha?',
-  tagline_main:'A plataforma que nasceu antes do problema.',
-  pitch_title:'Nem o ovo nem a galinha.',pitch_sub:'Nos chegamos primeiro.',
-  card1_t:'IA Preditiva',card1_p:'Classificador de risco de surtos, previsao com bandas de confianca, e recomendacoes automaticas antes que o problema ocorra.',
-  card2_t:'Biosseguranca Total',card2_p:'Controle de visitantes, zonas de risco, avistamentos de pragas, e protocolos de desinfeccao. Pest Score em tempo real.',
-  card3_t:'Rastreabilidade Completa',card3_p:'Do lote ao cliente. Cada ovo rastreado com QR: granja, galpao, lote, data, FCR, health score.',
-  card4_t:'20 Modulos Integrados',card4_p:'Producao, saude, alimentacao, ambiente, vacinas, clientes, financas, rastreabilidade, biosseguranca, IA e mais. Tudo em uma so plataforma.',
-  card5_t:'Modo Campo',card5_p:'Interface simplificada para o dia a dia. Um botao, registrar ovos, pronto. Projetado para usar com botas de trabalho.',
-  card6_t:'Validacao Zero Tolerance',card6_p:'4 processadores validam cada dado. Zero erros financeiros. Confianca total para contadores e auditores.',
-  cta_title:'A eterna pergunta, respondida.',
-  tl1:'Nem o ovo nem a galinha. <strong>EGGlogU 360.</strong>',
-  tl2:'Antes do ovo. Antes da galinha. <strong>EGGlogU 360.</strong>',
-  tl3:'A resposta que a industria avicola estava esperando.',
-  tl4:'<strong>EGGlogU 360</strong> — Nascemos primeiro.',
-  btn_start:'Comecar Agora',btn_plans:'Ver Planos e Precos',
-  pricing_title:'Planos e Precos',pricing_sub:'Sem contratos. Cancele quando quiser. Todos incluem 30 dias Enterprise.',
-  badge_pop:'Mais Popular',btn_trial:'Comecar + Enterprise 30 Dias',btn_contact:'Contatar',btn_trial_ent:'Testar Enterprise',price_mo:'/mes',
-  tier0_name:'Hobbyist',tier0_desc:'Produtor independente',
-  t0f1:'Ate 2 lotes',t0f2:'1 usuario · +$4.99/extra',t0f3:'Producao + Dashboard',t0f4:'Modo Campo',t0f5:'Funciona sem internet',
-  tier1_name:'Starter',tier1_desc:'Operacao comercial',
-  t1f1:'Ate 5 lotes',t1f2:'1 usuario · +$3.99/extra',t1f3:'Producao + Alimentacao + Saude',t1f4:'Financas + Clientes',t1f5:'Modo Campo + Dashboard',
-  tier2_name:'Professional',tier2_desc:'Operacao completa com IA',
-  t2f1:'Ate 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA preditiva + Analytics',t2f5:'Biosseguranca + Rastreabilidade',t2f6:'Validacao Zero Tolerance',
-  tier3_name:'Enterprise',tier3_desc:'Multi-granja, sem limites',
-  t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Tudo no Professional +',t3f5:'Suporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Sem contratos. Cancele quando quiser. Pagamento anual = <strong>2 meses gratis</strong>.',
-  promo_title:'Incluido em todos os planos',promo_trial:'30 dias Enterprise completo',promo_trial_desc:'Comece com todas as funcionalidades. Sem restricoes. Escolha seu plano quando estiver pronto.',promo_offline:'Funciona sem internet',promo_offline_desc:'Registre producao no campo. Sincroniza automaticamente quando conectado.',promo_cancel:'Sem contratos, sem compromisso',promo_cancel_desc:'Cancele quando quiser. Seus dados exportam completos.',btn_trial_ent:'Testar Enterprise',
-  lead_title:'Acesso Antecipado',lead_sub:'Cadastre-se e receba informacao personalizada para sua operacao.',
-  lf_size_default:'Tamanho da operacao',lf_size_hobby:'1-2 lotes (Hobbyist)',lf_size_starter:'3-5 lotes (Starter)',lf_size_pro:'6-15 lotes (Professional)',lf_size_ent:'15+ lotes (Enterprise)',
-  lf_need_default:'Necessidade principal',lf_need_prod:'Controle de producao',lf_need_trace:'Rastreabilidade',lf_need_ai:'IA e Analytics',lf_need_bio:'Biosseguranca',
-  lf_btn:'Quero Acesso Antecipado',lf_privacy:'Sua informacao e confidencial. Sem spam, so valor.',lf_thanks:'Pronto! Voce recebera informacao personalizada para sua operacao.'
+// Curtain: fade out on scroll
+const curtain=document.getElementById('curtain');
+let curtainDismissed=false;
+function dismissCurtain(){
+  if(curtainDismissed)return;
+  curtainDismissed=true;
+  curtain.style.transition='opacity .8s ease';
+  curtain.style.opacity='0';
+  setTimeout(()=>{curtain.style.display='none';window.scrollTo(0,0)},800);
 }
-};
-/* FR, DE, ZH, HI, AR — Phase 2 (global expansion) */
-let _PHASE2_LANGS = {
-zh:{
-  q_what:'\u5230\u5E95\u662F\u8C01\u5148\u6765\u7684\u2026\u2026',q_chicken_egg:'\u5148\u6709\u9E21\u8FD8\u662F\u5148\u6709\u86CB\uFF1F',
-  tagline_main:'\u6BD4\u95EE\u9898\u66F4\u65E9\u8BDE\u751F\u7684\u5E73\u53F0\u3002',
-  pitch_title:'\u4E0D\u662F\u9E21\uFF0C\u4E5F\u4E0D\u662F\u86CB\u3002',pitch_sub:'\u6211\u4EEC\u5148\u5230\u4E86\u3002',
-  card1_t:'AI \u9884\u6D4B',card1_p:'\u75AB\u60C5\u98CE\u9669\u5206\u7C7B\u5668\u3001\u5E26\u7F6E\u4FE1\u533A\u95F4\u7684\u9884\u6D4B\u3001\u4EE5\u53CA\u5728\u95EE\u9898\u53D1\u751F\u4E4B\u524D\u7684\u81EA\u52A8\u5EFA\u8BAE\u3002',
-  card2_t:'\u5168\u9762\u751F\u7269\u5B89\u5168',card2_p:'\u8BBF\u5BA2\u7BA1\u7406\u3001\u98CE\u9669\u533A\u57DF\u3001\u5BB3\u866B\u76EE\u51FB\u8BB0\u5F55\u548C\u6D88\u6BD2\u89C4\u7A0B\u3002\u5B9E\u65F6\u5BB3\u866B\u8BC4\u5206\u3002',
-  card3_t:'\u5B8C\u6574\u53EF\u8FFD\u6EAF\u6027',card3_p:'\u4ECE\u6279\u6B21\u5230\u5BA2\u6237\u3002\u6BCF\u9897\u86CB\u901A\u8FC7 QR \u8FFD\u8E2A\uFF1A\u519C\u573A\u3001\u9E21\u820D\u3001\u6279\u6B21\u3001\u65E5\u671F\u3001FCR\u3001\u5065\u5EB7\u8BC4\u5206\u3002',
-  card4_t:'20\u4E2A\u96C6\u6210\u6A21\u5757',card4_p:'\u751F\u4EA7\u3001\u5065\u5EB7\u3001\u9972\u5582\u3001\u73AF\u5883\u3001\u75AB\u82D7\u3001\u5BA2\u6237\u3001\u8D22\u52A1\u3001\u8FFD\u6EAF\u3001\u751F\u7269\u5B89\u5168\u3001AI\u7B49\u3002\u4E00\u4E2A\u5E73\u53F0\u641E\u5B9A\u4E00\u5207\u3002',
-  card5_t:'\u7530\u95F4\u6A21\u5F0F',card5_p:'\u65E5\u5E38\u7B80\u5316\u754C\u9762\u3002\u4E00\u4E2A\u6309\u94AE\uFF0C\u8BB0\u5F55\u9E21\u86CB\uFF0C\u5B8C\u6210\u3002\u4E13\u4E3A\u7A7F\u7740\u5DE5\u4F5C\u978B\u4F7F\u7528\u800C\u8BBE\u8BA1\u3002',
-  card6_t:'\u96F6\u5BB9\u5FCD\u9A8C\u8BC1',card6_p:'4\u4E2A\u5904\u7406\u5668\u9A8C\u8BC1\u6BCF\u9879\u6570\u636E\u3002\u96F6\u8D22\u52A1\u9519\u8BEF\u3002\u4F1A\u8BA1\u548C\u5BA1\u8BA1\u5E08\u5B8C\u5168\u4FE1\u8D56\u3002',
-  cta_title:'\u6C38\u6052\u4E4B\u95EE\uFF0C\u5DF2\u6709\u7B54\u6848\u3002',
-  tl1:'\u4E0D\u662F\u9E21\uFF0C\u4E5F\u4E0D\u662F\u86CB\u3002<strong>EGGlogU 360\u3002</strong>',
-  tl2:'\u5148\u4E8E\u9E21\u3002\u5148\u4E8E\u86CB\u3002<strong>EGGlogU 360\u3002</strong>',
-  tl3:'\u5BB6\u79BD\u884C\u4E1A\u4E00\u76F4\u5728\u7B49\u5F85\u7684\u7B54\u6848\u3002',
-  tl4:'<strong>EGGlogU 360</strong> \u2014 \u6211\u4EEC\u5148\u8BDE\u751F\u4E86\u3002',
-  btn_start:'\u514D\u8D39\u8BD5\u752830\u5929',btn_plans:'\u67E5\u770B\u65B9\u6848\u548C\u4EF7\u683C',
-  pricing_title:'\u65B9\u6848\u548C\u4EF7\u683C',pricing_sub:'\u65E0\u5408\u7EA6\u3002\u968F\u65F6\u53D6\u6D88\u300230\u5929\u5168\u529F\u80FD\u8BD5\u7528\u3002',
-  badge_pop:'\u6700\u53D7\u6B22\u8FCE',btn_trial:'\u514D\u8D39\u8BD5\u752830\u5929',btn_contact:'\u8054\u7CFB\u6211\u4EEC',price_mo:'/\u6708',
-  tier0_name:'Hobbyist',tier0_desc:'\u72EC\u7ACB\u751F\u4EA7\u8005',
-  t0f1:'\u6700\u591A2\u4E2A\u6279\u6B21',t0f2:'1\u4E2A\u7528\u6237 \u00B7 +$4.99/\u989D\u5916',t0f3:'\u751F\u4EA7 + \u4EEA\u8868\u677F',t0f4:'\u7530\u95F4\u6A21\u5F0F',t0f5:'\u79BB\u7EBF\u53EF\u7528',
-  tier1_name:'Starter',tier1_desc:'\u5546\u4E1A\u8FD0\u8425',
-  t1f1:'\u6700\u591A5\u4E2A\u6279\u6B21',t1f2:'1\u4E2A\u7528\u6237 \u00B7 +$3.99/\u989D\u5916',t1f3:'\u751F\u4EA7 + \u9972\u5582 + \u5065\u5EB7',t1f4:'\u8D22\u52A1 + \u5BA2\u6237',t1f5:'\u7530\u95F4\u6A21\u5F0F + \u4EEA\u8868\u677F',
-  tier2_name:'Professional',tier2_desc:'AI\u5B8C\u6574\u8FD0\u8425',
-  t2f1:'\u6700\u591A15\u4E2A\u6279\u6B21',t2f2:'1\u4E2A\u7528\u6237 \u00B7 +$2.99/\u989D\u5916',t2f3:'\u5168\u90E820\u4E2A\u6A21\u5757',t2f4:'AI\u9884\u6D4B + \u5206\u6790',t2f5:'\u751F\u7269\u5B89\u5168 + \u8FFD\u6EAF',t2f6:'\u96F6\u5BB9\u5FCD\u9A8C\u8BC1',
-  tier3_name:'Enterprise',tier3_desc:'\u591A\u519C\u573A\uFF0C\u65E0\u9650\u5236',
-  t3f1:'\u65E0\u9650\u6279\u6B21',t3f2:'1\u4E2A\u7528\u6237 \u00B7 +$2.49/\u989D\u5916 (-50%)',t3f3:'\u96C6\u4E2D\u5F0F\u591A\u519C\u573A',t3f4:'Professional\u5168\u90E8\u529F\u80FD + IoT',t3f5:'\u4E13\u5C5E\u652F\u6301 24/7',t3f6:'\u4E2A\u6027\u5316\u5165\u95E8\u57F9\u8BAD'
-},
-hi:{
-  q_what:'\u092A\u0939\u0932\u0947 \u0915\u094C\u0928 \u0906\u092F\u093E\u2026',q_chicken_egg:'\u092E\u0941\u0930\u094D\u0917\u0940 \u092F\u093E \u0905\u0902\u0921\u093E?',
-  tagline_main:'\u0935\u0939 \u092A\u094D\u0932\u0947\u091F\u092B\u093C\u0949\u0930\u094D\u092E \u091C\u094B \u0938\u092E\u0938\u094D\u092F\u093E \u0938\u0947 \u092A\u0939\u0932\u0947 \u091C\u0928\u094D\u092E\u093E\u0964',
-  pitch_title:'\u0928 \u092E\u0941\u0930\u094D\u0917\u0940, \u0928 \u0905\u0902\u0921\u093E\u0964',pitch_sub:'\u0939\u092E \u092A\u0939\u0932\u0947 \u0906\u090F\u0964',
-  card1_t:'AI \u092D\u0935\u093F\u0937\u094D\u092F\u0935\u093E\u0923\u0940',card1_p:'\u092A\u094D\u0930\u0915\u094B\u092A \u091C\u094B\u0916\u093F\u092E \u0935\u0930\u094D\u0917\u0940\u0915\u0930\u0923, \u0935\u093F\u0936\u094D\u0935\u093E\u0938 \u092C\u0948\u0902\u0921 \u0915\u0947 \u0938\u093E\u0925 \u092A\u0942\u0930\u094D\u0935\u093E\u0928\u0941\u092E\u093E\u0928, \u0914\u0930 \u0938\u092E\u0938\u094D\u092F\u093E \u0939\u094B\u0928\u0947 \u0938\u0947 \u092A\u0939\u0932\u0947 \u0938\u094D\u0935\u091A\u093E\u0932\u093F\u0924 \u0938\u093F\u092B\u093C\u093E\u0930\u093F\u0936\u0947\u0902\u0964',
-  card2_t:'\u0938\u0902\u092A\u0942\u0930\u094D\u0923 \u091C\u0948\u0935 \u0938\u0941\u0930\u0915\u094D\u0937\u093E',card2_p:'\u0906\u0917\u0902\u0924\u0941\u0915 \u0928\u093F\u092F\u0902\u0924\u094D\u0930\u0923, \u091C\u094B\u0916\u093F\u092E \u0915\u094D\u0937\u0947\u0924\u094D\u0930, \u0915\u0940\u091F \u0926\u0943\u0936\u094D\u092F \u0914\u0930 \u0915\u0940\u091F\u093E\u0923\u0941\u0936\u094B\u0927\u0928 \u092A\u094D\u0930\u094B\u091F\u094B\u0915\u0949\u0932\u0964 \u0930\u0940\u092F\u0932-\u091F\u093E\u0907\u092E \u0915\u0940\u091F \u0938\u094D\u0915\u094B\u0930\u0964',
-  card3_t:'\u092A\u0942\u0930\u094D\u0923 \u091F\u094D\u0930\u0947\u0938\u0947\u092C\u093F\u0932\u093F\u091F\u0940',card3_p:'\u092C\u0948\u091A \u0938\u0947 \u0917\u094D\u0930\u093E\u0939\u0915 \u0924\u0915\u0964 \u0939\u0930 \u0905\u0902\u0921\u093E QR \u0938\u0947 \u091F\u094D\u0930\u0948\u0915: \u092B\u093E\u0930\u094D\u092E, \u0936\u0947\u0921, \u092C\u0948\u091A, \u0924\u093F\u0925\u093F, FCR, \u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F \u0938\u094D\u0915\u094B\u0930\u0964',
-  card4_t:'20 \u090F\u0915\u0940\u0915\u0943\u0924 \u092E\u0949\u0921\u094D\u092F\u0942\u0932',card4_p:'\u0909\u0924\u094D\u092A\u093E\u0926\u0928, \u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F, \u0906\u0939\u093E\u0930, \u092A\u0930\u094D\u092F\u093E\u0935\u0930\u0923, \u091F\u0940\u0915\u0947, \u0917\u094D\u0930\u093E\u0939\u0915, \u0935\u093F\u0924\u094D\u0924, \u091F\u094D\u0930\u0947\u0938\u0947\u092C\u093F\u0932\u093F\u091F\u0940, \u091C\u0948\u0935 \u0938\u0941\u0930\u0915\u094D\u0937\u093E, AI \u0914\u0930 \u092C\u0939\u0941\u0924 \u0915\u0941\u091B\u0964 \u0938\u092C \u090F\u0915 \u092A\u094D\u0932\u0947\u091F\u092B\u093C\u0949\u0930\u094D\u092E \u092A\u0930\u0964',
-  card5_t:'\u092B\u093C\u0940\u0932\u094D\u0921 \u092E\u094B\u0921',card5_p:'\u0926\u0948\u0928\u093F\u0915 \u0915\u093E\u0930\u094D\u092F \u0915\u0947 \u0932\u093F\u090F \u0938\u0930\u0932 \u0907\u0902\u091F\u0930\u092B\u093C\u0947\u0938\u0964 \u090F\u0915 \u092C\u091F\u0928, \u0905\u0902\u0921\u0947 \u0926\u0930\u094D\u091C \u0915\u0930\u0947\u0902, \u092C\u0938\u0964 \u0915\u093E\u092E \u0915\u0947 \u091C\u0942\u0924\u094B\u0902 \u092E\u0947\u0902 \u0909\u092A\u092F\u094B\u0917 \u0915\u0947 \u0932\u093F\u090F \u0921\u093F\u091C\u093C\u093E\u0907\u0928 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964',
-  card6_t:'\u091C\u093C\u0940\u0930\u094B \u091F\u0949\u0932\u0930\u0947\u0902\u0938 \u0935\u0948\u0932\u093F\u0921\u0947\u0936\u0928',card6_p:'4 \u092A\u094D\u0930\u094B\u0938\u0947\u0938\u0930 \u0939\u0930 \u0921\u0947\u091F\u093E \u0915\u0940 \u091C\u093E\u0902\u091A \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964 \u0936\u0942\u0928\u094D\u092F \u0935\u093F\u0924\u094D\u0924\u0940\u092F \u0924\u094D\u0930\u0941\u091F\u093F\u092F\u093E\u0902\u0964 \u0932\u0947\u0916\u093E\u0915\u093E\u0930\u094B\u0902 \u0914\u0930 \u0911\u0921\u093F\u091F\u0930\u094B\u0902 \u0915\u0947 \u0932\u093F\u090F \u092A\u0942\u0930\u094D\u0923 \u0935\u093F\u0936\u094D\u0935\u093E\u0938\u0964',
-  cta_title:'\u0936\u093E\u0936\u094D\u0935\u0924 \u092A\u094D\u0930\u0936\u094D\u0928, \u0939\u0932 \u0939\u094B \u0917\u092F\u093E\u0964',
-  tl1:'\u0928 \u092E\u0941\u0930\u094D\u0917\u0940, \u0928 \u0905\u0902\u0921\u093E\u0964 <strong>EGGlogU 360\u0964</strong>',
-  tl2:'\u092E\u0941\u0930\u094D\u0917\u0940 \u0938\u0947 \u092A\u0939\u0932\u0947\u0964 \u0905\u0902\u0921\u0947 \u0938\u0947 \u092A\u0939\u0932\u0947\u0964 <strong>EGGlogU 360\u0964</strong>',
-  tl3:'\u0935\u0939 \u0909\u0924\u094D\u0924\u0930 \u091C\u093F\u0938\u0915\u0940 \u092A\u094B\u0932\u094D\u091F\u094D\u0930\u0940 \u0909\u0926\u094D\u092F\u094B\u0917 \u092A\u094D\u0930\u0924\u0940\u0915\u094D\u0937\u093E \u0915\u0930 \u0930\u0939\u093E \u0925\u093E\u0964',
-  tl4:'<strong>EGGlogU 360</strong> \u2014 \u0939\u092E \u092A\u0939\u0932\u0947 \u091C\u0928\u094D\u092E\u0947\u0964',
-  btn_start:'30 \u0926\u093F\u0928 \u092E\u0941\u092B\u093C\u094D\u0924 \u0906\u091C\u093C\u092E\u093E\u090F\u0902',btn_plans:'\u092F\u094B\u091C\u0928\u093E\u090F\u0902 \u0914\u0930 \u092E\u0942\u0932\u094D\u092F \u0926\u0947\u0916\u0947\u0902',
-  pricing_title:'\u092F\u094B\u091C\u0928\u093E\u090F\u0902 \u0914\u0930 \u092E\u0942\u0932\u094D\u092F',pricing_sub:'\u0915\u094B\u0908 \u0905\u0928\u0941\u092C\u0902\u0927 \u0928\u0939\u0940\u0902\u0964 \u0915\u092D\u0940 \u092D\u0940 \u0930\u0926\u094D\u0926 \u0915\u0930\u0947\u0902\u0964 30 \u0926\u093F\u0928 \u0915\u093E \u092A\u0942\u0930\u094D\u0923 \u092A\u0930\u0940\u0915\u094D\u0937\u0923\u0964',
-  badge_pop:'\u0938\u092C\u0938\u0947 \u0932\u094B\u0915\u092A\u094D\u0930\u093F\u092F',btn_trial:'30 \u0926\u093F\u0928 \u092E\u0941\u092B\u093C\u094D\u0924 \u0906\u091C\u093C\u092E\u093E\u090F\u0902',btn_contact:'\u0938\u0902\u092A\u0930\u094D\u0915 \u0915\u0930\u0947\u0902',price_mo:'/\u092E\u0939\u0940\u0928\u093E',
-  tier0_name:'Hobbyist',tier0_desc:'\u0938\u094D\u0935\u0924\u0902\u0924\u094D\u0930 \u0909\u0924\u094D\u092A\u093E\u0926\u0915',
-  t0f1:'2 \u0932\u0949\u091F \u0924\u0915',t0f2:'1 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E \u00B7 +$4.99/\u0905\u0924\u093F\u0930\u093F\u0915\u094D\u0924',t0f3:'\u0909\u0924\u094D\u092A\u093E\u0926\u0928 + \u0921\u0948\u0936\u092C\u094B\u0930\u094D\u0921',t0f4:'\u092B\u093C\u0940\u0932\u094D\u0921 \u092E\u094B\u0921',t0f5:'\u0911\u092B\u093C\u0932\u093E\u0907\u0928 \u0915\u093E\u092E \u0915\u0930\u0924\u093E \u0939\u0948',
-  tier1_name:'Starter',tier1_desc:'\u0935\u094D\u092F\u093E\u0935\u0938\u093E\u092F\u093F\u0915 \u0938\u0902\u091A\u093E\u0932\u0928',
-  t1f1:'5 \u0932\u0949\u091F \u0924\u0915',t1f2:'1 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E \u00B7 +$3.99/\u0905\u0924\u093F\u0930\u093F\u0915\u094D\u0924',t1f3:'\u0909\u0924\u094D\u092A\u093E\u0926\u0928+\u0906\u0939\u093E\u0930+\u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F',t1f4:'\u0935\u093F\u0924\u094D\u0924+\u0917\u094D\u0930\u093E\u0939\u0915',t1f5:'\u092B\u093C\u0940\u0932\u094D\u0921 \u092E\u094B\u0921+\u0921\u0948\u0936\u092C\u094B\u0930\u094D\u0921',
-  tier2_name:'Professional',tier2_desc:'AI \u0915\u0947 \u0938\u093E\u0925 \u092A\u0942\u0930\u094D\u0923 \u0938\u0902\u091A\u093E\u0932\u0928',
-  t2f1:'15 \u0932\u0949\u091F \u0924\u0915',t2f2:'1 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E \u00B7 +$2.99/\u0905\u0924\u093F\u0930\u093F\u0915\u094D\u0924',t2f3:'\u0938\u092D\u0940 20 \u092E\u0949\u0921\u094D\u092F\u0942\u0932',t2f4:'AI \u092D\u0935\u093F\u0937\u094D\u092F\u0935\u093E\u0923\u0940 + \u0935\u093F\u0936\u094D\u0932\u0947\u0937\u0923',t2f5:'\u091C\u0948\u0935 \u0938\u0941\u0930\u0915\u094D\u0937\u093E + \u091F\u094D\u0930\u0947\u0938\u0947\u092C\u093F\u0932\u093F\u091F\u0940',t2f6:'\u091C\u093C\u0940\u0930\u094B \u091F\u0949\u0932\u0930\u0947\u0902\u0938 \u0935\u0948\u0932\u093F\u0921\u0947\u0936\u0928',
-  tier3_name:'Enterprise',tier3_desc:'\u092E\u0932\u094D\u091F\u0940-\u092B\u093C\u093E\u0930\u094D\u092E, \u0915\u094B\u0908 \u0938\u0940\u092E\u093E \u0928\u0939\u0940\u0902',
-  t3f1:'\u0905\u0938\u0940\u092E\u093F\u0924 \u0932\u0949\u091F',t3f2:'1 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E \u00B7 +$2.49/\u0905\u0924\u093F\u0930\u093F\u0915\u094D\u0924 (-50%)',t3f3:'\u0915\u0947\u0902\u0926\u094D\u0930\u0940\u0915\u0943\u0924 \u092E\u0932\u094D\u091F\u0940-\u092B\u093C\u093E\u0930\u094D\u092E',t3f4:'Professional \u092E\u0947\u0902 \u0938\u092C \u0915\u0941\u091B + IoT',t3f5:'\u0938\u092E\u0930\u094D\u092A\u093F\u0924 \u0938\u0939\u093E\u092F\u0924\u093E 24/7',t3f6:'\u0935\u094D\u092F\u0915\u094D\u0924\u093F\u0917\u0924 \u0911\u0928\u092C\u094B\u0930\u094D\u0921\u093F\u0902\u0917'
-},
-ar:{
-  q_what:'\u0645\u0627 \u0627\u0644\u0630\u064A \u0643\u0627\u0646 \u0623\u0648\u0644\u0627\u064B...',q_chicken_egg:'\u0627\u0644\u062F\u062C\u0627\u062C\u0629 \u0623\u0645 \u0627\u0644\u0628\u064A\u0636\u0629\u061F',
-  tagline_main:'\u0627\u0644\u0645\u0646\u0635\u0629 \u0627\u0644\u062A\u064A \u0648\u0644\u062F\u062A \u0642\u0628\u0644 \u0627\u0644\u0645\u0634\u0643\u0644\u0629.',
-  pitch_title:'\u0644\u0627 \u0627\u0644\u062F\u062C\u0627\u062C\u0629 \u0648\u0644\u0627 \u0627\u0644\u0628\u064A\u0636\u0629.',pitch_sub:'\u0646\u062D\u0646 \u0648\u0635\u0644\u0646\u0627 \u0623\u0648\u0644\u0627\u064B.',
-  card1_t:'\u0630\u0643\u0627\u0621 \u0627\u0635\u0637\u0646\u0627\u0639\u064A \u062A\u0646\u0628\u0624\u064A',card1_p:'\u0645\u0635\u0646\u0641 \u062E\u0637\u0631 \u0627\u0644\u062A\u0641\u0634\u064A\u060C \u0627\u0644\u062A\u0648\u0642\u0639\u0627\u062A \u0645\u0639 \u0646\u0637\u0627\u0642\u0627\u062A \u0627\u0644\u062B\u0642\u0629\u060C \u0648\u0627\u0644\u062A\u0648\u0635\u064A\u0627\u062A \u0627\u0644\u062A\u0644\u0642\u0627\u0626\u064A\u0629 \u0642\u0628\u0644 \u062D\u062F\u0648\u062B \u0627\u0644\u0645\u0634\u0643\u0644\u0629.',
-  card2_t:'\u0623\u0645\u0646 \u062D\u064A\u0648\u064A \u0643\u0627\u0645\u0644',card2_p:'\u0645\u0631\u0627\u0642\u0628\u0629 \u0627\u0644\u0632\u0648\u0627\u0631\u060C \u0645\u0646\u0627\u0637\u0642 \u0627\u0644\u062E\u0637\u0631\u060C \u0631\u0635\u062F \u0627\u0644\u0622\u0641\u0627\u062A\u060C \u0648\u0628\u0631\u0648\u062A\u0648\u0643\u0648\u0644\u0627\u062A \u0627\u0644\u062A\u0639\u0642\u064A\u0645. \u0646\u062A\u064A\u062C\u0629 \u0627\u0644\u0622\u0641\u0627\u062A \u0641\u064A \u0627\u0644\u0648\u0642\u062A \u0627\u0644\u0641\u0639\u0644\u064A.',
-  card3_t:'\u062A\u062A\u0628\u0639 \u0643\u0627\u0645\u0644',card3_p:'\u0645\u0646 \u0627\u0644\u062F\u0641\u0639\u0629 \u0625\u0644\u0649 \u0627\u0644\u0639\u0645\u064A\u0644. \u0643\u0644 \u0628\u064A\u0636\u0629 \u0645\u062A\u062A\u0628\u0639\u0629 \u0645\u0639 QR: \u0627\u0644\u0645\u0632\u0631\u0639\u0629\u060C \u0627\u0644\u062D\u0638\u064A\u0631\u0629\u060C \u0627\u0644\u0642\u0637\u064A\u0639\u060C \u0627\u0644\u062A\u0627\u0631\u064A\u062E\u060C FCR\u060C \u0646\u062A\u064A\u062C\u0629 \u0627\u0644\u0635\u062D\u0629.',
-  card4_t:'20 \u0648\u062D\u062F\u0629 \u0645\u062A\u0643\u0627\u0645\u0644\u0629',card4_p:'\u0627\u0644\u0625\u0646\u062A\u0627\u062C\u060C \u0627\u0644\u0635\u062D\u0629\u060C \u0627\u0644\u062A\u063A\u0630\u064A\u0629\u060C \u0627\u0644\u0628\u064A\u0626\u0629\u060C \u0627\u0644\u0644\u0642\u0627\u062D\u0627\u062A\u060C \u0627\u0644\u0639\u0645\u0644\u0627\u0621\u060C \u0627\u0644\u0645\u0627\u0644\u064A\u0629\u060C \u0627\u0644\u062A\u062A\u0628\u0639\u060C \u0627\u0644\u0623\u0645\u0646 \u0627\u0644\u062D\u064A\u0648\u064A\u060C AI \u0648\u0627\u0644\u0645\u0632\u064A\u062F. \u0643\u0644 \u0634\u064A\u0621 \u0641\u064A \u0645\u0646\u0635\u0629 \u0648\u0627\u062D\u062F\u0629.',
-  card5_t:'\u0648\u0636\u0639 \u0627\u0644\u062D\u0642\u0644',card5_p:'\u0648\u0627\u062C\u0647\u0629 \u0645\u0628\u0633\u0637\u0629 \u0644\u0644\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0627\u0644\u064A\u0648\u0645\u064A. \u0632\u0631 \u0648\u0627\u062D\u062F\u060C \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0628\u064A\u0636\u060C \u0627\u0646\u062A\u0647\u0649. \u0645\u0635\u0645\u0645 \u0644\u0644\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0645\u0639 \u0623\u062D\u0630\u064A\u0629 \u0627\u0644\u0639\u0645\u0644.',
-  card6_t:'\u062A\u062D\u0642\u0642 \u0639\u062F\u0645 \u0627\u0644\u062A\u0633\u0627\u0645\u062D',card6_p:'4 \u0645\u0639\u0627\u0644\u062C\u0627\u062A \u062A\u062A\u062D\u0642\u0642 \u0645\u0646 \u0643\u0644 \u0628\u064A\u0627\u0646\u0629. \u0635\u0641\u0631 \u0623\u062E\u0637\u0627\u0621 \u0645\u0627\u0644\u064A\u0629. \u062B\u0642\u0629 \u062A\u0627\u0645\u0629 \u0644\u0644\u0645\u062D\u0627\u0633\u0628\u064A\u0646 \u0648\u0627\u0644\u0645\u062F\u0642\u0642\u064A\u0646.',
-  cta_title:'\u0627\u0644\u0633\u0624\u0627\u0644 \u0627\u0644\u0623\u0632\u0644\u064A\u060C \u062A\u0645 \u062D\u0644\u0647.',
-  tl1:'\u0644\u0627 \u0627\u0644\u062F\u062C\u0627\u062C\u0629 \u0648\u0644\u0627 \u0627\u0644\u0628\u064A\u0636\u0629. <strong>EGGlogU 360.</strong>',
-  tl2:'\u0642\u0628\u0644 \u0627\u0644\u062F\u062C\u0627\u062C\u0629. \u0642\u0628\u0644 \u0627\u0644\u0628\u064A\u0636\u0629. <strong>EGGlogU 360.</strong>',
-  tl3:'\u0627\u0644\u0625\u062C\u0627\u0628\u0629 \u0627\u0644\u062A\u064A \u0643\u0627\u0646\u062A \u0635\u0646\u0627\u0639\u0629 \u0627\u0644\u062F\u0648\u0627\u062C\u0646 \u062A\u0646\u062A\u0638\u0631\u0647\u0627.',
-  tl4:'<strong>EGGlogU 360</strong> \u2014 \u0648\u0644\u062F\u0646\u0627 \u0623\u0648\u0644\u0627\u064B.',
-  btn_start:'\u062C\u0631\u0628 30 \u064A\u0648\u0645 \u0645\u062C\u0627\u0646\u0627\u064B',btn_plans:'\u0639\u0631\u0636 \u0627\u0644\u062E\u0637\u0637 \u0648\u0627\u0644\u0623\u0633\u0639\u0627\u0631',
-  pricing_title:'\u0627\u0644\u062E\u0637\u0637 \u0648\u0627\u0644\u0623\u0633\u0639\u0627\u0631',pricing_sub:'\u0628\u062F\u0648\u0646 \u0639\u0642\u0648\u062F. \u0627\u0644\u063A \u0641\u064A \u0623\u064A \u0648\u0642\u062A. 30 \u064A\u0648\u0645 \u062A\u062C\u0631\u0628\u0629 \u0643\u0627\u0645\u0644\u0629.',
-  badge_pop:'\u0627\u0644\u0623\u0643\u062B\u0631 \u0634\u0639\u0628\u064A\u0629',btn_trial:'\u062C\u0631\u0628 30 \u064A\u0648\u0645 \u0645\u062C\u0627\u0646\u0627\u064B',btn_contact:'\u0627\u062A\u0635\u0644 \u0628\u0646\u0627',price_mo:'/\u0634\u0647\u0631',
-  tier0_name:'Hobbyist',tier0_desc:'\u0645\u0646\u062A\u062C \u0645\u0633\u062A\u0642\u0644',
-  t0f1:'\u062D\u062A\u0649 2 \u0623\u0633\u0631\u0627\u0628',t0f2:'1 \u0645\u0633\u062A\u062E\u062F\u0645 \u00B7 +$4.99/\u0625\u0636\u0627\u0641\u064A',t0f3:'\u0625\u0646\u062A\u0627\u062C + \u0644\u0648\u062D\u0629 \u0645\u0639\u0644\u0648\u0645\u0627\u062A',t0f4:'\u0648\u0636\u0639 \u0627\u0644\u062D\u0642\u0644',t0f5:'\u064A\u0639\u0645\u0644 \u0628\u062F\u0648\u0646 \u0625\u0646\u062A\u0631\u0646\u062A',
-  tier1_name:'Starter',tier1_desc:'\u0639\u0645\u0644\u064A\u0629 \u062A\u062C\u0627\u0631\u064A\u0629',
-  t1f1:'\u062D\u062A\u0649 5 \u0623\u0633\u0631\u0627\u0628',t1f2:'1 \u0645\u0633\u062A\u062E\u062F\u0645 \u00B7 +$3.99/\u0625\u0636\u0627\u0641\u064A',t1f3:'\u0625\u0646\u062A\u0627\u062C+\u062A\u063A\u0630\u064A\u0629+\u0635\u062D\u0629',t1f4:'\u0645\u0627\u0644\u064A\u0629+\u0639\u0645\u0644\u0627\u0621',t1f5:'\u0648\u0636\u0639 \u0627\u0644\u062D\u0642\u0644+\u0644\u0648\u062D\u0629 \u0645\u0639\u0644\u0648\u0645\u0627\u062A',
-  tier2_name:'Professional',tier2_desc:'\u0639\u0645\u0644\u064A\u0629 \u0643\u0627\u0645\u0644\u0629 \u0645\u0639 AI',
-  t2f1:'\u062D\u062A\u0649 15 \u0623\u0633\u0631\u0627\u0628',t2f2:'1 \u0645\u0633\u062A\u062E\u062F\u0645 \u00B7 +$2.99/\u0625\u0636\u0627\u0641\u064A',t2f3:'\u062C\u0645\u064A\u0639 \u0627\u0644\u0640 20 \u0648\u062D\u062F\u0629',t2f4:'AI \u062A\u0646\u0628\u0624\u064A + \u062A\u062D\u0644\u064A\u0644\u0627\u062A',t2f5:'\u0623\u0645\u0646 \u062D\u064A\u0648\u064A + \u062A\u062A\u0628\u0639',t2f6:'\u062A\u062D\u0642\u0642 \u0639\u062F\u0645 \u0627\u0644\u062A\u0633\u0627\u0645\u062D',
-  tier3_name:'Enterprise',tier3_desc:'\u0645\u062A\u0639\u062F\u062F \u0627\u0644\u0645\u0632\u0627\u0631\u0639\u060C \u0628\u0644\u0627 \u062D\u062F\u0648\u062F',
-  t3f1:'\u0623\u0633\u0631\u0627\u0628 \u063A\u064A\u0631 \u0645\u062D\u062F\u0648\u062F\u0629',t3f2:'1 \u0645\u0633\u062A\u062E\u062F\u0645 \u00B7 +$2.49/\u0625\u0636\u0627\u0641\u064A (-50%)',t3f3:'\u0645\u062A\u0639\u062F\u062F \u0627\u0644\u0645\u0632\u0627\u0631\u0639 \u0645\u0631\u0643\u0632\u064A',t3f4:'\u0643\u0644 \u0634\u064A\u0621 \u0641\u064A Professional + IoT',t3f5:'\u062F\u0639\u0645 \u0645\u062E\u0635\u0635 24/7',t3f6:'\u062A\u0623\u0647\u064A\u0644 \u0634\u062E\u0635\u064A'
-}
-};
-let curLang='es';
-function setLang(l,manual){
-  curLang=l;
-  document.querySelectorAll('.lang-bar button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l));
-  document.querySelectorAll('[data-t]').forEach(el=>{
-    const k=el.getAttribute('data-t'),v=T[l]&&T[l][k];
-    if(v) el.innerHTML=v;
-  });
-  document.documentElement.lang=l;
-  document.documentElement.dir=l==='ar'?'rtl':'ltr';
-  if(manual) localStorage.setItem('campaign_lang_manual',l);
-}
-/* toggleAcc removed — plans are now always visible side-by-side */
-// Auto-detect device language, manual switch saves preference
-function detectDeviceLang(){
-  const nav=navigator.language||navigator.userLanguage||'';
-  const code=nav.split('-')[0].toLowerCase();
-  if(T[code]) return code;
-  if(nav.startsWith('es')) return 'es';
-  if(nav.startsWith('pt')) return 'pt';
-  return 'en';
-}
-// Use saved only if user manually switched, otherwise always use device lang
-const userChose=localStorage.getItem('campaign_lang_manual');
-setLang(userChose&&T[userChose]?userChose:detectDeviceLang());
+document.querySelector('.curtain-scroll').addEventListener('click',e=>{e.preventDefault();dismissCurtain()});
+window.addEventListener('scroll',()=>{
+  if(!curtainDismissed&&window.scrollY>window.innerHeight*0.25){dismissCurtain()}
+},{passive:true});
 
-/* ── Lead form ── */
-const LF_PH={es:{lf_email_ph:'correo@ejemplo.com',lf_farm_ph:'Nombre de tu granja',lf_country_ph:'Pais'},en:{lf_email_ph:'email@example.com',lf_farm_ph:'Your farm name',lf_country_ph:'Country'},pt:{lf_email_ph:'email@exemplo.com',lf_farm_ph:'Nome da sua granja',lf_country_ph:'Pais'}};
-function updateLeadPH(l){const ph=LF_PH[l]||LF_PH.en;document.querySelectorAll('[data-ph-t]').forEach(el=>{const k=el.getAttribute('data-ph-t');if(ph[k])el.placeholder=ph[k]})}
-const _origSetLang=setLang;setLang=function(l,m){_origSetLang(l,m);updateLeadPH(l)};updateLeadPH(curLang);
-document.getElementById('leadForm').addEventListener('submit',function(e){
-  e.preventDefault();var f=this;
-  if(f.querySelector('[name="_gotcha"]').value)return;
-  var body={email:f.email.value,farm_name:f.farm_name.value||null,country:f.country.value||null,operation_size:f.operation_size.value||null,primary_need:f.primary_need.value||null,source:f.dataset.source||'index'};
-  fetch('https://api.egglogu.com/api/leads/',{method:'POST',body:JSON.stringify(body),headers:{'Content-Type':'application/json'}})
-  .then(function(r){if(r.ok||r.status===201){document.getElementById('lfMsg').style.display='block';f.reset();setTimeout(function(){document.getElementById('lfMsg').style.display='none'},5000)}else{alert(curLang==='es'?'Error al enviar. Intenta de nuevo.':curLang==='pt'?'Erro ao enviar. Tente novamente.':'Error submitting. Please try again.')}})
-  .catch(function(){alert(curLang==='es'?'Error de conexion. Intenta de nuevo.':curLang==='pt'?'Erro de conexao. Tente novamente.':'Connection error. Please try again.')});
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20)});
+const hamburger=document.getElementById('hamburger');
+const navLinks=document.getElementById('navLinks');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');navLinks.classList.toggle('open')});
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{hamburger.classList.remove('open');navLinks.classList.remove('open')}));
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.feature-card,.problem-card,.diff-card,.price-card,.step').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease, transform .5s ease';observer.observe(el)});
+// Language picker — globe dropdown
+const langGlobe=document.getElementById('langGlobe');
+const langDropdown=document.getElementById('langDropdown');
+langGlobe.addEventListener('click',e=>{e.stopPropagation();langDropdown.classList.toggle('open')});
+document.addEventListener('click',()=>langDropdown.classList.remove('open'));
+langDropdown.addEventListener('click',e=>e.stopPropagation());
+document.querySelectorAll('.lang-option').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const lang=btn.dataset.lang;
+    if(window.setLang)window.setLang(lang);
+    document.querySelectorAll('.lang-option').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+    langDropdown.classList.remove('open');
+  });
 });
-
-/* ── UTM Capture ── */
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k => {
-    const v = params.get(k);
-    if(v) localStorage.setItem(k, v);
-  });
-})();
-
-/* ── Conversion tracking on CTA clicks ── */
-(function(){
-  function fireConversion(){
-    plausible('Lead',{props:{source:document.referrer||'direct',page:location.pathname}});
-  }
-  // All btn-main (primary CTA), btn-price (plan trials), btn-price-main links
-  document.querySelectorAll('.btn-main, .btn-price, .btn-price-main').forEach(function(el){
-    el.addEventListener('click', fireConversion);
-  });
-  // Lead form submit
-  var lf=document.getElementById('leadForm');
-  if(lf) lf.addEventListener('submit', fireConversion);
-})();
 </script>
+<script src="i18n-landing.js"></script>
 </body>
 </html>
