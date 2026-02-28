@@ -795,3 +795,4 @@ document.title=titles[l]||titles.es;
 document.querySelectorAll('.lang-option').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
 }
 window.setLang=setLang;
+setLang(document.querySelector('.lang-option.active')?.dataset.lang||'es');
