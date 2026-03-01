@@ -5,8 +5,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
@@ -93,7 +92,7 @@ class RetentionRule(TimestampMixin, Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(200))
     trigger_type: Mapped[RetentionTrigger] = mapped_column()
-    conditions: Mapped[dict] = mapped_column(JSONB, default=dict)
+    conditions: Mapped[dict] = mapped_column(JSON, default=dict)
     discount_percent: Mapped[int] = mapped_column(Integer, default=0)
     action_type: Mapped[RetentionAction] = mapped_column(
         default=RetentionAction.flag_for_review
