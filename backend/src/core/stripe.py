@@ -179,6 +179,13 @@ async def create_launch_checkout_session(
     return session.url
 
 
+def cancel_stripe_subscription(stripe_subscription_id: str) -> dict:
+    """Cancel a Stripe subscription at the end of the current billing period."""
+    return stripe.Subscription.modify(
+        stripe_subscription_id, cancel_at_period_end=True
+    )
+
+
 async def create_customer_portal(customer_id: str, return_url: str) -> str:
     session = stripe.billing_portal.Session.create(
         customer=customer_id,

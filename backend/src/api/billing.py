@@ -12,6 +12,7 @@ from src.api.deps import (
     get_org_plan,
     get_subscription,
     invalidate_subscription_cache,
+    require_role,
     require_superadmin,
 )
 from src.config import settings
@@ -20,6 +21,7 @@ from src.core.plans import get_allowed_modules, PLAN_LIMITS
 from src.core.stripe import (
     DISCOUNT_PHASES,
     apply_phase_coupon,
+    cancel_stripe_subscription,
     compute_phase,
     construct_webhook_event,
     create_checkout_session,
@@ -28,8 +30,9 @@ from src.core.stripe import (
     get_effective_price,
     get_phase_discount,
 )
+from src.core.security import verify_password
 from src.database import get_db
-from src.models.auth import User
+from src.models.auth import Organization, User
 from src.models.subscription import PlanTier, Subscription, SubscriptionStatus
 
 logger = logging.getLogger(__name__)
@@ -109,7 +112,7 @@ async def get_pricing():
 async def create_checkout(
     data: CheckoutRequest,
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(require_role("owner", "manager")),
 ):
     if data.plan not in ("hobby", "starter", "pro", "enterprise"):
         raise ForbiddenError("Invalid plan tier")
@@ -142,7 +145,7 @@ class LaunchCheckoutRequest(BaseModel):
 async def create_checkout_launch(
     data: LaunchCheckoutRequest,
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(require_role("owner", "manager")),
 ):
     """Create a one-time $75 checkout for the 3-month Enterprise launch promo."""
     sub = await get_subscription(user.organization_id, db)
@@ -298,7 +301,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 @router.get("/portal", response_model=PortalResponse)
 async def billing_portal(
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(require_role("owner", "manager")),
 ):
     sub = await get_subscription(user.organization_id, db)
     if not sub or not sub.stripe_customer_id:
@@ -398,6 +401,102 @@ async def billing_status(
         discount_pct=discount_pct,
         discount_label=discount_label,
     )
+
+
+class DeleteAccountRequest(BaseModel):
+    password: str
+    confirm_text: str  # Must be "DELETE" or "ELIMINAR"
+
+
+@router.post("/cancel-subscription")
+async def cancel_subscription(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(require_role("owner", "manager")),
+):
+    """Cancel subscription at end of current billing period (owner/manager only)."""
+    sub = await get_subscription(user.organization_id, db)
+    if not sub or not sub.stripe_subscription_id:
+        raise NotFoundError("No active subscription found")
+
+    if sub.status != SubscriptionStatus.active:
+        raise ForbiddenError("Subscription is not active")
+
+    # Cancel in Stripe (keeps active until period end)
+    cancel_stripe_subscription(sub.stripe_subscription_id)
+
+    sub.status = SubscriptionStatus.cancelled
+    await db.flush()
+    await invalidate_subscription_cache(user.organization_id)
+
+    logger.info(
+        "Subscription cancelled: org %s by user %s (active until %s)",
+        user.organization_id,
+        user.id,
+        sub.current_period_end.isoformat() if sub.current_period_end else "unknown",
+    )
+
+    return {
+        "detail": "Subscription cancelled",
+        "active_until": sub.current_period_end.isoformat() if sub.current_period_end else None,
+    }
+
+
+@router.delete("/delete-account")
+async def delete_account(
+    body: DeleteAccountRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(require_role("owner")),
+):
+    """Permanently delete organization account (owner only, requires password)."""
+    if body.confirm_text not in ("DELETE", "ELIMINAR"):
+        raise ForbiddenError("Confirmation text must be 'DELETE' or 'ELIMINAR'")
+
+    if not user.hashed_password:
+        raise ForbiddenError("Password verification required — OAuth-only accounts must set a password first")
+
+    if not verify_password(body.password, user.hashed_password):
+        raise ForbiddenError("Invalid password")
+
+    # Cancel Stripe subscription if active
+    sub = await get_subscription(user.organization_id, db)
+    if sub and sub.stripe_subscription_id:
+        try:
+            cancel_stripe_subscription(sub.stripe_subscription_id)
+        except Exception as e:
+            logger.warning("Failed to cancel Stripe sub during account deletion: %s", e)
+
+    # Soft delete: deactivate all org users
+    result = await db.execute(
+        select(User).where(User.organization_id == user.organization_id)
+    )
+    org_users = result.scalars().all()
+    for u in org_users:
+        u.is_active = False
+
+    # Mark subscription as suspended
+    if sub:
+        sub.status = SubscriptionStatus.suspended
+        sub.stripe_subscription_id = None
+
+    # Soft delete organization (rename to mark as deleted)
+    result = await db.execute(
+        select(Organization).where(Organization.id == user.organization_id)
+    )
+    org = result.scalar_one_or_none()
+    if org:
+        org.name = f"[DELETED] {org.name}"
+        org.slug = f"deleted-{org.slug}-{_uuid.uuid4().hex[:8]}"
+
+    await db.flush()
+    await invalidate_subscription_cache(user.organization_id)
+
+    logger.info(
+        "Account deleted: org %s by owner %s",
+        user.organization_id,
+        user.id,
+    )
+
+    return {"detail": "Account deleted"}
 
 
 # ── MRR Admin Dashboard ──
