@@ -68,7 +68,6 @@ PLAN_LIMITS = {
             "feed",
             "clients",
             "finance",
-            "inventory",
             "environment",
         ],
         "health": True,
