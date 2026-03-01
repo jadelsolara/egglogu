@@ -24,6 +24,7 @@ from src.core.stripe import (
     construct_webhook_event,
     create_checkout_session,
     create_customer_portal,
+    create_launch_checkout_session,
     get_effective_price,
     get_phase_discount,
 )
@@ -132,6 +133,33 @@ async def create_checkout(
     return {"checkout_url": url}
 
 
+class LaunchCheckoutRequest(BaseModel):
+    success_url: str | None = None
+    cancel_url: str | None = None
+
+
+@router.post("/create-checkout-launch")
+async def create_checkout_launch(
+    data: LaunchCheckoutRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Create a one-time $75 checkout for the 3-month Enterprise launch promo."""
+    sub = await get_subscription(user.organization_id, db)
+    customer_id = sub.stripe_customer_id if sub else None
+
+    success = data.success_url or f"{settings.FRONTEND_URL}/?billing=launch-success"
+    cancel = data.cancel_url or f"{settings.FRONTEND_URL}/?billing=cancel"
+
+    url = await create_launch_checkout_session(
+        org_id=str(user.organization_id),
+        success_url=success,
+        cancel_url=cancel,
+        customer_id=customer_id,
+    )
+    return {"checkout_url": url}
+
+
 @router.post("/webhook", status_code=status.HTTP_200_OK)
 async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     payload = await request.body()
@@ -165,22 +193,43 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
             )
             sub = result.scalar_one_or_none()
             if sub:
-                sub.stripe_customer_id = customer_id
-                sub.stripe_subscription_id = subscription_id
-                sub.plan = PlanTier(plan_str)
-                sub.is_trial = False
-                sub.status = SubscriptionStatus.active
-                sub.discount_phase = 1  # Q1: 40% off
-                sub.months_subscribed = 0
-                sub.billing_interval = interval
-                await db.flush()
-                await invalidate_subscription_cache(org_uuid)
-                logger.info(
-                    "Checkout completed: org %s → %s/%s (Q1 40%% off)",
-                    org_uuid,
-                    plan_str,
-                    interval,
-                )
+                if plan_str == "launch75":
+                    # Launch promo: one-time $75 → Enterprise for 90 days
+                    sub.stripe_customer_id = customer_id
+                    sub.stripe_subscription_id = None  # No recurring sub
+                    sub.plan = PlanTier.enterprise
+                    sub.is_trial = False
+                    sub.status = SubscriptionStatus.active
+                    sub.discount_phase = 0
+                    sub.months_subscribed = 0
+                    sub.billing_interval = "launch75"
+                    sub.current_period_end = datetime.now(timezone.utc) + timedelta(
+                        days=90
+                    )
+                    await db.flush()
+                    await invalidate_subscription_cache(org_uuid)
+                    logger.info(
+                        "Launch promo activated: org %s → Enterprise for 90 days (expires %s)",
+                        org_uuid,
+                        sub.current_period_end.isoformat(),
+                    )
+                else:
+                    sub.stripe_customer_id = customer_id
+                    sub.stripe_subscription_id = subscription_id
+                    sub.plan = PlanTier(plan_str)
+                    sub.is_trial = False
+                    sub.status = SubscriptionStatus.active
+                    sub.discount_phase = 1  # Q1: 40% off
+                    sub.months_subscribed = 0
+                    sub.billing_interval = interval
+                    await db.flush()
+                    await invalidate_subscription_cache(org_uuid)
+                    logger.info(
+                        "Checkout completed: org %s → %s/%s (Q1 40%% off)",
+                        org_uuid,
+                        plan_str,
+                        interval,
+                    )
 
     elif event_type == "customer.subscription.created":
         sub = await _find_sub_by_stripe_id(data_obj.get("id"), db)
@@ -283,6 +332,26 @@ async def billing_status(
     billing_interval = "month"
 
     if sub:
+        # Auto-downgrade: if launch promo expired, revert to hobby
+        if (
+            sub.billing_interval == "launch75"
+            and sub.current_period_end
+            and sub.current_period_end < datetime.now(timezone.utc)
+        ):
+            sub.plan = PlanTier.hobby
+            sub.billing_interval = "month"
+            sub.status = SubscriptionStatus.active
+            sub.current_period_end = None
+            sub.discount_phase = 0
+            sub.months_subscribed = 0
+            await db.flush()
+            await invalidate_subscription_cache(user.organization_id)
+            logger.info(
+                "Launch promo expired: org %s → auto-downgraded to Hobby",
+                user.organization_id,
+            )
+            plan = "hobby"
+
         period_end = (
             sub.current_period_end.isoformat() if sub.current_period_end else None
         )

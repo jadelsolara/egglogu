@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     STRIPE_PRICE_STARTER_ANNUAL: str = ""  # $190/yr
     STRIPE_PRICE_PRO_ANNUAL: str = ""  # $490/yr
     STRIPE_PRICE_ENTERPRISE_ANNUAL: str = ""  # $990/yr
+    # Launch promo: one-time $75 for 3 months Enterprise
+    STRIPE_PRICE_LAUNCH75: str = ""  # One-time price created in Stripe Dashboard
     # Email
     RESEND_API_KEY: str = ""
     GOOGLE_CLIENT_ID: str = ""

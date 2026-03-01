@@ -190,6 +190,26 @@ section{padding:5rem 1.5rem}
 .pricing-included-card p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5}
 .pricing-note{margin-top:1.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1rem 1.5rem;text-align:center;font-size:.9rem;color:rgba(255,255,255,.6)}
 .pricing-note strong{color:var(--orange);font-weight:700}
+/* LAUNCH PROMO */
+.launch-promo{margin-bottom:2.5rem;border:2px solid var(--orange);border-radius:var(--radius);padding:2.5rem 2rem;background:linear-gradient(135deg,rgba(245,166,35,.1) 0%,rgba(245,166,35,.03) 100%);position:relative;overflow:hidden;text-align:center}
+.launch-promo::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.12) 0%,transparent 70%)}
+.launch-promo-tag{display:inline-block;background:var(--orange);color:var(--navy-deep);padding:.3rem 1.2rem;border-radius:50px;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem}
+.launch-promo-row{display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap;position:relative;z-index:1}
+.launch-promo-price{text-align:center}
+.launch-promo-price .big-price{font-size:4rem;font-weight:800;color:var(--orange);line-height:1}
+.launch-promo-price .big-price span{font-size:1.2rem;font-weight:400;color:rgba(255,255,255,.5)}
+.launch-promo-price .price-sub{font-size:.95rem;color:rgba(255,255,255,.5);margin-top:.25rem}
+.launch-promo-info{text-align:left;max-width:420px}
+.launch-promo-info h3{font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
+.launch-promo-info p{font-size:.92rem;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:1rem}
+.launch-promo-info .promo-features{list-style:none;padding:0;margin:0 0 1.25rem}
+.launch-promo-info .promo-features li{font-size:.88rem;color:rgba(255,255,255,.7);padding:.25rem 0;display:flex;align-items:center;gap:.5rem}
+.launch-promo-info .promo-features li::before{content:'\2713';color:var(--orange);font-weight:700;font-size:.85rem}
+.launch-promo-urgency{font-size:.8rem;color:var(--orange);font-weight:600;margin-top:.75rem;text-align:center}
+.launch-promo-after{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1}
+.launch-promo-after p{font-size:.85rem;color:rgba(255,255,255,.4);max-width:600px;margin:0 auto}
+.launch-promo-after strong{color:rgba(255,255,255,.7)}
+@media(max-width:768px){.launch-promo-row{flex-direction:column;gap:1.5rem}.launch-promo-info{text-align:center}.launch-promo-price .big-price{font-size:3rem}}
 .compare-toggle-wrap{text-align:center;margin-top:2rem}
 .compare-toggle{background:transparent;border:2px solid var(--orange);color:var(--orange);padding:.7rem 2rem;border-radius:50px;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem}
 .compare-toggle:hover{background:var(--orange);color:var(--navy-deep)}
@@ -259,7 +279,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
 }
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"EGGlogU","url":"https://egglogu.com","applicationCategory":"BusinessApplication","operatingSystem":"Web, iOS, Android","offers":[{"@type":"Offer","name":"Hobbyist","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Starter","price":"49","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Professional","price":"99","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Enterprise","price":"199","priceCurrency":"USD","billingPeriod":"P1M"}],"description":"Plataforma de gestión avícola con IA predictiva. Producción, salud, alimentación, finanzas y trazabilidad. Offline-first, 14 idiomas.","featureList":["Producción diaria","Salud y sanidad","Alimentación y FCR","Finanzas","Trazabilidad QR","Analytics con IA","Bioseguridad","IoT","14 idiomas","Modo offline"],"screenshot":"https://egglogu.com/campaign-logo.webp","author":{"@type":"Organization","name":"FarmLogU"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"EGGlogU","url":"https://egglogu.com","applicationCategory":"BusinessApplication","operatingSystem":"Web, iOS, Android","offers":[{"@type":"Offer","name":"Launch Offer — 3 Months Enterprise","price":"75","priceCurrency":"USD","description":"Full Enterprise access for 3 months. One-time payment, no commitment after.","availability":"https://schema.org/LimitedAvailability"},{"@type":"Offer","name":"Hobbyist","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Starter","price":"49","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Professional","price":"99","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Enterprise","price":"199","priceCurrency":"USD","billingPeriod":"P1M"}],"description":"Plataforma de gestión avícola con IA predictiva. Producción, salud, alimentación, finanzas y trazabilidad. Offline-first, 14 idiomas.","featureList":["Producción diaria","Salud y sanidad","Alimentación y FCR","Finanzas","Trazabilidad QR","Analytics con IA","Bioseguridad","IoT","14 idiomas","Modo offline"],"screenshot":"https://egglogu.com/campaign-logo.webp","author":{"@type":"Organization","name":"FarmLogU"}}
 </script>
 </head>
 <body>
@@ -523,6 +543,31 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
     <div class="section-header">
       <h2 data-i18n="pricing_title">Planes y Precios</h2>
       <p data-i18n="pricing_desc">Sin contratos. Cancela cuando quieras. Todos incluyen 30 días Enterprise.</p>
+    </div>
+    <!-- LAUNCH PROMO -->
+    <div class="launch-promo">
+      <div class="launch-promo-tag" data-i18n="promo_tag">Oferta de Lanzamiento</div>
+      <div class="launch-promo-row">
+        <div class="launch-promo-price">
+          <div class="big-price">$75<span> USD</span></div>
+          <div class="price-sub" data-i18n="promo_duration">3 meses completos</div>
+        </div>
+        <div class="launch-promo-info">
+          <h3 data-i18n="promo_title">Enterprise completo por $25/mes</h3>
+          <p data-i18n="promo_desc">Accede a todos los módulos, IA predictiva, bioseguridad, trazabilidad, soporte dedicado y más. Un solo pago, sin compromiso después.</p>
+          <ul class="promo-features">
+            <li data-i18n="promo_f1">12 módulos + IA predictiva + Analytics</li>
+            <li data-i18n="promo_f2">Lotes ilimitados · Multi-granja</li>
+            <li data-i18n="promo_f3">Soporte dedicado 24/7</li>
+            <li data-i18n="promo_f4">Después elige el plan que mejor te sirva</li>
+          </ul>
+          <a href="egglogu.html?plan=launch75" class="btn btn-primary btn-lg" data-i18n="promo_cta">Activar Oferta — $75</a>
+          <div class="launch-promo-urgency" data-i18n="promo_urgency">Cupos limitados — primeros 200 usuarios</div>
+        </div>
+      </div>
+      <div class="launch-promo-after">
+        <p data-i18n="promo_after">Al terminar los 3 meses, <strong data-i18n="promo_after_bold">elige tu plan ideal</strong> basado en lo que realmente usas. Sin cargos automáticos.</p>
+      </div>
     </div>
     <div class="pricing-grid">
       <div class="price-card">
