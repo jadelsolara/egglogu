@@ -3,9 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EGGlogU — Gestion avicola inteligente</title>
-<meta name="description" content="Plataforma digital para granjas avicolas. Produccion, salud, alimentacion, finanzas y trazabilidad. Funciona offline. Prueba gratis 30 dias.">
+<title>EGGlogU — Gestión avícola inteligente</title>
+<meta name="description" content="Plataforma digital para granjas avícolas. Producción, salud, alimentación, finanzas y trazabilidad. Funciona offline. Prueba gratis 30 días.">
+<meta name="theme-color" content="#0F2137">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="campaign-logo.webp">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://egglogu.com/">
+<meta property="og:title" content="EGGlogU — Gestión avícola inteligente">
+<meta property="og:description" content="Producción de huevos, salud, alimentación, finanzas y trazabilidad en una sola plataforma. Funciona sin internet. 14 idiomas. Prueba gratis 30 días.">
+<meta property="og:image" content="https://egglogu.com/campaign-logo.webp">
+<meta property="og:locale" content="es_CL">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EGGlogU — Gestión avícola inteligente">
+<meta name="twitter:description" content="Gestión avícola con IA predictiva. Offline-first, 14 idiomas, desde $0/mes.">
+<meta name="twitter:image" content="https://egglogu.com/campaign-logo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -96,7 +112,7 @@ img,svg{max-width:100%;display:block}
 .curtain-question h2 em{font-style:italic;color:rgba(255,255,255,.6)}
 .curtain-dots{font-size:40px;letter-spacing:8px;opacity:.4;margin:20px 0;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}}
-.curtain-answer{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal 1s ease-out 2.5s forwards}
+.curtain-answer{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal .8s ease-out 1.5s forwards}
 @keyframes reveal{to{opacity:1;transform:translateY(0)}}
 .curtain-brand{font-size:clamp(42px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1;color:var(--white)}
 .curtain-brand span.light{font-weight:300;color:rgba(255,255,255,.6)}
@@ -156,7 +172,7 @@ section{padding:5rem 1.5rem}
 .price-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:2rem 1.5rem;text-align:left;transition:all .25s;position:relative;display:flex;flex-direction:column}
 .price-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.2);border-color:rgba(255,255,255,.15)}
 .price-card.featured{border:2px solid var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.15)}
-.price-card.featured::before{content:'Mas Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:var(--navy-deep);padding:.2rem 1rem;border-radius:50px;font-size:.78rem;font-weight:700}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:var(--navy-deep);padding:.2rem 1rem;border-radius:50px;font-size:.78rem;font-weight:700;white-space:nowrap}
 .price-card h3{font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem;color:rgba(255,255,255,.6)}
 .price-card.featured h3{color:var(--orange)}
 .price-card .price{font-size:2.8rem;font-weight:800;color:var(--white);margin:0 0 .15rem}
@@ -226,7 +242,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   .hamburger.open span:nth-child(2){opacity:0}
   .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
   .features-grid,.diff-grid,.pricing-grid,.problems-grid{grid-template-columns:1fr}
-  .compare-table{font-size:.72rem}.compare-table th,.compare-table td{padding:.45rem .4rem}.compare-panel{overflow-x:auto}
+  .compare-table{font-size:.72rem}.compare-table th,.compare-table td{padding:.45rem .4rem}.compare-panel{overflow-x:auto}.compare-panel::after{content:'← → Desliza para ver más';display:block;text-align:center;font-size:.7rem;color:rgba(255,255,255,.35);padding:.5rem 0;font-style:italic}
   .steps{grid-template-columns:1fr 1fr}
   .hero{padding:6.5rem 1.5rem 3.5rem}
   .hero h1{font-size:2rem}
@@ -242,6 +258,9 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   section{padding:3.5rem 1.5rem}
 }
 </style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"EGGlogU","url":"https://egglogu.com","applicationCategory":"BusinessApplication","operatingSystem":"Web, iOS, Android","offers":[{"@type":"Offer","name":"Hobbyist","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Starter","price":"49","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Professional","price":"99","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Enterprise","price":"199","priceCurrency":"USD","billingPeriod":"P1M"}],"description":"Plataforma de gestión avícola con IA predictiva. Producción, salud, alimentación, finanzas y trazabilidad. Offline-first, 14 idiomas.","featureList":["Producción diaria","Salud y sanidad","Alimentación y FCR","Finanzas","Trazabilidad QR","Analytics con IA","Bioseguridad","IoT","14 idiomas","Modo offline"],"screenshot":"https://egglogu.com/campaign-logo.webp","author":{"@type":"Organization","name":"FarmLogU"}}
+</script>
 </head>
 <body>
 
@@ -307,7 +326,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
     <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     <div class="nav-links" id="navLinks">
       <a href="#features" data-i18n="nav_features">Funcionalidades</a>
-      <a href="#how" data-i18n="nav_how">Como funciona</a>
+      <a href="#how" data-i18n="nav_how">Cómo funciona</a>
       <a href="#pricing" data-i18n="nav_pricing">Precios</a>
       <a href="egglogu.html" class="btn btn-outline" data-i18n="nav_login">&#x1F511; Acceso Clientes</a>
     </div>
@@ -319,19 +338,19 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   <div class="hero-content">
     <div class="hero-logo">
       <div class="logo-glow"></div>
-      <img src="campaign-logo.webp" alt="EGGlogU" width="180" height="180">
+      <img src="campaign-logo.webp" alt="EGGlogU" width="180" height="180" loading="lazy">
     </div>
     <div class="hero-badge"><span>Live</span> <span data-i18n="hero_badge">Parte de la plataforma FarmLogU</span></div>
-    <h1 data-i18n="hero_title">Gestion avicola <em>inteligente y sin complicaciones</em></h1>
-    <p data-i18n="hero_desc">Produccion de huevos, salud de parvadas, alimentacion, finanzas y trazabilidad en una sola plataforma. Funciona sin internet.</p>
+    <h1 data-i18n="hero_title">Gestión avícola <em>inteligente y sin complicaciones</em></h1>
+    <p data-i18n="hero_desc">Producción de huevos, salud de parvadas, alimentación, finanzas y trazabilidad en una sola plataforma. Funciona sin internet.</p>
     <div class="hero-buttons">
-      <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 dias</a>
+      <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 días</a>
       <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat"><strong>100%</strong><span data-i18n="stat_offline">Offline-first</span></div>
       <div class="hero-stat"><strong>14</strong><span data-i18n="stat_langs">Idiomas</span></div>
-      <div class="hero-stat"><strong>30</strong><span data-i18n="stat_trial">Dias gratis</span></div>
+      <div class="hero-stat"><strong>30</strong><span data-i18n="stat_trial">Días gratis</span></div>
       <div class="hero-stat"><strong>24/7</strong><span data-i18n="stat_support">Soporte IA</span></div>
     </div>
   </div>
@@ -343,36 +362,36 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   <div class="section-inner">
     <div class="section-header">
       <h2 data-i18n="problems_title">El problema que resolvemos</h2>
-      <p data-i18n="problems_desc">La gestion manual de granjas avicolas cuesta tiempo, dinero y trazabilidad</p>
+      <p data-i18n="problems_desc">La gestión manual de granjas avícolas cuesta tiempo, dinero y trazabilidad</p>
     </div>
     <div class="problems-grid">
       <div class="problem-card">
         <div class="problem-icon red">&#x2717;</div>
-        <div><h3 data-i18n="prob1_title">Produccion registrada en cuadernos</h3><p data-i18n="prob1_desc">Datos de huevos por galpon anotados a mano, perdidos entre hojas y carpetas.</p></div>
+        <div><h3 data-i18n="prob1_title">Producción registrada en cuadernos</h3><p data-i18n="prob1_desc">Datos de huevos por galpón anotados a mano, perdidos entre hojas y carpetas.</p></div>
       </div>
       <div class="problem-card">
         <div class="problem-icon green">&#x2713;</div>
-        <div><h3 data-i18n="prob2_title">Registro digital por parvada</h3><p data-i18n="prob2_desc">Produccion diaria con grados, roturas, mortalidad y notas. Todo desde el celular.</p></div>
+        <div><h3 data-i18n="prob2_title">Registro digital por parvada</h3><p data-i18n="prob2_desc">Producción diaria con grados, roturas, mortalidad y notas. Todo desde el celular.</p></div>
       </div>
       <div class="problem-card">
         <div class="problem-icon red">&#x2717;</div>
-        <div><h3 data-i18n="prob3_title">Salud sin trazabilidad</h3><p data-i18n="prob3_desc">Vacunas, medicamentos y brotes sin historial. Imposible auditar.</p></div>
+        <div><h3 data-i18n="prob3_title">Salud sin trazabilidad</h3><p data-i18n="prob3_desc">Vacunas, medicamentos y brotes sin historial. Imposible de auditar.</p></div>
       </div>
       <div class="problem-card">
         <div class="problem-icon green">&#x2713;</div>
-        <div><h3 data-i18n="prob4_title">Historial sanitario completo</h3><p data-i18n="prob4_desc">Vacunas, medicaciones, brotes y eventos de estres con fechas y responsables.</p></div>
+        <div><h3 data-i18n="prob4_title">Historial sanitario completo</h3><p data-i18n="prob4_desc">Vacunas, medicaciones, brotes y eventos de estrés con fechas y responsables.</p></div>
       </div>
       <div class="problem-card">
         <div class="problem-icon red">&#x2717;</div>
-        <div><h3 data-i18n="prob5_title">Costos de alimento descontrolados</h3><p data-i18n="prob5_desc">Sin saber cuanto consume cada parvada ni el costo real por huevo producido.</p></div>
+        <div><h3 data-i18n="prob5_title">Costos de alimento descontrolados</h3><p data-i18n="prob5_desc">Sin saber cuánto consume cada parvada ni el costo real por huevo producido.</p></div>
       </div>
       <div class="problem-card">
         <div class="problem-icon green">&#x2713;</div>
-        <div><h3 data-i18n="prob6_title">Alimentacion optimizada</h3><p data-i18n="prob6_desc">Compras, consumo por parvada, conversion alimenticia y costo por huevo automatico.</p></div>
+        <div><h3 data-i18n="prob6_title">Alimentación optimizada</h3><p data-i18n="prob6_desc">Compras, consumo por parvada, conversión alimenticia y costo por huevo automático.</p></div>
       </div>
       <div class="problem-card">
         <div class="problem-icon red">&#x2717;</div>
-        <div><h3 data-i18n="prob7_title">Finanzas en Excel desactualizado</h3><p data-i18n="prob7_desc">Ingresos, gastos y cuentas por cobrar en hojas de calculo que nadie actualiza.</p></div>
+        <div><h3 data-i18n="prob7_title">Finanzas en Excel desactualizado</h3><p data-i18n="prob7_desc">Ingresos, gastos y cuentas por cobrar en hojas de cálculo que nadie actualiza.</p></div>
       </div>
       <div class="problem-card">
         <div class="problem-icon green">&#x2713;</div>
@@ -387,23 +406,23 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   <div class="section-inner">
     <div class="section-header">
       <h2 data-i18n="features_title">Todo lo que necesitas para tu granja</h2>
-      <p data-i18n="features_desc">Desde el galpon hasta la venta, todo en un solo lugar</p>
+      <p data-i18n="features_desc">Desde el galpón hasta la venta, todo en un solo lugar</p>
     </div>
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">&#x1F95A;</div>
-        <h3 data-i18n="feat1_title">Produccion diaria</h3>
-        <p data-i18n="feat1_desc">Registro por parvada: huevos totales, grados (AA, A, B, C), roturas, mortalidad. Curvas de produccion vs estandar de raza.</p>
+        <h3 data-i18n="feat1_title">Producción diaria</h3>
+        <p data-i18n="feat1_desc">Registro por parvada: huevos totales, grados (AA, A, B, C), roturas, mortalidad. Curvas de producción vs estándar de raza.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F3E5;</div>
         <h3 data-i18n="feat2_title">Salud y sanidad</h3>
-        <p data-i18n="feat2_desc">Calendario de vacunas, medicaciones con dosis y retiro, brotes con aislamiento, eventos de estres y bioseguridad.</p>
+        <p data-i18n="feat2_desc">Calendario de vacunas, medicaciones con dosis y retiro, brotes con aislamiento, eventos de estrés y bioseguridad.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F33E;</div>
-        <h3 data-i18n="feat3_title">Alimentacion</h3>
-        <p data-i18n="feat3_desc">Compras de alimento con proveedor y costo. Consumo diario por parvada. Conversion alimenticia automatica.</p>
+        <h3 data-i18n="feat3_title">Alimentación</h3>
+        <p data-i18n="feat3_desc">Compras de alimento con proveedor y costo. Consumo diario por parvada. Conversión alimenticia automática.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F4B0;</div>
@@ -413,17 +432,17 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <div class="feature-card">
         <div class="feature-icon">&#x1F50D;</div>
         <h3 data-i18n="feat5_title">Trazabilidad</h3>
-        <p data-i18n="feat5_desc">Lotes con QR desde el galpon hasta el cliente. Historial completo de produccion, calidad y despacho.</p>
+        <p data-i18n="feat5_desc">Lotes con QR desde el galpón hasta el cliente. Historial completo de producción, calidad y despacho.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F4CA;</div>
         <h3 data-i18n="feat6_title">Analytics y KPIs</h3>
-        <p data-i18n="feat6_desc">Tasa de postura, mortalidad, conversion alimenticia, costo por huevo, predicciones con IA. Todo en dashboards interactivos.</p>
+        <p data-i18n="feat6_desc">Tasa de postura, mortalidad, conversión alimenticia, costo por huevo, predicciones con IA. Todo en dashboards interactivos.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F30D;</div>
         <h3 data-i18n="feat7_title">Ambiente e IoT</h3>
-        <p data-i18n="feat7_desc">Temperatura, humedad, amoniaco, iluminacion. Integracion con sensores IoT y datos climaticos automaticos.</p>
+        <p data-i18n="feat7_desc">Temperatura, humedad, amoníaco, iluminación. Integración con sensores IoT y datos climáticos automáticos.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
@@ -433,7 +452,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <div class="feature-card">
         <div class="feature-icon">&#x1F4CB;</div>
         <h3 data-i18n="feat9_title">Operaciones</h3>
-        <p data-i18n="feat9_desc">Checklists diarios, bitacora de galpon, personal con roles y turnos. Planificacion de produccion.</p>
+        <p data-i18n="feat9_desc">Checklists diarios, bitácora de galpón, personal con roles y turnos. Planificación de producción.</p>
       </div>
     </div>
   </div>
@@ -444,13 +463,13 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   <div class="section-inner">
     <div class="section-header">
       <h2 data-i18n="how_title">Empieza en minutos</h2>
-      <p data-i18n="how_desc">Sin instalacion, sin hardware especial. Solo un navegador.</p>
+      <p data-i18n="how_desc">Sin instalación, sin hardware especial. Solo un navegador.</p>
     </div>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
         <h3 data-i18n="step1_title">Crea tu cuenta</h3>
-        <p data-i18n="step1_desc">Registro gratuito. 30 dias de prueba sin tarjeta de credito.</p>
+        <p data-i18n="step1_desc">Registro gratuito. 30 días de prueba sin tarjeta de crédito.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
@@ -460,12 +479,12 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <div class="step">
         <div class="step-num">3</div>
         <h3 data-i18n="step3_title">Registra a diario</h3>
-        <p data-i18n="step3_desc">Produccion, salud, alimento y gastos desde cualquier dispositivo. Sin internet.</p>
+        <p data-i18n="step3_desc">Producción, salud, alimento y gastos desde cualquier dispositivo. Sin internet.</p>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <h3 data-i18n="step4_title">Analiza y decide</h3>
-        <p data-i18n="step4_desc">Dashboards con KPIs, tendencias, predicciones IA y alertas automaticas.</p>
+        <p data-i18n="step4_desc">Dashboards con KPIs, tendencias, predicciones IA y alertas automáticas.</p>
       </div>
     </div>
   </div>
@@ -475,19 +494,19 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
 <section class="diff-section">
   <div class="section-inner">
     <div class="section-header">
-      <h2 data-i18n="diff_title">Por que EGGlogU</h2>
-      <p data-i18n="diff_desc">Disenado por y para avicultores</p>
+      <h2 data-i18n="diff_title">Por qué EGGlogU</h2>
+      <p data-i18n="diff_desc">Diseñado por y para avicultores</p>
     </div>
     <div class="diff-grid">
       <div class="diff-card">
         <div class="diff-icon">&#x1F4F4;</div>
         <h3 data-i18n="diff1_title">Funciona sin internet</h3>
-        <p data-i18n="diff1_desc">PWA offline-first. Registra datos en el galpon sin cobertura. Se sincroniza automaticamente al reconectarse.</p>
+        <p data-i18n="diff1_desc">PWA offline-first. Registra datos en el galpón sin cobertura. Se sincroniza automáticamente al reconectarse.</p>
       </div>
       <div class="diff-card">
         <div class="diff-icon">&#x1F30E;</div>
         <h3 data-i18n="diff2_title">14 idiomas</h3>
-        <p data-i18n="diff2_desc">Espanol, ingles, portugues, frances, aleman, italiano, japones, chino y 6 mas. Tu equipo trabaja en su idioma.</p>
+        <p data-i18n="diff2_desc">Español, inglés, portugués, francés, alemán, italiano, japonés, chino y 6 más. Tu equipo trabaja en su idioma.</p>
       </div>
       <div class="diff-card">
         <div class="diff-icon">&#x1F9E9;</div>
@@ -503,53 +522,55 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   <div class="section-inner">
     <div class="section-header">
       <h2 data-i18n="pricing_title">Planes y Precios</h2>
-      <p data-i18n="pricing_desc">Sin contratos. Cancela cuando quieras. Todos incluyen 30 dias Enterprise.</p>
+      <p data-i18n="pricing_desc">Sin contratos. Cancela cuando quieras. Todos incluyen 30 días Enterprise.</p>
     </div>
     <div class="pricing-grid">
       <div class="price-card">
         <h3 data-i18n="hobby_name">Hobbyist</h3>
         <div class="price" data-i18n="hobby_price">Gratis</div>
-        <div class="price-period" data-i18n="hobby_limit">Productor independiente</div>
+        <div class="price-period" data-i18n="hobby_limit">Granjero independiente</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:-.75rem;margin-bottom:.75rem" data-i18n="hobby_reg">Registro requerido</div>
         <ul>
           <li data-i18n="hobby_f1">Hasta 2 lotes</li>
           <li data-i18n="hobby_f2">Worker +$3.99 · Manager +$6.99</li>
-          <li data-i18n="hobby_f3">Produccion + Alimentacion + Dashboard</li>
+          <li data-i18n="hobby_f3">Producción + Alimentación + Dashboard</li>
           <li data-i18n="hobby_f4">Modo Campo</li>
           <li data-i18n="hobby_f5">Funciona sin internet</li>
         </ul>
-        <a href="egglogu.html" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Dias</a>
+        <a href="egglogu.html?plan=hobby" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Días</a>
       </div>
       <div class="price-card">
         <h3 data-i18n="starter_name">Starter</h3>
         <div class="price">$49<span>/mes</span></div>
-        <div class="price-period" data-i18n="starter_limit">Operacion comercial</div>
+        <div class="price-period" data-i18n="starter_limit">Operación comercial</div>
         <ul>
           <li data-i18n="starter_f1">Hasta 5 lotes</li>
           <li data-i18n="starter_f2">Worker +$3.99 · Manager +$6.99</li>
-          <li data-i18n="starter_f3">Produccion + Alimentacion + Salud</li>
+          <li data-i18n="starter_f3">Producción + Alimentación + Salud</li>
           <li data-i18n="starter_f4">Finanzas + Clientes</li>
           <li data-i18n="starter_f5">Modo Campo + Dashboard</li>
         </ul>
-        <a href="egglogu.html" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Dias</a>
+        <a href="egglogu.html?plan=starter" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Días</a>
       </div>
       <div class="price-card featured">
+        <span class="price-badge" data-i18n="badge_popular">Más Popular</span>
         <h3 data-i18n="pro_name">Professional</h3>
         <div class="price">$99<span>/mes</span></div>
-        <div class="price-period" data-i18n="pro_limit">Operacion completa con IA</div>
+        <div class="price-period" data-i18n="pro_limit">Operación completa con IA</div>
         <ul>
           <li data-i18n="pro_f1">Hasta 15 lotes</li>
           <li data-i18n="pro_f2">Worker +$3.99 · Manager +$6.99</li>
-          <li data-i18n="pro_f3">12 modulos completos</li>
+          <li data-i18n="pro_f3">12 módulos completos</li>
           <li data-i18n="pro_f4">IA predictiva + Analytics</li>
           <li data-i18n="pro_f5">Bioseguridad + Trazabilidad</li>
-          <li data-i18n="pro_f6">Validacion Zero Tolerance</li>
+          <li data-i18n="pro_f6">Validación Zero Tolerance</li>
         </ul>
-        <a href="egglogu.html" class="btn btn-primary" data-i18n="plan_cta">Empezar + Enterprise 30 Dias</a>
+        <a href="egglogu.html?plan=pro" class="btn btn-primary" data-i18n="plan_cta">Empezar + Enterprise 30 Días</a>
       </div>
       <div class="price-card">
         <h3 data-i18n="ent_name">Enterprise</h3>
         <div class="price">$199<span>/mes</span></div>
-        <div class="price-period" data-i18n="ent_limit">Multi-granja, sin limites</div>
+        <div class="price-period" data-i18n="ent_limit">Multi-granja, sin límites</div>
         <ul>
           <li data-i18n="ent_f1">Lotes ilimitados</li>
           <li data-i18n="ent_f2">Worker +$3.99 · Manager +$6.99</li>
@@ -558,17 +579,17 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
           <li data-i18n="ent_f5">Soporte dedicado 24/7</li>
           <li data-i18n="ent_f6">Onboarding personalizado</li>
         </ul>
-        <a href="egglogu.html" class="btn btn-outline" data-i18n="ent_cta">Probar Enterprise</a>
+        <a href="egglogu.html?plan=enterprise" class="btn btn-outline" data-i18n="ent_cta">Probar Enterprise</a>
       </div>
     </div>
     <div class="compare-toggle-wrap">
-      <button class="compare-toggle" onclick="toggleCompare()" data-i18n="compare_btn">Ver comparacion detallada <span class="arrow">▼</span></button>
+      <button class="compare-toggle" onclick="toggleCompare()" data-i18n="compare_btn">Ver comparación detallada <span class="arrow">▼</span></button>
     </div>
     <div class="compare-panel" id="comparePanel">
       <table class="compare-table">
         <thead>
           <tr>
-            <th data-i18n="cmp_feature">Caracteristica</th>
+            <th data-i18n="cmp_feature">Característica</th>
             <th>Hobbyist<br><small data-i18n="cmp_free">Gratis</small></th>
             <th>Starter<br><small>$49/mes</small></th>
             <th>Professional<br><small>$99/mes</small></th>
@@ -576,16 +597,16 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
           </tr>
         </thead>
         <tbody>
-          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_limits">Limites</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_limits">Límites</td></tr>
           <tr><td data-i18n="cmp_farms">Granjas</td><td>1</td><td>1</td><td>1</td><td data-i18n="cmp_unlimited">Ilimitadas</td></tr>
           <tr><td data-i18n="cmp_flocks">Lotes</td><td>2</td><td>5</td><td>15</td><td data-i18n="cmp_unlimited2">Ilimitados</td></tr>
           <tr><td data-i18n="cmp_users">Usuarios base</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
           <tr><td data-i18n="cmp_extra_worker">Extra Worker</td><td colspan="4">$3.99/mes</td></tr>
           <tr><td data-i18n="cmp_extra_mgmt">Extra Management</td><td colspan="4">$6.99/mes</td></tr>
-          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_modules">Modulos</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_modules">Módulos</td></tr>
           <tr><td>Dashboard</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_production">Produccion</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-          <tr><td data-i18n="cmp_feed">Alimentacion</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_feed">Alimentación</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_health">Salud</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_clients">Clientes</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_finance">Finanzas</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
@@ -594,10 +615,10 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
           <tr><td data-i18n="cmp_inventory">Inventario</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_biosecurity">Bioseguridad</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_traceability">Trazabilidad</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
-          <tr><td data-i18n="cmp_planning">Planificacion</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_planning">Planificación</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td>IoT</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td></tr>
           <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_features">Funcionalidades</td></tr>
-          <tr><td data-i18n="cmp_fcr">Conversion alimenticia</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_fcr">Conversión alimenticia</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_field_mode">Modo Campo</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_offline">Funciona sin internet</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
           <tr><td data-i18n="cmp_dark_mode">Modo oscuro</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
@@ -617,12 +638,12 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <h3 data-i18n="included_title">Incluido en todos los planes</h3>
       <div class="pricing-included-grid">
         <div class="pricing-included-card">
-          <h4 data-i18n="included_1_title">30 dias Enterprise completo</h4>
-          <p data-i18n="included_1_desc">Empieza con todas las funcionalidades. Sin restricciones. Elige tu plan cuando estes listo.</p>
+          <h4 data-i18n="included_1_title">30 días Enterprise completo</h4>
+          <p data-i18n="included_1_desc">Empieza con todas las funcionalidades. Sin restricciones. Elige tu plan cuando estés listo.</p>
         </div>
         <div class="pricing-included-card">
           <h4 data-i18n="included_2_title">Funciona sin internet</h4>
-          <p data-i18n="included_2_desc">Registra produccion en el campo. Se sincroniza automaticamente cuando hay conexion.</p>
+          <p data-i18n="included_2_desc">Registra producción en el campo. Se sincroniza automáticamente cuando hay conexión.</p>
         </div>
         <div class="pricing-included-card">
           <h4 data-i18n="included_3_title">Sin contratos, sin compromiso</h4>
@@ -636,10 +657,10 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
 
 <!-- CTA -->
 <section class="cta-section">
-  <h2 data-i18n="cta_title">Digitaliza tu granja avicola hoy</h2>
-  <p data-i18n="cta_desc">Unete a avicultores que ya controlan su operacion de galpon a cliente.</p>
+  <h2 data-i18n="cta_title">Digitaliza tu granja avícola hoy</h2>
+  <p data-i18n="cta_desc">Únete a avicultores que ya controlan su operación de galpón a cliente.</p>
   <div class="cta-buttons">
-    <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 dias</a>
+    <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 días</a>
     <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
   </div>
 </section>
@@ -653,27 +674,27 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
           <img src="campaign-logo.webp" alt="EGGlogU" width="28" height="28">
           EGGlogU
         </div>
-        <p class="footer-brand-text" data-i18n="footer_desc">Plataforma de gestion avicola. Parte del ecosistema FarmLogU — ERP modular para agricultura.</p>
+        <p class="footer-brand-text" data-i18n="footer_desc">Plataforma de gestión avícola. Parte del ecosistema FarmLogU — ERP modular para agricultura.</p>
       </div>
       <div class="footer-col">
         <h4 data-i18n="footer_product">Producto</h4>
         <a href="#features" data-i18n="nav_features">Funcionalidades</a>
         <a href="#pricing" data-i18n="nav_pricing">Precios</a>
-        <a href="#how" data-i18n="nav_how">Como funciona</a>
-        <a href="egglogu.html" data-i18n="nav_login">Iniciar sesion</a>
+        <a href="#how" data-i18n="nav_how">Cómo funciona</a>
+        <a href="egglogu.html" data-i18n="nav_login">Iniciar sesión</a>
       </div>
       <div class="footer-col">
         <h4 data-i18n="footer_platform">Plataforma</h4>
-        <a href="#">FarmLogU</a>
-        <a href="#">HarvestLogU</a>
-        <a href="#">CowLogU</a>
-        <a href="#">SwineLogU</a>
+        <a href="https://farmlogu.com" target="_blank" rel="noopener">FarmLogU</a>
+        <a href="https://farmlogu.com" target="_blank" rel="noopener">HarvestLogU</a>
+        <a href="https://farmlogu.com" target="_blank" rel="noopener">CowLogU</a>
+        <a href="https://farmlogu.com" target="_blank" rel="noopener">SwineLogU</a>
       </div>
       <div class="footer-col">
         <h4 data-i18n="footer_legal">Legal</h4>
-        <a href="#" data-i18n="footer_privacy">Privacidad</a>
-        <a href="#" data-i18n="footer_terms">Terminos</a>
-        <a href="#" data-i18n="footer_cookies">Cookies</a>
+        <a href="privacy.html" data-i18n="footer_privacy">Privacidad</a>
+        <a href="terms.html" data-i18n="footer_terms">Términos</a>
+        <a href="privacy.html#cookies" data-i18n="footer_cookies">Cookies</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -700,9 +721,9 @@ let curtainDismissed=false;
 function dismissCurtain(){
   if(curtainDismissed)return;
   curtainDismissed=true;
-  curtain.style.transition='opacity .8s ease';
+  curtain.style.transition='opacity .6s ease, max-height .6s ease';
   curtain.style.opacity='0';
-  setTimeout(()=>{curtain.style.display='none';window.scrollTo(0,0)},800);
+  setTimeout(()=>{curtain.style.display='none'},600);
 }
 document.querySelector('.curtain-scroll').addEventListener('click',e=>{e.preventDefault();dismissCurtain()});
 window.addEventListener('scroll',()=>{
