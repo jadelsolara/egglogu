@@ -98,9 +98,7 @@ class RetentionRule(TimestampMixin, Base):
     action_type: Mapped[RetentionAction] = mapped_column(
         default=RetentionAction.flag_for_review
     )
-    email_template_key: Mapped[Optional[str]] = mapped_column(
-        String(100), default=None
-    )
+    email_template_key: Mapped[Optional[str]] = mapped_column(String(100), default=None)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
 

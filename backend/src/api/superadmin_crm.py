@@ -96,9 +96,7 @@ async def _audit(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@router.get(
-    "/organizations/{org_id}/crm-360", response_model=CRM360Response
-)
+@router.get("/organizations/{org_id}/crm-360", response_model=CRM360Response)
 async def crm_360_view(
     org_id: uuid.UUID,
     user: User = SUPERADMIN,
@@ -237,21 +235,23 @@ async def crm_360_view(
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-@router.get(
-    "/organizations/{org_id}/notes", response_model=list[CustomerNoteRead]
-)
+@router.get("/organizations/{org_id}/notes", response_model=list[CustomerNoteRead])
 async def list_notes(
     org_id: uuid.UUID,
     user: User = SUPERADMIN,
     db: AsyncSession = Depends(get_db),
 ):
     notes = (
-        await db.execute(
-            select(CustomerNote)
-            .where(CustomerNote.organization_id == org_id)
-            .order_by(CustomerNote.is_pinned.desc(), CustomerNote.created_at.desc())
+        (
+            await db.execute(
+                select(CustomerNote)
+                .where(CustomerNote.organization_id == org_id)
+                .order_by(CustomerNote.is_pinned.desc(), CustomerNote.created_at.desc())
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return [CustomerNoteRead.model_validate(n) for n in notes]
 
 
@@ -289,7 +289,9 @@ async def create_note(
     return CustomerNoteRead.model_validate(note)
 
 
-@router.patch("/organizations/{org_id}/notes/{note_id}", response_model=CustomerNoteRead)
+@router.patch(
+    "/organizations/{org_id}/notes/{note_id}", response_model=CustomerNoteRead
+)
 async def update_note(
     org_id: uuid.UUID,
     note_id: uuid.UUID,
@@ -383,6 +385,7 @@ async def apply_discount(
                 name=f"Manual: {body.reason[:50]}",
             )
             import stripe
+
             stripe.Subscription.modify(
                 sub.stripe_subscription_id, coupon=stripe_coupon_id
             )
@@ -405,7 +408,12 @@ async def apply_discount(
     await db.refresh(discount)
 
     await _audit(
-        db, user, "CREATE", "manual_discount", str(discount.id), request,
+        db,
+        user,
+        "CREATE",
+        "manual_discount",
+        str(discount.id),
+        request,
         changes={"percent_off": body.percent_off, "org": org.name},
     )
     return ManualDiscountRead.model_validate(discount)
@@ -417,12 +425,16 @@ async def list_active_discounts(
     db: AsyncSession = Depends(get_db),
 ):
     discounts = (
-        await db.execute(
-            select(ManualDiscount)
-            .where(ManualDiscount.is_active.is_(True))
-            .order_by(ManualDiscount.created_at.desc())
+        (
+            await db.execute(
+                select(ManualDiscount)
+                .where(ManualDiscount.is_active.is_(True))
+                .order_by(ManualDiscount.created_at.desc())
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return [ManualDiscountRead.model_validate(d) for d in discounts]
 
 
@@ -434,9 +446,7 @@ async def revoke_discount(
     db: AsyncSession = Depends(get_db),
 ):
     discount = (
-        await db.execute(
-            select(ManualDiscount).where(ManualDiscount.id == discount_id)
-        )
+        await db.execute(select(ManualDiscount).where(ManualDiscount.id == discount_id))
     ).scalar_one_or_none()
     if not discount:
         raise NotFoundError("Discount not found")
@@ -455,6 +465,7 @@ async def revoke_discount(
         if sub and sub.stripe_subscription_id:
             try:
                 import stripe
+
                 stripe.Subscription.modify(sub.stripe_subscription_id, coupon="")
             except Exception:
                 pass
@@ -473,16 +484,18 @@ async def list_retention_rules(
     db: AsyncSession = Depends(get_db),
 ):
     rules = (
-        await db.execute(
-            select(RetentionRule).order_by(RetentionRule.created_at.desc())
+        (
+            await db.execute(
+                select(RetentionRule).order_by(RetentionRule.created_at.desc())
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return [RetentionRuleRead.model_validate(r) for r in rules]
 
 
-@router.post(
-    "/retention-rules", response_model=RetentionRuleRead, status_code=201
-)
+@router.post("/retention-rules", response_model=RetentionRuleRead, status_code=201)
 async def create_retention_rule(
     body: RetentionRuleCreate,
     request: Request,
@@ -581,7 +594,12 @@ async def evaluate_retention(
     """Evaluate all active retention rules against all organizations."""
     triggered = await evaluate_retention_rules(db)
     await _audit(
-        db, user, "EXECUTE", "retention_evaluation", "all", request,
+        db,
+        user,
+        "EXECUTE",
+        "retention_evaluation",
+        "all",
+        request,
         changes={"triggered_count": len(triggered)},
     )
     return {"triggered": triggered, "count": len(triggered)}
@@ -624,7 +642,12 @@ async def issue_refund(
         reason=body.reason,
     )
     await _audit(
-        db, user, "CREATE", "refund", result["id"], request,
+        db,
+        user,
+        "CREATE",
+        "refund",
+        result["id"],
+        request,
         changes={"amount": result["amount"], "org_id": str(org_id)},
     )
     return result
@@ -675,7 +698,12 @@ async def create_credit_note(
     await db.refresh(cn)
 
     await _audit(
-        db, user, "CREATE", "credit_note", str(cn.id), request,
+        db,
+        user,
+        "CREATE",
+        "credit_note",
+        str(cn.id),
+        request,
         changes={"amount_cents": body.amount_cents, "org": org.name},
     )
     return CreditNoteRead.model_validate(cn)
@@ -688,12 +716,16 @@ async def list_credit_notes(
     db: AsyncSession = Depends(get_db),
 ):
     cns = (
-        await db.execute(
-            select(CreditNote)
-            .where(CreditNote.organization_id == org_id)
-            .order_by(CreditNote.created_at.desc())
+        (
+            await db.execute(
+                select(CreditNote)
+                .where(CreditNote.organization_id == org_id)
+                .order_by(CreditNote.created_at.desc())
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return [CreditNoteRead.model_validate(cn) for cn in cns]
 
 
@@ -716,6 +748,7 @@ async def org_payment_methods(
     # Mark default payment method
     try:
         import stripe
+
         customer = stripe.Customer.retrieve(sub.stripe_customer_id)
         default_pm = customer.get("invoice_settings", {}).get("default_payment_method")
         for m in methods:
@@ -761,15 +794,22 @@ async def change_plan(
 
     # Update local DB
     from src.models.subscription import PlanTier
+
     sub.plan = PlanTier(body.new_plan)
     sub.billing_interval = body.interval
 
     # Invalidate subscription cache
     from src.api.deps import invalidate_subscription_cache
+
     await invalidate_subscription_cache(org_id)
 
     await _audit(
-        db, user, "UPDATE", "subscription_plan", str(sub.id), request,
+        db,
+        user,
+        "UPDATE",
+        "subscription_plan",
+        str(sub.id),
+        request,
         changes={"from": old_plan, "to": body.new_plan},
     )
     return {
@@ -792,9 +832,7 @@ async def crm_report(
     now = datetime.now(timezone.utc).replace(tzinfo=None)
     d30 = now - timedelta(days=30)
 
-    total_orgs = (
-        await db.execute(select(func.count(Organization.id)))
-    ).scalar() or 0
+    total_orgs = (await db.execute(select(func.count(Organization.id)))).scalar() or 0
 
     active_orgs = (
         await db.execute(
@@ -933,9 +971,7 @@ async def export_org_data(
         return StreamingResponse(
             iter([output.getvalue()]),
             media_type="text/csv",
-            headers={
-                "Content-Disposition": f"attachment; filename=crm_{org.slug}.csv"
-            },
+            headers={"Content-Disposition": f"attachment; filename=crm_{org.slug}.csv"},
         )
 
     return data

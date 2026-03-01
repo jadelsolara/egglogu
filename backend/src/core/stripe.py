@@ -217,7 +217,9 @@ async def list_invoices(customer_id: str, limit: int = 20) -> list[dict]:
 
 
 async def create_refund(
-    payment_intent_id: str, amount_cents: int | None = None, reason: str = "requested_by_customer"
+    payment_intent_id: str,
+    amount_cents: int | None = None,
+    reason: str = "requested_by_customer",
 ) -> dict:
     """Create a refund for a payment intent (full or partial)."""
     params: dict = {

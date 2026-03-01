@@ -188,10 +188,14 @@ async def evaluate_retention_rules(db: AsyncSession) -> list[dict]:
     Returns list of events triggered.
     """
     rules = (
-        await db.execute(
-            select(RetentionRule).where(RetentionRule.is_active.is_(True))
+        (
+            await db.execute(
+                select(RetentionRule).where(RetentionRule.is_active.is_(True))
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     if not rules:
         return []
@@ -245,14 +249,16 @@ async def evaluate_retention_rules(db: AsyncSession) -> list[dict]:
                     result=f"score={health['score']}, risk={health['risk']}",
                 )
                 db.add(event)
-                triggered.append({
-                    "organization_id": str(org.id),
-                    "organization_name": org.name,
-                    "rule": rule.name,
-                    "trigger": rule.trigger_type.value,
-                    "action": rule.action_type.value,
-                    "health_score": health["score"],
-                })
+                triggered.append(
+                    {
+                        "organization_id": str(org.id),
+                        "organization_name": org.name,
+                        "rule": rule.name,
+                        "trigger": rule.trigger_type.value,
+                        "action": rule.action_type.value,
+                        "health_score": health["score"],
+                    }
+                )
 
     if triggered:
         await db.flush()
