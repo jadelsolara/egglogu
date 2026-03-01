@@ -174,6 +174,22 @@ section{padding:5rem 1.5rem}
 .pricing-included-card p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5}
 .pricing-note{margin-top:1.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1rem 1.5rem;text-align:center;font-size:.9rem;color:rgba(255,255,255,.6)}
 .pricing-note strong{color:var(--orange);font-weight:700}
+.compare-toggle-wrap{text-align:center;margin-top:2rem}
+.compare-toggle{background:transparent;border:2px solid var(--orange);color:var(--orange);padding:.7rem 2rem;border-radius:50px;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem}
+.compare-toggle:hover{background:var(--orange);color:var(--navy-deep)}
+.compare-toggle .arrow{transition:transform .3s;display:inline-block;font-size:.75rem}
+.compare-toggle.open .arrow{transform:rotate(180deg)}
+.compare-panel{max-height:0;overflow:hidden;transition:max-height .4s ease;margin-top:0}
+.compare-panel.open{margin-top:1.5rem}
+.compare-table{width:100%;border-collapse:collapse;border:2px solid var(--orange);border-radius:var(--radius);overflow:hidden;background:rgba(255,255,255,.03)}
+.compare-table th,.compare-table td{padding:.65rem .8rem;text-align:center;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.compare-table th{background:rgba(245,166,35,.12);color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.78rem}
+.compare-table td:first-child{text-align:left;color:rgba(255,255,255,.8);font-weight:500;padding-left:1.2rem}
+.compare-table th:first-child{text-align:left;padding-left:1.2rem}
+.compare-table tr:hover{background:rgba(245,166,35,.04)}
+.compare-table .check{color:var(--orange);font-weight:700;font-size:1rem}
+.compare-table .no{color:rgba(255,255,255,.2);font-size:.85rem}
+.compare-table .cat-row td{background:rgba(245,166,35,.06);font-weight:700;color:var(--orange);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;padding:.5rem .8rem}
 
 /* CTA */
 .cta-section{background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy-light) 100%);color:var(--white);text-align:center;padding:5rem 1.5rem;position:relative;overflow:hidden}
@@ -210,6 +226,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   .hamburger.open span:nth-child(2){opacity:0}
   .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
   .features-grid,.diff-grid,.pricing-grid,.problems-grid{grid-template-columns:1fr}
+  .compare-table{font-size:.72rem}.compare-table th,.compare-table td{padding:.45rem .4rem}.compare-panel{overflow-x:auto}
   .steps{grid-template-columns:1fr 1fr}
   .hero{padding:6.5rem 1.5rem 3.5rem}
   .hero h1{font-size:2rem}
@@ -544,6 +561,57 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
         <a href="egglogu.html" class="btn btn-outline" data-i18n="ent_cta">Probar Enterprise</a>
       </div>
     </div>
+    <div class="compare-toggle-wrap">
+      <button class="compare-toggle" onclick="toggleCompare()" data-i18n="compare_btn">Ver comparacion detallada <span class="arrow">▼</span></button>
+    </div>
+    <div class="compare-panel" id="comparePanel">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th data-i18n="cmp_feature">Caracteristica</th>
+            <th>Hobbyist<br><small>$19/mes</small></th>
+            <th>Starter<br><small>$49/mes</small></th>
+            <th>Professional<br><small>$99/mes</small></th>
+            <th>Enterprise<br><small>$199/mes</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_limits">Limites</td></tr>
+          <tr><td data-i18n="cmp_farms">Granjas</td><td>1</td><td>1</td><td>1</td><td data-i18n="cmp_unlimited">Ilimitadas</td></tr>
+          <tr><td data-i18n="cmp_flocks">Lotes</td><td>2</td><td>5</td><td>15</td><td data-i18n="cmp_unlimited2">Ilimitados</td></tr>
+          <tr><td data-i18n="cmp_users">Usuarios base</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td data-i18n="cmp_extra_user">Extra por usuario</td><td>$4.99</td><td>$3.99</td><td>$2.99</td><td>$2.49</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_modules">Modulos</td></tr>
+          <tr><td>Dashboard</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_production">Produccion</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_feed">Alimentacion</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_health">Salud</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_clients">Clientes</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_finance">Finanzas</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_environment">Ambiente</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_operations">Operaciones</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_inventory">Inventario</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_biosecurity">Bioseguridad</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_traceability">Trazabilidad</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_planning">Planificacion</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td>IoT</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_features">Funcionalidades</td></tr>
+          <tr><td data-i18n="cmp_fcr">Conversion alimenticia</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_field_mode">Modo Campo</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_offline">Funciona sin internet</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_dark_mode">Modo oscuro</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_i18n">Multi-idioma</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_ai">IA predictiva</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_vet_mode">Modo Veterinario</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_iot_feat">Sensores IoT</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_support">Soporte</td></tr>
+          <tr><td data-i18n="cmp_tickets">Tickets de soporte</td><td>3</td><td>10</td><td data-i18n="cmp_unlimited3">Ilimitados</td><td data-i18n="cmp_unlimited4">Ilimitados</td></tr>
+          <tr><td data-i18n="cmp_sla">Tiempo de respuesta</td><td>FAQ</td><td>48h</td><td>12h</td><td data-i18n="cmp_dedicated">24/7 dedicado</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_pricing">Precio anual (2 meses gratis)</td></tr>
+          <tr><td data-i18n="cmp_annual">Precio anual</td><td>$190/año</td><td>$490/año</td><td>$990/año</td><td>$1,990/año</td></tr>
+        </tbody>
+      </table>
+    </div>
     <div class="pricing-included">
       <h3 data-i18n="included_title">Incluido en todos los planes</h3>
       <div class="pricing-included-grid">
@@ -615,6 +683,16 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
 </footer>
 
 <script>
+// Compare table toggle
+function toggleCompare(){
+  const p=document.getElementById('comparePanel');
+  const b=document.querySelector('.compare-toggle');
+  if(p.classList.contains('open')){
+    p.style.maxHeight='0';p.classList.remove('open');b.classList.remove('open');
+  }else{
+    p.style.maxHeight=p.scrollHeight+'px';p.classList.add('open');b.classList.add('open');
+  }
+}
 // Curtain: fade out on scroll
 const curtain=document.getElementById('curtain');
 let curtainDismissed=false;
