@@ -189,9 +189,13 @@ async def sync_data(
     server_changes: dict[str, list[dict[str, Any]]] = {}
     since = payload.last_synced_at or datetime.min.replace(tzinfo=timezone.utc)
 
-    async def _fetch_entity(entity_key: str, model_cls: type) -> tuple[str, list[dict[str, Any]]]:
+    async def _fetch_entity(
+        entity_key: str, model_cls: type
+    ) -> tuple[str, list[dict[str, Any]]]:
         """Fetch changed records for a single entity."""
-        if not hasattr(model_cls, "updated_at") or not hasattr(model_cls, "organization_id"):
+        if not hasattr(model_cls, "updated_at") or not hasattr(
+            model_cls, "organization_id"
+        ):
             return entity_key, []
         stmt = (
             select(model_cls)
@@ -207,9 +211,7 @@ async def sync_data(
         return entity_key, [_row_to_dict(r) for r in rows]
 
     # Run all 19 entity queries in parallel
-    results = await asyncio.gather(
-        *[_fetch_entity(k, m) for k, m in MODEL_MAP.items()]
-    )
+    results = await asyncio.gather(*[_fetch_entity(k, m) for k, m in MODEL_MAP.items()])
     for entity_key, rows in results:
         if rows:
             server_changes[entity_key] = rows

@@ -91,10 +91,20 @@ async def get_subscription(org_id: uuid.UUID, db: AsyncSession) -> Subscription 
                 for k, v in data.items():
                     if k == "plan":
                         from src.models.subscription import PlanTier
+
                         v = PlanTier(v)
                     elif k == "status":
                         v = SubscriptionStatus(v)
-                    elif k in ("trial_end", "current_period_end", "created_at", "updated_at") and v:
+                    elif (
+                        k
+                        in (
+                            "trial_end",
+                            "current_period_end",
+                            "created_at",
+                            "updated_at",
+                        )
+                        and v
+                    ):
                         v = datetime.fromisoformat(v)
                     elif k in ("id", "organization_id") and v:
                         v = uuid.UUID(v)
@@ -124,7 +134,9 @@ async def get_subscription(org_id: uuid.UUID, db: AsyncSession) -> Subscription 
                 "discount_phase": sub.discount_phase,
                 "months_subscribed": sub.months_subscribed,
                 "billing_interval": sub.billing_interval,
-                "current_period_end": sub.current_period_end.isoformat() if sub.current_period_end else None,
+                "current_period_end": sub.current_period_end.isoformat()
+                if sub.current_period_end
+                else None,
             }
             await _redis.setex(cache_key, _SUB_CACHE_TTL, json.dumps(cache_data))
         except Exception as e:
