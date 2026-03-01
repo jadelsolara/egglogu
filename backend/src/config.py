@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     STRIPE_PRICE_STARTER: str = ""  # $19/mo
     STRIPE_PRICE_PRO: str = ""  # $49/mo
     STRIPE_PRICE_ENTERPRISE: str = ""  # $99/mo
-    # Annual prices (create in Stripe Dashboard — 2 months free)
+    # Annual prices (create in Stripe Dashboard)
     STRIPE_PRICE_HOBBY_ANNUAL: str = ""  # $90/yr
     STRIPE_PRICE_STARTER_ANNUAL: str = ""  # $190/yr
     STRIPE_PRICE_PRO_ANNUAL: str = ""  # $490/yr

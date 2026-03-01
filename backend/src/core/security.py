@@ -1,4 +1,5 @@
 import re
+import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -35,7 +36,9 @@ def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
 
 
-def create_access_token(user_id: uuid.UUID, org_id: uuid.UUID | None, role: str) -> str:
+def create_access_token(
+    user_id: uuid.UUID, org_id: uuid.UUID | None, role: str, jti: str | None = None
+) -> str:
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
     )
@@ -45,13 +48,16 @@ def create_access_token(user_id: uuid.UUID, org_id: uuid.UUID | None, role: str)
         "role": role,
         "exp": expire,
         "type": "access",
+        "jti": jti or secrets.token_urlsafe(16),
     }
     return jwt.encode(
         payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
     )
 
 
-def create_refresh_token(user_id: uuid.UUID) -> str:
+def create_refresh_token(user_id: uuid.UUID, jti: str | None = None) -> tuple[str, str]:
+    """Create refresh token. Returns (token, jti) tuple."""
+    token_jti = jti or secrets.token_urlsafe(16)
     expire = datetime.now(timezone.utc) + timedelta(
         days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS
     )
@@ -59,10 +65,12 @@ def create_refresh_token(user_id: uuid.UUID) -> str:
         "sub": str(user_id),
         "exp": expire,
         "type": "refresh",
+        "jti": token_jti,
     }
-    return jwt.encode(
+    token = jwt.encode(
         payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
     )
+    return token, token_jti
 
 
 def decode_token(token: str) -> dict:

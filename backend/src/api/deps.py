@@ -37,6 +37,15 @@ async def get_current_user(
         raise UnauthorizedError()
     if payload.get("type") != "access":
         raise UnauthorizedError("Invalid token type")
+
+    # Check token blacklist (logout / revocation)
+    jti = payload.get("jti")
+    if jti:
+        from src.core.auth_security import is_token_blacklisted
+
+        if await is_token_blacklisted(jti):
+            raise UnauthorizedError("Token has been revoked")
+
     user_id = payload.get("sub")
     if not user_id:
         raise UnauthorizedError()

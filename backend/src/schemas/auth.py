@@ -104,5 +104,20 @@ class ChangePasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8, max_length=128)
 
 
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = Field(None, min_length=1, max_length=200)
+
+
+class ReassignmentNotifyRequest(BaseModel):
+    new_email: EmailStr
+    new_name: str = Field(..., min_length=1, max_length=200)
+    old_name: str = Field(..., min_length=1, max_length=200)
+    role: str = Field(
+        ..., min_length=1, max_length=50, pattern=r"^(owner|manager|vet|worker|viewer)$"
+    )
+    organization_name: str = Field(..., min_length=1, max_length=200)
+    reassigned_by: str = Field(..., min_length=1, max_length=200)
+
+
 class MessageResponse(BaseModel):
     message: str

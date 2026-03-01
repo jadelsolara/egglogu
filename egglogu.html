@@ -152,7 +152,7 @@ tr:hover{background:var(--primary-hover)}
 .snapshot-up{background:#E8F5E9;color:#2E7D32}.snapshot-down{background:#FFEBEE;color:#C62828}.snapshot-same{background:#F5F5F5;color:#757575}
 @media(max-width:768px){
 .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.hamburger{display:block}
-.main-content{margin-left:0;padding:60px 15px 20px}
+.main-content{margin-left:0;padding:60px 15px 20px;overflow-x:hidden}
 .kpi-grid{grid-template-columns:1fr 1fr}.form-row,.form-row-3{grid-template-columns:1fr}
 .page-header{flex-direction:column;align-items:flex-start}.modal{max-width:95vw}
 .lifecycle-bar{flex-wrap:wrap;height:auto}.lifecycle-stage{padding:8px}
@@ -214,7 +214,7 @@ tr:hover{background:var(--primary-hover)}
 .qe-card .qe-submit:disabled{opacity:.5;cursor:not-allowed}
 .qe-card.qe-eggs{border-top-color:#FF8F00}.qe-card.qe-feed{border-top-color:#43A047}.qe-card.qe-mort{border-top-color:#C62828}.qe-card.qe-env{border-top-color:#1565C0}
 .qe-card .qe-success{background:#C8E6C9;color:#2E7D32;padding:8px 12px;border-radius:6px;text-align:center;font-weight:500;display:none;margin-top:8px}
-@media(max-width:600px){.qe-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.qe-grid{grid-template-columns:1fr}.qe-card{padding:16px}.qe-card .qe-row{flex-direction:column}}
 /* Traffic light */
 .traffic-light{display:flex;align-items:center;gap:8px;font-size:24px}
 .traffic-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);opacity:.3}.traffic-dot.active{opacity:1;box-shadow:0 0 8px currentColor}

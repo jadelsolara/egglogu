@@ -51,3 +51,9 @@ from src.models.crm import (  # noqa: F401
     RetentionEvent,
     CreditNote,
 )
+from src.models.security import (  # noqa: F401
+    LoginAuditLog,
+    UserSession,
+    UserTOTP,
+    KnownDevice,
+)

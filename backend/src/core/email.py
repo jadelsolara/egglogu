@@ -87,6 +87,35 @@ async def send_team_invite(
     )
 
 
+async def send_reassignment_notification(
+    new_email: str,
+    new_name: str,
+    old_name: str,
+    role: str,
+    org_name: str,
+    reassigned_by: str,
+) -> None:
+    link = f"{settings.FRONTEND_URL}/egglogu.html"
+    html = f"""
+    <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
+      <h2 style="color:#2563eb">Cuenta reasignada — EGGlogU 360</h2>
+      <p>Hola <strong>{new_name}</strong>,</p>
+      <p><strong>{reassigned_by}</strong> te ha asignado la cuenta de <strong>{old_name}</strong> como <strong>{role}</strong> en la organización <strong>{org_name}</strong>.</p>
+      <p>Ahora puedes acceder a la plataforma con tus nuevas credenciales:</p>
+      <a href="{link}" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;margin:16px 0">
+        Acceder a EGGlogU
+      </a>
+      <p style="color:#666;font-size:13px">Si no reconoces esta acción, contacta al administrador de tu organización.</p>
+    </div>
+    """
+    await _send_email(
+        new_email,
+        f"Tu cuenta en EGGlogU ha sido asignada — {org_name}",
+        html,
+        tipo="reasignacion",
+    )
+
+
 async def send_welcome(email: str, name: str) -> None:
     html = f"""
     <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
