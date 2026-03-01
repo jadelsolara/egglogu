@@ -44,3 +44,10 @@ from src.models.compliance import (  # noqa: F401
 )
 from src.models.cost_center import CostCenter, CostAllocation, ProfitLossSnapshot  # noqa: F401
 from src.models.market_intelligence import MarketIntelligence, PriceTrend  # noqa: F401
+from src.models.crm import (  # noqa: F401
+    CustomerNote,
+    ManualDiscount,
+    RetentionRule,
+    RetentionEvent,
+    CreditNote,
+)

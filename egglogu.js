@@ -4993,7 +4993,8 @@ ticket_id:'#Ticket',subject:'Asunto',priority:'Prioridad',category:'Categoría',
 region:'Región',price:'Precio Promedio',production:'Producción',demand:'Demanda',supply:'Oferta',trend:'Tendencia',add_entry:'Nueva Entrada',date:'Fecha',source:'Fuente',notes:'Notas',save:'Guardar',
 no_data:'Sin datos',error:'Error al cargar datos',hours:'hrs',confirm_delete_org:'ELIMINAR ORGANIZACIÓN COMPLETA. Esto es IRREVERSIBLE.',confirm_delete_ticket:'Eliminar ticket permanentemente?',confirm_delete_user:'Eliminar usuario permanentemente?',
 total_production:'Producción Total',feature_requests:'Solicitudes',critical_tickets:'Críticos',response_avg:'Resp. Promedio',
-tab_settings:'Mi Cuenta',current_pw:'Contraseña Actual',new_pw:'Nueva Contraseña',confirm_pw:'Confirmar Contraseña',change_pw:'Cambiar Contraseña',pw_changed:'Contraseña cambiada exitosamente',pw_mismatch:'Las contraseñas no coinciden',pw_rules:'Mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número, 1 símbolo',account_info:'Información de Cuenta'},
+tab_settings:'Mi Cuenta',current_pw:'Contraseña Actual',new_pw:'Nueva Contraseña',confirm_pw:'Confirmar Contraseña',change_pw:'Cambiar Contraseña',pw_changed:'Contraseña cambiada exitosamente',pw_mismatch:'Las contraseñas no coinciden',pw_rules:'Mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número, 1 símbolo',account_info:'Información de Cuenta',
+tab_crm:'CRM',crm_orgs:'Clientes',crm_360:'Vista 360°',crm_health:'Salud',crm_ltv:'LTV',crm_risk:'Riesgo',crm_notes:'Notas',crm_discounts:'Descuentos',crm_retention:'Retención',crm_credit_notes:'Notas de Crédito',crm_invoices:'Facturas',crm_payment_methods:'Métodos de Pago',crm_refund:'Reembolso',crm_change_plan:'Cambiar Plan',crm_report:'Reporte CRM',crm_apply_discount:'Aplicar Descuento',crm_issue_refund:'Emitir Reembolso',crm_issue_credit:'Emitir Nota de Crédito',crm_percent_off:'% Descuento',crm_duration:'Duración (meses)',crm_reason:'Motivo',crm_amount:'Monto (centavos)',crm_currency:'Moneda',crm_new_plan:'Nuevo Plan',crm_interval:'Intervalo',crm_active:'Activo',crm_revoke:'Revocar',crm_back:'Volver',crm_export:'Exportar',crm_score:'Puntuación',crm_subscription:'Suscripción',crm_billing_history:'Historial Facturación',crm_no_notes:'Sin notas',crm_add_note:'Agregar Nota',crm_pinned:'Fijada',crm_evaluate:'Evaluar Retención',crm_rules:'Reglas',crm_events:'Eventos',crm_trigger:'Disparador',crm_action:'Acción',crm_result:'Resultado',crm_conditions:'Condiciones',crm_template:'Plantilla Email',crm_avg_health:'Salud Promedio',crm_total_ltv:'LTV Total',crm_active_discounts:'Descuentos Activos',crm_events_30d:'Eventos (30d)',crm_credits_total:'Total Créditos',crm_payment_id:'ID Pago',crm_confirm_refund:'¿Confirmar reembolso?',crm_month:'mes',crm_year:'año'},
 en:{title:'Superadmin Panel',tab_dashboard:'Dashboard',tab_inventory:'Global Inventory',tab_accounts:'Accounts',tab_tickets:'Tickets',tab_market:'Market',
 loading:'Loading...',total_orgs:'Organizations',total_users:'Users',active_users:'Active',mrr:'Estimated MRR',total_eggs:'Eggs in Stock',open_tickets:'Open Tickets',bug_tickets:'Bugs',avg_resolution:'Avg. Resolution',sla:'SLA',support_rating:'Support Rating',new_orgs_30d:'New Orgs (30d)',new_users_30d:'New Users (30d)',plan_dist:'Plan Distribution',
 org_name:'Organization',plan:'Plan',users:'Users',farms:'Farms',status:'Status',created:'Created',last_activity:'Last Activity',actions:'Actions',deactivate:'Deactivate',activate:'Activate',delete:'Delete',
@@ -5003,7 +5004,8 @@ ticket_id:'#Ticket',subject:'Subject',priority:'Priority',category:'Category',or
 region:'Region',price:'Avg. Price',production:'Production',demand:'Demand',supply:'Supply',trend:'Trend',add_entry:'New Entry',date:'Date',source:'Source',notes:'Notes',save:'Save',
 no_data:'No data',error:'Error loading data',hours:'hrs',confirm_delete_org:'DELETE ENTIRE ORGANIZATION. This is IRREVERSIBLE.',confirm_delete_ticket:'Permanently delete ticket?',confirm_delete_user:'Permanently delete user?',
 total_production:'Total Production',feature_requests:'Feature Requests',critical_tickets:'Critical',response_avg:'Avg. Response',
-tab_settings:'My Account',current_pw:'Current Password',new_pw:'New Password',confirm_pw:'Confirm Password',change_pw:'Change Password',pw_changed:'Password changed successfully',pw_mismatch:'Passwords do not match',pw_rules:'Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol',account_info:'Account Info'}};
+tab_settings:'My Account',current_pw:'Current Password',new_pw:'New Password',confirm_pw:'Confirm Password',change_pw:'Change Password',pw_changed:'Password changed successfully',pw_mismatch:'Passwords do not match',pw_rules:'Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol',account_info:'Account Info',
+tab_crm:'CRM',crm_orgs:'Customers',crm_360:'360° View',crm_health:'Health',crm_ltv:'LTV',crm_risk:'Risk',crm_notes:'Notes',crm_discounts:'Discounts',crm_retention:'Retention',crm_credit_notes:'Credit Notes',crm_invoices:'Invoices',crm_payment_methods:'Payment Methods',crm_refund:'Refund',crm_change_plan:'Change Plan',crm_report:'CRM Report',crm_apply_discount:'Apply Discount',crm_issue_refund:'Issue Refund',crm_issue_credit:'Issue Credit Note',crm_percent_off:'% Off',crm_duration:'Duration (months)',crm_reason:'Reason',crm_amount:'Amount (cents)',crm_currency:'Currency',crm_new_plan:'New Plan',crm_interval:'Interval',crm_active:'Active',crm_revoke:'Revoke',crm_back:'Back',crm_export:'Export',crm_score:'Score',crm_subscription:'Subscription',crm_billing_history:'Billing History',crm_no_notes:'No notes',crm_add_note:'Add Note',crm_pinned:'Pinned',crm_evaluate:'Evaluate Retention',crm_rules:'Rules',crm_events:'Events',crm_trigger:'Trigger',crm_action:'Action',crm_result:'Result',crm_conditions:'Conditions',crm_template:'Email Template',crm_avg_health:'Avg Health',crm_total_ltv:'Total LTV',crm_active_discounts:'Active Discounts',crm_events_30d:'Events (30d)',crm_credits_total:'Total Credits',crm_payment_id:'Payment ID',crm_confirm_refund:'Confirm refund?',crm_month:'month',crm_year:'year'}};
 const lang=document.documentElement.lang||'es';
 const lbl=L[lang]||L[Object.keys(L).find(k=>lang.startsWith(k))]||L.es;
 
@@ -5013,6 +5015,7 @@ const tabs=[
 {id:'sa-accounts',label:lbl.tab_accounts,icon:'🏢'},
 {id:'sa-tickets',label:lbl.tab_tickets,icon:'🎫'},
 {id:'sa-market',label:lbl.tab_market,icon:'📈'},
+{id:'sa-crm',label:lbl.tab_crm,icon:'💼'},
 {id:'sa-settings',label:lbl.tab_settings,icon:'⚙️'}
 ];
 
@@ -5035,6 +5038,7 @@ else if(_saTab==='sa-inventory')await _saRenderInventory(ct,lbl);
 else if(_saTab==='sa-accounts')await _saRenderAccounts(ct,lbl);
 else if(_saTab==='sa-tickets')await _saRenderTickets(ct,lbl);
 else if(_saTab==='sa-market')await _saRenderMarket(ct,lbl);
+else if(_saTab==='sa-crm')await _saRenderCRM(ct,lbl);
 else if(_saTab==='sa-settings')_saRenderSettings(ct,lbl);
 }catch(e){ct.innerHTML=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
 }
@@ -5262,6 +5266,472 @@ else body[k]=v;
 try{
 await apiService.request('POST','/superadmin/market-intelligence',body);
 showToast('Entrada creada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+// ── CRM State ────────────────────────────────────────────────────
+let _crmView='list'; // 'list' | '360' | 'report' | 'retention'
+let _crmOrgId=null;
+let _crmOrgName='';
+
+async function _saRenderCRM(ct,lbl){
+let h='';
+try{
+// Sub-nav for CRM sections
+const views=[
+{id:'list',label:lbl.crm_orgs,icon:'🏢'},
+{id:'report',label:lbl.crm_report,icon:'📊'},
+{id:'retention',label:lbl.crm_retention,icon:'🔄'}
+];
+h+=`<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">`;
+views.forEach(v=>{
+h+=`<button class="btn ${_crmView===v.id?'btn-primary':'btn-secondary'} btn-sm" onclick="_crmView='${v.id}';_crmOrgId=null;renderSuperadmin()">${v.icon} ${v.label}</button>`;
+});
+if(_crmView==='360'&&_crmOrgName){
+h+=`<span class="badge badge-info" style="align-self:center;font-size:0.85rem">360° ${_crmOrgName}</span>`;
+}
+h+=`</div>`;
+
+if(_crmView==='list')h+=await _crmRenderOrgList(lbl);
+else if(_crmView==='360'&&_crmOrgId)h+=await _crmRender360(lbl);
+else if(_crmView==='report')h+=await _crmRenderReport(lbl);
+else if(_crmView==='retention')h+=await _crmRenderRetention(lbl);
+else h+=await _crmRenderOrgList(lbl);
+}catch(e){h=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
+ct.innerHTML=h;
+}
+
+async function _crmRenderOrgList(lbl){
+const data=await _saFetch('/crm/report');
+const orgs=await _saFetch('/organizations');
+let h=`<div class="card"><h3>🏢 ${lbl.crm_orgs}</h3>`;
+if(!orgs||!orgs.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p></div>`;return h;}
+
+// KPIs row
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px">
+<div class="kpi-card"><div class="kpi-label">${lbl.total_orgs}</div><div class="kpi-value">${data.total_orgs||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_avg_health}</div><div class="kpi-value" style="color:${(data.avg_health_score||0)>=70?'var(--success)':(data.avg_health_score||0)>=40?'var(--warning)':'var(--danger)'}">${(data.avg_health_score||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_total_ltv}</div><div class="kpi-value" style="color:var(--success)">$${(data.total_ltv||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_active_discounts}</div><div class="kpi-value">${data.active_discounts||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_events_30d}</div><div class="kpi-value">${data.retention_events_30d||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_credits_total}</div><div class="kpi-value">$${((data.credit_notes_total_cents||0)/100).toFixed(2)}</div></div>
+</div>`;
+
+// Risk distribution
+if(data.risk_distribution){
+h+=`<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">`;
+const riskColors={low:'var(--success)',medium:'var(--warning)',high:'#ff5722',critical:'var(--danger)'};
+const riskLabels={low:'Bajo',medium:'Medio',high:'Alto',critical:'Crítico'};
+Object.entries(data.risk_distribution).forEach(([r,c])=>{
+h+=`<div style="padding:6px 14px;border-radius:20px;background:${riskColors[r]||'var(--bg-card)'};color:#fff;font-size:0.8rem;font-weight:600">${riskLabels[r]||r}: ${c}</div>`;
+});
+h+=`</div>`;}
+
+// Org table with health score
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.org_name}</th><th>${lbl.plan}</th><th>${lbl.crm_score}</th><th>${lbl.crm_risk}</th><th>${lbl.crm_ltv}</th><th>${lbl.users}</th><th>${lbl.farms}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+for(const o of orgs){
+let hs=0,risk='low';
+try{const h360=await apiService.request('GET','/superadmin/organizations/'+o.id+'/crm-360');hs=h360.health?.score||0;risk=h360.health?.risk||'low';}catch(e){}
+const riskColors={low:'success',medium:'warning',high:'danger',critical:'danger'};
+const planColors={hobby:'secondary',starter:'info',pro:'info',enterprise:'warning'};
+h+=`<tr>
+<td><strong>${o.name||'-'}</strong><br><span style="font-size:0.75rem;color:var(--text-light)">${o.slug||''}</span></td>
+<td><span class="badge badge-${planColors[o.plan]||'secondary'}">${(o.plan||'free').toUpperCase()}</span></td>
+<td><div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:6px;background:var(--bg-card);border-radius:3px;overflow:hidden"><div style="width:${hs}%;height:100%;background:${hs>=70?'var(--success)':hs>=40?'var(--warning)':'var(--danger)'}"></div></div><span style="font-size:0.85rem;font-weight:600">${hs}</span></div></td>
+<td><span class="badge badge-${riskColors[risk]||'secondary'}">${risk.toUpperCase()}</span></td>
+<td style="font-weight:600">$${(hs*10).toFixed(0)}</td>
+<td>${o.user_count||0}</td>
+<td>${o.farm_count||0}</td>
+<td><button class="btn btn-primary btn-sm" onclick="_crmView='360';_crmOrgId='${o.id}';_crmOrgName='${(o.name||'').replace(/'/g,"\\'")}';renderSuperadmin()">360°</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmExport('${o.id}','json')">${lbl.crm_export}</button></td>
+</tr>`;
+}
+h+=`</tbody></table></div></div>`;
+return h;
+}
+
+async function _crmRender360(lbl){
+const data=await apiService.request('GET','/superadmin/organizations/'+_crmOrgId+'/crm-360');
+let h=`<button class="btn btn-secondary btn-sm" onclick="_crmView='list';_crmOrgId=null;renderSuperadmin()" style="margin-bottom:12px">← ${lbl.crm_back}</button>`;
+
+// Header with health score
+const hs=data.health||{};
+const org=data.organization||{};
+h+=`<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<div><h3 style="margin:0">${org.name||_crmOrgName}</h3><span style="color:var(--text-light);font-size:0.85rem">${org.slug||''} · ${org.tier||''}</span></div>
+<div style="display:flex;gap:16px;align-items:center">
+<div style="text-align:center"><div style="font-size:2rem;font-weight:700;color:${(hs.score||0)>=70?'var(--success)':(hs.score||0)>=40?'var(--warning)':'var(--danger)'}">${hs.score||0}</div><div style="font-size:0.7rem;color:var(--text-light)">${lbl.crm_health}</div></div>
+<div style="text-align:center"><div style="font-size:1.3rem;font-weight:700;color:var(--success)">$${(data.ltv?.total_value||0).toFixed(0)}</div><div style="font-size:0.7rem;color:var(--text-light)">${lbl.crm_ltv}</div></div>
+<span class="badge badge-${(hs.risk||'low')==='low'?'success':(hs.risk||'low')==='medium'?'warning':'danger'}" style="font-size:0.9rem;padding:6px 12px">${(hs.risk||'low').toUpperCase()}</span>
+</div></div></div>`;
+
+// Subscription info
+const sub=data.subscription||{};
+if(sub.plan||sub.status){
+h+=`<div class="card" style="margin-bottom:14px"><h3>💳 ${lbl.crm_subscription}</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+<div class="kpi-card"><div class="kpi-label">${lbl.plan}</div><div class="kpi-value" style="font-size:0.95rem">${(sub.plan||'-').toUpperCase()}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.status}</div><div class="kpi-value" style="font-size:0.95rem">${sub.status||'-'}</div></div>
+<div class="kpi-card"><div class="kpi-label">Stripe</div><div class="kpi-value" style="font-size:0.7rem">${sub.stripe_subscription_id||'-'}</div></div>
+</div></div>`;
+}
+
+// Actions row
+h+=`<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+<button class="btn btn-primary btn-sm" onclick="_crmShowDiscountModal('${_crmOrgId}')">🏷️ ${lbl.crm_apply_discount}</button>
+<button class="btn btn-warning btn-sm" onclick="_crmShowRefundModal('${_crmOrgId}')">💸 ${lbl.crm_issue_refund}</button>
+<button class="btn btn-info btn-sm" onclick="_crmShowCreditModal('${_crmOrgId}')">📝 ${lbl.crm_issue_credit}</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmShowPlanModal('${_crmOrgId}')">🔄 ${lbl.crm_change_plan}</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmExport('${_crmOrgId}','csv')">📥 CSV</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmExport('${_crmOrgId}','json')">📥 JSON</button>
+</div>`;
+
+// Notes section
+h+=`<div class="card" style="margin-bottom:14px"><h3>📝 ${lbl.crm_notes}</h3>`;
+h+=`<form onsubmit="_crmAddNote(event,'${_crmOrgId}');return false" style="display:flex;gap:8px;margin-bottom:12px">
+<input type="text" id="crm-note-input" placeholder="${lbl.crm_add_note}..." style="flex:1" required>
+<select id="crm-note-type"><option value="general">General</option><option value="billing">Billing</option><option value="support">Support</option><option value="retention">Retention</option></select>
+<button type="submit" class="btn btn-primary btn-sm">${lbl.save}</button></form>`;
+const notes=data.notes||[];
+if(!notes.length){h+=`<p style="color:var(--text-light)">${lbl.crm_no_notes}</p>`;}
+else{
+notes.forEach(n=>{
+h+=`<div style="padding:10px;border-left:3px solid ${n.is_pinned?'var(--warning)':'var(--border)'};margin-bottom:8px;background:var(--bg-card);border-radius:0 6px 6px 0">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-weight:600;font-size:0.85rem">${n.note_type||'general'}${n.is_pinned?' 📌':''}</span>
+<div style="display:flex;gap:4px;align-items:center">
+<span style="font-size:0.7rem;color:var(--text-light)">${n.created_at?n.created_at.substring(0,10):''}</span>
+<button class="btn btn-secondary btn-sm" style="padding:2px 6px;font-size:0.7rem" onclick="_crmTogglePin('${_crmOrgId}','${n.id}',${!n.is_pinned})">${n.is_pinned?'Unpin':'Pin'}</button>
+<button class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:0.7rem" onclick="_crmDeleteNote('${_crmOrgId}','${n.id}')">×</button>
+</div></div>
+<p style="margin:4px 0 0;font-size:0.9rem">${n.content}</p></div>`;
+});}
+h+=`</div>`;
+
+// Discounts
+h+=`<div class="card" style="margin-bottom:14px"><h3>🏷️ ${lbl.crm_discounts}</h3>`;
+const discounts=data.discounts||[];
+if(!discounts.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.crm_percent_off}</th><th>${lbl.crm_duration}</th><th>${lbl.crm_reason}</th><th>${lbl.crm_active}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+discounts.forEach(d=>{
+h+=`<tr><td style="font-weight:700">${d.percent_off}%</td><td>${d.duration_months} ${lbl.crm_month}</td><td>${d.reason||'-'}</td>
+<td><span class="badge badge-${d.is_active?'success':'secondary'}">${d.is_active?lbl.crm_active:'Expired'}</span></td>
+<td>${d.is_active?`<button class="btn btn-danger btn-sm" onclick="_crmRevokeDiscount('${d.id}')">${lbl.crm_revoke}</button>`:'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+
+// Credit Notes
+h+=`<div class="card" style="margin-bottom:14px"><h3>📋 ${lbl.crm_credit_notes}</h3>`;
+const credits=data.credit_notes||[];
+if(!credits.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.crm_amount}</th><th>${lbl.crm_currency}</th><th>${lbl.crm_reason}</th><th>${lbl.status}</th><th>${lbl.created}</th></tr></thead><tbody>`;
+credits.forEach(c=>{
+h+=`<tr><td style="font-weight:700">$${(c.amount_cents/100).toFixed(2)}</td><td>${c.currency}</td><td>${c.reason||'-'}</td>
+<td><span class="badge badge-${c.status==='issued'?'success':'secondary'}">${c.status}</span></td>
+<td>${c.created_at?c.created_at.substring(0,10):'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+
+// Users & Farms summary
+h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">`;
+h+=`<div class="card"><h3>👥 ${lbl.users} (${(data.users||[]).length})</h3>`;
+(data.users||[]).forEach(u=>{
+h+=`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.85rem"><strong>${u.full_name||u.email}</strong> · <span class="badge badge-secondary">${u.role||'-'}</span></div>`;
+});
+h+=`</div>`;
+h+=`<div class="card"><h3>🏠 ${lbl.farms} (${(data.farms||[]).length})</h3>`;
+(data.farms||[]).forEach(f=>{
+h+=`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.85rem"><strong>${f.name||'-'}</strong> · ${f.location||''}</div>`;
+});
+h+=`</div></div>`;
+
+// Stats
+h+=`<div class="card" style="margin-bottom:14px"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+<div class="kpi-card"><div class="kpi-label">${lbl.open_tickets}</div><div class="kpi-value">${data.open_tickets||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">Flocks</div><div class="kpi-value">${data.total_flocks||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.total_eggs}</div><div class="kpi-value">${(data.total_eggs_in_stock||0).toLocaleString()}</div></div>
+</div></div>`;
+
+return h;
+}
+
+async function _crmRenderReport(lbl){
+const data=await _saFetch('/crm/report');
+let h=`<div class="card"><h3>📊 ${lbl.crm_report}</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px">
+<div class="kpi-card"><div class="kpi-label">${lbl.total_orgs}</div><div class="kpi-value">${data.total_orgs||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.active_users}</div><div class="kpi-value" style="color:var(--success)">${data.active_orgs||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_avg_health}</div><div class="kpi-value" style="color:${(data.avg_health_score||0)>=70?'var(--success)':'var(--warning)'}">${(data.avg_health_score||0).toFixed(1)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_total_ltv}</div><div class="kpi-value" style="color:var(--success)">$${(data.total_ltv||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_ltv} (${lbl.crm_avg_health})</div><div class="kpi-value">$${(data.avg_ltv||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_active_discounts}</div><div class="kpi-value">${data.active_discounts||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_events_30d}</div><div class="kpi-value">${data.retention_events_30d||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_credits_total}</div><div class="kpi-value">$${((data.credit_notes_total_cents||0)/100).toFixed(2)}</div></div>
+</div>`;
+
+// Risk distribution chart
+if(data.risk_distribution){
+h+=`<div style="margin-top:16px"><h4>${lbl.crm_risk} Distribution</h4>
+<div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap">`;
+const riskColors={low:'var(--success)',medium:'var(--warning)',high:'#ff5722',critical:'var(--danger)'};
+Object.entries(data.risk_distribution).forEach(([r,c])=>{
+const total=data.total_orgs||1;
+const pct=((c/total)*100).toFixed(0);
+h+=`<div style="flex:1;min-width:120px;text-align:center">
+<div style="background:var(--bg-card);border-radius:8px;padding:12px;border:2px solid ${riskColors[r]||'var(--border)'}">
+<div style="font-size:1.5rem;font-weight:700;color:${riskColors[r]||'var(--text)'}">${c}</div>
+<div style="font-size:0.75rem;color:var(--text-light)">${r.toUpperCase()} (${pct}%)</div>
+</div></div>`;
+});
+h+=`</div></div>`;}
+h+=`</div>`;
+return h;
+}
+
+async function _crmRenderRetention(lbl){
+let h='';
+// Retention rules
+const rules=await apiService.request('GET','/superadmin/retention-rules');
+const events=await apiService.request('GET','/superadmin/retention-events?limit=20');
+
+h+=`<div class="card" style="margin-bottom:14px"><h3>📋 ${lbl.crm_rules}</h3>
+<div style="margin-bottom:12px"><button class="btn btn-primary btn-sm" onclick="_crmShowRuleModal()">${lbl.crm_add_note} Rule</button>
+<button class="btn btn-warning btn-sm" onclick="_crmEvaluateRetention()">${lbl.crm_evaluate}</button></div>`;
+if(!rules||!rules.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>${lbl.crm_trigger}</th><th>${lbl.crm_action}</th><th>% Off</th><th>${lbl.crm_active}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+rules.forEach(r=>{
+h+=`<tr><td><strong>${r.name}</strong></td><td>${r.trigger_type}</td><td>${r.action_type}</td><td>${r.discount_percent}%</td>
+<td><span class="badge badge-${r.is_active?'success':'secondary'}">${r.is_active?'ON':'OFF'}</span></td>
+<td><button class="btn btn-secondary btn-sm" onclick="_crmToggleRule('${r.id}',${!r.is_active})">${r.is_active?'Disable':'Enable'}</button>
+<button class="btn btn-danger btn-sm" onclick="_crmDeleteRule('${r.id}')">×</button></td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+
+// Events log
+h+=`<div class="card"><h3>📜 ${lbl.crm_events}</h3>`;
+const evtList=events.items||events||[];
+if(!evtList.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.org}</th><th>${lbl.crm_trigger}</th><th>${lbl.crm_action}</th><th>${lbl.crm_result}</th><th>${lbl.date}</th></tr></thead><tbody>`;
+evtList.forEach(ev=>{
+h+=`<tr><td>${ev.organization_id?ev.organization_id.substring(0,8)+'...':'-'}</td><td>${ev.trigger_type}</td><td>${ev.action_taken}</td><td>${ev.result||'-'}</td><td>${ev.created_at?ev.created_at.substring(0,10):'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+return h;
+}
+
+// ── CRM Action Functions ────────────────────────────────────────
+function _crmShowDiscountModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{pct:'% Off',dur:'Duration (months)',reason:'Reason',apply:'Apply Discount'}:{pct:'% Descuento',dur:'Duración (meses)',reason:'Motivo',apply:'Aplicar Descuento'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>🏷️ ${lbl.apply}</h3>
+<form onsubmit="_crmApplyDiscount(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.pct}</label><input type="number" id="crm-d-pct" min="1" max="100" required></div>
+<div><label>${lbl.dur}</label><input type="number" id="crm-d-dur" min="1" max="36" value="1" required></div>
+<div><label>${lbl.reason}</label><input type="text" id="crm-d-reason" required></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-primary">${lbl.apply}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmApplyDiscount(e,orgId){
+e.preventDefault();
+const body={percent_off:parseInt(document.getElementById('crm-d-pct').value),duration_months:parseInt(document.getElementById('crm-d-dur').value),reason:document.getElementById('crm-d-reason').value};
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/discounts',body);
+document.getElementById('crm-modal')?.remove();showToast('Descuento aplicado');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowRefundModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{pid:'Payment Intent ID',amount:'Amount (cents, empty=full)',reason:'Reason',issue:'Issue Refund'}:{pid:'Payment Intent ID',amount:'Monto (centavos, vacío=total)',reason:'Motivo',issue:'Emitir Reembolso'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>💸 ${lbl.issue}</h3>
+<form onsubmit="_crmIssueRefund(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.pid}</label><input type="text" id="crm-r-pid" placeholder="pi_..." required></div>
+<div><label>${lbl.amount}</label><input type="number" id="crm-r-amt" min="1" placeholder="Leave empty for full refund"></div>
+<div><label>${lbl.reason}</label><input type="text" id="crm-r-reason" value="requested_by_customer"></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-warning">${lbl.issue}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmIssueRefund(e,orgId){
+e.preventDefault();
+const lang=document.documentElement.lang||'es';
+if(!confirm(lang==='en'?'Confirm refund?':'¿Confirmar reembolso?'))return;
+const body={payment_intent_id:document.getElementById('crm-r-pid').value,reason:document.getElementById('crm-r-reason').value};
+const amt=document.getElementById('crm-r-amt').value;
+if(amt)body.amount_cents=parseInt(amt);
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/refund',body);
+document.getElementById('crm-modal')?.remove();showToast('Reembolso emitido');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowCreditModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{amount:'Amount (cents)',currency:'Currency',reason:'Reason',issue:'Issue Credit Note'}:{amount:'Monto (centavos)',currency:'Moneda',reason:'Motivo',issue:'Emitir Nota de Crédito'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>📝 ${lbl.issue}</h3>
+<form onsubmit="_crmIssueCreditNote(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.amount}</label><input type="number" id="crm-c-amt" min="1" required></div>
+<div><label>${lbl.currency}</label><input type="text" id="crm-c-cur" value="usd" maxlength="3"></div>
+<div><label>${lbl.reason}</label><input type="text" id="crm-c-reason" required></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-info">${lbl.issue}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmIssueCreditNote(e,orgId){
+e.preventDefault();
+const body={amount_cents:parseInt(document.getElementById('crm-c-amt').value),currency:document.getElementById('crm-c-cur').value,reason:document.getElementById('crm-c-reason').value};
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/credit-notes',body);
+document.getElementById('crm-modal')?.remove();showToast('Nota de crédito emitida');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowPlanModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{plan:'New Plan',interval:'Interval',month:'Month',year:'Year',change:'Change Plan'}:{plan:'Nuevo Plan',interval:'Intervalo',month:'Mes',year:'Año',change:'Cambiar Plan'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>🔄 ${lbl.change}</h3>
+<form onsubmit="_crmChangePlan(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.plan}</label><select id="crm-p-plan"><option value="hobby">Hobby ($9)</option><option value="starter">Starter ($19)</option><option value="pro">Pro ($49)</option><option value="enterprise">Enterprise ($99)</option></select></div>
+<div><label>${lbl.interval}</label><select id="crm-p-int"><option value="month">${lbl.month}</option><option value="year">${lbl.year}</option></select></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-primary">${lbl.change}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmChangePlan(e,orgId){
+e.preventDefault();
+const body={new_plan:document.getElementById('crm-p-plan').value,interval:document.getElementById('crm-p-int').value};
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/change-plan',body);
+document.getElementById('crm-modal')?.remove();showToast('Plan cambiado');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmAddNote(e,orgId){
+e.preventDefault();
+const content=document.getElementById('crm-note-input').value;
+const note_type=document.getElementById('crm-note-type').value;
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/notes',{content,note_type,is_pinned:false});
+showToast('Nota agregada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmTogglePin(orgId,noteId,pin){
+try{
+await apiService.request('PATCH','/superadmin/organizations/'+orgId+'/notes/'+noteId,{is_pinned:pin});
+renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmDeleteNote(orgId,noteId){
+if(!confirm('Delete note?'))return;
+try{
+await apiService.request('DELETE','/superadmin/organizations/'+orgId+'/notes/'+noteId);
+showToast('Nota eliminada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmRevokeDiscount(discountId){
+if(!confirm('Revoke discount?'))return;
+try{
+await apiService.request('DELETE','/superadmin/discounts/'+discountId);
+showToast('Descuento revocado');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmExport(orgId,fmt){
+try{
+const data=await apiService.request('GET','/superadmin/organizations/'+orgId+'/export?format='+fmt);
+const blob=new Blob([typeof data==='string'?data:JSON.stringify(data,null,2)],{type:fmt==='csv'?'text/csv':'application/json'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download=`crm_${orgId.substring(0,8)}.${fmt}`;a.click();
+URL.revokeObjectURL(url);
+showToast('Exportado');
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowRuleModal(){
+const lang=document.documentElement.lang||'es';
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:450px">
+<h3>📋 New Retention Rule</h3>
+<form onsubmit="_crmCreateRule(event);return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>Name</label><input type="text" id="crm-rule-name" required></div>
+<div><label>Trigger</label><select id="crm-rule-trigger"><option value="churn_risk">Churn Risk</option><option value="payment_failed">Payment Failed</option><option value="low_usage">Low Usage</option><option value="downgrade_request">Downgrade Request</option><option value="trial_expiring">Trial Expiring</option></select></div>
+<div><label>Action</label><select id="crm-rule-action"><option value="flag_for_review">Flag for Review</option><option value="auto_discount">Auto Discount</option><option value="send_email">Send Email</option><option value="extend_trial">Extend Trial</option></select></div>
+<div><label>Discount %</label><input type="number" id="crm-rule-disc" min="0" max="100" value="0"></div>
+<div><label>Email Template Key</label><input type="text" id="crm-rule-tpl" placeholder="optional"></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-primary">Create</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmCreateRule(e){
+e.preventDefault();
+const body={
+name:document.getElementById('crm-rule-name').value,
+trigger_type:document.getElementById('crm-rule-trigger').value,
+action_type:document.getElementById('crm-rule-action').value,
+discount_percent:parseInt(document.getElementById('crm-rule-disc').value)||0,
+email_template_key:document.getElementById('crm-rule-tpl').value||null,
+conditions:{}
+};
+try{
+await apiService.request('POST','/superadmin/retention-rules',body);
+document.getElementById('crm-modal')?.remove();showToast('Regla creada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmToggleRule(ruleId,active){
+try{
+await apiService.request('PATCH','/superadmin/retention-rules/'+ruleId,{is_active:active});
+renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmDeleteRule(ruleId){
+if(!confirm('Delete rule?'))return;
+try{
+await apiService.request('DELETE','/superadmin/retention-rules/'+ruleId);
+showToast('Regla eliminada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmEvaluateRetention(){
+try{
+const res=await apiService.request('POST','/superadmin/retention/evaluate');
+showToast(`Evaluación completa: ${res.events_created||0} eventos`);renderSuperadmin();
 }catch(err){showToast('Error: '+err.message,'error');}
 }
 

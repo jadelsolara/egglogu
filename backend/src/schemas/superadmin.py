@@ -178,3 +178,156 @@ class TicketOverview(BaseModel):
 
 class BulkDeleteRequest(BaseModel):
     ticket_ids: list[uuid.UUID] = Field(..., min_length=1, max_length=100)
+
+
+# ── CRM Schemas ──────────────────────────────────────────────────
+
+
+class CustomerNoteCreate(BaseModel):
+    content: str = Field(..., min_length=1, max_length=5000)
+    note_type: str = Field(default="general")
+    is_pinned: bool = False
+
+
+class CustomerNoteRead(BaseModel):
+    id: uuid.UUID
+    organization_id: uuid.UUID
+    author_id: Optional[uuid.UUID] = None
+    content: str
+    note_type: str
+    is_pinned: bool
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class CustomerNoteUpdate(BaseModel):
+    content: Optional[str] = None
+    note_type: Optional[str] = None
+    is_pinned: Optional[bool] = None
+
+
+class ManualDiscountCreate(BaseModel):
+    percent_off: int = Field(..., ge=1, le=100)
+    duration_months: int = Field(..., ge=1, le=36)
+    reason: str = Field(..., min_length=1, max_length=500)
+
+
+class ManualDiscountRead(BaseModel):
+    id: uuid.UUID
+    organization_id: uuid.UUID
+    applied_by: Optional[uuid.UUID] = None
+    percent_off: int
+    duration_months: int
+    reason: str
+    stripe_coupon_id: Optional[str] = None
+    is_active: bool
+    expires_at: Optional[datetime] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class RetentionRuleCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    trigger_type: str
+    conditions: dict = {}
+    discount_percent: int = Field(default=0, ge=0, le=100)
+    action_type: str = "flag_for_review"
+    email_template_key: Optional[str] = None
+
+
+class RetentionRuleRead(BaseModel):
+    id: uuid.UUID
+    name: str
+    trigger_type: str
+    conditions: dict
+    discount_percent: int
+    action_type: str
+    email_template_key: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class RetentionRuleUpdate(BaseModel):
+    name: Optional[str] = None
+    trigger_type: Optional[str] = None
+    conditions: Optional[dict] = None
+    discount_percent: Optional[int] = Field(default=None, ge=0, le=100)
+    action_type: Optional[str] = None
+    email_template_key: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class RetentionEventRead(BaseModel):
+    id: uuid.UUID
+    organization_id: uuid.UUID
+    rule_id: Optional[uuid.UUID] = None
+    trigger_type: str
+    action_taken: str
+    result: Optional[str] = None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class CreditNoteCreate(BaseModel):
+    amount_cents: int = Field(..., gt=0)
+    currency: str = Field(default="usd", max_length=3)
+    reason: str = Field(..., min_length=1, max_length=500)
+    stripe_invoice_id: Optional[str] = None
+
+
+class CreditNoteRead(BaseModel):
+    id: uuid.UUID
+    organization_id: uuid.UUID
+    issued_by: Optional[uuid.UUID] = None
+    amount_cents: int
+    currency: str
+    reason: str
+    stripe_credit_note_id: Optional[str] = None
+    status: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class RefundRequest(BaseModel):
+    payment_intent_id: str
+    amount_cents: Optional[int] = None
+    reason: str = Field(default="requested_by_customer", max_length=500)
+
+
+class ChangePlanRequest(BaseModel):
+    new_plan: str = Field(..., pattern="^(hobby|starter|pro|enterprise)$")
+    interval: str = Field(default="month", pattern="^(month|year)$")
+
+
+class CRM360Response(BaseModel):
+    organization: dict
+    subscription: Optional[dict] = None
+    health: dict
+    ltv: dict
+    users: list[dict] = []
+    farms: list[dict] = []
+    notes: list[CustomerNoteRead] = []
+    discounts: list[ManualDiscountRead] = []
+    credit_notes: list[CreditNoteRead] = []
+    open_tickets: int = 0
+    total_flocks: int = 0
+    total_eggs_in_stock: int = 0
+
+
+class CRMReportResponse(BaseModel):
+    total_orgs: int = 0
+    active_orgs: int = 0
+    avg_health_score: float = 0.0
+    risk_distribution: dict = {}
+    total_ltv: float = 0.0
+    avg_ltv: float = 0.0
+    active_discounts: int = 0
+    retention_events_30d: int = 0
+    credit_notes_total_cents: int = 0
