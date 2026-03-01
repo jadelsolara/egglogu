@@ -30,9 +30,10 @@ PLAN_LIMITS = {
         "support_sla_hours": None,
     },
     "hobby": {
-        "price_monthly": 19,
-        "price_annual": 190,  # 2 months free
-        "per_user_extra": 4.99,
+        "price_monthly": 0,
+        "price_annual": 0,  # Free tier, registration required
+        "per_user_extra_worker": 3.99,
+        "per_user_extra_mgmt": 6.99,
         "farms": 1,
         "flocks": 2,
         "users": 1,  # base; extra users at per_user_extra
@@ -57,7 +58,8 @@ PLAN_LIMITS = {
     "starter": {
         "price_monthly": 49,
         "price_annual": 490,
-        "per_user_extra": 3.99,
+        "per_user_extra_worker": 3.99,
+        "per_user_extra_mgmt": 6.99,
         "farms": 1,
         "flocks": 5,
         "users": 1,
@@ -90,7 +92,8 @@ PLAN_LIMITS = {
     "pro": {
         "price_monthly": 99,
         "price_annual": 990,
-        "per_user_extra": 2.99,
+        "per_user_extra_worker": 3.99,
+        "per_user_extra_mgmt": 6.99,
         "farms": 1,
         "flocks": 15,
         "users": 1,
@@ -128,7 +131,8 @@ PLAN_LIMITS = {
     "enterprise": {
         "price_monthly": 199,
         "price_annual": 1990,
-        "per_user_extra": 2.49,
+        "per_user_extra_worker": 3.99,
+        "per_user_extra_mgmt": 6.99,
         "farms": None,  # unlimited
         "flocks": None,  # unlimited
         "users": 1,
@@ -230,7 +234,8 @@ def get_plan_summary(plan: str) -> dict:
         "plan": plan,
         "price_monthly": limits.get("price_monthly"),
         "price_annual": limits.get("price_annual"),
-        "per_user_extra": limits.get("per_user_extra", 0),
+        "per_user_extra_worker": limits.get("per_user_extra_worker", 0),
+        "per_user_extra_mgmt": limits.get("per_user_extra_mgmt", 0),
         "limits": {
             "farms": limits.get("farms"),
             "flocks": limits.get("flocks"),
