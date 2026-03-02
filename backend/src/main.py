@@ -64,6 +64,8 @@ from src.api import (
     cost_centers,
     superadmin,
     superadmin_crm,
+    reports,
+    workflows,
 )
 
 
@@ -294,6 +296,8 @@ app.include_router(compliance.router, prefix=prefix)
 app.include_router(cost_centers.router, prefix=prefix)
 app.include_router(superadmin.router, prefix=prefix)
 app.include_router(superadmin_crm.router, prefix=prefix)
+app.include_router(reports.router, prefix=prefix)
+app.include_router(workflows.router, prefix=prefix)
 
 # Public routes (no /api/v1 prefix)
 app.include_router(trace_public.router)

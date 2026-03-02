@@ -57,3 +57,5 @@ from src.models.security import (  # noqa: F401
     UserTOTP,
     KnownDevice,
 )
+from src.models.report import ReportSchedule, ReportExecution  # noqa: F401
+from src.models.workflow import WorkflowRule, WorkflowExecution  # noqa: F401

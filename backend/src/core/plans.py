@@ -26,6 +26,8 @@ PLAN_LIMITS = {
         "i18n": False,
         "offline": False,
         "dark_mode": True,
+        "reports": False,
+        "workflows": False,
         "support_tickets": 0,
         "support_sla_hours": None,
     },
@@ -52,6 +54,8 @@ PLAN_LIMITS = {
         "i18n": False,
         "offline": True,
         "dark_mode": True,
+        "reports": False,
+        "workflows": False,
         "support_tickets": 3,
         "support_sla_hours": None,  # FAQ only
     },
@@ -86,6 +90,14 @@ PLAN_LIMITS = {
         "i18n": True,
         "offline": True,
         "dark_mode": True,
+        "reports": {
+            "templates": ["production", "financial", "health"],
+            "scheduling": [],
+            "max_schedules": 0,
+        },
+        "workflows": {
+            "max_rules": 5,
+        },
         "support_tickets": 10,
         "support_sla_hours": 48,
     },
@@ -125,6 +137,14 @@ PLAN_LIMITS = {
         "i18n": True,
         "offline": True,
         "dark_mode": True,
+        "reports": {
+            "templates": "all",
+            "scheduling": ["weekly"],
+            "max_schedules": 10,
+        },
+        "workflows": {
+            "max_rules": 20,
+        },
         "support_tickets": None,  # unlimited
         "support_sla_hours": 12,
     },
@@ -151,6 +171,14 @@ PLAN_LIMITS = {
         "i18n": True,
         "offline": True,
         "dark_mode": True,
+        "reports": {
+            "templates": "all",
+            "scheduling": "all",
+            "max_schedules": None,
+        },
+        "workflows": {
+            "max_rules": None,
+        },
         "support_tickets": None,
         "support_sla_hours": None,  # 24/7 dedicated
     },
@@ -187,6 +215,8 @@ ALL_FEATURES = [
     "i18n",
     "offline",
     "dark_mode",
+    "reports",
+    "workflows",
 ]
 
 # Tier ordering for upgrade/downgrade checks
