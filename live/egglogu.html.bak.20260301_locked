@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1A3C6E">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'sha256-QNbi/9anH36ir6swpjezBPWmKy/e3Nf54Z+hdwoycAk=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' http://localhost:8000 https://egglogu-api.up.railway.app https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'sha256-dZYNm0lYUm0dkZjL/ggd1V0DOOgrmiN3L5kkSir02MA=' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' http://localhost:8000 https://egglogu-api.up.railway.app https://api.egglogu.com https://api.openweathermap.org https://accounts.google.com https://oauth2.googleapis.com wss: ws:; frame-src 'self' https://accounts.google.com; worker-src 'self'">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -25,6 +25,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .app{display:flex;min-height:100vh}
 .sidebar{width:var(--sidebar-width);background:var(--sidebar-bg);color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;transition:transform .3s}
 .sidebar-logo{padding:20px;font-size:24px;font-weight:700;text-align:center;border-bottom:1px solid rgba(255,255,255,.2);letter-spacing:2px}
+.sidebar-logo img{max-width:44px;height:auto;display:block;margin:0 auto 8px}
 .sidebar-logo small{display:block;font-size:10px;font-weight:400;opacity:.7}
 .sidebar nav{flex:1;padding:10px 0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.2) transparent}
 .sidebar nav::-webkit-scrollbar{width:4px}.sidebar nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:4px}
