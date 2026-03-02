@@ -45,9 +45,10 @@ else
   # Reemplazar hash en el CSP meta tag
   sed -i "s|$CURRENT_HASH|$NEW_HASH|g" "$FILE"
 
-  # Asegurar que unsafe-inline esté presente
-  if ! grep -q "'unsafe-inline'" "$FILE"; then
-    sed -i "s|style-src 'self'|style-src 'self' 'unsafe-inline'|" "$FILE"
+  # Asegurar que unsafe-inline esté en style-src
+  if ! grep -oP "style-src[^;]+" "$FILE" | grep -q "'unsafe-inline'"; then
+    sed -i "s|style-src 'self' '$NEW_HASH'|style-src 'self' 'unsafe-inline' '$NEW_HASH'|" "$FILE"
+    echo "  unsafe-inline añadido a style-src"
   fi
 
   echo "  CSP actualizado en $FILE"
