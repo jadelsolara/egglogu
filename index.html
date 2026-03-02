@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EGGlogU — Gestión avícola inteligente</title>
-<meta name="description" content="Plataforma digital para granjas avícolas. Producción, salud, alimentación, finanzas y trazabilidad. Funciona offline. Prueba gratis 30 días.">
+<meta name="description" content="Plataforma digital para granjas avícolas. Producción, salud, alimentación, finanzas y trazabilidad. Funciona offline. Empieza gratis.">
 <meta name="theme-color" content="#0F2137">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,7 +14,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://egglogu.com/">
 <meta property="og:title" content="EGGlogU — Gestión avícola inteligente">
-<meta property="og:description" content="Producción de huevos, salud, alimentación, finanzas y trazabilidad en una sola plataforma. Funciona sin internet. 14 idiomas. Prueba gratis 30 días.">
+<meta property="og:description" content="Producción de huevos, salud, alimentación, finanzas y trazabilidad en una sola plataforma. Funciona sin internet. 14 idiomas. Empieza gratis.">
 <meta property="og:image" content="https://egglogu.com/campaign-logo.webp">
 <meta property="og:locale" content="es_CL">
 <!-- Twitter Card -->
@@ -51,8 +51,10 @@ img,svg{max-width:100%;display:block}
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:.65rem 1.5rem;border-radius:8px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:all .2s;font-family:inherit}
 .btn-primary{background:var(--orange);color:var(--navy-deep)}
 .btn-primary:hover{background:var(--orange-dark);transform:translateY(-1px);box-shadow:0 4px 20px rgba(245,166,35,.4)}
-.btn-outline{border:2px solid var(--orange);color:var(--orange);background:rgba(20,30,50,.85);border-radius:50px;padding:.65rem 1.5rem}
-.btn-outline:hover{background:rgba(20,30,50,.95)}
+.btn-outline{border:2px solid var(--orange);color:var(--orange);background:transparent}
+.btn-outline:hover{background:rgba(245,166,35,.1)}
+.nav-links .btn-outline{background:rgba(20,30,50,.85);border-radius:50px;padding:.65rem 1.5rem}
+.nav-links .btn-outline:hover{background:rgba(20,30,50,.95)}
 .btn-white{background:var(--white);color:var(--navy-deep)}
 .btn-white:hover{background:var(--gray-100);transform:translateY(-1px)}
 .btn-ghost{border:2px solid rgba(255,255,255,.3);color:var(--white);background:transparent}
@@ -147,6 +149,45 @@ section{padding:5rem 1.5rem}
 .feature-icon{width:52px;height:52px;border-radius:12px;background:rgba(245,166,35,.1);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem}
 .feature-card h3{font-size:1.15rem;font-weight:600;margin-bottom:.5rem;color:var(--white)}
 .feature-card p{font-size:.92rem;color:rgba(255,255,255,.5);line-height:1.6}
+
+/* GUIDED TOUR */
+.tour-section{background:var(--navy)}
+.tour-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.tour-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .25s}
+.tour-card:hover{border-color:var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.1);transform:translateY(-3px)}
+.tour-screen{height:220px;background:var(--navy-deep);border-bottom:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden;padding:.75rem}
+.tour-screen-topbar{display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:rgba(245,166,35,.15);border-radius:6px;margin-bottom:.5rem;font-size:.65rem;color:var(--orange)}
+.tour-screen-grid{display:grid;gap:.4rem}
+.tour-screen-row{display:flex;gap:.4rem}
+.tour-screen-block{border-radius:4px;background:rgba(255,255,255,.06)}
+.tour-screen-bar{height:6px;border-radius:3px;background:rgba(245,166,35,.3)}
+.tour-info{padding:1.25rem}
+.tour-info h3{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.35rem}
+.tour-info p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5}
+.tour-badge{display:inline-block;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600;margin-top:.5rem}
+.tour-badge.hobby{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.tour-badge.starter{background:rgba(59,130,246,.15);color:#60a5fa}
+.tour-badge.pro{background:rgba(245,166,35,.15);color:var(--orange)}
+.tour-badge.enterprise{background:rgba(168,85,247,.15);color:#c084fc}
+.tour-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:2rem}
+.tour-lightbox.active{display:flex}
+.tour-lightbox-inner{background:var(--navy-light);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem;position:relative}
+.tour-lightbox-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer;opacity:.6;transition:opacity .2s}
+.tour-lightbox-close:hover{opacity:1}
+.tour-lightbox-screen{height:350px;background:var(--navy-deep);border-radius:12px;border:1px solid rgba(255,255,255,.08);margin-bottom:1.5rem;padding:1rem;overflow:hidden}
+.tour-lightbox h3{font-size:1.4rem;color:var(--white);margin-bottom:.5rem}
+.tour-lightbox p{color:rgba(255,255,255,.6);line-height:1.7}
+.tour-lightbox-features{list-style:none;padding:0;margin-top:1rem}
+.tour-lightbox-features li{padding:.4rem 0;color:rgba(255,255,255,.5);font-size:.9rem}
+.tour-lightbox-features li::before{content:'✓ ';color:var(--orange)}
+@media(max-width:1024px){.tour-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .tour-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:1rem;padding-bottom:1rem;-webkit-overflow-scrolling:touch}
+  .tour-card{min-width:280px;scroll-snap-align:start;flex-shrink:0}
+  .tour-dots{display:flex;justify-content:center;gap:.5rem;margin-top:1rem}
+  .tour-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;padding:0}
+  .tour-dot.active{background:var(--orange)}
+}
 
 /* HOW IT WORKS */
 .how{background:var(--navy)}
@@ -360,17 +401,17 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <div class="logo-glow"></div>
       <img src="campaign-logo.webp" alt="EGGlogU" width="180" height="180" loading="lazy">
     </div>
-    <div class="hero-badge"><span>Live</span> <span data-i18n="hero_badge">Parte de la plataforma FarmLogU</span></div>
+    <!-- hero-badge: FarmLogU umbrella — re-enable when FarmLogU launches -->
     <h1 data-i18n="hero_title">Gestión avícola <em>inteligente y sin complicaciones</em></h1>
     <p data-i18n="hero_desc">Producción de huevos, salud de parvadas, alimentación, finanzas y trazabilidad en una sola plataforma. Funciona sin internet.</p>
     <div class="hero-buttons">
-      <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 días</a>
+      <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Empieza Gratis</a>
       <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat"><strong>100%</strong><span data-i18n="stat_offline">Offline-first</span></div>
       <div class="hero-stat"><strong>14</strong><span data-i18n="stat_langs">Idiomas</span></div>
-      <div class="hero-stat"><strong>30</strong><span data-i18n="stat_trial">Días gratis</span></div>
+      <div class="hero-stat"><strong>$0</strong><span data-i18n="stat_trial">Plan Hobbyist</span></div>
       <div class="hero-stat"><strong>24/7</strong><span data-i18n="stat_support">Soporte IA</span></div>
     </div>
   </div>
@@ -478,6 +519,225 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   </div>
 </section>
 
+<!-- GUIDED TOUR -->
+<section class="tour-section" id="tour">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="tour_title">Conoce la plataforma</h2>
+      <p data-i18n="tour_subtitle">Explora las vistas principales de EGGlogU</p>
+    </div>
+    <div class="tour-grid">
+      <!-- Card 1: Dashboard -->
+      <div class="tour-card" onclick="openTourLightbox(0)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">📊 Dashboard</div>
+          <div class="tour-screen-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="tour-screen-block" style="height:52px;background:rgba(245,166,35,.12);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:70%"></div></div>
+            <div class="tour-screen-block" style="height:52px;background:rgba(59,130,246,.1);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:85%;background:rgba(59,130,246,.4)"></div></div>
+            <div class="tour-screen-block" style="height:52px;background:rgba(16,185,129,.1);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:55%;background:rgba(16,185,129,.4)"></div></div>
+            <div class="tour-screen-block" style="height:52px;background:rgba(239,68,68,.08);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:40%;background:rgba(239,68,68,.3)"></div></div>
+          </div>
+          <div style="margin-top:.5rem;display:flex;gap:.3rem;align-items:flex-end;height:80px">
+            <div style="flex:1;background:rgba(245,166,35,.15);border-radius:3px;height:60%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.2);border-radius:3px;height:80%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.15);border-radius:3px;height:45%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.25);border-radius:3px;height:90%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.2);border-radius:3px;height:70%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.15);border-radius:3px;height:55%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.3);border-radius:3px;height:100%"></div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_1_title">Dashboard</h3>
+          <p data-i18n="tour_1_desc">KPIs en tiempo real, gráficas de producción y alertas importantes de un vistazo.</p>
+          <span class="tour-badge hobby">Hobbyist</span>
+        </div>
+      </div>
+      <!-- Card 2: Producción -->
+      <div class="tour-card" onclick="openTourLightbox(1)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">🥚 Producción</div>
+          <div style="display:flex;flex-direction:column;gap:.35rem">
+            <div style="display:flex;gap:.3rem;padding:.2rem .4rem;background:rgba(255,255,255,.04);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.3)">
+              <span style="flex:2">Lote</span><span style="flex:1;text-align:center">Huevos</span><span style="flex:1;text-align:center">Rotos</span><span style="flex:1;text-align:center">%</span>
+            </div>
+            <div style="display:flex;gap:.3rem;padding:.25rem .4rem;background:rgba(245,166,35,.06);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.4)">
+              <span style="flex:2">Lote A-12</span><span style="flex:1;text-align:center;color:var(--orange)">2,450</span><span style="flex:1;text-align:center">12</span><span style="flex:1;text-align:center;color:#10b981">96.2%</span>
+            </div>
+            <div style="display:flex;gap:.3rem;padding:.25rem .4rem;background:rgba(255,255,255,.03);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.4)">
+              <span style="flex:2">Lote B-08</span><span style="flex:1;text-align:center;color:var(--orange)">1,830</span><span style="flex:1;text-align:center">8</span><span style="flex:1;text-align:center;color:#10b981">94.7%</span>
+            </div>
+            <div style="display:flex;gap:.3rem;padding:.25rem .4rem;background:rgba(245,166,35,.06);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.4)">
+              <span style="flex:2">Lote C-15</span><span style="flex:1;text-align:center;color:var(--orange)">3,100</span><span style="flex:1;text-align:center">15</span><span style="flex:1;text-align:center;color:#10b981">97.1%</span>
+            </div>
+            <div style="margin-top:.3rem;padding:.3rem .5rem;background:rgba(245,166,35,.12);border-radius:6px;display:flex;justify-content:space-between;font-size:.6rem;color:var(--orange)">
+              <span>Total: 7,380</span><span>Prom: 96.0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_2_title">Producción diaria</h3>
+          <p data-i18n="tour_2_desc">Registra huevos por lote, rastrea roturas y analiza tendencias de postura.</p>
+          <span class="tour-badge hobby">Hobbyist</span>
+        </div>
+      </div>
+      <!-- Card 3: Salud -->
+      <div class="tour-card" onclick="openTourLightbox(2)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">💉 Salud</div>
+          <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
+            <div style="flex:1;padding:.4rem;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.15);border-radius:6px">
+              <div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-bottom:.2rem">Vacuna</div>
+              <div style="font-size:.6rem;color:#10b981">Newcastle</div>
+              <div style="font-size:.45rem;color:rgba(255,255,255,.25);margin-top:.15rem">15 Mar 2026</div>
+            </div>
+            <div style="flex:1;padding:.4rem;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.15);border-radius:6px">
+              <div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-bottom:.2rem">Próxima</div>
+              <div style="font-size:.6rem;color:var(--orange)">Bronquitis</div>
+              <div style="font-size:.45rem;color:rgba(255,255,255,.25);margin-top:.15rem">22 Mar 2026</div>
+            </div>
+          </div>
+          <div style="padding:.35rem .5rem;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.12);border-radius:6px;margin-bottom:.3rem">
+            <div style="font-size:.5rem;color:#ef4444">⚠ Alerta: Mortalidad elevada Lote B-08</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:.2rem">
+            <div style="width:100%;aspect-ratio:1;background:rgba(16,185,129,.15);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(16,185,129,.15);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(16,185,129,.1);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(245,166,35,.2);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(239,68,68,.15);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(255,255,255,.04);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(255,255,255,.04);border-radius:3px"></div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_3_title">Salud y vacunas</h3>
+          <p data-i18n="tour_3_desc">Calendario sanitario, alertas de mortalidad y seguimiento de tratamientos.</p>
+          <span class="tour-badge starter">Starter</span>
+        </div>
+      </div>
+      <!-- Card 4: Finanzas -->
+      <div class="tour-card" onclick="openTourLightbox(3)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">💰 Finanzas</div>
+          <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
+            <div style="flex:1;padding:.4rem;background:rgba(16,185,129,.08);border-radius:6px;text-align:center">
+              <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Ingresos</div>
+              <div style="font-size:.75rem;color:#10b981;font-weight:700">$12,450</div>
+            </div>
+            <div style="flex:1;padding:.4rem;background:rgba(239,68,68,.08);border-radius:6px;text-align:center">
+              <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Gastos</div>
+              <div style="font-size:.75rem;color:#ef4444;font-weight:700">$8,230</div>
+            </div>
+          </div>
+          <div style="padding:.35rem .5rem;background:rgba(245,166,35,.1);border-radius:6px;text-align:center;margin-bottom:.4rem">
+            <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Balance</div>
+            <div style="font-size:.85rem;color:var(--orange);font-weight:700">+$4,220</div>
+          </div>
+          <div style="display:flex;gap:.2rem;align-items:flex-end;height:50px">
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:30px;background:rgba(16,185,129,.2);border-radius:2px 2px 0 0"></div>
+              <div style="height:20px;background:rgba(239,68,68,.15);border-radius:0 0 2px 2px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:35px;background:rgba(16,185,129,.25);border-radius:2px 2px 0 0"></div>
+              <div style="height:22px;background:rgba(239,68,68,.15);border-radius:0 0 2px 2px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:25px;background:rgba(16,185,129,.2);border-radius:2px 2px 0 0"></div>
+              <div style="height:18px;background:rgba(239,68,68,.12);border-radius:0 0 2px 2px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:40px;background:rgba(16,185,129,.3);border-radius:2px 2px 0 0"></div>
+              <div style="height:25px;background:rgba(239,68,68,.18);border-radius:0 0 2px 2px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_4_title">Finanzas</h3>
+          <p data-i18n="tour_4_desc">Ingresos, gastos, balance y gráficos financieros por período.</p>
+          <span class="tour-badge starter">Starter</span>
+        </div>
+      </div>
+      <!-- Card 5: Trazabilidad -->
+      <div class="tour-card" onclick="openTourLightbox(4)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">📦 Trazabilidad</div>
+          <div style="display:flex;flex-direction:column;gap:.35rem">
+            <div style="padding:.35rem .5rem;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.15);border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:.55rem;color:#c084fc;font-weight:600">Lote #2026-0342</div>
+                <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Granja Norte → Cliente A</div>
+              </div>
+              <div style="width:28px;height:28px;background:rgba(168,85,247,.15);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.7rem">📱</div>
+            </div>
+            <div style="padding:.35rem .5rem;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.1);border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:.55rem;color:var(--orange);font-weight:600">Lote #2026-0341</div>
+                <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Granja Sur → Cliente B</div>
+              </div>
+              <div style="width:28px;height:28px;background:rgba(245,166,35,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.7rem">📱</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.4rem;margin-top:.4rem;padding:0 .2rem">
+            <div style="width:8px;height:8px;border-radius:50%;background:#10b981"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.08)"><div style="width:100%;height:100%;background:rgba(16,185,129,.4)"></div></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:#10b981"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.08)"><div style="width:70%;height:100%;background:rgba(245,166,35,.4)"></div></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--orange)"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.08)"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15)"></div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_5_title">Trazabilidad</h3>
+          <p data-i18n="tour_5_desc">Lotes con código QR, timeline de distribución y trazabilidad completa.</p>
+          <span class="tour-badge pro">Pro</span>
+        </div>
+      </div>
+      <!-- Card 6: Modo Campo -->
+      <div class="tour-card" onclick="openTourLightbox(5)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">📶 Modo Campo <span style="margin-left:auto;background:rgba(16,185,129,.2);color:#10b981;padding:.1rem .4rem;border-radius:10px;font-size:.55rem">Offline</span></div>
+          <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.3rem">
+            <div style="padding:.6rem;background:rgba(245,166,35,.08);border:2px solid rgba(245,166,35,.2);border-radius:10px;text-align:center">
+              <div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-bottom:.2rem">Huevos hoy</div>
+              <div style="font-size:1.4rem;color:var(--orange);font-weight:800">2,450</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">
+              <div style="padding:.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-align:center">
+                <div style="font-size:.9rem;margin-bottom:.15rem">➕</div>
+                <div style="font-size:.5rem;color:rgba(255,255,255,.4)">Registrar</div>
+              </div>
+              <div style="padding:.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-align:center">
+                <div style="font-size:.9rem;margin-bottom:.15rem">📋</div>
+                <div style="font-size:.5rem;color:rgba(255,255,255,.4)">Checklist</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_6_title">Modo Campo</h3>
+          <p data-i18n="tour_6_desc">Interfaz simplificada para registro rápido. Funciona sin conexión a internet.</p>
+          <span class="tour-badge hobby">Hobbyist</span>
+        </div>
+      </div>
+    </div>
+    <div class="tour-dots"></div>
+  </div>
+</section>
+
+<!-- TOUR LIGHTBOX -->
+<div class="tour-lightbox" id="tourLightbox">
+  <div class="tour-lightbox-inner">
+    <button class="tour-lightbox-close" onclick="closeTourLightbox()">&times;</button>
+    <div class="tour-lightbox-screen" id="tourLbScreen"></div>
+    <h3 id="tourLbTitle"></h3>
+    <p id="tourLbDesc"></p>
+    <ul class="tour-lightbox-features" id="tourLbFeatures"></ul>
+  </div>
+</div>
+
 <!-- HOW IT WORKS -->
 <section class="how" id="how">
   <div class="section-inner">
@@ -489,7 +749,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <div class="step">
         <div class="step-num">1</div>
         <h3 data-i18n="step1_title">Crea tu cuenta</h3>
-        <p data-i18n="step1_desc">Registro gratuito. 30 días de prueba sin tarjeta de crédito.</p>
+        <p data-i18n="step1_desc">Registro gratuito. Empieza con el plan Hobbyist sin costo.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
@@ -542,7 +802,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   <div class="section-inner">
     <div class="section-header">
       <h2 data-i18n="pricing_title">Planes y Precios</h2>
-      <p data-i18n="pricing_desc">Sin contratos. Cancela cuando quieras. Todos incluyen 30 días Enterprise.</p>
+      <p data-i18n="pricing_desc">Sin contratos. Cancela cuando quieras.</p>
     </div>
     <!-- LAUNCH PROMO -->
     <div class="launch-promo">
@@ -583,7 +843,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
           <li data-i18n="hobby_f4">Modo Campo</li>
           <li data-i18n="hobby_f5">Funciona sin internet</li>
         </ul>
-        <a href="egglogu.html?plan=hobby" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Días</a>
+        <a href="egglogu.html?plan=hobby" class="btn btn-outline" data-i18n="plan_cta">Empezar Gratis</a>
       </div>
       <div class="price-card">
         <h3 data-i18n="starter_name">Starter</h3>
@@ -596,7 +856,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
           <li data-i18n="starter_f4">Finanzas + Clientes</li>
           <li data-i18n="starter_f5">Modo Campo + Dashboard</li>
         </ul>
-        <a href="egglogu.html?plan=starter" class="btn btn-outline" data-i18n="plan_cta">Empezar + Enterprise 30 Días</a>
+        <a href="egglogu.html?plan=starter" class="btn btn-outline" data-i18n="plan_cta">Empezar Gratis</a>
       </div>
       <div class="price-card featured">
         <span class="price-badge" data-i18n="badge_popular">Más Popular</span>
@@ -611,7 +871,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
           <li data-i18n="pro_f5">Bioseguridad + Trazabilidad</li>
           <li data-i18n="pro_f6">Validación Zero Tolerance</li>
         </ul>
-        <a href="egglogu.html?plan=pro" class="btn btn-primary" data-i18n="plan_cta">Empezar + Enterprise 30 Días</a>
+        <a href="egglogu.html?plan=pro" class="btn btn-primary" data-i18n="plan_cta">Empezar Gratis</a>
       </div>
       <div class="price-card">
         <h3 data-i18n="ent_name">Enterprise</h3>
@@ -684,8 +944,8 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
       <h3 data-i18n="included_title">Incluido en todos los planes</h3>
       <div class="pricing-included-grid">
         <div class="pricing-included-card">
-          <h4 data-i18n="included_1_title">30 días Enterprise completo</h4>
-          <p data-i18n="included_1_desc">Empieza con todas las funcionalidades. Sin restricciones. Elige tu plan cuando estés listo.</p>
+          <h4 data-i18n="included_1_title">Hobbyist gratis para siempre</h4>
+          <p data-i18n="included_1_desc">Empieza sin costo. Cuando crezcas, elige el plan que mejor se ajuste.</p>
         </div>
         <div class="pricing-included-card">
           <h4 data-i18n="included_2_title">Funciona sin internet</h4>
@@ -706,7 +966,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   <h2 data-i18n="cta_title">Digitaliza tu granja avícola hoy</h2>
   <p data-i18n="cta_desc">Únete a avicultores que ya controlan su operación de galpón a cliente.</p>
   <div class="cta-buttons">
-    <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Prueba gratis 30 días</a>
+    <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Empieza Gratis</a>
     <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
   </div>
 </section>
@@ -727,7 +987,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
         <a href="#features" data-i18n="nav_features">Funcionalidades</a>
         <a href="#pricing" data-i18n="nav_pricing">Precios</a>
         <a href="#how" data-i18n="nav_how">Cómo funciona</a>
-        <a href="egglogu.html" data-i18n="nav_login">Iniciar sesión</a>
+        <a href="egglogu.html" data-i18n="footer_login">Acceso Clientes</a>
       </div>
       <div class="footer-col">
         <h4 data-i18n="footer_legal">Legal</h4>
@@ -777,7 +1037,7 @@ hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');navLi
 navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{hamburger.classList.remove('open');navLinks.classList.remove('open')}));
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
 const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.feature-card,.problem-card,.diff-card,.price-card,.step').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease, transform .5s ease';observer.observe(el)});
+document.querySelectorAll('.feature-card,.problem-card,.diff-card,.price-card,.step,.tour-card').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease, transform .5s ease';observer.observe(el)});
 // Language picker — all globe dropdowns (curtain + nav)
 document.querySelectorAll('.lang-picker').forEach(picker=>{
   const globe=picker.querySelector('.lang-globe');
@@ -794,6 +1054,44 @@ document.querySelectorAll('.lang-option').forEach(btn=>{
     document.querySelectorAll('.lang-dropdown').forEach(d=>d.classList.remove('open'));
   });
 });
+// Tour lightbox
+const tourData=[
+  {title:'Dashboard',desc:'Panel principal con KPIs en tiempo real: producción diaria, mortalidad, consumo de alimento y alertas activas. Gráficas interactivas de tendencias semanales y mensuales.',features:['KPIs de producción, mortalidad y feed','Gráficas de tendencia semanal/mensual','Alertas y notificaciones activas','Resumen multi-granja']},
+  {title:'Producción diaria',desc:'Registro detallado de huevos por lote con control de roturas, clasificación por calibre y análisis de porcentaje de postura. Histórico completo exportable.',features:['Registro por lote con roturas y calibre','Porcentaje de postura automático','Histórico y exportación CSV/PDF','Comparativa entre lotes']},
+  {title:'Salud y vacunas',desc:'Calendario sanitario completo con recordatorios automáticos, seguimiento de tratamientos, alertas de mortalidad y registro de brotes sanitarios.',features:['Calendario de vacunación con alertas','Registro de mortalidad y brotes','Seguimiento de medicamentos','Historial sanitario por lote']},
+  {title:'Finanzas',desc:'Control financiero integral: ingresos por venta, gastos operativos, balance mensual y gráficos comparativos. Cuentas por cobrar y proyecciones.',features:['Ingresos y gastos por categoría','Balance y rentabilidad por período','Cuentas por cobrar','Gráficos comparativos mensuales']},
+  {title:'Trazabilidad',desc:'Trazabilidad completa desde la granja hasta el cliente final. Lotes con código QR, timeline de distribución y página pública de verificación.',features:['Códigos QR por lote','Timeline granja → cliente','Página pública de verificación','Exportación para auditorías']},
+  {title:'Modo Campo',desc:'Interfaz simplificada diseñada para uso en gallineros. Botones grandes, registro rápido y funcionamiento 100% offline con sincronización automática.',features:['Interfaz táctil con botones grandes','Funciona 100% sin internet','Sincronización automática al reconectar','Checklist diario de operaciones']}
+];
+function openTourLightbox(i){
+  const d=tourData[i],lb=document.getElementById('tourLightbox');
+  const card=document.querySelectorAll('.tour-card')[i];
+  const screenHTML=card?card.querySelector('.tour-screen').innerHTML:'';
+  document.getElementById('tourLbScreen').innerHTML=screenHTML;
+  document.getElementById('tourLbTitle').textContent=d.title;
+  document.getElementById('tourLbDesc').textContent=d.desc;
+  const ul=document.getElementById('tourLbFeatures');
+  ul.innerHTML=d.features.map(f=>'<li>'+f+'</li>').join('');
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeTourLightbox(){
+  document.getElementById('tourLightbox').classList.remove('active');
+  document.body.style.overflow='';
+}
+document.getElementById('tourLightbox').addEventListener('click',function(e){if(e.target===this)closeTourLightbox()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTourLightbox()});
+// Tour mobile dots
+if(window.innerWidth<=768){
+  const grid=document.querySelector('.tour-grid');
+  const dots=document.querySelector('.tour-dots');
+  const cards=document.querySelectorAll('.tour-card');
+  if(grid&&dots&&cards.length){
+    cards.forEach((_,i)=>{const dot=document.createElement('button');dot.className='tour-dot'+(i===0?' active':'');dot.onclick=()=>cards[i].scrollIntoView({behavior:'smooth',inline:'start',block:'nearest'});dots.appendChild(dot)});
+    const dobs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const idx=[...cards].indexOf(e.target);dots.querySelectorAll('.tour-dot').forEach((d,j)=>d.classList.toggle('active',j===idx))}})},{root:grid,threshold:.6});
+    cards.forEach(c=>dobs.observe(c));
+  }
+}
 </script>
 <script src="i18n-landing.js?v=14lang5"></script>
 </body>
