@@ -106,9 +106,7 @@ async def _build_tokens_with_session(
 ) -> dict:
     """Create access + refresh tokens and register a session."""
     refresh_token, refresh_jti = create_refresh_token(user.id)
-    access_token = create_access_token(
-        user.id, user.organization_id, user.role.value
-    )
+    access_token = create_access_token(user.id, user.organization_id, user.role.value)
     await create_session(
         db=db,
         user_id=user.id,
@@ -119,9 +117,7 @@ async def _build_tokens_with_session(
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
-async def _post_login_checks(
-    user: User, request: Request, db: AsyncSession
-) -> None:
+async def _post_login_checks(user: User, request: Request, db: AsyncSession) -> None:
     """Run post-login security checks: known device, impossible travel, alerts."""
     ip = _client_ip(request)
     ua = _user_agent(request)
@@ -134,14 +130,14 @@ async def _post_login_checks(
         )
 
     # Impossible travel detection (log warning, don't block)
-    travel = await check_impossible_travel(
-        db, user.id, user.geo_lat, user.geo_lng
-    )
+    travel = await check_impossible_travel(db, user.id, user.geo_lat, user.geo_lng)
     if travel.get("impossible"):
         import logging
+
         logging.getLogger("egglogu.auth_security").warning(
             "Impossible travel detected for user %s: %s",
-            user.id, travel["details"],
+            user.id,
+            travel["details"],
         )
 
 
@@ -372,7 +368,9 @@ async def login_2fa(
 
     # Verify TOTP code
     totp_result = await db.execute(
-        select(UserTOTP).where(UserTOTP.user_id == user.id, UserTOTP.is_enabled.is_(True))
+        select(UserTOTP).where(
+            UserTOTP.user_id == user.id, UserTOTP.is_enabled.is_(True)
+        )
     )
     totp = totp_result.scalar_one_or_none()
     if not totp:
@@ -528,12 +526,14 @@ async def setup_2fa(
     db: AsyncSession = Depends(get_db),
 ):
     """Generate TOTP seed + QR code for 2FA setup."""
-    from src.core.auth_security import generate_backup_codes, generate_totp_seed, hash_backup_codes
+    from src.core.auth_security import (
+        generate_backup_codes,
+        generate_totp_seed,
+        hash_backup_codes,
+    )
 
     # Check if already enabled
-    existing = await db.execute(
-        select(UserTOTP).where(UserTOTP.user_id == user.id)
-    )
+    existing = await db.execute(select(UserTOTP).where(UserTOTP.user_id == user.id))
     totp = existing.scalar_one_or_none()
     if totp and totp.is_enabled:
         raise ConflictError("2FA is already enabled. Disable it first to reconfigure.")
@@ -573,9 +573,7 @@ async def verify_2fa_setup(
     """Verify TOTP code to enable 2FA."""
     from src.core.auth_security import verify_totp_code
 
-    result = await db.execute(
-        select(UserTOTP).where(UserTOTP.user_id == user.id)
-    )
+    result = await db.execute(select(UserTOTP).where(UserTOTP.user_id == user.id))
     totp = result.scalar_one_or_none()
     if not totp:
         raise NotFoundError("Call /2fa/setup first")
@@ -601,7 +599,9 @@ async def disable_2fa(
     from src.core.auth_security import verify_totp_code
 
     result = await db.execute(
-        select(UserTOTP).where(UserTOTP.user_id == user.id, UserTOTP.is_enabled.is_(True))
+        select(UserTOTP).where(
+            UserTOTP.user_id == user.id, UserTOTP.is_enabled.is_(True)
+        )
     )
     totp = result.scalar_one_or_none()
     if not totp:
@@ -655,7 +655,9 @@ async def google_auth(
             data.credential, GoogleRequest(), settings.GOOGLE_CLIENT_ID
         )
     except ValueError:
-        await log_login_attempt(db, "unknown", LoginResult.bad_creds, ip, ua, method="google")
+        await log_login_attempt(
+            db, "unknown", LoginResult.bad_creds, ip, ua, method="google"
+        )
         raise UnauthorizedError("Invalid Google token")
 
     email = payload.get("email")
@@ -680,7 +682,13 @@ async def google_auth(
             user.verification_token = None
         if not user.is_active:
             await log_login_attempt(
-                db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="google"
+                db,
+                email,
+                LoginResult.disabled,
+                ip,
+                ua,
+                user_id=user.id,
+                method="google",
             )
             raise UnauthorizedError("Account is disabled")
     else:
@@ -760,7 +768,9 @@ async def apple_auth(
             issuer="https://appleid.apple.com",
         )
     except jwt.PyJWTError:
-        await log_login_attempt(db, "unknown", LoginResult.bad_creds, ip, ua, method="apple")
+        await log_login_attempt(
+            db, "unknown", LoginResult.bad_creds, ip, ua, method="apple"
+        )
         raise UnauthorizedError("Invalid Apple token")
 
     email = payload.get("email")
@@ -854,7 +864,9 @@ async def microsoft_auth(
                 raise UnauthorizedError("Invalid Microsoft token")
             profile = graph_resp.json()
     except httpx.HTTPError:
-        await log_login_attempt(db, "unknown", LoginResult.bad_creds, ip, ua, method="microsoft")
+        await log_login_attempt(
+            db, "unknown", LoginResult.bad_creds, ip, ua, method="microsoft"
+        )
         raise UnauthorizedError("Failed to verify Microsoft token")
 
     email = profile.get("mail") or profile.get("userPrincipalName")
@@ -878,7 +890,13 @@ async def microsoft_auth(
             user.verification_token = None
         if not user.is_active:
             await log_login_attempt(
-                db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="microsoft"
+                db,
+                email,
+                LoginResult.disabled,
+                ip,
+                ua,
+                user_id=user.id,
+                method="microsoft",
             )
             raise UnauthorizedError("Account is disabled")
     else:
@@ -958,7 +976,9 @@ async def refresh(
         )
         if rotated is None:
             # Token reuse detected — all sessions revoked
-            raise UnauthorizedError("Session compromised. All sessions revoked. Please log in again.")
+            raise UnauthorizedError(
+                "Session compromised. All sessions revoked. Please log in again."
+            )
     else:
         # Legacy token without JTI — create a new session
         await create_session(
@@ -1030,7 +1050,9 @@ async def reset_password(
     user = result.scalar_one_or_none()
     if not user:
         raise NotFoundError("Invalid or expired reset token")
-    if user.reset_token_expires and user.reset_token_expires < datetime.now(timezone.utc):
+    if user.reset_token_expires and user.reset_token_expires < datetime.now(
+        timezone.utc
+    ):
         raise NotFoundError("Reset token has expired")
 
     try:

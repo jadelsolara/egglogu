@@ -181,9 +181,7 @@ async def create_launch_checkout_session(
 
 def cancel_stripe_subscription(stripe_subscription_id: str) -> dict:
     """Cancel a Stripe subscription at the end of the current billing period."""
-    return stripe.Subscription.modify(
-        stripe_subscription_id, cancel_at_period_end=True
-    )
+    return stripe.Subscription.modify(stripe_subscription_id, cancel_at_period_end=True)
 
 
 async def create_customer_portal(customer_id: str, return_url: str) -> str:

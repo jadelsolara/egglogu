@@ -437,7 +437,9 @@ async def cancel_subscription(
 
     return {
         "detail": "Subscription cancelled",
-        "active_until": sub.current_period_end.isoformat() if sub.current_period_end else None,
+        "active_until": sub.current_period_end.isoformat()
+        if sub.current_period_end
+        else None,
     }
 
 
@@ -452,7 +454,9 @@ async def delete_account(
         raise ForbiddenError("Confirmation text must be 'DELETE' or 'ELIMINAR'")
 
     if not user.hashed_password:
-        raise ForbiddenError("Password verification required — OAuth-only accounts must set a password first")
+        raise ForbiddenError(
+            "Password verification required — OAuth-only accounts must set a password first"
+        )
 
     if not verify_password(body.password, user.hashed_password):
         raise ForbiddenError("Invalid password")
