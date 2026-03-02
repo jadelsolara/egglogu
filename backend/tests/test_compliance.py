@@ -32,7 +32,9 @@ async def test_create_certification(client: AsyncClient, authenticated_user):
     assert data["status"] == "active"
 
 
-async def test_create_salmonella_test(client: AsyncClient, authenticated_user, sample_flock):
+async def test_create_salmonella_test(
+    client: AsyncClient, authenticated_user, sample_flock
+):
     resp = await client.post(
         "/api/v1/compliance/salmonella",
         headers=authenticated_user["headers"],

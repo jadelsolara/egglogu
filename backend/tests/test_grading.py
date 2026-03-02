@@ -13,7 +13,9 @@ async def test_list_grading_sessions_empty(client: AsyncClient, authenticated_us
     assert resp.json() == []
 
 
-async def test_create_grading_session(client: AsyncClient, authenticated_user, sample_flock):
+async def test_create_grading_session(
+    client: AsyncClient, authenticated_user, sample_flock
+):
     resp = await client.post(
         "/api/v1/grading/sessions",
         headers=authenticated_user["headers"],

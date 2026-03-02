@@ -11,13 +11,14 @@ PREFIX = "/api/v1/clients"
 
 @pytest.mark.asyncio
 class TestListClients:
-
     async def test_list_clients_empty(self, client: AsyncClient, authenticated_user):
         response = await client.get(PREFIX, headers=authenticated_user["headers"])
         assert response.status_code == 200
         assert response.json() == []
 
-    async def test_list_clients_returns_created(self, client: AsyncClient, authenticated_user):
+    async def test_list_clients_returns_created(
+        self, client: AsyncClient, authenticated_user
+    ):
         headers = authenticated_user["headers"]
         await client.post(PREFIX, json={"name": "Client Alpha"}, headers=headers)
         await client.post(PREFIX, json={"name": "Client Beta"}, headers=headers)
@@ -36,7 +37,6 @@ class TestListClients:
 
 @pytest.mark.asyncio
 class TestCreateClient:
-
     async def test_create_client_minimal(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         payload = {"name": "Test Client"}
@@ -53,10 +53,11 @@ class TestCreateClient:
 
 @pytest.mark.asyncio
 class TestDeleteClient:
-
     async def test_delete_client_success(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
-        create_resp = await client.post(PREFIX, json={"name": "Doomed Client"}, headers=headers)
+        create_resp = await client.post(
+            PREFIX, json={"name": "Doomed Client"}, headers=headers
+        )
         client_id = create_resp.json()["id"]
 
         del_resp = await client.delete(f"{PREFIX}/{client_id}", headers=headers)
@@ -65,7 +66,9 @@ class TestDeleteClient:
         get_resp = await client.get(f"{PREFIX}/{client_id}", headers=headers)
         assert get_resp.status_code == 404
 
-    async def test_delete_client_nonexistent(self, client: AsyncClient, authenticated_user):
+    async def test_delete_client_nonexistent(
+        self, client: AsyncClient, authenticated_user
+    ):
         fake_id = str(uuid.uuid4())
         response = await client.delete(
             f"{PREFIX}/{fake_id}", headers=authenticated_user["headers"]

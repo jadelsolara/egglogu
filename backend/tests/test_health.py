@@ -6,7 +6,6 @@ from httpx import AsyncClient
 
 @pytest.mark.asyncio
 class TestHealthEndpoint:
-
     async def test_health_returns_200(self, client: AsyncClient):
         response = await client.get("/health")
         assert response.status_code == 200

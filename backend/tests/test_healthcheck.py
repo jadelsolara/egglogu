@@ -1,4 +1,5 @@
 """Tests for the healthcheck module."""
+
 import pytest
 from httpx import AsyncClient
 

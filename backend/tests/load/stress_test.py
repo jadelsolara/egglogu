@@ -14,15 +14,11 @@ import argparse
 import asyncio
 import json
 import statistics
-import sys
 import time
 from dataclasses import dataclass, field
 from urllib.parse import urljoin
 
 # Use stdlib only — no pip install needed
-import ssl
-from http.client import HTTPSConnection, HTTPConnection
-from urllib.parse import urlparse
 
 
 @dataclass
@@ -88,7 +84,13 @@ class TestResults:
         return self.total / max(elapsed, 0.001)
 
 
-async def make_request(session, url: str, method: str = "GET", body: str | None = None, headers: dict | None = None) -> RequestResult:
+async def make_request(
+    session,
+    url: str,
+    method: str = "GET",
+    body: str | None = None,
+    headers: dict | None = None,
+) -> RequestResult:
     """Make an HTTP request using asyncio subprocess curl for true async."""
     start = time.monotonic()
     try:
@@ -114,7 +116,9 @@ async def make_request(session, url: str, method: str = "GET", body: str | None 
         return RequestResult(url=url, status=0, duration_ms=duration_ms, error=str(e))
 
 
-async def run_scenario(base_url: str, vus: int, duration_secs: int, name: str) -> TestResults:
+async def run_scenario(
+    base_url: str, vus: int, duration_secs: int, name: str
+) -> TestResults:
     """Run a stress test scenario with N virtual users for M seconds."""
     results = TestResults(name=name)
     results.start_time = time.monotonic()
@@ -125,8 +129,15 @@ async def run_scenario(base_url: str, vus: int, duration_secs: int, name: str) -
         ("GET", "/api/health", None, None),
         ("GET", "/api/v1/support/faq", None, None),
         ("GET", "/api/v1/farms/", None, {"Authorization": "Bearer stress-test-token"}),
-        ("POST", "/api/v1/sync/", json.dumps({"last_synced_at": None, "data": {}}),
-         {"Content-Type": "application/json", "Authorization": "Bearer stress-test-token"}),
+        (
+            "POST",
+            "/api/v1/sync/",
+            json.dumps({"last_synced_at": None, "data": {}}),
+            {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer stress-test-token",
+            },
+        ),
     ]
 
     async def virtual_user(vu_id: int):
@@ -148,20 +159,20 @@ async def run_scenario(base_url: str, vus: int, duration_secs: int, name: str) -
 
 def print_results(results: TestResults):
     elapsed = results.end_time - results.start_time
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  {results.name}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"  Duration:    {elapsed:.1f}s")
     print(f"  Requests:    {results.total}")
     print(f"  RPS:         {results.rps:.1f} req/s")
-    print(f"  Success:     {results.successes} ({(1-results.error_rate)*100:.1f}%)")
-    print(f"  Errors:      {results.errors} ({results.error_rate*100:.1f}%)")
-    print(f"  Latency:")
+    print(f"  Success:     {results.successes} ({(1 - results.error_rate) * 100:.1f}%)")
+    print(f"  Errors:      {results.errors} ({results.error_rate * 100:.1f}%)")
+    print("  Latency:")
     print(f"    avg:       {results.avg:.0f}ms")
     print(f"    p50:       {results.p50:.0f}ms")
     print(f"    p95:       {results.p95:.0f}ms")
     print(f"    p99:       {results.p99:.0f}ms")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Per-status breakdown
     status_counts = {}
@@ -186,17 +197,27 @@ async def main():
     parser.add_argument("--url", default="https://api.egglogu.com", help="Base URL")
     parser.add_argument("--vus", type=int, default=50, help="Virtual users")
     parser.add_argument("--duration", type=int, default=30, help="Duration in seconds")
-    parser.add_argument("--scenario", choices=["smoke", "load", "stress", "full"], default="smoke")
+    parser.add_argument(
+        "--scenario", choices=["smoke", "load", "stress", "full"], default="smoke"
+    )
     args = parser.parse_args()
 
-    print(f"\nEGGlogU Stress Test")
+    print("\nEGGlogU Stress Test")
     print(f"Target: {args.url}")
     print(f"Scenario: {args.scenario}\n")
 
     scenarios = {
         "smoke": [(5, 15, "Smoke Test (5 VUs, 15s)")],
-        "load": [(10, 20, "Warm-up (10 VUs)"), (50, 30, "Load (50 VUs)"), (100, 30, "Peak Load (100 VUs)")],
-        "stress": [(50, 15, "Warm-up"), (200, 30, "Stress (200 VUs)"), (500, 30, "Heavy Stress (500 VUs)")],
+        "load": [
+            (10, 20, "Warm-up (10 VUs)"),
+            (50, 30, "Load (50 VUs)"),
+            (100, 30, "Peak Load (100 VUs)"),
+        ],
+        "stress": [
+            (50, 15, "Warm-up"),
+            (200, 30, "Stress (200 VUs)"),
+            (500, 30, "Heavy Stress (500 VUs)"),
+        ],
         "full": [
             (5, 10, "Smoke (5 VUs)"),
             (50, 20, "Load (50 VUs)"),
@@ -208,7 +229,12 @@ async def main():
 
     if args.scenario not in scenarios:
         # Custom single run
-        results = await run_scenario(args.url, args.vus, args.duration, f"Custom ({args.vus} VUs, {args.duration}s)")
+        results = await run_scenario(
+            args.url,
+            args.vus,
+            args.duration,
+            f"Custom ({args.vus} VUs, {args.duration}s)",
+        )
         print_results(results)
     else:
         all_results = []
@@ -239,7 +265,7 @@ async def main():
         }
         with open("stress_test_results.json", "w") as f:
             json.dump(summary, f, indent=2)
-        print(f"\nResults saved to stress_test_results.json")
+        print("\nResults saved to stress_test_results.json")
 
 
 if __name__ == "__main__":

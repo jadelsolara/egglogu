@@ -11,13 +11,14 @@ PREFIX = "/api/v1/farms"
 
 @pytest.mark.asyncio
 class TestListFarms:
-
     async def test_list_farms_empty(self, client: AsyncClient, authenticated_user):
         response = await client.get(PREFIX, headers=authenticated_user["headers"])
         assert response.status_code == 200
         assert response.json() == []
 
-    async def test_list_farms_returns_created(self, client: AsyncClient, authenticated_user):
+    async def test_list_farms_returns_created(
+        self, client: AsyncClient, authenticated_user
+    ):
         headers = authenticated_user["headers"]
         # Create two farms
         await client.post(PREFIX, json={"name": "Farm Alpha"}, headers=headers)
@@ -37,7 +38,6 @@ class TestListFarms:
 
 @pytest.mark.asyncio
 class TestCreateFarm:
-
     async def test_create_farm_minimal(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         payload = {"name": "Mi Granja"}
@@ -78,7 +78,6 @@ class TestCreateFarm:
 
 @pytest.mark.asyncio
 class TestGetFarm:
-
     async def test_get_farm_by_id(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         # Create
@@ -109,7 +108,6 @@ class TestGetFarm:
 
 @pytest.mark.asyncio
 class TestUpdateFarm:
-
     async def test_update_farm_name(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         create_resp = await client.post(
@@ -145,7 +143,9 @@ class TestUpdateFarm:
         assert data["lat"] == pytest.approx(40.7128)
         assert data["lng"] == pytest.approx(-74.0060)
 
-    async def test_update_nonexistent_farm(self, client: AsyncClient, authenticated_user):
+    async def test_update_nonexistent_farm(
+        self, client: AsyncClient, authenticated_user
+    ):
         fake_id = str(uuid.uuid4())
         response = await client.put(
             f"{PREFIX}/{fake_id}",
@@ -157,7 +157,6 @@ class TestUpdateFarm:
 
 @pytest.mark.asyncio
 class TestDeleteFarm:
-
     async def test_delete_farm_success(self, client: AsyncClient, authenticated_user):
         headers = authenticated_user["headers"]
         create_resp = await client.post(
@@ -173,7 +172,9 @@ class TestDeleteFarm:
         get_resp = await client.get(f"{PREFIX}/{farm_id}", headers=headers)
         assert get_resp.status_code == 404
 
-    async def test_delete_nonexistent_farm(self, client: AsyncClient, authenticated_user):
+    async def test_delete_nonexistent_farm(
+        self, client: AsyncClient, authenticated_user
+    ):
         fake_id = str(uuid.uuid4())
         response = await client.delete(
             f"{PREFIX}/{fake_id}", headers=authenticated_user["headers"]

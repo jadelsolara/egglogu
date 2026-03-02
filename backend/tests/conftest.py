@@ -8,12 +8,10 @@ Shared fixtures for EGGlogU backend tests.
 """
 
 import os
-import uuid
 from datetime import datetime, timedelta, timezone
 from typing import AsyncGenerator
 from unittest.mock import AsyncMock, patch
 
-import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -22,12 +20,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 # Environment overrides — MUST happen before any src imports
 # ---------------------------------------------------------------------------
 os.environ["DATABASE_URL"] = "sqlite+aiosqlite://"  # in-memory
-os.environ["REDIS_URL"] = ""                         # disable Redis
+os.environ["REDIS_URL"] = ""  # disable Redis
 os.environ["JWT_SECRET_KEY"] = "test-secret-key-not-for-production"
-os.environ["RESEND_API_KEY"] = ""                    # disable email
+os.environ["RESEND_API_KEY"] = ""  # disable email
 
 from src.database import Base, get_db  # noqa: E402
 from src.models.auth import Organization, Role, User  # noqa: E402
+from src.models.security import LoginAuditLog  # noqa: E402, F401
 from src.models.subscription import (  # noqa: E402
     PlanTier,
     Subscription,
@@ -82,26 +81,36 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
             raise
 
     # Patch rate limiting to always allow
-    with patch("src.core.rate_limit.check_rate_limit", new_callable=AsyncMock, return_value=True):
+    with patch(
+        "src.core.rate_limit.check_rate_limit",
+        new_callable=AsyncMock,
+        return_value=True,
+    ):
         # Patch email sending to no-op
         with patch("src.api.auth.send_verification_email", new_callable=AsyncMock):
             with patch("src.api.auth.send_welcome", new_callable=AsyncMock):
                 with patch("src.api.auth.send_password_reset", new_callable=AsyncMock):
-                    # Import app here (after env vars are set)
-                    from src.main import app
+                    # Patch HIBP check to always return safe (no breaches)
+                    with patch(
+                        "src.api.auth.check_pwned",
+                        new_callable=AsyncMock,
+                        return_value=0,
+                    ):
+                        # Import app here (after env vars are set)
+                        from src.main import app
 
-                    app.dependency_overrides[get_db] = _override_get_db
+                        app.dependency_overrides[get_db] = _override_get_db
 
-                    # Disable lifespan so we don't need Redis / real DB
-                    transport = ASGITransport(app=app)
-                    async with AsyncClient(
-                        transport=transport,
-                        base_url="http://testserver",
-                        follow_redirects=True,
-                    ) as ac:
-                        yield ac
+                        # Disable lifespan so we don't need Redis / real DB
+                        transport = ASGITransport(app=app)
+                        async with AsyncClient(
+                            transport=transport,
+                            base_url="http://testserver",
+                            follow_redirects=True,
+                        ) as ac:
+                            yield ac
 
-                    app.dependency_overrides.clear()
+                        app.dependency_overrides.clear()
 
 
 # ---------------------------------------------------------------------------
@@ -150,6 +159,7 @@ async def authenticated_user(db_session: AsyncSession):
 @pytest_asyncio.fixture
 async def sample_farm(db_session: AsyncSession, authenticated_user):
     from src.models.farm import Farm
+
     farm = Farm(
         name="Test Farm",
         organization_id=authenticated_user["org"].id,
@@ -162,6 +172,7 @@ async def sample_farm(db_session: AsyncSession, authenticated_user):
 @pytest_asyncio.fixture
 async def sample_flock(db_session: AsyncSession, authenticated_user, sample_farm):
     from src.models.flock import Flock
+
     flock = Flock(
         name="Test Flock A",
         organization_id=authenticated_user["org"].id,

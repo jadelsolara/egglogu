@@ -9,7 +9,6 @@ PREFIX = "/api/v1/billing"
 
 @pytest.mark.asyncio
 class TestBillingPricing:
-
     async def test_get_pricing_public(self, client: AsyncClient):
         """Pricing endpoint is public: no auth needed, should return 200."""
         response = await client.get(f"{PREFIX}/pricing")
@@ -22,8 +21,9 @@ class TestBillingPricing:
 
 @pytest.mark.asyncio
 class TestBillingStatus:
-
-    async def test_billing_status_authenticated(self, client: AsyncClient, authenticated_user):
+    async def test_billing_status_authenticated(
+        self, client: AsyncClient, authenticated_user
+    ):
         headers = authenticated_user["headers"]
         response = await client.get(f"{PREFIX}/status", headers=headers)
         assert response.status_code == 200

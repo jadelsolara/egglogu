@@ -9,7 +9,6 @@ PREFIX = "/api/v1/auth"
 
 @pytest.mark.asyncio
 class TestRegister:
-
     async def test_register_success(self, client: AsyncClient):
         payload = {
             "email": "newuser@example.com",
@@ -67,8 +66,9 @@ class TestRegister:
 
 @pytest.mark.asyncio
 class TestLogin:
-
-    async def _register_and_verify(self, client: AsyncClient, email: str, password: str):
+    async def _register_and_verify(
+        self, client: AsyncClient, email: str, password: str
+    ):
         """Helper: register a user, then manually verify via DB bypass."""
         payload = {
             "email": email,
@@ -104,7 +104,7 @@ class TestLogin:
         }
         response = await client.post(f"{PREFIX}/login", json=payload)
         assert response.status_code == 401
-        assert "Invalid email or password" in response.json()["detail"]
+        assert "Invalid email or credentials" in response.json()["detail"]
 
     async def test_login_nonexistent_user(self, client: AsyncClient):
         payload = {
@@ -135,47 +135,62 @@ class TestLogin:
 
 @pytest.mark.asyncio
 class TestTokenRefresh:
-
     async def test_refresh_token_success(self, client: AsyncClient, authenticated_user):
         # First login to get tokens
-        login_resp = await client.post(f"{PREFIX}/login", json={
-            "email": "testuser@example.com",
-            "password": "TestPassword123",
-        })
+        login_resp = await client.post(
+            f"{PREFIX}/login",
+            json={
+                "email": "testuser@example.com",
+                "password": "TestPassword123",
+            },
+        )
         tokens = login_resp.json()
 
         # Use refresh token
-        response = await client.post(f"{PREFIX}/refresh", json={
-            "refresh_token": tokens["refresh_token"],
-        })
+        response = await client.post(
+            f"{PREFIX}/refresh",
+            json={
+                "refresh_token": tokens["refresh_token"],
+            },
+        )
         assert response.status_code == 200
         data = response.json()
         assert "access_token" in data
         assert "refresh_token" in data
 
     async def test_refresh_with_invalid_token(self, client: AsyncClient):
-        response = await client.post(f"{PREFIX}/refresh", json={
-            "refresh_token": "invalid.token.here",
-        })
+        response = await client.post(
+            f"{PREFIX}/refresh",
+            json={
+                "refresh_token": "invalid.token.here",
+            },
+        )
         assert response.status_code == 401
 
-    async def test_refresh_with_access_token_rejected(self, client: AsyncClient, authenticated_user):
+    async def test_refresh_with_access_token_rejected(
+        self, client: AsyncClient, authenticated_user
+    ):
         """Using an access token as refresh token should fail (wrong type)."""
-        login_resp = await client.post(f"{PREFIX}/login", json={
-            "email": "testuser@example.com",
-            "password": "TestPassword123",
-        })
+        login_resp = await client.post(
+            f"{PREFIX}/login",
+            json={
+                "email": "testuser@example.com",
+                "password": "TestPassword123",
+            },
+        )
         tokens = login_resp.json()
 
-        response = await client.post(f"{PREFIX}/refresh", json={
-            "refresh_token": tokens["access_token"],  # wrong token type
-        })
+        response = await client.post(
+            f"{PREFIX}/refresh",
+            json={
+                "refresh_token": tokens["access_token"],  # wrong token type
+            },
+        )
         assert response.status_code == 401
 
 
 @pytest.mark.asyncio
 class TestMe:
-
     async def test_me_authenticated(self, client: AsyncClient, authenticated_user):
         response = await client.get(
             f"{PREFIX}/me",
