@@ -1,7 +1,7 @@
 """add superadmin role and market intelligence table
 
 Revision ID: g8b9c0d1e234
-Revises: f7a8b9c0d123
+Revises: a422e710575a
 Create Date: 2026-02-25 12:00:00.000000
 
 """
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = "g8b9c0d1e234"
-down_revision: Union[str, None] = "f7a8b9c0d123"
+down_revision: Union[str, None] = "a422e710575a"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

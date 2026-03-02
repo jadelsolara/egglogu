@@ -8,6 +8,7 @@ Create Date: 2026-02-27 10:00:00.000000
 from typing import Sequence, Union
 
 from alembic import op
+from sqlalchemy import inspect, text
 
 # revision identifiers, used by Alembic.
 revision: str = "h9c0d1e2f345"
@@ -35,7 +36,7 @@ def upgrade() -> None:
     )
 
     # Analytics: flock_id lookups for cost aggregation
-    op.create_index("ix_feed_purchases_flock", "feed_purchases", ["flock_id"])
+    # feed_purchases does NOT have flock_id — skip that index
     op.create_index("ix_vaccines_flock", "vaccines", ["flock_id"])
     op.create_index("ix_medications_flock", "medications", ["flock_id"])
 
@@ -69,7 +70,6 @@ def downgrade() -> None:
     op.drop_index("ix_expenses_org_updated", table_name="expenses")
     op.drop_index("ix_medications_flock", table_name="medications")
     op.drop_index("ix_vaccines_flock", table_name="vaccines")
-    op.drop_index("ix_feed_purchases_flock", table_name="feed_purchases")
     op.drop_index("ix_flocks_org_updated", table_name="flocks")
     op.drop_index(
         "ix_daily_production_flock_date", table_name="daily_production"
