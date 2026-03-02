@@ -24,7 +24,6 @@ from src.core.auth_security import (
     revoke_session,
     rotate_refresh_session,
     send_new_login_alert,
-    validate_oauth_state,
 )
 from src.core.email import (
     generate_token,
@@ -426,8 +425,6 @@ async def logout(
 ):
     """Logout — blacklist current access token + revoke refresh token session."""
     # Blacklist the access token (from Authorization header)
-    from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
     auth_header = request.headers.get("authorization", "")
     if auth_header.startswith("Bearer "):
         try:
@@ -993,7 +990,6 @@ async def update_me(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    ip = _client_ip(request)
     if not await check_rate_limit(f"update_profile:{user.id}", 30, 3600):
         raise RateLimitError("Too many profile updates. Try again later.")
 
@@ -1181,6 +1177,7 @@ async def login_history(
     db: AsyncSession = Depends(get_db),
 ):
     """Get the last 20 login attempts for the current user."""
+    from src.models.security import LoginAuditLog
     from src.schemas.security import LoginAuditRead
 
     result = await db.execute(
