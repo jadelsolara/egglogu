@@ -15,6 +15,7 @@ NC='\033[0m'
 LOCKED="live/egglogu.html.bak.20260301_locked"
 CURRENT="egglogu.html"
 LIVE="live/egglogu.html"
+LOCK_HASH_FILE=".erp-lock-sha256"
 
 if [ ! -f "$LOCKED" ]; then
   echo -e "${RED}FATAL: Backup locked no encontrado: $LOCKED${NC}"
@@ -22,6 +23,26 @@ if [ ! -f "$LOCKED" ]; then
 fi
 
 ERRORS=0
+
+# ═══════════════════════════════════════════
+# Verificar integridad del locked backup
+# ═══════════════════════════════════════════
+if [ -f "$LOCK_HASH_FILE" ]; then
+  EXPECTED_HASH=$(awk '{print $1}' "$LOCK_HASH_FILE")
+  ACTUAL_HASH=$(sha256sum "$LOCKED" | awk '{print $1}')
+
+  if [ "$EXPECTED_HASH" != "$ACTUAL_HASH" ]; then
+    echo -e "${RED}═══════════════════════════════════════════════${NC}"
+    echo -e "${RED}  ❌ FATAL: LOCKED BACKUP MANIPULADO${NC}"
+    echo -e "${RED}═══════════════════════════════════════════════${NC}"
+    echo -e "${RED}  Hash esperado: $EXPECTED_HASH${NC}"
+    echo -e "${RED}  Hash actual:   $ACTUAL_HASH${NC}"
+    echo -e "${RED}  El locked backup fue modificado sin autorización.${NC}"
+    echo -e "${RED}  Usar update-erp-lock.sh para actualizarlo legítimamente.${NC}"
+    echo -e "${RED}═══════════════════════════════════════════════${NC}"
+    exit 1
+  fi
+fi
 
 check_file() {
   local FILE="$1"

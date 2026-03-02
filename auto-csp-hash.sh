@@ -9,6 +9,10 @@ cd "$(dirname "$0")"
 FILE="egglogu.html"
 LIVE_FILE="live/egglogu.html"
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
 if [ ! -f "$FILE" ]; then
   echo "ERROR: $FILE no encontrado"
   exit 1
@@ -44,17 +48,23 @@ else
 
   # Reemplazar hash en el CSP meta tag
   sed -i "s|$CURRENT_HASH|$NEW_HASH|g" "$FILE"
-
-  # Asegurar que unsafe-inline esté en style-src
-  if ! grep -oP "style-src[^;]+" "$FILE" | grep -q "'unsafe-inline'"; then
-    sed -i "s|style-src 'self' '$NEW_HASH'|style-src 'self' 'unsafe-inline' '$NEW_HASH'|" "$FILE"
-    echo "  unsafe-inline añadido a style-src"
-  fi
-
   echo "  CSP actualizado en $FILE"
 
   # Re-stage si estamos en contexto de git commit
   git add "$FILE" 2>/dev/null || true
+fi
+
+# ═══════════════════════════════════════════
+# VERIFICACIÓN unsafe-inline — SIEMPRE se ejecuta
+# (antes estaba solo dentro del bloque "if hash cambió")
+# ═══════════════════════════════════════════
+STYLE_SRC=$(grep -oP "style-src[^;]+" "$FILE")
+if ! echo "$STYLE_SRC" | grep -q "'unsafe-inline'"; then
+  echo "  ⚠️  unsafe-inline FALTABA en style-src — añadiendo..."
+  CURRENT_HASH_NOW=$(echo "$STYLE_SRC" | grep -oP "sha256-[A-Za-z0-9+/=]+")
+  sed -i "s|style-src 'self' '$CURRENT_HASH_NOW'|style-src 'self' 'unsafe-inline' '$CURRENT_HASH_NOW'|" "$FILE"
+  git add "$FILE" 2>/dev/null || true
+  echo "  unsafe-inline añadido a style-src"
 fi
 
 # Sincronizar a live/
@@ -74,5 +84,38 @@ if [ -f "checksums-erp.sha256" ]; then
   git add checksums-erp.sha256 2>/dev/null || true
   echo "  checksums-erp.sha256 actualizado"
 fi
+
+# ═══════════════════════════════════════════
+# POST-VALIDACIÓN FINAL — SIEMPRE se ejecuta
+# ═══════════════════════════════════════════
+echo ""
+echo "--- Post-validación ---"
+
+FINAL_STYLE_SRC=$(grep -oP "style-src[^;]+" "$FILE")
+
+# Validar 1: unsafe-inline presente en style-src
+if ! echo "$FINAL_STYLE_SRC" | grep -q "'unsafe-inline'"; then
+  echo -e "${RED}FATAL: unsafe-inline NO está en style-src después de procesar${NC}"
+  echo "  style-src actual: $FINAL_STYLE_SRC"
+  exit 1
+fi
+
+# Validar 2: hash en CSP coincide con el calculado del <style>
+FINAL_CSP_HASH=$(echo "$FINAL_STYLE_SRC" | grep -oP "sha256-[A-Za-z0-9+/=]+")
+RECALC_HASH=$(python3 -c "
+import hashlib, base64, re
+html = open('$FILE').read()
+match = re.search(r'<style>(.*?)</style>', html, re.S)
+style = match.group(1)
+digest = hashlib.sha256(style.encode()).digest()
+print('sha256-' + base64.b64encode(digest).decode())
+")
+
+if [ "$FINAL_CSP_HASH" != "$RECALC_HASH" ]; then
+  echo -e "${RED}FATAL: hash en CSP ($FINAL_CSP_HASH) NO coincide con hash calculado ($RECALC_HASH)${NC}"
+  exit 1
+fi
+
+echo -e "${GREEN}✅ Post-validación: unsafe-inline presente, hash correcto ($FINAL_CSP_HASH)${NC}"
 
 echo "=== CSP Auto-Hash: COMPLETADO ==="
