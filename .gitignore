@@ -28,6 +28,11 @@ pgdata/
 .erp-checkpoints/
 .session-scope
 
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+dist/
+
 # OS
 .DS_Store
 Thumbs.db
