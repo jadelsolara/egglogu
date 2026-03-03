@@ -32,8 +32,8 @@ PLAN_LIMITS = {
         "support_sla_hours": None,
     },
     "hobby": {
-        "price_monthly": 0,
-        "price_annual": 0,  # Free tier, registration required
+        "price_monthly": 9,
+        "price_annual": 90,
         "per_user_extra_worker": 3.99,
         "per_user_extra_mgmt": 6.99,
         "farms": 1,
@@ -60,8 +60,8 @@ PLAN_LIMITS = {
         "support_sla_hours": None,  # FAQ only
     },
     "starter": {
-        "price_monthly": 49,
-        "price_annual": 490,
+        "price_monthly": 19,
+        "price_annual": 190,
         "per_user_extra_worker": 3.99,
         "per_user_extra_mgmt": 6.99,
         "farms": 1,
@@ -102,8 +102,8 @@ PLAN_LIMITS = {
         "support_sla_hours": 48,
     },
     "pro": {
-        "price_monthly": 99,
-        "price_annual": 990,
+        "price_monthly": 49,
+        "price_annual": 490,
         "per_user_extra_worker": 3.99,
         "per_user_extra_mgmt": 6.99,
         "farms": 1,
@@ -149,8 +149,8 @@ PLAN_LIMITS = {
         "support_sla_hours": 12,
     },
     "enterprise": {
-        "price_monthly": 199,
-        "price_annual": 1990,
+        "price_monthly": 99,
+        "price_annual": 990,
         "per_user_extra_worker": 3.99,
         "per_user_extra_mgmt": 6.99,
         "farms": None,  # unlimited

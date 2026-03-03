@@ -1,0 +1,125 @@
+# EGGlogU Helm Chart — Default Values
+# Credentials are referenced by K8s object name (never inline).
+
+replicaCount: 3
+
+image:
+  repository: ghcr.io/egglogu/backend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# -- Application config (non-sensitive, injected as ConfigMap)
+app:
+  frontendUrl: https://egglogu.com
+  logLevel: INFO
+  webConcurrency: 4
+  gunicornWorkers: 4
+  celeryQueues: celery,email,reports,webhooks,analytics
+
+# -- K8s credential ref (name of an existing K8s object holding env vars).
+# Create it via sealed-secrets, external-secrets operator, or kubectl.
+# Required keys: DATABASE_URL, DATABASE_READ_URL, REDIS_URL,
+#   JWT_KEY, STRIPE_KEY, RESEND_KEY, SENTRY_DSN
+credentials:
+  ref: egglogu-creds
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rate-limit: "120"
+    nginx.ingress.kubernetes.io/rate-limit-window: 1m
+  hosts:
+    - host: api.egglogu.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - api.egglogu.com
+      tlsCert: egglogu-tls
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# -- Celery worker
+worker:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+
+# -- Celery beat (single replica — leader election)
+beat:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# -- Alembic migration job (runs before app deploy)
+migration:
+  enabled: true
+
+# -- Probes
+probes:
+  liveness:
+    path: /health/live
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    failureThreshold: 3
+  readiness:
+    path: /health/ready
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    failureThreshold: 3
+
+# -- Pod annotations / labels
+podAnnotations: {}
+podLabels: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

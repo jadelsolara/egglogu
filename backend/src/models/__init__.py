@@ -59,3 +59,6 @@ from src.models.security import (  # noqa: F401
 )
 from src.models.report import ReportSchedule, ReportExecution  # noqa: F401
 from src.models.workflow import WorkflowRule, WorkflowExecution  # noqa: F401
+from src.models.webhook import Webhook, WebhookDelivery  # noqa: F401
+from src.models.api_key import APIKey  # noqa: F401
+from src.models.plugin import Plugin, PluginInstall  # noqa: F401

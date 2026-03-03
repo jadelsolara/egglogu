@@ -34,7 +34,7 @@ if settings.SENTRY_DSN:
         send_default_pii=False,
     )
 from src.core.rate_limit import init_redis, close_redis
-from src.database import engine
+from src.database import engine, async_session
 from src.api import (
     analytics,
     auth,
@@ -66,6 +66,10 @@ from src.api import (
     superadmin_crm,
     reports,
     workflows,
+    webhooks,
+    api_keys,
+    plugins,
+    websocket as ws_routes,
 )
 
 
@@ -143,6 +147,25 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         )
         response.headers["X-Request-ID"] = request_id
         return response
+
+
+# ── Audit Context Middleware ────────────────────────────────────────
+class AuditContextMiddleware(BaseHTTPMiddleware):
+    """Injects audit context (IP, user-agent) into ContextVars for audit trail."""
+
+    async def dispatch(self, request: Request, call_next) -> Response:
+        from src.core.audit import audit_ip, audit_user_agent
+
+        client_ip = request.client.host if request.client else None
+        ua = request.headers.get("user-agent", "")[:500]
+
+        token_ip = audit_ip.set(client_ip)
+        token_ua = audit_user_agent.set(ua)
+        try:
+            return await call_next(request)
+        finally:
+            audit_ip.reset(token_ip)
+            audit_user_agent.reset(token_ua)
 
 
 # ── Security Headers Middleware ──────────────────────────────────────
@@ -228,6 +251,13 @@ async def lifespan(app: FastAPI):
         "Startup: tables managed by Alembic (run 'alembic upgrade head')"
     )
     await init_redis()
+
+    # Initialize audit trail (hash-chain listeners + cache)
+    from src.core.audit import setup_audit_listeners, initialize_hash_cache
+    setup_audit_listeners()
+    async with async_session() as db:
+        await initialize_hash_cache(db)
+
     yield
     await close_redis()
     await engine.dispose()
@@ -246,16 +276,23 @@ app = FastAPI(
 # 1) Request ID + structured logging (outermost — captures everything)
 app.add_middleware(RequestLoggingMiddleware)
 
-# 2) Security headers on every response
+# 2) API versioning headers (deprecation, sunset)
+from src.api.versioning import APIVersionMiddleware
+app.add_middleware(APIVersionMiddleware)
+
+# 3) Audit context (IP, user-agent) for hash-chain audit trail
+app.add_middleware(AuditContextMiddleware)
+
+# 3) Security headers on every response
 app.add_middleware(SecurityHeadersMiddleware)
 
-# 3) Global rate limit (before CORS so abusive IPs are cut early)
+# 4) Global rate limit (before CORS so abusive IPs are cut early)
 app.add_middleware(GlobalRateLimitMiddleware)
 
-# 4) GZip compression for responses > 500 bytes
+# 5) GZip compression for responses > 500 bytes
 app.add_middleware(GZipMiddleware, minimum_size=500)
 
-# 5) CORS — restricted origins, never wildcard
+# 6) CORS — restricted origins, never wildcard
 allowed_origins = [settings.FRONTEND_URL]
 if settings.FRONTEND_URL != "https://egglogu.com":
     allowed_origins.append("http://localhost:3000")
@@ -298,10 +335,16 @@ app.include_router(superadmin.router, prefix=prefix)
 app.include_router(superadmin_crm.router, prefix=prefix)
 app.include_router(reports.router, prefix=prefix)
 app.include_router(workflows.router, prefix=prefix)
+app.include_router(webhooks.router, prefix=prefix)
+app.include_router(api_keys.router, prefix=prefix)
+app.include_router(plugins.router, prefix=prefix)
 
 # Public routes (no /api/v1 prefix)
 app.include_router(trace_public.router)
 app.include_router(leads.router, prefix="/api")
+
+# WebSocket routes (no version prefix — ws://host/ws/...)
+app.include_router(ws_routes.router)
 
 # System health check at /api/health (no version prefix — standard path for LBs)
 app.include_router(healthcheck.router, prefix="/api")

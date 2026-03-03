@@ -20,6 +20,7 @@ from src.core.exceptions import ForbiddenError, NotFoundError
 from src.core.plans import get_allowed_modules, PLAN_LIMITS
 from src.core.stripe import (
     DISCOUNT_PHASES,
+    TIER_BASE_PRICES,
     apply_phase_coupon,
     cancel_stripe_subscription,
     compute_phase,
@@ -84,18 +85,20 @@ class PricingTier(BaseModel):
 
 @router.get("/pricing")
 async def get_pricing():
-    """Public endpoint: return all tier pricing with Q1 discount."""
+    """Public endpoint: return all tier pricing with Q1 discount.
+    Single source of truth: TIER_BASE_PRICES from stripe.py."""
     tiers = []
     for tier_name in ["hobby", "starter", "pro", "enterprise"]:
         limits = PLAN_LIMITS[tier_name]
+        base = TIER_BASE_PRICES[tier_name]
         q1 = get_effective_price(tier_name, 1, "month")
         tiers.append(
             {
                 "tier": tier_name,
-                "price_monthly": limits["price_monthly"],
-                "price_annual": limits["price_annual"],
+                "price_monthly": base["month"],
+                "price_annual": base["year"],
                 "price_monthly_q1": q1["effective_price"],
-                "annual_monthly": round(limits["price_annual"] / 12, 2),
+                "annual_monthly": round(base["year"] / 12, 2),
                 "limits": {
                     "farms": limits.get("farms"),
                     "flocks": limits.get("flocks"),

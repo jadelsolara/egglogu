@@ -1,14 +1,14 @@
 import uuid
-from datetime import date
+from datetime import date, timedelta
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select, func, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.deps import require_feature
+from src.api.deps import require_feature, get_current_user
 from src.core.cache import get_cached, set_cached
-from src.database import get_db
+from src.database import get_db, get_read_db
 from src.models.auth import User
 from src.models.feed import FeedConsumption, FeedPurchase
 from src.models.finance import Expense, Income
@@ -306,3 +306,199 @@ async def get_economics(
     await set_cached(cache_key, response.model_dump(), ttl=300)
 
     return response
+
+
+# ── CQRS Analytics (read from materialized views via read replica) ───
+
+
+@router.get("/analytics/production/trends")
+async def get_production_trends(
+    db: AsyncSession = Depends(get_read_db),
+    user: User = Depends(require_feature("analytics")),
+    days: int = Query(30, ge=7, le=365),
+):
+    """Org-wide daily production trends from materialized view (read replica)."""
+    org_id = user.organization_id
+    since = date.today() - timedelta(days=days)
+
+    result = await db.execute(
+        text("""
+            SELECT date, active_flocks, total_eggs, total_broken,
+                   total_mortality, avg_egg_weight_g
+            FROM mv_org_production_trends
+            WHERE organization_id = :org_id AND date >= :since
+            ORDER BY date
+        """),
+        {"org_id": str(org_id), "since": since},
+    )
+    rows = result.mappings().all()
+
+    return {
+        "org_id": str(org_id),
+        "days": days,
+        "data": [dict(r) for r in rows],
+    }
+
+
+@router.get("/analytics/flock/{flock_id}/weekly-kpi")
+async def get_flock_weekly_kpi(
+    flock_id: uuid.UUID,
+    db: AsyncSession = Depends(get_read_db),
+    user: User = Depends(require_feature("analytics")),
+    weeks: int = Query(12, ge=1, le=52),
+):
+    """Weekly KPI aggregates for a specific flock (read replica)."""
+    org_id = user.organization_id
+    since = date.today() - timedelta(weeks=weeks)
+
+    result = await db.execute(
+        text("""
+            SELECT week_start, days_recorded, avg_hen_day_pct, total_eggs,
+                   total_broken, total_mortality, avg_egg_weight_g
+            FROM mv_weekly_kpi
+            WHERE organization_id = :org_id
+              AND flock_id = :flock_id
+              AND week_start >= :since
+            ORDER BY week_start
+        """),
+        {"org_id": str(org_id), "flock_id": str(flock_id), "since": since},
+    )
+    rows = result.mappings().all()
+
+    return {
+        "flock_id": str(flock_id),
+        "weeks": weeks,
+        "data": [dict(r) for r in rows],
+    }
+
+
+@router.get("/analytics/flock/{flock_id}/fcr")
+async def get_flock_fcr(
+    flock_id: uuid.UUID,
+    db: AsyncSession = Depends(get_read_db),
+    user: User = Depends(require_feature("analytics")),
+    weeks: int = Query(12, ge=1, le=52),
+):
+    """Weekly feed conversion ratio (FCR) for a flock (read replica)."""
+    org_id = user.organization_id
+    since = date.today() - timedelta(weeks=weeks)
+
+    result = await db.execute(
+        text("""
+            SELECT week_start, feed_kg, egg_mass_kg, fcr
+            FROM mv_flock_fcr
+            WHERE organization_id = :org_id
+              AND flock_id = :flock_id
+              AND week_start >= :since
+            ORDER BY week_start
+        """),
+        {"org_id": str(org_id), "flock_id": str(flock_id), "since": since},
+    )
+    rows = result.mappings().all()
+
+    return {
+        "flock_id": str(flock_id),
+        "weeks": weeks,
+        "data": [dict(r) for r in rows],
+    }
+
+
+@router.get("/analytics/costs/monthly")
+async def get_monthly_costs(
+    db: AsyncSession = Depends(get_read_db),
+    user: User = Depends(require_feature("finance")),
+    flock_id: Optional[uuid.UUID] = Query(default=None),
+    months: int = Query(6, ge=1, le=24),
+):
+    """Monthly cost breakdown from materialized view (read replica)."""
+    org_id = user.organization_id
+    since = date.today() - timedelta(days=months * 30)
+
+    params: dict = {"org_id": str(org_id), "since": since}
+    flock_filter = ""
+    if flock_id:
+        flock_filter = "AND flock_id = :flock_id"
+        params["flock_id"] = str(flock_id)
+
+    result = await db.execute(
+        text(f"""
+            SELECT flock_id, month_start, total_feed_kg, avg_feed_price_per_kg,
+                   vaccine_cost, medication_cost, direct_expenses,
+                   (total_feed_kg * avg_feed_price_per_kg + vaccine_cost +
+                    medication_cost + direct_expenses) AS total_cost
+            FROM mv_monthly_costs
+            WHERE organization_id = :org_id
+              AND month_start >= :since
+              {flock_filter}
+            ORDER BY month_start, flock_id
+        """),
+        params,
+    )
+    rows = result.mappings().all()
+
+    return {
+        "org_id": str(org_id),
+        "months": months,
+        "flock_id": str(flock_id) if flock_id else None,
+        "data": [dict(r) for r in rows],
+    }
+
+
+@router.get("/analytics/production/daily")
+async def get_daily_production(
+    db: AsyncSession = Depends(get_read_db),
+    user: User = Depends(require_feature("analytics")),
+    flock_id: Optional[uuid.UUID] = Query(default=None),
+    days: int = Query(30, ge=1, le=365),
+):
+    """Daily production detail from materialized view (read replica)."""
+    org_id = user.organization_id
+    since = date.today() - timedelta(days=days)
+
+    params: dict = {"org_id": str(org_id), "since": since}
+    flock_filter = ""
+    if flock_id:
+        flock_filter = "AND flock_id = :flock_id"
+        params["flock_id"] = str(flock_id)
+
+    result = await db.execute(
+        text(f"""
+            SELECT flock_id, flock_name, date, total_eggs, broken_eggs,
+                   mortality, current_count, hen_day_pct, avg_egg_weight_g
+            FROM mv_daily_production_summary
+            WHERE organization_id = :org_id
+              AND date >= :since
+              {flock_filter}
+            ORDER BY date DESC, flock_id
+        """),
+        params,
+    )
+    rows = result.mappings().all()
+
+    return {
+        "org_id": str(org_id),
+        "days": days,
+        "flock_id": str(flock_id) if flock_id else None,
+        "data": [dict(r) for r in rows],
+    }
+
+
+@router.post("/analytics/refresh")
+async def trigger_refresh(
+    user: User = Depends(require_feature("analytics")),
+    view: str | None = Query(default=None, description="Specific view to refresh, or all"),
+):
+    """Admin: manually trigger materialized view refresh."""
+    from src.tasks.analytics import refresh_materialized_views, refresh_single_view, MATERIALIZED_VIEWS
+
+    if view:
+        if view not in MATERIALIZED_VIEWS:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Unknown view: {view}. Valid: {', '.join(MATERIALIZED_VIEWS)}",
+            )
+        refresh_single_view.delay(view)
+        return {"status": "queued", "view": view}
+
+    refresh_materialized_views.delay()
+    return {"status": "queued", "views": MATERIALIZED_VIEWS}

@@ -79,6 +79,7 @@ class SyncPayload(BaseModel):
 class SyncResponse(BaseModel):
     synced: int
     conflicts: list[str]
+    conflict_count: int = 0
     server_changes: dict[str, list[dict[str, Any]]]
     server_now: str
     sync_cursor: str | None = None
@@ -238,6 +239,7 @@ async def sync_data(
     return SyncResponse(
         synced=synced,
         conflicts=conflicts,
+        conflict_count=len(conflicts),
         server_changes=server_changes,
         server_now=server_now.isoformat(),
         sync_cursor=max_cursor.isoformat() if max_cursor else None,

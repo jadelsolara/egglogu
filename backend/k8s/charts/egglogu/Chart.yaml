@@ -1,0 +1,14 @@
+apiVersion: v2
+name: egglogu
+description: EGGlogU — Enterprise Poultry Farm Management SaaS
+type: application
+version: 1.0.0
+appVersion: "3.0.0"
+keywords:
+  - poultry
+  - farm
+  - erp
+  - saas
+maintainers:
+  - name: EGGlogU Team
+    email: dev@egglogu.com

@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.exceptions import ForbiddenError, UnauthorizedError
 from src.core.plans import check_feature_access
 from src.core.security import decode_token
-from src.database import get_db
+from src.database import get_db, set_tenant_context
 from src.models.auth import Role, User
 from src.models.subscription import Subscription, SubscriptionStatus
 
@@ -53,6 +53,15 @@ async def get_current_user(
     user = result.scalar_one_or_none()
     if not user or not user.is_active:
         raise UnauthorizedError()
+
+    # Set audit context for hash-chain audit trail
+    from src.core.audit import audit_user_id as _audit_uid, audit_org_id as _audit_oid
+    _audit_uid.set(str(user.id))
+    _audit_oid.set(str(user.organization_id))
+
+    # Set RLS tenant context for this transaction
+    await set_tenant_context(db, str(user.organization_id))
+
     return user
 
 

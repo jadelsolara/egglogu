@@ -47,23 +47,25 @@ async def blacklist_token(jti: str, expires_in_seconds: int) -> None:
     """Add a token JTI to the blacklist. TTL matches token expiry."""
     redis = await _get_redis()
     if not redis:
-        logger.warning("Token blacklist UNAVAILABLE — Redis down")
+        logger.critical("Token blacklist UNAVAILABLE — Redis down, revoked tokens may pass")
         return
     try:
         await redis.setex(f"{_PREFIX_BLACKLIST}{jti}", expires_in_seconds, "1")
     except Exception as e:
-        logger.error("Failed to blacklist token: %s", e)
+        logger.critical("Failed to blacklist token: %s", e)
 
 
 async def is_token_blacklisted(jti: str) -> bool:
-    """Check if a token JTI is blacklisted."""
+    """Check if a token JTI is blacklisted. Fail-closed: Redis down = treat as blacklisted."""
     redis = await _get_redis()
     if not redis:
-        return False  # fail-open
+        logger.error("Redis unavailable for token blacklist check — fail-closed")
+        return True
     try:
         return await redis.exists(f"{_PREFIX_BLACKLIST}{jti}") > 0
-    except Exception:
-        return False
+    except Exception as e:
+        logger.error("Redis error checking token blacklist: %s — fail-closed", e)
+        return True
 
 
 async def blacklist_all_user_tokens(user_id: uuid.UUID, db: AsyncSession) -> int:
@@ -99,18 +101,20 @@ LOCKOUT_WINDOW_SECONDS = 1800  # 30 minutes
 
 
 async def record_failed_login(email: str) -> int:
-    """Increment failed login counter. Returns current count."""
+    """Increment failed login counter. Fail-closed: Redis down = return max attempts."""
     redis = await _get_redis()
     if not redis:
-        return 0
+        logger.error("Redis unavailable for login lockout — fail-closed, returning max attempts")
+        return LOCKOUT_MAX_ATTEMPTS
     try:
         key = f"{_PREFIX_LOCKOUT}{email}"
         count = await redis.incr(key)
         if count == 1:
             await redis.expire(key, LOCKOUT_WINDOW_SECONDS)
         return count
-    except Exception:
-        return 0
+    except Exception as e:
+        logger.error("Redis error recording failed login: %s — fail-closed", e)
+        return LOCKOUT_MAX_ATTEMPTS
 
 
 async def clear_failed_logins(email: str) -> None:
@@ -125,27 +129,31 @@ async def clear_failed_logins(email: str) -> None:
 
 
 async def is_account_locked(email: str) -> bool:
-    """Check if account is locked due to too many failed attempts."""
+    """Check if account is locked. Fail-closed: Redis down = treat as locked."""
     redis = await _get_redis()
     if not redis:
-        return False
+        logger.error("Redis unavailable for account lockout check — fail-closed")
+        return True
     try:
         count = await redis.get(f"{_PREFIX_LOCKOUT}{email}")
         return count is not None and int(count) >= LOCKOUT_MAX_ATTEMPTS
-    except Exception:
-        return False
+    except Exception as e:
+        logger.error("Redis error checking account lockout: %s — fail-closed", e)
+        return True
 
 
 async def get_lockout_remaining(email: str) -> int:
-    """Get remaining lockout seconds. Returns 0 if not locked."""
+    """Get remaining lockout seconds. Fail-closed: Redis down = return full window."""
     redis = await _get_redis()
     if not redis:
-        return 0
+        logger.error("Redis unavailable for lockout TTL — fail-closed, returning full window")
+        return LOCKOUT_WINDOW_SECONDS
     try:
         ttl = await redis.ttl(f"{_PREFIX_LOCKOUT}{email}")
         return max(0, ttl)
-    except Exception:
-        return 0
+    except Exception as e:
+        logger.error("Redis error getting lockout TTL: %s — fail-closed", e)
+        return LOCKOUT_WINDOW_SECONDS
 
 
 # ═══════════════════════════════════════════════════════════════════

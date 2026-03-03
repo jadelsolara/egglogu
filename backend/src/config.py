@@ -3,7 +3,13 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://egglogu:egglogu@postgres:5432/egglogu"
+    DATABASE_READ_URL: str = ""  # Read replica (falls back to primary if empty)
     REDIS_URL: str = "redis://redis:6379/0"
+    CELERY_BROKER_URL: str = "redis://redis:6379/1"
+    CELERY_RESULT_BACKEND: str = "redis://redis:6379/2"
+    # Redis Sentinel (comma-separated host:port pairs, empty = direct connection)
+    REDIS_SENTINEL_HOSTS: str = ""  # e.g. "redis-sentinel-1:26379,redis-sentinel-2:26379,redis-sentinel-3:26379"
+    REDIS_SENTINEL_MASTER: str = "egglogu-master"
     JWT_SECRET_KEY: str = "change-me-in-production"
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
