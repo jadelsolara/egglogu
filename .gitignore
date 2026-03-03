@@ -24,6 +24,10 @@ pgdata/
 *.swp
 *.swo
 
+# AFP (Anti-Fuckup Protocol)
+.erp-checkpoints/
+.session-scope
+
 # OS
 .DS_Store
 Thumbs.db

@@ -151,7 +151,7 @@ jobs:
           pip install pytest pytest-asyncio pytest-cov httpx
 
       - name: Run tests with coverage
-        run: python -m pytest tests/ -v --tb=short --cov=src --cov-report=term-missing --cov-fail-under=50
+        run: python -m pytest tests/ -v --tb=short --cov=src --cov-report=term-missing --cov-fail-under=70
 
   # ─── Backend: Build Docker Image ─────────────────────────────────
   backend-build:
