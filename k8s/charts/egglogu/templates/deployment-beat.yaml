@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "egglogu.fullname" . }}-beat
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "egglogu.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: beat
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "egglogu.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: beat
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: beat
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - celery
+            - -A
+            - src.worker
+            - beat
+            - --loglevel=info
+            - --schedule=/tmp/celerybeat-schedule
+          envFrom:
+            - configMapRef:
+                name: {{ include "egglogu.configmapName" . }}
+            - secretRef:
+                name: {{ include "egglogu.secretName" . }}
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@{{ include "egglogu.postgres.primary" . }}:5432/$(POSTGRES_DB)"
+          resources:
+            {{- toYaml .Values.beat.resources | nindent 12 }}

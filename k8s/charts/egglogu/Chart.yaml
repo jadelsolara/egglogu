@@ -1,0 +1,17 @@
+apiVersion: v2
+name: egglogu
+description: EGGlogU — Poultry Farm Management SaaS (FastAPI + Celery + PostgreSQL + Redis)
+type: application
+version: 1.0.0
+appVersion: "3.0.0"
+keywords:
+  - egglogu
+  - poultry
+  - saas
+  - fastapi
+maintainers:
+  - name: Jose Antonio
+    email: jose@egglogu.com
+home: https://egglogu.com
+sources:
+  - https://github.com/jadelsolara/egglogu

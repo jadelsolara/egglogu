@@ -1,0 +1,291 @@
+---
+# -- PostgreSQL Primary
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "egglogu.postgres.primary" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres-primary
+spec:
+  serviceName: {{ include "egglogu.postgres.primary" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "egglogu.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgres-primary
+  template:
+    metadata:
+      labels:
+        {{- include "egglogu.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: postgres-primary
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: POSTGRES_USER
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "egglogu.secretName" . }}
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_INITDB_ARGS
+              value: "--data-checksums"
+          args:
+            - postgres
+            - -c
+            - shared_buffers={{ .Values.postgres.primary.config.sharedBuffers }}
+            - -c
+            - max_connections={{ .Values.postgres.primary.config.maxConnections }}
+            - -c
+            - work_mem={{ .Values.postgres.primary.config.workMem }}
+            - -c
+            - effective_cache_size={{ .Values.postgres.primary.config.effectiveCacheSize }}
+            - -c
+            - log_min_duration_statement=500
+            - -c
+            - log_connections=on
+            - -c
+            - log_lock_waits=on
+            - -c
+            - checkpoint_completion_target=0.9
+            - -c
+            - random_page_cost=1.1
+            - -c
+            - wal_level={{ .Values.postgres.primary.config.walLevel }}
+            - -c
+            - max_wal_senders={{ .Values.postgres.primary.config.maxWalSenders }}
+            - -c
+            - wal_keep_size={{ .Values.postgres.primary.config.walKeepSize }}
+            - -c
+            - max_replication_slots={{ .Values.postgres.primary.config.maxReplicationSlots }}
+            - -c
+            - archive_mode=on
+            - -c
+            - archive_command=test ! -f /var/lib/postgresql/wal_archive/%f && cp %p /var/lib/postgresql/wal_archive/%f
+            - -c
+            - log_replication_commands=on
+            - -c
+            - "hba_file=/var/lib/postgresql/data/pg_hba.conf"
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgres.auth.username }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgres.auth.username }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+            - name: wal-archive
+              mountPath: /var/lib/postgresql/wal_archive
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+          resources:
+            {{- toYaml .Values.postgres.primary.resources | nindent 12 }}
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: {{ include "egglogu.fullname" . }}-pg-init
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.postgres.primary.storage }}
+    - metadata:
+        name: wal-archive
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.postgres.walArchive.storage }}
+
+---
+# -- PostgreSQL init scripts ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "egglogu.fullname" . }}-pg-init
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+data:
+  01-replication.sql: |
+    -- Create replication user
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '{{ .Values.postgres.auth.replicationUser }}') THEN
+        CREATE ROLE {{ .Values.postgres.auth.replicationUser }} WITH REPLICATION LOGIN;
+      END IF;
+    END
+    $$;
+    -- pg_hba.conf allows replication connections from the K8s pod network
+    ALTER SYSTEM SET listen_addresses = '*';
+
+  02-pg-hba-append.sh: |
+    #!/bin/sh
+    # Allow replication from pod network (10.0.0.0/8 covers most CNI ranges)
+    echo "host replication {{ .Values.postgres.auth.replicationUser }} 10.0.0.0/8 md5" >> "$PGDATA/pg_hba.conf"
+    echo "host all all 10.0.0.0/8 md5" >> "$PGDATA/pg_hba.conf"
+
+{{- if .Values.postgres.replica.enabled }}
+---
+# -- PostgreSQL Replica
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "egglogu.postgres.replica" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres-replica
+spec:
+  serviceName: {{ include "egglogu.postgres.replica" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "egglogu.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: postgres-replica
+  template:
+    metadata:
+      labels:
+        {{- include "egglogu.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: postgres-replica
+    spec:
+      initContainers:
+        # -- Bootstrap replica from primary via pg_basebackup
+        - name: pg-basebackup
+          image: {{ .Values.postgres.image }}
+          command:
+            - sh
+            - -c
+            - |
+              if [ -s "/var/lib/postgresql/data/pgdata/PG_VERSION" ]; then
+                echo "Data directory already initialized, skipping pg_basebackup"
+                exit 0
+              fi
+              echo "Running pg_basebackup from primary..."
+              until pg_isready -h {{ include "egglogu.postgres.primary" . }} -U {{ .Values.postgres.auth.username }}; do
+                echo "Waiting for primary..."
+                sleep 2
+              done
+              pg_basebackup \
+                -h {{ include "egglogu.postgres.primary" . }} \
+                -U {{ .Values.postgres.auth.replicationUser }} \
+                -D /var/lib/postgresql/data/pgdata \
+                -Fp -Xs -P -R
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "egglogu.secretName" . }}
+                  key: REPLICATOR_PASSWORD
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      containers:
+        - name: postgres
+          image: {{ .Values.postgres.image }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: POSTGRES_USER
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "egglogu.secretName" . }}
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          args:
+            - postgres
+            - -c
+            - hot_standby=on
+            - -c
+            - hot_standby_feedback=on
+            - -c
+            - max_standby_streaming_delay=30s
+            - -c
+            - max_connections={{ .Values.postgres.primary.config.maxConnections }}
+            - -c
+            - shared_buffers=256MB
+            - -c
+            - work_mem={{ .Values.postgres.primary.config.workMem }}
+            - -c
+            - effective_cache_size=768MB
+            - -c
+            - log_min_duration_statement=500
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgres.auth.username }}
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - {{ .Values.postgres.auth.username }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 10
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            {{- toYaml .Values.postgres.replica.resources | nindent 12 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.postgres.replica.storage }}
+{{- end }}

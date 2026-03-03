@@ -1,0 +1,199 @@
+---
+# -- Redis Master
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "egglogu.redis.master" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-master
+spec:
+  serviceName: {{ include "egglogu.redis.master" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "egglogu.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: redis-master
+  template:
+    metadata:
+      labels:
+        {{- include "egglogu.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: redis-master
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.redis.image }}
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          command:
+            - redis-server
+            - --maxmemory
+            - {{ .Values.redis.master.maxmemory }}
+            - --maxmemory-policy
+            - allkeys-lru
+            - --appendonly
+            - "yes"
+            - --appendfsync
+            - everysec
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            {{- toYaml .Values.redis.master.resources | nindent 12 }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.redis.master.storage }}
+
+---
+# -- Redis Replicas
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "egglogu.fullname" . }}-redis-replica
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-replica
+spec:
+  replicas: {{ .Values.redis.replicas }}
+  selector:
+    matchLabels:
+      {{- include "egglogu.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: redis-replica
+  template:
+    metadata:
+      labels:
+        {{- include "egglogu.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: redis-replica
+    spec:
+      containers:
+        - name: redis
+          image: {{ .Values.redis.image }}
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          command:
+            - redis-server
+            - --replicaof
+            - {{ include "egglogu.redis.master" . }}
+            - "6379"
+            - --maxmemory
+            - {{ .Values.redis.master.maxmemory }}
+            - --maxmemory-policy
+            - allkeys-lru
+            - --appendonly
+            - "yes"
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            {{- toYaml .Values.redis.master.resources | nindent 12 }}
+
+{{- if .Values.redis.sentinel.enabled }}
+---
+# -- Redis Sentinel
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "egglogu.redis.sentinel" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-sentinel
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      {{- include "egglogu.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: redis-sentinel
+  template:
+    metadata:
+      labels:
+        {{- include "egglogu.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: redis-sentinel
+    spec:
+      initContainers:
+        # Sentinel needs a writable copy of the config
+        - name: copy-config
+          image: {{ .Values.redis.image }}
+          command: ["sh", "-c", "cp /etc/redis-ro/sentinel.conf /etc/redis/sentinel.conf"]
+          volumeMounts:
+            - name: sentinel-config-ro
+              mountPath: /etc/redis-ro
+            - name: sentinel-config
+              mountPath: /etc/redis
+      containers:
+        - name: sentinel
+          image: {{ .Values.redis.image }}
+          ports:
+            - name: sentinel
+              containerPort: 26379
+              protocol: TCP
+          command:
+            - redis-sentinel
+            - /etc/redis/sentinel.conf
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "-p", "26379", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "-p", "26379", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: sentinel-config
+              mountPath: /etc/redis
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+        - name: sentinel-config-ro
+          configMap:
+            name: {{ include "egglogu.configmapName" . }}
+            items:
+              - key: sentinel.conf
+                path: sentinel.conf
+        - name: sentinel-config
+          emptyDir: {}
+{{- end }}

@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "egglogu.configmapName" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+data:
+  # -- App
+  APP_ENV: "production"
+  APP_PORT: {{ .Values.app.port | quote }}
+  GUNICORN_WORKERS: {{ .Values.app.gunicorn.workers | quote }}
+  GUNICORN_TIMEOUT: {{ .Values.app.gunicorn.timeout | quote }}
+  GUNICORN_MAX_REQUESTS: {{ .Values.app.gunicorn.maxRequests | quote }}
+
+  # -- PostgreSQL
+  POSTGRES_DB: {{ .Values.postgres.auth.database | quote }}
+  POSTGRES_USER: {{ .Values.postgres.auth.username | quote }}
+  POSTGRES_REPLICATION_USER: {{ .Values.postgres.auth.replicationUser | quote }}
+  PG_SHARED_BUFFERS: {{ .Values.postgres.primary.config.sharedBuffers | quote }}
+  PG_MAX_CONNECTIONS: {{ .Values.postgres.primary.config.maxConnections | quote }}
+  PG_WORK_MEM: {{ .Values.postgres.primary.config.workMem | quote }}
+  PG_EFFECTIVE_CACHE_SIZE: {{ .Values.postgres.primary.config.effectiveCacheSize | quote }}
+  PG_WAL_LEVEL: {{ .Values.postgres.primary.config.walLevel | quote }}
+  PG_MAX_WAL_SENDERS: {{ .Values.postgres.primary.config.maxWalSenders | quote }}
+  PG_WAL_KEEP_SIZE: {{ .Values.postgres.primary.config.walKeepSize | quote }}
+  PG_MAX_REPLICATION_SLOTS: {{ .Values.postgres.primary.config.maxReplicationSlots | quote }}
+
+  # -- PgBouncer
+  {{- if .Values.pgbouncer.enabled }}
+  PGBOUNCER_POOL_MODE: {{ .Values.pgbouncer.poolMode | quote }}
+  PGBOUNCER_MAX_CLIENT_CONN: {{ .Values.pgbouncer.maxClientConn | quote }}
+  PGBOUNCER_DEFAULT_POOL_SIZE: {{ .Values.pgbouncer.defaultPoolSize | quote }}
+  PGBOUNCER_MIN_POOL_SIZE: {{ .Values.pgbouncer.minPoolSize | quote }}
+  PGBOUNCER_RESERVE_POOL_SIZE: {{ .Values.pgbouncer.reservePoolSize | quote }}
+  {{- end }}
+
+  # -- Redis
+  REDIS_MAXMEMORY: {{ .Values.redis.master.maxmemory | quote }}
+  REDIS_REPLICAS: {{ .Values.redis.replicas | quote }}
+  {{- if .Values.redis.sentinel.enabled }}
+  REDIS_SENTINEL_QUORUM: {{ .Values.redis.sentinel.quorum | quote }}
+  {{- end }}
+
+  # -- Worker
+  CELERY_CONCURRENCY: {{ .Values.worker.concurrency | quote }}
+  CELERY_QUEUES: {{ .Values.worker.queues | quote }}
+
+  # -- Backup
+  {{- if .Values.backup.enabled }}
+  BACKUP_RETENTION_LOCAL: {{ .Values.backup.retention.local | quote }}
+  BACKUP_RETENTION_REMOTE: {{ .Values.backup.retention.remote | quote }}
+  R2_BUCKET: {{ .Values.backup.r2.bucket | quote }}
+  {{- end }}
+
+  # -- Redis Sentinel config (mounted in Redis pods)
+  sentinel.conf: |
+    port 26379
+    sentinel monitor egglogu-master {{ include "egglogu.redis.master" . }} 6379 {{ .Values.redis.sentinel.quorum }}
+    sentinel down-after-milliseconds egglogu-master 5000
+    sentinel failover-timeout egglogu-master 60000
+    sentinel parallel-syncs egglogu-master 1

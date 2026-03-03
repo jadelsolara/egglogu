@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "egglogu.fullname" . }}-app
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: app
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      {{- include "egglogu.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        {{- include "egglogu.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: app
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 30
+      containers:
+        # -- FastAPI app
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.app.port }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "egglogu.configmapName" . }}
+            - secretRef:
+                name: {{ include "egglogu.secretName" . }}
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@127.0.0.1:6432/$(POSTGRES_DB)"
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.app.livenessProbe.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.app.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.app.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.app.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.app.readinessProbe.path }}
+              port: http
+            initialDelaySeconds: {{ .Values.app.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.app.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.app.readinessProbe.failureThreshold }}
+          resources:
+            {{- toYaml .Values.app.resources | nindent 12 }}
+
+        {{- if .Values.pgbouncer.enabled }}
+        # -- PgBouncer sidecar
+        - name: pgbouncer
+          image: {{ .Values.pgbouncer.image }}
+          ports:
+            - name: pgbouncer
+              containerPort: 6432
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              value: "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@{{ include "egglogu.postgres.primary" . }}:5432/$(POSTGRES_DB)"
+            - name: POOL_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: PGBOUNCER_POOL_MODE
+            - name: MAX_CLIENT_CONN
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: PGBOUNCER_MAX_CLIENT_CONN
+            - name: DEFAULT_POOL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: PGBOUNCER_DEFAULT_POOL_SIZE
+            - name: MIN_POOL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: PGBOUNCER_MIN_POOL_SIZE
+            - name: RESERVE_POOL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "egglogu.configmapName" . }}
+                  key: PGBOUNCER_RESERVE_POOL_SIZE
+          envFrom:
+            - secretRef:
+                name: {{ include "egglogu.secretName" . }}
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.pgbouncer.resources | nindent 12 }}
+        {{- end }}

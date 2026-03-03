@@ -1,0 +1,106 @@
+---
+# -- App Service (FastAPI)
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "egglogu.fullname" . }}-app
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: app
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "egglogu.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: app
+
+---
+# -- PostgreSQL Primary Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "egglogu.postgres.primary" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres-primary
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 5432
+      targetPort: postgres
+      protocol: TCP
+      name: postgres
+  selector:
+    {{- include "egglogu.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres-primary
+
+{{- if .Values.postgres.replica.enabled }}
+---
+# -- PostgreSQL Replica Service (read-only)
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "egglogu.postgres.replica" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres-replica
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 5432
+      targetPort: postgres
+      protocol: TCP
+      name: postgres
+  selector:
+    {{- include "egglogu.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres-replica
+{{- end }}
+
+---
+# -- Redis Master Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "egglogu.redis.master" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-master
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 6379
+      targetPort: redis
+      protocol: TCP
+      name: redis
+  selector:
+    {{- include "egglogu.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-master
+
+{{- if .Values.redis.sentinel.enabled }}
+---
+# -- Redis Sentinel Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "egglogu.redis.sentinel" . }}
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-sentinel
+spec:
+  type: ClusterIP
+  ports:
+    - port: 26379
+      targetPort: sentinel
+      protocol: TCP
+      name: sentinel
+  selector:
+    {{- include "egglogu.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-sentinel
+{{- end }}

@@ -1,0 +1,133 @@
+{{- if .Values.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "egglogu.fullname" . }}-backup
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backup
+spec:
+  schedule: {{ .Values.backup.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 3600
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            {{- include "egglogu.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: backup
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: postgres:16-alpine
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+                  BACKUP_FILE="/backups/egglogu_${TIMESTAMP}.sql.gz"
+
+                  echo "[$(date)] Starting backup..."
+                  pg_dump -h {{ include "egglogu.postgres.primary" . }} \
+                    -U "$PGUSER" \
+                    -d "$PGDATABASE" \
+                    --no-owner --no-acl \
+                    | gzip > "${BACKUP_FILE}"
+
+                  SIZE=$(du -sh "${BACKUP_FILE}" | cut -f1)
+                  echo "[$(date)] Backup completed: ${BACKUP_FILE} (${SIZE})"
+
+                  # Prune local backups older than retention days
+                  echo "[$(date)] Pruning backups older than ${BACKUP_RETENTION_LOCAL} days..."
+                  find /backups -name "egglogu_*.sql.gz" -mtime +${BACKUP_RETENTION_LOCAL} -delete
+
+                  # Upload to R2 if configured
+                  if [ -n "${R2_ENDPOINT_URL}" ] && [ -n "${R2_ACCESS_KEY_ID}" ]; then
+                    echo "[$(date)] Uploading to R2..."
+                    apk add --no-cache aws-cli 2>/dev/null || true
+                    aws --endpoint-url "${R2_ENDPOINT_URL}" \
+                      s3 cp "${BACKUP_FILE}" "s3://${R2_BUCKET}/$(basename ${BACKUP_FILE})"
+                    echo "[$(date)] R2 upload complete"
+                  fi
+
+                  echo "[$(date)] Backup job finished successfully"
+              env:
+                - name: PGUSER
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "egglogu.configmapName" . }}
+                      key: POSTGRES_USER
+                - name: PGDATABASE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "egglogu.configmapName" . }}
+                      key: POSTGRES_DB
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "egglogu.secretName" . }}
+                      key: POSTGRES_PASSWORD
+                - name: BACKUP_RETENTION_LOCAL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "egglogu.configmapName" . }}
+                      key: BACKUP_RETENTION_LOCAL
+                - name: R2_ENDPOINT_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "egglogu.secretName" . }}
+                      key: R2_ENDPOINT_URL
+                      optional: true
+                - name: R2_BUCKET
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "egglogu.configmapName" . }}
+                      key: R2_BUCKET
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "egglogu.secretName" . }}
+                      key: R2_ACCESS_KEY_ID
+                      optional: true
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "egglogu.secretName" . }}
+                      key: R2_SECRET_ACCESS_KEY
+                      optional: true
+              volumeMounts:
+                - name: backups
+                  mountPath: /backups
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: {{ include "egglogu.fullname" . }}-backups
+
+---
+# -- Backup PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "egglogu.fullname" . }}-backups
+  labels:
+    {{- include "egglogu.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backup
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: {{ .Values.backup.storage }}
+{{- end }}
