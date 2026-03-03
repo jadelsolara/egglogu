@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGGlogU — Arquitectura Tecnica</title>
+<meta name="description" content="Arquitectura completa de EGGlogU: stack tecnico, modelos de datos, seguridad, flujos de sincronizacion y mas.">
+<link rel="icon" href="favicon.png" type="image/png">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --amber-700:#b45309;--amber-600:#d97706;--amber-500:#f59e0b;--amber-50:#fffbeb;
+  --brown-700:#78350f;--brown-600:#92400e;
+  --gray-900:#111827;--gray-700:#374151;--gray-500:#6b7280;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;
+  --white:#fff;--radius:12px;--shadow:0 4px 24px rgba(0,0,0,.08);
+  --red-500:#ef4444;--red-50:#fef2f2;--green-500:#22c55e;--green-50:#f0fdf4;--blue-500:#3b82f6;--blue-50:#eff6ff;--purple-500:#8b5cf6;--purple-50:#f5f3ff;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--gray-900);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray-300);padding:.75rem 0;transition:box-shadow .3s}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.08)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.25rem;color:var(--brown-700)}
+.nav-brand svg{width:36px;height:36px}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{font-size:.95rem;color:var(--gray-700);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--amber-600)}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.65rem 1.5rem;border-radius:8px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--amber-600);color:var(--white)}
+.btn-primary:hover{background:var(--amber-700);transform:translateY(-1px);box-shadow:0 4px 16px rgba(217,119,6,.3)}
+.btn-outline{border:2px solid var(--amber-600);color:var(--amber-600);background:transparent}
+.btn-outline:hover{background:var(--amber-50)}
+.btn-white{background:var(--white);color:var(--brown-700)}
+.btn-white:hover{background:var(--gray-100)}
+.btn-lg{padding:.85rem 2.2rem;font-size:1.1rem;border-radius:10px}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
+.hamburger span{display:block;width:24px;height:2px;background:var(--gray-700);margin:5px 0;transition:.3s}
+
+/* HERO */
+.hero{padding:8rem 1.5rem 5rem;background:linear-gradient(135deg,var(--amber-50) 0%,#fff 50%,#fef3c7 100%);text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:rgba(245,158,11,.06)}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:rgba(217,119,6,.05)}
+.hero-content{max-width:800px;margin:0 auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--white);border:1px solid var(--gray-300);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;color:var(--gray-700);margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.hero-badge span{background:var(--amber-600);color:var(--white);padding:.15rem .5rem;border-radius:50px;font-size:.75rem;font-weight:600}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;line-height:1.15;margin-bottom:1.25rem;color:var(--gray-900)}
+.hero h1 em{font-style:normal;color:var(--amber-600)}
+.hero p{font-size:1.2rem;color:var(--gray-500);max-width:600px;margin:0 auto 2rem;line-height:1.7}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:3.5rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat strong{display:block;font-size:1.8rem;color:var(--amber-600);font-weight:800}
+.hero-stat span{font-size:.85rem;color:var(--gray-500)}
+
+/* SECTION COMMON */
+section{padding:5rem 1.5rem}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-header{text-align:center;max-width:650px;margin:0 auto 3.5rem}
+.section-header h2{font-size:2.2rem;font-weight:700;margin-bottom:.75rem}
+.section-header p{color:var(--gray-500);font-size:1.1rem}
+
+/* FLOW DIAGRAM */
+.flow{background:var(--gray-50)}
+.flow-diagram{max-width:900px;margin:0 auto;position:relative}
+.flow-row{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.flow-box{background:var(--white);border:1px solid var(--gray-300);border-radius:var(--radius);padding:1rem 1.5rem;text-align:center;min-width:140px;transition:all .25s}
+.flow-box:hover{border-color:var(--amber-500);box-shadow:var(--shadow);transform:translateY(-2px)}
+.flow-box.amber{background:linear-gradient(135deg,var(--amber-50),#fff);border-color:var(--amber-500)}
+.flow-box.blue{background:linear-gradient(135deg,var(--blue-50),#fff);border-color:var(--blue-500)}
+.flow-box.green{background:linear-gradient(135deg,var(--green-50),#fff);border-color:var(--green-500)}
+.flow-box.purple{background:linear-gradient(135deg,var(--purple-50),#fff);border-color:var(--purple-500)}
+.flow-box.red{background:linear-gradient(135deg,var(--red-50),#fff);border-color:var(--red-500)}
+.flow-box .flow-icon{font-size:1.5rem;margin-bottom:.35rem}
+.flow-box h4{font-size:.9rem;font-weight:700;margin-bottom:.15rem}
+.flow-box p{font-size:.78rem;color:var(--gray-500)}
+.flow-arrow{color:var(--amber-600);font-size:1.4rem;font-weight:700;flex-shrink:0}
+.flow-arrow.down{display:block;text-align:center;margin:-.5rem 0;font-size:1.6rem}
+.flow-label{background:var(--amber-600);color:var(--white);padding:.3rem .8rem;border-radius:50px;font-size:.75rem;font-weight:600;display:inline-block;margin-bottom:1rem}
+.flow-section{margin-bottom:3rem}
+.flow-section-title{font-size:1.1rem;font-weight:700;color:var(--gray-900);margin-bottom:1.25rem;text-align:center}
+
+/* FEATURES GRID */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feature-card{background:var(--white);border:1px solid var(--gray-300);border-radius:var(--radius);padding:2rem;transition:all .25s}
+.feature-card:hover{border-color:var(--amber-500);box-shadow:var(--shadow);transform:translateY(-3px)}
+.feature-icon{width:52px;height:52px;border-radius:12px;background:var(--amber-50);color:var(--amber-600);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem}
+.feature-card h3{font-size:1.15rem;font-weight:600;margin-bottom:.5rem}
+.feature-card p{font-size:.92rem;color:var(--gray-500);line-height:1.6}
+
+/* DATA MODEL GRID */
+.model-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.model-card{background:var(--white);border:1px solid var(--gray-300);border-radius:var(--radius);padding:1.25rem;text-align:center;transition:all .25s;position:relative}
+.model-card:hover{border-color:var(--amber-500);box-shadow:var(--shadow);transform:translateY(-2px)}
+.model-card .model-icon{font-size:1.8rem;margin-bottom:.5rem}
+.model-card h4{font-size:.95rem;font-weight:600;margin-bottom:.25rem}
+.model-card p{font-size:.78rem;color:var(--gray-500)}
+.model-card .model-count{position:absolute;top:.6rem;right:.6rem;background:var(--amber-50);color:var(--amber-600);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:50px}
+.model-group{margin-bottom:2.5rem}
+.model-group-title{display:flex;align-items:center;gap:.5rem;font-size:1rem;font-weight:700;margin-bottom:1rem;color:var(--gray-700)}
+.model-group-title .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.model-group-title .dot.amber{background:var(--amber-500)}
+.model-group-title .dot.blue{background:var(--blue-500)}
+.model-group-title .dot.green{background:var(--green-500)}
+.model-group-title .dot.purple{background:var(--purple-500)}
+.model-group-title .dot.red{background:var(--red-500)}
+
+/* SECURITY */
+.security-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.security-card{background:var(--white);border:1px solid var(--gray-300);border-radius:var(--radius);padding:1.5rem;display:flex;gap:1rem;align-items:flex-start;transition:all .25s}
+.security-card:hover{border-color:var(--amber-500);box-shadow:var(--shadow)}
+.security-icon{flex-shrink:0;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.security-icon.green{background:var(--green-50);color:var(--green-500)}
+.security-icon.amber{background:var(--amber-50);color:var(--amber-600)}
+.security-icon.red{background:var(--red-50);color:var(--red-500)}
+.security-icon.blue{background:var(--blue-50);color:var(--blue-500)}
+.security-card h3{font-size:1rem;font-weight:600;margin-bottom:.25rem}
+.security-card p{font-size:.88rem;color:var(--gray-500);line-height:1.5}
+
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;position:relative}
+.steps::before{content:'';position:absolute;top:36px;left:calc(12.5% + 24px);right:calc(12.5% + 24px);height:2px;background:var(--gray-300)}
+.step{text-align:center;position:relative}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--amber-600);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;margin:0 auto 1.25rem;position:relative;z-index:1}
+.step h3{font-size:1.05rem;font-weight:600;margin-bottom:.4rem}
+.step p{font-size:.88rem;color:var(--gray-500)}
+
+/* DIFF */
+.diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.diff-card{background:linear-gradient(135deg,var(--amber-50),#fff);border:1px solid var(--gray-300);border-radius:var(--radius);padding:2rem;text-align:center;transition:all .25s}
+.diff-card:hover{border-color:var(--amber-500);box-shadow:var(--shadow);transform:translateY(-2px)}
+.diff-card .diff-icon{font-size:2.5rem;margin-bottom:1rem}
+.diff-card h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem}
+.diff-card p{font-size:.9rem;color:var(--gray-500)}
+
+/* MIDDLEWARE */
+.middleware-stack{max-width:600px;margin:0 auto}
+.middleware-layer{background:var(--white);border:1px solid var(--gray-300);border-radius:var(--radius);padding:1.1rem 1.5rem;margin-bottom:.75rem;display:flex;align-items:center;gap:1rem;transition:all .25s}
+.middleware-layer:hover{border-color:var(--amber-500);box-shadow:var(--shadow)}
+.middleware-num{width:36px;height:36px;border-radius:50%;background:var(--amber-600);color:var(--white);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.middleware-layer h4{font-size:.95rem;font-weight:600;margin-bottom:.1rem}
+.middleware-layer p{font-size:.82rem;color:var(--gray-500)}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--brown-700),var(--amber-600));color:var(--white);text-align:center;padding:5rem 1.5rem}
+.cta-section h2{font-size:2.2rem;font-weight:700;margin-bottom:.75rem}
+.cta-section p{font-size:1.15rem;opacity:.85;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{background:var(--gray-900);color:var(--gray-300);padding:3rem 1.5rem 1.5rem}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem}
+.footer-brand{font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:.75rem}
+.footer-brand-text{font-size:.88rem;color:var(--gray-500);line-height:1.6}
+.footer-col h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-500);margin-bottom:1rem;font-weight:600}
+.footer-col a{display:block;font-size:.9rem;color:var(--gray-300);padding:.3rem 0;transition:color .2s}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--gray-500);flex-wrap:wrap;gap:.5rem}
+
+/* TAG */
+.tag{display:inline-block;padding:.2rem .6rem;border-radius:50px;font-size:.72rem;font-weight:600}
+.tag.amber{background:var(--amber-50);color:var(--amber-600)}
+.tag.green{background:var(--green-50);color:var(--green-500)}
+.tag.blue{background:var(--blue-50);color:var(--blue-500)}
+.tag.purple{background:var(--purple-50);color:var(--purple-500)}
+.tag.red{background:var(--red-50);color:var(--red-500)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .features-grid,.diff-grid,.security-grid{grid-template-columns:repeat(2,1fr)}
+  .model-grid{grid-template-columns:repeat(3,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .steps::before{display:none}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--white);flex-direction:column;padding:1.5rem;gap:1rem;border-bottom:1px solid var(--gray-300);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .nav-links.open{display:flex}
+  .hamburger{display:block}
+  .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+  .features-grid,.diff-grid,.security-grid{grid-template-columns:1fr}
+  .model-grid{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr 1fr}
+  .flow-row{flex-direction:column;gap:.5rem}
+  .flow-arrow{transform:rotate(90deg)}
+  .hero{padding:6.5rem 1.5rem 3.5rem}
+  .hero h1{font-size:2rem}
+  .hero-stats{gap:1.5rem}
+  .footer-grid{grid-template-columns:1fr}
+  section{padding:3.5rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <svg viewBox="0 0 512 512" width="36" height="36">
+        <defs>
+          <linearGradient id="eg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f59e0b"/><stop offset="100%" style="stop-color:#d97706"/></linearGradient>
+          <linearGradient id="eg2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#fef3c7"/><stop offset="100%" style="stop-color:#fde68a"/></linearGradient>
+        </defs>
+        <circle cx="256" cy="256" r="250" fill="url(#eg1)"/>
+        <ellipse cx="256" cy="270" rx="105" ry="135" fill="url(#eg2)"/>
+        <ellipse cx="256" cy="260" rx="90" ry="118" fill="#fff" opacity=".3"/>
+        <ellipse cx="235" cy="225" rx="30" ry="40" fill="#fff" opacity=".25" transform="rotate(-15 235 225)"/>
+      </svg>
+      EGGlogU
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="nav-links" id="navLinks">
+      <a href="#stack">Stack</a>
+      <a href="#dataflow">Flujo de datos</a>
+      <a href="#models">Modelos</a>
+      <a href="#security">Seguridad</a>
+      <a href="index.html" class="btn btn-primary">Volver al inicio</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><span>v1.0</span> Arquitectura Tecnica</div>
+    <h1>Bajo el capo de <em>EGGlogU</em></h1>
+    <p>PWA offline-first, API REST con FastAPI, PostgreSQL, Redis, Stripe, 8 idiomas y sincronizacion delta. Todo en detalle.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>26</strong><span>Modelos de datos</span></div>
+      <div class="hero-stat"><strong>170+</strong><span>Endpoints API</span></div>
+      <div class="hero-stat"><strong>388</strong><span>Funciones JS</span></div>
+      <div class="hero-stat"><strong>20</strong><span>Modulos frontend</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK TECNICO -->
+<section id="stack">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Stack tecnico</h2>
+      <p>Cada componente elegido por rendimiento, simplicidad y escalabilidad</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F310;</div>
+        <h3>Frontend — Vanilla JS PWA</h3>
+        <p>HTML unico + JS puro. Sin frameworks, sin build tools. IndexedDB + localStorage para offline. Service Worker con cache versionado (v11). Chart.js, Leaflet, MQTT.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x26A1;</div>
+        <h3>Backend — FastAPI + SQLAlchemy</h3>
+        <p>Python 3.12, FastAPI 0.115 async, SQLAlchemy 2.0 con asyncpg. Pool de 20+30 conexiones. JSON structured logging. Sentry para error tracking.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F5C4;&#xFE0F;</div>
+        <h3>Base de datos — PostgreSQL 16</h3>
+        <p>26 tablas multi-tenant con UUIDs. Alembic para migraciones (11 versiones). Indices en organization_id, timestamps y FKs criticas. Backups automaticos en Docker.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F534;</div>
+        <h3>Cache — Redis 7</h3>
+        <p>Rate limiting por IP (120 req/min). Cache de sesiones. Sliding window con INCR + EXPIRE. Fail-open: si Redis cae, las requests pasan sin bloqueo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4B3;</div>
+        <h3>Pagos — Stripe</h3>
+        <p>Checkout sessions, customer portal, webhooks para lifecycle. Descuentos por fase: trial → 40% → 25% → 15% → precio completo. Soft landing para conversion.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4E7;</div>
+        <h3>Email — Resend API</h3>
+        <p>Verificacion, reset de password, invitaciones de equipo, bienvenida. HTML templated. Archivo local de cada email enviado en PostgreSQL.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F433;</div>
+        <h3>Infra — Docker Compose</h3>
+        <p>4 servicios: app (FastAPI + Uvicorn), PostgreSQL 16, Redis 7, backup automatico. VPS unico en api.egglogu.com. CDN Cloudflare Pages para frontend.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F512;</div>
+        <h3>Auth — JWT + OAuth multi</h3>
+        <p>JWT con refresh tokens. Google OAuth, Apple Sign-In, Microsoft Identity. PIN offline para acceso sin internet. Roles: superadmin, owner, manager, vet, viewer.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F30D;</div>
+        <h3>i18n — 8 idiomas</h3>
+        <p>ES, EN, PT, FR, DE, IT, JA, ZH. Sistema de traducciones con 200+ keys. Deteccion automatica del navegador. Cambio en tiempo real sin reload.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLUJO DE DATOS -->
+<section class="flow" id="dataflow">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Flujo de datos completo</h2>
+      <p>Desde el navegador del usuario hasta la base de datos y de regreso</p>
+    </div>
+
+    <!-- High level -->
+    <div class="flow-section">
+      <div class="flow-label">Vista general</div>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-box amber">
+            <div class="flow-icon">&#x1F4F1;</div>
+            <h4>PWA Client</h4>
+            <p>egglogu.html + .js</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box blue">
+            <div class="flow-icon">&#x2601;&#xFE0F;</div>
+            <h4>Cloudflare CDN</h4>
+            <p>egglogu.com</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box green">
+            <div class="flow-icon">&#x1F433;</div>
+            <h4>Docker VPS</h4>
+            <p>api.egglogu.com</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box purple">
+            <div class="flow-icon">&#x1F5C4;&#xFE0F;</div>
+            <h4>PostgreSQL 16</h4>
+            <p>26 tablas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auth flow -->
+    <div class="flow-section">
+      <div class="flow-label">Autenticacion</div>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-box">
+            <div class="flow-icon">&#x1F464;</div>
+            <h4>Login / OAuth</h4>
+            <p>Email + pass o Google/Apple/MS</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box amber">
+            <div class="flow-icon">&#x1F510;</div>
+            <h4>JWT + Refresh</h4>
+            <p>bcrypt hash, token pair</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box green">
+            <div class="flow-icon">&#x2705;</div>
+            <h4>Middleware Auth</h4>
+            <p>Valida token + org_id</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box blue">
+            <div class="flow-icon">&#x1F3E0;</div>
+            <h4>Dashboard</h4>
+            <p>Datos por tenant</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync flow -->
+    <div class="flow-section">
+      <div class="flow-label">Sincronizacion offline</div>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-box amber">
+            <div class="flow-icon">&#x1F4F4;</div>
+            <h4>Sin internet</h4>
+            <p>Usuario registra datos</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box">
+            <div class="flow-icon">&#x1F4BE;</div>
+            <h4>IndexedDB</h4>
+            <p>Almacena local</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box green">
+            <div class="flow-icon">&#x1F4E1;</div>
+            <h4>Reconexion</h4>
+            <p>Detecta internet</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box blue">
+            <div class="flow-icon">&#x1F504;</div>
+            <h4>Delta Sync</h4>
+            <p>POST /sync con cambios</p>
+          </div>
+        </div>
+        <div class="flow-row" style="margin-top:.5rem">
+          <div class="flow-box purple">
+            <div class="flow-icon">&#x1F4CA;</div>
+            <h4>Servidor</h4>
+            <p>Upsert + detecta conflictos</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box">
+            <div class="flow-icon">&#x1F4E5;</div>
+            <h4>Respuesta</h4>
+            <p>Cambios del server + cursor</p>
+          </div>
+          <div class="flow-arrow">&#x2192;</div>
+          <div class="flow-box green">
+            <div class="flow-icon">&#x2705;</div>
+            <h4>Merge local</h4>
+            <p>IndexedDB actualizado</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MIDDLEWARE PIPELINE -->
+<section>
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Pipeline de middleware</h2>
+      <p>Cada request atraviesa 5 capas antes de llegar a tu endpoint</p>
+    </div>
+    <div class="middleware-stack">
+      <div class="middleware-layer">
+        <div class="middleware-num">1</div>
+        <div>
+          <h4>Request Logging</h4>
+          <p>UUID por request, metodo, ruta, status, duracion en ms. JSON estructurado.</p>
+        </div>
+      </div>
+      <div class="middleware-layer">
+        <div class="middleware-num">2</div>
+        <div>
+          <h4>Security Headers</h4>
+          <p>CSP, HSTS (1 ano), X-Frame-Options: DENY, X-Content-Type-Options, Referrer-Policy.</p>
+        </div>
+      </div>
+      <div class="middleware-layer">
+        <div class="middleware-num">3</div>
+        <div>
+          <h4>Global Rate Limit</h4>
+          <p>120 requests/minuto por IP via Redis. Fail-open si Redis no disponible.</p>
+        </div>
+      </div>
+      <div class="middleware-layer">
+        <div class="middleware-num">4</div>
+        <div>
+          <h4>GZip Compression</h4>
+          <p>Comprime respuestas mayores a 500 bytes automaticamente.</p>
+        </div>
+      </div>
+      <div class="middleware-layer">
+        <div class="middleware-num">5</div>
+        <div>
+          <h4>CORS</h4>
+          <p>Origenes restringidos: egglogu.com, localhost. Credenciales permitidas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODELOS DE DATOS -->
+<section class="flow" id="models">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>26 modelos de datos</h2>
+      <p>Multi-tenant: Organization &#x2192; Farm &#x2192; Flock &#x2192; Produccion</p>
+    </div>
+
+    <!-- Core -->
+    <div class="model-group">
+      <div class="model-group-title"><span class="dot amber"></span> Core — Identidad y estructura</div>
+      <div class="model-grid">
+        <div class="model-card">
+          <div class="model-icon">&#x1F3E2;</div>
+          <h4>Organization</h4>
+          <p>Tenant raiz. Plan, trial, Stripe ID</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F464;</div>
+          <h4>User</h4>
+          <p>Email, hash, OAuth IDs, PIN</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F511;</div>
+          <h4>Role</h4>
+          <p>superadmin, owner, manager, vet, viewer</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F3E0;</div>
+          <h4>Farm</h4>
+          <p>Nombre, ubicacion, galpones</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produccion -->
+    <div class="model-group">
+      <div class="model-group-title"><span class="dot green"></span> Produccion — El corazon del negocio</div>
+      <div class="model-grid">
+        <div class="model-card">
+          <div class="model-icon">&#x1F414;</div>
+          <h4>Flock</h4>
+          <p>Parvada con raza, edad, galpon</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F95A;</div>
+          <h4>DailyProduction</h4>
+          <p>Huevos, grados, roturas, mortalidad</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F4C8;</div>
+          <h4>BreedCurve</h4>
+          <p>16 razas x 63 semanas estandar</p>
+          <span class="model-count">1,008 pts</span>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F33E;</div>
+          <h4>FeedPurchase</h4>
+          <p>Compras con proveedor y costo</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F372;</div>
+          <h4>FeedConsumption</h4>
+          <p>Consumo diario por parvada</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Salud -->
+    <div class="model-group">
+      <div class="model-group-title"><span class="dot blue"></span> Salud — Trazabilidad sanitaria</div>
+      <div class="model-grid">
+        <div class="model-card">
+          <div class="model-icon">&#x1F489;</div>
+          <h4>Vaccine</h4>
+          <p>Calendario vacunal por parvada</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F48A;</div>
+          <h4>Medication</h4>
+          <p>Dosis, retiro, responsable</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x26A0;&#xFE0F;</div>
+          <h4>Outbreak</h4>
+          <p>Brotes con aislamiento</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F4A8;</div>
+          <h4>StressEvent</h4>
+          <p>Eventos de estres ambiental</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Finanzas -->
+    <div class="model-group">
+      <div class="model-group-title"><span class="dot purple"></span> Finanzas — Control economico</div>
+      <div class="model-grid">
+        <div class="model-card">
+          <div class="model-icon">&#x1F4B0;</div>
+          <h4>Income</h4>
+          <p>Ventas por cliente y producto</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F4B8;</div>
+          <h4>Expense</h4>
+          <p>Gastos con categoria</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F4C5;</div>
+          <h4>Receivable</h4>
+          <p>Cuentas por cobrar + vencimiento</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F465;</div>
+          <h4>Client</h4>
+          <p>Compradores con contacto</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operaciones -->
+    <div class="model-group">
+      <div class="model-group-title"><span class="dot red"></span> Operaciones, Ambiente e Infra</div>
+      <div class="model-grid">
+        <div class="model-card">
+          <div class="model-icon">&#x1F321;&#xFE0F;</div>
+          <h4>EnvironmentReading</h4>
+          <p>Temp, humedad, amoniaco</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F4E1;</div>
+          <h4>IoTReading</h4>
+          <p>Sensores MQTT en tiempo real</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x2705;</div>
+          <h4>ChecklistItem</h4>
+          <p>Tareas diarias por galpon</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F4D3;</div>
+          <h4>LogbookEntry</h4>
+          <p>Bitacora de operaciones</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F6E1;&#xFE0F;</div>
+          <h4>BiosecurityVisitor</h4>
+          <p>Control de acceso a zonas</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F50D;</div>
+          <h4>TraceabilityBatch</h4>
+          <p>Lotes con QR de parvada a cliente</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F4CA;</div>
+          <h4>KPISnapshot</h4>
+          <p>Metricas calculadas periodicas</p>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#x1F916;</div>
+          <h4>Prediction</h4>
+          <p>Predicciones IA de produccion</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGURIDAD -->
+<section id="security">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Seguridad en cada capa</h2>
+      <p>Desde el navegador hasta la base de datos, cada punto esta protegido</p>
+    </div>
+    <div class="security-grid">
+      <div class="security-card">
+        <div class="security-icon green">&#x1F512;</div>
+        <div>
+          <h3>JWT + Refresh Tokens</h3>
+          <p>Access token de corta vida + refresh token rotativo. Bcrypt para hashing. Blacklist en Redis para logout instantaneo.</p>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon amber">&#x1F6E1;&#xFE0F;</div>
+        <div>
+          <h3>Content Security Policy</h3>
+          <p>CSP estricto: solo CDNs aprobados para scripts. SHA-256 hashes para estilos inline. Bloquea XSS por inyeccion de scripts.</p>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon blue">&#x23F1;&#xFE0F;</div>
+        <div>
+          <h3>Rate Limiting multi-capa</h3>
+          <p>120 req/min global por IP. Limites especificos por endpoint de auth. Rate limit por usuario y organizacion. Redis-backed con fail-open.</p>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon green">&#x1F3E0;</div>
+        <div>
+          <h3>Multi-tenancy estricto</h3>
+          <p>Cada query filtra por organization_id. Imposible acceder a datos de otro tenant. FK con CASCADE para limpieza automatica.</p>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon amber">&#x1F4DC;</div>
+        <div>
+          <h3>Security Headers</h3>
+          <p>HSTS (1 ano), X-Frame-Options: DENY, X-Content-Type: nosniff, Referrer-Policy: strict-origin. Previene clickjacking y MIME sniffing.</p>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon blue">&#x1F50D;</div>
+        <div>
+          <h3>Audit Log</h3>
+          <p>Registro de acciones criticas: CREATE, UPDATE, DELETE. IP, User-Agent, diff de cambios en JSON. Para compliance y forense.</p>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon green">&#x1F4F4;</div>
+        <div>
+          <h3>Offline PIN seguro</h3>
+          <p>PIN para acceso sin internet, hasheado localmente. No se transmite al servidor. Expiracion automatica.</p>
+        </div>
+      </div>
+      <div class="security-card">
+        <div class="security-icon amber">&#x1F4BE;</div>
+        <div>
+          <h3>Datos locales cifrados</h3>
+          <p>Datos sensibles en localStorage protegidos con Web Crypto API. Clave derivada del password del usuario. AES-GCM 256-bit.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYNC DETALLADO -->
+<section class="flow">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Sincronizacion delta</h2>
+      <p>Offline-first con resolucion de conflictos inteligente</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Captura offline</h3>
+        <p>Datos se escriben en IndexedDB + localStorage. Marca timestamp de cada cambio.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Deteccion de red</h3>
+        <p>El Service Worker detecta reconexion. Acumula cola de cambios pendientes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Push + Pull</h3>
+        <p>POST /sync envia cambios locales + last_synced_at. Server responde con cambios remotos.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Merge inteligente</h3>
+        <p>Last-write-wins por campo. Conflictos notificados al usuario. Cursor para paginacion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API ROUTES -->
+<section>
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>28 modulos de API</h2>
+      <p>REST con versionamiento /api/v1/, paginacion, filtros y plan-gating</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F511;</div>
+        <h3>Auth (6 endpoints)</h3>
+        <p>Login, register, verify email, reset password, refresh token, Google/Apple/Microsoft OAuth.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F3E0;</div>
+        <h3>Farms + Flocks (12 ep)</h3>
+        <p>CRUD granjas y parvadas. Asignacion de galpones. Historial de movimientos entre granjas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F95A;</div>
+        <h3>Production (8 ep)</h3>
+        <p>Registro diario, grados de huevo, roturas, mortalidad. Curvas de postura vs raza estandar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F3E5;</div>
+        <h3>Health (10 ep)</h3>
+        <p>Vacunas, medicaciones, brotes, estres. Calendario sanitario automatico con alertas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F33E;</div>
+        <h3>Feed (6 ep)</h3>
+        <p>Compras de alimento, consumo por parvada. Conversion alimenticia y costo por huevo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4B0;</div>
+        <h3>Finance (12 ep)</h3>
+        <p>Ingresos, gastos, cuentas por cobrar. Dashboard de rentabilidad. Reportes por periodo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F321;&#xFE0F;</div>
+        <h3>Environment (6 ep)</h3>
+        <p>Lecturas ambientales, IoT MQTT, weather cache. Alertas por umbrales criticos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F504;</div>
+        <h3>Sync (1 ep)</h3>
+        <p>Delta sync bidireccional. 15 entidades sincronizables. Conflict detection + cursor pagination.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4CB;</div>
+        <h3>Operations + 10 mas</h3>
+        <p>Checklists, bitacora, personal, bioseguridad, trazabilidad, planificacion, billing, soporte, leads, superadmin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FRONTEND MODULES -->
+<section class="flow">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>20 modulos frontend</h2>
+      <p>Cada seccion es un modulo independiente dentro de un SPA monolitico</p>
+    </div>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F4CA;</div>
+        <h3>Dashboard</h3>
+        <p>KPIs en tiempo real, graficas de tendencia, alertas activas, resumen de granjas.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F414;</div>
+        <h3>Lotes y produccion</h3>
+        <p>Gestion de parvadas, registro diario, curvas de postura, comparativa por raza.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F3E5;</div>
+        <h3>Sanidad</h3>
+        <p>Vacunas, medicamentos, brotes, calendario sanitario con alertas de vencimiento.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F33E;</div>
+        <h3>Alimentacion</h3>
+        <p>Compras, consumo por parvada, conversion alimenticia, costo por huevo producido.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F4B0;</div>
+        <h3>Finanzas</h3>
+        <p>Ingresos, gastos, cuentas por cobrar, rentabilidad por granja, reportes.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F50D;</div>
+        <h3>Trazabilidad</h3>
+        <p>Lotes con QR, cadena de custodia desde galpon hasta cliente final.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F6E1;&#xFE0F;</div>
+        <h3>Bioseguridad</h3>
+        <p>Registro de visitantes, zonas, protocolos, plagas, auditorias de bioseguridad.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F916;</div>
+        <h3>Soporte IA</h3>
+        <p>Chat inteligente, tickets automaticos, FAQ, clasificacion de bugs, 8 idiomas.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x2699;&#xFE0F;</div>
+        <h3>Admin y config</h3>
+        <p>Usuarios, roles, permisos, plan de suscripcion, superadmin panel, personalizacion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMEROS FINALES -->
+<section>
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>EGGlogU en numeros</h2>
+      <p>Metricas reales del sistema en produccion</p>
+    </div>
+    <div class="model-grid">
+      <div class="model-card">
+        <div class="model-icon">&#x1F4C4;</div>
+        <h4>7,272</h4>
+        <p>Lineas de HTML</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F4BB;</div>
+        <h4>10,040</h4>
+        <p>Lineas de JavaScript</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F40D;</div>
+        <h4>3,800+</h4>
+        <p>Lineas de Python</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F4E6;</div>
+        <h4>26</h4>
+        <p>Modelos SQLAlchemy</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F517;</div>
+        <h4>170+</h4>
+        <p>Endpoints REST</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x2699;&#xFE0F;</div>
+        <h4>388</h4>
+        <p>Funciones JavaScript</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F30D;</div>
+        <h4>8</h4>
+        <p>Idiomas soportados</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F4CA;</div>
+        <h4>20</h4>
+        <p>Modulos frontend</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F504;</div>
+        <h4>15</h4>
+        <p>Entidades sincronizables</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F414;</div>
+        <h4>16</h4>
+        <p>Razas con curva estandar</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F510;</div>
+        <h4>5</h4>
+        <p>Capas de middleware</p>
+      </div>
+      <div class="model-card">
+        <div class="model-icon">&#x1F4BE;</div>
+        <h4>11</h4>
+        <p>Migraciones Alembic</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Tecnologia de nivel enterprise para tu granja</h2>
+  <p>Arquitectura solida, segura y escalable. Empieza hoy gratis.</p>
+  <div class="cta-buttons">
+    <a href="egglogu.html" class="btn btn-white btn-lg">Prueba gratis 30 dias</a>
+    <a href="index.html" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.4);color:var(--white)">Volver al inicio</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">EGGlogU</div>
+        <p class="footer-brand-text">Plataforma de gestion avicola. Parte del ecosistema FarmLogU — ERP modular para agricultura.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <a href="index.html#features">Funcionalidades</a>
+        <a href="index.html#pricing">Precios</a>
+        <a href="index.html#how">Como funciona</a>
+        <a href="egglogu.html">Iniciar sesion</a>
+      </div>
+      <div class="footer-col">
+        <h4>Plataforma</h4>
+        <a href="#">FarmLogU</a>
+        <a href="#">HarvestLogU</a>
+        <a href="#">CowLogU</a>
+        <a href="#">SwineLogU</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="#">Privacidad</a>
+        <a href="#">Terminos</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 EGGlogU. Todos los derechos reservados.</span>
+      <span>Hecho con cuidado para el campo.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20)});
+const hamburger=document.getElementById('hamburger');
+const navLinks=document.getElementById('navLinks');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');navLinks.classList.toggle('open')});
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{hamburger.classList.remove('open');navLinks.classList.remove('open')}));
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.feature-card,.model-card,.security-card,.diff-card,.step,.flow-box,.middleware-layer').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease, transform .5s ease';observer.observe(el)});
+</script>
+</body>
+</html>

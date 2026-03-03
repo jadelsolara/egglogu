@@ -1,0 +1,433 @@
+{
+  "$schema": "EGGlogU Hardlock Module Manifest v1.0",
+  "version": "1.0.0",
+  "owner": "Jose Antonio del Solar",
+  "owner_email": "jose@egglogu.com",
+  "created": "2026-03-03",
+  "description": "Defines module boundaries for EGGlogU. Once a module is locked, ONLY the owner can modify it. No module may access or modify another module's internal state.",
+  "files": {
+    "egglogu.html": {
+      "description": "App shell — HTML structure, CSS, section containers",
+      "lockable": true,
+      "protected_zones": [
+        {"name": "login-screen", "description": "Login UI — NEVER modify"},
+        {"name": "sidebar-logo", "description": "Sidebar logo — NEVER modify"},
+        {"name": "nav-login-btn", "description": "Acceso Clientes button — NEVER modify"},
+        {"name": "lang-picker-fixed", "description": "Language globe — position:fixed, NEVER move"}
+      ]
+    },
+    "egglogu.js": {
+      "description": "Main application — 9,172 lines, 21 feature modules + shared infrastructure",
+      "lockable": true,
+      "modules": {
+        "core": {
+          "name": "Core & Translations",
+          "line_start": 1,
+          "line_end": 990,
+          "tier": "shared",
+          "description": "Error handling, translations (T), LIFECYCLE, THEMES, theme functions",
+          "key_functions": ["_bugUpdateBadge", "applyTheme", "themeColor", "themeRgba"],
+          "key_constants": ["T", "LIFECYCLE", "THEMES", "LANG"],
+          "depends_on": [],
+          "depended_by": ["*"]
+        },
+        "utils": {
+          "name": "Utilities",
+          "line_start": 991,
+          "line_end": 1060,
+          "tier": "shared",
+          "description": "Formatting, sanitization, validation, confirm dialogs",
+          "key_functions": ["t", "tc", "fmtNum", "fmtMoney", "fmtDate", "genId", "currency", "todayStr", "sanitizeHTML", "escapeAttr", "safeHTML", "validateInput", "validateForm", "showFieldError", "clearFieldErrors", "showConfirm", "confirmYes", "confirmNo"],
+          "depends_on": ["core"],
+          "depended_by": ["*"]
+        },
+        "auth": {
+          "name": "Authentication & Session",
+          "line_start": 1061,
+          "line_end": 1435,
+          "line_ranges_extra": [[8231, 8660]],
+          "tier": "shared",
+          "description": "Login, logout, OAuth (Google/Apple/Microsoft), PIN, signup, forgot password, email verification",
+          "key_functions": ["hashPassword", "hashPin", "verifyPinHash", "doLogin", "doLogout", "isAuthenticated", "checkAuth", "signInWithGoogle", "handleGoogleCallback", "showPinLogin", "verifyPin", "processSignUp", "processForgotPassword"],
+          "key_constants": ["AUTH_KEY", "AUTH_SESSION", "API_BASE", "PIN_MAX_ATTEMPTS", "PIN_LOCK_DURATION"],
+          "depends_on": ["core", "utils"],
+          "depended_by": ["init"]
+        },
+        "data": {
+          "name": "Data Persistence & Sync",
+          "line_start": 1436,
+          "line_end": 1925,
+          "tier": "shared",
+          "description": "DEFAULT_DATA, breeds, catalogs, LOCALE_MAP, select helpers, loadData, saveData, sync, backup, pagination",
+          "key_functions": ["loadData", "saveData", "syncToServer", "loadFromServer", "autoBackup", "listBackups", "restoreBackup", "paginate", "paginationControls", "supplierSelect", "houseSelect", "flockSelect", "clientSelect", "feedTypeSelect"],
+          "key_constants": ["DEFAULT_DATA", "COMMERCIAL_BREEDS", "BREED_CURVES", "CATALOGS", "CATALOG_T", "LOCALE_MAP", "ENTITY_MAP", "PAGE_SIZE"],
+          "depends_on": ["core", "utils"],
+          "depended_by": ["*"]
+        },
+        "veng": {
+          "name": "Validation Engine (VENG)",
+          "line_start": 1926,
+          "line_end": 2290,
+          "tier": "shared",
+          "description": "14 data quality validators, integrity widget, audit log, backup scheduler",
+          "key_functions": ["catScore", "showVengPanel", "renderIntegrityWidget", "logAudit", "scheduleAutoBackup", "autoBackup", "getStorageUsage"],
+          "key_objects": ["VENG"],
+          "depends_on": ["core", "utils", "data"],
+          "depended_by": ["dashboard", "admin"]
+        },
+        "rbac_kpi": {
+          "name": "RBAC & KPI Engine",
+          "line_start": 2291,
+          "line_end": 2468,
+          "tier": "shared",
+          "description": "Role permissions, active hens, health scoring, KPI snapshot, quick entry, vaccine calendar",
+          "key_functions": ["hasPermission", "activeHens", "activeHensByFlock", "flockAge", "flockLifecycleStage", "healthScore", "healthBadge", "statusBadge", "computeKpiSnapshot", "saveKpiSnapshot", "renderQuickEntry", "qeSaveEggs", "qeSaveFeed", "qeSaveMort", "qeSaveEnv", "generateVaccineCalendar"],
+          "key_constants": ["ROLE_PERMISSIONS"],
+          "depends_on": ["core", "utils", "data"],
+          "depended_by": ["dashboard", "flocks", "production", "health"]
+        },
+        "ui_nav": {
+          "name": "UI & Navigation",
+          "line_start": 2469,
+          "line_end": 2880,
+          "tier": "shared",
+          "description": "Nav routing, sidebar, modal, toast, walkthrough, empty states, chart helpers, a11y",
+          "key_functions": ["toggleNavGroup", "openNavGroupFor", "nav", "postRenderA11y", "toggleSidebar", "openModal", "closeModal", "toast", "emptyState", "destroyCharts", "flockSelect", "clientSelect", "getAlerts", "startWalkthrough", "endWalkthrough"],
+          "depends_on": ["core", "utils", "data", "rbac_kpi"],
+          "depended_by": ["*"]
+        },
+        "dashboard": {
+          "name": "Dashboard",
+          "section_id": "sec-dashboard",
+          "line_start": 2881,
+          "line_end": 3048,
+          "tier": "feature",
+          "description": "KPI cards, trend chart, alerts, trial banner, subscription",
+          "key_functions": ["renderDashboard", "kpi", "toggleKpiTip", "renderTrendChart", "renderTrialBanner", "startSubscription"],
+          "depends_on": ["core", "utils", "data", "veng", "rbac_kpi", "ui_nav"],
+          "depended_by": []
+        },
+        "flocks": {
+          "name": "Flock Management",
+          "section_id": "sec-lotes",
+          "line_start": 3049,
+          "line_end": 3170,
+          "tier": "feature",
+          "description": "Flock CRUD, breed helpers, roadmap",
+          "key_functions": ["renderFlocks", "showFlockForm", "showFlockRoadmap", "saveFlock", "deleteFlock", "breedName", "breedInfo", "onBreedSelect"],
+          "depends_on": ["core", "utils", "data", "rbac_kpi", "ui_nav"],
+          "depended_by": ["production", "health", "feed", "analytics"]
+        },
+        "production": {
+          "name": "Daily Production",
+          "section_id": "sec-produccion",
+          "line_start": 3171,
+          "line_end": 3257,
+          "tier": "feature",
+          "description": "Production records CRUD, filtering",
+          "key_functions": ["renderProduction", "filterProd", "showProdForm", "saveProd", "deleteProd"],
+          "depends_on": ["core", "utils", "data", "rbac_kpi", "ui_nav", "flocks"],
+          "depended_by": ["inventory", "analytics"]
+        },
+        "health": {
+          "name": "Health & Sanidad",
+          "section_id": "sec-sanidad",
+          "line_start": 3258,
+          "line_end": 3447,
+          "line_ranges_extra": [[7157, 7519]],
+          "tier": "feature",
+          "description": "Vaccines, medications, outbreaks, weather, IoT/MQTT, predictions, stress events",
+          "key_functions": ["renderSanidad", "renderVaccinesTab", "renderMedicationsTab", "renderOutbreaksTab", "renderPredictionsTab", "renderStressEventsTab", "showVaccineForm", "saveVaccine", "showMedForm", "saveMed", "showOutbreakForm", "saveOutbreak", "fetchWeather", "fetchForecast", "renderWeatherWidget", "connectMQTT", "computeDropRisk", "showStressForm", "saveStress"],
+          "depends_on": ["core", "utils", "data", "rbac_kpi", "ui_nav", "flocks"],
+          "depended_by": ["biosecurity"]
+        },
+        "feed": {
+          "name": "Feed Management",
+          "section_id": "sec-alimento",
+          "line_start": 3448,
+          "line_end": 3549,
+          "tier": "feature",
+          "description": "Feed purchases and consumption CRUD",
+          "key_functions": ["renderFeed", "renderFeedPurchases", "renderFeedConsumption", "showFeedPurchaseForm", "saveFeedPurchase", "deleteFeedPurchase", "showFeedConsForm", "saveFeedCons", "deleteFeedCons"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "flocks"],
+          "depended_by": ["analytics"]
+        },
+        "clients": {
+          "name": "Clients & Claims",
+          "section_id": "sec-clientes",
+          "line_start": 3550,
+          "line_end": 3715,
+          "tier": "feature",
+          "description": "Client CRUD, claims management, satisfaction tracking",
+          "key_functions": ["renderClients", "renderClientList", "renderClaimsList", "showClaimForm", "saveClaim", "showResolveClaimForm", "resolveClaim", "progressClaim", "showClientForm", "saveClient", "deleteClient"],
+          "depends_on": ["core", "utils", "data", "ui_nav"],
+          "depended_by": ["finances"]
+        },
+        "inventory": {
+          "name": "Inventory",
+          "section_id": "sec-inventario",
+          "line_start": 3716,
+          "line_end": 3769,
+          "tier": "feature",
+          "description": "Inventory view with computed stock from production/sales",
+          "key_functions": ["renderInventory", "filterInventory"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "production"],
+          "depended_by": ["finances"]
+        },
+        "finances": {
+          "name": "Finances",
+          "section_id": "sec-finanzas",
+          "line_start": 3770,
+          "line_end": 4020,
+          "tier": "feature",
+          "description": "Income, expenses, receivables, financial summary, CSV export",
+          "key_functions": ["renderFinances", "renderFinIncome", "renderFinExpenses", "renderFinReceivables", "renderFinSummary", "showIncomeForm", "saveIncome", "showExpenseForm", "saveExpense", "showReceivableForm", "saveReceivable", "toggleReceivablePaid", "exportFinCSV"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "clients"],
+          "depended_by": ["analytics"]
+        },
+        "analytics": {
+          "name": "Analytics",
+          "section_id": "sec-analisis",
+          "line_start": 4021,
+          "line_end": 4286,
+          "tier": "feature",
+          "description": "Comparison, seasonality, profitability, KPI evolution, economics",
+          "key_functions": ["renderAnalysis", "renderAnaComparison", "renderAnaSeasonality", "renderAnaProfitability", "renderAnaKpiEvo", "renderAnaEconomics"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "rbac_kpi", "flocks", "production", "feed", "finances"],
+          "depended_by": []
+        },
+        "operations": {
+          "name": "Operations",
+          "section_id": "sec-operaciones",
+          "line_start": 4287,
+          "line_end": 4416,
+          "tier": "feature",
+          "description": "Daily checklist, logbook, personnel management",
+          "key_functions": ["renderOperations", "renderOpsChecklist", "renderOpsLogbook", "renderOpsPersonnel", "toggleCheck", "addCheckTask", "showLogForm", "saveLog", "showPersonnelForm", "savePersonnel"],
+          "depends_on": ["core", "utils", "data", "ui_nav"],
+          "depended_by": []
+        },
+        "environment": {
+          "name": "Environment",
+          "section_id": "sec-ambiente",
+          "line_start": 4417,
+          "line_end": 4531,
+          "tier": "feature",
+          "description": "Manual readings, IoT sensor tab, history/trends, geo location",
+          "key_functions": ["renderEnvironment", "renderEnvManual", "renderEnvIoT", "renderEnvHistory", "showEnvForm", "saveEnv", "showGeoModal", "saveGeoLocation", "saveIoTToEnv"],
+          "depends_on": ["core", "utils", "data", "ui_nav"],
+          "depended_by": []
+        },
+        "census": {
+          "name": "Deficiency Census",
+          "section_id": "sec-carencias",
+          "line_start": 4532,
+          "line_end": 4636,
+          "tier": "feature",
+          "description": "Deficiency census, anonymous submission",
+          "key_functions": ["renderCarencias", "exportCensusAnon", "showCensusAnon"],
+          "depends_on": ["core", "utils", "data", "ui_nav"],
+          "depended_by": []
+        },
+        "support": {
+          "name": "Support & Tickets",
+          "section_id": "sec-soporte",
+          "line_start": 4637,
+          "line_end": 5014,
+          "tier": "feature",
+          "description": "Support tickets, FAQ, AI assistant, ratings, offline sync",
+          "key_functions": ["renderSoporte", "_loadFaq", "_searchFaq", "_faqVote", "_loadMyTickets", "_openTicket", "_submitTicket", "_sendTicketMsg", "_closeUserTicket", "_submitRating", "_syncOfflineTickets"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "auth"],
+          "depended_by": []
+        },
+        "superadmin": {
+          "name": "Superadmin & CRM",
+          "section_id": "sec-superadmin",
+          "line_start": 5015,
+          "line_end": 5879,
+          "tier": "feature",
+          "description": "Multi-org management, CRM, market analysis, retention, settings",
+          "key_functions": ["renderSuperadmin", "_saRenderDashboard", "_saRenderInventory", "_saRenderAccounts", "_saRenderTickets", "_saRenderMarket", "_saRenderCRM", "_crmRender360", "_crmRenderReport", "_crmRenderRetention"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "auth"],
+          "depended_by": []
+        },
+        "admin": {
+          "name": "Admin & Config",
+          "section_id": "sec-admin",
+          "line_start": 5880,
+          "line_end": 7156,
+          "tier": "feature",
+          "description": "Farm settings, user management, billing, roles, config, data export/import, audit log",
+          "key_functions": ["renderAdmin", "renderConfig", "saveConfig", "showUserForm", "saveUser", "deactivateUser", "removeUser", "loadBackupList", "doRestore", "toggleRolePerm", "renderAuditLog", "exportData", "importData", "resetData", "renderBillingCard", "renderProfileCard", "showChangePinModal"],
+          "depends_on": ["core", "utils", "data", "veng", "ui_nav", "auth"],
+          "depended_by": []
+        },
+        "biosecurity": {
+          "name": "Biosecurity",
+          "section_id": "sec-bioseguridad",
+          "line_start": 7520,
+          "line_end": 7763,
+          "tier": "feature",
+          "description": "Visitor tracking, risk zones, pest sightings, disinfection protocols",
+          "key_functions": ["renderBiosecurity", "computePestScore", "renderBioVisitors", "renderBioZones", "renderBioPests", "renderBioProtocols", "showBioVisitorForm", "saveBioVisitor", "showBioZoneForm", "saveBioZone", "showBioPestForm", "saveBioPest", "showBioProtocolForm", "saveBioProtocol"],
+          "depends_on": ["core", "utils", "data", "ui_nav"],
+          "depended_by": []
+        },
+        "traceability": {
+          "name": "Traceability",
+          "section_id": "sec-trazabilidad",
+          "line_start": 7764,
+          "line_end": 7878,
+          "tier": "feature",
+          "description": "Egg batch tracking, trace QR, batch filtering, CSV export",
+          "key_functions": ["renderTraceability", "renderBatchList", "showBatchForm", "saveBatch", "deleteBatch", "showBatchTrace", "computeFlockHealthScore", "filterBatches", "exportBatchCSV"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "flocks", "health"],
+          "depended_by": []
+        },
+        "planning": {
+          "name": "Production Planning",
+          "section_id": "sec-planificacion",
+          "line_start": 7879,
+          "line_end": 7962,
+          "tier": "feature",
+          "description": "Production planning, estimation, plan CRUD",
+          "key_functions": ["renderPlanning", "estimateProduction", "estimateTotalProduction", "showPlanForm", "savePlan", "deletePlan"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "flocks"],
+          "depended_by": []
+        },
+        "field_vet": {
+          "name": "Field & Vet Modes",
+          "line_start": 7963,
+          "line_end": 8208,
+          "tier": "feature",
+          "description": "Campo mode, vet mode, outbreak risk, forecast, recommendations",
+          "key_functions": ["toggleCampoMode", "applyCampoMode", "renderCampoDashboard", "showCampoQuickEntry", "saveCampoQuick", "toggleVetMode", "showVetDashboard", "renderVetFlock", "vetAction", "computeOutbreakRisk", "computeForecast", "getRecommendations", "applyFontScale", "applyDarkMode"],
+          "depends_on": ["core", "utils", "data", "ui_nav", "flocks", "health"],
+          "depended_by": []
+        },
+        "init": {
+          "name": "App Initialization",
+          "line_start": 8661,
+          "line_end": 8729,
+          "tier": "shared",
+          "description": "Main init() function, DOMContentLoaded handler",
+          "key_functions": ["init"],
+          "depends_on": ["*"],
+          "depended_by": []
+        },
+        "bug_reporter": {
+          "name": "Bug Reporter Widget",
+          "line_start": 8730,
+          "line_end": 9172,
+          "tier": "feature",
+          "description": "Bug report FAB, suggestion forms, bug panel",
+          "key_functions": ["loadBugs", "saveBugs", "loadSuggestions", "saveSuggestions", "injectBugWidget", "toggleBugPanel", "renderBugPanel", "_submitBug", "_submitSuggestion"],
+          "depends_on": ["core", "utils"],
+          "depended_by": []
+        }
+      }
+    },
+    "egglogu-reports.js": {
+      "description": "Report generation IIFE — PDF/CSV export",
+      "lockable": true,
+      "modules": {
+        "reports": {
+          "name": "Reports Engine",
+          "line_start": 1,
+          "line_end": 803,
+          "tier": "feature",
+          "description": "IIFE: PDF and CSV report generation for all modules",
+          "depends_on": ["data", "utils"],
+          "depended_by": []
+        }
+      }
+    },
+    "egglogu-workflows.js": {
+      "description": "Workflow automation IIFE — WorkflowEngine",
+      "lockable": true,
+      "modules": {
+        "workflows": {
+          "name": "Workflow Engine",
+          "line_start": 1,
+          "line_end": 645,
+          "tier": "feature",
+          "description": "IIFE: WorkflowEngine with rule evaluation, triggered by saveData()",
+          "depends_on": ["data"],
+          "depended_by": []
+        }
+      }
+    },
+    "egglogu-datatable.js": {
+      "description": "DataTable component IIFE — sortable/filterable tables",
+      "lockable": true,
+      "modules": {
+        "datatable": {
+          "name": "DataTable Component",
+          "line_start": 1,
+          "line_end": 620,
+          "tier": "feature",
+          "description": "IIFE: Reusable data table with sort, filter, pagination",
+          "depends_on": ["utils"],
+          "depended_by": []
+        }
+      }
+    }
+  },
+  "coupling_points": [
+    {
+      "id": "CP-001",
+      "severity": "high",
+      "description": "saveIncome writes to inventory via production cross-reference",
+      "from_module": "finances",
+      "to_module": "inventory",
+      "mitigation": "Use event bus pattern instead of direct access"
+    },
+    {
+      "id": "CP-002",
+      "severity": "high",
+      "description": "deleteClient cascades to finances (receivables) and traceability",
+      "from_module": "clients",
+      "to_module": "finances",
+      "mitigation": "Cascade deletes should go through data layer, not direct module access"
+    },
+    {
+      "id": "CP-003",
+      "severity": "high",
+      "description": "qeSaveEggs in quick_entry writes to production and inventory data",
+      "from_module": "rbac_kpi",
+      "to_module": "production",
+      "mitigation": "Quick entry should call production module's save function"
+    },
+    {
+      "id": "CP-004",
+      "severity": "medium",
+      "description": "WorkflowEngine.evaluate(DATA) called by saveData() — crosses workflow boundary",
+      "from_module": "data",
+      "to_module": "workflows",
+      "mitigation": "Event-driven: saveData emits event, WorkflowEngine listens"
+    },
+    {
+      "id": "CP-005",
+      "severity": "medium",
+      "description": "VENG.census(D) reaches into all modules for validation",
+      "from_module": "veng",
+      "to_module": "*",
+      "mitigation": "Each module exposes its own validation, VENG aggregates results"
+    },
+    {
+      "id": "CP-006",
+      "severity": "medium",
+      "description": "computeFlockHealthScore crosses health + flocks + production modules",
+      "from_module": "traceability",
+      "to_module": "health",
+      "mitigation": "Health module should expose computeFlockHealthScore as API"
+    }
+  ],
+  "rules": {
+    "lock_enforcement": "Pre-commit hook blocks any commit modifying lines within a locked module",
+    "unlock_procedure": "Only the owner (Jose Antonio del Solar) can unlock via hardlock-erp.sh unlock <module>",
+    "cross_module_access": "Modules may only access other modules through the shared DATA object and shared utility functions. Direct function calls across feature modules are PROHIBITED.",
+    "new_module_policy": "New modules must be registered in this manifest before code is written",
+    "checksum_storage": ".egglogu-hardlock.json stores per-module SHA256 checksums"
+  }
+}

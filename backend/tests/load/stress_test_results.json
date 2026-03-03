@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-02-28T09:01:56",
+  "target": "https://api.egglogu.com",
+  "scenario": "stress",
+  "stages": [
+    {
+      "name": "Warm-up",
+      "requests": 1286,
+      "rps": 81.9,
+      "p50_ms": 283,
+      "p95_ms": 509,
+      "p99_ms": 712,
+      "error_rate": 0.0
+    },
+    {
+      "name": "Stress (200 VUs)",
+      "requests": 3312,
+      "rps": 107.1,
+      "p50_ms": 1218,
+      "p95_ms": 2013,
+      "p99_ms": 2182,
+      "error_rate": 0.0
+    },
+    {
+      "name": "Heavy Stress (500 VUs)",
+      "requests": 3115,
+      "rps": 101.2,
+      "p50_ms": 2771,
+      "p95_ms": 4790,
+      "p99_ms": 5327,
+      "error_rate": 0.0
+    }
+  ]
+}
