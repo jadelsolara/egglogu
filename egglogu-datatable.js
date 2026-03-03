@@ -8,14 +8,18 @@ const DataTable=(function(){
 'use strict';
 
 const _state={};
-const _defaults={pageSize:50,page:1,sortCol:null,sortDir:'asc',filters:{},selectedIds:new Set(),visibleCols:null,search:''};
+const _defaults={pageSize:50,page:1,sortCol:null,sortDir:'asc',filters:{},selectedIds:null,visibleCols:null,search:''};
+
+function _newState(){
+  return{pageSize:50,page:1,sortCol:null,sortDir:'asc',filters:{},selectedIds:new Set(),visibleCols:null,search:''};
+}
 
 function _getState(id){
-  if(!_state[id])_state[id]=JSON.parse(JSON.stringify(_defaults));
+  if(!_state[id])_state[id]=_newState();
   return _state[id];
 }
 
-function _resetState(id){_state[id]=JSON.parse(JSON.stringify(_defaults));}
+function _resetState(id){_state[id]=_newState();}
 
 /**
  * DataTable.create(config) -> HTML string
