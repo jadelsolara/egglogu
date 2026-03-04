@@ -2,9 +2,9 @@
 
 # -- Container image
 image:
-  repository: ghcr.io/jadelsolara/egglogu
+  repository: egglogu-app
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Never
 
 # -- Image pull secrets (for private registries)
 imagePullSecrets: []
@@ -78,7 +78,7 @@ beat:
 postgres:
   image: postgres:16-alpine
   primary:
-    storage: 20Gi
+    storage: 5Gi
     resources:
       requests:
         cpu: 500m
@@ -97,7 +97,7 @@ postgres:
       maxReplicationSlots: "5"
   replica:
     enabled: true
-    storage: 20Gi
+    storage: 5Gi
     resources:
       requests:
         cpu: 250m
@@ -106,7 +106,7 @@ postgres:
         cpu: 500m
         memory: 1Gi
   walArchive:
-    storage: 10Gi
+    storage: 2Gi
   auth:
     database: egglogu
     username: egglogu
@@ -156,15 +156,13 @@ ingress:
     enabled: true
     clusterIssuer: letsencrypt-prod
   annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/affinity: cookie
     nginx.ingress.kubernetes.io/session-cookie-name: egglogu-affinity
     nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
     nginx.ingress.kubernetes.io/proxy-body-size: 50m
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
 
 # -- Alembic migration job
 migration:
@@ -175,7 +173,7 @@ migration:
 backup:
   enabled: true
   schedule: "0 3 * * *"
-  storage: 50Gi
+  storage: 5Gi
   retention:
     local: 7
     remote: 30

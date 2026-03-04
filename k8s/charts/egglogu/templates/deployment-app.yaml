@@ -44,9 +44,31 @@ spec:
                 name: {{ include "egglogu.configmapName" . }}
             - secretRef:
                 name: {{ include "egglogu.secretName" . }}
+          command:
+            - gunicorn
+            - src.main:app
+            - --worker-class
+            - uvicorn.workers.UvicornWorker
+            - --workers
+            - "{{ .Values.app.gunicorn.workers }}"
+            - --bind
+            - "0.0.0.0:{{ .Values.app.port }}"
+            - --timeout
+            - "{{ .Values.app.gunicorn.timeout }}"
+            - --graceful-timeout
+            - "30"
+            - --access-logfile
+            - "-"
+            - --error-logfile
+            - "-"
           env:
+            {{- if .Values.pgbouncer.enabled }}
             - name: DATABASE_URL
               value: "postgresql+asyncpg://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@127.0.0.1:6432/$(POSTGRES_DB)"
+            {{- else }}
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@{{ include "egglogu.postgres.primary" . }}:5432/$(POSTGRES_DB)"
+            {{- end }}
           livenessProbe:
             httpGet:
               path: {{ .Values.app.livenessProbe.path }}

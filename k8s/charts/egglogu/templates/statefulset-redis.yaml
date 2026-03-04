@@ -144,10 +144,22 @@ spec:
         app.kubernetes.io/component: redis-sentinel
     spec:
       initContainers:
-        # Sentinel needs a writable copy of the config
+        # Sentinel needs a writable config with resolved IP
         - name: copy-config
           image: {{ .Values.redis.image }}
-          command: ["sh", "-c", "cp /etc/redis-ro/sentinel.conf /etc/redis/sentinel.conf"]
+          command:
+            - sh
+            - -c
+            - |
+              # Resolve master hostname to IP for sentinel
+              until getent hosts {{ include "egglogu.redis.master" . }}-0.{{ include "egglogu.redis.master" . }}.default.svc.cluster.local; do
+                echo "Waiting for redis master DNS..."
+                sleep 2
+              done
+              MASTER_IP=$(getent hosts {{ include "egglogu.redis.master" . }}-0.{{ include "egglogu.redis.master" . }}.default.svc.cluster.local | awk '{print $1}')
+              echo "Resolved master IP: $MASTER_IP"
+              sed "s/{{ include "egglogu.redis.master" . }}/$MASTER_IP/g" /etc/redis-ro/sentinel.conf > /etc/redis/sentinel.conf
+              cat /etc/redis/sentinel.conf
           volumeMounts:
             - name: sentinel-config-ro
               mountPath: /etc/redis-ro
