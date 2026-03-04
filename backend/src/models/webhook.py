@@ -8,7 +8,7 @@ from sqlalchemy import DateTime, ForeignKey, String, Boolean, Integer, JSON, Tex
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models import Base
+from src.database import Base
 from src.models.base import TimestampMixin, TenantMixin
 
 

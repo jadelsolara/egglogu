@@ -21,7 +21,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from src.config import settings
-from src.core.rate_limit import _redis
+from src.core import rate_limit as _rl
 from src.database import async_session, engine
 
 router = APIRouter(tags=["system"])
@@ -63,11 +63,11 @@ async def _check_database() -> dict:
 
 async def _check_redis() -> dict:
     """Probe Redis with PING and measure latency."""
-    if _redis is None:
+    if _rl._redis is None:
         return {"status": "not_configured"}
     try:
         t0 = time.monotonic()
-        pong = await _redis.ping()
+        pong = await _rl._redis.ping()
         latency = round((time.monotonic() - t0) * 1000, 2)
         if pong:
             return {"status": "ok", "latency_ms": latency}
@@ -124,13 +124,13 @@ async def _check_db_pool() -> dict:
 
 async def _check_celery_queue() -> dict:
     """Check Celery queue depths via Redis."""
-    if _redis is None:
+    if _rl._redis is None:
         return {"status": "not_configured"}
     try:
         queues = ["celery", "email", "reports", "webhooks"]
         depths = {}
         for q in queues:
-            length = await _redis.llen(q)
+            length = await _rl._redis.llen(q)
             depths[q] = length
         total = sum(depths.values())
         return {"status": "ok", "queues": depths, "total_pending": total}
@@ -140,11 +140,11 @@ async def _check_celery_queue() -> dict:
 
 async def _check_redis_info() -> dict:
     """Get Redis memory and hit rate stats."""
-    if _redis is None:
+    if _rl._redis is None:
         return {"status": "not_configured"}
     try:
-        info = await _redis.info(section="memory")
-        stats = await _redis.info(section="stats")
+        info = await _rl._redis.info(section="memory")
+        stats = await _rl._redis.info(section="stats")
         hits = stats.get("keyspace_hits", 0)
         misses = stats.get("keyspace_misses", 0)
         hit_rate = round(hits / (hits + misses) * 100, 1) if (hits + misses) > 0 else 0
