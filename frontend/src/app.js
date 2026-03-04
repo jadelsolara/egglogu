@@ -18,6 +18,12 @@ import { syncToServer, scheduleSyncToServer } from '@core/sync.js';
 import { apiService } from '@core/api-service.js';
 import { wsClient } from '@core/websocket.js';
 
+// ── Route Bridge (Strangler Fig) ─────────────────────────
+import { registerRoute, getRouteOverride, getStatus as getRouteStatus } from '@core/route-bridge.js';
+import { isEnabled, enable, disable, getAll as getAllFlags } from '@core/feature-flags.js';
+import { createDataTable } from '@core/datatable-bridge.js';
+import { kpi, emptyState, openModal as modalOpen, closeModal as modalClose, toast as toastMsg, paginate, paginationControls, validateForm as vForm, clearFieldErrors, showFieldError, showConfirm, catalogSelect, flockSelect } from '@core/render-utils.js';
+
 // ── Feature Modules ──────────────────────────────────────
 import * as Dashboard from '@modules/dashboard.js';
 import * as Production from '@modules/production.js';
@@ -34,6 +40,7 @@ import * as Traceability from '@modules/traceability.js';
 import * as Planning from '@modules/planning.js';
 import * as Support from '@modules/support.js';
 import * as Admin from '@modules/admin.js';
+import * as Inventory from '@modules/inventory.js';
 
 // ── Module Registry ──────────────────────────────────────
 // Exposes all modules on window.EGGlogU for gradual migration
@@ -61,6 +68,11 @@ const EGGlogU = {
   Planning,
   Support,
   Admin,
+  Inventory,
+
+  // Route Bridge
+  routeBridge: { registerRoute, getRouteOverride, getRouteStatus },
+  featureFlags: { isEnabled, enable, disable, getAllFlags },
 
   // Version
   version: '2.0.0',
@@ -97,6 +109,7 @@ function initWebSocket() {
 
 function init() {
   console.log(`[EGGlogU] Modular build v${EGGlogU.version} loaded`);
+  console.log('[EGGlogU] Route Bridge:', getRouteStatus());
 
   // Load persisted data
   loadData();

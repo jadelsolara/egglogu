@@ -2863,7 +2863,9 @@ document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',
 openNavGroupFor(section);
 $('sidebar').classList.remove('open');
 const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,reportes:renderReportes,automatizacion:renderAutomatizacion,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
-if(R[section]){
+const _rb=window.__routeBridge?.getRouteOverride(section);
+if(_rb){_rb();postRenderA11y(section);}
+else if(R[section]){
 if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);});}
 else{R[section]();postRenderA11y(section);}
 }

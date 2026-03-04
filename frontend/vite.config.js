@@ -23,6 +23,10 @@ export default defineConfig({
             './src/core/security.js',
             './src/core/api-service.js',
             './src/core/translations.js',
+            './src/core/route-bridge.js',
+            './src/core/feature-flags.js',
+            './src/core/datatable-bridge.js',
+            './src/core/render-utils.js',
           ],
           'data': [
             './src/core/data.js',
