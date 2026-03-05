@@ -24,7 +24,26 @@ os.environ["REDIS_URL"] = ""  # disable Redis
 os.environ["JWT_SECRET_KEY"] = "test-secret-key-not-for-production"
 os.environ["RESEND_API_KEY"] = ""  # disable email
 
-from src.database import Base, get_db  # noqa: E402
+# ---------------------------------------------------------------------------
+# Map PostgreSQL JSONB → JSON for SQLite compatibility in tests
+# ---------------------------------------------------------------------------
+from sqlalchemy.dialects.postgresql import JSONB as _JSONB  # noqa: E402
+from sqlalchemy.ext.compiler import compiles as _compiles  # noqa: E402
+
+
+@_compiles(_JSONB, "sqlite")
+def _compile_jsonb_sqlite(element, compiler, **kw):
+    return "JSON"
+
+
+# Also register the type compiler for JSONB on SQLite
+from sqlalchemy.dialects.sqlite.base import SQLiteTypeCompiler  # noqa: E402
+
+_orig_type_compiler = SQLiteTypeCompiler.__class__
+if not hasattr(SQLiteTypeCompiler, "visit_JSONB"):
+    SQLiteTypeCompiler.visit_JSONB = lambda self, type_, **kw: "JSON"
+
+from src.database import Base, get_db, get_read_db  # noqa: E402
 from src.models.auth import Organization, Role, User  # noqa: E402
 from src.models.security import LoginAuditLog  # noqa: E402, F401
 from src.models.subscription import (  # noqa: E402
@@ -80,37 +99,98 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
             await db_session.rollback()
             raise
 
-    # Patch rate limiting to always allow
-    with patch(
-        "src.core.rate_limit.check_rate_limit",
-        new_callable=AsyncMock,
-        return_value=True,
-    ):
-        # Patch email sending to no-op
-        with patch("src.api.auth.send_verification_email", new_callable=AsyncMock):
-            with patch("src.api.auth.send_welcome", new_callable=AsyncMock):
-                with patch("src.api.auth.send_password_reset", new_callable=AsyncMock):
-                    # Patch HIBP check to always return safe (no breaches)
-                    with patch(
-                        "src.api.auth.check_pwned",
-                        new_callable=AsyncMock,
-                        return_value=0,
-                    ):
-                        # Import app here (after env vars are set)
-                        from src.main import app
+    from contextlib import ExitStack
 
-                        app.dependency_overrides[get_db] = _override_get_db
+    with ExitStack() as stack:
+        # Rate limiting — always allow
+        stack.enter_context(
+            patch(
+                "src.core.rate_limit.check_rate_limit",
+                new_callable=AsyncMock,
+                return_value=True,
+            )
+        )
+        # Token blacklist — never blacklisted
+        stack.enter_context(
+            patch(
+                "src.core.auth_security.is_token_blacklisted",
+                new_callable=AsyncMock,
+                return_value=False,
+            )
+        )
+        # Account lockout — never locked
+        stack.enter_context(
+            patch(
+                "src.core.auth_security.is_account_locked",
+                new_callable=AsyncMock,
+                return_value=False,
+            )
+        )
+        stack.enter_context(
+            patch(
+                "src.api.auth.is_account_locked",
+                new_callable=AsyncMock,
+                return_value=False,
+            )
+        )
+        # Failed login tracking — no-op (needs Redis)
+        stack.enter_context(
+            patch(
+                "src.api.auth.record_failed_login",
+                new_callable=AsyncMock,
+                return_value=0,
+            )
+        )
+        stack.enter_context(
+            patch(
+                "src.api.auth.clear_failed_logins",
+                new_callable=AsyncMock,
+            )
+        )
+        # Login attempt logging — no-op (needs Redis)
+        stack.enter_context(
+            patch(
+                "src.core.auth_security.log_login_attempt",
+                new_callable=AsyncMock,
+            )
+        )
+        stack.enter_context(
+            patch(
+                "src.api.auth.log_login_attempt",
+                new_callable=AsyncMock,
+            )
+        )
+        # Email sending — no-op
+        stack.enter_context(
+            patch("src.api.auth.send_verification_email", new_callable=AsyncMock)
+        )
+        stack.enter_context(patch("src.api.auth.send_welcome", new_callable=AsyncMock))
+        stack.enter_context(
+            patch("src.api.auth.send_password_reset", new_callable=AsyncMock)
+        )
+        # HIBP check — always safe
+        stack.enter_context(
+            patch(
+                "src.api.auth.check_pwned",
+                new_callable=AsyncMock,
+                return_value=0,
+            )
+        )
 
-                        # Disable lifespan so we don't need Redis / real DB
-                        transport = ASGITransport(app=app)
-                        async with AsyncClient(
-                            transport=transport,
-                            base_url="http://testserver",
-                            follow_redirects=True,
-                        ) as ac:
-                            yield ac
+        from src.main import app
 
-                        app.dependency_overrides.clear()
+        app.dependency_overrides[get_db] = _override_get_db
+        app.dependency_overrides[get_read_db] = _override_get_db
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(
+            transport=transport,
+            base_url="http://testserver",
+            follow_redirects=True,
+        ) as ac:
+            yield ac
+
+        app.dependency_overrides.clear()
 
 
 # ---------------------------------------------------------------------------
