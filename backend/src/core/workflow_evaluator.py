@@ -9,7 +9,6 @@ from src.models.production import DailyProduction
 from src.models.health import Outbreak
 from src.models.feed import FeedPurchase, FeedConsumption
 from src.models.finance import Receivable
-from src.models.environment import EnvironmentReading
 from src.models.workflow import WorkflowRule, WorkflowExecution
 
 logger = logging.getLogger("egglogu.workflows")
