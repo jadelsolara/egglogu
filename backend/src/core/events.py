@@ -91,3 +91,12 @@ async def subscribe_org(org_id: str):
     pubsub = _redis.pubsub()
     await pubsub.subscribe(_channel_for_org(org_id))
     return pubsub
+
+
+async def subscribe_chat(room_id: str):
+    """Return a Redis Pub/Sub subscription for a chat room channel."""
+    if _redis is None:
+        return None
+    pubsub = _redis.pubsub()
+    await pubsub.subscribe(f"chat:{room_id}")
+    return pubsub

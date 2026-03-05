@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.deps import get_current_user, require_feature
+from src.api.deps import require_feature
 from src.core.exceptions import NotFoundError, ForbiddenError
 from src.core.plans import get_plan_limits
 from src.database import get_db
@@ -15,7 +15,6 @@ from src.schemas.workflow import (
     WorkflowRuleRead,
     WorkflowRuleUpdate,
     WorkflowExecutionRead,
-    WorkflowTestRequest,
 )
 
 router = APIRouter(prefix="/workflows", tags=["workflows"])
@@ -89,9 +88,13 @@ WORKFLOW_PRESETS = [
 ]
 
 
-def _check_rule_limit(user: User, current_count: int) -> None:
+async def _check_rule_limit(user: User, current_count: int, db) -> None:
     """Validate plan-level workflow rule limit."""
-    limits = get_plan_limits(user.plan)
+    from src.api.deps import get_subscription, _resolve_plan
+
+    sub = await get_subscription(user.organization_id, db)
+    plan = await _resolve_plan(sub, db)
+    limits = get_plan_limits(plan)
     wf_cfg = limits.get("workflows", {})
     max_rules = wf_cfg.get("max_rules")
     if max_rules is not None and current_count >= max_rules:
@@ -148,7 +151,7 @@ async def create_rule(
         WorkflowRule.farm_id == data.farm_id,
     )
     count = (await db.execute(count_stmt)).scalar() or 0
-    _check_rule_limit(user, count)
+    await _check_rule_limit(user, count, db)
 
     obj = WorkflowRule(
         **data.model_dump(),

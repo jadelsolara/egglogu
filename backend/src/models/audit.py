@@ -9,7 +9,7 @@ are allowed.
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, Text, func, JSON
+from sqlalchemy import DateTime, String, func, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base

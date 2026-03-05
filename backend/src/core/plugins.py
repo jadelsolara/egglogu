@@ -62,7 +62,7 @@ async def execute_hook(
         .join(Plugin, PluginInstall.plugin_id == Plugin.id)
         .where(
             PluginInstall.organization_id == org_id,
-            PluginInstall.is_active == True,
+            PluginInstall.is_active.is_(True),
         )
     )
     installs = result.all()

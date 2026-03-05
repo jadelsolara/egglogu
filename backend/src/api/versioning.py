@@ -8,7 +8,6 @@ Supports:
 """
 
 import logging
-from datetime import datetime
 
 from fastapi import APIRouter, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -45,7 +44,6 @@ def create_versioned_router(version: str = "v1", **kwargs) -> APIRouter:
         v2_router.include_router(farms_v2.router)
         app.include_router(v2_router, prefix="/api/v2")
     """
-    version_info = VERSIONS.get(version, {})
     return APIRouter(
         tags=[f"API {version}"],
         responses={

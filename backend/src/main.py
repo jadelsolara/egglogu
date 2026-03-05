@@ -16,6 +16,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 import src.models  # noqa: F401, E402
+from src.api.versioning import APIVersionMiddleware
 from src.config import settings
 
 # ── Sentry Error Tracking ────────────────────────────────────────
@@ -69,6 +70,8 @@ from src.api import (
     webhooks,
     api_keys,
     plugins,
+    animal_welfare,
+    community,
     websocket as ws_routes,
 )
 
@@ -222,10 +225,19 @@ class GlobalRateLimitMiddleware(BaseHTTPMiddleware):
     MAX_REQUESTS = 120
     WINDOW_SECONDS = 60
 
+    EXEMPT_PATHS = {"/health", "/healthcheck", "/api/healthcheck"}
+
     async def dispatch(self, request: Request, call_next) -> Response:
+        if request.url.path in self.EXEMPT_PATHS:
+            return await call_next(request)
+
         from src.core.rate_limit import check_rate_limit  # deferred import
 
-        client_ip = request.client.host if request.client else "unknown"
+        forwarded = request.headers.get("x-forwarded-for")
+        if forwarded:
+            client_ip = forwarded.split(",")[0].strip()
+        else:
+            client_ip = request.headers.get("x-real-ip", request.client.host if request.client else "unknown")
         allowed = await check_rate_limit(
             f"global:{client_ip}", self.MAX_REQUESTS, self.WINDOW_SECONDS
         )
@@ -277,7 +289,6 @@ app = FastAPI(
 app.add_middleware(RequestLoggingMiddleware)
 
 # 2) API versioning headers (deprecation, sunset)
-from src.api.versioning import APIVersionMiddleware
 app.add_middleware(APIVersionMiddleware)
 
 # 3) Audit context (IP, user-agent) for hash-chain audit trail
@@ -338,6 +349,8 @@ app.include_router(workflows.router, prefix=prefix)
 app.include_router(webhooks.router, prefix=prefix)
 app.include_router(api_keys.router, prefix=prefix)
 app.include_router(plugins.router, prefix=prefix)
+app.include_router(animal_welfare.router, prefix=prefix)
+app.include_router(community.router, prefix=prefix)
 
 # Public routes (no /api/v1 prefix)
 app.include_router(trace_public.router)

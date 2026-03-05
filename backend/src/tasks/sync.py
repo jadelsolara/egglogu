@@ -14,7 +14,7 @@ def refresh_weather_cache():
     try:
         import asyncio
         from src.database import async_session
-        from sqlalchemy import select, update
+        from sqlalchemy import select
         from src.models.farm import Farm
 
         async def _refresh():

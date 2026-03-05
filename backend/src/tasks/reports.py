@@ -57,7 +57,6 @@ def generate_daily_kpi_snapshot(org_id: str):
     logger.info("Generating daily KPI snapshot for org=%s", org_id)
     try:
         import asyncio
-        from datetime import date
         from src.database import async_session
 
         async def _snapshot():

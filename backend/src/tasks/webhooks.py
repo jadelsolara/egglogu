@@ -29,7 +29,7 @@ def deliver_webhook(self, webhook_id: str, event_type: str, payload: dict):
         async def _deliver():
             async with async_session() as db:
                 result = await db.execute(
-                    select(Webhook).where(Webhook.id == webhook_id, Webhook.is_active == True)
+                    select(Webhook).where(Webhook.id == webhook_id, Webhook.is_active.is_(True))
                 )
                 webhook = result.scalar_one_or_none()
                 if not webhook:
@@ -123,7 +123,7 @@ def dispatch_webhooks(org_id: str, event_type: str, data: dict):
             result = await db.execute(
                 select(Webhook).where(
                     Webhook.organization_id == org_id,
-                    Webhook.is_active == True,
+                    Webhook.is_active.is_(True),
                 )
             )
             webhooks = result.scalars().all()

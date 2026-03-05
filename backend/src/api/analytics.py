@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.deps import require_feature, get_current_user
+from src.api.deps import require_feature
 from src.core.cache import get_cached, set_cached
 from src.database import get_db, get_read_db
 from src.models.auth import User

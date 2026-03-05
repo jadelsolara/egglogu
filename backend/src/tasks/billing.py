@@ -39,7 +39,6 @@ async def _handle_checkout_completed(db, event_data: dict):
     from sqlalchemy import select
     from src.models.subscription import Subscription, SubscriptionStatus
     from src.api.deps import invalidate_subscription_cache
-    import uuid
 
     customer_id = event_data.get("customer")
     if not customer_id:

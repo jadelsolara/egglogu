@@ -16,7 +16,7 @@ import shutil
 import time
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 

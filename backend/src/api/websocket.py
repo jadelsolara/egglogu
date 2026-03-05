@@ -17,7 +17,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from jose import jwt, JWTError
 
 from src.config import settings
-from src.core.events import subscribe_farm, subscribe_org
+from src.core.events import subscribe_chat, subscribe_farm, subscribe_org
 
 logger = logging.getLogger("egglogu.websocket")
 
@@ -94,7 +94,6 @@ async def ws_farm_dashboard(websocket: WebSocket, farm_id: str, token: str = Que
         return
 
     user_id = payload.get("sub")
-    org_id = payload.get("org")
 
     await websocket.accept()
     manager.connect_farm(farm_id, websocket)
@@ -173,6 +172,73 @@ async def ws_org_dashboard(websocket: WebSocket, org_id: str, token: str = Query
         logger.warning("WS error for org=%s: %s", org_id, e)
     finally:
         manager.disconnect_org(org_id, websocket)
+        if pubsub:
+            await pubsub.unsubscribe()
+            await pubsub.aclose()
+
+
+# ─── Chat Room WebSocket ────────────────────────────────────────────
+
+class ChatConnectionManager:
+    """Track active WebSocket connections per chat room."""
+
+    def __init__(self):
+        self._rooms: dict[str, set[WebSocket]] = {}
+
+    def connect(self, room_id: str, ws: WebSocket):
+        self._rooms.setdefault(room_id, set()).add(ws)
+
+    def disconnect(self, room_id: str, ws: WebSocket):
+        conns = self._rooms.get(room_id)
+        if conns:
+            conns.discard(ws)
+            if not conns:
+                del self._rooms[room_id]
+
+    def online_count(self, room_id: str) -> int:
+        return len(self._rooms.get(room_id, set()))
+
+
+chat_manager = ChatConnectionManager()
+
+
+@router.websocket("/ws/chat/{room_id}")
+async def ws_chat_room(websocket: WebSocket, room_id: str, token: str = Query(...)):
+    """WebSocket for real-time chat room messages via Redis Pub/Sub."""
+    payload = _verify_ws_token(token)
+    if not payload:
+        await websocket.close(code=4001, reason="Invalid or expired token")
+        return
+
+    user_id = payload.get("sub")
+
+    await websocket.accept()
+    chat_manager.connect(room_id, websocket)
+    logger.info("WS chat connected: user=%s room=%s (online=%d)", user_id, room_id, chat_manager.online_count(room_id))
+
+    pubsub = await subscribe_chat(room_id)
+
+    try:
+        await websocket.send_json({
+            "type": "connected",
+            "room_id": room_id,
+            "online_count": chat_manager.online_count(room_id),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        })
+
+        if pubsub:
+            await _relay_events(websocket, pubsub)
+        else:
+            while True:
+                await asyncio.sleep(HEARTBEAT_INTERVAL)
+                await websocket.send_json({"type": "heartbeat", "timestamp": datetime.now(timezone.utc).isoformat()})
+
+    except WebSocketDisconnect:
+        logger.info("WS chat disconnected: user=%s room=%s", user_id, room_id)
+    except Exception as e:
+        logger.warning("WS chat error for room=%s: %s", room_id, e)
+    finally:
+        chat_manager.disconnect(room_id, websocket)
         if pubsub:
             await pubsub.unsubscribe()
             await pubsub.aclose()

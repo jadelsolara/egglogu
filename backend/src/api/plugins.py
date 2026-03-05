@@ -2,7 +2,6 @@
 
 import uuid
 from datetime import datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
@@ -80,7 +79,7 @@ async def list_marketplace(
     search: str | None = None,
 ):
     """List all public plugins available for installation."""
-    query = select(Plugin).where(Plugin.is_public == True)
+    query = select(Plugin).where(Plugin.is_public.is_(True))
     if search:
         query = query.where(
             Plugin.name.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
@@ -90,7 +89,7 @@ async def list_marketplace(
     result = await db.execute(query)
     plugins = result.scalars().all()
 
-    count_q = select(func.count(Plugin.id)).where(Plugin.is_public == True)
+    count_q = select(func.count(Plugin.id)).where(Plugin.is_public.is_(True))
     if search:
         count_q = count_q.where(
             Plugin.name.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
