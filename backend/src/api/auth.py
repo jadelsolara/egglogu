@@ -1,3 +1,4 @@
+import os
 import re
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -94,6 +95,13 @@ def _slugify(name: str) -> str:
 
 
 def _client_ip(request: Request) -> str:
+    """Extract real client IP, respecting reverse proxy headers."""
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    real_ip = request.headers.get("x-real-ip")
+    if real_ip:
+        return real_ip.strip()
     return request.client.host if request.client else "unknown"
 
 
@@ -1210,3 +1218,56 @@ async def login_history(
     )
     entries = result.scalars().all()
     return [LoginAuditRead.model_validate(e) for e in entries]
+
+
+# ── Load Test Registration (gated behind LOADTEST_SECRET) ───────
+
+LOADTEST_SECRET = os.environ.get("LOADTEST_SECRET")
+
+
+@router.post("/loadtest-register", response_model=TokenResponseExtended)
+async def loadtest_register(
+    data: UserCreate, request: Request, db: AsyncSession = Depends(get_db)
+):
+    """Auto-verified registration for load testing. Only available when
+    LOADTEST_SECRET env var is set and the request includes matching header."""
+    if not LOADTEST_SECRET:
+        raise NotFoundError("Not found")
+
+    req_secret = request.headers.get("X-Loadtest-Secret", "")
+    if req_secret != LOADTEST_SECRET:
+        raise UnauthorizedError("Invalid loadtest secret")
+
+    existing = await db.execute(select(User).where(User.email == data.email))
+    if existing.scalar_one_or_none():
+        raise ConflictError("Email already registered")
+
+    org = Organization(
+        name=data.organization_name, slug=_slugify(data.organization_name)
+    )
+    db.add(org)
+    await db.flush()
+
+    sub = Subscription(
+        organization_id=org.id,
+        plan=PlanTier.enterprise,
+        status=SubscriptionStatus.active,
+        is_trial=True,
+        trial_end=datetime.now(timezone.utc) + timedelta(days=30),
+    )
+    db.add(sub)
+
+    user = User(
+        email=data.email,
+        hashed_password=hash_password(data.password),
+        full_name=data.full_name,
+        role=Role.owner,
+        organization_id=org.id,
+        email_verified=True,
+        is_active=True,
+    )
+    db.add(user)
+    await db.flush()
+
+    tokens = await _build_tokens_with_session(user, request, db)
+    return TokenResponseExtended(**tokens)
