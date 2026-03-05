@@ -22,7 +22,9 @@ _read_url = getattr(settings, "DATABASE_READ_URL", None) or settings.DATABASE_UR
 read_engine = create_async_engine(_read_url, **_engine_kwargs)
 
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-async_read_session = async_sessionmaker(read_engine, class_=AsyncSession, expire_on_commit=False)
+async_read_session = async_sessionmaker(
+    read_engine, class_=AsyncSession, expire_on_commit=False
+)
 
 
 class Base(DeclarativeBase):

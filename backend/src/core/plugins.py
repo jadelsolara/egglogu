@@ -27,12 +27,20 @@ from src.models.plugin import Plugin, PluginInstall
 logger = logging.getLogger("egglogu.plugins")
 
 PLUGIN_TIMEOUT = 5  # seconds
-VALID_HOOKS = frozenset({
-    "before_save", "after_save", "before_delete",
-    "on_production_entry", "on_alert", "on_report",
-    "on_flock_update", "on_environment_reading",
-    "on_feed_purchase", "on_biosecurity_event",
-})
+VALID_HOOKS = frozenset(
+    {
+        "before_save",
+        "after_save",
+        "before_delete",
+        "on_production_entry",
+        "on_alert",
+        "on_report",
+        "on_flock_update",
+        "on_environment_reading",
+        "on_feed_purchase",
+        "on_biosecurity_event",
+    }
+)
 
 
 async def execute_hook(
@@ -77,27 +85,33 @@ async def execute_hook(
             install.last_executed_at = datetime.now(timezone.utc)
             install.execution_count += 1
             install.last_error = None
-            results.append({
-                "plugin": plugin.slug,
-                "status": "ok",
-                "output": output,
-            })
+            results.append(
+                {
+                    "plugin": plugin.slug,
+                    "status": "ok",
+                    "output": output,
+                }
+            )
         except subprocess.TimeoutExpired:
             install.last_error = f"Timeout ({PLUGIN_TIMEOUT}s) on hook {hook_name}"
             logger.warning("Plugin %s timed out on %s", plugin.slug, hook_name)
-            results.append({
-                "plugin": plugin.slug,
-                "status": "timeout",
-                "error": install.last_error,
-            })
+            results.append(
+                {
+                    "plugin": plugin.slug,
+                    "status": "timeout",
+                    "error": install.last_error,
+                }
+            )
         except Exception as e:
             install.last_error = str(e)[:500]
             logger.error("Plugin %s failed on %s: %s", plugin.slug, hook_name, e)
-            results.append({
-                "plugin": plugin.slug,
-                "status": "error",
-                "error": str(e)[:500],
-            })
+            results.append(
+                {
+                    "plugin": plugin.slug,
+                    "status": "error",
+                    "error": str(e)[:500],
+                }
+            )
 
     if installs:
         await db.flush()
@@ -116,13 +130,15 @@ def _run_sandboxed(
     The plugin receives JSON on stdin and writes JSON to stdout.
     Stderr is captured for logging.
     """
-    payload = json.dumps({
-        "hook": hook_name,
-        "plugin": plugin.slug,
-        "version": plugin.version,
-        "config": install.config or {},
-        "context": context,
-    })
+    payload = json.dumps(
+        {
+            "hook": hook_name,
+            "plugin": plugin.slug,
+            "version": plugin.version,
+            "config": install.config or {},
+            "context": context,
+        }
+    )
 
     # Run as subprocess with restricted resources
     proc = subprocess.run(
@@ -134,13 +150,15 @@ def _run_sandboxed(
     )
 
     if proc.returncode != 0:
-        raise RuntimeError(f"Plugin exited with code {proc.returncode}: {proc.stderr[:500]}")
+        raise RuntimeError(
+            f"Plugin exited with code {proc.returncode}: {proc.stderr[:500]}"
+        )
 
     return proc.stdout.strip()
 
 
 # Minimal sandbox wrapper — reads JSON from stdin, executes plugin logic
-_SANDBOX_WRAPPER = '''
+_SANDBOX_WRAPPER = """
 import json, sys
 try:
     data = json.loads(sys.stdin.read())
@@ -151,4 +169,4 @@ try:
 except Exception as e:
     print(json.dumps({"error": str(e)}), file=sys.stderr)
     sys.exit(1)
-'''
+"""

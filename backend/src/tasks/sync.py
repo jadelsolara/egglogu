@@ -19,9 +19,7 @@ def refresh_weather_cache():
 
         async def _refresh():
             async with async_session() as db:
-                result = await db.execute(
-                    select(Farm).where(Farm.latitude.isnot(None))
-                )
+                result = await db.execute(select(Farm).where(Farm.latitude.isnot(None)))
                 farms = result.scalars().all()
                 logger.info("Refreshing weather for %d farms", len(farms))
                 # Weather refresh logic would call OWM API here

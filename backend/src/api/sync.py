@@ -42,6 +42,12 @@ from src.models import (
     ChecklistItem,
     LogbookEntry,
     Personnel,
+    BiosecurityVisitor,
+    BiosecurityZone,
+    PestSighting,
+    BiosecurityProtocol,
+    TraceabilityBatch,
+    ProductionPlan,
 )
 
 logger = logging.getLogger("egglogu.sync")
@@ -68,6 +74,12 @@ MODEL_MAP = {
     "checklist_items": ChecklistItem,
     "logbook_entries": LogbookEntry,
     "personnel": Personnel,
+    "biosecurity_visitors": BiosecurityVisitor,
+    "biosecurity_zones": BiosecurityZone,
+    "biosecurity_pest_sightings": PestSighting,
+    "biosecurity_protocols": BiosecurityProtocol,
+    "traceability_batches": TraceabilityBatch,
+    "production_plans": ProductionPlan,
 }
 
 

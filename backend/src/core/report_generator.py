@@ -1,4 +1,5 @@
 """Server-side report generation and email delivery."""
+
 import logging
 from datetime import datetime, timezone
 
@@ -79,27 +80,33 @@ async def _aggregate_health(db: AsyncSession, farm_id, org_id) -> dict:
     end = date.today()
     start = end - timedelta(days=30)
 
-    vax = (await db.execute(
-        select(func.count()).where(
-            Vaccine.organization_id == org_id,
-            Vaccine.farm_id == farm_id,
-            Vaccine.date >= start,
+    vax = (
+        await db.execute(
+            select(func.count()).where(
+                Vaccine.organization_id == org_id,
+                Vaccine.farm_id == farm_id,
+                Vaccine.date >= start,
+            )
         )
-    )).scalar() or 0
-    meds = (await db.execute(
-        select(func.count()).where(
-            Medication.organization_id == org_id,
-            Medication.farm_id == farm_id,
-            Medication.start_date >= start,
+    ).scalar() or 0
+    meds = (
+        await db.execute(
+            select(func.count()).where(
+                Medication.organization_id == org_id,
+                Medication.farm_id == farm_id,
+                Medication.start_date >= start,
+            )
         )
-    )).scalar() or 0
-    outbreaks = (await db.execute(
-        select(func.count()).where(
-            Outbreak.organization_id == org_id,
-            Outbreak.farm_id == farm_id,
-            Outbreak.start_date >= start,
+    ).scalar() or 0
+    outbreaks = (
+        await db.execute(
+            select(func.count()).where(
+                Outbreak.organization_id == org_id,
+                Outbreak.farm_id == farm_id,
+                Outbreak.start_date >= start,
+            )
         )
-    )).scalar() or 0
+    ).scalar() or 0
     return {"vaccines": vax, "medications": meds, "outbreaks": outbreaks}
 
 
@@ -110,27 +117,33 @@ async def _aggregate_feed(db: AsyncSession, farm_id, org_id) -> dict:
     end = date.today()
     start = end - timedelta(days=30)
 
-    purchased = (await db.execute(
-        select(func.sum(FeedPurchase.quantity_kg)).where(
-            FeedPurchase.organization_id == org_id,
-            FeedPurchase.farm_id == farm_id,
-            FeedPurchase.date >= start,
+    purchased = (
+        await db.execute(
+            select(func.sum(FeedPurchase.quantity_kg)).where(
+                FeedPurchase.organization_id == org_id,
+                FeedPurchase.farm_id == farm_id,
+                FeedPurchase.date >= start,
+            )
         )
-    )).scalar() or 0
-    consumed = (await db.execute(
-        select(func.sum(FeedConsumption.quantity_kg)).where(
-            FeedConsumption.organization_id == org_id,
-            FeedConsumption.farm_id == farm_id,
-            FeedConsumption.date >= start,
+    ).scalar() or 0
+    consumed = (
+        await db.execute(
+            select(func.sum(FeedConsumption.quantity_kg)).where(
+                FeedConsumption.organization_id == org_id,
+                FeedConsumption.farm_id == farm_id,
+                FeedConsumption.date >= start,
+            )
         )
-    )).scalar() or 0
-    cost = (await db.execute(
-        select(func.sum(FeedPurchase.total_cost)).where(
-            FeedPurchase.organization_id == org_id,
-            FeedPurchase.farm_id == farm_id,
-            FeedPurchase.date >= start,
+    ).scalar() or 0
+    cost = (
+        await db.execute(
+            select(func.sum(FeedPurchase.total_cost)).where(
+                FeedPurchase.organization_id == org_id,
+                FeedPurchase.farm_id == farm_id,
+                FeedPurchase.date >= start,
+            )
         )
-    )).scalar() or 0
+    ).scalar() or 0
     return {
         "purchased_kg": float(purchased),
         "consumed_kg": float(consumed),
@@ -179,7 +192,9 @@ async def execute_report(
         for email in schedule.recipients.split(","):
             email = email.strip()
             if email:
-                await _send_email(email, f"EGGlogU Report: {schedule.name}", html, tipo="reporte")
+                await _send_email(
+                    email, f"EGGlogU Report: {schedule.name}", html, tipo="reporte"
+                )
         recipients_sent = schedule.recipients
 
     # Update schedule
@@ -199,7 +214,9 @@ async def execute_report(
     db.add(execution)
     await db.flush()
 
-    logger.info("Report executed: %s (template=%s)", schedule.name, schedule.template.value)
+    logger.info(
+        "Report executed: %s (template=%s)", schedule.name, schedule.template.value
+    )
     return execution
 
 
@@ -218,7 +235,12 @@ async def generate_adhoc_report(
         for email in data.recipients.split(","):
             email = email.strip()
             if email:
-                await _send_email(email, f"EGGlogU Report: {data.template.title()}", html, tipo="reporte")
+                await _send_email(
+                    email,
+                    f"EGGlogU Report: {data.template.title()}",
+                    html,
+                    tipo="reporte",
+                )
         recipients_sent = data.recipients
 
     execution = ReportExecution(

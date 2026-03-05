@@ -237,7 +237,9 @@ class GlobalRateLimitMiddleware(BaseHTTPMiddleware):
         if forwarded:
             client_ip = forwarded.split(",")[0].strip()
         else:
-            client_ip = request.headers.get("x-real-ip", request.client.host if request.client else "unknown")
+            client_ip = request.headers.get(
+                "x-real-ip", request.client.host if request.client else "unknown"
+            )
         allowed = await check_rate_limit(
             f"global:{client_ip}", self.MAX_REQUESTS, self.WINDOW_SECONDS
         )
@@ -266,6 +268,7 @@ async def lifespan(app: FastAPI):
 
     # Initialize audit trail (hash-chain listeners + cache)
     from src.core.audit import setup_audit_listeners, initialize_hash_cache
+
     setup_audit_listeners()
     async with async_session() as db:
         await initialize_hash_cache(db)

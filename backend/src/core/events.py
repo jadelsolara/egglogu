@@ -16,6 +16,7 @@ logger = logging.getLogger("egglogu.events")
 
 # ─── Event Types ─────────────────────────────────────────────────────
 
+
 class EventType:
     PRODUCTION_NEW = "production.new"
     PRODUCTION_UPDATE = "production.update"
@@ -56,13 +57,15 @@ async def publish_event(
         logger.debug("Event not published (Redis unavailable): %s", event_type)
         return
 
-    payload = json.dumps({
-        "type": event_type,
-        "farm_id": farm_id,
-        "org_id": org_id,
-        "data": data or {},
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-    })
+    payload = json.dumps(
+        {
+            "type": event_type,
+            "farm_id": farm_id,
+            "org_id": org_id,
+            "data": data or {},
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    )
 
     try:
         published = 0

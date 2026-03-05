@@ -20,11 +20,13 @@ KEY_PREFIX_LENGTH = 8  # Visible prefix for identification
 
 # ─── Schemas ─────────────────────────────────────────────────────────
 
+
 class APIKeyCreate(BaseModel):
     name: str
     scopes: list[str] = []
     description: str | None = None
     expires_in_days: int | None = None  # None = no expiration
+
 
 class APIKeyResponse(BaseModel):
     id: uuid.UUID
@@ -38,12 +40,15 @@ class APIKeyResponse(BaseModel):
     description: str | None
     created_at: datetime
 
+
 class APIKeyCreatedResponse(APIKeyResponse):
     """Returned only on creation — includes the full key (shown once)."""
+
     full_key: str
 
 
 # ─── Endpoints ───────────────────────────────────────────────────────
+
 
 @router.post("", status_code=201)
 async def create_api_key(
@@ -60,6 +65,7 @@ async def create_api_key(
     expires_at = None
     if body.expires_in_days:
         from datetime import timedelta
+
         expires_at = datetime.now(timezone.utc) + timedelta(days=body.expires_in_days)
 
     api_key = APIKey(
@@ -110,7 +116,9 @@ async def list_api_keys(
     keys = result.scalars().all()
 
     count_result = await db.execute(
-        select(func.count(APIKey.id)).where(APIKey.organization_id == user.organization_id)
+        select(func.count(APIKey.id)).where(
+            APIKey.organization_id == user.organization_id
+        )
     )
     total = count_result.scalar()
 
@@ -130,7 +138,9 @@ async def revoke_api_key(
 ):
     """Revoke (deactivate) an API key."""
     result = await db.execute(
-        select(APIKey).where(APIKey.id == key_id, APIKey.organization_id == user.organization_id)
+        select(APIKey).where(
+            APIKey.id == key_id, APIKey.organization_id == user.organization_id
+        )
     )
     api_key = result.scalar_one_or_none()
     if not api_key:
@@ -148,7 +158,9 @@ async def regenerate_api_key(
 ):
     """Regenerate an API key — old key is immediately invalidated."""
     result = await db.execute(
-        select(APIKey).where(APIKey.id == key_id, APIKey.organization_id == user.organization_id)
+        select(APIKey).where(
+            APIKey.id == key_id, APIKey.organization_id == user.organization_id
+        )
     )
     api_key = result.scalar_one_or_none()
     if not api_key:
@@ -178,6 +190,7 @@ async def regenerate_api_key(
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────
+
 
 def _to_response(k: APIKey) -> APIKeyResponse:
     return APIKeyResponse(

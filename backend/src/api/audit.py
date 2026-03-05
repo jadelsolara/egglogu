@@ -37,9 +37,8 @@ async def list_audit_logs(
     logs = result.scalars().all()
 
     # Get total count for pagination
-    count_stmt = (
-        select(func.count(AuditLog.id))
-        .where(AuditLog.organization_id == str(user.organization_id))
+    count_stmt = select(func.count(AuditLog.id)).where(
+        AuditLog.organization_id == str(user.organization_id)
     )
     if resource:
         count_stmt = count_stmt.where(AuditLog.resource == resource)

@@ -55,6 +55,7 @@ def create_versioned_router(version: str = "v1", **kwargs) -> APIRouter:
 
 # ─── Deprecation Middleware ──────────────────────────────────────────
 
+
 class APIVersionMiddleware(BaseHTTPMiddleware):
     """Adds API versioning headers to responses.
 
@@ -90,7 +91,9 @@ class APIVersionMiddleware(BaseHTTPMiddleware):
             sunset = version_info.get("sunset")
             if sunset:
                 response.headers["Sunset"] = sunset
-            response.headers["Link"] = f'</api/{CURRENT_VERSION}/>; rel="successor-version"'
+            response.headers["Link"] = (
+                f'</api/{CURRENT_VERSION}/>; rel="successor-version"'
+            )
             logger.debug("Deprecated API %s used: %s %s", version, request.method, path)
 
         return response

@@ -17,6 +17,7 @@ router = APIRouter(prefix="/plugins", tags=["plugins"])
 
 # ─── Schemas ─────────────────────────────────────────────────────────
 
+
 class PluginResponse(BaseModel):
     id: uuid.UUID
     slug: str
@@ -57,6 +58,7 @@ class PluginInstallUpdate(BaseModel):
 
 class PluginCreate(BaseModel):
     """Admin-only: register a new plugin in the marketplace."""
+
     slug: str
     name: str
     version: str
@@ -69,6 +71,7 @@ class PluginCreate(BaseModel):
 
 
 # ─── Marketplace (public plugins) ───────────────────────────────────
+
 
 @router.get("/marketplace")
 async def list_marketplace(
@@ -106,6 +109,7 @@ async def list_marketplace(
 
 # ─── Installed Plugins (org-scoped) ─────────────────────────────────
 
+
 @router.get("")
 async def list_installed(
     db: AsyncSession = Depends(get_db),
@@ -126,8 +130,9 @@ async def list_installed(
     rows = result.all()
 
     count_result = await db.execute(
-        select(func.count(PluginInstall.id))
-        .where(PluginInstall.organization_id == user.organization_id)
+        select(func.count(PluginInstall.id)).where(
+            PluginInstall.organization_id == user.organization_id
+        )
     )
     total = count_result.scalar()
 
@@ -218,6 +223,7 @@ async def uninstall_plugin(
 
 # ─── Admin: Plugin Registry ─────────────────────────────────────────
 
+
 @router.post("/registry", status_code=201)
 async def register_plugin(
     body: PluginCreate,
@@ -236,7 +242,9 @@ async def register_plugin(
     # Check slug uniqueness
     existing = await db.execute(select(Plugin).where(Plugin.slug == body.slug))
     if existing.scalar_one_or_none():
-        raise HTTPException(status_code=409, detail=f"Plugin slug '{body.slug}' already exists")
+        raise HTTPException(
+            status_code=409, detail=f"Plugin slug '{body.slug}' already exists"
+        )
 
     plugin = Plugin(
         slug=body.slug,
@@ -262,6 +270,7 @@ async def list_valid_hooks(user=Depends(get_current_user)):
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────
+
 
 async def _get_plugin_or_404(db: AsyncSession, plugin_id: uuid.UUID) -> Plugin:
     result = await db.execute(select(Plugin).where(Plugin.id == plugin_id))

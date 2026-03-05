@@ -24,7 +24,9 @@ def refresh_materialized_views(self):
     Runs every 15 min via Celery Beat.  Uses CONCURRENTLY to avoid locking
     reads during refresh (requires unique index on each view).
     """
-    logger.info("Starting materialized view refresh (%d views)", len(MATERIALIZED_VIEWS))
+    logger.info(
+        "Starting materialized view refresh (%d views)", len(MATERIALIZED_VIEWS)
+    )
     start = time.perf_counter()
 
     try:
@@ -49,9 +51,13 @@ def refresh_materialized_views(self):
                             await conn.execute(
                                 text(f"REFRESH MATERIALIZED VIEW {view_name}")
                             )
-                            logger.info("Refreshed %s (non-concurrent fallback)", view_name)
+                            logger.info(
+                                "Refreshed %s (non-concurrent fallback)", view_name
+                            )
                         except Exception as e2:
-                            logger.error("Failed to refresh %s (fallback): %s", view_name, e2)
+                            logger.error(
+                                "Failed to refresh %s (fallback): %s", view_name, e2
+                            )
 
         asyncio.run(_refresh())
 

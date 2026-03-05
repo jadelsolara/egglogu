@@ -57,7 +57,11 @@ WORKFLOW_PRESETS = [
         "id": "temperature_alert",
         "name": "Temperature Alert (THI)",
         "trigger_type": "threshold",
-        "conditions": {"type": "temperature_thi", "thi_threshold": 28, "consecutive": 2},
+        "conditions": {
+            "type": "temperature_thi",
+            "thi_threshold": 28,
+            "consecutive": 2,
+        },
         "actions": {"notify": True, "auto_log": True},
         "cooldown_minutes": 120,
     },
@@ -262,7 +266,11 @@ async def test_rule(
     from src.core.workflow_evaluator import evaluate_rule
 
     test_result = await evaluate_rule(db, obj, dry_run=True)
-    return {"rule_id": str(rule_id), "would_trigger": test_result["matched"], "details": test_result}
+    return {
+        "rule_id": str(rule_id),
+        "would_trigger": test_result["matched"],
+        "details": test_result,
+    }
 
 
 # ── POST /workflows/evaluate (bulk evaluate all active rules) ──
@@ -285,11 +293,13 @@ async def evaluate_all(
     results = []
     for rule in rules:
         eval_result = await evaluate_rule(db, rule, dry_run=False)
-        results.append({
-            "rule_id": str(rule.id),
-            "name": rule.name,
-            "triggered": eval_result["matched"],
-        })
+        results.append(
+            {
+                "rule_id": str(rule.id),
+                "name": rule.name,
+                "triggered": eval_result["matched"],
+            }
+        )
     return {"evaluated": len(results), "results": results}
 
 

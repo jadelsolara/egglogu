@@ -110,9 +110,7 @@ async def create_assessment(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = WelfareAssessment(
-        **data.model_dump(), organization_id=user.organization_id
-    )
+    item = WelfareAssessment(**data.model_dump(), organization_id=user.organization_id)
     db.add(item)
     await db.flush()
     return item

@@ -17,11 +17,13 @@ router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
 # ─── Schemas ─────────────────────────────────────────────────────────
 
+
 class WebhookCreate(BaseModel):
     name: str
     url: str
     events: list[str]
     description: str | None = None
+
 
 class WebhookUpdate(BaseModel):
     name: str | None = None
@@ -29,6 +31,7 @@ class WebhookUpdate(BaseModel):
     events: list[str] | None = None
     is_active: bool | None = None
     description: str | None = None
+
 
 class WebhookResponse(BaseModel):
     id: uuid.UUID
@@ -43,6 +46,7 @@ class WebhookResponse(BaseModel):
     last_delivery_at: datetime | None
     created_at: datetime
 
+
 class WebhookDeliveryResponse(BaseModel):
     id: uuid.UUID
     event_type: str
@@ -55,6 +59,7 @@ class WebhookDeliveryResponse(BaseModel):
 
 
 # ─── CRUD ────────────────────────────────────────────────────────────
+
 
 @router.post("", status_code=201)
 async def create_webhook(
@@ -97,7 +102,9 @@ async def list_webhooks(
     webhooks = result.scalars().all()
 
     count_result = await db.execute(
-        select(func.count(Webhook.id)).where(Webhook.organization_id == user.organization_id)
+        select(func.count(Webhook.id)).where(
+            Webhook.organization_id == user.organization_id
+        )
     )
     total = count_result.scalar()
 
@@ -181,6 +188,7 @@ async def test_webhook(
     webhook = await _get_webhook_or_404(db, webhook_id, user.organization_id)
 
     from src.tasks.webhooks import deliver_webhook
+
     deliver_webhook.delay(
         str(webhook.id),
         "webhook.test",
@@ -190,6 +198,7 @@ async def test_webhook(
 
 
 # ─── Delivery Logs ──────────────────────────────────────────────────
+
 
 @router.get("/{webhook_id}/deliveries")
 async def list_deliveries(
@@ -213,7 +222,9 @@ async def list_deliveries(
     deliveries = result.scalars().all()
 
     count_result = await db.execute(
-        select(func.count(WebhookDelivery.id)).where(WebhookDelivery.webhook_id == webhook_id)
+        select(func.count(WebhookDelivery.id)).where(
+            WebhookDelivery.webhook_id == webhook_id
+        )
     )
     total = count_result.scalar()
 
@@ -239,9 +250,14 @@ async def list_deliveries(
 
 # ─── Helpers ─────────────────────────────────────────────────────────
 
-async def _get_webhook_or_404(db: AsyncSession, webhook_id: uuid.UUID, org_id) -> Webhook:
+
+async def _get_webhook_or_404(
+    db: AsyncSession, webhook_id: uuid.UUID, org_id
+) -> Webhook:
     result = await db.execute(
-        select(Webhook).where(Webhook.id == webhook_id, Webhook.organization_id == org_id)
+        select(Webhook).where(
+            Webhook.id == webhook_id, Webhook.organization_id == org_id
+        )
     )
     webhook = result.scalar_one_or_none()
     if not webhook:

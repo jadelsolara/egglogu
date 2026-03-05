@@ -16,7 +16,12 @@ logger = logging.getLogger("egglogu.tasks.webhooks")
 @app.task(bind=True, max_retries=3, default_retry_delay=30)
 def deliver_webhook(self, webhook_id: str, event_type: str, payload: dict):
     """Deliver a webhook event to the registered URL with HMAC-SHA256 signature."""
-    logger.info("Delivering webhook=%s event=%s attempt=%d", webhook_id, event_type, self.request.retries + 1)
+    logger.info(
+        "Delivering webhook=%s event=%s attempt=%d",
+        webhook_id,
+        event_type,
+        self.request.retries + 1,
+    )
 
     try:
         import asyncio
@@ -29,11 +34,15 @@ def deliver_webhook(self, webhook_id: str, event_type: str, payload: dict):
         async def _deliver():
             async with async_session() as db:
                 result = await db.execute(
-                    select(Webhook).where(Webhook.id == webhook_id, Webhook.is_active.is_(True))
+                    select(Webhook).where(
+                        Webhook.id == webhook_id, Webhook.is_active.is_(True)
+                    )
                 )
                 webhook = result.scalar_one_or_none()
                 if not webhook:
-                    logger.warning("Webhook %s not found or inactive — skipping", webhook_id)
+                    logger.warning(
+                        "Webhook %s not found or inactive — skipping", webhook_id
+                    )
                     return
 
                 # Sign payload with HMAC-SHA256
@@ -81,7 +90,9 @@ def deliver_webhook(self, webhook_id: str, event_type: str, payload: dict):
                         webhook.last_failure_at = datetime.now(timezone.utc)
                         logger.warning(
                             "Webhook %s returned %d for %s",
-                            webhook_id, resp.status_code, event_type,
+                            webhook_id,
+                            resp.status_code,
+                            event_type,
                         )
 
                 except requests.RequestException as e:
@@ -97,7 +108,9 @@ def deliver_webhook(self, webhook_id: str, event_type: str, payload: dict):
                 await db.commit()
 
                 if not delivery.success:
-                    raise Exception(f"Delivery failed: status={delivery.response_status}")
+                    raise Exception(
+                        f"Delivery failed: status={delivery.response_status}"
+                    )
 
         asyncio.run(_deliver())
         logger.info("Webhook %s delivered for %s", webhook_id, event_type)
@@ -105,7 +118,7 @@ def deliver_webhook(self, webhook_id: str, event_type: str, payload: dict):
     except Exception as exc:
         logger.error("Webhook task failed: %s", exc)
         # Exponential backoff: 30s, 60s, 120s
-        raise self.retry(exc=exc, countdown=30 * (2 ** self.request.retries))
+        raise self.retry(exc=exc, countdown=30 * (2**self.request.retries))
 
 
 def dispatch_webhooks(org_id: str, event_type: str, data: dict):

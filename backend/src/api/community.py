@@ -50,7 +50,11 @@ router = APIRouter(prefix="/community", tags=["community"])
 # Simple keyword-based moderation. Replace with LLM call for production.
 
 _BLOCKED_PATTERNS = [
-    "spam", "scam", "buy now", "click here", "free money",
+    "spam",
+    "scam",
+    "buy now",
+    "click here",
+    "free money",
     # Add more as needed — or integrate with an LLM moderation API
 ]
 
@@ -60,16 +64,39 @@ _BLOCKED_PATTERNS = [
 # Open to ALL: general, suggestions, FarmLogU sectors (demand generation).
 # EGGlogU-specific categories gated by tier.
 
-_OPEN_CATS = {"general", "suggestions", "pork-production", "cattle-production", "crop-agriculture"}
+_OPEN_CATS = {
+    "general",
+    "suggestions",
+    "pork-production",
+    "cattle-production",
+    "crop-agriculture",
+}
 
 PLAN_FORUM_ACCESS = {
     "suspended": _OPEN_CATS,
     "hobby": _OPEN_CATS | {"nutrition-feed"},
-    "starter": _OPEN_CATS | {"nutrition-feed", "health-disease", "market-sales", "housing-equipment"},
-    "pro": _OPEN_CATS | {"nutrition-feed", "health-disease", "market-sales", "housing-equipment",
-                         "genetics-breeding", "animal-welfare", "biosecurity"},
-    "enterprise": _OPEN_CATS | {"nutrition-feed", "health-disease", "market-sales", "housing-equipment",
-                                "genetics-breeding", "animal-welfare", "biosecurity"},
+    "starter": _OPEN_CATS
+    | {"nutrition-feed", "health-disease", "market-sales", "housing-equipment"},
+    "pro": _OPEN_CATS
+    | {
+        "nutrition-feed",
+        "health-disease",
+        "market-sales",
+        "housing-equipment",
+        "genetics-breeding",
+        "animal-welfare",
+        "biosecurity",
+    },
+    "enterprise": _OPEN_CATS
+    | {
+        "nutrition-feed",
+        "health-disease",
+        "market-sales",
+        "housing-equipment",
+        "genetics-breeding",
+        "animal-welfare",
+        "biosecurity",
+    },
 }
 
 PLAN_CHAT_ACCESS = {
@@ -77,7 +104,13 @@ PLAN_CHAT_ACCESS = {
     "hobby": {"general", "suggestions", "newcomers"},
     "starter": {"general", "suggestions", "newcomers", "technical-help"},
     "pro": {"general", "suggestions", "newcomers", "technical-help", "market-watch"},
-    "enterprise": {"general", "suggestions", "newcomers", "technical-help", "market-watch"},
+    "enterprise": {
+        "general",
+        "suggestions",
+        "newcomers",
+        "technical-help",
+        "market-watch",
+    },
 }
 
 
@@ -110,19 +143,81 @@ def _extract_ai_tags(title: str, content: str) -> str | None:
     tags = []
     combined = (title + " " + content).lower()
     tag_keywords = {
-        "nutrition": ["feed", "nutrition", "protein", "calcium", "diet", "nutricion", "alimento"],
-        "health": ["disease", "vaccine", "mortality", "sick", "enfermedad", "vacuna", "mortalidad"],
+        "nutrition": [
+            "feed",
+            "nutrition",
+            "protein",
+            "calcium",
+            "diet",
+            "nutricion",
+            "alimento",
+        ],
+        "health": [
+            "disease",
+            "vaccine",
+            "mortality",
+            "sick",
+            "enfermedad",
+            "vacuna",
+            "mortalidad",
+        ],
         "genetics": ["breed", "genetics", "strain", "raza", "genetica", "linea"],
-        "welfare": ["welfare", "stress", "behavior", "bienestar", "estres", "comportamiento"],
+        "welfare": [
+            "welfare",
+            "stress",
+            "behavior",
+            "bienestar",
+            "estres",
+            "comportamiento",
+        ],
         "market": ["price", "market", "sell", "buyer", "precio", "mercado", "venta"],
         "eggs": ["egg", "production", "laying", "huevo", "produccion", "postura"],
-        "housing": ["housing", "ventilation", "lighting", "galpon", "ventilacion", "iluminacion"],
-        "biosecurity": ["biosecurity", "disinfect", "quarantine", "bioseguridad", "desinfeccion"],
+        "housing": [
+            "housing",
+            "ventilation",
+            "lighting",
+            "galpon",
+            "ventilacion",
+            "iluminacion",
+        ],
+        "biosecurity": [
+            "biosecurity",
+            "disinfect",
+            "quarantine",
+            "bioseguridad",
+            "desinfeccion",
+        ],
         # FarmLogU sector demand signals
         "pork": ["pig", "swine", "pork", "cerdo", "porcino", "chancho", "lechon"],
-        "cattle": ["cow", "cattle", "beef", "dairy", "bovino", "vaca", "ganado", "lecheria"],
-        "crops": ["crop", "harvest", "irrigation", "soil", "cultivo", "cosecha", "riego", "suelo"],
-        "suggestion": ["suggest", "idea", "feature", "request", "sugerencia", "idea", "solicitud"],
+        "cattle": [
+            "cow",
+            "cattle",
+            "beef",
+            "dairy",
+            "bovino",
+            "vaca",
+            "ganado",
+            "lecheria",
+        ],
+        "crops": [
+            "crop",
+            "harvest",
+            "irrigation",
+            "soil",
+            "cultivo",
+            "cosecha",
+            "riego",
+            "suelo",
+        ],
+        "suggestion": [
+            "suggest",
+            "idea",
+            "feature",
+            "request",
+            "sugerencia",
+            "idea",
+            "solicitud",
+        ],
     }
     for tag, keywords in tag_keywords.items():
         if any(kw in combined for kw in keywords):
@@ -131,6 +226,7 @@ def _extract_ai_tags(title: str, content: str) -> str | None:
 
 
 # ── Forum Categories ──────────────────────────────────────────────
+
 
 @router.get("/categories", response_model=list[ForumCategoryRead])
 async def list_categories(
@@ -156,6 +252,7 @@ async def list_categories(
 
 # ── Forum Threads ─────────────────────────────────────────────────
 
+
 @router.get("/threads", response_model=list[ForumThreadRead])
 async def list_threads(
     category_id: uuid.UUID | None = None,
@@ -166,18 +263,20 @@ async def list_threads(
     user: User = Depends(get_current_user),
     plan: str = Depends(get_org_plan),
 ):
-    q = select(ForumThread, User.full_name).join(
-        User, ForumThread.author_id == User.id
-    )
+    q = select(ForumThread, User.full_name).join(User, ForumThread.author_id == User.id)
     if category_id:
         q = q.where(ForumThread.category_id == category_id)
     if search:
         q = q.where(ForumThread.title.ilike(f"%{search}%"))
 
-    q = q.order_by(
-        ForumThread.is_pinned.desc(),
-        ForumThread.last_activity_at.desc(),
-    ).offset((page - 1) * size).limit(size)
+    q = (
+        q.order_by(
+            ForumThread.is_pinned.desc(),
+            ForumThread.last_activity_at.desc(),
+        )
+        .offset((page - 1) * size)
+        .limit(size)
+    )
 
     result = await db.execute(q)
     rows = result.all()
@@ -196,9 +295,9 @@ async def get_thread(
     user: User = Depends(get_current_user),
 ):
     result = await db.execute(
-        select(ForumThread, User.full_name).join(
-            User, ForumThread.author_id == User.id
-        ).where(ForumThread.id == thread_id)
+        select(ForumThread, User.full_name)
+        .join(User, ForumThread.author_id == User.id)
+        .where(ForumThread.id == thread_id)
     )
     row = result.one_or_none()
     if not row:
@@ -216,12 +315,13 @@ async def get_thread(
 
     # Get posts
     posts_result = await db.execute(
-        select(ForumPost, User.full_name).join(
-            User, ForumPost.author_id == User.id
-        ).where(
+        select(ForumPost, User.full_name)
+        .join(User, ForumPost.author_id == User.id)
+        .where(
             ForumPost.thread_id == thread_id,
             ForumPost.moderation_status != ModerationAction.removed,
-        ).order_by(ForumPost.created_at)
+        )
+        .order_by(ForumPost.created_at)
     )
     posts = []
     for post, post_author_name in posts_result.all():
@@ -251,7 +351,9 @@ async def create_thread(
     # Check plan access to this category
     allowed = _get_allowed_categories(plan)
     if cat.slug not in allowed:
-        raise ForbiddenError(f"Upgrade your plan to post in '{cat.name}'. Current plan: {plan}.")
+        raise ForbiddenError(
+            f"Upgrade your plan to post in '{cat.name}'. Current plan: {plan}."
+        )
 
     # Create thread
     thread = ForumThread(
@@ -284,6 +386,7 @@ async def create_thread(
 
 
 # ── Forum Posts ───────────────────────────────────────────────────
+
 
 @router.post("/posts", response_model=ForumPostRead, status_code=201)
 async def create_post(
@@ -398,6 +501,7 @@ async def toggle_like(
 
 # ── Chat Rooms ────────────────────────────────────────────────────
 
+
 @router.get("/rooms", response_model=list[ChatRoomRead])
 async def list_rooms(
     db: AsyncSession = Depends(get_db),
@@ -445,7 +549,9 @@ async def list_messages(
     return messages
 
 
-@router.post("/rooms/{room_id}/messages", response_model=ChatMessageRead, status_code=201)
+@router.post(
+    "/rooms/{room_id}/messages", response_model=ChatMessageRead, status_code=201
+)
 async def send_message(
     room_id: uuid.UUID,
     data: ChatMessageCreate,
@@ -480,19 +586,28 @@ async def send_message(
     # Publish to Redis for WebSocket subscribers
     try:
         from src.core.rate_limit import _redis
+
         if _redis:
             import json
-            await _redis.publish(f"chat:{room_id}", json.dumps({
-                "type": "chat_message",
-                "room_id": str(room_id),
-                "message": {
-                    "id": str(msg.id),
-                    "author_name": user.full_name,
-                    "content": msg.content if mod_action == ModerationAction.approved else "[Message under review]",
-                    "is_ai": False,
-                    "created_at": msg.created_at.isoformat(),
-                },
-            }))
+
+            await _redis.publish(
+                f"chat:{room_id}",
+                json.dumps(
+                    {
+                        "type": "chat_message",
+                        "room_id": str(room_id),
+                        "message": {
+                            "id": str(msg.id),
+                            "author_name": user.full_name,
+                            "content": msg.content
+                            if mod_action == ModerationAction.approved
+                            else "[Message under review]",
+                            "is_ai": False,
+                            "created_at": msg.created_at.isoformat(),
+                        },
+                    }
+                ),
+            )
     except Exception as e:
         logger.warning("Failed to publish chat message: %s", e)
 
@@ -502,6 +617,7 @@ async def send_message(
 
 
 # ── AI Insights (superadmin / internal) ───────────────────────────
+
 
 @router.get("/insights", response_model=list[AIInsightRead])
 async def list_insights(
@@ -520,6 +636,7 @@ async def list_insights(
 
 # ── Community Stats ───────────────────────────────────────────────
 
+
 @router.get("/stats", response_model=CommunityStats)
 async def community_stats(
     db: AsyncSession = Depends(get_db),
@@ -534,7 +651,9 @@ async def community_stats(
 
     # Active users in last 24h (union of forum + chat authors)
     forum_authors = select(ForumPost.author_id).where(ForumPost.created_at >= day_ago)
-    chat_authors = select(ChatMessage.author_id).where(ChatMessage.created_at >= day_ago)
+    chat_authors = select(ChatMessage.author_id).where(
+        ChatMessage.created_at >= day_ago
+    )
     union_q = forum_authors.union(chat_authors).subquery()
     active_users = await db.scalar(select(func.count()).select_from(union_q))
 
@@ -547,14 +666,17 @@ async def community_stats(
         .limit(5)
     )
     top_cats_result = await db.execute(top_cats_q)
-    top_categories = [{"name": name, "threads": cnt} for name, cnt in top_cats_result.all()]
+    top_categories = [
+        {"name": name, "threads": cnt} for name, cnt in top_cats_result.all()
+    ]
 
     insights_count = await db.scalar(select(func.count(AIInsight.id)))
 
     # Distinct countries from chat messages
     countries = await db.scalar(
-        select(func.count(func.distinct(ChatMessage.author_country)))
-        .where(ChatMessage.author_country.isnot(None))
+        select(func.count(func.distinct(ChatMessage.author_country))).where(
+            ChatMessage.author_country.isnot(None)
+        )
     )
 
     return CommunityStats(

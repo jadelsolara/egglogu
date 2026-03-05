@@ -486,10 +486,16 @@ async def get_daily_production(
 @router.post("/analytics/refresh")
 async def trigger_refresh(
     user: User = Depends(require_feature("analytics")),
-    view: str | None = Query(default=None, description="Specific view to refresh, or all"),
+    view: str | None = Query(
+        default=None, description="Specific view to refresh, or all"
+    ),
 ):
     """Admin: manually trigger materialized view refresh."""
-    from src.tasks.analytics import refresh_materialized_views, refresh_single_view, MATERIALIZED_VIEWS
+    from src.tasks.analytics import (
+        refresh_materialized_views,
+        refresh_single_view,
+        MATERIALIZED_VIEWS,
+    )
 
     if view:
         if view not in MATERIALIZED_VIEWS:

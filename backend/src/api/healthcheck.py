@@ -100,6 +100,7 @@ def _check_memory() -> dict:
     """Check process memory usage."""
     try:
         import resource
+
         rusage = resource.getrusage(resource.RUSAGE_SELF)
         rss_mb = round(rusage.ru_maxrss / 1024, 2)  # Linux: KB → MB
         return {"status": "ok", "rss_mb": rss_mb}
@@ -163,6 +164,7 @@ async def _check_redis_info() -> dict:
 
 # ─── Tier 1: Liveness ───────────────────────────────────────────────
 
+
 @router.get("/health/live")
 async def health_live():
     """K8s liveness probe — app process is alive, no dependency checks."""
@@ -173,6 +175,7 @@ async def health_live():
 
 
 # ─── Tier 2: Readiness ──────────────────────────────────────────────
+
 
 @router.get("/health/ready")
 async def health_ready():
@@ -198,6 +201,7 @@ async def health_ready():
 
 
 # ─── Tier 3: Detailed (admin only) ──────────────────────────────────
+
 
 @router.get("/health/detailed")
 async def health_detailed():
@@ -244,6 +248,7 @@ async def health_detailed():
 
 
 # ─── Legacy (backward-compatible) ───────────────────────────────────
+
 
 @router.get("/health")
 async def system_health():

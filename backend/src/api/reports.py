@@ -26,7 +26,9 @@ def _check_report_access(user: User, template: str) -> None:
     limits = get_plan_limits(user.plan)
     report_cfg = limits.get("reports", {})
     if not report_cfg:
-        raise ForbiddenError("Reports require Starter plan or higher. Upgrade to access.")
+        raise ForbiddenError(
+            "Reports require Starter plan or higher. Upgrade to access."
+        )
     allowed = report_cfg.get("templates", [])
     if allowed != "all" and template not in allowed:
         raise ForbiddenError(
@@ -159,9 +161,7 @@ async def update_schedule(
 
 
 # ── DELETE /reports/schedules/{schedule_id} ──
-@router.delete(
-    "/schedules/{schedule_id}", status_code=status.HTTP_204_NO_CONTENT
-)
+@router.delete("/schedules/{schedule_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_schedule(
     schedule_id: uuid.UUID,
     user: User = Depends(require_feature("reports")),

@@ -1,4 +1,5 @@
 """Server-side workflow rule evaluator and action executor."""
+
 import logging
 from datetime import datetime, timedelta, timezone, date
 
@@ -59,7 +60,11 @@ async def _check_production_drop(db: AsyncSession, rule: WorkflowRule) -> dict:
 
     actual_drop = ((float(avg) - float(current)) / float(avg)) * 100
     matched = actual_drop >= drop_pct
-    return {"matched": matched, "drop_pct": round(actual_drop, 2), "threshold_pct": drop_pct}
+    return {
+        "matched": matched,
+        "drop_pct": round(actual_drop, 2),
+        "threshold_pct": drop_pct,
+    }
 
 
 async def _check_feed_stock(db: AsyncSession, rule: WorkflowRule) -> dict:
@@ -68,38 +73,48 @@ async def _check_feed_stock(db: AsyncSession, rule: WorkflowRule) -> dict:
     days_threshold = cond.get("days_remaining", 3)
 
     # Get total purchased vs consumed
-    purchased = (await db.execute(
-        select(func.sum(FeedPurchase.quantity_kg)).where(
-            FeedPurchase.organization_id == rule.organization_id,
-            FeedPurchase.farm_id == rule.farm_id,
+    purchased = (
+        await db.execute(
+            select(func.sum(FeedPurchase.quantity_kg)).where(
+                FeedPurchase.organization_id == rule.organization_id,
+                FeedPurchase.farm_id == rule.farm_id,
+            )
         )
-    )).scalar() or 0
-    consumed = (await db.execute(
-        select(func.sum(FeedConsumption.quantity_kg)).where(
-            FeedConsumption.organization_id == rule.organization_id,
-            FeedConsumption.farm_id == rule.farm_id,
+    ).scalar() or 0
+    consumed = (
+        await db.execute(
+            select(func.sum(FeedConsumption.quantity_kg)).where(
+                FeedConsumption.organization_id == rule.organization_id,
+                FeedConsumption.farm_id == rule.farm_id,
+            )
         )
-    )).scalar() or 0
+    ).scalar() or 0
 
     stock = float(purchased) - float(consumed)
     if stock <= 0:
         return {"matched": True, "stock_kg": 0, "days_remaining": 0}
 
     # Avg daily consumption last 30 days
-    avg_daily = (await db.execute(
-        select(func.avg(FeedConsumption.quantity_kg)).where(
-            FeedConsumption.organization_id == rule.organization_id,
-            FeedConsumption.farm_id == rule.farm_id,
-            FeedConsumption.date >= date.today() - timedelta(days=30),
+    avg_daily = (
+        await db.execute(
+            select(func.avg(FeedConsumption.quantity_kg)).where(
+                FeedConsumption.organization_id == rule.organization_id,
+                FeedConsumption.farm_id == rule.farm_id,
+                FeedConsumption.date >= date.today() - timedelta(days=30),
+            )
         )
-    )).scalar() or 0
+    ).scalar() or 0
 
     if float(avg_daily) <= 0:
         return {"matched": False, "reason": "no consumption data"}
 
     days_left = stock / float(avg_daily)
     matched = days_left <= days_threshold
-    return {"matched": matched, "days_remaining": round(days_left, 1), "threshold_days": days_threshold}
+    return {
+        "matched": matched,
+        "days_remaining": round(days_left, 1),
+        "threshold_days": days_threshold,
+    }
 
 
 async def _check_outbreak(db: AsyncSession, rule: WorkflowRule) -> dict:
@@ -188,9 +203,15 @@ async def evaluate_rule(
 
     # Check cooldown
     if not dry_run and rule.last_triggered_at:
-        cooldown_until = rule.last_triggered_at + timedelta(minutes=rule.cooldown_minutes)
+        cooldown_until = rule.last_triggered_at + timedelta(
+            minutes=rule.cooldown_minutes
+        )
         if datetime.now(timezone.utc) < cooldown_until:
-            return {"matched": False, "reason": "cooldown", "cooldown_until": cooldown_until.isoformat()}
+            return {
+                "matched": False,
+                "reason": "cooldown",
+                "cooldown_until": cooldown_until.isoformat(),
+            }
 
     result = await evaluator(db, rule)
 
@@ -212,7 +233,12 @@ async def _execute_actions(
         actions_executed["notify"] = True
 
     # Email actions
-    if actions.get("email") or actions.get("email_vet") or actions.get("email_team") or actions.get("email_client"):
+    if (
+        actions.get("email")
+        or actions.get("email_vet")
+        or actions.get("email_team")
+        or actions.get("email_client")
+    ):
         actions_executed["email_queued"] = True
         # Actual email sending would go through src.core.email
         # For now we log it — the client-side handles immediate notifications

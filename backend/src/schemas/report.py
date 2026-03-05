@@ -20,9 +20,7 @@ class ReportScheduleUpdate(BaseModel):
     template: Optional[str] = Field(
         default=None, pattern=r"^(production|financial|health|feed|kpi)$"
     )
-    frequency: Optional[str] = Field(
-        default=None, pattern=r"^(daily|weekly|monthly)$"
-    )
+    frequency: Optional[str] = Field(default=None, pattern=r"^(daily|weekly|monthly)$")
     recipients: Optional[str] = Field(default=None, max_length=2000)
     is_active: Optional[bool] = None
     params: Optional[dict] = None

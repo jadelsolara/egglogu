@@ -20,7 +20,9 @@ class Webhook(Base, TimestampMixin, TenantMixin):
     name: Mapped[str] = mapped_column(String(200))
     url: Mapped[str] = mapped_column(String(2048))
     secret: Mapped[str] = mapped_column(String(256))  # HMAC-SHA256 signing secret
-    events: Mapped[list] = mapped_column(JSON, default=list)  # ["production.new", "health.alert", ...]
+    events: Mapped[list] = mapped_column(
+        JSON, default=list
+    )  # ["production.new", "health.alert", ...]
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     description: Mapped[Optional[str]] = mapped_column(Text, default=None)
     created_by: Mapped[Optional[uuid.UUID]] = mapped_column(
@@ -30,10 +32,16 @@ class Webhook(Base, TimestampMixin, TenantMixin):
     # Delivery stats
     total_deliveries: Mapped[int] = mapped_column(Integer, default=0)
     total_failures: Mapped[int] = mapped_column(Integer, default=0)
-    last_delivery_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
-    last_failure_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    last_delivery_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
+    last_failure_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
 
-    deliveries: Mapped[list["WebhookDelivery"]] = relationship(back_populates="webhook", cascade="all, delete-orphan")
+    deliveries: Mapped[list["WebhookDelivery"]] = relationship(
+        back_populates="webhook", cascade="all, delete-orphan"
+    )
 
 
 class WebhookDelivery(Base):

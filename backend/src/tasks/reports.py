@@ -34,6 +34,7 @@ def generate_report(self, report_execution_id: str):
 
                 try:
                     from src.core.report_generator import generate_report_data
+
                     report_data = await generate_report_data(db, execution)
                     execution.status = "completed"
                     execution.result = report_data
@@ -47,7 +48,9 @@ def generate_report(self, report_execution_id: str):
         asyncio.run(_generate())
         logger.info("Report execution %s completed", report_execution_id)
     except Exception as exc:
-        logger.error("Report task failed for execution=%s: %s", report_execution_id, exc)
+        logger.error(
+            "Report task failed for execution=%s: %s", report_execution_id, exc
+        )
         raise self.retry(exc=exc)
 
 

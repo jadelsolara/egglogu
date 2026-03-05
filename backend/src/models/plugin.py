@@ -22,10 +22,18 @@ class Plugin(Base, TimestampMixin):
     version: Mapped[str] = mapped_column(String(20))
     description: Mapped[Optional[str]] = mapped_column(Text, default=None)
     author: Mapped[Optional[str]] = mapped_column(String(200), default=None)
-    hooks: Mapped[list] = mapped_column(JSON, default=list)  # ["on_production_entry", "on_alert", ...]
-    permissions: Mapped[list] = mapped_column(JSON, default=list)  # ["read:production", "write:alerts"]
-    config_schema: Mapped[Optional[dict]] = mapped_column(JSON, default=None)  # JSON Schema for plugin config
-    is_public: Mapped[bool] = mapped_column(Boolean, default=False)  # Visible in marketplace
+    hooks: Mapped[list] = mapped_column(
+        JSON, default=list
+    )  # ["on_production_entry", "on_alert", ...]
+    permissions: Mapped[list] = mapped_column(
+        JSON, default=list
+    )  # ["read:production", "write:alerts"]
+    config_schema: Mapped[Optional[dict]] = mapped_column(
+        JSON, default=None
+    )  # JSON Schema for plugin config
+    is_public: Mapped[bool] = mapped_column(
+        Boolean, default=False
+    )  # Visible in marketplace
 
 
 class PluginInstall(Base, TimestampMixin, TenantMixin):
@@ -38,10 +46,14 @@ class PluginInstall(Base, TimestampMixin, TenantMixin):
         ForeignKey("plugins.id", ondelete="CASCADE"), index=True
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    config: Mapped[Optional[dict]] = mapped_column(JSON, default=None)  # Plugin-specific config
+    config: Mapped[Optional[dict]] = mapped_column(
+        JSON, default=None
+    )  # Plugin-specific config
     installed_by: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"), default=None
     )
-    last_executed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    last_executed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
     execution_count: Mapped[int] = mapped_column(default=0)
     last_error: Mapped[Optional[str]] = mapped_column(Text, default=None)

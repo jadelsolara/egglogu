@@ -56,6 +56,7 @@ async def get_current_user(
 
     # Set audit context for hash-chain audit trail
     from src.core.audit import audit_user_id as _audit_uid, audit_org_id as _audit_oid
+
     _audit_uid.set(str(user.id))
     _audit_oid.set(str(user.organization_id))
 

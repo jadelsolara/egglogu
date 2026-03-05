@@ -151,10 +151,12 @@ def _create_audit_entry(
 
 
 # ── Tables to skip auditing ──
-_SKIP_TABLES = frozenset({
-    "audit_logs",
-    "alembic_version",
-})
+_SKIP_TABLES = frozenset(
+    {
+        "audit_logs",
+        "alembic_version",
+    }
+)
 
 
 def _should_audit(instance: Any) -> bool:
@@ -166,6 +168,7 @@ def _should_audit(instance: Any) -> bool:
 
 
 # ── SQLAlchemy Event Listeners ──
+
 
 def _after_flush_handler(session: Session, flush_context: Any) -> None:
     """Capture INSERT/UPDATE/DELETE events after flush."""
@@ -187,7 +190,9 @@ def _after_flush_handler(session: Session, flush_context: Any) -> None:
                     continue
                 new_values[key] = _serialize_value(getattr(instance, key))
 
-            entry = _create_audit_entry("CREATE", table, record_id, org_id, None, new_values)
+            entry = _create_audit_entry(
+                "CREATE", table, record_id, org_id, None, new_values
+            )
             audit_entries.append(entry)
         except Exception as e:
             logger.warning("Audit CREATE failed for %s: %s", type(instance).__name__, e)
@@ -204,7 +209,9 @@ def _after_flush_handler(session: Session, flush_context: Any) -> None:
             old_values, new_values = _get_model_changes(instance)
             if not new_values:
                 continue
-            entry = _create_audit_entry("UPDATE", table, record_id, org_id, old_values, new_values)
+            entry = _create_audit_entry(
+                "UPDATE", table, record_id, org_id, old_values, new_values
+            )
             audit_entries.append(entry)
         except Exception as e:
             logger.warning("Audit UPDATE failed for %s: %s", type(instance).__name__, e)
@@ -225,7 +232,9 @@ def _after_flush_handler(session: Session, flush_context: Any) -> None:
                     continue
                 old_values[key] = _serialize_value(getattr(instance, key))
 
-            entry = _create_audit_entry("DELETE", table, record_id, org_id, old_values, None)
+            entry = _create_audit_entry(
+                "DELETE", table, record_id, org_id, old_values, None
+            )
             audit_entries.append(entry)
         except Exception as e:
             logger.warning("Audit DELETE failed for %s: %s", type(instance).__name__, e)
@@ -251,7 +260,9 @@ async def initialize_hash_cache(db: AsyncSession) -> None:
         result = await db.execute(stmt)
         for org_id, last_hash in result.all():
             _last_hash_cache[org_id] = last_hash
-        logger.info("Audit hash cache initialized for %d organizations", len(_last_hash_cache))
+        logger.info(
+            "Audit hash cache initialized for %d organizations", len(_last_hash_cache)
+        )
     except Exception as e:
         logger.warning("Failed to initialize audit hash cache: %s", e)
 
@@ -292,6 +303,7 @@ async def verify_audit_chain(db: AsyncSession, organization_id: str) -> dict:
 
 
 # ── Legacy manual audit function (backward compat) ──
+
 
 async def log_audit(
     db: AsyncSession,
@@ -340,5 +352,9 @@ async def log_audit(
     db.add(entry)
     logger.info(
         "AUDIT: %s %s/%s by user=%s org=%s",
-        action, resource, resource_id, user_id, organization_id,
+        action,
+        resource,
+        resource_id,
+        user_id,
+        organization_id,
     )

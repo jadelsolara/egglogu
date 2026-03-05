@@ -62,3 +62,13 @@ from src.models.workflow import WorkflowRule, WorkflowExecution  # noqa: F401
 from src.models.webhook import Webhook, WebhookDelivery  # noqa: F401
 from src.models.api_key import APIKey  # noqa: F401
 from src.models.plugin import Plugin, PluginInstall  # noqa: F401
+from src.models.animal_welfare import WelfareAssessment  # noqa: F401
+from src.models.community import (  # noqa: F401
+    ForumCategory,
+    ForumThread,
+    ForumPost,
+    PostLike,
+    ChatRoom,
+    ChatMessage,
+    AIInsight,
+)

@@ -26,6 +26,7 @@ router = APIRouter()
 
 # ─── Connection Manager ─────────────────────────────────────────────
 
+
 class ConnectionManager:
     """Track active WebSocket connections per farm/org."""
 
@@ -69,6 +70,7 @@ HEARTBEAT_INTERVAL = 30  # seconds
 
 # ─── Auth ────────────────────────────────────────────────────────────
 
+
 def _verify_ws_token(token: str) -> dict | None:
     """Verify JWT token for WebSocket auth. Returns payload or None."""
     try:
@@ -84,8 +86,11 @@ def _verify_ws_token(token: str) -> dict | None:
 
 # ─── Farm Dashboard WebSocket ────────────────────────────────────────
 
+
 @router.websocket("/ws/dashboard/{farm_id}")
-async def ws_farm_dashboard(websocket: WebSocket, farm_id: str, token: str = Query(...)):
+async def ws_farm_dashboard(
+    websocket: WebSocket, farm_id: str, token: str = Query(...)
+):
     """WebSocket for live farm dashboard updates."""
     # Auth
     payload = _verify_ws_token(token)
@@ -97,18 +102,25 @@ async def ws_farm_dashboard(websocket: WebSocket, farm_id: str, token: str = Que
 
     await websocket.accept()
     manager.connect_farm(farm_id, websocket)
-    logger.info("WS connected: user=%s farm=%s (total=%d)", user_id, farm_id, manager.total_connections)
+    logger.info(
+        "WS connected: user=%s farm=%s (total=%d)",
+        user_id,
+        farm_id,
+        manager.total_connections,
+    )
 
     # Subscribe to Redis Pub/Sub for this farm
     pubsub = await subscribe_farm(farm_id)
 
     try:
         # Send initial connection confirmation
-        await websocket.send_json({
-            "type": "connected",
-            "farm_id": farm_id,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        await websocket.send_json(
+            {
+                "type": "connected",
+                "farm_id": farm_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        )
 
         if pubsub:
             await _relay_events(websocket, pubsub)
@@ -116,7 +128,12 @@ async def ws_farm_dashboard(websocket: WebSocket, farm_id: str, token: str = Que
             # No Redis — keep connection alive with heartbeat only
             while True:
                 await asyncio.sleep(HEARTBEAT_INTERVAL)
-                await websocket.send_json({"type": "heartbeat", "timestamp": datetime.now(timezone.utc).isoformat()})
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("WS disconnected: user=%s farm=%s", user_id, farm_id)
@@ -130,6 +147,7 @@ async def ws_farm_dashboard(websocket: WebSocket, farm_id: str, token: str = Que
 
 
 # ─── Org-wide WebSocket ─────────────────────────────────────────────
+
 
 @router.websocket("/ws/org/{org_id}")
 async def ws_org_dashboard(websocket: WebSocket, org_id: str, token: str = Query(...)):
@@ -153,18 +171,25 @@ async def ws_org_dashboard(websocket: WebSocket, org_id: str, token: str = Query
     pubsub = await subscribe_org(org_id)
 
     try:
-        await websocket.send_json({
-            "type": "connected",
-            "org_id": org_id,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        await websocket.send_json(
+            {
+                "type": "connected",
+                "org_id": org_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        )
 
         if pubsub:
             await _relay_events(websocket, pubsub)
         else:
             while True:
                 await asyncio.sleep(HEARTBEAT_INTERVAL)
-                await websocket.send_json({"type": "heartbeat", "timestamp": datetime.now(timezone.utc).isoformat()})
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("WS org disconnected: user=%s org=%s", user_id, org_id)
@@ -178,6 +203,7 @@ async def ws_org_dashboard(websocket: WebSocket, org_id: str, token: str = Query
 
 
 # ─── Chat Room WebSocket ────────────────────────────────────────────
+
 
 class ChatConnectionManager:
     """Track active WebSocket connections per chat room."""
@@ -214,24 +240,36 @@ async def ws_chat_room(websocket: WebSocket, room_id: str, token: str = Query(..
 
     await websocket.accept()
     chat_manager.connect(room_id, websocket)
-    logger.info("WS chat connected: user=%s room=%s (online=%d)", user_id, room_id, chat_manager.online_count(room_id))
+    logger.info(
+        "WS chat connected: user=%s room=%s (online=%d)",
+        user_id,
+        room_id,
+        chat_manager.online_count(room_id),
+    )
 
     pubsub = await subscribe_chat(room_id)
 
     try:
-        await websocket.send_json({
-            "type": "connected",
-            "room_id": room_id,
-            "online_count": chat_manager.online_count(room_id),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        await websocket.send_json(
+            {
+                "type": "connected",
+                "room_id": room_id,
+                "online_count": chat_manager.online_count(room_id),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        )
 
         if pubsub:
             await _relay_events(websocket, pubsub)
         else:
             while True:
                 await asyncio.sleep(HEARTBEAT_INTERVAL)
-                await websocket.send_json({"type": "heartbeat", "timestamp": datetime.now(timezone.utc).isoformat()})
+                await websocket.send_json(
+                    {
+                        "type": "heartbeat",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
 
     except WebSocketDisconnect:
         logger.info("WS chat disconnected: user=%s room=%s", user_id, room_id)
@@ -245,6 +283,7 @@ async def ws_chat_room(websocket: WebSocket, room_id: str, token: str = Query(..
 
 
 # ─── Event Relay ─────────────────────────────────────────────────────
+
 
 async def _relay_events(websocket: WebSocket, pubsub):
     """Relay Redis Pub/Sub messages to WebSocket with heartbeat."""
@@ -264,10 +303,12 @@ async def _relay_events(websocket: WebSocket, pubsub):
         # Heartbeat
         now = asyncio.get_event_loop().time()
         if now - last_heartbeat >= HEARTBEAT_INTERVAL:
-            await websocket.send_json({
-                "type": "heartbeat",
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            await websocket.send_json(
+                {
+                    "type": "heartbeat",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
+            )
             last_heartbeat = now
 
         # Small sleep to prevent tight loop

@@ -12,7 +12,9 @@ logger = logging.getLogger("egglogu.tasks.email")
 
 
 @app.task(bind=True, max_retries=3, default_retry_delay=30)
-def send_verification_email(self, to_email: str, verification_url: str, lang: str = "en"):
+def send_verification_email(
+    self, to_email: str, verification_url: str, lang: str = "en"
+):
     """Send email verification link."""
     try:
         from src.core.email import send_email_sync
@@ -56,7 +58,9 @@ def send_password_reset_email(self, to_email: str, reset_url: str, lang: str = "
 
 
 @app.task(bind=True, max_retries=3, default_retry_delay=30)
-def send_team_invite_email(self, to_email: str, invite_url: str, org_name: str, lang: str = "en"):
+def send_team_invite_email(
+    self, to_email: str, invite_url: str, org_name: str, lang: str = "en"
+):
     """Send team invitation email."""
     try:
         from src.core.email import send_email_sync
@@ -82,6 +86,7 @@ def send_alert_email(self, to_email: str, subject: str, body_html: str):
     """Send generic alert email (health alerts, threshold breaches, etc.)."""
     try:
         from src.core.email import send_email_sync
+
         send_email_sync(to=to_email, subject=subject, html=body_html)
         logger.info("Alert email sent to %s: %s", to_email, subject)
     except Exception as exc:

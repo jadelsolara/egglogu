@@ -4,8 +4,15 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import (
-    Boolean, DateTime, Enum, Float, ForeignKey, Integer,
-    String, Text, func,
+    Boolean,
+    DateTime,
+    Enum,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    func,
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -14,6 +21,7 @@ from src.models.base import TimestampMixin
 
 
 # ── Enums ──────────────────────────────────────────────────────────
+
 
 class ThreadStatus(str, enum.Enum):
     open = "open"
@@ -37,8 +45,10 @@ class ModerationAction(str, enum.Enum):
 
 # ── Forum Category ─────────────────────────────────────────────────
 
+
 class ForumCategory(TimestampMixin, Base):
     """Global categories — not tenant-scoped (shared across all orgs)."""
+
     __tablename__ = "forum_categories"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -52,8 +62,10 @@ class ForumCategory(TimestampMixin, Base):
 
 # ── Forum Thread ───────────────────────────────────────────────────
 
+
 class ForumThread(TimestampMixin, Base):
     """A discussion thread created by a user."""
+
     __tablename__ = "forum_threads"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -80,8 +92,10 @@ class ForumThread(TimestampMixin, Base):
 
 # ── Forum Post (reply) ────────────────────────────────────────────
 
+
 class ForumPost(TimestampMixin, Base):
     """A reply within a thread. First post = thread body."""
+
     __tablename__ = "forum_posts"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -106,8 +120,10 @@ class ForumPost(TimestampMixin, Base):
 
 # ── Post Like ──────────────────────────────────────────────────────
 
+
 class PostLike(TimestampMixin, Base):
     """User likes on forum posts."""
+
     __tablename__ = "post_likes"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -121,8 +137,10 @@ class PostLike(TimestampMixin, Base):
 
 # ── Chat Room ──────────────────────────────────────────────────────
 
+
 class ChatRoom(TimestampMixin, Base):
     """Global chat rooms (topic-based). Not tenant-scoped."""
+
     __tablename__ = "chat_rooms"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -139,8 +157,10 @@ class ChatRoom(TimestampMixin, Base):
 
 # ── Chat Message ───────────────────────────────────────────────────
 
+
 class ChatMessage(TimestampMixin, Base):
     """A message in a chat room."""
+
     __tablename__ = "chat_messages"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -164,8 +184,10 @@ class ChatMessage(TimestampMixin, Base):
 
 # ── AI Insight (extracted from conversations) ─────────────────────
 
+
 class AIInsight(TimestampMixin, Base):
     """AI-extracted insights from forum threads and chat messages."""
+
     __tablename__ = "ai_insights"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

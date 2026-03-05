@@ -47,7 +47,9 @@ async def blacklist_token(jti: str, expires_in_seconds: int) -> None:
     """Add a token JTI to the blacklist. TTL matches token expiry."""
     redis = await _get_redis()
     if not redis:
-        logger.critical("Token blacklist UNAVAILABLE — Redis down, revoked tokens may pass")
+        logger.critical(
+            "Token blacklist UNAVAILABLE — Redis down, revoked tokens may pass"
+        )
         return
     try:
         await redis.setex(f"{_PREFIX_BLACKLIST}{jti}", expires_in_seconds, "1")
@@ -104,7 +106,9 @@ async def record_failed_login(email: str) -> int:
     """Increment failed login counter. Fail-closed: Redis down = return max attempts."""
     redis = await _get_redis()
     if not redis:
-        logger.error("Redis unavailable for login lockout — fail-closed, returning max attempts")
+        logger.error(
+            "Redis unavailable for login lockout — fail-closed, returning max attempts"
+        )
         return LOCKOUT_MAX_ATTEMPTS
     try:
         key = f"{_PREFIX_LOCKOUT}{email}"
@@ -146,7 +150,9 @@ async def get_lockout_remaining(email: str) -> int:
     """Get remaining lockout seconds. Fail-closed: Redis down = return full window."""
     redis = await _get_redis()
     if not redis:
-        logger.error("Redis unavailable for lockout TTL — fail-closed, returning full window")
+        logger.error(
+            "Redis unavailable for lockout TTL — fail-closed, returning full window"
+        )
         return LOCKOUT_WINDOW_SECONDS
     try:
         ttl = await redis.ttl(f"{_PREFIX_LOCKOUT}{email}")

@@ -2,7 +2,15 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import String, Integer, Boolean, ForeignKey, Text, DateTime, Enum as SAEnum
+from sqlalchemy import (
+    String,
+    Integer,
+    Boolean,
+    ForeignKey,
+    Text,
+    DateTime,
+    Enum as SAEnum,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -52,7 +60,9 @@ class WorkflowExecution(TimestampMixin, TenantMixin, Base):
     farm_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("farms.id", ondelete="CASCADE"), index=True
     )
-    triggered_by: Mapped[str] = mapped_column(String(50))  # "system" | "manual" | user_id
+    triggered_by: Mapped[str] = mapped_column(
+        String(50)
+    )  # "system" | "manual" | user_id
     conditions_matched: Mapped[Optional[dict]] = mapped_column(JSONB, default=None)
     actions_executed: Mapped[Optional[dict]] = mapped_column(JSONB, default=None)
     status: Mapped[str] = mapped_column(String(20), default="completed")

@@ -21,23 +21,18 @@ app.conf.update(
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",
-
     # Timezone
     timezone="UTC",
     enable_utc=True,
-
     # Reliability
     task_acks_late=True,
     worker_prefetch_multiplier=1,
     task_reject_on_worker_lost=True,
-
     # Retry
     task_default_retry_delay=60,
     task_max_retries=3,
-
     # Results
     result_expires=3600,  # 1 hour
-
     # Task routing
     task_routes={
         "src.tasks.email.*": {"queue": "email"},
@@ -47,7 +42,6 @@ app.conf.update(
         "src.tasks.billing.*": {"queue": "default"},
         "src.tasks.analytics.*": {"queue": "analytics"},
     },
-
     # Beat schedule (periodic tasks)
     beat_schedule={
         "refresh-kpi-snapshots": {

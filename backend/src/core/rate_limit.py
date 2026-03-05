@@ -38,7 +38,10 @@ async def init_redis() -> None:
                 decode_responses=True,
             )
             await _redis.ping()
-            logger.info("Redis connected via Sentinel (master=%s)", settings.REDIS_SENTINEL_MASTER)
+            logger.info(
+                "Redis connected via Sentinel (master=%s)",
+                settings.REDIS_SENTINEL_MASTER,
+            )
         elif settings.REDIS_URL:
             # Direct connection mode
             _redis = aioredis.from_url(settings.REDIS_URL, decode_responses=True)

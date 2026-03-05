@@ -30,7 +30,9 @@ class AuditLog(Base):
     user_agent: Mapped[str | None] = mapped_column(String(500), default=None)
 
     # What
-    action: Mapped[str] = mapped_column(String(20), index=True)  # CREATE, UPDATE, DELETE
+    action: Mapped[str] = mapped_column(
+        String(20), index=True
+    )  # CREATE, UPDATE, DELETE
     table_name: Mapped[str] = mapped_column(String(100), index=True)
     record_id: Mapped[str] = mapped_column(String(50), index=True)
 
@@ -45,4 +47,6 @@ class AuditLog(Base):
 
     # Hash-chain fields for immutability verification
     hash: Mapped[str] = mapped_column(String(64), index=True)  # SHA-256 hex
-    prev_hash: Mapped[str] = mapped_column(String(64), default="0" * 64)  # genesis = all zeros
+    prev_hash: Mapped[str] = mapped_column(
+        String(64), default="0" * 64
+    )  # genesis = all zeros
