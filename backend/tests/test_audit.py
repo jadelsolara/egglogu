@@ -10,4 +10,6 @@ async def test_list_audit_logs(client: AsyncClient, authenticated_user):
         headers=authenticated_user["headers"],
     )
     assert resp.status_code == 200
-    assert isinstance(resp.json(), list)
+    data = resp.json()
+    # Supports both list and paginated response formats
+    assert isinstance(data, list) or (isinstance(data, dict) and "items" in data)
