@@ -33,6 +33,18 @@ node_modules/
 frontend/node_modules/
 dist/
 
+# Backups / Archives
+*.bak
+*.bak.*
+backups_archive/
+correos/
+
+# Test results
+test-results/
+playwright-report/
+backend/stress_results_*.json
+backend/tests/load/results_*/
+
 # OS
 .DS_Store
 Thumbs.db
