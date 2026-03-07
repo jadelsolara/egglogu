@@ -2,542 +2,1097 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>What came first? | EGGlogU 360</title>
-<meta name="theme-color" content="#1B2E4B">
-<meta name="description" content="What came first, the chicken or the egg? Answer: EGGlogU 360 — Gestión Avícola Inteligente">
-<meta property="og:title" content="What came first, the chicken or the egg?">
-<meta property="og:description" content="Answer: EGGlogU 360 — La plataforma que nació antes que el problema.">
-<meta property="og:image" content="campaign-logo.webp">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGGlogU — Gestión avícola inteligente</title>
+<meta name="description" content="Plataforma digital para granjas avícolas. Producción, salud, alimentación, finanzas y trazabilidad. Funciona offline. Empieza gratis.">
+<meta name="theme-color" content="#0F2137">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="campaign-logo.webp">
+<!-- Open Graph -->
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://egglogu.com/">
+<meta property="og:title" content="EGGlogU — Gestión avícola inteligente">
+<meta property="og:description" content="Producción de huevos, salud, alimentación, finanzas y trazabilidad en una sola plataforma. Funciona sin internet. 14 idiomas. Empieza gratis.">
+<meta property="og:image" content="https://egglogu.com/campaign-logo.webp">
+<meta property="og:locale" content="es_CL">
+<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<meta name="twitter:title" content="EGGlogU — Gestión avícola inteligente">
+<meta name="twitter:description" content="Gestión avícola con IA predictiva. Offline-first, 14 idiomas, desde $0/mes.">
+<meta name="twitter:image" content="https://egglogu.com/campaign-logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
-:root{--navy:#1B2E4B;--navy-deep:#0F2137;--orange:#F5A623;--red:#E74C3C;--white:#FFFFFF;--cream:#FFF8E1}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--navy-deep);color:var(--white);min-height:100vh;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2E4B;--navy-deep:#0F2137;--navy-light:#243B55;
+  --orange:#F5A623;--orange-dark:#E09200;--orange-glow:rgba(245,166,35,.15);
+  --red:#E74C3C;--cream:#FFF8E1;
+  --white:#FFFFFF;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.12);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--white);line-height:1.6;overflow-x:hidden;background:var(--navy-deep)}
+a{color:inherit;text-decoration:none}
+img,svg{max-width:100%;display:block}
 
-/* Phase 1: Teaser */
-.phase-teaser{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;position:relative;background:radial-gradient(ellipse at center,#243B55 0%,var(--navy-deep) 70%)}
-.phase-teaser::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M20 10c-3 0-6 5-6 10s3 10 6 10 6-5 6-10-3-10-6-10z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,33,55,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);padding:.75rem 0;transition:box-shadow .3s}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.25rem;color:var(--white)}
+.nav-brand img{width:36px;height:36px;border-radius:8px}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{font-size:.95rem;color:rgba(255,255,255,.7);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--orange)}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.65rem 1.5rem;border-radius:8px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn-primary{background:var(--orange);color:var(--navy-deep)}
+.btn-primary:hover{background:var(--orange-dark);transform:translateY(-1px);box-shadow:0 4px 20px rgba(245,166,35,.4)}
+.btn-outline{border:2px solid var(--orange);color:var(--orange);background:transparent}
+.btn-outline:hover{background:rgba(245,166,35,.1)}
+.nav-links .btn-outline{background:rgba(20,30,50,.85);border-radius:50px;padding:.65rem 1.5rem}
+.nav-links .btn-outline:hover{background:rgba(20,30,50,.95)}
+.btn-white{background:var(--white);color:var(--navy-deep)}
+.btn-white:hover{background:var(--gray-100);transform:translateY(-1px)}
+.btn-ghost{border:2px solid rgba(255,255,255,.3);color:var(--white);background:transparent}
+.btn-ghost:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.05)}
+.btn-lg{padding:.85rem 2.2rem;font-size:1.1rem;border-radius:10px}
+.lang-picker.lang-picker-fixed{position:fixed;top:1.25rem;right:1.5rem;z-index:300}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:.3s}
 
-.question-mark{font-size:120px;opacity:.06;position:absolute;font-weight:900}
-.q1{top:10%;left:8%;transform:rotate(-15deg)}
-.q2{top:20%;right:12%;transform:rotate(20deg)}
-.q3{bottom:15%;left:15%;transform:rotate(10deg)}
-.q4{bottom:25%;right:8%;transform:rotate(-25deg)}
-
-.logo-container{margin-bottom:48px;position:relative;z-index:1}
-.logo-container img{width:280px;height:280px;border-radius:40px;box-shadow:0 20px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);transition:transform .6s cubic-bezier(.16,1,.3,1)}
-.logo-container img:hover{transform:scale(1.05) rotate(-2deg)}
-.logo-glow{position:absolute;inset:-20px;border-radius:60px;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 70%);z-index:-1;animation:glow 3s ease-in-out infinite alternate}
+/* HERO */
+.hero{padding:8rem 1.5rem 5rem;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,var(--navy-light) 0%,var(--navy-deep) 70%);text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;right:-120px;width:400px;height:400px;border-radius:50%;background:rgba(245,166,35,.04)}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:rgba(245,166,35,.03)}
+.hero-content{max-width:800px;margin:0 auto;position:relative;z-index:1}
+.hero-logo{margin:0 auto 2rem;position:relative;width:180px;height:180px}
+.hero-logo img{width:180px;height:180px;border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);position:relative;z-index:1}
+.hero-logo .logo-glow{position:absolute;inset:-15px;border-radius:45px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);animation:glow 3s ease-in-out infinite alternate}
 @keyframes glow{0%{opacity:.5;transform:scale(.95)}100%{opacity:1;transform:scale(1.05)}}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem}
+.hero-badge span{background:var(--orange);color:var(--navy-deep);padding:.15rem .5rem;border-radius:50px;font-size:.75rem;font-weight:700}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:800;line-height:1.15;margin-bottom:1.25rem;color:var(--white)}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p{font-size:1.2rem;color:rgba(255,255,255,.6);max-width:600px;margin:0 auto 2rem;line-height:1.7}
+.hero-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:3.5rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat strong{display:block;font-size:1.8rem;color:var(--orange);font-weight:800}
+.hero-stat span{font-size:.85rem;color:rgba(255,255,255,.5)}
 
-.question{position:relative;z-index:1}
-.question h1{font-size:clamp(28px,5vw,52px);font-weight:300;line-height:1.3;margin-bottom:12px;letter-spacing:-1px}
-.question h1 em{font-style:italic;color:rgba(255,255,255,.6)}
-.question .dots{font-size:40px;letter-spacing:8px;opacity:.4;margin:20px 0;animation:pulse 2s ease-in-out infinite}
+/* CURTAIN / TEASER */
+.curtain{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#243B55 0%,var(--navy-deep) 70%);text-align:center;position:relative;overflow:hidden;padding:40px 24px;z-index:200}
+.curtain::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='30' y='35' text-anchor='middle' font-size='14' font-weight='700' fill='rgba(255,255,255,0.03)' font-family='Inter,sans-serif'%3E%3F%3C/text%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.curtain .question-mark{font-size:120px;opacity:.06;position:absolute;font-weight:900;color:var(--white);pointer-events:none}
+.curtain .q1{top:10%;left:8%;transform:rotate(-15deg)}
+.curtain .q2{top:20%;right:12%;transform:rotate(20deg)}
+.curtain .q3{bottom:15%;left:15%;transform:rotate(10deg)}
+.curtain .q4{bottom:25%;right:8%;transform:rotate(-25deg)}
+.curtain-topbar{position:absolute;top:1.25rem;left:1.5rem;right:1.5rem;display:flex;justify-content:space-between;align-items:center;z-index:5}
+.curtain-access{display:inline-flex;align-items:center;gap:.5rem;border:2px solid var(--orange);color:var(--orange);background:transparent;padding:.55rem 1.2rem;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:inherit;transition:all .2s;text-decoration:none}
+.curtain-access:hover{background:rgba(245,166,35,.12)}
+.lang-picker{position:relative}
+.lang-globe{width:40px;height:40px;border-radius:50%;background:transparent;border:2px solid rgba(255,255,255,.3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s}
+.lang-globe:hover{border-color:var(--white);background:rgba(255,255,255,.08)}
+.lang-globe svg{width:20px;height:20px;color:var(--white)}
+.lang-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--navy);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.5rem 0;min-width:160px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:all .25s ease;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:10}
+.lang-dropdown.open{opacity:1;visibility:visible;transform:translateY(0)}
+.lang-option{display:block;width:100%;padding:.55rem 1.1rem;font-size:.88rem;font-weight:500;color:rgba(255,255,255,.65);background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;transition:all .15s}
+.lang-option:hover{background:rgba(255,255,255,.06);color:var(--white)}
+.lang-option.active{color:var(--orange);font-weight:600}
+.curtain-body{position:relative;z-index:2;max-width:700px;display:flex;flex-direction:column;align-items:center}
+.curtain-logo-wrap{margin:0 auto 48px;position:relative;z-index:1}
+.curtain-logo-wrap .logo-glow{position:absolute;inset:-20px;border-radius:60px;background:radial-gradient(circle,rgba(245,166,35,.15) 0%,transparent 70%);z-index:-1;animation:glow 3s ease-in-out infinite alternate}
+.curtain-logo{width:280px;height:280px;border-radius:40px;box-shadow:0 20px 80px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.05);transition:transform .6s cubic-bezier(.16,1,.3,1);cursor:pointer}
+.curtain-logo:hover{transform:scale(1.05) rotate(-2deg)}
+.curtain-question{position:relative;z-index:1}
+.curtain-question h2{font-size:clamp(28px,5vw,52px);font-weight:300;line-height:1.3;margin-bottom:12px;letter-spacing:-1px;color:var(--white)}
+.curtain-question h2 em{font-style:italic;color:rgba(255,255,255,.6)}
+.curtain-dots{font-size:40px;letter-spacing:8px;opacity:.4;margin:20px 0;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:.7}}
-
-.answer-reveal{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal 1s ease-out 2.5s forwards}
+.curtain-answer{margin-top:48px;position:relative;z-index:1;opacity:0;transform:translateY(30px);animation:reveal .8s ease-out 1.5s forwards}
 @keyframes reveal{to{opacity:1;transform:translateY(0)}}
+.curtain-brand{font-size:clamp(42px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1;color:var(--white)}
+.curtain-brand span.light{font-weight:300;color:rgba(255,255,255,.6)}
+.curtain-360{font-size:clamp(24px,4vw,48px);font-weight:800;color:var(--orange);letter-spacing:6px;margin-top:4px}
+.curtain-sub{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.6);margin-top:20px;font-weight:300;font-style:italic}
+.curtain-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;animation:bounce 2s infinite}
+.curtain-scroll svg{width:28px;height:28px;color:rgba(255,255,255,.3)}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
 
-.answer-label{font-size:14px;text-transform:uppercase;letter-spacing:4px;color:rgba(255,255,255,.5);margin-bottom:16px;font-weight:600}
-.answer-brand{font-size:clamp(42px,8vw,80px);font-weight:900;letter-spacing:2px;line-height:1}
-.answer-brand .egg{color:var(--white)}
-.answer-brand .log{font-weight:300;color:rgba(255,255,255,.7)}
-.answer-brand .u{color:var(--white)}
-.answer-360{font-size:clamp(24px,4vw,48px);font-weight:800;color:var(--orange);letter-spacing:6px;margin-top:4px}
-.answer-tagline{font-size:clamp(14px,2vw,20px);color:rgba(255,255,255,.6);margin-top:20px;font-weight:300;font-style:italic}
+/* SECTION COMMON */
+section{padding:5rem 1.5rem}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-header{text-align:center;max-width:650px;margin:0 auto 3.5rem}
+.section-header h2{font-size:2.2rem;font-weight:700;margin-bottom:.75rem;color:var(--white)}
+.section-header p{color:rgba(255,255,255,.5);font-size:1.1rem}
 
-/* Divider */
-.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);margin:0}
+/* PROBLEMS */
+.problems{background:var(--navy)}
+.problems-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:900px;margin:0 auto}
+.problem-card{display:flex;gap:1rem;align-items:flex-start;background:rgba(255,255,255,.04);padding:1.5rem;border-radius:var(--radius);border:1px solid rgba(255,255,255,.08)}
+.problem-icon{flex-shrink:0;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.problem-icon.red{background:rgba(231,76,60,.12);color:var(--red)}
+.problem-icon.green{background:rgba(245,166,35,.12);color:var(--orange)}
+.problem-card h3{font-size:1rem;font-weight:600;margin-bottom:.25rem;color:var(--white)}
+.problem-card p{font-size:.9rem;color:rgba(255,255,255,.5)}
 
-/* Phase 2: The Pitch */
-.phase-pitch{padding:80px 24px;text-align:center;background:var(--navy)}
-.pitch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;max-width:960px;margin:48px auto 0}
-.pitch-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:32px 24px;transition:all .3s}
-.pitch-card:hover{background:rgba(255,255,255,.08);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.2)}
-.pitch-icon{font-size:40px;margin-bottom:16px}
-.pitch-card h3{font-size:18px;font-weight:700;margin-bottom:8px}
-.pitch-card p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6}
+/* FEATURES */
+.features-section{background:var(--navy-deep)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feature-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:2rem;transition:all .25s}
+.feature-card:hover{border-color:var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.1);transform:translateY(-3px)}
+.feature-icon{width:52px;height:52px;border-radius:12px;background:rgba(245,166,35,.1);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem}
+.feature-card h3{font-size:1.15rem;font-weight:600;margin-bottom:.5rem;color:var(--white)}
+.feature-card p{font-size:.92rem;color:rgba(255,255,255,.5);line-height:1.6}
 
-.section-title{font-size:clamp(22px,3.5vw,36px);font-weight:800;margin-bottom:8px}
-.section-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,.5);font-weight:300}
+/* GUIDED TOUR */
+.tour-section{background:var(--navy)}
+.tour-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.tour-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .25s}
+.tour-card:hover{border-color:var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.1);transform:translateY(-3px)}
+.tour-screen{height:220px;background:var(--navy-deep);border-bottom:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden;padding:.75rem}
+.tour-screen-topbar{display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:rgba(245,166,35,.15);border-radius:6px;margin-bottom:.5rem;font-size:.65rem;color:var(--orange)}
+.tour-screen-grid{display:grid;gap:.4rem}
+.tour-screen-row{display:flex;gap:.4rem}
+.tour-screen-block{border-radius:4px;background:rgba(255,255,255,.06)}
+.tour-screen-bar{height:6px;border-radius:3px;background:rgba(245,166,35,.3)}
+.tour-info{padding:1.25rem}
+.tour-info h3{font-size:1.05rem;font-weight:600;color:var(--white);margin-bottom:.35rem}
+.tour-info p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5}
+.tour-badge{display:inline-block;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600;margin-top:.5rem}
+.tour-badge.hobby{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.tour-badge.starter{background:rgba(59,130,246,.15);color:#60a5fa}
+.tour-badge.pro{background:rgba(245,166,35,.15);color:var(--orange)}
+.tour-badge.enterprise{background:rgba(168,85,247,.15);color:#c084fc}
+.tour-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:2rem}
+.tour-lightbox.active{display:flex}
+.tour-lightbox-inner{background:var(--navy-light);border:1px solid rgba(255,255,255,.1);border-radius:16px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem;position:relative}
+.tour-lightbox-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--white);font-size:1.5rem;cursor:pointer;opacity:.6;transition:opacity .2s}
+.tour-lightbox-close:hover{opacity:1}
+.tour-lightbox-screen{height:350px;background:var(--navy-deep);border-radius:12px;border:1px solid rgba(255,255,255,.08);margin-bottom:1.5rem;padding:1rem;overflow:hidden}
+.tour-lightbox h3{font-size:1.4rem;color:var(--white);margin-bottom:.5rem}
+.tour-lightbox p{color:rgba(255,255,255,.6);line-height:1.7}
+.tour-lightbox-features{list-style:none;padding:0;margin-top:1rem}
+.tour-lightbox-features li{padding:.4rem 0;color:rgba(255,255,255,.5);font-size:.9rem}
+.tour-lightbox-features li::before{content:'✓ ';color:var(--orange)}
+@media(max-width:1024px){.tour-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .tour-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:1rem;padding-bottom:1rem;-webkit-overflow-scrolling:touch}
+  .tour-card{min-width:280px;scroll-snap-align:start;flex-shrink:0}
+  .tour-dots{display:flex;justify-content:center;gap:.5rem;margin-top:1rem}
+  .tour-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);border:none;cursor:pointer;padding:0}
+  .tour-dot.active{background:var(--orange)}
+}
 
-/* Pricing */
-.phase-pricing{padding:80px 24px;text-align:center;background:var(--navy-deep)}
-.pricing-accordion{max-width:680px;margin:48px auto 0;text-align:left}
-.acc-item{border:1px solid rgba(255,255,255,.08);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:all .3s}
-.acc-item.featured{border-color:var(--orange)}
-.acc-item.open{background:rgba(255,255,255,.05)}
-.acc-item.open.featured{background:rgba(245,166,35,.05)}
-.acc-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;user-select:none;transition:background .2s}
-.acc-header:hover{background:rgba(255,255,255,.04)}
-.acc-h-left{display:flex;align-items:center;gap:16px}
-.acc-tier{font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.7)}
-.acc-item.featured .acc-tier{color:var(--orange)}
-.acc-price{font-size:28px;font-weight:900;line-height:1}
-.acc-price span{font-size:14px;font-weight:400;color:rgba(255,255,255,.5)}
-.acc-badge{background:var(--orange);color:var(--navy-deep);font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;white-space:nowrap}
-.acc-chevron{font-size:20px;color:rgba(255,255,255,.4);transition:transform .3s}
-.acc-item.open .acc-chevron{transform:rotate(180deg);color:var(--orange)}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.acc-item.open .acc-body{max-height:500px}
-.acc-content{padding:0 24px 24px}
-.acc-desc{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:16px}
-.price-features{list-style:none;text-align:left;margin-bottom:20px}
-.price-features li{padding:6px 0;font-size:14px;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.05)}
-.price-features li::before{content:'\2713  ';color:var(--orange);font-weight:700}
-.btn-price{display:inline-block;padding:12px 28px;background:transparent;border:2px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;transition:all .2s;cursor:pointer}
-.btn-price:hover{border-color:#fff;background:rgba(255,255,255,.05)}
-.btn-price-main{background:var(--orange);border-color:var(--orange);color:var(--navy-deep)}
-.btn-price-main:hover{background:#FFB84D;border-color:#FFB84D}
-.pricing-note{max-width:680px;margin:28px auto 0;padding:16px 24px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:12px;font-size:14px;color:rgba(255,255,255,.8);line-height:1.6}
-.pricing-note strong{color:var(--orange)}
-.contact-strip{margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.btn-email{padding:14px 32px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-.btn-email:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4)}
+/* HOW IT WORKS */
+.how{background:var(--navy)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;position:relative}
+.steps::before{content:'';position:absolute;top:36px;left:calc(12.5% + 24px);right:calc(12.5% + 24px);height:2px;background:rgba(255,255,255,.1)}
+.step{text-align:center;position:relative}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--orange);color:var(--navy-deep);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;margin:0 auto 1.25rem;position:relative;z-index:1}
+.step h3{font-size:1.05rem;font-weight:600;margin-bottom:.4rem;color:var(--white)}
+.step p{font-size:.88rem;color:rgba(255,255,255,.5)}
 
-/* Phase 3: CTA */
-.phase-cta{padding:80px 24px;text-align:center;background:linear-gradient(135deg,var(--navy-deep) 0%,#243B55 100%);position:relative}
-.taglines{display:flex;flex-direction:column;gap:16px;max-width:600px;margin:40px auto 48px;align-items:center}
-.tagline{font-size:clamp(16px,2.5vw,22px);padding:12px 28px;border-radius:40px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-weight:300;transition:all .3s;cursor:default}
-.tagline:hover{background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);color:var(--orange)}
-.tagline strong{font-weight:700;color:var(--orange)}
+/* DIFFERENTIATORS */
+.diff-section{background:var(--navy-deep)}
+.diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.diff-card{background:linear-gradient(135deg,rgba(245,166,35,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:2rem;text-align:center;transition:all .25s}
+.diff-card:hover{border-color:var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.08);transform:translateY(-3px)}
+.diff-card .diff-icon{font-size:2.5rem;margin-bottom:1rem}
+.diff-card h3{font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--white)}
+.diff-card p{font-size:.9rem;color:rgba(255,255,255,.5)}
 
-.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
-.btn-main{padding:16px 40px;background:var(--orange);color:var(--navy-deep);border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
-.btn-main:hover{background:#FFB84D;transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,166,35,.3)}
-.btn-ghost{padding:16px 40px;background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.3);border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
-.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.05)}
+/* PRICING */
+.pricing{background:var(--navy)}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;align-items:stretch}
+.price-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:2rem 1.5rem;text-align:left;transition:all .25s;position:relative;display:flex;flex-direction:column}
+.price-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.2);border-color:rgba(255,255,255,.15)}
+.price-card.featured{border:2px solid var(--orange);box-shadow:0 8px 32px rgba(245,166,35,.15)}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:var(--navy-deep);padding:.2rem 1rem;border-radius:50px;font-size:.78rem;font-weight:700;white-space:nowrap}
+.price-card h3{font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem;color:rgba(255,255,255,.6)}
+.price-card.featured h3{color:var(--orange)}
+.price-card .price{font-size:2.8rem;font-weight:800;color:var(--white);margin:0 0 .15rem}
+.price-card .price span{font-size:1rem;font-weight:400;color:rgba(255,255,255,.5)}
+.price-card .price-period{font-size:.85rem;color:rgba(255,255,255,.4);margin-bottom:1.5rem}
+.price-card ul{list-style:none;text-align:left;margin-bottom:1.5rem;flex:1}
+.price-card li{font-size:.88rem;color:rgba(255,255,255,.7);padding:.35rem 0;display:flex;align-items:flex-start;gap:.5rem}
+.price-card li::before{content:'\2713';color:var(--orange);font-weight:700;font-size:.85rem;flex-shrink:0}
+.price-card .btn{width:100%}
+.pricing-included{margin-top:3rem;border:2px solid var(--orange);border-radius:var(--radius);padding:2.5rem 2rem;text-align:center}
+.pricing-included h3{font-size:1.1rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:1.5rem}
+.pricing-included-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.pricing-included-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1.25rem;text-align:left}
+.pricing-included-card h4{font-size:.95rem;font-weight:700;color:var(--orange);margin-bottom:.4rem}
+.pricing-included-card p{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.5}
+.pricing-note{margin-top:1.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:1rem 1.5rem;text-align:center;font-size:.9rem;color:rgba(255,255,255,.6)}
+.pricing-note strong{color:var(--orange);font-weight:700}
+/* LAUNCH PROMO */
+.launch-promo{margin-bottom:2.5rem;border:2px solid var(--orange);border-radius:var(--radius);padding:2.5rem 2rem;background:linear-gradient(135deg,rgba(245,166,35,.1) 0%,rgba(245,166,35,.03) 100%);position:relative;overflow:hidden;text-align:center}
+.launch-promo::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.12) 0%,transparent 70%)}
+.launch-promo-tag{display:inline-block;background:var(--orange);color:var(--navy-deep);padding:.3rem 1.2rem;border-radius:50px;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem}
+.launch-promo-row{display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap;position:relative;z-index:1}
+.launch-promo-price{text-align:center}
+.launch-promo-price .big-price{font-size:4rem;font-weight:800;color:var(--orange);line-height:1}
+.launch-promo-price .big-price span{font-size:1.2rem;font-weight:400;color:rgba(255,255,255,.5)}
+.launch-promo-price .price-sub{font-size:.95rem;color:rgba(255,255,255,.5);margin-top:.25rem}
+.launch-promo-info{text-align:left;max-width:420px}
+.launch-promo-info h3{font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:.5rem}
+.launch-promo-info p{font-size:.92rem;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:1rem}
+.launch-promo-info .promo-features{list-style:none;padding:0;margin:0 0 1.25rem}
+.launch-promo-info .promo-features li{font-size:.88rem;color:rgba(255,255,255,.7);padding:.25rem 0;display:flex;align-items:center;gap:.5rem}
+.launch-promo-info .promo-features li::before{content:'\2713';color:var(--orange);font-weight:700;font-size:.85rem}
+.launch-promo-urgency{font-size:.8rem;color:var(--orange);font-weight:600;margin-top:.75rem;text-align:center}
+.launch-promo-after{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1}
+.launch-promo-after p{font-size:.85rem;color:rgba(255,255,255,.4);max-width:600px;margin:0 auto}
+.launch-promo-after strong{color:rgba(255,255,255,.7)}
+@media(max-width:768px){.launch-promo-row{flex-direction:column;gap:1.5rem}.launch-promo-info{text-align:center}.launch-promo-price .big-price{font-size:3rem}}
+.compare-toggle-wrap{text-align:center;margin-top:2rem}
+.compare-toggle{background:transparent;border:2px solid var(--orange);color:var(--orange);padding:.7rem 2rem;border-radius:50px;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem}
+.compare-toggle:hover{background:var(--orange);color:var(--navy-deep)}
+.compare-toggle .arrow{transition:transform .3s;display:inline-block;font-size:.75rem}
+.compare-toggle.open .arrow{transform:rotate(180deg)}
+.compare-panel{max-height:0;overflow:hidden;transition:max-height .4s ease;margin-top:0}
+.compare-panel.open{margin-top:1.5rem}
+.compare-table{width:100%;border-collapse:collapse;border:2px solid var(--orange);border-radius:var(--radius);overflow:hidden;background:rgba(255,255,255,.03)}
+.compare-table th,.compare-table td{padding:.65rem .8rem;text-align:center;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.compare-table th{background:rgba(245,166,35,.12);color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.78rem}
+.compare-table td:first-child{text-align:left;color:rgba(255,255,255,.8);font-weight:500;padding-left:1.2rem}
+.compare-table th:first-child{text-align:left;padding-left:1.2rem}
+.compare-table tr:hover{background:rgba(245,166,35,.04)}
+.compare-table .check{color:var(--orange);font-weight:700;font-size:1rem}
+.compare-table .no{color:rgba(255,255,255,.2);font-size:.85rem}
+.compare-table .cat-row td{background:rgba(245,166,35,.06);font-weight:700;color:var(--orange);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;padding:.5rem .8rem}
 
-/* Footer */
-.footer{padding:32px 24px;text-align:center;background:var(--navy-deep);border-top:1px solid rgba(255,255,255,.05)}
-.footer p{font-size:13px;color:rgba(255,255,255,.3)}
-.footer a{color:var(--orange);text-decoration:none}
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy-light) 100%);color:var(--white);text-align:center;padding:5rem 1.5rem;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.06) 0%,transparent 70%)}
+.cta-section h2{font-size:2.2rem;font-weight:700;margin-bottom:.75rem;position:relative;z-index:1}
+.cta-section p{font-size:1.15rem;opacity:.6;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
 
-/* Social share cards */
-.share-strip{display:flex;gap:12px;justify-content:center;margin-top:32px}
-.share-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all .2s;text-decoration:none;color:#fff}
-.share-btn:hover{background:var(--orange);border-color:var(--orange);color:var(--navy-deep);transform:scale(1.1)}
+/* FOOTER */
+footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5rem 1.5rem;border-top:1px solid rgba(255,255,255,.06)}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:2.5rem}
+.footer-brand{font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.footer-brand img{width:28px;height:28px;border-radius:6px}
+.footer-brand-text{font-size:.88rem;color:rgba(255,255,255,.4);line-height:1.6}
+.footer-col h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-bottom:1rem;font-weight:600}
+.footer-col a{display:block;font-size:.9rem;color:rgba(255,255,255,.5);padding:.3rem 0;transition:color .2s}
+.footer-col a:hover{color:var(--orange)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:rgba(255,255,255,.35);flex-wrap:wrap;gap:.5rem}
 
-/* Language switcher */
-.lang-bar{position:fixed;top:16px;right:16px;z-index:200;display:flex;gap:6px;align-items:center;background:rgba(15,33,55,.85);backdrop-filter:blur(8px);padding:6px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.1)}
-.lang-bar button{padding:5px 14px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.7);border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
-.lang-bar button.active{background:#fff;color:var(--navy-deep);border-color:#fff}
-.lang-bar button:hover:not(.active){background:rgba(255,255,255,.1);color:#fff}
-.lang-bar .badge-more{font-size:10px;color:var(--orange);font-weight:500;padding:0 4px}
-
-@media(max-width:600px){
-  .logo-container img{width:200px;height:200px;border-radius:30px}
-  .question-mark{font-size:80px}
-  .phase-teaser{padding:32px 20px}
-  .phase-pitch,.phase-cta,.phase-pricing{padding:60px 20px}
-  .price-amount{font-size:36px}
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .features-grid,.diff-grid{grid-template-columns:repeat(2,1fr)}
+  .pricing-grid{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .steps::before{display:none}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--navy-deep);flex-direction:column;padding:1.5rem;gap:1rem;border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .nav-links.open{display:flex}
+  .hamburger{display:block}
+  .hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+  .hamburger.open span:nth-child(2){opacity:0}
+  .hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+  .features-grid,.diff-grid,.pricing-grid,.problems-grid{grid-template-columns:1fr}
+  .compare-table{font-size:.72rem}.compare-table th,.compare-table td{padding:.45rem .4rem}.compare-panel{overflow-x:auto}.compare-panel::after{content:'← → Desliza para ver más';display:block;text-align:center;font-size:.7rem;color:rgba(255,255,255,.35);padding:.5rem 0;font-style:italic}
+  .steps{grid-template-columns:1fr 1fr}
+  .hero{padding:6.5rem 1.5rem 3.5rem;min-height:100svh}
+  .hero h1{font-size:2rem}
+  .hero-logo{width:140px;height:140px}
+  .hero-logo img{width:140px;height:140px}
+  .hero-stats{gap:1.5rem}
+  .curtain-topbar{position:relative;top:auto;left:auto;right:auto;margin-bottom:1.5rem;justify-content:flex-end}
+  .curtain-access{justify-content:center}
+  .curtain{padding-top:1.5rem}
+  .curtain-logo{width:200px;height:200px}
+  .curtain .question-mark{font-size:80px}
+  .footer-grid{grid-template-columns:1fr}
+  section{padding:3.5rem 1.5rem}
 }
 </style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"EGGlogU","url":"https://egglogu.com","applicationCategory":"BusinessApplication","operatingSystem":"Web, iOS, Android","offers":[{"@type":"Offer","name":"Launch Offer — Enterprise at $75/mo for 3 months","price":"75","priceCurrency":"USD","billingPeriod":"P1M","description":"Enterprise at $75/month for your first 3 months (regular price $99/month). No commitment after.","availability":"https://schema.org/LimitedAvailability"},{"@type":"Offer","name":"Hobbyist","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Starter","price":"49","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Professional","price":"99","priceCurrency":"USD","billingPeriod":"P1M"},{"@type":"Offer","name":"Enterprise","price":"199","priceCurrency":"USD","billingPeriod":"P1M"}],"description":"Plataforma de gestión avícola con IA predictiva. Producción, salud, alimentación, finanzas y trazabilidad. Offline-first, 14 idiomas.","featureList":["Producción diaria","Salud y sanidad","Alimentación y FCR","Finanzas","Trazabilidad QR","Analytics con IA","Bioseguridad","IoT","14 idiomas","Modo offline"],"screenshot":"https://egglogu.com/campaign-logo.webp","author":{"@type":"Organization","name":"FarmLogU"}}
+</script>
 </head>
 <body>
 
-<!-- Language switcher -->
-<div class="lang-bar">
-  <button class="active" onclick="setLang('es',true)">ES</button>
-  <button onclick="setLang('en',true)">EN</button>
-  <button onclick="setLang('pt',true)">PT</button>
+<!-- GLOBAL LANGUAGE PICKER — fixed position, never moves -->
+<div class="lang-picker lang-picker-fixed">
+  <button class="lang-globe" aria-label="Idioma">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/><ellipse cx="12" cy="7" rx="8.5" ry="0" /><path d="M3.5 7c2.5.8 5.3 1.2 8.5 1.2s6-.4 8.5-1.2"/><path d="M3.5 17c2.5-.8 5.3-1.2 8.5-1.2s6 .4 8.5 1.2"/></svg>
+  </button>
+  <div class="lang-dropdown">
+    <button class="lang-option active" data-lang="es">Español</button>
+    <button class="lang-option" data-lang="en">English</button>
+    <button class="lang-option" data-lang="pt">Português</button>
+    <button class="lang-option" data-lang="fr">Français</button>
+    <button class="lang-option" data-lang="de">Deutsch</button>
+    <button class="lang-option" data-lang="it">Italiano</button>
+    <button class="lang-option" data-lang="ja">日本語</button>
+    <button class="lang-option" data-lang="zh">中文</button>
+    <button class="lang-option" data-lang="ru">Русский</button>
+    <button class="lang-option" data-lang="id">Bahasa</button>
+    <button class="lang-option" data-lang="ar">العربية</button>
+    <button class="lang-option" data-lang="ko">한국어</button>
+    <button class="lang-option" data-lang="th">ไทย</button>
+    <button class="lang-option" data-lang="vi">Tiếng Việt</button>
+  </div>
 </div>
 
-<!-- PHASE 1: THE QUESTION -->
-<section class="phase-teaser">
+<!-- CURTAIN / TEASER -->
+<section class="curtain" id="curtain">
+  <div class="curtain-topbar">
+    <div></div>
+  </div>
   <span class="question-mark q1">?</span>
   <span class="question-mark q2">?</span>
   <span class="question-mark q3">?</span>
   <span class="question-mark q4">?</span>
-
-  <div class="logo-container">
-    <img src="campaign-logo.webp" alt="Chicken inside an egg — EGGlogU 360">
-    <div class="logo-glow"></div>
-  </div>
-
-  <div class="question">
-    <h1><em data-t="q_what">Que fue primero...</em><br><span data-t="q_chicken_egg">el huevo o la gallina?</span></h1>
-    <div class="dots">...</div>
-  </div>
-
-  <div class="answer-reveal">
-    <div class="answer-brand">
-      <span class="egg">EGG</span><span class="log">log</span><span class="u">U</span>
+  <div class="curtain-body">
+    <div class="curtain-logo-wrap">
+      <div class="logo-glow"></div>
+      <img src="campaign-logo.webp" alt="EGGlogU" class="curtain-logo" width="280" height="280">
     </div>
-    <div class="answer-360">360</div>
-    <div class="answer-tagline" data-t="tagline_main">La plataforma que nacio antes que el problema.</div>
+    <div class="curtain-question">
+      <h2 data-i18n="curtain_question"><em>Que fue primero...</em><br>el huevo o la gallina?</h2>
+    </div>
+    <div class="curtain-dots">. . .</div>
+    <div class="curtain-answer">
+      <div class="curtain-brand"><strong>EGG</strong><span class="light">log</span><strong>U</strong></div>
+      <div class="curtain-360" data-i18n="curtain_360">360</div>
+      <div class="curtain-sub" data-i18n="curtain_sub">La plataforma que nacio antes que el problema.</div>
+    </div>
+  </div>
+  <a href="#nav" class="curtain-scroll" aria-label="Scroll down">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 10l5 5 5-5"/></svg>
+  </a>
+</section>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <img src="campaign-logo.webp" alt="EGGlogU" width="36" height="36">
+      EGGlogU
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="nav-links" id="navLinks">
+      <a href="#features" data-i18n="nav_features">Funcionalidades</a>
+      <a href="#how" data-i18n="nav_how">Cómo funciona</a>
+      <a href="#pricing" data-i18n="nav_pricing">Precios</a>
+      <a href="egglogu.html" class="btn btn-outline" data-i18n="nav_login">&#x1F511; Acceso Clientes</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-logo">
+      <div class="logo-glow"></div>
+      <img src="campaign-logo.webp" alt="EGGlogU" width="180" height="180" loading="lazy">
+    </div>
+    <!-- hero-badge: FarmLogU umbrella — re-enable when FarmLogU launches -->
+    <h1 data-i18n="hero_title">Gestión avícola <em>inteligente y sin complicaciones</em></h1>
+    <p data-i18n="hero_desc">Producción de huevos, salud de parvadas, alimentación, finanzas y trazabilidad en una sola plataforma. Funciona sin internet.</p>
+    <div class="hero-buttons">
+      <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Empieza Gratis</a>
+      <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>100%</strong><span data-i18n="stat_offline">Offline-first</span></div>
+      <div class="hero-stat"><strong>14</strong><span data-i18n="stat_langs">Idiomas</span></div>
+      <div class="hero-stat"><strong>$0</strong><span data-i18n="stat_trial">Plan Hobbyist</span></div>
+      <div class="hero-stat"><strong>24/7</strong><span data-i18n="stat_support">Soporte IA</span></div>
+    </div>
   </div>
 </section>
 
-<div class="divider"></div>
 
-<!-- PHASE 2: WHY US -->
-<section class="phase-pitch">
-  <div class="section-title" data-t="pitch_title">Ni el huevo ni la gallina.</div>
-  <div class="section-sub" data-t="pitch_sub">Nosotros llegamos primero.</div>
-
-  <div class="pitch-grid">
-    <div class="pitch-card">
-      <div class="pitch-icon">🧠</div>
-      <h3 data-t="card1_t">IA Predictiva</h3>
-      <p data-t="card1_p">Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.</p>
+<!-- PROBLEMS -->
+<section class="problems">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="problems_title">El problema que resolvemos</h2>
+      <p data-i18n="problems_desc">La gestión manual de granjas avícolas cuesta tiempo, dinero y trazabilidad</p>
     </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">🛡️</div>
-      <h3 data-t="card2_t">Bioseguridad Total</h3>
-      <p data-t="card2_p">Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">📦</div>
-      <h3 data-t="card3_t">Trazabilidad Completa</h3>
-      <p data-t="card3_p">Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">📊</div>
-      <h3 data-t="card4_t">20 Modulos Integrados</h3>
-      <p data-t="card4_p">Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, trazabilidad, bioseguridad, IA y mas. Todo en una sola plataforma.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">🌾</div>
-      <h3 data-t="card5_t">Modo Campo</h3>
-      <p data-t="card5_p">Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.</p>
-    </div>
-    <div class="pitch-card">
-      <div class="pitch-icon">🔒</div>
-      <h3 data-t="card6_t">Validacion Zero Tolerance</h3>
-      <p data-t="card6_p">4 procesadores validan cada dato. Cero errores financieros. Confianza total para contadores y auditores.</p>
+    <div class="problems-grid">
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob1_title">Producción registrada en cuadernos</h3><p data-i18n="prob1_desc">Datos de huevos por galpón anotados a mano, perdidos entre hojas y carpetas.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob2_title">Registro digital por parvada</h3><p data-i18n="prob2_desc">Producción diaria con grados, roturas, mortalidad y notas. Todo desde el celular.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob3_title">Salud sin trazabilidad</h3><p data-i18n="prob3_desc">Vacunas, medicamentos y brotes sin historial. Imposible de auditar.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob4_title">Historial sanitario completo</h3><p data-i18n="prob4_desc">Vacunas, medicaciones, brotes y eventos de estrés con fechas y responsables.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob5_title">Costos de alimento descontrolados</h3><p data-i18n="prob5_desc">Sin saber cuánto consume cada parvada ni el costo real por huevo producido.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob6_title">Alimentación optimizada</h3><p data-i18n="prob6_desc">Compras, consumo por parvada, conversión alimenticia y costo por huevo automático.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon red">&#x2717;</div>
+        <div><h3 data-i18n="prob7_title">Finanzas en Excel desactualizado</h3><p data-i18n="prob7_desc">Ingresos, gastos y cuentas por cobrar en hojas de cálculo que nadie actualiza.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon green">&#x2713;</div>
+        <div><h3 data-i18n="prob8_title">Finanzas en tiempo real</h3><p data-i18n="prob8_desc">Ingresos, gastos, cuentas por cobrar y dashboard financiero siempre actualizado.</p></div>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="features_title">Todo lo que necesitas para tu granja</h2>
+      <p data-i18n="features_desc">Desde el galpón hasta la venta, todo en un solo lugar</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F95A;</div>
+        <h3 data-i18n="feat1_title">Producción diaria</h3>
+        <p data-i18n="feat1_desc">Registro por parvada: huevos totales, grados (AA, A, B, C), roturas, mortalidad. Curvas de producción vs estándar de raza.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F3E5;</div>
+        <h3 data-i18n="feat2_title">Salud y sanidad</h3>
+        <p data-i18n="feat2_desc">Calendario de vacunas, medicaciones con dosis y retiro, brotes con aislamiento, eventos de estrés y bioseguridad.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F33E;</div>
+        <h3 data-i18n="feat3_title">Alimentación</h3>
+        <p data-i18n="feat3_desc">Compras de alimento con proveedor y costo. Consumo diario por parvada. Conversión alimenticia automática.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4B0;</div>
+        <h3 data-i18n="feat4_title">Finanzas</h3>
+        <p data-i18n="feat4_desc">Ingresos por venta, gastos operativos, cuentas por cobrar con vencimiento. Dashboard de rentabilidad por granja.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F50D;</div>
+        <h3 data-i18n="feat5_title">Trazabilidad</h3>
+        <p data-i18n="feat5_desc">Lotes con QR desde el galpón hasta el cliente. Historial completo de producción, calidad y despacho.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4CA;</div>
+        <h3 data-i18n="feat6_title">Analytics y KPIs</h3>
+        <p data-i18n="feat6_desc">Tasa de postura, mortalidad, conversión alimenticia, costo por huevo, predicciones con IA. Todo en dashboards interactivos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F30D;</div>
+        <h3 data-i18n="feat7_title">Ambiente e IoT</h3>
+        <p data-i18n="feat7_desc">Temperatura, humedad, amoníaco, iluminación. Integración con sensores IoT y datos climáticos automáticos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F6E1;&#xFE0F;</div>
+        <h3 data-i18n="feat8_title">Bioseguridad</h3>
+        <p data-i18n="feat8_desc">Registro de visitantes, zonas de bioseguridad, protocolos de ingreso, avistamiento de plagas y auditorias.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#x1F4CB;</div>
+        <h3 data-i18n="feat9_title">Operaciones</h3>
+        <p data-i18n="feat9_desc">Checklists diarios, bitácora de galpón, personal con roles y turnos. Planificación de producción.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUIDED TOUR -->
+<section class="tour-section" id="tour">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="tour_title">Conoce la plataforma</h2>
+      <p data-i18n="tour_subtitle">Explora las vistas principales de EGGlogU</p>
+    </div>
+    <div class="tour-grid">
+      <!-- Card 1: Dashboard -->
+      <div class="tour-card" onclick="openTourLightbox(0)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">📊 Dashboard</div>
+          <div class="tour-screen-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="tour-screen-block" style="height:52px;background:rgba(245,166,35,.12);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:70%"></div></div>
+            <div class="tour-screen-block" style="height:52px;background:rgba(59,130,246,.1);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:85%;background:rgba(59,130,246,.4)"></div></div>
+            <div class="tour-screen-block" style="height:52px;background:rgba(16,185,129,.1);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:55%;background:rgba(16,185,129,.4)"></div></div>
+            <div class="tour-screen-block" style="height:52px;background:rgba(239,68,68,.08);display:flex;align-items:flex-end;padding:.3rem"><div class="tour-screen-bar" style="width:40%;background:rgba(239,68,68,.3)"></div></div>
+          </div>
+          <div style="margin-top:.5rem;display:flex;gap:.3rem;align-items:flex-end;height:80px">
+            <div style="flex:1;background:rgba(245,166,35,.15);border-radius:3px;height:60%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.2);border-radius:3px;height:80%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.15);border-radius:3px;height:45%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.25);border-radius:3px;height:90%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.2);border-radius:3px;height:70%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.15);border-radius:3px;height:55%"></div>
+            <div style="flex:1;background:rgba(245,166,35,.3);border-radius:3px;height:100%"></div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_1_title">Dashboard</h3>
+          <p data-i18n="tour_1_desc">KPIs en tiempo real, gráficas de producción y alertas importantes de un vistazo.</p>
+          <span class="tour-badge hobby">Hobbyist</span>
+        </div>
+      </div>
+      <!-- Card 2: Producción -->
+      <div class="tour-card" onclick="openTourLightbox(1)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">🥚 Producción</div>
+          <div style="display:flex;flex-direction:column;gap:.35rem">
+            <div style="display:flex;gap:.3rem;padding:.2rem .4rem;background:rgba(255,255,255,.04);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.3)">
+              <span style="flex:2">Lote</span><span style="flex:1;text-align:center">Huevos</span><span style="flex:1;text-align:center">Rotos</span><span style="flex:1;text-align:center">%</span>
+            </div>
+            <div style="display:flex;gap:.3rem;padding:.25rem .4rem;background:rgba(245,166,35,.06);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.4)">
+              <span style="flex:2">Lote A-12</span><span style="flex:1;text-align:center;color:var(--orange)">2,450</span><span style="flex:1;text-align:center">12</span><span style="flex:1;text-align:center;color:#10b981">96.2%</span>
+            </div>
+            <div style="display:flex;gap:.3rem;padding:.25rem .4rem;background:rgba(255,255,255,.03);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.4)">
+              <span style="flex:2">Lote B-08</span><span style="flex:1;text-align:center;color:var(--orange)">1,830</span><span style="flex:1;text-align:center">8</span><span style="flex:1;text-align:center;color:#10b981">94.7%</span>
+            </div>
+            <div style="display:flex;gap:.3rem;padding:.25rem .4rem;background:rgba(245,166,35,.06);border-radius:4px;font-size:.55rem;color:rgba(255,255,255,.4)">
+              <span style="flex:2">Lote C-15</span><span style="flex:1;text-align:center;color:var(--orange)">3,100</span><span style="flex:1;text-align:center">15</span><span style="flex:1;text-align:center;color:#10b981">97.1%</span>
+            </div>
+            <div style="margin-top:.3rem;padding:.3rem .5rem;background:rgba(245,166,35,.12);border-radius:6px;display:flex;justify-content:space-between;font-size:.6rem;color:var(--orange)">
+              <span>Total: 7,380</span><span>Prom: 96.0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_2_title">Producción diaria</h3>
+          <p data-i18n="tour_2_desc">Registra huevos por lote, rastrea roturas y analiza tendencias de postura.</p>
+          <span class="tour-badge hobby">Hobbyist</span>
+        </div>
+      </div>
+      <!-- Card 3: Salud -->
+      <div class="tour-card" onclick="openTourLightbox(2)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">💉 Salud</div>
+          <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
+            <div style="flex:1;padding:.4rem;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.15);border-radius:6px">
+              <div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-bottom:.2rem">Vacuna</div>
+              <div style="font-size:.6rem;color:#10b981">Newcastle</div>
+              <div style="font-size:.45rem;color:rgba(255,255,255,.25);margin-top:.15rem">15 Mar 2026</div>
+            </div>
+            <div style="flex:1;padding:.4rem;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.15);border-radius:6px">
+              <div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-bottom:.2rem">Próxima</div>
+              <div style="font-size:.6rem;color:var(--orange)">Bronquitis</div>
+              <div style="font-size:.45rem;color:rgba(255,255,255,.25);margin-top:.15rem">22 Mar 2026</div>
+            </div>
+          </div>
+          <div style="padding:.35rem .5rem;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.12);border-radius:6px;margin-bottom:.3rem">
+            <div style="font-size:.5rem;color:#ef4444">⚠ Alerta: Mortalidad elevada Lote B-08</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:.2rem">
+            <div style="width:100%;aspect-ratio:1;background:rgba(16,185,129,.15);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(16,185,129,.15);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(16,185,129,.1);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(245,166,35,.2);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(239,68,68,.15);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(255,255,255,.04);border-radius:3px"></div>
+            <div style="width:100%;aspect-ratio:1;background:rgba(255,255,255,.04);border-radius:3px"></div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_3_title">Salud y vacunas</h3>
+          <p data-i18n="tour_3_desc">Calendario sanitario, alertas de mortalidad y seguimiento de tratamientos.</p>
+          <span class="tour-badge starter">Starter</span>
+        </div>
+      </div>
+      <!-- Card 4: Finanzas -->
+      <div class="tour-card" onclick="openTourLightbox(3)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">💰 Finanzas</div>
+          <div style="display:flex;gap:.4rem;margin-bottom:.4rem">
+            <div style="flex:1;padding:.4rem;background:rgba(16,185,129,.08);border-radius:6px;text-align:center">
+              <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Ingresos</div>
+              <div style="font-size:.75rem;color:#10b981;font-weight:700">$12,450</div>
+            </div>
+            <div style="flex:1;padding:.4rem;background:rgba(239,68,68,.08);border-radius:6px;text-align:center">
+              <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Gastos</div>
+              <div style="font-size:.75rem;color:#ef4444;font-weight:700">$8,230</div>
+            </div>
+          </div>
+          <div style="padding:.35rem .5rem;background:rgba(245,166,35,.1);border-radius:6px;text-align:center;margin-bottom:.4rem">
+            <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Balance</div>
+            <div style="font-size:.85rem;color:var(--orange);font-weight:700">+$4,220</div>
+          </div>
+          <div style="display:flex;gap:.2rem;align-items:flex-end;height:50px">
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:30px;background:rgba(16,185,129,.2);border-radius:2px 2px 0 0"></div>
+              <div style="height:20px;background:rgba(239,68,68,.15);border-radius:0 0 2px 2px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:35px;background:rgba(16,185,129,.25);border-radius:2px 2px 0 0"></div>
+              <div style="height:22px;background:rgba(239,68,68,.15);border-radius:0 0 2px 2px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:25px;background:rgba(16,185,129,.2);border-radius:2px 2px 0 0"></div>
+              <div style="height:18px;background:rgba(239,68,68,.12);border-radius:0 0 2px 2px"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:1px;justify-content:flex-end">
+              <div style="height:40px;background:rgba(16,185,129,.3);border-radius:2px 2px 0 0"></div>
+              <div style="height:25px;background:rgba(239,68,68,.18);border-radius:0 0 2px 2px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_4_title">Finanzas</h3>
+          <p data-i18n="tour_4_desc">Ingresos, gastos, balance y gráficos financieros por período.</p>
+          <span class="tour-badge starter">Starter</span>
+        </div>
+      </div>
+      <!-- Card 5: Trazabilidad -->
+      <div class="tour-card" onclick="openTourLightbox(4)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">📦 Trazabilidad</div>
+          <div style="display:flex;flex-direction:column;gap:.35rem">
+            <div style="padding:.35rem .5rem;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.15);border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:.55rem;color:#c084fc;font-weight:600">Lote #2026-0342</div>
+                <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Granja Norte → Cliente A</div>
+              </div>
+              <div style="width:28px;height:28px;background:rgba(168,85,247,.15);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.7rem">📱</div>
+            </div>
+            <div style="padding:.35rem .5rem;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.1);border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:.55rem;color:var(--orange);font-weight:600">Lote #2026-0341</div>
+                <div style="font-size:.45rem;color:rgba(255,255,255,.3)">Granja Sur → Cliente B</div>
+              </div>
+              <div style="width:28px;height:28px;background:rgba(245,166,35,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.7rem">📱</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.4rem;margin-top:.4rem;padding:0 .2rem">
+            <div style="width:8px;height:8px;border-radius:50%;background:#10b981"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.08)"><div style="width:100%;height:100%;background:rgba(16,185,129,.4)"></div></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:#10b981"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.08)"><div style="width:70%;height:100%;background:rgba(245,166,35,.4)"></div></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--orange)"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.08)"></div>
+            <div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15)"></div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_5_title">Trazabilidad</h3>
+          <p data-i18n="tour_5_desc">Lotes con código QR, timeline de distribución y trazabilidad completa.</p>
+          <span class="tour-badge pro">Pro</span>
+        </div>
+      </div>
+      <!-- Card 6: Modo Campo -->
+      <div class="tour-card" onclick="openTourLightbox(5)">
+        <div class="tour-screen">
+          <div class="tour-screen-topbar">📶 Modo Campo <span style="margin-left:auto;background:rgba(16,185,129,.2);color:#10b981;padding:.1rem .4rem;border-radius:10px;font-size:.55rem">Offline</span></div>
+          <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.3rem">
+            <div style="padding:.6rem;background:rgba(245,166,35,.08);border:2px solid rgba(245,166,35,.2);border-radius:10px;text-align:center">
+              <div style="font-size:.5rem;color:rgba(255,255,255,.3);margin-bottom:.2rem">Huevos hoy</div>
+              <div style="font-size:1.4rem;color:var(--orange);font-weight:800">2,450</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">
+              <div style="padding:.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-align:center">
+                <div style="font-size:.9rem;margin-bottom:.15rem">➕</div>
+                <div style="font-size:.5rem;color:rgba(255,255,255,.4)">Registrar</div>
+              </div>
+              <div style="padding:.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;text-align:center">
+                <div style="font-size:.9rem;margin-bottom:.15rem">📋</div>
+                <div style="font-size:.5rem;color:rgba(255,255,255,.4)">Checklist</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-info">
+          <h3 data-i18n="tour_6_title">Modo Campo</h3>
+          <p data-i18n="tour_6_desc">Interfaz simplificada para registro rápido. Funciona sin conexión a internet.</p>
+          <span class="tour-badge hobby">Hobbyist</span>
+        </div>
+      </div>
+    </div>
+    <div class="tour-dots"></div>
+  </div>
+</section>
+
+<!-- TOUR LIGHTBOX -->
+<div class="tour-lightbox" id="tourLightbox">
+  <div class="tour-lightbox-inner">
+    <button class="tour-lightbox-close" onclick="closeTourLightbox()">&times;</button>
+    <div class="tour-lightbox-screen" id="tourLbScreen"></div>
+    <h3 id="tourLbTitle"></h3>
+    <p id="tourLbDesc"></p>
+    <ul class="tour-lightbox-features" id="tourLbFeatures"></ul>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="how_title">Empieza en minutos</h2>
+      <p data-i18n="how_desc">Sin instalación, sin hardware especial. Solo un navegador.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 data-i18n="step1_title">Crea tu cuenta</h3>
+        <p data-i18n="step1_desc">Registro gratuito. Empieza con el plan Hobbyist sin costo.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 data-i18n="step2_title">Configura tu granja</h3>
+        <p data-i18n="step2_desc">Agrega galpones, parvadas y personal. Importa datos si ya tienes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 data-i18n="step3_title">Registra a diario</h3>
+        <p data-i18n="step3_desc">Producción, salud, alimento y gastos desde cualquier dispositivo. Sin internet.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3 data-i18n="step4_title">Analiza y decide</h3>
+        <p data-i18n="step4_desc">Dashboards con KPIs, tendencias, predicciones IA y alertas automáticas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFFERENTIATORS -->
+<section class="diff-section">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="diff_title">Por qué EGGlogU</h2>
+      <p data-i18n="diff_desc">Diseñado por y para avicultores</p>
+    </div>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F4F4;</div>
+        <h3 data-i18n="diff1_title">Funciona sin internet</h3>
+        <p data-i18n="diff1_desc">PWA offline-first. Registra datos en el galpón sin cobertura. Se sincroniza automáticamente al reconectarse.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F30E;</div>
+        <h3 data-i18n="diff2_title">14 idiomas</h3>
+        <p data-i18n="diff2_desc">Español, inglés, portugués, francés, alemán, italiano, japonés, chino y 6 más. Tu equipo trabaja en su idioma.</p>
+      </div>
+      <div class="diff-card">
+        <div class="diff-icon">&#x1F9E9;</div>
+        <h3 data-i18n="diff3_title">Plataforma modular</h3>
+        <p data-i18n="diff3_desc">Parte de FarmLogU. Integra con HarvestLogU, CowLogU y mas. Paga solo lo que necesitas.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- PRICING -->
-<section class="phase-pricing" id="pricing">
-  <div class="section-title" data-t="pricing_title">Planes y Precios</div>
-  <div class="section-sub" data-t="pricing_sub">Sin contratos. Cancela cuando quieras. 14 dias de prueba completa.</div>
-
-  <div class="pricing-accordion" id="pricingAcc">
-    <div class="acc-item" data-acc="0">
-      <div class="acc-header" onclick="toggleAcc(0)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier0_name">Hobbyist</span><span class="acc-price">$19<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-chevron">&#9662;</span>
-      </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier0_desc">Productor independiente</div>
-        <ul class="price-features">
-          <li data-t="t0f1">Hasta 2 lotes</li>
-          <li data-t="t0f2">1 usuario · +$4.99/extra</li>
-          <li data-t="t0f3">Produccion + Dashboard</li>
-          <li data-t="t0f4">Modo Campo</li>
-          <li data-t="t0f5">Funciona sin internet</li>
-        </ul>
-        <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
-      </div></div>
+<section class="pricing" id="pricing">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2 data-i18n="pricing_title">Planes y Precios</h2>
+      <p data-i18n="pricing_desc">Sin contratos. Cancela cuando quieras.</p>
     </div>
-
-    <div class="acc-item" data-acc="1">
-      <div class="acc-header" onclick="toggleAcc(1)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier1_name">Starter</span><span class="acc-price">$49<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-chevron">&#9662;</span>
+    <!-- LAUNCH PROMO -->
+    <div class="launch-promo">
+      <div class="launch-promo-tag" data-i18n="promo_tag">Oferta de Lanzamiento</div>
+      <div class="launch-promo-row">
+        <div class="launch-promo-price">
+          <div class="big-price">$75<span> /mes</span></div>
+          <div class="price-sub" data-i18n="promo_duration">durante tus primeros 3 meses</div>
+          <div class="price-sub" style="font-size:.8rem;color:var(--orange);margin-top:.2rem" data-i18n="promo_savings">Precio regular $199/mes — ahorras $124/mes</div>
+        </div>
+        <div class="launch-promo-info">
+          <h3 data-i18n="promo_title">Enterprise a $75/mes por 3 meses</h3>
+          <p data-i18n="promo_desc">Accede a todos los módulos, IA predictiva, bioseguridad, trazabilidad, soporte dedicado y más. $75/mes durante tus primeros 3 meses en lugar de $199/mes. Al terminar, elige tu plan o continúa probando.</p>
+          <ul class="promo-features">
+            <li data-i18n="promo_f1">12 módulos + IA predictiva + Analytics</li>
+            <li data-i18n="promo_f2">Lotes ilimitados · Multi-granja</li>
+            <li data-i18n="promo_f3">Soporte dedicado 24/7</li>
+            <li data-i18n="promo_f4">Después elige el plan que mejor te sirva</li>
+          </ul>
+          <a href="egglogu.html?plan=launch75" class="btn btn-primary btn-lg" data-i18n="promo_cta">Activar Oferta — $75/mes</a>
+        </div>
       </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier1_desc">Operacion comercial</div>
-        <ul class="price-features">
-          <li data-t="t1f1">Hasta 5 lotes</li>
-          <li data-t="t1f2">1 usuario · +$3.99/extra</li>
-          <li data-t="t1f3">Produccion + Alimentacion + Salud</li>
-          <li data-t="t1f4">Finanzas + Clientes</li>
-          <li data-t="t1f5">Modo Campo + Dashboard</li>
-        </ul>
-        <a href="egglogu.html" class="btn-price" data-t="btn_trial">Probar 14 Dias</a>
-      </div></div>
-    </div>
-
-    <div class="acc-item featured open" data-acc="2">
-      <div class="acc-header" onclick="toggleAcc(2)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier2_name">Professional</span><span class="acc-price">$99<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-badge" data-t="badge_pop">Mas Popular</span>
-        <span class="acc-chevron">&#9662;</span>
+      <div class="launch-promo-urgency" data-i18n="promo_urgency">Cupos limitados — primeros 500 usuarios</div>
+      <div class="launch-promo-after">
+        <p data-i18n="promo_after">Al terminar los 3 meses, <strong data-i18n="promo_after_bold">elige tu plan ideal</strong> o continúa probando Enterprise. Sin cargos automáticos.</p>
       </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier2_desc">Operacion completa con IA</div>
-        <ul class="price-features">
-          <li data-t="t2f1">Hasta 15 lotes</li>
-          <li data-t="t2f2">1 usuario · +$2.99/extra</li>
-          <li data-t="t2f3">20 modulos completos</li>
-          <li data-t="t2f4">IA predictiva + Analytics</li>
-          <li data-t="t2f5">Bioseguridad + Trazabilidad</li>
-          <li data-t="t2f6">Validacion Zero Tolerance</li>
-        </ul>
-        <a href="egglogu.html" class="btn-price btn-price-main" data-t="btn_trial">Probar 14 Dias</a>
-      </div></div>
     </div>
-
-    <div class="acc-item" data-acc="3">
-      <div class="acc-header" onclick="toggleAcc(3)">
-        <div class="acc-h-left"><span class="acc-tier" data-t="tier3_name">Enterprise</span><span class="acc-price">$199<span data-t="price_mo">/mes</span></span></div>
-        <span class="acc-chevron">&#9662;</span>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3 data-i18n="hobby_name">Hobbyist</h3>
+        <div class="price" data-i18n="hobby_price">Gratis</div>
+        <div class="price-period" data-i18n="hobby_limit">Granjero independiente</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:-.75rem;margin-bottom:.75rem" data-i18n="hobby_reg">Registro requerido</div>
+        <ul>
+          <li data-i18n="hobby_f1">Hasta 2 lotes</li>
+          <li data-i18n="hobby_f2">Worker +$3.99 · Manager +$6.99</li>
+          <li data-i18n="hobby_f3">Producción + Alimentación + Dashboard</li>
+          <li data-i18n="hobby_f4">Modo Campo</li>
+          <li data-i18n="hobby_f5">Funciona sin internet</li>
+        </ul>
+        <a href="egglogu.html?plan=hobby" class="btn btn-outline" data-i18n="plan_cta">Empezar Gratis</a>
       </div>
-      <div class="acc-body"><div class="acc-content">
-        <div class="acc-desc" data-t="tier3_desc">Multi-granja, sin limites</div>
-        <ul class="price-features">
-          <li data-t="t3f1">Lotes ilimitados</li>
-          <li data-t="t3f2">1 usuario · +$2.49/extra (-50%)</li>
-          <li data-t="t3f3">Multi-granja centralizada</li>
-          <li data-t="t3f4">Todo en Professional +</li>
-          <li data-t="t3f5">Soporte dedicado 24/7</li>
-          <li data-t="t3f6">Onboarding personalizado</li>
+      <div class="price-card">
+        <h3 data-i18n="starter_name">Starter</h3>
+        <div class="price">$49<span>/mes</span></div>
+        <div class="price-period" data-i18n="starter_limit">Operación comercial</div>
+        <ul>
+          <li data-i18n="starter_f1">Hasta 5 lotes</li>
+          <li data-i18n="starter_f2">Worker +$3.99 · Manager +$6.99</li>
+          <li data-i18n="starter_f3">Producción + Alimentación + Salud</li>
+          <li data-i18n="starter_f4">Finanzas + Clientes</li>
+          <li data-i18n="starter_f5">Modo Campo + Dashboard</li>
         </ul>
-        <a href="mailto:contacto@egglogu.com?subject=EGGlogU%20Enterprise" class="btn-price" data-t="btn_contact">Contactar</a>
-      </div></div>
+        <a href="egglogu.html?plan=starter" class="btn btn-outline" data-i18n="plan_cta">Empezar Gratis</a>
+      </div>
+      <div class="price-card featured">
+        <span class="price-badge" data-i18n="badge_popular">Más Popular</span>
+        <h3 data-i18n="pro_name">Professional</h3>
+        <div class="price">$99<span>/mes</span></div>
+        <div class="price-period" data-i18n="pro_limit">Operación completa con IA</div>
+        <ul>
+          <li data-i18n="pro_f1">Hasta 15 lotes</li>
+          <li data-i18n="pro_f2">Worker +$3.99 · Manager +$6.99</li>
+          <li data-i18n="pro_f3">12 módulos completos</li>
+          <li data-i18n="pro_f4">IA predictiva + Analytics</li>
+          <li data-i18n="pro_f5">Bioseguridad + Trazabilidad</li>
+          <li data-i18n="pro_f6">Validación Zero Tolerance</li>
+        </ul>
+        <a href="egglogu.html?plan=pro" class="btn btn-primary" data-i18n="plan_cta">Empezar Gratis</a>
+      </div>
+      <div class="price-card">
+        <h3 data-i18n="ent_name">Enterprise</h3>
+        <div class="price">$199<span>/mes</span></div>
+        <div class="price-period" data-i18n="ent_limit">Multi-granja, sin límites</div>
+        <ul>
+          <li data-i18n="ent_f1">Lotes ilimitados</li>
+          <li data-i18n="ent_f2">Worker +$3.99 · Manager +$6.99</li>
+          <li data-i18n="ent_f3">Multi-granja centralizada</li>
+          <li data-i18n="ent_f4">Todo en Professional +</li>
+          <li data-i18n="ent_f5">Soporte dedicado 24/7</li>
+          <li data-i18n="ent_f6">Onboarding personalizado</li>
+        </ul>
+        <a href="egglogu.html?plan=enterprise" class="btn btn-outline" data-i18n="ent_cta">Probar Enterprise</a>
+      </div>
     </div>
-  </div>
-
-  <div class="pricing-note" data-t="pricing_note">Crece y ahorra: al subir de plan, el costo por usuario baja hasta <strong>50%</strong> y recibes <strong>2 meses gratis</strong> el primer año. Tu inversion se reinvierte en programas de mejora genetica y calidad de materia prima.</div>
-
-  <div class="contact-strip">
-    <a href="mailto:contacto@egglogu.com?subject=EGGlogU%20-%20Consulta" class="btn-email">✉ contacto@egglogu.com</a>
+    <div class="compare-toggle-wrap">
+      <button class="compare-toggle" onclick="toggleCompare()" data-i18n="compare_btn">Ver comparación detallada <span class="arrow">▼</span></button>
+    </div>
+    <div class="compare-panel" id="comparePanel">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th data-i18n="cmp_feature">Característica</th>
+            <th>Hobbyist<br><small data-i18n="cmp_free">Gratis</small></th>
+            <th>Starter<br><small>$49/mes</small></th>
+            <th>Professional<br><small>$99/mes</small></th>
+            <th>Enterprise<br><small>$199/mes</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_limits">Límites</td></tr>
+          <tr><td data-i18n="cmp_farms">Granjas</td><td>1</td><td>1</td><td>1</td><td data-i18n="cmp_unlimited">Ilimitadas</td></tr>
+          <tr><td data-i18n="cmp_flocks">Lotes</td><td>2</td><td>5</td><td>15</td><td data-i18n="cmp_unlimited2">Ilimitados</td></tr>
+          <tr><td data-i18n="cmp_users">Usuarios base</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td data-i18n="cmp_extra_worker">Extra Worker</td><td colspan="4">$3.99/mes</td></tr>
+          <tr><td data-i18n="cmp_extra_mgmt">Extra Management</td><td colspan="4">$6.99/mes</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_modules">Módulos</td></tr>
+          <tr><td>Dashboard</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_production">Produccion</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_feed">Alimentación</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_health">Salud</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_clients">Clientes</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_finance">Finanzas</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_environment">Ambiente</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_operations">Operaciones</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_inventory">Inventario</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_biosecurity">Bioseguridad</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_traceability">Trazabilidad</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_planning">Planificación</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td>IoT</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_features">Funcionalidades</td></tr>
+          <tr><td data-i18n="cmp_fcr">Conversión alimenticia</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_field_mode">Modo Campo</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_offline">Funciona sin internet</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_dark_mode">Modo oscuro</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_i18n">Multi-idioma</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_ai">IA predictiva</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_vet_mode">Modo Veterinario</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td data-i18n="cmp_iot_feat">Sensores IoT</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="check">✓</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_support">Soporte</td></tr>
+          <tr><td data-i18n="cmp_tickets">Tickets de soporte</td><td>3</td><td>10</td><td data-i18n="cmp_unlimited3">Ilimitados</td><td data-i18n="cmp_unlimited4">Ilimitados</td></tr>
+          <tr><td data-i18n="cmp_sla">Tiempo de respuesta</td><td>FAQ</td><td>48h</td><td>12h</td><td data-i18n="cmp_dedicated">24/7 dedicado</td></tr>
+          <tr class="cat-row"><td colspan="5" data-i18n="cmp_cat_pricing">Precio anual</td></tr>
+          <tr><td data-i18n="cmp_annual">Precio anual</td><td data-i18n="cmp_free2">Gratis</td><td>$490/año</td><td>$990/año</td><td>$1,990/año</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pricing-included">
+      <h3 data-i18n="included_title">Incluido en todos los planes</h3>
+      <div class="pricing-included-grid">
+        <div class="pricing-included-card">
+          <h4 data-i18n="included_1_title">Hobbyist gratis para siempre</h4>
+          <p data-i18n="included_1_desc">Empieza sin costo. Cuando crezcas, elige el plan que mejor se ajuste.</p>
+        </div>
+        <div class="pricing-included-card">
+          <h4 data-i18n="included_2_title">Funciona sin internet</h4>
+          <p data-i18n="included_2_desc">Registra producción en el campo. Se sincroniza automáticamente cuando hay conexión.</p>
+        </div>
+        <div class="pricing-included-card">
+          <h4 data-i18n="included_3_title">Sin contratos, sin compromiso</h4>
+          <p data-i18n="included_3_desc">Cancela cuando quieras. Tu data se exporta completa.</p>
+        </div>
+      </div>
+    </div>
+    <div class="pricing-note" data-i18n="pricing_note">Sin contratos. Cancela cuando quieras.</div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<!-- PHASE 3: THE PUNCHLINE CTA -->
-<section class="phase-cta">
-  <div class="section-title" data-t="cta_title">La eterna pregunta, resuelta.</div>
-
-  <div class="taglines">
-    <div class="tagline" data-t="tl1">Ni el huevo ni la gallina. <strong>EGGlogU 360.</strong></div>
-    <div class="tagline" data-t="tl2">Antes del huevo. Antes de la gallina. <strong>EGGlogU 360.</strong></div>
-    <div class="tagline" data-t="tl3">La respuesta que la industria avicola estaba esperando.</div>
-    <div class="tagline" data-t="tl4"><strong>EGGlogU 360</strong> — Nacimos primero.</div>
-  </div>
-
+<!-- CTA -->
+<section class="cta-section">
+  <h2 data-i18n="cta_title">Digitaliza tu granja avícola hoy</h2>
+  <p data-i18n="cta_desc">Únete a avicultores que ya controlan su operación de galpón a cliente.</p>
   <div class="cta-buttons">
-    <a href="egglogu.html" class="btn-main" data-t="btn_start">Probar 30 Dias</a>
-    <a href="#pricing" class="btn-ghost" data-t="btn_plans">Ver Planes y Precios</a>
-  </div>
-
-  <div class="share-strip">
-    <a class="share-btn" title="Share on X" href="https://twitter.com/intent/tweet?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A&url=https://egglogu.com/campaign" target="_blank">&#120143;</a>
-    <a class="share-btn" title="Share on LinkedIn" href="https://www.linkedin.com/sharing/share-offsite/?url=https://egglogu.com/campaign" target="_blank">in</a>
-    <a class="share-btn" title="Share on WhatsApp" href="https://wa.me/?text=What%20came%20first%2C%20the%20chicken%20or%20the%20egg%3F%20Answer%3A%20EGGlogU%20360%20%F0%9F%90%94%F0%9F%A5%9A%20https://egglogu.com/campaign" target="_blank">💬</a>
-    <a class="share-btn" title="Copy link" onclick="navigator.clipboard.writeText(window.location.href);this.textContent='\u2713';setTimeout(()=>this.textContent='\uD83D\uDD17',2000)" href="javascript:void(0)">🔗</a>
+    <a href="egglogu.html" class="btn btn-primary btn-lg" data-i18n="hero_cta">Empieza Gratis</a>
+    <a href="#features" class="btn btn-ghost btn-lg" data-i18n="hero_features">Ver funcionalidades</a>
   </div>
 </section>
 
-<footer class="footer">
-  <p>&copy; 2026 <a href="/">EGGlogU 360</a> — Gestion Avicola Inteligente</p>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="campaign-logo.webp" alt="EGGlogU" width="28" height="28">
+          EGGlogU
+        </div>
+        <p class="footer-brand-text" data-i18n="footer_desc">Plataforma de gestión avícola. Parte del ecosistema FarmLogU — ERP modular para agricultura.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_product">Producto</h4>
+        <a href="#features" data-i18n="nav_features">Funcionalidades</a>
+        <a href="#pricing" data-i18n="nav_pricing">Precios</a>
+        <a href="#how" data-i18n="nav_how">Cómo funciona</a>
+        <a href="egglogu.html" data-i18n="footer_login">Acceso Clientes</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_legal">Legal</h4>
+        <a href="privacy.html" data-i18n="footer_privacy">Privacidad</a>
+        <a href="terms.html" data-i18n="footer_terms">Términos</a>
+        <a href="privacy.html#cookies" data-i18n="footer_cookies">Cookies</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span data-i18n="footer_copy">&copy; 2026 EGGlogU. Todos los derechos reservados.</span>
+      <span data-i18n="footer_made">Hecho con cuidado para el campo.</span>
+    </div>
+  </div>
 </footer>
 
 <script>
-const T={
-es:{
-  q_what:'Que fue primero...',q_chicken_egg:'el huevo o la gallina?',
-  tagline_main:'La plataforma que nacio antes que el problema.',
-  pitch_title:'Ni el huevo ni la gallina.',pitch_sub:'Nosotros llegamos primero.',
-  card1_t:'IA Predictiva',card1_p:'Clasificador de riesgo de brotes, forecasting con bandas de confianza, y recomendaciones automaticas antes de que el problema ocurra.',
-  card2_t:'Bioseguridad Total',card2_p:'Control de visitantes, zonas de riesgo, avistamientos de plagas, y protocolos de desinfeccion. Pest Score en tiempo real.',
-  card3_t:'Trazabilidad Completa',card3_p:'Del lote al cliente. Cada huevo rastreado con QR: granja, galpon, lote, fecha, FCR, health score.',
-  card4_t:'20 Modulos Integrados',card4_p:'Produccion, salud, alimentacion, ambiente, vacunas, clientes, finanzas, trazabilidad, bioseguridad, IA y mas. Todo en una sola plataforma.',
-  card5_t:'Modo Campo',card5_p:'Interfaz simplificada para el dia a dia. Un boton, registrar huevos, listo. Diseñado para usar con botas de trabajo.',
-  card6_t:'Validacion Zero Tolerance',card6_p:'4 procesadores validan cada dato. Cero errores financieros. Confianza total para contadores y auditores.',
-  cta_title:'La eterna pregunta, resuelta.',
-  tl1:'Ni el huevo ni la gallina. <strong>EGGlogU 360.</strong>',
-  tl2:'Antes del huevo. Antes de la gallina. <strong>EGGlogU 360.</strong>',
-  tl3:'La respuesta que la industria avicola estaba esperando.',
-  tl4:'<strong>EGGlogU 360</strong> — Nacimos primero.',
-  btn_start:'Probar 14 Dias',btn_plans:'Ver Planes y Precios',
-  pricing_title:'Planes y Precios',pricing_sub:'Sin contratos. Cancela cuando quieras. 14 dias de prueba completa.',
-  badge_pop:'Mas Popular',btn_trial:'Probar 14 Dias',btn_contact:'Contactar',price_mo:'/mes',
-  tier0_name:'Hobbyist',tier0_desc:'Productor independiente',
-  t0f1:'Hasta 2 lotes',t0f2:'1 usuario · +$4.99/extra',t0f3:'Produccion + Dashboard',t0f4:'Modo Campo',t0f5:'Funciona sin internet',
-  tier1_name:'Starter',tier1_desc:'Operacion comercial',
-  t1f1:'Hasta 5 lotes',t1f2:'1 usuario · +$3.99/extra',t1f3:'Produccion + Alimentacion + Salud',t1f4:'Finanzas + Clientes',t1f5:'Modo Campo + Dashboard',
-  tier2_name:'Professional',tier2_desc:'Operacion completa con IA',
-  t2f1:'Hasta 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA predictiva + Analytics',t2f5:'Bioseguridad + Trazabilidad',t2f6:'Validacion Zero Tolerance',
-  tier3_name:'Enterprise',tier3_desc:'Multi-granja, sin limites',
-  t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Todo en Professional +',t3f5:'Soporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Crece y ahorra: al subir de plan, el costo por usuario baja hasta <strong>50%</strong> y recibes <strong>2 meses gratis</strong> el primer año. Tu inversion se reinvierte en programas de mejora genetica y calidad de materia prima.'
-},
-en:{
-  q_what:'What came first...',q_chicken_egg:'the chicken or the egg?',
-  tagline_main:'The platform that was born before the problem.',
-  pitch_title:'Neither the chicken nor the egg.',pitch_sub:'We got here first.',
-  card1_t:'Predictive AI',card1_p:'Outbreak risk classifier, forecasting with confidence bands, and automatic recommendations before the problem occurs.',
-  card2_t:'Total Biosecurity',card2_p:'Visitor control, risk zones, pest sightings, and disinfection protocols. Real-time Pest Score.',
-  card3_t:'Full Traceability',card3_p:'From batch to client. Every egg tracked with QR: farm, house, flock, date, FCR, health score.',
-  card4_t:'20 Integrated Modules',card4_p:'Production, health, feed, environment, vaccines, clients, finances, traceability, biosecurity, AI and more. All in one platform.',
-  card5_t:'Field Mode',card5_p:'Simplified interface for daily use. One button, log eggs, done. Designed to use with work boots on.',
-  card6_t:'Zero Tolerance Validation',card6_p:'4 processors validate every data point. Zero financial errors. Total confidence for accountants and auditors.',
-  cta_title:'The eternal question, answered.',
-  tl1:'Neither the chicken nor the egg. <strong>EGGlogU 360.</strong>',
-  tl2:'Before the chicken. Before the egg. <strong>EGGlogU 360.</strong>',
-  tl3:'The answer the poultry industry was waiting for.',
-  tl4:'<strong>EGGlogU 360</strong> — We were born first.',
-  btn_start:'Start 14-Day Trial',btn_plans:'See Plans & Pricing',
-  pricing_title:'Plans & Pricing',pricing_sub:'No contracts. Cancel anytime. 14-day full-access trial.',
-  badge_pop:'Most Popular',btn_trial:'Start 14-Day Trial',btn_contact:'Contact Us',price_mo:'/mo',
-  tier0_name:'Hobbyist',tier0_desc:'Independent producer',
-  t0f1:'Up to 2 flocks',t0f2:'1 user · +$4.99/extra',t0f3:'Production + Dashboard',t0f4:'Field Mode',t0f5:'Works offline',
-  tier1_name:'Starter',tier1_desc:'Commercial operation',
-  t1f1:'Up to 5 flocks',t1f2:'1 user · +$3.99/extra',t1f3:'Production + Feed + Health',t1f4:'Finances + Clients',t1f5:'Field Mode + Dashboard',
-  tier2_name:'Professional',tier2_desc:'Full operation with AI',
-  t2f1:'Up to 15 flocks',t2f2:'1 user · +$2.99/extra',t2f3:'All 20 modules',t2f4:'Predictive AI + Analytics',t2f5:'Biosecurity + Traceability',t2f6:'Zero Tolerance Validation',
-  tier3_name:'Enterprise',tier3_desc:'Multi-farm, no limits',
-  t3f1:'Unlimited flocks',t3f2:'1 user · +$2.49/extra (-50%)',t3f3:'Centralized multi-farm',t3f4:'Everything in Professional +',t3f5:'Dedicated 24/7 support',t3f6:'Personalized onboarding',
-  pricing_note:'Grow & save: upgrade your plan and per-user cost drops up to <strong>50%</strong>, plus <strong>2 months free</strong> on your first year. Your investment funds genetic improvement and raw material quality programs.'
-},
-pt:{
-  q_what:'O que veio primeiro...',q_chicken_egg:'o ovo ou a galinha?',
-  tagline_main:'A plataforma que nasceu antes do problema.',
-  pitch_title:'Nem o ovo nem a galinha.',pitch_sub:'Nos chegamos primeiro.',
-  card1_t:'IA Preditiva',card1_p:'Classificador de risco de surtos, previsao com bandas de confianca, e recomendacoes automaticas antes que o problema ocorra.',
-  card2_t:'Biosseguranca Total',card2_p:'Controle de visitantes, zonas de risco, avistamentos de pragas, e protocolos de desinfeccao. Pest Score em tempo real.',
-  card3_t:'Rastreabilidade Completa',card3_p:'Do lote ao cliente. Cada ovo rastreado com QR: granja, galpao, lote, data, FCR, health score.',
-  card4_t:'20 Modulos Integrados',card4_p:'Producao, saude, alimentacao, ambiente, vacinas, clientes, financas, rastreabilidade, biosseguranca, IA e mais. Tudo em uma so plataforma.',
-  card5_t:'Modo Campo',card5_p:'Interface simplificada para o dia a dia. Um botao, registrar ovos, pronto. Projetado para usar com botas de trabalho.',
-  card6_t:'Validacao Zero Tolerance',card6_p:'4 processadores validam cada dado. Zero erros financeiros. Confianca total para contadores e auditores.',
-  cta_title:'A eterna pergunta, respondida.',
-  tl1:'Nem o ovo nem a galinha. <strong>EGGlogU 360.</strong>',
-  tl2:'Antes do ovo. Antes da galinha. <strong>EGGlogU 360.</strong>',
-  tl3:'A resposta que a industria avicola estava esperando.',
-  tl4:'<strong>EGGlogU 360</strong> — Nascemos primeiro.',
-  btn_start:'Testar 14 Dias',btn_plans:'Ver Planos e Precos',
-  pricing_title:'Planos e Precos',pricing_sub:'Sem contratos. Cancele quando quiser. 14 dias de teste completo.',
-  badge_pop:'Mais Popular',btn_trial:'Testar 14 Dias',btn_contact:'Contatar',price_mo:'/mes',
-  tier0_name:'Hobbyist',tier0_desc:'Produtor independente',
-  t0f1:'Ate 2 lotes',t0f2:'1 usuario · +$4.99/extra',t0f3:'Producao + Dashboard',t0f4:'Modo Campo',t0f5:'Funciona sem internet',
-  tier1_name:'Starter',tier1_desc:'Operacao comercial',
-  t1f1:'Ate 5 lotes',t1f2:'1 usuario · +$3.99/extra',t1f3:'Producao + Alimentacao + Saude',t1f4:'Financas + Clientes',t1f5:'Modo Campo + Dashboard',
-  tier2_name:'Professional',tier2_desc:'Operacao completa com IA',
-  t2f1:'Ate 15 lotes',t2f2:'1 usuario · +$2.99/extra',t2f3:'20 modulos completos',t2f4:'IA preditiva + Analytics',t2f5:'Biosseguranca + Rastreabilidade',t2f6:'Validacao Zero Tolerance',
-  tier3_name:'Enterprise',tier3_desc:'Multi-granja, sem limites',
-  t3f1:'Lotes ilimitados',t3f2:'1 usuario · +$2.49/extra (-50%)',t3f3:'Multi-granja centralizada',t3f4:'Tudo no Professional +',t3f5:'Suporte dedicado 24/7',t3f6:'Onboarding personalizado',
-  pricing_note:'Cresça e economize: ao subir de plano, o custo por usuario cai ate <strong>50%</strong> e voce recebe <strong>2 meses gratis</strong> no primeiro ano. Seu investimento financia programas de melhoria genetica e qualidade de materia-prima.'
+// Compare table toggle
+function toggleCompare(){
+  const p=document.getElementById('comparePanel');
+  const b=document.querySelector('.compare-toggle');
+  if(p.classList.contains('open')){
+    p.style.maxHeight='0';p.classList.remove('open');b.classList.remove('open');
+  }else{
+    p.style.maxHeight=p.scrollHeight+'px';p.classList.add('open');b.classList.add('open');
+  }
 }
-};
-/* FR, DE, ZH, HI, AR — Phase 2 (global expansion) */
-let _PHASE2_LANGS = {
-zh:{
-  q_what:'\u5230\u5E95\u662F\u8C01\u5148\u6765\u7684\u2026\u2026',q_chicken_egg:'\u5148\u6709\u9E21\u8FD8\u662F\u5148\u6709\u86CB\uFF1F',
-  tagline_main:'\u6BD4\u95EE\u9898\u66F4\u65E9\u8BDE\u751F\u7684\u5E73\u53F0\u3002',
-  pitch_title:'\u4E0D\u662F\u9E21\uFF0C\u4E5F\u4E0D\u662F\u86CB\u3002',pitch_sub:'\u6211\u4EEC\u5148\u5230\u4E86\u3002',
-  card1_t:'AI \u9884\u6D4B',card1_p:'\u75AB\u60C5\u98CE\u9669\u5206\u7C7B\u5668\u3001\u5E26\u7F6E\u4FE1\u533A\u95F4\u7684\u9884\u6D4B\u3001\u4EE5\u53CA\u5728\u95EE\u9898\u53D1\u751F\u4E4B\u524D\u7684\u81EA\u52A8\u5EFA\u8BAE\u3002',
-  card2_t:'\u5168\u9762\u751F\u7269\u5B89\u5168',card2_p:'\u8BBF\u5BA2\u7BA1\u7406\u3001\u98CE\u9669\u533A\u57DF\u3001\u5BB3\u866B\u76EE\u51FB\u8BB0\u5F55\u548C\u6D88\u6BD2\u89C4\u7A0B\u3002\u5B9E\u65F6\u5BB3\u866B\u8BC4\u5206\u3002',
-  card3_t:'\u5B8C\u6574\u53EF\u8FFD\u6EAF\u6027',card3_p:'\u4ECE\u6279\u6B21\u5230\u5BA2\u6237\u3002\u6BCF\u9897\u86CB\u901A\u8FC7 QR \u8FFD\u8E2A\uFF1A\u519C\u573A\u3001\u9E21\u820D\u3001\u6279\u6B21\u3001\u65E5\u671F\u3001FCR\u3001\u5065\u5EB7\u8BC4\u5206\u3002',
-  card4_t:'20\u4E2A\u96C6\u6210\u6A21\u5757',card4_p:'\u751F\u4EA7\u3001\u5065\u5EB7\u3001\u9972\u5582\u3001\u73AF\u5883\u3001\u75AB\u82D7\u3001\u5BA2\u6237\u3001\u8D22\u52A1\u3001\u8FFD\u6EAF\u3001\u751F\u7269\u5B89\u5168\u3001AI\u7B49\u3002\u4E00\u4E2A\u5E73\u53F0\u641E\u5B9A\u4E00\u5207\u3002',
-  card5_t:'\u7530\u95F4\u6A21\u5F0F',card5_p:'\u65E5\u5E38\u7B80\u5316\u754C\u9762\u3002\u4E00\u4E2A\u6309\u94AE\uFF0C\u8BB0\u5F55\u9E21\u86CB\uFF0C\u5B8C\u6210\u3002\u4E13\u4E3A\u7A7F\u7740\u5DE5\u4F5C\u978B\u4F7F\u7528\u800C\u8BBE\u8BA1\u3002',
-  card6_t:'\u96F6\u5BB9\u5FCD\u9A8C\u8BC1',card6_p:'4\u4E2A\u5904\u7406\u5668\u9A8C\u8BC1\u6BCF\u9879\u6570\u636E\u3002\u96F6\u8D22\u52A1\u9519\u8BEF\u3002\u4F1A\u8BA1\u548C\u5BA1\u8BA1\u5E08\u5B8C\u5168\u4FE1\u8D56\u3002',
-  cta_title:'\u6C38\u6052\u4E4B\u95EE\uFF0C\u5DF2\u6709\u7B54\u6848\u3002',
-  tl1:'\u4E0D\u662F\u9E21\uFF0C\u4E5F\u4E0D\u662F\u86CB\u3002<strong>EGGlogU 360\u3002</strong>',
-  tl2:'\u5148\u4E8E\u9E21\u3002\u5148\u4E8E\u86CB\u3002<strong>EGGlogU 360\u3002</strong>',
-  tl3:'\u5BB6\u79BD\u884C\u4E1A\u4E00\u76F4\u5728\u7B49\u5F85\u7684\u7B54\u6848\u3002',
-  tl4:'<strong>EGGlogU 360</strong> \u2014 \u6211\u4EEC\u5148\u8BDE\u751F\u4E86\u3002',
-  btn_start:'\u514D\u8D39\u8BD5\u752814\u5929',btn_plans:'\u67E5\u770B\u65B9\u6848\u548C\u4EF7\u683C',
-  pricing_title:'\u65B9\u6848\u548C\u4EF7\u683C',pricing_sub:'\u65E0\u5408\u7EA6\u3002\u968F\u65F6\u53D6\u6D88\u300214\u5929\u5168\u529F\u80FD\u8BD5\u7528\u3002',
-  badge_pop:'\u6700\u53D7\u6B22\u8FCE',btn_trial:'\u514D\u8D39\u8BD5\u752814\u5929',btn_contact:'\u8054\u7CFB\u6211\u4EEC',price_mo:'/\u6708',
-  tier0_name:'\u7231\u597D\u8005',tier0_desc:'\u72EC\u7ACB\u751F\u4EA7\u8005',
-  t0f1:'\u6700\u591A2\u4E2A\u6279\u6B21',t0f2:'1\u4E2A\u7528\u6237',t0f3:'\u751F\u4EA7 + \u4EEA\u8868\u677F',t0f4:'\u7530\u95F4\u6A21\u5F0F',t0f5:'\u79BB\u7EBF\u53EF\u7528',
-  tier1_name:'\u5165\u95E8\u7248',tier1_desc:'\u5546\u4E1A\u8FD0\u8425',
-  t1f1:'\u6700\u591A5\u4E2A\u6279\u6B21',t1f2:'2\u4E2A\u7528\u6237',t1f3:'\u751F\u4EA7 + \u9972\u5582 + \u5065\u5EB7',t1f4:'\u8D22\u52A1 + \u5BA2\u6237',t1f5:'\u7530\u95F4\u6A21\u5F0F + \u4EEA\u8868\u677F',
-  tier2_name:'\u4E13\u4E1A\u7248',tier2_desc:'AI\u5B8C\u6574\u8FD0\u8425',
-  t2f1:'\u6700\u591A15\u4E2A\u6279\u6B21',t2f2:'5\u4E2A\u7528\u6237',t2f3:'\u5168\u90E820\u4E2A\u6A21\u5757',t2f4:'AI\u9884\u6D4B + \u5206\u6790',t2f5:'\u751F\u7269\u5B89\u5168 + \u8FFD\u6EAF',t2f6:'\u96F6\u5BB9\u5FCD\u9A8C\u8BC1',
-  tier3_name:'\u4F01\u4E1A\u7248',tier3_desc:'\u591A\u519C\u573A\uFF0C\u65E0\u9650\u5236',
-  t3f1:'\u65E0\u9650\u6279\u6B21',t3f2:'\u65E0\u9650\u7528\u6237',t3f3:'\u96C6\u4E2D\u5F0F\u591A\u519C\u573A',t3f4:'Professional\u5168\u90E8\u529F\u80FD +',t3f5:'\u4E13\u5C5E24/7\u652F\u6301',t3f6:'\u4E2A\u6027\u5316\u5165\u95E8\u57F9\u8BAD'
-},
-hi:{
-  q_what:'\u092A\u0939\u0932\u0947 \u0915\u094C\u0928 \u0906\u092F\u093E\u2026',q_chicken_egg:'\u092E\u0941\u0930\u094D\u0917\u0940 \u092F\u093E \u0905\u0902\u0921\u093E?',
-  tagline_main:'\u0935\u0939 \u092A\u094D\u0932\u0947\u091F\u092B\u093C\u0949\u0930\u094D\u092E \u091C\u094B \u0938\u092E\u0938\u094D\u092F\u093E \u0938\u0947 \u092A\u0939\u0932\u0947 \u091C\u0928\u094D\u092E\u093E\u0964',
-  pitch_title:'\u0928 \u092E\u0941\u0930\u094D\u0917\u0940, \u0928 \u0905\u0902\u0921\u093E\u0964',pitch_sub:'\u0939\u092E \u092A\u0939\u0932\u0947 \u0906\u090F\u0964',
-  card1_t:'AI \u092D\u0935\u093F\u0937\u094D\u092F\u0935\u093E\u0923\u0940',card1_p:'\u092A\u094D\u0930\u0915\u094B\u092A \u091C\u094B\u0916\u093F\u092E \u0935\u0930\u094D\u0917\u0940\u0915\u0930\u0923, \u0935\u093F\u0936\u094D\u0935\u093E\u0938 \u092C\u0948\u0902\u0921 \u0915\u0947 \u0938\u093E\u0925 \u092A\u0942\u0930\u094D\u0935\u093E\u0928\u0941\u092E\u093E\u0928, \u0914\u0930 \u0938\u092E\u0938\u094D\u092F\u093E \u0939\u094B\u0928\u0947 \u0938\u0947 \u092A\u0939\u0932\u0947 \u0938\u094D\u0935\u091A\u093E\u0932\u093F\u0924 \u0938\u093F\u092B\u093C\u093E\u0930\u093F\u0936\u0947\u0902\u0964',
-  card2_t:'\u0938\u0902\u092A\u0942\u0930\u094D\u0923 \u091C\u0948\u0935 \u0938\u0941\u0930\u0915\u094D\u0937\u093E',card2_p:'\u0906\u0917\u0902\u0924\u0941\u0915 \u0928\u093F\u092F\u0902\u0924\u094D\u0930\u0923, \u091C\u094B\u0916\u093F\u092E \u0915\u094D\u0937\u0947\u0924\u094D\u0930, \u0915\u0940\u091F \u0926\u0943\u0936\u094D\u092F \u0914\u0930 \u0915\u0940\u091F\u093E\u0923\u0941\u0936\u094B\u0927\u0928 \u092A\u094D\u0930\u094B\u091F\u094B\u0915\u0949\u0932\u0964 \u0930\u0940\u092F\u0932-\u091F\u093E\u0907\u092E \u0915\u0940\u091F \u0938\u094D\u0915\u094B\u0930\u0964',
-  card3_t:'\u092A\u0942\u0930\u094D\u0923 \u091F\u094D\u0930\u0947\u0938\u0947\u092C\u093F\u0932\u093F\u091F\u0940',card3_p:'\u092C\u0948\u091A \u0938\u0947 \u0917\u094D\u0930\u093E\u0939\u0915 \u0924\u0915\u0964 \u0939\u0930 \u0905\u0902\u0921\u093E QR \u0938\u0947 \u091F\u094D\u0930\u0948\u0915: \u092B\u093E\u0930\u094D\u092E, \u0936\u0947\u0921, \u092C\u0948\u091A, \u0924\u093F\u0925\u093F, FCR, \u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F \u0938\u094D\u0915\u094B\u0930\u0964',
-  card4_t:'20 \u090F\u0915\u0940\u0915\u0943\u0924 \u092E\u0949\u0921\u094D\u092F\u0942\u0932',card4_p:'\u0909\u0924\u094D\u092A\u093E\u0926\u0928, \u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F, \u0906\u0939\u093E\u0930, \u092A\u0930\u094D\u092F\u093E\u0935\u0930\u0923, \u091F\u0940\u0915\u0947, \u0917\u094D\u0930\u093E\u0939\u0915, \u0935\u093F\u0924\u094D\u0924, \u091F\u094D\u0930\u0947\u0938\u0947\u092C\u093F\u0932\u093F\u091F\u0940, \u091C\u0948\u0935 \u0938\u0941\u0930\u0915\u094D\u0937\u093E, AI \u0914\u0930 \u092C\u0939\u0941\u0924 \u0915\u0941\u091B\u0964 \u0938\u092C \u090F\u0915 \u092A\u094D\u0932\u0947\u091F\u092B\u093C\u0949\u0930\u094D\u092E \u092A\u0930\u0964',
-  card5_t:'\u092B\u093C\u0940\u0932\u094D\u0921 \u092E\u094B\u0921',card5_p:'\u0926\u0948\u0928\u093F\u0915 \u0915\u093E\u0930\u094D\u092F \u0915\u0947 \u0932\u093F\u090F \u0938\u0930\u0932 \u0907\u0902\u091F\u0930\u092B\u093C\u0947\u0938\u0964 \u090F\u0915 \u092C\u091F\u0928, \u0905\u0902\u0921\u0947 \u0926\u0930\u094D\u091C \u0915\u0930\u0947\u0902, \u092C\u0938\u0964 \u0915\u093E\u092E \u0915\u0947 \u091C\u0942\u0924\u094B\u0902 \u092E\u0947\u0902 \u0909\u092A\u092F\u094B\u0917 \u0915\u0947 \u0932\u093F\u090F \u0921\u093F\u091C\u093C\u093E\u0907\u0928 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964',
-  card6_t:'\u091C\u093C\u0940\u0930\u094B \u091F\u0949\u0932\u0930\u0947\u0902\u0938 \u0935\u0948\u0932\u093F\u0921\u0947\u0936\u0928',card6_p:'4 \u092A\u094D\u0930\u094B\u0938\u0947\u0938\u0930 \u0939\u0930 \u0921\u0947\u091F\u093E \u0915\u0940 \u091C\u093E\u0902\u091A \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964 \u0936\u0942\u0928\u094D\u092F \u0935\u093F\u0924\u094D\u0924\u0940\u092F \u0924\u094D\u0930\u0941\u091F\u093F\u092F\u093E\u0902\u0964 \u0932\u0947\u0916\u093E\u0915\u093E\u0930\u094B\u0902 \u0914\u0930 \u0911\u0921\u093F\u091F\u0930\u094B\u0902 \u0915\u0947 \u0932\u093F\u090F \u092A\u0942\u0930\u094D\u0923 \u0935\u093F\u0936\u094D\u0935\u093E\u0938\u0964',
-  cta_title:'\u0936\u093E\u0936\u094D\u0935\u0924 \u092A\u094D\u0930\u0936\u094D\u0928, \u0939\u0932 \u0939\u094B \u0917\u092F\u093E\u0964',
-  tl1:'\u0928 \u092E\u0941\u0930\u094D\u0917\u0940, \u0928 \u0905\u0902\u0921\u093E\u0964 <strong>EGGlogU 360\u0964</strong>',
-  tl2:'\u092E\u0941\u0930\u094D\u0917\u0940 \u0938\u0947 \u092A\u0939\u0932\u0947\u0964 \u0905\u0902\u0921\u0947 \u0938\u0947 \u092A\u0939\u0932\u0947\u0964 <strong>EGGlogU 360\u0964</strong>',
-  tl3:'\u0935\u0939 \u0909\u0924\u094D\u0924\u0930 \u091C\u093F\u0938\u0915\u0940 \u092A\u094B\u0932\u094D\u091F\u094D\u0930\u0940 \u0909\u0926\u094D\u092F\u094B\u0917 \u092A\u094D\u0930\u0924\u0940\u0915\u094D\u0937\u093E \u0915\u0930 \u0930\u0939\u093E \u0925\u093E\u0964',
-  tl4:'<strong>EGGlogU 360</strong> \u2014 \u0939\u092E \u092A\u0939\u0932\u0947 \u091C\u0928\u094D\u092E\u0947\u0964',
-  btn_start:'14 \u0926\u093F\u0928 \u092E\u0941\u092B\u093C\u094D\u0924 \u0906\u091C\u093C\u092E\u093E\u090F\u0902',btn_plans:'\u092F\u094B\u091C\u0928\u093E\u090F\u0902 \u0914\u0930 \u092E\u0942\u0932\u094D\u092F \u0926\u0947\u0916\u0947\u0902',
-  pricing_title:'\u092F\u094B\u091C\u0928\u093E\u090F\u0902 \u0914\u0930 \u092E\u0942\u0932\u094D\u092F',pricing_sub:'\u0915\u094B\u0908 \u0905\u0928\u0941\u092C\u0902\u0927 \u0928\u0939\u0940\u0902\u0964 \u0915\u092D\u0940 \u092D\u0940 \u0930\u0926\u094D\u0926 \u0915\u0930\u0947\u0902\u0964 14 \u0926\u093F\u0928 \u0915\u093E \u092A\u0942\u0930\u094D\u0923 \u092A\u0930\u0940\u0915\u094D\u0937\u0923\u0964',
-  badge_pop:'\u0938\u092C\u0938\u0947 \u0932\u094B\u0915\u092A\u094D\u0930\u093F\u092F',btn_trial:'14 \u0926\u093F\u0928 \u092E\u0941\u092B\u093C\u094D\u0924 \u0906\u091C\u093C\u092E\u093E\u090F\u0902',btn_contact:'\u0938\u0902\u092A\u0930\u094D\u0915 \u0915\u0930\u0947\u0902',price_mo:'/\u092E\u0939\u0940\u0928\u093E',
-  tier0_name:'Hobbyist',tier0_desc:'\u0938\u094D\u0935\u0924\u0902\u0924\u094D\u0930 \u0909\u0924\u094D\u092A\u093E\u0926\u0915',
-  t0f1:'2 \u0932\u0949\u091F \u0924\u0915',t0f2:'1 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E',t0f3:'\u0909\u0924\u094D\u092A\u093E\u0926\u0928 + \u0921\u0948\u0936\u092C\u094B\u0930\u094D\u0921',t0f4:'\u092B\u093C\u0940\u0932\u094D\u0921 \u092E\u094B\u0921',t0f5:'\u0911\u092B\u093C\u0932\u093E\u0907\u0928 \u0915\u093E\u092E \u0915\u0930\u0924\u093E \u0939\u0948',
-  tier1_name:'Starter',tier1_desc:'\u0935\u094D\u092F\u093E\u0935\u0938\u093E\u092F\u093F\u0915 \u0938\u0902\u091A\u093E\u0932\u0928',
-  t1f1:'5 \u0932\u0949\u091F \u0924\u0915',t1f2:'2 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E',t1f3:'\u0909\u0924\u094D\u092A\u093E\u0926\u0928+\u0906\u0939\u093E\u0930+\u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F',t1f4:'\u0935\u093F\u0924\u094D\u0924+\u0917\u094D\u0930\u093E\u0939\u0915',t1f5:'\u092B\u093C\u0940\u0932\u094D\u0921 \u092E\u094B\u0921+\u0921\u0948\u0936\u092C\u094B\u0930\u094D\u0921',
-  tier2_name:'Professional',tier2_desc:'AI \u0915\u0947 \u0938\u093E\u0925 \u092A\u0942\u0930\u094D\u0923 \u0938\u0902\u091A\u093E\u0932\u0928',
-  t2f1:'15 \u0932\u0949\u091F \u0924\u0915',t2f2:'5 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E',t2f3:'\u0938\u092D\u0940 20 \u092E\u0949\u0921\u094D\u092F\u0942\u0932',t2f4:'AI \u092D\u0935\u093F\u0937\u094D\u092F\u0935\u093E\u0923\u0940 + \u0935\u093F\u0936\u094D\u0932\u0947\u0937\u0923',t2f5:'\u091C\u0948\u0935 \u0938\u0941\u0930\u0915\u094D\u0937\u093E + \u091F\u094D\u0930\u0947\u0938\u0947\u092C\u093F\u0932\u093F\u091F\u0940',t2f6:'\u091C\u093C\u0940\u0930\u094B \u091F\u0949\u0932\u0930\u0947\u0902\u0938 \u0935\u0948\u0932\u093F\u0921\u0947\u0936\u0928',
-  tier3_name:'Enterprise',tier3_desc:'\u092E\u0932\u094D\u091F\u0940-\u092B\u093C\u093E\u0930\u094D\u092E, \u0915\u094B\u0908 \u0938\u0940\u092E\u093E \u0928\u0939\u0940\u0902',
-  t3f1:'\u0905\u0938\u0940\u092E\u093F\u0924 \u0932\u0949\u091F',t3f2:'\u0905\u0938\u0940\u092E\u093F\u0924 \u0909\u092A\u092F\u094B\u0917\u0915\u0930\u094D\u0924\u093E',t3f3:'\u0915\u0947\u0902\u0926\u094D\u0930\u0940\u0915\u0943\u0924 \u092E\u0932\u094D\u091F\u0940-\u092B\u093C\u093E\u0930\u094D\u092E',t3f4:'Professional \u092E\u0947\u0902 \u0938\u092C \u0915\u0941\u091B +',t3f5:'\u0938\u092E\u0930\u094D\u092A\u093F\u0924 24/7 \u0938\u0939\u093E\u092F\u0924\u093E',t3f6:'\u0935\u094D\u092F\u0915\u094D\u0924\u093F\u0917\u0924 \u0911\u0928\u092C\u094B\u0930\u094D\u0921\u093F\u0902\u0917'
-},
-ar:{
-  q_what:'\u0645\u0627 \u0627\u0644\u0630\u064A \u0643\u0627\u0646 \u0623\u0648\u0644\u0627\u064B...',q_chicken_egg:'\u0627\u0644\u062F\u062C\u0627\u062C\u0629 \u0623\u0645 \u0627\u0644\u0628\u064A\u0636\u0629\u061F',
-  tagline_main:'\u0627\u0644\u0645\u0646\u0635\u0629 \u0627\u0644\u062A\u064A \u0648\u0644\u062F\u062A \u0642\u0628\u0644 \u0627\u0644\u0645\u0634\u0643\u0644\u0629.',
-  pitch_title:'\u0644\u0627 \u0627\u0644\u062F\u062C\u0627\u062C\u0629 \u0648\u0644\u0627 \u0627\u0644\u0628\u064A\u0636\u0629.',pitch_sub:'\u0646\u062D\u0646 \u0648\u0635\u0644\u0646\u0627 \u0623\u0648\u0644\u0627\u064B.',
-  card1_t:'\u0630\u0643\u0627\u0621 \u0627\u0635\u0637\u0646\u0627\u0639\u064A \u062A\u0646\u0628\u0624\u064A',card1_p:'\u0645\u0635\u0646\u0641 \u062E\u0637\u0631 \u0627\u0644\u062A\u0641\u0634\u064A\u060C \u0627\u0644\u062A\u0648\u0642\u0639\u0627\u062A \u0645\u0639 \u0646\u0637\u0627\u0642\u0627\u062A \u0627\u0644\u062B\u0642\u0629\u060C \u0648\u0627\u0644\u062A\u0648\u0635\u064A\u0627\u062A \u0627\u0644\u062A\u0644\u0642\u0627\u0626\u064A\u0629 \u0642\u0628\u0644 \u062D\u062F\u0648\u062B \u0627\u0644\u0645\u0634\u0643\u0644\u0629.',
-  card2_t:'\u0623\u0645\u0646 \u062D\u064A\u0648\u064A \u0643\u0627\u0645\u0644',card2_p:'\u0645\u0631\u0627\u0642\u0628\u0629 \u0627\u0644\u0632\u0648\u0627\u0631\u060C \u0645\u0646\u0627\u0637\u0642 \u0627\u0644\u062E\u0637\u0631\u060C \u0631\u0635\u062F \u0627\u0644\u0622\u0641\u0627\u062A\u060C \u0648\u0628\u0631\u0648\u062A\u0648\u0643\u0648\u0644\u0627\u062A \u0627\u0644\u062A\u0639\u0642\u064A\u0645. \u0646\u062A\u064A\u062C\u0629 \u0627\u0644\u0622\u0641\u0627\u062A \u0641\u064A \u0627\u0644\u0648\u0642\u062A \u0627\u0644\u0641\u0639\u0644\u064A.',
-  card3_t:'\u062A\u062A\u0628\u0639 \u0643\u0627\u0645\u0644',card3_p:'\u0645\u0646 \u0627\u0644\u062F\u0641\u0639\u0629 \u0625\u0644\u0649 \u0627\u0644\u0639\u0645\u064A\u0644. \u0643\u0644 \u0628\u064A\u0636\u0629 \u0645\u062A\u062A\u0628\u0639\u0629 \u0645\u0639 QR: \u0627\u0644\u0645\u0632\u0631\u0639\u0629\u060C \u0627\u0644\u062D\u0638\u064A\u0631\u0629\u060C \u0627\u0644\u0642\u0637\u064A\u0639\u060C \u0627\u0644\u062A\u0627\u0631\u064A\u062E\u060C FCR\u060C \u0646\u062A\u064A\u062C\u0629 \u0627\u0644\u0635\u062D\u0629.',
-  card4_t:'20 \u0648\u062D\u062F\u0629 \u0645\u062A\u0643\u0627\u0645\u0644\u0629',card4_p:'\u0627\u0644\u0625\u0646\u062A\u0627\u062C\u060C \u0627\u0644\u0635\u062D\u0629\u060C \u0627\u0644\u062A\u063A\u0630\u064A\u0629\u060C \u0627\u0644\u0628\u064A\u0626\u0629\u060C \u0627\u0644\u0644\u0642\u0627\u062D\u0627\u062A\u060C \u0627\u0644\u0639\u0645\u0644\u0627\u0621\u060C \u0627\u0644\u0645\u0627\u0644\u064A\u0629\u060C \u0627\u0644\u062A\u062A\u0628\u0639\u060C \u0627\u0644\u0623\u0645\u0646 \u0627\u0644\u062D\u064A\u0648\u064A\u060C AI \u0648\u0627\u0644\u0645\u0632\u064A\u062F. \u0643\u0644 \u0634\u064A\u0621 \u0641\u064A \u0645\u0646\u0635\u0629 \u0648\u0627\u062D\u062F\u0629.',
-  card5_t:'\u0648\u0636\u0639 \u0627\u0644\u062D\u0642\u0644',card5_p:'\u0648\u0627\u062C\u0647\u0629 \u0645\u0628\u0633\u0637\u0629 \u0644\u0644\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0627\u0644\u064A\u0648\u0645\u064A. \u0632\u0631 \u0648\u0627\u062D\u062F\u060C \u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u0628\u064A\u0636\u060C \u0627\u0646\u062A\u0647\u0649. \u0645\u0635\u0645\u0645 \u0644\u0644\u0627\u0633\u062A\u062E\u062F\u0627\u0645 \u0645\u0639 \u0623\u062D\u0630\u064A\u0629 \u0627\u0644\u0639\u0645\u0644.',
-  card6_t:'\u062A\u062D\u0642\u0642 \u0639\u062F\u0645 \u0627\u0644\u062A\u0633\u0627\u0645\u062D',card6_p:'4 \u0645\u0639\u0627\u0644\u062C\u0627\u062A \u062A\u062A\u062D\u0642\u0642 \u0645\u0646 \u0643\u0644 \u0628\u064A\u0627\u0646\u0629. \u0635\u0641\u0631 \u0623\u062E\u0637\u0627\u0621 \u0645\u0627\u0644\u064A\u0629. \u062B\u0642\u0629 \u062A\u0627\u0645\u0629 \u0644\u0644\u0645\u062D\u0627\u0633\u0628\u064A\u0646 \u0648\u0627\u0644\u0645\u062F\u0642\u0642\u064A\u0646.',
-  cta_title:'\u0627\u0644\u0633\u0624\u0627\u0644 \u0627\u0644\u0623\u0632\u0644\u064A\u060C \u062A\u0645 \u062D\u0644\u0647.',
-  tl1:'\u0644\u0627 \u0627\u0644\u062F\u062C\u0627\u062C\u0629 \u0648\u0644\u0627 \u0627\u0644\u0628\u064A\u0636\u0629. <strong>EGGlogU 360.</strong>',
-  tl2:'\u0642\u0628\u0644 \u0627\u0644\u062F\u062C\u0627\u062C\u0629. \u0642\u0628\u0644 \u0627\u0644\u0628\u064A\u0636\u0629. <strong>EGGlogU 360.</strong>',
-  tl3:'\u0627\u0644\u0625\u062C\u0627\u0628\u0629 \u0627\u0644\u062A\u064A \u0643\u0627\u0646\u062A \u0635\u0646\u0627\u0639\u0629 \u0627\u0644\u062F\u0648\u0627\u062C\u0646 \u062A\u0646\u062A\u0638\u0631\u0647\u0627.',
-  tl4:'<strong>EGGlogU 360</strong> \u2014 \u0648\u0644\u062F\u0646\u0627 \u0623\u0648\u0644\u0627\u064B.',
-  btn_start:'\u062C\u0631\u0628 14 \u064A\u0648\u0645 \u0645\u062C\u0627\u0646\u0627\u064B',btn_plans:'\u0639\u0631\u0636 \u0627\u0644\u062E\u0637\u0637 \u0648\u0627\u0644\u0623\u0633\u0639\u0627\u0631',
-  pricing_title:'\u0627\u0644\u062E\u0637\u0637 \u0648\u0627\u0644\u0623\u0633\u0639\u0627\u0631',pricing_sub:'\u0628\u062F\u0648\u0646 \u0639\u0642\u0648\u062F. \u0627\u0644\u063A \u0641\u064A \u0623\u064A \u0648\u0642\u062A. 14 \u064A\u0648\u0645 \u062A\u062C\u0631\u0628\u0629 \u0643\u0627\u0645\u0644\u0629.',
-  badge_pop:'\u0627\u0644\u0623\u0643\u062B\u0631 \u0634\u0639\u0628\u064A\u0629',btn_trial:'\u062C\u0631\u0628 14 \u064A\u0648\u0645 \u0645\u062C\u0627\u0646\u0627\u064B',btn_contact:'\u0627\u062A\u0635\u0644 \u0628\u0646\u0627',price_mo:'/\u0634\u0647\u0631',
-  tier0_name:'Hobbyist',tier0_desc:'\u0645\u0646\u062A\u062C \u0645\u0633\u062A\u0642\u0644',
-  t0f1:'\u062D\u062A\u0649 \u0633\u0631\u0628\u064A\u0646',t0f2:'\u0645\u0633\u062A\u062E\u062F\u0645 \u0648\u0627\u062D\u062F',t0f3:'\u0625\u0646\u062A\u0627\u062C + \u0644\u0648\u062D\u0629 \u0645\u0639\u0644\u0648\u0645\u0627\u062A',t0f4:'\u0648\u0636\u0639 \u0627\u0644\u062D\u0642\u0644',t0f5:'\u064A\u0639\u0645\u0644 \u0628\u062F\u0648\u0646 \u0625\u0646\u062A\u0631\u0646\u062A',
-  tier1_name:'Starter',tier1_desc:'\u0639\u0645\u0644\u064A\u0629 \u062A\u062C\u0627\u0631\u064A\u0629',
-  t1f1:'\u062D\u062A\u0649 5 \u0623\u0633\u0631\u0627\u0628',t1f2:'\u0645\u0633\u062A\u062E\u062F\u0645\u0627\u0646',t1f3:'\u0625\u0646\u062A\u0627\u062C+\u062A\u063A\u0630\u064A\u0629+\u0635\u062D\u0629',t1f4:'\u0645\u0627\u0644\u064A\u0629+\u0639\u0645\u0644\u0627\u0621',t1f5:'\u0648\u0636\u0639 \u0627\u0644\u062D\u0642\u0644+\u0644\u0648\u062D\u0629 \u0645\u0639\u0644\u0648\u0645\u0627\u062A',
-  tier2_name:'Professional',tier2_desc:'\u0639\u0645\u0644\u064A\u0629 \u0643\u0627\u0645\u0644\u0629 \u0645\u0639 AI',
-  t2f1:'\u062D\u062A\u0649 15 \u0633\u0631\u0628\u0627\u064B',t2f2:'5 \u0645\u0633\u062A\u062E\u062F\u0645\u064A\u0646',t2f3:'\u062C\u0645\u064A\u0639 \u0627\u0644\u0640 20 \u0648\u062D\u062F\u0629',t2f4:'AI \u062A\u0646\u0628\u0624\u064A + \u062A\u062D\u0644\u064A\u0644\u0627\u062A',t2f5:'\u0623\u0645\u0646 \u062D\u064A\u0648\u064A + \u062A\u062A\u0628\u0639',t2f6:'\u062A\u062D\u0642\u0642 \u0639\u062F\u0645 \u0627\u0644\u062A\u0633\u0627\u0645\u062D',
-  tier3_name:'Enterprise',tier3_desc:'\u0645\u062A\u0639\u062F\u062F \u0627\u0644\u0645\u0632\u0627\u0631\u0639\u060C \u0628\u0644\u0627 \u062D\u062F\u0648\u062F',
-  t3f1:'\u0623\u0633\u0631\u0627\u0628 \u063A\u064A\u0631 \u0645\u062D\u062F\u0648\u062F\u0629',t3f2:'\u0645\u0633\u062A\u062E\u062F\u0645\u0648\u0646 \u063A\u064A\u0631 \u0645\u062D\u062F\u0648\u062F\u064A\u0646',t3f3:'\u0645\u062A\u0639\u062F\u062F \u0627\u0644\u0645\u0632\u0627\u0631\u0639 \u0645\u0631\u0643\u0632\u064A',t3f4:'\u0643\u0644 \u0634\u064A\u0621 \u0641\u064A Professional +',t3f5:'\u062F\u0639\u0645 \u0645\u062E\u0635\u0635 24/7',t3f6:'\u062A\u0623\u0647\u064A\u0644 \u0634\u062E\u0635\u064A'
+// Curtain: fade out on scroll
+const curtain=document.getElementById('curtain');
+let curtainDismissed=false;
+function dismissCurtain(){
+  if(curtainDismissed)return;
+  curtainDismissed=true;
+  curtain.style.transition='opacity .6s ease, max-height .6s ease';
+  curtain.style.opacity='0';
+  setTimeout(()=>{curtain.style.display='none'},600);
 }
-};
-let curLang='es';
-function setLang(l,manual){
-  curLang=l;
-  document.querySelectorAll('.lang-bar button').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===l));
-  document.querySelectorAll('[data-t]').forEach(el=>{
-    const k=el.getAttribute('data-t'),v=T[l]&&T[l][k];
-    if(v) el.innerHTML=v;
+document.querySelector('.curtain-scroll').addEventListener('click',e=>{e.preventDefault();dismissCurtain()});
+window.addEventListener('scroll',()=>{
+  if(!curtainDismissed&&window.scrollY>window.innerHeight*0.25){dismissCurtain()}
+},{passive:true});
+
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20)});
+const hamburger=document.getElementById('hamburger');
+const navLinks=document.getElementById('navLinks');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');navLinks.classList.toggle('open')});
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{hamburger.classList.remove('open');navLinks.classList.remove('open')}));
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.feature-card,.problem-card,.diff-card,.price-card,.step,.tour-card').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease, transform .5s ease';observer.observe(el)});
+// Language picker — all globe dropdowns (curtain + nav)
+document.querySelectorAll('.lang-picker').forEach(picker=>{
+  const globe=picker.querySelector('.lang-globe');
+  const dd=picker.querySelector('.lang-dropdown');
+  globe.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.lang-dropdown').forEach(d=>{if(d!==dd)d.classList.remove('open')});dd.classList.toggle('open')});
+  dd.addEventListener('click',e=>e.stopPropagation());
+});
+document.addEventListener('click',()=>document.querySelectorAll('.lang-dropdown').forEach(d=>d.classList.remove('open')));
+document.querySelectorAll('.lang-option').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const lang=btn.dataset.lang;
+    if(window.setLang)window.setLang(lang);
+    document.querySelectorAll('.lang-option').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+    document.querySelectorAll('.lang-dropdown').forEach(d=>d.classList.remove('open'));
   });
-  document.documentElement.lang=l;
-  document.documentElement.dir=l==='ar'?'rtl':'ltr';
-  if(manual) localStorage.setItem('campaign_lang_manual',l);
+});
+// Tour lightbox
+const tourData=[
+  {title:'Dashboard',desc:'Panel principal con KPIs en tiempo real: producción diaria, mortalidad, consumo de alimento y alertas activas. Gráficas interactivas de tendencias semanales y mensuales.',features:['KPIs de producción, mortalidad y feed','Gráficas de tendencia semanal/mensual','Alertas y notificaciones activas','Resumen multi-granja']},
+  {title:'Producción diaria',desc:'Registro detallado de huevos por lote con control de roturas, clasificación por calibre y análisis de porcentaje de postura. Histórico completo exportable.',features:['Registro por lote con roturas y calibre','Porcentaje de postura automático','Histórico y exportación CSV/PDF','Comparativa entre lotes']},
+  {title:'Salud y vacunas',desc:'Calendario sanitario completo con recordatorios automáticos, seguimiento de tratamientos, alertas de mortalidad y registro de brotes sanitarios.',features:['Calendario de vacunación con alertas','Registro de mortalidad y brotes','Seguimiento de medicamentos','Historial sanitario por lote']},
+  {title:'Finanzas',desc:'Control financiero integral: ingresos por venta, gastos operativos, balance mensual y gráficos comparativos. Cuentas por cobrar y proyecciones.',features:['Ingresos y gastos por categoría','Balance y rentabilidad por período','Cuentas por cobrar','Gráficos comparativos mensuales']},
+  {title:'Trazabilidad',desc:'Trazabilidad completa desde la granja hasta el cliente final. Lotes con código QR, timeline de distribución y página pública de verificación.',features:['Códigos QR por lote','Timeline granja → cliente','Página pública de verificación','Exportación para auditorías']},
+  {title:'Modo Campo',desc:'Interfaz simplificada diseñada para uso en gallineros. Botones grandes, registro rápido y funcionamiento 100% offline con sincronización automática.',features:['Interfaz táctil con botones grandes','Funciona 100% sin internet','Sincronización automática al reconectar','Checklist diario de operaciones']}
+];
+function openTourLightbox(i){
+  const d=tourData[i],lb=document.getElementById('tourLightbox');
+  const card=document.querySelectorAll('.tour-card')[i];
+  const screenHTML=card?card.querySelector('.tour-screen').innerHTML:'';
+  document.getElementById('tourLbScreen').innerHTML=screenHTML;
+  document.getElementById('tourLbTitle').textContent=d.title;
+  document.getElementById('tourLbDesc').textContent=d.desc;
+  const ul=document.getElementById('tourLbFeatures');
+  ul.innerHTML=d.features.map(f=>'<li>'+f+'</li>').join('');
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
 }
-function toggleAcc(n){
-  document.querySelectorAll('.acc-item').forEach(el=>{
-    if(+el.dataset.acc===n) el.classList.toggle('open');
-    else el.classList.remove('open');
-  });
+function closeTourLightbox(){
+  document.getElementById('tourLightbox').classList.remove('active');
+  document.body.style.overflow='';
 }
-// Auto-detect device language, manual switch saves preference
-function detectDeviceLang(){
-  const nav=navigator.language||navigator.userLanguage||'';
-  const code=nav.split('-')[0].toLowerCase();
-  if(T[code]) return code;
-  if(nav.startsWith('es')) return 'es';
-  if(nav.startsWith('pt')) return 'pt';
-  return 'en';
+document.getElementById('tourLightbox').addEventListener('click',function(e){if(e.target===this)closeTourLightbox()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeTourLightbox()});
+// Tour mobile dots
+if(window.innerWidth<=768){
+  const grid=document.querySelector('.tour-grid');
+  const dots=document.querySelector('.tour-dots');
+  const cards=document.querySelectorAll('.tour-card');
+  if(grid&&dots&&cards.length){
+    cards.forEach((_,i)=>{const dot=document.createElement('button');dot.className='tour-dot'+(i===0?' active':'');dot.onclick=()=>cards[i].scrollIntoView({behavior:'smooth',inline:'start',block:'nearest'});dots.appendChild(dot)});
+    const dobs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const idx=[...cards].indexOf(e.target);dots.querySelectorAll('.tour-dot').forEach((d,j)=>d.classList.toggle('active',j===idx))}})},{root:grid,threshold:.6});
+    cards.forEach(c=>dobs.observe(c));
+  }
 }
-// Use saved only if user manually switched, otherwise always use device lang
-const userChose=localStorage.getItem('campaign_lang_manual');
-setLang(userChose&&T[userChose]?userChose:detectDeviceLang());
 </script>
+<script src="i18n-landing.js?v=14lang5"></script>
 </body>
 </html>
