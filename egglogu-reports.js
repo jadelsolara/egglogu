@@ -625,25 +625,23 @@ const ReportEngine={
 
   exportExcel(result){
     if(!result||!result.csvRows||!result.csvRows.length)return;
-    if(typeof XLSX==='undefined'){
+    loadLib('XLSX',LAZY_URLS.XLSX).then(()=>{
+      const ws=XLSX.utils.aoa_to_sheet(result.csvRows);
+      const wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb,ws,result.template||'Report');
+      XLSX.writeFile(wb,'egglogu_'+result.template+'_'+todayStr()+'.xlsx');
+      if(typeof toast==='function')toast(t('cfg_exported'));
+    }).catch(()=>{
       if(typeof toast==='function')toast(t('rpt_xlsx_missing'),'error');
-      return;
-    }
-    const ws=XLSX.utils.aoa_to_sheet(result.csvRows);
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,result.template||'Report');
-    XLSX.writeFile(wb,'egglogu_'+result.template+'_'+todayStr()+'.xlsx');
-    if(typeof toast==='function')toast(t('cfg_exported'));
+    });
   },
 
   async exportPDF(containerId){
-    if(typeof html2canvas==='undefined'||typeof jspdf==='undefined'){
-      if(typeof toast==='function')toast(t('rpt_pdf_missing'),'error');
-      return;
-    }
     const el=document.getElementById(containerId);
     if(!el)return;
     try{
+      await loadLib('html2canvas',LAZY_URLS.html2canvas);
+      await loadLib('jspdf',LAZY_URLS.jspdf);
       const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
       const imgData=canvas.toDataURL('image/png');
       const pdf=new jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});

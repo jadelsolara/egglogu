@@ -983,6 +983,14 @@ Object.keys(CHARTS).forEach(k=>{if(CHARTS[k]){try{CHARTS[k].destroy();}catch(e){
 function themeColor(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
 function themeRgba(a){const th=THEMES[localStorage.getItem('egglogu_theme')||'blue']||THEMES.blue;return'rgba('+th.rgb+','+a+')';}
 
+// ============ LAZY LIB LOADER ============
+const _loadedLibs={};
+function _loadLib(name,url){if(_loadedLibs[name])return _loadedLibs[name];_loadedLibs[name]=new Promise((res,rej)=>{const s=document.createElement('script');s.src=url;s.onload=()=>res();s.onerror=()=>rej(new Error('Failed to load '+name));document.head.appendChild(s);});return _loadedLibs[name];}
+async function _ensureChart(){if(typeof Chart!=='undefined')return;await _loadLib('chartjs','https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js');}
+async function _ensureLeaflet(){if(typeof L!=='undefined')return;await _loadLib('leaflet','https://unpkg.com/leaflet@1/dist/leaflet.js');}
+async function _ensureXLSX(){if(typeof XLSX!=='undefined')return;await _loadLib('xlsx','https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js');}
+async function _ensureMQTT(){if(typeof mqtt!=='undefined')return;await _loadLib('mqtt','https://unpkg.com/mqtt@5/dist/mqtt.min.js');}
+
 // ============ CORE ============
 let LANG=localStorage.getItem('egglogu_lang')||'es';
 let DATA=null;let CHARTS={};let currentSection='dashboard';
@@ -1000,13 +1008,42 @@ function currency(){return(DATA||loadData()).farm.currency||'$';}
 function todayStr(){return new Date().toISOString().substring(0,10);}
 
 // ============ SECURITY: XSS Prevention ============
+/**
+ * Sanitizes a string by escaping HTML special characters to prevent XSS attacks.
+ * @param {string} str - The string to sanitize
+ * @returns {string} The escaped string with &, <, >, ", ' replaced by HTML entities
+ */
 function sanitizeHTML(str){
 if(typeof str!=='string')return String(str||'');
 const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
 return str.replace(/[&<>"']/g,c=>map[c]);
 }
+/**
+ * Escapes a string for safe use inside HTML attributes.
+ * @param {string} str - The attribute value to escape
+ * @returns {string} The sanitized string safe for HTML attribute insertion
+ */
 function escapeAttr(str){return sanitizeHTML(String(str||''));}
 function safeHTML(tpl,...vals){return tpl.reduce((out,s,i)=>out+s+(i<vals.length?sanitizeHTML(String(vals[i])):''),'');}
+
+// ============ Lazy loader for heavy third-party libs ============
+const _lazyLibs={};
+function loadLib(name,url){
+  if(_lazyLibs[name])return _lazyLibs[name];
+  _lazyLibs[name]=new Promise((resolve,reject)=>{
+    if(window[name]){resolve(window[name]);return;}
+    const s=document.createElement('script');
+    s.src=url;s.onload=()=>resolve(window[name]);
+    s.onerror=()=>reject(new Error('Failed to load '+name));
+    document.head.appendChild(s);
+  });
+  return _lazyLibs[name];
+}
+const LAZY_URLS={
+  html2canvas:'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+  jspdf:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js',
+  XLSX:'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.mini.min.js'
+};
 
 // ============ SECURITY: Input Validation ============
 function validateInput(value,rules={}){
@@ -1058,6 +1095,37 @@ function confirmYes(){$('confirm-overlay').classList.remove('open');if(_confirmR
 function confirmNo(){$('confirm-overlay').classList.remove('open');if(_confirmResolve){_confirmResolve(false);_confirmResolve=null;}}
 
 // ============ API SERVICE LAYER (Backend Connection) ============
+
+// Circuit breaker for external APIs
+const _circuitBreakers={};
+function _getBreaker(key){
+  if(!_circuitBreakers[key])_circuitBreakers[key]={failures:0,lastFail:0,state:'closed'};
+  return _circuitBreakers[key];
+}
+function _cbFetch(url,opts,key,threshold=3,cooldownMs=30000){
+  const cb=_getBreaker(key||url);
+  if(cb.state==='open'){
+    if(Date.now()-cb.lastFail<cooldownMs)return Promise.reject(new Error('Circuit open: '+key));
+    cb.state='half-open';
+  }
+  return fetch(url,opts).then(r=>{
+    if(r.ok){cb.failures=0;cb.state='closed';}
+    else{cb.failures++;cb.lastFail=Date.now();if(cb.failures>=threshold)cb.state='open';}
+    return r;
+  }).catch(e=>{
+    cb.failures++;cb.lastFail=Date.now();if(cb.failures>=threshold)cb.state='open';
+    throw e;
+  });
+}
+
+// CSRF token helper
+function _getCsrfToken(){
+  const meta=document.querySelector('meta[name="csrf-token"]');
+  if(meta)return meta.content;
+  const m=document.cookie.match(/csrf_token=([^;]+)/);
+  return m?m[1]:'';
+}
+
 const API_BASE=localStorage.getItem('egglogu_api_base')||'https://api.egglogu.com/api/v1';
 const _GOOGLE_CLIENT_ID=localStorage.getItem('egglogu_google_client_id')||'';window._GOOGLE_CLIENT_ID=_GOOGLE_CLIENT_ID;
 // SECURITY MODEL — localStorage Token Storage
@@ -1067,6 +1135,12 @@ const _GOOGLE_CLIENT_ID=localStorage.getItem('egglogu_google_client_id')||'';win
 // short-lived with refresh rotation, (4) the alternative (httpOnly cookies) is incompatible
 // with offline-first PWA architecture. XSS is mitigated via sanitizeHTML() on all user input.
 // NEVER store raw passwords, PINs, or API keys in localStorage.
+/**
+ * API service object handling all HTTP communication with the backend.
+ * Manages JWT tokens (access + refresh), auto-refresh on 401, offline queueing
+ * for POST/PUT requests, and server sync flush.
+ * @type {Object}
+ */
 const apiService={
   _token:null,_refreshToken:null,_online:navigator.onLine,_syncQueue:[],
 
@@ -1089,7 +1163,7 @@ const apiService={
   // Core HTTP wrapper
   async request(method,path,body,retry=true){
     const token=this.getToken();
-    const opts={method,headers:{'Content-Type':'application/json'}};
+    const opts={method,headers:{'Content-Type':'application/json','X-CSRF-Token':_getCsrfToken()}};
     if(token)opts.headers['Authorization']='Bearer '+token;
     if(body&&method!=='GET')opts.body=JSON.stringify(body);
     let resp;
@@ -1719,6 +1793,11 @@ function onMedSelect(){const sel=$('m-name');if(!sel)return;const med=CATALOGS.m
 function onExpenseCatChange(){const cat=$('fe-cat')?.value;const descEl=$('fe-desc');if(!descEl||!cat)return;const opts=CATALOGS.expenseDescriptions[cat]||[];descEl.innerHTML=catalogSelect(opts,descEl.value,true);}
 function onHouseChange(){const house=$('tb-house')?.value;const rackEl=$('tb-rack');if(!rackEl)return;rackEl.innerHTML=rackSelect(house,rackEl.value);}
 function onProdFlockChange(){const fid=$('p-flock')?.value;const shellEl=$('p-shell');if(!fid||!shellEl)return;const D=loadData();const f=D.flocks.find(x=>x.id===fid);if(f){const b=COMMERCIAL_BREEDS.find(x=>x.id===f.breed);if(b&&b.eggColor){const colorMap={'Blanco':'blanco','Marrón':'marron','Marrón oscuro':'marron','Crema':'crema','Azul/Verde':'crema','Verde oliva':'crema'};shellEl.value=colorMap[b.eggColor]||'';}}}
+/**
+ * Loads application data from localStorage, applying migrations for missing fields.
+ * Returns cached DATA if already loaded; otherwise parses from storage or falls back to DEFAULT_DATA.
+ * @returns {Object} The full application data object (farm, flocks, production, settings, etc.)
+ */
 function loadData(){
 if(DATA)return DATA;
 try{const r=localStorage.getItem('egglogu_data');
@@ -1763,6 +1842,11 @@ if(DATA.settings.darkMode===undefined)DATA.settings.darkMode=false;
 }catch(e){DATA=JSON.parse(JSON.stringify(DEFAULT_DATA));}
 return DATA;
 }
+/**
+ * Persists application data to localStorage, schedules auto-backup and server sync,
+ * and triggers WorkflowEngine evaluation if available.
+ * @param {Object} [d] - Data object to save; if omitted, saves the current cached DATA
+ */
 function saveData(d){DATA=d||DATA;_safeSetItem('egglogu_data',JSON.stringify(DATA));scheduleAutoBackup();scheduleSyncToServer();if(typeof WorkflowEngine!=='undefined')try{WorkflowEngine.evaluate(DATA);}catch(e){console.warn('WorkflowEngine.evaluate error:',e);}}
 
 // ============ SERVER SYNC (dual-write: localStorage + API) — Delta Sync ============
@@ -2851,12 +2935,29 @@ _wtRenderStep();
 }
 // ============ END WALKTHROUGH ENGINE ============
 
+/**
+ * Cleans up resources from the current section before navigating away.
+ * Destroys Chart.js instances, removes Leaflet map, disconnects MQTT, and clears active timers.
+ */
+function _cleanupSection(){
+destroyCharts();
+if(geoMap){try{geoMap.remove();}catch(e){}geoMap=null;geoMarker=null;}
+if(mqttClient){try{mqttClient.end(true);}catch(e){}mqttClient=null;mqttConnected=false;}
+if(_pinLockCountdownTimer){clearInterval(_pinLockCountdownTimer);_pinLockCountdownTimer=null;}
+if(typeof _wtTimer!=='undefined'&&_wtTimer){clearTimeout(_wtTimer);_wtTimer=null;}
+}
+/**
+ * Main SPA router. Navigates to a section, cleaning up the previous one, updating nav state,
+ * and rendering the target section. Blocks non-dashboard access when trial is suspended.
+ * @param {string} section - Section ID (e.g. 'dashboard', 'produccion', 'finanzas', 'config')
+ */
 function nav(section){
 // Suspension gate — trial expired, force to dashboard
 const _p=(loadData().settings.plan||{});
 if(_p.status==='suspended'&&section!=='dashboard'&&section!=='config'){
 section='dashboard';showToast('Tu prueba ha terminado. Suscribete para continuar.','error');
 }
+_cleanupSection();
 currentSection=section;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
 $('sec-'+section).classList.add('active');
 document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',a.dataset.section===section));
@@ -2878,9 +2979,17 @@ setTimeout(()=>{const first=$('modal-overlay').querySelector('input,select,texta
 function closeModal(){$('modal-overlay').classList.remove('open');if(_modalTrigger&&_modalTrigger.focus)_modalTrigger.focus();_modalTrigger=null;_vengWarningsShown=false;}
 function toast(msg,err=false){const e=$('toast');e.textContent=msg;e.className='toast show'+(err?' error':'');setTimeout(()=>e.className='toast',3000);}
 function emptyState(icon,msg,btn,act){let h=`<div class="empty-state"><div class="empty-icon">${sanitizeHTML(icon)}</div><p>${sanitizeHTML(msg)}</p>`;if(btn)h+=`<button class="btn btn-primary" onclick="${escapeAttr(act)}">${sanitizeHTML(btn)}</button>`;return h+'</div>';}
+/**
+ * Switches the UI language, updates localStorage, sets HTML dir (RTL for Arabic),
+ * refreshes all translatable elements, and re-renders the current section.
+ * @param {string} l - Language code (e.g. 'es', 'en', 'pt', 'fr', 'de', 'it', 'ja', 'zh', 'ar')
+ */
 function switchLang(l){LANG=l;_safeSetItem('egglogu_lang',l);document.documentElement.lang=l;document.documentElement.dir=(l==='ar')?'rtl':'ltr';const lt=$('langToggle');if(lt){lt.querySelectorAll('.lang-grid button').forEach(b=>{b.classList.toggle('active',b.id==='btn-'+l);});const names={es:'Español',en:'English',pt:'Português',fr:'Français',de:'Deutsch',it:'Italiano',ja:'日本語',zh:'中文',ru:'Русский',id:'Bahasa Indonesia',ar:'العربية',ko:'한국어',th:'ไทย',vi:'Tiếng Việt'};const lc=$('langCurrent');if(lc)lc.textContent=names[l]||l;lt.classList.remove('open');}document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
 function flockSelect(sel,all=false){const D=loadData();const active=D.flocks.filter(f=>f.status!=='descarte');let h=all?`<option value="">${t('all')}</option>`:'';if(all||active.length!==1)h+='<option value="">--</option>';active.forEach(f=>{const autoSel=(!sel&&active.length===1)||f.id===sel;h+=`<option value="${escapeAttr(f.id)}"${autoSel?' selected':''}>${sanitizeHTML(f.name)}</option>`;});return h;}
 function clientSelect(sel){const D=loadData();let h='<option value="">--</option>';D.clients.forEach(c=>{h+=`<option value="${escapeAttr(c.id)}"${c.id===sel?' selected':''}>${sanitizeHTML(c.name)}</option>`;});return h;}
+/**
+ * Destroys all active Chart.js instances stored in the CHARTS registry and resets it.
+ */
 function destroyCharts(){Object.values(CHARTS).forEach(c=>{try{c.destroy();}catch(e){}});CHARTS={};}
 
 // ============ ALERTS ============
@@ -2993,6 +3102,10 @@ if(res&&res.checkout_url){
 }
 
 // ============ DASHBOARD ============
+/**
+ * Renders the main dashboard with KPI cards, alerts, recommendations, weather widget,
+ * trend chart, and quick-entry forms. Delegates to campo/vet dashboards if those modes are active.
+ */
 function renderDashboard(){
 const D=loadData();
 if(D.settings.campoMode){$('sec-dashboard').innerHTML=renderCampoDashboard(D);return;}
@@ -8217,20 +8330,25 @@ document.body.classList.remove('font-small','font-normal','font-large','font-xla
 document.body.classList.add('font-'+scale);
 const D=loadData();D.settings.fontScale=scale;saveData(D);
 }
+/**
+ * Toggles dark mode on/off, persists the setting, and swaps the CSS theme.
+ * Restores the previous color theme when dark mode is turned off.
+ * @param {boolean} on - True to enable dark mode, false to disable
+ */
 function applyDarkMode(on){
 document.body.classList.toggle('dark-mode',on);
 const D=loadData();D.settings.darkMode=on;saveData(D);
 if(on){
-// Save previous theme so we can restore on toggle off
 if(localStorage.getItem('egglogu_theme')!=='dark'){
 _safeSetItem('egglogu_theme_prev',localStorage.getItem('egglogu_theme')||'blue');
 }
 applyTheme('dark');_safeSetItem('egglogu_theme','dark');
 }else{
-// Restore previous theme
 const prev=localStorage.getItem('egglogu_theme_prev')||'blue';
 applyTheme(prev);_safeSetItem('egglogu_theme',prev);
 }
+const tb=document.getElementById('dark-toggle-btn');
+if(tb)tb.textContent=on?'\u263E '+t('cfg_theme_dark'):'\u2600 '+t('cfg_font_normal');
 }
 
 // ============ PIN LOGIN (A8) ============
@@ -8693,7 +8811,7 @@ if(D.users&&D.users.length){let _pinMigrated=false;for(const u of D.users){if(u.
 // Also remove any plaintext passwords that may have been stored in user objects
 D.users.forEach(u=>{if(u.password){delete u.password;_pinMigrated=true;}});if(_pinMigrated)saveData(D);}
 if(D.settings.fontScale&&D.settings.fontScale!=='normal')applyFontScale(D.settings.fontScale);
-if(D.settings.darkMode)document.body.classList.add('dark-mode');
+if(D.settings.darkMode){document.body.classList.add('dark-mode');const _dtb=document.getElementById('dark-toggle-btn');if(_dtb)_dtb.textContent='\u263E '+t('cfg_theme_dark');}
 applyCampoMode(D);
 switchLang(LANG);
 // PIN login if users exist (A8) — skip if already JWT-authenticated
@@ -8727,6 +8845,16 @@ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.foc
 if(typeof startWorkflowEvaluation==='function')startWorkflowEvaluation();
 }
 window.addEventListener('DOMContentLoaded',init);
+
+// ============ WEB VITALS TRACKING ============
+if('PerformanceObserver' in window){
+  // LCP
+  try{new PerformanceObserver(l=>{l.getEntries().forEach(e=>{console.log('[WebVital] LCP:',e.startTime.toFixed(0)+'ms');_safeSetItem('egglogu_lcp',e.startTime.toFixed(0));});}).observe({type:'largest-contentful-paint',buffered:true});}catch(e){}
+  // FID
+  try{new PerformanceObserver(l=>{l.getEntries().forEach(e=>{console.log('[WebVital] FID:',e.processingStart-e.startTime+'ms');_safeSetItem('egglogu_fid',(e.processingStart-e.startTime).toFixed(0));});}).observe({type:'first-input',buffered:true});}catch(e){}
+  // CLS
+  try{let cls=0;new PerformanceObserver(l=>{l.getEntries().forEach(e=>{if(!e.hadRecentInput){cls+=e.value;console.log('[WebVital] CLS:',cls.toFixed(3));_safeSetItem('egglogu_cls',cls.toFixed(3));}});}).observe({type:'layout-shift',buffered:true});}catch(e){}
+}
 
 // ============ BUG REPORTER + SUGGESTIONS WIDGET ============
 (function(){
@@ -9170,6 +9298,77 @@ toast?.('📋 Sugerencias exportadas ('+suggestions.length+')');
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',injectBugWidget);
 else injectBugWidget();
+})();
+
+// ============ EVENT DELEGATION (CSP-safe — no inline handlers) ============
+(function(){
+'use strict';
+
+// --- Click delegation ---
+document.addEventListener('click',function(e){
+  // Nav sections (sidebar links with data-section)
+  var secEl=e.target.closest('[data-section]');
+  if(secEl&&secEl.tagName==='A'){nav(secEl.dataset.section);return;}
+
+  // Nav group collapse labels
+  var grpEl=e.target.closest('.nav-group-label');
+  if(grpEl){toggleNavGroup(grpEl);return;}
+
+  // Language switch buttons
+  var langEl=e.target.closest('[data-lang]');
+  if(langEl){switchLang(langEl.dataset.lang);return;}
+
+  // Generic data-action dispatch
+  var actionEl=e.target.closest('[data-action]');
+  if(actionEl){
+    var fn=actionEl.dataset.action;
+    var actions={
+      signInWithGoogle:signInWithGoogle,
+      signInWithApple:signInWithApple,
+      signInWithMicrosoft:signInWithMicrosoft,
+      doLogin:doLogin,
+      showSignUpFromLogin:showSignUpFromLogin,
+      showForgotPassword:showForgotPassword,
+      confirmNo:confirmNo,
+      confirmYes:confirmYes,
+      toggleCampoMode:toggleCampoMode,
+      toggleVetMode:toggleVetMode,
+      doLogout:doLogout,
+      toggleSidebar:toggleSidebar,
+      closeModal:closeModal,
+      toggleLangCollapse:function(){actionEl.parentElement.classList.toggle('open');},
+      toggleDarkMode:function(){
+        var D=loadData();
+        D.settings.darkMode=!D.settings.darkMode;
+        saveData(D);
+        applyDarkMode(D.settings.darkMode);
+        var btn=document.getElementById('dark-toggle-btn');
+        if(btn)btn.textContent=D.settings.darkMode?'\u263E Oscuro':'\u2600 Claro';
+      }
+    };
+    if(actions[fn])actions[fn]();
+    return;
+  }
+
+  // Modal overlay close (click on overlay but NOT inside .modal)
+  if(e.target.id==='modal-overlay'){closeModal();return;}
+});
+
+// --- Keydown delegation (Enter on password field) ---
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&e.target.id==='login-pass'){doLogin();}
+});
+
+// --- Focus/blur delegation for skip-link accessibility ---
+var _skipLink=document.getElementById('skip-link');
+if(_skipLink){
+  _skipLink.addEventListener('focus',function(){
+    this.style.cssText='position:fixed;left:0;top:0;z-index:9999;padding:12px 24px;background:var(--primary);color:#fff;font-weight:600;text-decoration:none;border-radius:0 0 8px 0';
+  });
+  _skipLink.addEventListener('blur',function(){
+    this.style.cssText='position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden';
+  });
+}
 })();
 
 // ============ SERVICE WORKER ============

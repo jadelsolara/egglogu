@@ -345,6 +345,7 @@ function renderAutomatizacion(){
 
   let h=`<div class="page-header"><h2>⚡ ${t('wf_title')}</h2>
     <button class="btn btn-primary" onclick="WorkflowUI.showCreateForm()">${t('wf_create_rule')}</button></div>`;
+  h+=`<div class="alert alert-info" style="margin-bottom:1rem;padding:.75rem 1rem;border-radius:8px;background:var(--primary-bg,#e8f4fd);border:1px solid var(--primary,#1976d2);font-size:.9rem;">ℹ️ ${t('wf_browser_note')}</div>`;
 
   // KPIs
   const activeRules=D.workflowRules.filter(r=>r.enabled).length;

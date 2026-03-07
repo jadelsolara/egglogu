@@ -12,7 +12,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-LOCKED="live/egglogu.html.bak.20260304_locked"
+LOCKED="live/egglogu.html.bak.20260307_locked"
 CURRENT="egglogu.html"
 LIVE="live/egglogu.html"
 LOCK_HASH_FILE=".erp-lock-sha256"

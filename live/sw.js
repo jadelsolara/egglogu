@@ -1,4 +1,4 @@
-const CACHE_NAME = 'egglogu-v11';
+const CACHE_NAME = 'egglogu-v2';
 const CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.7',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -7,13 +7,11 @@ const CDN_ASSETS = [
   'https://unpkg.com/simple-statistics@7.8.8/dist/simple-statistics.min.js'
 ];
 const LOCAL_ASSETS = [
-  './',
+  './egglogu.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
-// HTML should always be fresh (no-cache strategy)
-const NO_CACHE_PATHS = ['egglogu.html', '/'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -36,32 +34,38 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') return;
+  // Network-first for EGGlogU API calls — never cache, let app handle offline via localStorage
+  if ((url.hostname.includes('egglogu') || url.hostname.includes('railway.app')) && url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return new Response(JSON.stringify({error: 'offline', detail: 'No network connection'}), {
+          status: 503,
+          headers: {'Content-Type': 'application/json'}
+        });
+      })
+    );
+    return;
+  }
 
-  // Network-first for API calls (backend, OpenWeatherMap, MQTT)
-  if (url.hostname.includes('api.egglogu.com') || url.hostname.includes('openweathermap.org') || url.hostname.includes('mqtt')) {
+  // Network-first for API calls (OpenWeatherMap, MQTT)
+  if (url.hostname.includes('openweathermap.org') || url.hostname.includes('mqtt')) {
     event.respondWith(
       fetch(event.request).then(response => {
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         return response;
       }).catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // Cache-first (immutable) for CDN assets — versioned URLs never change
+  // Cache-first for CDN assets
   if (CDN_ASSETS.some(a => event.request.url.includes(a.replace('https://', '')))) {
     event.respondWith(
       caches.match(event.request).then(cached => {
         return cached || fetch(event.request).then(response => {
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          }
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           return response;
         });
       })
@@ -69,29 +73,13 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Network-first for HTML (always fresh)
-  if (url.origin === self.location.origin && (url.pathname === '/' || NO_CACHE_PATHS.some(p => url.pathname.endsWith(p)))) {
-    event.respondWith(
-      fetch(event.request).then(response => {
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
-        return response;
-      }).catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  // Stale-while-revalidate for other local assets (JS, CSS, images)
+  // Cache-first with background update for local assets
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.match(event.request).then(cached => {
         const fetchPromise = fetch(event.request).then(response => {
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          }
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           return response;
         }).catch(() => cached);
 
@@ -105,11 +93,4 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
   );
-});
-
-// Notify clients when a new version is available
-self.addEventListener('message', event => {
-  if (event.data === 'skipWaiting') {
-    self.skipWaiting();
-  }
 });

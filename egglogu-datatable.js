@@ -527,26 +527,30 @@ function _exportCSV(id){
 function _exportExcel(id){
   const cfg=_lastConfigs[id];
   if(!cfg)return;
-  if(typeof XLSX==='undefined'){
-    if(typeof toast==='function')toast('SheetJS (XLSX) not loaded','error');
+  if(typeof loadLib==='undefined'||typeof LAZY_URLS==='undefined'){
+    if(typeof toast==='function')toast('SheetJS (XLSX) not available','error');
     return;
   }
-  const st=_getState(id);
-  const cols=cfg.columns.filter(c=>!c.hidden&&st.visibleCols.includes(c.key));
-  let data=cfg.data?[...cfg.data]:[];
-  if(cfg.preFilter)data=cfg.preFilter(data);
-  data=_applyFilters(data,cols,st.filters);
-  if(st.search){const q=st.search.toLowerCase();data=data.filter(r=>cols.some(c=>{const v=_getCellValue(r,c);return v!=null&&String(v).toLowerCase().includes(q);}));}
-  if(st.sortCol){const col=cols.find(c=>c.key===st.sortCol);if(col){const dir=st.sortDir==='desc'?-1:1;data.sort((a,b)=>{let va=_getCellValue(a,col)||'',vb=_getCellValue(b,col)||'';if(col.type==='number'||col.type==='money'){va=parseFloat(va)||0;vb=parseFloat(vb)||0;}else{va=String(va).toLowerCase();vb=String(vb).toLowerCase();}return va<vb?-dir:va>vb?dir:0;});}}
-  const headers=cols.map(c=>c.label);
-  const rows=data.map(row=>cols.map(c=>{const v=_getCellValue(row,c);return v!=null?v:'';}));
-  const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
-  // Auto-width columns
-  ws['!cols']=cols.map((c,i)=>{let max=c.label.length;rows.forEach(r=>{const l=String(r[i]).length;if(l>max)max=l;});return{wch:Math.min(max+2,40)};});
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,cfg.id.substring(0,31));
-  XLSX.writeFile(wb,'egglogu_'+id+'_'+_todayStr()+'.xlsx');
-  if(typeof toast==='function')toast(t('cfg_exported')||'Exported');
+  loadLib('XLSX',LAZY_URLS.XLSX).then(()=>{
+    const st=_getState(id);
+    const cols=cfg.columns.filter(c=>!c.hidden&&st.visibleCols.includes(c.key));
+    let data=cfg.data?[...cfg.data]:[];
+    if(cfg.preFilter)data=cfg.preFilter(data);
+    data=_applyFilters(data,cols,st.filters);
+    if(st.search){const q=st.search.toLowerCase();data=data.filter(r=>cols.some(c=>{const v=_getCellValue(r,c);return v!=null&&String(v).toLowerCase().includes(q);}));}
+    if(st.sortCol){const col=cols.find(c=>c.key===st.sortCol);if(col){const dir=st.sortDir==='desc'?-1:1;data.sort((a,b)=>{let va=_getCellValue(a,col)||'',vb=_getCellValue(b,col)||'';if(col.type==='number'||col.type==='money'){va=parseFloat(va)||0;vb=parseFloat(vb)||0;}else{va=String(va).toLowerCase();vb=String(vb).toLowerCase();}return va<vb?-dir:va>vb?dir:0;});}}
+    const headers=cols.map(c=>c.label);
+    const rows=data.map(row=>cols.map(c=>{const v=_getCellValue(row,c);return v!=null?v:'';}));
+    const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+    // Auto-width columns
+    ws['!cols']=cols.map((c,i)=>{let max=c.label.length;rows.forEach(r=>{const l=String(r[i]).length;if(l>max)max=l;});return{wch:Math.min(max+2,40)};});
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,cfg.id.substring(0,31));
+    XLSX.writeFile(wb,'egglogu_'+id+'_'+_todayStr()+'.xlsx');
+    if(typeof toast==='function')toast(t('cfg_exported')||'Exported');
+  }).catch(()=>{
+    if(typeof toast==='function')toast('Failed to load SheetJS (XLSX)','error');
+  });
 }
 
 // ─── Utilities ───
