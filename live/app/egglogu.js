@@ -35,7 +35,7 @@ window.addEventListener('unhandledrejection', function(e) {
     }
   }
 });
-function _bugUpdateBadge(){const b=document.getElementById('bug-badge');if(!b)return;try{const bugs=JSON.parse(localStorage.getItem('egglogu_bugs')||'[]');const unsent=bugs.filter(x=>!x.sent).length;const total=unsent+_bugErrors.length;b.textContent=total;b.style.display=total?'flex':'none';}catch(e){b.textContent=_bugErrors.length;b.style.display=_bugErrors.length?'flex':'none';}}
+function _bugUpdateBadge(){const b=document.getElementById('bug-badge');if(!b)return;try{const bugs=JSON.parse(localStorage.getItem('egglogu_bugs')||'[]');const sugs=JSON.parse(localStorage.getItem('egglogu_suggestions')||'[]');const unsent=bugs.filter(x=>!x.sent).length+sugs.filter(x=>!x.sent).length;const total=unsent+_bugErrors.length;b.textContent=total;b.style.display=total?'flex':'none';}catch(e){b.textContent=_bugErrors.length;b.style.display=_bugErrors.length?'flex':'none';}}
 
 // ============ TRANSLATIONS ============
 const T={es:{
@@ -62,7 +62,7 @@ ops_log_cat_general:'General',ops_log_cat_health:'Sanidad',ops_log_cat_productio
 ops_per_name:'Nombre',ops_per_role:'Cargo',ops_per_salary:'Salario',ops_per_start:'Fecha Inicio',ops_per_active:'Activo',ops_per_add:'Agregar Personal',
 env_title:'Condiciones Ambientales',env_add:'Nuevo Registro',env_temp:'Temperatura (°C)',env_humidity:'Humedad (%)',env_light:'Horas Luz',env_ventilation:'Ventilación',env_density:'Densidad (aves/m²)',env_optimal:'Rango Óptimo',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 hrs',env_density_range:'4-5 aves/m²',
 cfg_title:'Configuración',cfg_farm:'Datos de la Granja',cfg_farm_name:'Nombre Granja',cfg_location:'Ubicación',cfg_capacity:'Capacidad (aves)',cfg_currency:'Moneda',cfg_alerts:'Umbrales de Alertas',cfg_min_feed:'Stock Mín. Alimento (kg)',cfg_max_mortality:'Mortalidad Máx. (%)',cfg_alert_days:'Días Anticipación',cfg_data:'Datos',cfg_export:'Exportar (JSON)',cfg_import:'Importar (JSON)',cfg_reset:'Borrar Todo',cfg_reset_confirm:'¿Eliminar TODOS los datos?',cfg_saved:'Guardado',cfg_exported:'Datos exportados',cfg_imported:'Datos importados',cfg_reset_done:'Datos eliminados',cfg_checklist:'Checklist Predeterminado',cfg_checklist_items:'Tareas del checklist',cfg_theme:'Tema de Color',cfg_theme_blue:'Azul Marino',cfg_theme_green:'Verde',cfg_theme_purple:'Púrpura',cfg_theme_black:'Negro',
-sidebar_subtitle:'Sistema Avícola 360°',prod_shell_white:'Blanco',prod_shell_brown:'Marrón',prod_shell_cream:'Crema',required:'Campo requerido',no_flocks_birthdate:'No hay lotes con fecha de nacimiento',vac_select_flocks:'Seleccione lotes para generar calendario:',feed_type_placeholder:'Postura, Iniciador, etc.',avg_per_day:'Prom/día',per_flock:'Lote',history:'Historial',env_latest_reading:'Última Lectura',env_ok:'OK',env_out_of_range:'Fuera de rango',data_stats:'Estadísticas de Datos',final_warning:'⚠️ ADVERTENCIA FINAL — Se eliminarán TODOS los datos',total_salaries:'Total Salarios',eggs_unit:'huevos',csv_income:'Ingreso',csv_expense:'Gasto',fcr_unit:'kg alimento/kg huevo',lc_feed_starter:'Iniciador',lc_feed_grower:'Crecimiento',lc_feed_developer:'Desarrollo',lc_feed_prelay:'Pre-postura',lc_feed_layer:'Postura',lc_feed_lowlay:'Postura baja',lc_prod_label:'Prod',lc_prod_first:'Primeros huevos',lc_mile_1:'Vacunas Marek, Newcastle+BI, Gumboro',lc_mile_2:'Newcastle refuerzo, desarrollo plumaje',lc_mile_3:'Viruela, Encefalomielitis, Coriza, Salmonella',lc_mile_4:'Newcastle+BI refuerzo, cambio dieta, 16h luz',lc_mile_5:'Pico producción sem 26-30, monitorear FCR',lc_mile_6:'Newcastle refuerzo c/8-12 sem, evaluar rentabilidad',lc_mile_7:'Evaluar descarte vs muda forzada',lc_mile_8:'Venta ave descarte, limpieza galpón',vac_route_injection:'Inyección',vac_route_ocular:'Ocular/spray',vac_route_water:'Agua',vac_route_wing:'Punción alar',snapshots:'snapshots',error_prefix:'Error',chk_collect_eggs:'Recolectar huevos',chk_feed_birds:'Alimentar aves',chk_check_water:'Verificar agua',chk_check_health:'Revisar salud',chk_cleaning:'Limpieza',chk_record_temp:'Registrar temperatura',
+sidebar_subtitle:'Gestión Avícola Inteligente',prod_shell_white:'Blanco',prod_shell_brown:'Marrón',prod_shell_cream:'Crema',required:'Campo requerido',no_flocks_birthdate:'No hay lotes con fecha de nacimiento',vac_select_flocks:'Seleccione lotes para generar calendario:',feed_type_placeholder:'Postura, Iniciador, etc.',avg_per_day:'Prom/día',per_flock:'Lote',history:'Historial',env_latest_reading:'Última Lectura',env_ok:'OK',env_out_of_range:'Fuera de rango',data_stats:'Estadísticas de Datos',final_warning:'⚠️ ADVERTENCIA FINAL — Se eliminarán TODOS los datos',total_salaries:'Total Salarios',eggs_unit:'huevos',csv_income:'Ingreso',csv_expense:'Gasto',fcr_unit:'kg alimento/kg huevo',lc_feed_starter:'Iniciador',lc_feed_grower:'Crecimiento',lc_feed_developer:'Desarrollo',lc_feed_prelay:'Pre-postura',lc_feed_layer:'Postura',lc_feed_lowlay:'Postura baja',lc_prod_label:'Prod',lc_prod_first:'Primeros huevos',lc_mile_1:'Vacunas Marek, Newcastle+BI, Gumboro',lc_mile_2:'Newcastle refuerzo, desarrollo plumaje',lc_mile_3:'Viruela, Encefalomielitis, Coriza, Salmonella',lc_mile_4:'Newcastle+BI refuerzo, cambio dieta, 16h luz',lc_mile_5:'Pico producción sem 26-30, monitorear FCR',lc_mile_6:'Newcastle refuerzo c/8-12 sem, evaluar rentabilidad',lc_mile_7:'Evaluar descarte vs muda forzada',lc_mile_8:'Venta ave descarte, limpieza galpón',vac_route_injection:'Inyección',vac_route_ocular:'Ocular/spray',vac_route_water:'Agua',vac_route_wing:'Punción alar',snapshots:'snapshots',error_prefix:'Error',chk_collect_eggs:'Recolectar huevos',chk_feed_birds:'Alimentar aves',chk_check_water:'Verificar agua',chk_check_health:'Revisar salud',chk_cleaning:'Limpieza',chk_record_temp:'Registrar temperatura',
 weather_title:'Clima',weather_temp:'Temperatura',weather_humidity:'Humedad',weather_wind:'Viento',weather_forecast:'Pronóstico 3 Días',weather_no_key:'Establece la ubicación de la granja para ver el clima',weather_heat_alert:'Alerta de Estrés Calórico',weather_thi:'Índice THI',weather_feels:'Sensación',weather_last_update:'Última actualización',weather_test:'Probar',
 geo_set_location:'Ubicación de la Granja',geo_use_gps:'Usar mi GPS',geo_click_map:'Clic en el mapa para ubicar',geo_lat:'Latitud',geo_lng:'Longitud',geo_saved:'Ubicación guardada',
 iot_title:'IoT Sensores',iot_broker:'Broker MQTT (wss://)',iot_user:'Usuario MQTT',iot_pass:'Contraseña MQTT',iot_topic:'Prefijo Topic',iot_connect:'Conectar',iot_disconnect:'Desconectar',iot_live:'IoT En Vivo',iot_no_config:'Configure MQTT en Configuración',iot_save_reading:'Guardar lectura actual',iot_connected:'Conectado',iot_disconnected:'Desconectado',iot_ammonia:'Amoníaco',iot_light:'Luz',iot_lux:'lux',iot_ppm:'ppm',
@@ -100,9 +100,15 @@ ana_segment_profit:'Rentabilidad por Segmento',cfg_accessibility:'Accesibilidad'
 rec_title:'Recomendaciones',rec_dismiss:'Descartar',rec_check_diet:'Revisar dieta / diseño de alimentación / descartar enfermedad',rec_check_env:'Verificar ambiente / enfermedad / estrés inmediatamente',rec_below_curve:'Producción bajo estándar — revisar estrés, luz, alimentación',rec_buy_feed:'Programar compra de alimento',rec_record_env:'Registrar condiciones ambientales',rec_disinfect:'Ejecutar protocolo de desinfección zona',rec_heat_plan:'Estrés calórico prolongado — activar plan de enfriamiento',rec_lab_samples:'Llevar muestras al laboratorio',rec_ventilation:'Aumentar ventilación, verificar agua fresca',
 auth_welcome:'Cuenta creada. Bienvenido!',auth_error:'Credenciales incorrectas',auth_first_run:'Primera vez: ingrese usuario y contraseña para crear su cuenta.',login_subtitle:'Inicia sesión o crea tu cuenta',logout:'Cerrar sesión',required:'Campo obligatorio',invalid_email:'Email inválido',invalid_phone:'Teléfono inválido',must_be_number:'Debe ser un número',invalid_date:'Fecha inválida',invalid_format:'Formato inválido',min_length:'Largo mínimo',max_length:'Largo máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Error de red',error_unexpected:'Error inesperado',error_loading:'Error al cargar',
 ana_economics:'Economía',flock_purchase_cost:'Costo por Ave',econ_cost_per_egg:'Costo/Huevo',econ_roi_per_bird:'ROI/Ave',econ_acquisition:'Adquisición',econ_feed_cost:'Costo Alimento',econ_health_cost:'Costo Sanitario',econ_direct_expenses:'Gastos Directos',econ_total_investment:'Inversión Total',econ_total_costs:'Costos Totales',econ_net_result:'Resultado Neto',econ_daily_cost_bird:'Costo Diario/Ave',econ_days_active:'Días Activo',econ_no_data_guide:'Ingrese costos de compra en Lotes, gastos en Finanzas y costos en Vacunas/Medicamentos para ver el análisis económico.',exp_flock:'Lote (opcional)',health_cost:'Costo',econ_org_summary:'Resumen Organización',econ_cost_breakdown:'Desglose de Costos',econ_completeness:'Datos Disponibles',
-nav_census:'Carencias',inv_total_in:'Total Entrada',inv_total_out:'Total Salida',inv_balance:'Balance',inv_records:'Registros',inv_by_type:'Por Tipo de Huevo',source:'Origen',fin_egg_type:'Tipo',
+nav_census:'Carencias',nav_reports:'Reportes',nav_automation:'Automatización',inv_total_in:'Total Entrada',inv_total_out:'Total Salida',inv_balance:'Balance',inv_records:'Registros',inv_by_type:'Por Tipo de Huevo',source:'Origen',fin_egg_type:'Tipo',
 kpi_info_today:'Huevos recolectados hoy en todos los lotes activos.',kpi_info_henday:'Porcentaje de gallinas que pusieron huevo hoy. Ideal: >85%.',kpi_info_fcr:'Kg de alimento por kg de huevo producido. Menor es mejor. Ideal: <2.2.',kpi_info_mortality:'Porcentaje acumulado de muertes sobre el total de aves. Objetivo: <3%.',kpi_info_cost_egg:'Costo total (alimento + sanidad + gastos) dividido entre huevos producidos.',kpi_info_income_net:'Ingresos por ventas menos todos los gastos del mes en curso.',kpi_info_active_hens:'Total de gallinas vivas en lotes activos actualmente.',kpi_info_alerts:'Número de situaciones que requieren tu atención inmediata.',info_fin_income:'Suma de todas las ventas e ingresos registrados en el mes.',info_fin_expenses:'Total de gastos operativos del mes: alimento, sanidad, operaciones.',info_fin_gross:'Ingresos menos costos directos (antes de impuestos y depreciación).',info_fin_dep:'Desgaste mensual del valor de activos (galpones, equipos).',info_fin_tax:'Impuesto estimado sobre la ganancia bruta según tasa configurada.',info_fin_net:'Ganancia final después de depreciación e impuestos.',info_fin_cpe:'Costo total dividido entre huevos producidos. Incluye alimento y gastos.',info_fin_be:'Huevos necesarios para cubrir todos los costos. Producir más = ganancia.',info_feed_stock:'Kg de alimento disponible actualmente en bodega.',info_feed_purchases:'Total de alimento comprado y su costo acumulado.',info_feed_consumption:'Kg de alimento consumido por las aves.',info_cli_total:'Número total de clientes (compradores) registrados.',info_clm_total:'Total de reclamos registrados de clientes.',info_clm_sat:'Promedio de satisfacción post-resolución (1-5 estrellas).',info_inv_in:'Total de huevos que ingresaron al inventario.',info_inv_out:'Total de huevos que salieron del inventario (ventas, merma).',info_inv_balance:'Huevos disponibles actualmente: entradas menos salidas.',info_inv_records:'Cantidad de movimientos de inventario registrados.',info_bio_pest:'Índice de presión de plagas (0-100). Mayor = más riesgo.',info_bio_visitors:'Personas externas que han ingresado a la granja.',info_bio_zones:'Áreas de la granja con protocolos de bioseguridad.',info_health_score:'Índice de salud del lote (0-100). Basado en mortalidad y eventos.',info_outbreaks:'Brotes de enfermedad activos que requieren atención.',info_vaccines:'Vacunas pendientes de aplicar según el calendario sanitario.',info_env_humidity:'Rango óptimo de humedad relativa para ponedoras.',info_env_light:'Horas de luz recomendadas para máxima producción.',info_env_density:'Aves por metro cuadrado recomendadas.',
-ana_channel_pricing:'Precio por Canal',cfg_action:'Acción',cfg_add_user:'+ Agregar Usuario',cfg_asset_value:'Valor Total de Activos',cfg_audit:'Registro de Auditoría',cfg_backup_na:'API de Cache no disponible en este navegador.',cfg_backups:'Auto-Respaldo',cfg_dep_years:'Depreciación (años)',cfg_detail:'Detalle',cfg_digits:'dígitos',cfg_loading:'Cargando...',cfg_module:'Módulo',cfg_no_backups:'Sin respaldos automáticos aún.',cfg_no_users:'Sin usuarios configurados.',cfg_restore:'Restaurar',cfg_restore_confirm:'¿Restaurar desde este respaldo?',cfg_restored:'Respaldo restaurado',cfg_role:'Rol',cfg_size:'Tamaño',cfg_storage:'Uso de Almacenamiento',cfg_tax:'Impuestos y Depreciación',cfg_tax_rate:'Tasa de Impuesto (%)',cfg_timestamp:'Hora',cfg_user:'Usuario',cfg_users:'Gestión de Usuarios',ch_direct:'Directo',ch_export:'Exportación',ch_organic:'Orgánico',ch_retail:'Minorista',ch_wholesale:'Mayorista',confirm_delete_cascade:'Este cliente tiene registros asociados. Eliminar borrará esas referencias. ¿Continuar?',fin_avg_price:'Precio Promedio',fin_channel:'Canal',fin_channel_breakdown:'Ingresos por Canal',fin_depreciation:'Depreciación/mes',fin_gross_profit:'Ganancia Bruta',fin_net_profit:'Ganancia Neta',fin_tax:'Impuesto',flock_curve_adjust:'Ajuste de Curva',flock_curve_tip:'1.0=estándar, 0.85=tropical, 1.1=templado',optional:'Opcional',pin_invalid:'PIN inválido',pin_login:'Iniciar sesión',pin_select_user:'Seleccionar usuario'
+ana_channel_pricing:'Precio por Canal',cfg_action:'Acción',cfg_add_user:'+ Agregar Usuario',cfg_asset_value:'Valor Total de Activos',cfg_audit:'Registro de Auditoría',cfg_backup_na:'API de Cache no disponible en este navegador.',cfg_backups:'Auto-Respaldo',cfg_dep_years:'Depreciación (años)',cfg_detail:'Detalle',cfg_digits:'dígitos',cfg_loading:'Cargando...',cfg_module:'Módulo',cfg_no_backups:'Sin respaldos automáticos aún.',cfg_no_users:'Sin usuarios configurados.',cfg_restore:'Restaurar',cfg_restore_confirm:'¿Restaurar desde este respaldo?',cfg_restored:'Respaldo restaurado',cfg_role:'Rol',cfg_size:'Tamaño',cfg_storage:'Uso de Almacenamiento',cfg_tax:'Impuestos y Depreciación',cfg_tax_rate:'Tasa de Impuesto (%)',cfg_timestamp:'Hora',cfg_user:'Usuario',cfg_users:'Gestión de Usuarios',ch_direct:'Directo',ch_export:'Exportación',ch_organic:'Orgánico',ch_retail:'Minorista',ch_wholesale:'Mayorista',confirm_delete_cascade:'Este cliente tiene registros asociados. Eliminar borrará esas referencias. ¿Continuar?',fin_avg_price:'Precio Promedio',fin_channel:'Canal',fin_channel_breakdown:'Ingresos por Canal',fin_depreciation:'Depreciación/mes',fin_gross_profit:'Ganancia Bruta',fin_net_profit:'Ganancia Neta',fin_tax:'Impuesto',flock_curve_adjust:'Ajuste de Curva',flock_curve_tip:'1.0=estándar, 0.85=tropical, 1.1=templado',optional:'Opcional',pin_invalid:'PIN inválido',pin_login:'Iniciar sesión',pin_select_user:'Seleccionar usuario',
+price_per_mo:'/mes',trial_ended_title:'Tu periodo de prueba ha terminado',trial_ended_subtitle:'Elige un plan para seguir usando EGGlogU — 40% off los primeros 3 meses',btn_see_plans:'Ver planes',trial_days_left:'días restantes de prueba Enterprise',trial_last_day:'¡Último día de prueba!',trial_full_access:'Acceso completo a todos los módulos',trial_from_price:'Después: desde $5/mes (40% off)',billing_next_quarter:'Próximo trimestre',billing_regular_price:'Precio regular',
+perfil_title:'Mi Perfil',perfil_subtitle:'Información de tu cuenta',perfil_name:'Nombre completo',perfil_member_since:'Miembro desde',perfil_change_pin:'Cambiar PIN',perfil_current_pin:'PIN Actual',perfil_new_pin:'Nuevo PIN',perfil_confirm_pin:'Confirmar PIN',perfil_pin_changed:'PIN actualizado correctamente',perfil_profile_updated:'Perfil actualizado',perfil_pin_mismatch:'Los PINs no coinciden',perfil_wrong_pin:'PIN actual incorrecto',
+reassign_title:'Reasignar Cuenta',reassign_btn:'Reasignar',reassign_new_name:'Nombre del nuevo titular',reassign_new_email:'Email del nuevo titular',reassign_new_pin:'PIN del nuevo titular',reassign_confirm:'Confirmar Reasignación',reassign_success:'Cuenta reasignada exitosamente',reassign_no_self:'No puedes reasignarte a ti mismo',reassign_last_owner:'No se puede reasignar al último owner activo',reassign_verify:'Verifica tu PIN para continuar',reassign_notify:'Se enviará notificación al nuevo titular',
+billing_no_permission:'No tienes permisos para acceder a facturación',billing_cancel_sub:'Cancelar Suscripción',billing_cancel_confirm:'Tu plan seguirá activo hasta {date}. Te recomendamos descargar tus datos antes de cancelar.',billing_cancel_success:'Suscripción cancelada',billing_delete_account:'Eliminar Cuenta',billing_delete_warning:'Esta acción es IRREVERSIBLE. Todos los datos se perderán permanentemente.',billing_delete_type_confirm:'Escribe {word} para confirmar',billing_delete_success:'Cuenta eliminada',billing_current_plan:'Plan Actual',billing_manage_payments:'Gestionar Pagos',billing_change_plan:'Cambiar Plan',billing_download_data:'Descargar Datos',
+dt_no_results:'Sin resultados para los filtros aplicados',dt_filters:'filtros',dt_selected:'seleccionados',dt_deselect:'Deseleccionar todo',dt_showing:'Mostrando',dt_records:'registros',dt_of:'de',dt_clear_filters:'Limpiar filtros',dt_columns:'Columnas',dt_export_csv:'Exportar CSV',dt_export_excel:'Exportar Excel',dt_per_page:'Por página',dt_sort_asc:'Ordenar ascendente',dt_sort_desc:'Ordenar descendente',dt_filter:'Filtrar',dt_select_all:'Seleccionar todo',dt_search:'Buscar',dt_page:'Página',
+rpt_title:'Reportes y Análisis',rpt_report:'Reporte',rpt_template:'Plantilla',rpt_period:'Período',rpt_period_total:'Total del período',rpt_generated:'Generado',rpt_invalid_template:'Plantilla de reporte no válida',rpt_tpl_production:'Producción',rpt_tpl_financial:'Financiero',rpt_tpl_health:'Salud',rpt_tpl_feed:'Alimentación',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Últimos 7 días',rpt_period_30d:'Últimos 30 días',rpt_period_90d:'Últimos 90 días',rpt_period_12m:'Últimos 12 meses',rpt_period_custom:'Personalizado',rpt_production_summary:'Resumen de Producción',rpt_total_eggs:'Total Huevos',rpt_avg_day:'Promedio/día',rpt_culled:'Descartadas',rpt_broken_dirty:'Rotos / Sucios',rpt_loss:'pérdida',rpt_daily_production:'Producción Diaria',rpt_size_breakdown:'Desglose por Tamaño',rpt_flock_breakdown:'Desglose por Lote',rpt_broken:'Rotos',rpt_dirty:'Sucios',rpt_financial_pl:'Estado de Resultados',rpt_transactions:'transacciones',rpt_margin:'Margen',rpt_overdue:'vencido(s)',rpt_monthly_trend:'Tendencia Mensual',rpt_by_category:'por Categoría',rpt_other:'Otros',rpt_health_overview:'Resumen de Salud',rpt_applied_period:'aplicadas en el período',rpt_upcoming_vaccines:'Próximas Vacunaciones',rpt_by_flock:'por Lote',rpt_feed_efficiency:'Eficiencia Alimenticia',rpt_hen_day:'gallina/día',rpt_feed_cost:'Costo Alimento',rpt_feed_stock:'Stock de Alimento',rpt_remaining:'restantes',rpt_weekly_consumption:'Consumo Semanal',rpt_by_feed_type:'por Tipo de Alimento',rpt_kpi_trends:'Tendencias KPI',rpt_no_snapshots:'No hay datos de KPI para este período',rpt_kpi_chart:'Producción y Postura',rpt_kpi_fcr_mort:'Conversión y Mortalidad',rpt_type:'Tipo',rpt_xlsx_missing:'Librería XLSX no disponible',rpt_pdf_missing:'Librerías PDF no disponibles',rpt_pdf_error:'Error al exportar PDF',wf_title:'Automatización',wf_create_rule:'Crear Regla',wf_active_rules:'Reglas Activas',wf_executions:'Ejecuciones',wf_last_24h:'Últimas 24h',wf_presets:'Plantillas Predefinidas',wf_rules:'Reglas',wf_no_rules:'No hay reglas configuradas',wf_rule_added:'Regla agregada',wf_execution_log:'Historial de Ejecuciones',wf_rule:'Regla',wf_detail:'Detalle',wf_last_fired:'Última Ejecución',wf_test:'Probar',wf_would_trigger:'Se activaría',wf_would_not_trigger:'No se activaría',wf_rule_name:'Nombre de la regla',wf_condition:'Condición',wf_comparator:'Comparador',wf_threshold:'Umbral',wf_add_action:'Agregar Acción',wf_cooldown:'Tiempo de Espera',wf_hours:'horas',wf_unnamed_rule:'Regla sin nombre',wf_triggered:'Regla activada',wf_invalid_condition:'Condición no válida',wf_cond_deaths_spike:'Pico de Mortalidad',wf_cond_low_production:'Baja Producción',wf_cond_feed_stock:'Stock de Alimento',wf_cond_vaccine_due:'Vacuna Pendiente',wf_cond_temperature:'Temperatura',wf_cond_payment_overdue:'Pago Vencido',wf_cond_outbreak_active:'Brote Activo',wf_cond_production_target:'Meta de Producción',wf_act_notify:'Notificar',wf_act_email:'Correo',wf_act_auto_log:'Auto-registro',wf_act_auto_task:'Auto-tarea',wf_act_update_status:'Actualizar Estado',wf_readings_above:'lecturas por encima',wf_no_target:'Sin meta de producción definida',wf_below_target:'por debajo de la meta',storage_warning:'Almacenamiento local casi lleno (>80%). Considera sincronizar tus datos.',storage_full:'Almacenamiento local lleno. Se liberó espacio automáticamente.',sync_conflicts:'{n} registro(s) actualizado(s) por otro usuario',wf_browser_note:'Las reglas de automatización se evalúan mientras el navegador está abierto.'
 },en:{
 save:'Save',cancel:'Cancel',delete:'Delete',edit:'Edit',add:'Add',close:'Close',actions:'Actions',date:'Date',notes:'Notes',name:'Name',phone:'Phone',email:'Email',address:'Address',confirm_delete:'Delete this record?',no_data:'No data recorded',total:'Total',all:'All',loading:'Loading',search:'Search',from:'From',to:'To',status:'Status',export_csv:'Export CSV',today:'Today',active:'Active',inactive:'Inactive',
 nav_dashboard:'Dashboard',nav_production:'Production',nav_flocks:'Flocks',nav_health:'Health',nav_feed:'Feed',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analysis',nav_operations:'Operations',nav_environment:'Environment',nav_config:'Settings',nav_support:'Support',nav_admin:'SaaS Admin',nav_inventory:'Inventory',nav_superadmin:'Superadmin',grp_production:'Production',grp_health:'Health',grp_commercial:'Commercial',grp_management:'Management',grp_system:'System',grp_superadmin:'Superadmin',
@@ -127,7 +133,7 @@ ops_log_cat_general:'General',ops_log_cat_health:'Health',ops_log_cat_production
 ops_per_name:'Name',ops_per_role:'Role',ops_per_salary:'Salary',ops_per_start:'Start Date',ops_per_active:'Active',ops_per_add:'Add Personnel',
 env_title:'Environmental Conditions',env_add:'New Record',env_temp:'Temperature (°C)',env_humidity:'Humidity (%)',env_light:'Light Hours',env_ventilation:'Ventilation',env_density:'Density (birds/m²)',env_optimal:'Optimal Range',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 hrs',env_density_range:'4-5 birds/m²',
 cfg_title:'Settings',cfg_farm:'Farm Details',cfg_farm_name:'Farm Name',cfg_location:'Location',cfg_capacity:'Capacity (birds)',cfg_currency:'Currency',cfg_alerts:'Alert Thresholds',cfg_min_feed:'Min Feed Stock (kg)',cfg_max_mortality:'Max Mortality (%)',cfg_alert_days:'Alert Days Ahead',cfg_data:'Data',cfg_export:'Export (JSON)',cfg_import:'Import (JSON)',cfg_reset:'Delete All',cfg_reset_confirm:'Delete ALL data permanently?',cfg_saved:'Saved',cfg_exported:'Data exported',cfg_imported:'Data imported',cfg_reset_done:'Data deleted',cfg_checklist:'Default Checklist',cfg_checklist_items:'Daily checklist tasks',cfg_theme:'Color Theme',cfg_theme_blue:'Navy Blue',cfg_theme_green:'Green',cfg_theme_purple:'Purple',cfg_theme_black:'Black',
-sidebar_subtitle:'Poultry System 360°',prod_shell_white:'White',prod_shell_brown:'Brown',prod_shell_cream:'Cream',required:'Required field',no_flocks_birthdate:'No flocks with birth date',vac_select_flocks:'Select flocks to generate calendar:',feed_type_placeholder:'Layer, Starter, etc.',avg_per_day:'Avg/day',per_flock:'Flock',history:'History',env_latest_reading:'Latest Reading',env_ok:'OK',env_out_of_range:'Out of range',data_stats:'Data Statistics',final_warning:'⚠️ FINAL WARNING — ALL data will be deleted',total_salaries:'Total Salaries',eggs_unit:'eggs',csv_income:'Income',csv_expense:'Expense',fcr_unit:'kg feed/kg egg',lc_feed_starter:'Starter',lc_feed_grower:'Grower',lc_feed_developer:'Developer',lc_feed_prelay:'Pre-lay',lc_feed_layer:'Layer',lc_feed_lowlay:'Low-lay',lc_prod_label:'Prod',lc_prod_first:'First eggs',lc_mile_1:'Marek, Newcastle+IB, Gumboro vaccines',lc_mile_2:'Newcastle booster, feather development',lc_mile_3:'Fowl Pox, AE, Coryza, Salmonella',lc_mile_4:'Newcastle+IB booster, diet change, 16h light',lc_mile_5:'Peak production wk 26-30, monitor FCR',lc_mile_6:'Newcastle booster every 8-12 wk, evaluate profitability',lc_mile_7:'Evaluate culling vs forced molting',lc_mile_8:'Sell culled birds, clean house',vac_route_injection:'Injection',vac_route_ocular:'Ocular/spray',vac_route_water:'Water',vac_route_wing:'Wing web',snapshots:'snapshots',error_prefix:'Error',chk_collect_eggs:'Collect eggs',chk_feed_birds:'Feed birds',chk_check_water:'Check water',chk_check_health:'Check health',chk_cleaning:'Cleaning',chk_record_temp:'Record temperature',
+sidebar_subtitle:'Intelligent Poultry Management',prod_shell_white:'White',prod_shell_brown:'Brown',prod_shell_cream:'Cream',required:'Required field',no_flocks_birthdate:'No flocks with birth date',vac_select_flocks:'Select flocks to generate calendar:',feed_type_placeholder:'Layer, Starter, etc.',avg_per_day:'Avg/day',per_flock:'Flock',history:'History',env_latest_reading:'Latest Reading',env_ok:'OK',env_out_of_range:'Out of range',data_stats:'Data Statistics',final_warning:'⚠️ FINAL WARNING — ALL data will be deleted',total_salaries:'Total Salaries',eggs_unit:'eggs',csv_income:'Income',csv_expense:'Expense',fcr_unit:'kg feed/kg egg',lc_feed_starter:'Starter',lc_feed_grower:'Grower',lc_feed_developer:'Developer',lc_feed_prelay:'Pre-lay',lc_feed_layer:'Layer',lc_feed_lowlay:'Low-lay',lc_prod_label:'Prod',lc_prod_first:'First eggs',lc_mile_1:'Marek, Newcastle+IB, Gumboro vaccines',lc_mile_2:'Newcastle booster, feather development',lc_mile_3:'Fowl Pox, AE, Coryza, Salmonella',lc_mile_4:'Newcastle+IB booster, diet change, 16h light',lc_mile_5:'Peak production wk 26-30, monitor FCR',lc_mile_6:'Newcastle booster every 8-12 wk, evaluate profitability',lc_mile_7:'Evaluate culling vs forced molting',lc_mile_8:'Sell culled birds, clean house',vac_route_injection:'Injection',vac_route_ocular:'Ocular/spray',vac_route_water:'Water',vac_route_wing:'Wing web',snapshots:'snapshots',error_prefix:'Error',chk_collect_eggs:'Collect eggs',chk_feed_birds:'Feed birds',chk_check_water:'Check water',chk_check_health:'Check health',chk_cleaning:'Cleaning',chk_record_temp:'Record temperature',
 weather_title:'Weather',weather_temp:'Temperature',weather_humidity:'Humidity',weather_wind:'Wind',weather_forecast:'3-Day Forecast',weather_no_key:'Set farm location to see weather',weather_heat_alert:'Heat Stress Alert',weather_thi:'THI Index',weather_feels:'Feels like',weather_last_update:'Last updated',weather_test:'Test',
 geo_set_location:'Farm Location',geo_use_gps:'Use my GPS',geo_click_map:'Click map to set location',geo_lat:'Latitude',geo_lng:'Longitude',geo_saved:'Location saved',
 iot_title:'IoT Sensors',iot_broker:'MQTT Broker (wss://)',iot_user:'MQTT User',iot_pass:'MQTT Password',iot_topic:'Topic Prefix',iot_connect:'Connect',iot_disconnect:'Disconnect',iot_live:'IoT Live',iot_no_config:'Configure MQTT in Settings',iot_save_reading:'Save current reading',iot_connected:'Connected',iot_disconnected:'Disconnected',iot_ammonia:'Ammonia',iot_light:'Light',iot_lux:'lux',iot_ppm:'ppm',
@@ -158,9 +164,15 @@ ana_segment_profit:'Profitability by Segment',cfg_accessibility:'Accessibility',
 rec_title:'Recommendations',rec_dismiss:'Dismiss',rec_check_diet:'Check diet / feed design / rule out disease',rec_check_env:'Check environment / disease / stress immediately',rec_below_curve:'Below standard production — check stress, light, feed',rec_buy_feed:'Schedule feed purchase',rec_record_env:'Record environmental conditions',rec_disinfect:'Execute disinfection protocol zone',rec_heat_plan:'Prolonged heat stress — activate cooling plan',rec_lab_samples:'Take samples to laboratory',rec_ventilation:'Increase ventilation, check fresh water',
 auth_welcome:'Account created. Welcome!',auth_error:'Invalid credentials',auth_first_run:'First time: enter username and password to create your account.',login_subtitle:'Sign in or create your account',logout:'Logout',required:'Required field',invalid_email:'Invalid email',invalid_phone:'Invalid phone',must_be_number:'Must be a number',invalid_date:'Invalid date',invalid_format:'Invalid format',min_length:'Min length',max_length:'Max length',min_value:'Min value',max_value:'Max value',error_network:'Network error',error_unexpected:'Unexpected error',error_loading:'Loading error',
 ana_economics:'Economics',flock_purchase_cost:'Cost per Bird',econ_cost_per_egg:'Cost/Egg',econ_roi_per_bird:'ROI/Bird',econ_acquisition:'Acquisition',econ_feed_cost:'Feed Cost',econ_health_cost:'Health Cost',econ_direct_expenses:'Direct Expenses',econ_total_investment:'Total Investment',econ_total_costs:'Total Costs',econ_net_result:'Net Result',econ_daily_cost_bird:'Daily Cost/Bird',econ_days_active:'Days Active',econ_no_data_guide:'Enter purchase costs in Flocks, expenses in Finances, and costs in Vaccines/Medications to see the economic analysis.',exp_flock:'Flock (optional)',health_cost:'Cost',econ_org_summary:'Organization Summary',econ_cost_breakdown:'Cost Breakdown',econ_completeness:'Data Available',
-nav_census:'Withdrawals',inv_total_in:'Total In',inv_total_out:'Total Out',inv_balance:'Balance',inv_records:'Records',inv_by_type:'By Egg Type',source:'Source',fin_egg_type:'Type',
+nav_census:'Withdrawals',nav_reports:'Reports',nav_automation:'Automation',inv_total_in:'Total In',inv_total_out:'Total Out',inv_balance:'Balance',inv_records:'Records',inv_by_type:'By Egg Type',source:'Source',fin_egg_type:'Type',
 kpi_info_today:'Eggs collected today across all active flocks.',kpi_info_henday:'Percentage of hens that laid today. Ideal: >85%.',kpi_info_fcr:'Kg of feed per kg of eggs produced. Lower is better. Ideal: <2.2.',kpi_info_mortality:'Cumulative death percentage over total birds. Target: <3%.',kpi_info_cost_egg:'Total cost (feed + health + expenses) divided by eggs produced.',kpi_info_income_net:'Sales revenue minus all expenses for the current month.',kpi_info_active_hens:'Total live hens in currently active flocks.',kpi_info_alerts:'Number of situations requiring your immediate attention.',info_fin_income:'Sum of all sales and income recorded this month.',info_fin_expenses:'Total operating expenses: feed, health, operations.',info_fin_gross:'Revenue minus direct costs (before taxes and depreciation).',info_fin_dep:'Monthly wear on asset value (buildings, equipment).',info_fin_tax:'Estimated tax on gross profit per configured rate.',info_fin_net:'Final profit after depreciation and taxes.',info_fin_cpe:'Total cost divided by eggs produced. Includes feed and expenses.',info_fin_be:'Eggs needed to cover all costs. Produce more = profit.',info_feed_stock:'Kg of feed currently available in storage.',info_feed_purchases:'Total feed purchased and accumulated cost.',info_feed_consumption:'Kg of feed consumed by the birds.',info_cli_total:'Total number of registered clients (buyers).',info_clm_total:'Total client claims recorded.',info_clm_sat:'Average post-resolution satisfaction (1-5 stars).',info_inv_in:'Total eggs entered into inventory.',info_inv_out:'Total eggs out of inventory (sales, waste).',info_inv_balance:'Eggs currently available: entries minus exits.',info_inv_records:'Number of inventory movements recorded.',info_bio_pest:'Pest pressure index (0-100). Higher = more risk.',info_bio_visitors:'External people who have entered the farm.',info_bio_zones:'Farm areas with biosecurity protocols.',info_health_score:'Flock health index (0-100). Based on mortality and events.',info_outbreaks:'Active disease outbreaks requiring attention.',info_vaccines:'Vaccines pending application per health calendar.',info_env_humidity:'Optimal relative humidity range for layers.',info_env_light:'Recommended light hours for maximum production.',info_env_density:'Recommended birds per square meter.',
-ana_channel_pricing:'Per-Channel Pricing',cfg_action:'Action',cfg_add_user:'+ Add User',cfg_asset_value:'Total Asset Value',cfg_audit:'Audit Log',cfg_backup_na:'Cache API not available in this browser.',cfg_backups:'Auto-Backup',cfg_dep_years:'Depreciation (years)',cfg_detail:'Detail',cfg_digits:'digits',cfg_loading:'Loading...',cfg_module:'Module',cfg_no_backups:'No auto-backups yet.',cfg_no_users:'No users configured.',cfg_restore:'Restore',cfg_restore_confirm:'Restore from this backup?',cfg_restored:'Backup restored',cfg_role:'Role',cfg_size:'Size',cfg_storage:'Storage Usage',cfg_tax:'Tax & Depreciation',cfg_tax_rate:'Tax Rate (%)',cfg_timestamp:'Time',cfg_user:'User',cfg_users:'User Management',ch_direct:'Direct',ch_export:'Export',ch_organic:'Organic',ch_retail:'Retail',ch_wholesale:'Wholesale',confirm_delete_cascade:'This client has associated records. Deleting will remove those references. Continue?',fin_avg_price:'Avg Price',fin_channel:'Channel',fin_channel_breakdown:'Revenue by Channel',fin_depreciation:'Depreciation/mo',fin_gross_profit:'Gross Profit',fin_net_profit:'Net Profit',fin_tax:'Tax',flock_curve_adjust:'Curve Adjust',flock_curve_tip:'1.0=standard, 0.85=tropical, 1.1=temperate',optional:'Optional',pin_invalid:'Invalid PIN',pin_login:'Login',pin_select_user:'Select user'
+ana_channel_pricing:'Per-Channel Pricing',cfg_action:'Action',cfg_add_user:'+ Add User',cfg_asset_value:'Total Asset Value',cfg_audit:'Audit Log',cfg_backup_na:'Cache API not available in this browser.',cfg_backups:'Auto-Backup',cfg_dep_years:'Depreciation (years)',cfg_detail:'Detail',cfg_digits:'digits',cfg_loading:'Loading...',cfg_module:'Module',cfg_no_backups:'No auto-backups yet.',cfg_no_users:'No users configured.',cfg_restore:'Restore',cfg_restore_confirm:'Restore from this backup?',cfg_restored:'Backup restored',cfg_role:'Role',cfg_size:'Size',cfg_storage:'Storage Usage',cfg_tax:'Tax & Depreciation',cfg_tax_rate:'Tax Rate (%)',cfg_timestamp:'Time',cfg_user:'User',cfg_users:'User Management',ch_direct:'Direct',ch_export:'Export',ch_organic:'Organic',ch_retail:'Retail',ch_wholesale:'Wholesale',confirm_delete_cascade:'This client has associated records. Deleting will remove those references. Continue?',fin_avg_price:'Avg Price',fin_channel:'Channel',fin_channel_breakdown:'Revenue by Channel',fin_depreciation:'Depreciation/mo',fin_gross_profit:'Gross Profit',fin_net_profit:'Net Profit',fin_tax:'Tax',flock_curve_adjust:'Curve Adjust',flock_curve_tip:'1.0=standard, 0.85=tropical, 1.1=temperate',optional:'Optional',pin_invalid:'Invalid PIN',pin_login:'Login',pin_select_user:'Select user',
+price_per_mo:'/mo',trial_ended_title:'Your trial period has ended',trial_ended_subtitle:'Choose a plan to keep using EGGlogU — 40% off first 3 months',btn_see_plans:'See plans',trial_days_left:'days left of Enterprise trial',trial_last_day:'Last day of trial!',trial_full_access:'Full access to all modules',trial_from_price:'After: from $5/mo (40% off)',billing_next_quarter:'Next quarter',billing_regular_price:'Regular price',
+perfil_title:'My Profile',perfil_subtitle:'Your account information',perfil_name:'Full name',perfil_member_since:'Member since',perfil_change_pin:'Change PIN',perfil_current_pin:'Current PIN',perfil_new_pin:'New PIN',perfil_confirm_pin:'Confirm PIN',perfil_pin_changed:'PIN updated successfully',perfil_profile_updated:'Profile updated',perfil_pin_mismatch:'PINs do not match',perfil_wrong_pin:'Current PIN is incorrect',
+reassign_title:'Reassign Account',reassign_btn:'Reassign',reassign_new_name:'New holder name',reassign_new_email:'New holder email',reassign_new_pin:'New holder PIN',reassign_confirm:'Confirm Reassignment',reassign_success:'Account reassigned successfully',reassign_no_self:'You cannot reassign yourself',reassign_last_owner:'Cannot reassign the last active owner',reassign_verify:'Verify your PIN to continue',reassign_notify:'Notification will be sent to the new holder',
+billing_no_permission:'You do not have permission to access billing',billing_cancel_sub:'Cancel Subscription',billing_cancel_confirm:'Your plan will remain active until {date}. We recommend downloading your data before cancelling.',billing_cancel_success:'Subscription cancelled',billing_delete_account:'Delete Account',billing_delete_warning:'This action is IRREVERSIBLE. All data will be permanently lost.',billing_delete_type_confirm:'Type {word} to confirm',billing_delete_success:'Account deleted',billing_current_plan:'Current Plan',billing_manage_payments:'Manage Payments',billing_change_plan:'Change Plan',billing_download_data:'Download Data',
+dt_no_results:'No results match your filters',dt_filters:'filters',dt_selected:'selected',dt_deselect:'Deselect all',dt_showing:'Showing',dt_records:'records',dt_of:'of',dt_clear_filters:'Clear filters',dt_columns:'Columns',dt_export_csv:'Export CSV',dt_export_excel:'Export Excel',dt_per_page:'Per page',dt_sort_asc:'Sort ascending',dt_sort_desc:'Sort descending',dt_filter:'Filter',dt_select_all:'Select all',dt_search:'Search',dt_page:'Page',
+rpt_title:'Reports & Analytics',rpt_report:'Report',rpt_template:'Template',rpt_period:'Period',rpt_period_total:'Period total',rpt_generated:'Generated',rpt_invalid_template:'Invalid report template',rpt_tpl_production:'Production',rpt_tpl_financial:'Financial',rpt_tpl_health:'Health',rpt_tpl_feed:'Feed',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Last 7 days',rpt_period_30d:'Last 30 days',rpt_period_90d:'Last 90 days',rpt_period_12m:'Last 12 months',rpt_period_custom:'Custom',rpt_production_summary:'Production Summary',rpt_total_eggs:'Total Eggs',rpt_avg_day:'Avg/day',rpt_culled:'Culled',rpt_broken_dirty:'Broken / Dirty',rpt_loss:'loss',rpt_daily_production:'Daily Production',rpt_size_breakdown:'Size Breakdown',rpt_flock_breakdown:'Flock Breakdown',rpt_broken:'Broken',rpt_dirty:'Dirty',rpt_financial_pl:'Profit & Loss',rpt_transactions:'transactions',rpt_margin:'Margin',rpt_overdue:'overdue',rpt_monthly_trend:'Monthly Trend',rpt_by_category:'by Category',rpt_other:'Other',rpt_health_overview:'Health Overview',rpt_applied_period:'applied in period',rpt_upcoming_vaccines:'Upcoming Vaccinations',rpt_by_flock:'by Flock',rpt_feed_efficiency:'Feed Efficiency',rpt_hen_day:'hen/day',rpt_feed_cost:'Feed Cost',rpt_feed_stock:'Feed Stock',rpt_remaining:'remaining',rpt_weekly_consumption:'Weekly Consumption',rpt_by_feed_type:'by Feed Type',rpt_kpi_trends:'KPI Trends',rpt_no_snapshots:'No KPI data for this period',rpt_kpi_chart:'Production & Laying',rpt_kpi_fcr_mort:'FCR & Mortality',rpt_type:'Type',rpt_xlsx_missing:'XLSX library not available',rpt_pdf_missing:'PDF libraries not available',rpt_pdf_error:'Error exporting PDF',wf_title:'Automation',wf_create_rule:'Create Rule',wf_active_rules:'Active Rules',wf_executions:'Executions',wf_last_24h:'Last 24h',wf_presets:'Preset Templates',wf_rules:'Rules',wf_no_rules:'No rules configured',wf_rule_added:'Rule added',wf_execution_log:'Execution Log',wf_rule:'Rule',wf_detail:'Detail',wf_last_fired:'Last Fired',wf_test:'Test',wf_would_trigger:'Would trigger',wf_would_not_trigger:'Would not trigger',wf_rule_name:'Rule name',wf_condition:'Condition',wf_comparator:'Comparator',wf_threshold:'Threshold',wf_add_action:'Add Action',wf_cooldown:'Cooldown',wf_hours:'hours',wf_unnamed_rule:'Unnamed rule',wf_triggered:'Rule triggered',wf_invalid_condition:'Invalid condition',wf_cond_deaths_spike:'Mortality Spike',wf_cond_low_production:'Low Production',wf_cond_feed_stock:'Feed Stock',wf_cond_vaccine_due:'Vaccine Due',wf_cond_temperature:'Temperature',wf_cond_payment_overdue:'Payment Overdue',wf_cond_outbreak_active:'Active Outbreak',wf_cond_production_target:'Production Target',wf_act_notify:'Notify',wf_act_email:'Email',wf_act_auto_log:'Auto-log',wf_act_auto_task:'Auto-task',wf_act_update_status:'Update Status',wf_readings_above:'readings above',wf_no_target:'No production target defined',wf_below_target:'below target',storage_warning:'Local storage almost full (>80%). Consider syncing your data.',storage_full:'Local storage full. Space was freed automatically.',sync_conflicts:'{n} record(s) updated by another user',wf_browser_note:'Automation rules are evaluated while the browser is open.'
 },pt:{
 save:'Salvar',cancel:'Cancelar',delete:'Excluir',edit:'Editar',add:'Adicionar',close:'Fechar',actions:'Ações',date:'Data',notes:'Observações',name:'Nome',phone:'Telefone',email:'Email',address:'Endereço',confirm_delete:'Excluir este registro?',no_data:'Nenhum dado registrado',total:'Total',all:'Todos',loading:'Carregando',search:'Buscar',from:'De',to:'Até',status:'Status',export_csv:'Exportar CSV',today:'Hoje',active:'Ativo',inactive:'Inativo',
 nav_dashboard:'Dashboard',nav_production:'Produção',nav_flocks:'Lotes',nav_health:'Sanidade',nav_feed:'Alimentação',nav_clients:'Clientes',nav_finances:'Finanças',nav_analysis:'Análise',nav_operations:'Operações',nav_environment:'Ambiente',nav_config:'Configuração',nav_support:'Suporte',nav_admin:'Admin SaaS',nav_inventory:'Inventário',nav_superadmin:'Superadmin',grp_production:'Produção',grp_health:'Saúde',grp_commercial:'Comercial',grp_management:'Gestão',grp_system:'Sistema',grp_superadmin:'Superadmin',
@@ -185,7 +197,7 @@ ops_log_cat_general:'Geral',ops_log_cat_health:'Sanidade',ops_log_cat_production
 ops_per_name:'Nome',ops_per_role:'Cargo',ops_per_salary:'Salário',ops_per_start:'Data de Início',ops_per_active:'Ativo',ops_per_add:'Adicionar Pessoal',
 env_title:'Condições Ambientais',env_add:'Novo Registro',env_temp:'Temperatura (°C)',env_humidity:'Umidade (%)',env_light:'Horas de Luz',env_ventilation:'Ventilação',env_density:'Densidade (aves/m²)',env_optimal:'Faixa Ideal',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 hrs',env_density_range:'4-5 aves/m²',
 cfg_title:'Configuração',cfg_farm:'Dados da Granja',cfg_farm_name:'Nome da Granja',cfg_location:'Localização',cfg_capacity:'Capacidade (aves)',cfg_currency:'Moeda',cfg_alerts:'Limites de Alertas',cfg_min_feed:'Estoque Mín. Ração (kg)',cfg_max_mortality:'Mortalidade Máx. (%)',cfg_alert_days:'Dias de Antecedência',cfg_data:'Dados',cfg_export:'Exportar (JSON)',cfg_import:'Importar (JSON)',cfg_reset:'Excluir Tudo',cfg_reset_confirm:'Excluir TODOS os dados permanentemente?',cfg_saved:'Salvo',cfg_exported:'Dados exportados',cfg_imported:'Dados importados',cfg_reset_done:'Dados excluídos',cfg_checklist:'Checklist Padrão',cfg_checklist_items:'Tarefas do checklist diário',cfg_theme:'Tema de Cor',cfg_theme_blue:'Azul Marinho',cfg_theme_green:'Verde',cfg_theme_purple:'Roxo',cfg_theme_black:'Preto',
-sidebar_subtitle:'Sistema Avícola 360°',prod_shell_white:'Branco',prod_shell_brown:'Marrom',prod_shell_cream:'Creme',required:'Campo obrigatório',no_flocks_birthdate:'Nenhum lote com data de nascimento',vac_select_flocks:'Selecione lotes para gerar calendário:',feed_type_placeholder:'Postura, Inicial, etc.',avg_per_day:'Méd/dia',per_flock:'Lote',history:'Histórico',env_latest_reading:'Última Leitura',env_ok:'OK',env_out_of_range:'Fora da faixa',data_stats:'Estatísticas de Dados',final_warning:'⚠️ AVISO FINAL — TODOS os dados serão excluídos',total_salaries:'Total Salários',eggs_unit:'ovos',csv_income:'Receita',csv_expense:'Despesa',fcr_unit:'kg ração/kg ovo',lc_feed_starter:'Inicial',lc_feed_grower:'Crescimento',lc_feed_developer:'Desenvolvimento',lc_feed_prelay:'Pré-postura',lc_feed_layer:'Postura',lc_feed_lowlay:'Postura baixa',lc_prod_label:'Prod',lc_prod_first:'Primeiros ovos',lc_mile_1:'Vacinas Marek, Newcastle+BI, Gumboro',lc_mile_2:'Newcastle reforço, desenvolvimento plumagem',lc_mile_3:'Varíola, Encefalomielite, Coriza, Salmonela',lc_mile_4:'Newcastle+BI reforço, mudança dieta, 16h luz',lc_mile_5:'Pico produção sem 26-30, monitorar FCR',lc_mile_6:'Newcastle reforço a cada 8-12 sem, avaliar rentabilidade',lc_mile_7:'Avaliar descarte vs muda forçada',lc_mile_8:'Venda ave descarte, limpeza galpão',vac_route_injection:'Injeção',vac_route_ocular:'Ocular/spray',vac_route_water:'Água',vac_route_wing:'Punção alar',snapshots:'snapshots',error_prefix:'Erro',chk_collect_eggs:'Coletar ovos',chk_feed_birds:'Alimentar aves',chk_check_water:'Verificar água',chk_check_health:'Verificar saúde',chk_cleaning:'Limpeza',chk_record_temp:'Registrar temperatura',
+sidebar_subtitle:'Gestão Avícola Inteligente',prod_shell_white:'Branco',prod_shell_brown:'Marrom',prod_shell_cream:'Creme',required:'Campo obrigatório',no_flocks_birthdate:'Nenhum lote com data de nascimento',vac_select_flocks:'Selecione lotes para gerar calendário:',feed_type_placeholder:'Postura, Inicial, etc.',avg_per_day:'Méd/dia',per_flock:'Lote',history:'Histórico',env_latest_reading:'Última Leitura',env_ok:'OK',env_out_of_range:'Fora da faixa',data_stats:'Estatísticas de Dados',final_warning:'⚠️ AVISO FINAL — TODOS os dados serão excluídos',total_salaries:'Total Salários',eggs_unit:'ovos',csv_income:'Receita',csv_expense:'Despesa',fcr_unit:'kg ração/kg ovo',lc_feed_starter:'Inicial',lc_feed_grower:'Crescimento',lc_feed_developer:'Desenvolvimento',lc_feed_prelay:'Pré-postura',lc_feed_layer:'Postura',lc_feed_lowlay:'Postura baixa',lc_prod_label:'Prod',lc_prod_first:'Primeiros ovos',lc_mile_1:'Vacinas Marek, Newcastle+BI, Gumboro',lc_mile_2:'Newcastle reforço, desenvolvimento plumagem',lc_mile_3:'Varíola, Encefalomielite, Coriza, Salmonela',lc_mile_4:'Newcastle+BI reforço, mudança dieta, 16h luz',lc_mile_5:'Pico produção sem 26-30, monitorar FCR',lc_mile_6:'Newcastle reforço a cada 8-12 sem, avaliar rentabilidade',lc_mile_7:'Avaliar descarte vs muda forçada',lc_mile_8:'Venda ave descarte, limpeza galpão',vac_route_injection:'Injeção',vac_route_ocular:'Ocular/spray',vac_route_water:'Água',vac_route_wing:'Punção alar',snapshots:'snapshots',error_prefix:'Erro',chk_collect_eggs:'Coletar ovos',chk_feed_birds:'Alimentar aves',chk_check_water:'Verificar água',chk_check_health:'Verificar saúde',chk_cleaning:'Limpeza',chk_record_temp:'Registrar temperatura',
 weather_title:'Clima',weather_temp:'Temperatura',weather_humidity:'Umidade',weather_wind:'Vento',weather_forecast:'Previsão 3 Dias',weather_no_key:'Defina a localização da granja para ver o clima',weather_heat_alert:'Alerta de Estresse Térmico',weather_thi:'Índice THI',weather_feels:'Sensação',weather_last_update:'Última atualização',weather_test:'Testar',
 geo_set_location:'Localização da Granja',geo_use_gps:'Usar meu GPS',geo_click_map:'Clique no mapa para localizar',geo_lat:'Latitude',geo_lng:'Longitude',geo_saved:'Localização salva',
 iot_title:'IoT Sensores',iot_broker:'Broker MQTT (wss://)',iot_user:'Usuário MQTT',iot_pass:'Senha MQTT',iot_topic:'Prefixo Tópico',iot_connect:'Conectar',iot_disconnect:'Desconectar',iot_live:'IoT Ao Vivo',iot_no_config:'Configure MQTT em Configuração',iot_save_reading:'Salvar leitura atual',iot_connected:'Conectado',iot_disconnected:'Desconectado',iot_ammonia:'Amônia',iot_light:'Luz',iot_lux:'lux',iot_ppm:'ppm',
@@ -216,9 +228,15 @@ ana_segment_profit:'Rentabilidade por Segmento',cfg_accessibility:'Acessibilidad
 rec_title:'Recomendações',rec_dismiss:'Descartar',rec_check_diet:'Verificar dieta / formulação de ração / descartar doença',rec_check_env:'Verificar ambiente / doença / estresse imediatamente',rec_below_curve:'Produção abaixo do padrão — verificar estresse, luz, alimentação',rec_buy_feed:'Programar compra de ração',rec_record_env:'Registrar condições ambientais',rec_disinfect:'Executar protocolo de desinfecção zona',rec_heat_plan:'Estresse térmico prolongado — ativar plano de resfriamento',rec_lab_samples:'Levar amostras ao laboratório',rec_ventilation:'Aumentar ventilação, verificar água fresca',
 auth_welcome:'Conta criada. Bem-vindo!',auth_error:'Credenciais inválidas',auth_first_run:'Primeira vez: insira usuário e senha para criar sua conta.',login_subtitle:'Entre ou crie sua conta',logout:'Sair',required:'Campo obrigatório',invalid_email:'Email inválido',invalid_phone:'Telefone inválido',must_be_number:'Deve ser um número',invalid_date:'Data inválida',invalid_format:'Formato inválido',min_length:'Comprimento mínimo',max_length:'Comprimento máximo',min_value:'Valor mínimo',max_value:'Valor máximo',error_network:'Erro de rede',error_unexpected:'Erro inesperado',error_loading:'Erro ao carregar',
 ana_economics:'Economia',flock_purchase_cost:'Custo por Ave',econ_cost_per_egg:'Custo/Ovo',econ_roi_per_bird:'ROI/Ave',econ_acquisition:'Aquisição',econ_feed_cost:'Custo Ração',econ_health_cost:'Custo Sanitário',econ_direct_expenses:'Despesas Diretas',econ_total_investment:'Investimento Total',econ_total_costs:'Custos Totais',econ_net_result:'Resultado Líquido',econ_daily_cost_bird:'Custo Diário/Ave',econ_days_active:'Dias Ativo',econ_no_data_guide:'Insira custos de compra em Lotes, despesas em Finanças e custos em Vacinas/Medicamentos para ver a análise econômica.',exp_flock:'Lote (opcional)',health_cost:'Custo',econ_org_summary:'Resumo Organização',econ_cost_breakdown:'Detalhamento de Custos',econ_completeness:'Dados Disponíveis',
-nav_census:'Carências',inv_total_in:'Total Entrada',inv_total_out:'Total Saída',inv_balance:'Saldo',inv_records:'Registros',inv_by_type:'Por Tipo de Ovo',source:'Origem',fin_egg_type:'Tipo',
+nav_census:'Carências',nav_reports:'Relatórios',nav_automation:'Automação',inv_total_in:'Total Entrada',inv_total_out:'Total Saída',inv_balance:'Saldo',inv_records:'Registros',inv_by_type:'Por Tipo de Ovo',source:'Origem',fin_egg_type:'Tipo',
 kpi_info_today:'Ovos coletados hoje em todos os lotes ativos.',kpi_info_henday:'Percentual de galinhas que puseram hoje. Ideal: >85%.',kpi_info_fcr:'Kg de ração por kg de ovos produzidos. Menor é melhor. Ideal: <2.2.',kpi_info_mortality:'Percentual acumulado de mortes sobre o total de aves. Meta: <3%.',kpi_info_cost_egg:'Custo total (ração + sanidade + despesas) dividido pelos ovos produzidos.',kpi_info_income_net:'Receita de vendas menos todas as despesas do mês corrente.',kpi_info_active_hens:'Total de galinhas vivas em lotes atualmente ativos.',kpi_info_alerts:'Número de situações que requerem sua atenção imediata.',info_fin_income:'Soma de todas as vendas e receitas do mês.',info_fin_expenses:'Total de despesas operacionais: ração, saúde, operações.',info_fin_gross:'Receita menos custos diretos (antes de impostos e depreciação).',info_fin_dep:'Desgaste mensal do valor dos ativos (galpões, equipamentos).',info_fin_tax:'Imposto estimado sobre o lucro bruto conforme taxa configurada.',info_fin_net:'Lucro final após depreciação e impostos.',info_fin_cpe:'Custo total dividido pelos ovos produzidos.',info_fin_be:'Ovos necessários para cobrir todos os custos.',info_feed_stock:'Kg de ração disponível atualmente.',info_feed_purchases:'Total de ração comprada e custo acumulado.',info_feed_consumption:'Kg de ração consumida pelas aves.',info_cli_total:'Número total de clientes registrados.',info_clm_total:'Total de reclamações de clientes.',info_clm_sat:'Média de satisfação pós-resolução (1-5 estrelas).',info_inv_in:'Total de ovos que entraram no estoque.',info_inv_out:'Total de ovos que saíram do estoque.',info_inv_balance:'Ovos disponíveis: entradas menos saídas.',info_inv_records:'Quantidade de movimentos registrados.',info_bio_pest:'Índice de pressão de pragas (0-100).',info_bio_visitors:'Pessoas externas que entraram na granja.',info_bio_zones:'Áreas com protocolos de biossegurança.',info_health_score:'Índice de saúde do lote (0-100).',info_outbreaks:'Surtos de doença ativos.',info_vaccines:'Vacinas pendentes de aplicação.',info_env_humidity:'Faixa ótima de umidade relativa.',info_env_light:'Horas de luz recomendadas.',info_env_density:'Aves por metro quadrado recomendadas.',
-ana_channel_pricing:'Preço por Canal',cfg_action:'Ação',cfg_add_user:'+ Adicionar Usuário',cfg_asset_value:'Valor Total de Ativos',cfg_audit:'Registro de Auditoria',cfg_backup_na:'API de Cache não disponível neste navegador.',cfg_backups:'Auto-Backup',cfg_dep_years:'Depreciação (anos)',cfg_detail:'Detalhe',cfg_digits:'dígitos',cfg_loading:'Carregando...',cfg_module:'Módulo',cfg_no_backups:'Sem backups automáticos ainda.',cfg_no_users:'Sem usuários configurados.',cfg_restore:'Restaurar',cfg_restore_confirm:'Restaurar deste backup?',cfg_restored:'Backup restaurado',cfg_role:'Função',cfg_size:'Tamanho',cfg_storage:'Uso de Armazenamento',cfg_tax:'Impostos e Depreciação',cfg_tax_rate:'Taxa de Imposto (%)',cfg_timestamp:'Hora',cfg_user:'Usuário',cfg_users:'Gestão de Usuários',ch_direct:'Direto',ch_export:'Exportação',ch_organic:'Orgânico',ch_retail:'Varejo',ch_wholesale:'Atacado',confirm_delete_cascade:'Este cliente tem registros associados. Excluir removerá essas referências. Continuar?',fin_avg_price:'Preço Médio',fin_channel:'Canal',fin_channel_breakdown:'Receita por Canal',fin_depreciation:'Depreciação/mês',fin_gross_profit:'Lucro Bruto',fin_net_profit:'Lucro Líquido',fin_tax:'Imposto',flock_curve_adjust:'Ajuste de Curva',flock_curve_tip:'1.0=padrão, 0.85=tropical, 1.1=temperado',optional:'Opcional',pin_invalid:'PIN inválido',pin_login:'Entrar',pin_select_user:'Selecionar usuário'
+ana_channel_pricing:'Preço por Canal',cfg_action:'Ação',cfg_add_user:'+ Adicionar Usuário',cfg_asset_value:'Valor Total de Ativos',cfg_audit:'Registro de Auditoria',cfg_backup_na:'API de Cache não disponível neste navegador.',cfg_backups:'Auto-Backup',cfg_dep_years:'Depreciação (anos)',cfg_detail:'Detalhe',cfg_digits:'dígitos',cfg_loading:'Carregando...',cfg_module:'Módulo',cfg_no_backups:'Sem backups automáticos ainda.',cfg_no_users:'Sem usuários configurados.',cfg_restore:'Restaurar',cfg_restore_confirm:'Restaurar deste backup?',cfg_restored:'Backup restaurado',cfg_role:'Função',cfg_size:'Tamanho',cfg_storage:'Uso de Armazenamento',cfg_tax:'Impostos e Depreciação',cfg_tax_rate:'Taxa de Imposto (%)',cfg_timestamp:'Hora',cfg_user:'Usuário',cfg_users:'Gestão de Usuários',ch_direct:'Direto',ch_export:'Exportação',ch_organic:'Orgânico',ch_retail:'Varejo',ch_wholesale:'Atacado',confirm_delete_cascade:'Este cliente tem registros associados. Excluir removerá essas referências. Continuar?',fin_avg_price:'Preço Médio',fin_channel:'Canal',fin_channel_breakdown:'Receita por Canal',fin_depreciation:'Depreciação/mês',fin_gross_profit:'Lucro Bruto',fin_net_profit:'Lucro Líquido',fin_tax:'Imposto',flock_curve_adjust:'Ajuste de Curva',flock_curve_tip:'1.0=padrão, 0.85=tropical, 1.1=temperado',optional:'Opcional',pin_invalid:'PIN inválido',pin_login:'Entrar',pin_select_user:'Selecionar usuário',
+price_per_mo:'/mês',trial_ended_title:'Seu período de teste terminou',trial_ended_subtitle:'Escolha um plano para continuar usando EGGlogU — 40% off nos primeiros 3 meses',btn_see_plans:'Ver planos',trial_days_left:'dias restantes do teste Enterprise',trial_last_day:'Último dia de teste!',trial_full_access:'Acesso completo a todos os módulos',trial_from_price:'Depois: a partir de $5/mês (40% off)',billing_next_quarter:'Próximo trimestre',billing_regular_price:'Preço regular',
+perfil_title:'Meu Perfil',perfil_subtitle:'Informações da sua conta',perfil_name:'Nome completo',perfil_member_since:'Membro desde',perfil_change_pin:'Alterar PIN',perfil_current_pin:'PIN Atual',perfil_new_pin:'Novo PIN',perfil_confirm_pin:'Confirmar PIN',perfil_pin_changed:'PIN atualizado com sucesso',perfil_profile_updated:'Perfil atualizado',perfil_pin_mismatch:'Os PINs não coincidem',perfil_wrong_pin:'PIN atual incorreto',
+reassign_title:'Reatribuir Conta',reassign_btn:'Reatribuir',reassign_new_name:'Nome do novo titular',reassign_new_email:'Email do novo titular',reassign_new_pin:'PIN do novo titular',reassign_confirm:'Confirmar Reatribuição',reassign_success:'Conta reatribuída com sucesso',reassign_no_self:'Você não pode se reatribuir',reassign_last_owner:'Não é possível reatribuir o último owner ativo',reassign_verify:'Verifique seu PIN para continuar',reassign_notify:'Notificação será enviada ao novo titular',
+billing_no_permission:'Você não tem permissão para acessar faturamento',billing_cancel_sub:'Cancelar Assinatura',billing_cancel_confirm:'Seu plano permanecerá ativo até {date}. Recomendamos baixar seus dados antes de cancelar.',billing_cancel_success:'Assinatura cancelada',billing_delete_account:'Excluir Conta',billing_delete_warning:'Esta ação é IRREVERSÍVEL. Todos os dados serão perdidos permanentemente.',billing_delete_type_confirm:'Digite {word} para confirmar',billing_delete_success:'Conta excluída',billing_current_plan:'Plano Atual',billing_manage_payments:'Gerenciar Pagamentos',billing_change_plan:'Alterar Plano',billing_download_data:'Baixar Dados',
+dt_no_results:'Nenhum resultado para os filtros aplicados',dt_filters:'filtros',dt_selected:'selecionados',dt_deselect:'Desmarcar tudo',dt_showing:'Exibindo',dt_records:'registros',dt_of:'de',dt_clear_filters:'Limpar filtros',dt_columns:'Colunas',dt_export_csv:'Exportar CSV',dt_export_excel:'Exportar Excel',dt_per_page:'Por página',dt_sort_asc:'Ordenar crescente',dt_sort_desc:'Ordenar decrescente',dt_filter:'Filtrar',dt_select_all:'Selecionar tudo',dt_search:'Buscar',dt_page:'Página',
+rpt_title:'Relatórios e Análises',rpt_report:'Relatório',rpt_template:'Modelo',rpt_period:'Período',rpt_period_total:'Total do período',rpt_generated:'Gerado',rpt_invalid_template:'Modelo de relatório inválido',rpt_tpl_production:'Produção',rpt_tpl_financial:'Financeiro',rpt_tpl_health:'Saúde',rpt_tpl_feed:'Alimentação',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Últimos 7 dias',rpt_period_30d:'Últimos 30 dias',rpt_period_90d:'Últimos 90 dias',rpt_period_12m:'Últimos 12 meses',rpt_period_custom:'Personalizado',rpt_production_summary:'Resumo de Produção',rpt_total_eggs:'Total Ovos',rpt_avg_day:'Média/dia',rpt_culled:'Descartadas',rpt_broken_dirty:'Quebrados / Sujos',rpt_loss:'perda',rpt_daily_production:'Produção Diária',rpt_size_breakdown:'Distribuição por Tamanho',rpt_flock_breakdown:'Distribuição por Lote',rpt_broken:'Quebrados',rpt_dirty:'Sujos',rpt_financial_pl:'Demonstração de Resultados',rpt_transactions:'transações',rpt_margin:'Margem',rpt_overdue:'vencido(s)',rpt_monthly_trend:'Tendência Mensal',rpt_by_category:'por Categoria',rpt_other:'Outros',rpt_health_overview:'Resumo de Saúde',rpt_applied_period:'aplicadas no período',rpt_upcoming_vaccines:'Próximas Vacinações',rpt_by_flock:'por Lote',rpt_feed_efficiency:'Eficiência Alimentar',rpt_hen_day:'galinha/dia',rpt_feed_cost:'Custo Ração',rpt_feed_stock:'Estoque de Ração',rpt_remaining:'restantes',rpt_weekly_consumption:'Consumo Semanal',rpt_by_feed_type:'por Tipo de Ração',rpt_kpi_trends:'Tendências KPI',rpt_no_snapshots:'Sem dados de KPI para este período',rpt_kpi_chart:'Produção e Postura',rpt_kpi_fcr_mort:'Conversão e Mortalidade',rpt_type:'Tipo',rpt_xlsx_missing:'Biblioteca XLSX não disponível',rpt_pdf_missing:'Bibliotecas PDF não disponíveis',rpt_pdf_error:'Erro ao exportar PDF',wf_title:'Automação',wf_create_rule:'Criar Regra',wf_active_rules:'Regras Ativas',wf_executions:'Execuções',wf_last_24h:'Últimas 24h',wf_presets:'Modelos Predefinidos',wf_rules:'Regras',wf_no_rules:'Nenhuma regra configurada',wf_rule_added:'Regra adicionada',wf_execution_log:'Histórico de Execuções',wf_rule:'Regra',wf_detail:'Detalhe',wf_last_fired:'Última Execução',wf_test:'Testar',wf_would_trigger:'Seria ativada',wf_would_not_trigger:'Não seria ativada',wf_rule_name:'Nome da regra',wf_condition:'Condição',wf_comparator:'Comparador',wf_threshold:'Limite',wf_add_action:'Adicionar Ação',wf_cooldown:'Tempo de Espera',wf_hours:'horas',wf_unnamed_rule:'Regra sem nome',wf_triggered:'Regra ativada',wf_invalid_condition:'Condição inválida',wf_cond_deaths_spike:'Pico de Mortalidade',wf_cond_low_production:'Baixa Produção',wf_cond_feed_stock:'Estoque de Ração',wf_cond_vaccine_due:'Vacina Pendente',wf_cond_temperature:'Temperatura',wf_cond_payment_overdue:'Pagamento Vencido',wf_cond_outbreak_active:'Surto Ativo',wf_cond_production_target:'Meta de Produção',wf_act_notify:'Notificar',wf_act_email:'E-mail',wf_act_auto_log:'Auto-registro',wf_act_auto_task:'Auto-tarefa',wf_act_update_status:'Atualizar Status',wf_readings_above:'leituras acima',wf_no_target:'Sem meta de produção definida',wf_below_target:'abaixo da meta',storage_warning:'Armazenamento local quase cheio (>80%). Considere sincronizar seus dados.',storage_full:'Armazenamento local cheio. Espaço liberado automaticamente.',sync_conflicts:'{n} registro(s) atualizado(s) por outro usuário',wf_browser_note:'As regras de automação são avaliadas enquanto o navegador estiver aberto.'
 },
 fr:{
 save:'Enregistrer',cancel:'Annuler',delete:'Supprimer',edit:'Modifier',add:'Ajouter',close:'Fermer',actions:'Actions',date:'Date',notes:'Notes',name:'Nom',phone:'Téléphone',email:'E-mail',address:'Adresse',confirm_delete:'Supprimer cet enregistrement ?',no_data:'Aucune donnée enregistrée',total:'Total',all:'Tout',loading:'Chargement',search:'Rechercher',from:'Du',to:'Au',status:'Statut',export_csv:'Exporter CSV',today:'Aujourd\'hui',active:'Actif',inactive:'Inactif',
@@ -244,7 +262,7 @@ ops_log_cat_general:'Général',ops_log_cat_health:'Santé',ops_log_cat_producti
 ops_per_name:'Nom',ops_per_role:'Poste',ops_per_salary:'Salaire',ops_per_start:'Date d\'embauche',ops_per_active:'Actif',ops_per_add:'Ajouter du personnel',
 env_title:'Conditions environnementales',env_add:'Nouvel enregistrement',env_temp:'Température (°C)',env_humidity:'Humidité (%)',env_light:'Heures de lumière',env_ventilation:'Ventilation',env_density:'Densité (oiseaux/m²)',env_optimal:'Plage optimale',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 h',env_density_range:'4-5 oiseaux/m²',
 cfg_title:'Paramètres',cfg_farm:'Détails de l\'exploitation',cfg_farm_name:'Nom de l\'exploitation',cfg_location:'Localisation',cfg_capacity:'Capacité (oiseaux)',cfg_currency:'Devise',cfg_alerts:'Seuils d\'alerte',cfg_min_feed:'Stock min d\'aliment (kg)',cfg_max_mortality:'Mortalité max (%)',cfg_alert_days:'Jours d\'alerte à l\'avance',cfg_data:'Données',cfg_export:'Exporter (JSON)',cfg_import:'Importer (JSON)',cfg_reset:'Tout supprimer',cfg_reset_confirm:'Supprimer TOUTES les données définitivement ?',cfg_saved:'Enregistré',cfg_exported:'Données exportées',cfg_imported:'Données importées',cfg_reset_done:'Données supprimées',cfg_checklist:'Liste de contrôle par défaut',cfg_checklist_items:'Tâches quotidiennes de contrôle',cfg_theme:'Thème de couleur',cfg_theme_blue:'Bleu marine',cfg_theme_green:'Vert',cfg_theme_purple:'Violet',cfg_theme_black:'Noir',
-sidebar_subtitle:'Système avicole 360°',prod_shell_white:'Blanc',prod_shell_brown:'Brun',prod_shell_cream:'Crème',required:'Champ obligatoire',no_flocks_birthdate:'Aucun lot avec date de naissance',vac_select_flocks:'Sélectionnez les lots pour générer le calendrier :',feed_type_placeholder:'Pondeuse, Démarrage, etc.',avg_per_day:'Moy/jour',per_flock:'Lot',history:'Historique',env_latest_reading:'Dernière mesure',env_ok:'OK',env_out_of_range:'Hors plage',data_stats:'Statistiques des données',final_warning:'⚠️ DERNIER AVERTISSEMENT — TOUTES les données seront supprimées',total_salaries:'Total des salaires',eggs_unit:'œufs',csv_income:'Revenu',csv_expense:'Dépense',fcr_unit:'kg aliment/kg œuf',lc_feed_starter:'Démarrage',lc_feed_grower:'Croissance',lc_feed_developer:'Développement',lc_feed_prelay:'Pré-ponte',lc_feed_layer:'Pondeuse',lc_feed_lowlay:'Fin de ponte',lc_prod_label:'Prod',lc_prod_first:'Premiers œufs',lc_mile_1:'Vaccins Marek, Newcastle+BI, Gumboro',lc_mile_2:'Rappel Newcastle, développement du plumage',lc_mile_3:'Variole aviaire, EA, Coryza, Salmonelle',lc_mile_4:'Rappel Newcastle+BI, changement d\'aliment, 16h lumière',lc_mile_5:'Pic de production sem 26-30, surveiller le FCR',lc_mile_6:'Rappel Newcastle toutes les 8-12 sem, évaluer la rentabilité',lc_mile_7:'Évaluer la réforme vs mue forcée',lc_mile_8:'Vendre les poules réformées, nettoyer le bâtiment',vac_route_injection:'Injection',vac_route_ocular:'Oculaire/nébulisation',vac_route_water:'Eau de boisson',vac_route_wing:'Transfixion alaire',snapshots:'instantanés',error_prefix:'Erreur',chk_collect_eggs:'Collecter les œufs',chk_feed_birds:'Nourrir les volailles',chk_check_water:'Vérifier l\'eau',chk_check_health:'Contrôler la santé',chk_cleaning:'Nettoyage',chk_record_temp:'Relever la température',
+sidebar_subtitle:'Gestion Avicole Intelligente',prod_shell_white:'Blanc',prod_shell_brown:'Brun',prod_shell_cream:'Crème',required:'Champ obligatoire',no_flocks_birthdate:'Aucun lot avec date de naissance',vac_select_flocks:'Sélectionnez les lots pour générer le calendrier :',feed_type_placeholder:'Pondeuse, Démarrage, etc.',avg_per_day:'Moy/jour',per_flock:'Lot',history:'Historique',env_latest_reading:'Dernière mesure',env_ok:'OK',env_out_of_range:'Hors plage',data_stats:'Statistiques des données',final_warning:'⚠️ DERNIER AVERTISSEMENT — TOUTES les données seront supprimées',total_salaries:'Total des salaires',eggs_unit:'œufs',csv_income:'Revenu',csv_expense:'Dépense',fcr_unit:'kg aliment/kg œuf',lc_feed_starter:'Démarrage',lc_feed_grower:'Croissance',lc_feed_developer:'Développement',lc_feed_prelay:'Pré-ponte',lc_feed_layer:'Pondeuse',lc_feed_lowlay:'Fin de ponte',lc_prod_label:'Prod',lc_prod_first:'Premiers œufs',lc_mile_1:'Vaccins Marek, Newcastle+BI, Gumboro',lc_mile_2:'Rappel Newcastle, développement du plumage',lc_mile_3:'Variole aviaire, EA, Coryza, Salmonelle',lc_mile_4:'Rappel Newcastle+BI, changement d\'aliment, 16h lumière',lc_mile_5:'Pic de production sem 26-30, surveiller le FCR',lc_mile_6:'Rappel Newcastle toutes les 8-12 sem, évaluer la rentabilité',lc_mile_7:'Évaluer la réforme vs mue forcée',lc_mile_8:'Vendre les poules réformées, nettoyer le bâtiment',vac_route_injection:'Injection',vac_route_ocular:'Oculaire/nébulisation',vac_route_water:'Eau de boisson',vac_route_wing:'Transfixion alaire',snapshots:'instantanés',error_prefix:'Erreur',chk_collect_eggs:'Collecter les œufs',chk_feed_birds:'Nourrir les volailles',chk_check_water:'Vérifier l\'eau',chk_check_health:'Contrôler la santé',chk_cleaning:'Nettoyage',chk_record_temp:'Relever la température',
 weather_title:'Météo',weather_temp:'Température',weather_humidity:'Humidité',weather_wind:'Vent',weather_forecast:'Prévisions 3 jours',weather_no_key:'Définissez l\'emplacement de la ferme pour voir la météo',weather_heat_alert:'Alerte stress thermique',weather_thi:'Indice THI',weather_feels:'Ressenti',weather_last_update:'Dernière mise à jour',weather_test:'Tester',
 geo_set_location:'Localisation de l\'exploitation',geo_use_gps:'Utiliser mon GPS',geo_click_map:'Cliquez sur la carte pour définir la localisation',geo_lat:'Latitude',geo_lng:'Longitude',geo_saved:'Localisation enregistrée',
 iot_title:'Capteurs IoT',iot_broker:'Broker MQTT (wss://)',iot_user:'Utilisateur MQTT',iot_pass:'Mot de passe MQTT',iot_topic:'Préfixe du topic',iot_connect:'Connecter',iot_disconnect:'Déconnecter',iot_live:'IoT en direct',iot_no_config:'Configurez MQTT dans les paramètres',iot_save_reading:'Enregistrer la mesure actuelle',iot_connected:'Connecté',iot_disconnected:'Déconnecté',iot_ammonia:'Ammoniac',iot_light:'Lumière',iot_lux:'lux',iot_ppm:'ppm',
@@ -275,9 +293,15 @@ ana_segment_profit:'Rentabilité par segment',cfg_accessibility:'Accessibilité'
 rec_title:'Recommandations',rec_dismiss:'Ignorer',rec_check_diet:'Vérifier l\'alimentation / formulation / exclure une maladie',rec_check_env:'Vérifier environnement / maladie / stress immédiatement',rec_below_curve:'En dessous de la courbe standard — vérifier stress, lumière, aliment',rec_buy_feed:'Planifier l\'achat d\'aliment',rec_record_env:'Enregistrer les conditions environnementales',rec_disinfect:'Exécuter le protocole de désinfection de la zone',rec_heat_plan:'Stress thermique prolongé — activer le plan de refroidissement',rec_lab_samples:'Envoyer des échantillons au laboratoire',rec_ventilation:'Augmenter la ventilation, vérifier l\'eau fraîche',
 auth_welcome:'Compte créé. Bienvenue!',auth_error:'Identifiants incorrects',auth_first_run:'Première fois: entrez un nom d\'utilisateur et un mot de passe pour créer votre compte.',login_subtitle:'Connectez-vous ou créez votre compte',logout:'Déconnexion',required:'Champ obligatoire',invalid_email:'Email invalide',invalid_phone:'Téléphone invalide',must_be_number:'Doit être un nombre',invalid_date:'Date invalide',invalid_format:'Format invalide',min_length:'Longueur min',max_length:'Longueur max',min_value:'Valeur min',max_value:'Valeur max',error_network:'Erreur réseau',error_unexpected:'Erreur inattendue',error_loading:'Erreur de chargement',
 ana_economics:'Économie',flock_purchase_cost:'Coût par oiseau',econ_cost_per_egg:'Coût/Œuf',econ_roi_per_bird:'ROI/Oiseau',econ_acquisition:'Acquisition',econ_feed_cost:'Coût aliment',econ_health_cost:'Coût sanitaire',econ_direct_expenses:'Dépenses directes',econ_total_investment:'Investissement total',econ_total_costs:'Coûts totaux',econ_net_result:'Résultat net',econ_daily_cost_bird:'Coût jour/oiseau',econ_days_active:'Jours actif',econ_no_data_guide:'Saisissez les coûts d\'achat dans Lots, les dépenses dans Finances et les coûts dans Vaccins/Médicaments pour voir l\'analyse économique.',exp_flock:'Lot (optionnel)',health_cost:'Coût',econ_org_summary:'Résumé organisation',econ_cost_breakdown:'Ventilation des coûts',econ_completeness:'Données disponibles',
-nav_census:'Carences',inv_total_in:'Total Entrées',inv_total_out:'Total Sorties',inv_balance:'Solde',inv_records:'Enregistrements',inv_by_type:'Par Type d\'Œuf',source:'Source',fin_egg_type:'Type',
+nav_census:'Carences',nav_reports:'Rapports',nav_automation:'Automatisation',inv_total_in:'Total Entrées',inv_total_out:'Total Sorties',inv_balance:'Solde',inv_records:'Enregistrements',inv_by_type:'Par Type d\'Œuf',source:'Source',fin_egg_type:'Type',
 kpi_info_today:'Œufs collectés aujourd\'hui dans tous les lots actifs.',kpi_info_henday:'Pourcentage de poules ayant pondu aujourd\'hui. Idéal: >85%.',kpi_info_fcr:'Kg d\'aliment par kg d\'œufs produits. Plus bas est mieux. Idéal: <2.2.',kpi_info_mortality:'Pourcentage cumulé de décès sur le total d\'oiseaux. Objectif: <3%.',kpi_info_cost_egg:'Coût total (aliment + santé + dépenses) divisé par les œufs produits.',kpi_info_income_net:'Revenus des ventes moins toutes les dépenses du mois en cours.',kpi_info_active_hens:'Total de poules vivantes dans les lots actuellement actifs.',kpi_info_alerts:'Nombre de situations nécessitant votre attention immédiate.',info_fin_income:'Somme des ventes et revenus du mois.',info_fin_expenses:'Total des dépenses: aliment, santé, opérations.',info_fin_gross:'Revenus moins coûts directs (avant impôts).',info_fin_dep:'Usure mensuelle des actifs (bâtiments, équipements).',info_fin_tax:'Impôt estimé sur le bénéfice brut.',info_fin_net:'Bénéfice final après dépréciation et impôts.',info_fin_cpe:'Coût total divisé par les œufs produits.',info_fin_be:'Œufs nécessaires pour couvrir tous les coûts.',info_feed_stock:'Kg d\'aliment disponible actuellement.',info_feed_purchases:'Total d\'aliment acheté et coût cumulé.',info_feed_consumption:'Kg d\'aliment consommé par les volailles.',info_cli_total:'Nombre total de clients enregistrés.',info_clm_total:'Total des réclamations clients.',info_clm_sat:'Satisfaction moyenne post-résolution (1-5 étoiles).',info_inv_in:'Total d\'œufs entrés en stock.',info_inv_out:'Total d\'œufs sortis du stock.',info_inv_balance:'Œufs disponibles: entrées moins sorties.',info_inv_records:'Nombre de mouvements enregistrés.',info_bio_pest:'Indice de pression parasitaire (0-100).',info_bio_visitors:'Personnes externes entrées dans la ferme.',info_bio_zones:'Zones avec protocoles de biosécurité.',info_health_score:'Indice de santé du lot (0-100).',info_outbreaks:'Foyers de maladie actifs.',info_vaccines:'Vaccins en attente d\'application.',info_env_humidity:'Plage optimale d\'humidité relative.',info_env_light:'Heures de lumière recommandées.',info_env_density:'Volailles par mètre carré recommandées.',
-ana_channel_pricing:'Prix par Canal',cfg_action:'Action',cfg_add_user:'+ Ajouter Utilisateur',cfg_asset_value:'Valeur Totale des Actifs',cfg_audit:'Journal d\'Audit',cfg_backup_na:'API Cache non disponible dans ce navigateur.',cfg_backups:'Sauvegarde Auto',cfg_dep_years:'Amortissement (années)',cfg_detail:'Détail',cfg_digits:'chiffres',cfg_loading:'Chargement...',cfg_module:'Module',cfg_no_backups:'Pas encore de sauvegardes auto.',cfg_no_users:'Aucun utilisateur configuré.',cfg_restore:'Restaurer',cfg_restore_confirm:'Restaurer depuis cette sauvegarde?',cfg_restored:'Sauvegarde restaurée',cfg_role:'Rôle',cfg_size:'Taille',cfg_storage:'Utilisation du Stockage',cfg_tax:'Impôts et Amortissement',cfg_tax_rate:'Taux d\'Imposition (%)',cfg_timestamp:'Heure',cfg_user:'Utilisateur',cfg_users:'Gestion des Utilisateurs',ch_direct:'Direct',ch_export:'Export',ch_organic:'Bio',ch_retail:'Détail',ch_wholesale:'Gros',confirm_delete_cascade:'Ce client a des enregistrements associés. Supprimer retirera ces références. Continuer?',fin_avg_price:'Prix Moyen',fin_channel:'Canal',fin_channel_breakdown:'Revenus par Canal',fin_depreciation:'Amortissement/mois',fin_gross_profit:'Bénéfice Brut',fin_net_profit:'Bénéfice Net',fin_tax:'Impôt',flock_curve_adjust:'Ajustement de Courbe',flock_curve_tip:'1.0=standard, 0.85=tropical, 1.1=tempéré',optional:'Optionnel',pin_invalid:'PIN invalide',pin_login:'Connexion',pin_select_user:'Sélectionner utilisateur'
+ana_channel_pricing:'Prix par Canal',cfg_action:'Action',cfg_add_user:'+ Ajouter Utilisateur',cfg_asset_value:'Valeur Totale des Actifs',cfg_audit:'Journal d\'Audit',cfg_backup_na:'API Cache non disponible dans ce navigateur.',cfg_backups:'Sauvegarde Auto',cfg_dep_years:'Amortissement (années)',cfg_detail:'Détail',cfg_digits:'chiffres',cfg_loading:'Chargement...',cfg_module:'Module',cfg_no_backups:'Pas encore de sauvegardes auto.',cfg_no_users:'Aucun utilisateur configuré.',cfg_restore:'Restaurer',cfg_restore_confirm:'Restaurer depuis cette sauvegarde?',cfg_restored:'Sauvegarde restaurée',cfg_role:'Rôle',cfg_size:'Taille',cfg_storage:'Utilisation du Stockage',cfg_tax:'Impôts et Amortissement',cfg_tax_rate:'Taux d\'Imposition (%)',cfg_timestamp:'Heure',cfg_user:'Utilisateur',cfg_users:'Gestion des Utilisateurs',ch_direct:'Direct',ch_export:'Export',ch_organic:'Bio',ch_retail:'Détail',ch_wholesale:'Gros',confirm_delete_cascade:'Ce client a des enregistrements associés. Supprimer retirera ces références. Continuer?',fin_avg_price:'Prix Moyen',fin_channel:'Canal',fin_channel_breakdown:'Revenus par Canal',fin_depreciation:'Amortissement/mois',fin_gross_profit:'Bénéfice Brut',fin_net_profit:'Bénéfice Net',fin_tax:'Impôt',flock_curve_adjust:'Ajustement de Courbe',flock_curve_tip:'1.0=standard, 0.85=tropical, 1.1=tempéré',optional:'Optionnel',pin_invalid:'PIN invalide',pin_login:'Connexion',pin_select_user:'Sélectionner utilisateur',
+price_per_mo:'/mois',trial_ended_title:'Votre période d\'essai est terminée',trial_ended_subtitle:'Choisissez un plan pour continuer à utiliser EGGlogU — 40% de réduction les 3 premiers mois',btn_see_plans:'Voir les plans',trial_days_left:'jours restants d\'essai Enterprise',trial_last_day:'Dernier jour d\'essai !',trial_full_access:'Accès complet à tous les modules',trial_from_price:'Après : à partir de 5$/mois (40% off)',billing_next_quarter:'Prochain trimestre',billing_regular_price:'Prix normal',
+perfil_title:'Mon Profil',perfil_subtitle:'Informations de votre compte',perfil_name:'Nom complet',perfil_member_since:'Membre depuis',perfil_change_pin:'Changer le PIN',perfil_current_pin:'PIN Actuel',perfil_new_pin:'Nouveau PIN',perfil_confirm_pin:'Confirmer le PIN',perfil_pin_changed:'PIN mis à jour avec succès',perfil_profile_updated:'Profil mis à jour',perfil_pin_mismatch:'Les PIN ne correspondent pas',perfil_wrong_pin:'PIN actuel incorrect',
+reassign_title:'Réassigner le Compte',reassign_btn:'Réassigner',reassign_new_name:'Nom du nouveau titulaire',reassign_new_email:'Email du nouveau titulaire',reassign_new_pin:'PIN du nouveau titulaire',reassign_confirm:'Confirmer la Réassignation',reassign_success:'Compte réassigné avec succès',reassign_no_self:'Vous ne pouvez pas vous réassigner',reassign_last_owner:'Impossible de réassigner le dernier propriétaire actif',reassign_verify:'Vérifiez votre PIN pour continuer',reassign_notify:'Une notification sera envoyée au nouveau titulaire',
+billing_no_permission:'Vous n\'avez pas la permission d\'accéder à la facturation',billing_cancel_sub:'Annuler l\'Abonnement',billing_cancel_confirm:'Votre plan restera actif jusqu\'au {date}. Nous vous recommandons de télécharger vos données avant d\'annuler.',billing_cancel_success:'Abonnement annulé',billing_delete_account:'Supprimer le Compte',billing_delete_warning:'Cette action est IRRÉVERSIBLE. Toutes les données seront définitivement perdues.',billing_delete_type_confirm:'Tapez {word} pour confirmer',billing_delete_success:'Compte supprimé',billing_current_plan:'Plan Actuel',billing_manage_payments:'Gérer les Paiements',billing_change_plan:'Changer de Plan',billing_download_data:'Télécharger les Données',
+dt_no_results:'Aucun résultat pour les filtres appliqués',dt_filters:'filtres',dt_selected:'sélectionnés',dt_deselect:'Tout désélectionner',dt_showing:'Affichage',dt_records:'enregistrements',dt_of:'de',dt_clear_filters:'Effacer les filtres',dt_columns:'Colonnes',dt_export_csv:'Exporter CSV',dt_export_excel:'Exporter Excel',dt_per_page:'Par page',dt_sort_asc:'Trier croissant',dt_sort_desc:'Trier décroissant',dt_filter:'Filtrer',dt_select_all:'Tout sélectionner',dt_search:'Rechercher',dt_page:'Page',
+rpt_title:'Rapports et Analyses',rpt_report:'Rapport',rpt_template:'Modèle',rpt_period:'Période',rpt_period_total:'Total de la période',rpt_generated:'Généré',rpt_invalid_template:'Modèle de rapport invalide',rpt_tpl_production:'Production',rpt_tpl_financial:'Financier',rpt_tpl_health:'Santé',rpt_tpl_feed:'Alimentation',rpt_tpl_kpi:'KPIs',rpt_period_7d:'7 derniers jours',rpt_period_30d:'30 derniers jours',rpt_period_90d:'90 derniers jours',rpt_period_12m:'12 derniers mois',rpt_period_custom:'Personnalisé',rpt_production_summary:'Résumé de Production',rpt_total_eggs:'Total Œufs',rpt_avg_day:'Moy./jour',rpt_culled:'Réformées',rpt_broken_dirty:'Cassés / Sales',rpt_loss:'perte',rpt_daily_production:'Production Journalière',rpt_size_breakdown:'Répartition par Taille',rpt_flock_breakdown:'Répartition par Lot',rpt_broken:'Cassés',rpt_dirty:'Sales',rpt_financial_pl:'Compte de Résultat',rpt_transactions:'transactions',rpt_margin:'Marge',rpt_overdue:'en retard',rpt_monthly_trend:'Tendance Mensuelle',rpt_by_category:'par Catégorie',rpt_other:'Autres',rpt_health_overview:'Aperçu Sanitaire',rpt_applied_period:'appliquées dans la période',rpt_upcoming_vaccines:'Prochaines Vaccinations',rpt_by_flock:'par Lot',rpt_feed_efficiency:'Efficacité Alimentaire',rpt_hen_day:'poule/jour',rpt_feed_cost:'Coût Aliment',rpt_feed_stock:'Stock Aliment',rpt_remaining:'restants',rpt_weekly_consumption:'Consommation Hebdomadaire',rpt_by_feed_type:'par Type d\'Aliment',rpt_kpi_trends:'Tendances KPI',rpt_no_snapshots:'Aucune donnée KPI pour cette période',rpt_kpi_chart:'Production et Ponte',rpt_kpi_fcr_mort:'IC et Mortalité',rpt_type:'Type',rpt_xlsx_missing:'Bibliothèque XLSX non disponible',rpt_pdf_missing:'Bibliothèques PDF non disponibles',rpt_pdf_error:'Erreur lors de l\'export PDF',wf_title:'Automatisation',wf_create_rule:'Créer Règle',wf_active_rules:'Règles Actives',wf_executions:'Exécutions',wf_last_24h:'Dernières 24h',wf_presets:'Modèles Prédéfinis',wf_rules:'Règles',wf_no_rules:'Aucune règle configurée',wf_rule_added:'Règle ajoutée',wf_execution_log:'Historique des Exécutions',wf_rule:'Règle',wf_detail:'Détail',wf_last_fired:'Dernière Exécution',wf_test:'Tester',wf_would_trigger:'Se déclencherait',wf_would_not_trigger:'Ne se déclencherait pas',wf_rule_name:'Nom de la règle',wf_condition:'Condition',wf_comparator:'Comparateur',wf_threshold:'Seuil',wf_add_action:'Ajouter Action',wf_cooldown:'Temps d\'Attente',wf_hours:'heures',wf_unnamed_rule:'Règle sans nom',wf_triggered:'Règle déclenchée',wf_invalid_condition:'Condition invalide',wf_cond_deaths_spike:'Pic de Mortalité',wf_cond_low_production:'Basse Production',wf_cond_feed_stock:'Stock d\'Aliment',wf_cond_vaccine_due:'Vaccin à Faire',wf_cond_temperature:'Température',wf_cond_payment_overdue:'Paiement en Retard',wf_cond_outbreak_active:'Foyer Actif',wf_cond_production_target:'Objectif de Production',wf_act_notify:'Notifier',wf_act_email:'E-mail',wf_act_auto_log:'Auto-enregistrement',wf_act_auto_task:'Auto-tâche',wf_act_update_status:'Mettre à Jour le Statut',wf_readings_above:'lectures au-dessus',wf_no_target:'Aucun objectif de production défini',wf_below_target:'en dessous de l\'objectif',storage_warning:'Stockage local presque plein (>80%). Pensez à synchroniser vos données.',storage_full:'Stockage local plein. De l\'espace a été libéré automatiquement.',sync_conflicts:'{n} enregistrement(s) mis à jour par un autre utilisateur',wf_browser_note:'Les règles d\'automatisation sont évaluées lorsque le navigateur est ouvert.'
 },
 de:{
 save:'Speichern',cancel:'Abbrechen',delete:'Löschen',edit:'Bearbeiten',add:'Hinzufügen',close:'Schließen',actions:'Aktionen',date:'Datum',notes:'Notizen',name:'Name',phone:'Telefon',email:'E-Mail',address:'Adresse',confirm_delete:'Diesen Eintrag löschen?',no_data:'Keine Daten erfasst',total:'Gesamt',all:'Alle',loading:'Laden',search:'Suche',from:'Von',to:'Bis',status:'Status',export_csv:'CSV exportieren',today:'Heute',active:'Aktiv',inactive:'Inaktiv',
@@ -303,7 +327,7 @@ ops_log_cat_general:'Allgemein',ops_log_cat_health:'Gesundheit',ops_log_cat_prod
 ops_per_name:'Name',ops_per_role:'Rolle',ops_per_salary:'Gehalt',ops_per_start:'Eintrittsdatum',ops_per_active:'Aktiv',ops_per_add:'Personal hinzufügen',
 env_title:'Umweltbedingungen',env_add:'Neuer Eintrag',env_temp:'Temperatur (°C)',env_humidity:'Luftfeuchtigkeit (%)',env_light:'Lichtstunden',env_ventilation:'Belüftung',env_density:'Besatzdichte (Tiere/m²)',env_optimal:'Optimalbereich',env_temp_range:'18–24 °C',env_humidity_range:'40–70 %',env_light_range:'14–16 Std.',env_density_range:'4–5 Tiere/m²',
 cfg_title:'Einstellungen',cfg_farm:'Betriebsdaten',cfg_farm_name:'Betriebsname',cfg_location:'Standort',cfg_capacity:'Kapazität (Tiere)',cfg_currency:'Währung',cfg_alerts:'Warnschwellen',cfg_min_feed:'Min. Futterbestand (kg)',cfg_max_mortality:'Max. Mortalität (%)',cfg_alert_days:'Warnungstage im Voraus',cfg_data:'Daten',cfg_export:'Exportieren (JSON)',cfg_import:'Importieren (JSON)',cfg_reset:'Alle Daten löschen',cfg_reset_confirm:'ALLE Daten unwiderruflich löschen?',cfg_saved:'Gespeichert',cfg_exported:'Daten exportiert',cfg_imported:'Daten importiert',cfg_reset_done:'Daten gelöscht',cfg_checklist:'Standard-Checkliste',cfg_checklist_items:'Tägliche Checklistenaufgaben',cfg_theme:'Farbschema',cfg_theme_blue:'Marineblau',cfg_theme_green:'Grün',cfg_theme_purple:'Lila',cfg_theme_black:'Schwarz',
-sidebar_subtitle:'Geflügelsystem 360°',prod_shell_white:'Weiß',prod_shell_brown:'Braun',prod_shell_cream:'Creme',required:'Pflichtfeld',no_flocks_birthdate:'Keine Herden mit Schlupfdatum',vac_select_flocks:'Herden für Kalender auswählen:',feed_type_placeholder:'Legehenne, Starter, usw.',avg_per_day:'Ø/Tag',per_flock:'Herde',history:'Verlauf',env_latest_reading:'Letzter Messwert',env_ok:'OK',env_out_of_range:'Außerhalb des Bereichs',data_stats:'Datenstatistik',final_warning:'⚠️ LETZTE WARNUNG — ALLE Daten werden gelöscht',total_salaries:'Gesamtgehälter',eggs_unit:'Eier',csv_income:'Einnahmen',csv_expense:'Ausgabe',fcr_unit:'kg Futter/kg Ei',lc_feed_starter:'Starter',lc_feed_grower:'Aufzuchtfutter',lc_feed_developer:'Entwicklungsfutter',lc_feed_prelay:'Vorlegefutter',lc_feed_layer:'Legefutter',lc_feed_lowlay:'Spätlegefutter',lc_prod_label:'Prod.',lc_prod_first:'Erste Eier',lc_mile_1:'Marek-, Newcastle+IB-, Gumboro-Impfungen',lc_mile_2:'Newcastle-Auffrischung, Federentwicklung',lc_mile_3:'Geflügelpocken, AE, Coryza, Salmonellen',lc_mile_4:'Newcastle+IB-Auffrischung, Futterwechsel, 16 Std. Licht',lc_mile_5:'Legehöhepunkt Wo. 26–30, FCR überwachen',lc_mile_6:'Newcastle-Auffrischung alle 8–12 Wo., Rentabilität prüfen',lc_mile_7:'Aussortierung vs. Zwangsmauser bewerten',lc_mile_8:'Aussortierte Tiere verkaufen, Stall reinigen',vac_route_injection:'Injektion',vac_route_ocular:'Okular/Spray',vac_route_water:'Trinkwasser',vac_route_wing:'Flügelstichmethode',snapshots:'Snapshots',error_prefix:'Fehler',chk_collect_eggs:'Eier sammeln',chk_feed_birds:'Tiere füttern',chk_check_water:'Wasser kontrollieren',chk_check_health:'Gesundheit kontrollieren',chk_cleaning:'Reinigung',chk_record_temp:'Temperatur erfassen',
+sidebar_subtitle:'Intelligentes Geflügelmanagement',prod_shell_white:'Weiß',prod_shell_brown:'Braun',prod_shell_cream:'Creme',required:'Pflichtfeld',no_flocks_birthdate:'Keine Herden mit Schlupfdatum',vac_select_flocks:'Herden für Kalender auswählen:',feed_type_placeholder:'Legehenne, Starter, usw.',avg_per_day:'Ø/Tag',per_flock:'Herde',history:'Verlauf',env_latest_reading:'Letzter Messwert',env_ok:'OK',env_out_of_range:'Außerhalb des Bereichs',data_stats:'Datenstatistik',final_warning:'⚠️ LETZTE WARNUNG — ALLE Daten werden gelöscht',total_salaries:'Gesamtgehälter',eggs_unit:'Eier',csv_income:'Einnahmen',csv_expense:'Ausgabe',fcr_unit:'kg Futter/kg Ei',lc_feed_starter:'Starter',lc_feed_grower:'Aufzuchtfutter',lc_feed_developer:'Entwicklungsfutter',lc_feed_prelay:'Vorlegefutter',lc_feed_layer:'Legefutter',lc_feed_lowlay:'Spätlegefutter',lc_prod_label:'Prod.',lc_prod_first:'Erste Eier',lc_mile_1:'Marek-, Newcastle+IB-, Gumboro-Impfungen',lc_mile_2:'Newcastle-Auffrischung, Federentwicklung',lc_mile_3:'Geflügelpocken, AE, Coryza, Salmonellen',lc_mile_4:'Newcastle+IB-Auffrischung, Futterwechsel, 16 Std. Licht',lc_mile_5:'Legehöhepunkt Wo. 26–30, FCR überwachen',lc_mile_6:'Newcastle-Auffrischung alle 8–12 Wo., Rentabilität prüfen',lc_mile_7:'Aussortierung vs. Zwangsmauser bewerten',lc_mile_8:'Aussortierte Tiere verkaufen, Stall reinigen',vac_route_injection:'Injektion',vac_route_ocular:'Okular/Spray',vac_route_water:'Trinkwasser',vac_route_wing:'Flügelstichmethode',snapshots:'Snapshots',error_prefix:'Fehler',chk_collect_eggs:'Eier sammeln',chk_feed_birds:'Tiere füttern',chk_check_water:'Wasser kontrollieren',chk_check_health:'Gesundheit kontrollieren',chk_cleaning:'Reinigung',chk_record_temp:'Temperatur erfassen',
 weather_title:'Wetter',weather_temp:'Temperatur',weather_humidity:'Luftfeuchtigkeit',weather_wind:'Wind',weather_forecast:'3-Tage-Vorhersage',weather_no_key:'Farmstandort festlegen, um Wetter zu sehen',weather_heat_alert:'Hitzestress-Warnung',weather_thi:'THI-Index',weather_feels:'Gefühlt',weather_last_update:'Zuletzt aktualisiert',weather_test:'Test',
 geo_set_location:'Betriebsstandort',geo_use_gps:'Mein GPS verwenden',geo_click_map:'Karte klicken, um Standort zu setzen',geo_lat:'Breitengrad',geo_lng:'Längengrad',geo_saved:'Standort gespeichert',
 iot_title:'IoT-Sensoren',iot_broker:'MQTT-Broker (wss://)',iot_user:'MQTT-Benutzer',iot_pass:'MQTT-Passwort',iot_topic:'Topic-Präfix',iot_connect:'Verbinden',iot_disconnect:'Trennen',iot_live:'IoT Live',iot_no_config:'MQTT in den Einstellungen konfigurieren',iot_save_reading:'Aktuellen Messwert speichern',iot_connected:'Verbunden',iot_disconnected:'Getrennt',iot_ammonia:'Ammoniak',iot_light:'Licht',iot_lux:'lux',iot_ppm:'ppm',
@@ -334,9 +358,15 @@ ana_segment_profit:'Rentabilität nach Segment',cfg_accessibility:'Barrierefreih
 rec_title:'Empfehlungen',rec_dismiss:'Verwerfen',rec_check_diet:'Futter / Futterrezeptur prüfen / Krankheit ausschließen',rec_check_env:'Umwelt / Krankheit / Stress sofort prüfen',rec_below_curve:'Unter Standardproduktion — Stress, Licht, Futter prüfen',rec_buy_feed:'Futterkauf planen',rec_record_env:'Umweltbedingungen erfassen',rec_disinfect:'Desinfektionsprotokoll Zone ausführen',rec_heat_plan:'Anhaltender Hitzestress — Kühlungsplan aktivieren',rec_lab_samples:'Proben ins Labor bringen',rec_ventilation:'Belüftung erhöhen, Frischwasser kontrollieren',
 auth_welcome:'Konto erstellt. Willkommen!',auth_error:'Ungültige Anmeldedaten',auth_first_run:'Erstmalig: Benutzernamen und Passwort eingeben, um Ihr Konto zu erstellen.',login_subtitle:'Anmelden oder Konto erstellen',logout:'Abmelden',required:'Pflichtfeld',invalid_email:'Ungültige E-Mail',invalid_phone:'Ungültige Telefonnummer',must_be_number:'Muss eine Zahl sein',invalid_date:'Ungültiges Datum',invalid_format:'Ungültiges Format',min_length:'Mindestlänge',max_length:'Maximale Länge',min_value:'Mindestwert',max_value:'Maximalwert',error_network:'Netzwerkfehler',error_unexpected:'Unerwarteter Fehler',error_loading:'Ladefehler',
 ana_economics:'Wirtschaft',flock_purchase_cost:'Kosten pro Tier',econ_cost_per_egg:'Kosten/Ei',econ_roi_per_bird:'ROI/Tier',econ_acquisition:'Anschaffung',econ_feed_cost:'Futterkosten',econ_health_cost:'Gesundheitskosten',econ_direct_expenses:'Direkte Ausgaben',econ_total_investment:'Gesamtinvestition',econ_total_costs:'Gesamtkosten',econ_net_result:'Nettoergebnis',econ_daily_cost_bird:'Tageskosten/Tier',econ_days_active:'Tage aktiv',econ_no_data_guide:'Geben Sie Kaufkosten in Herden, Ausgaben in Finanzen und Kosten in Impfungen/Medikamente ein, um die Wirtschaftsanalyse zu sehen.',exp_flock:'Herde (optional)',health_cost:'Kosten',econ_org_summary:'Betriebsübersicht',econ_cost_breakdown:'Kostenaufschlüsselung',econ_completeness:'Verfügbare Daten',
-nav_census:'Wartezeiten',inv_total_in:'Gesamt Eingang',inv_total_out:'Gesamt Ausgang',inv_balance:'Bestand',inv_records:'Einträge',inv_by_type:'Nach Eiertyp',source:'Quelle',fin_egg_type:'Typ',
+nav_census:'Wartezeiten',nav_reports:'Berichte',nav_automation:'Automatisierung',inv_total_in:'Gesamt Eingang',inv_total_out:'Gesamt Ausgang',inv_balance:'Bestand',inv_records:'Einträge',inv_by_type:'Nach Eiertyp',source:'Quelle',fin_egg_type:'Typ',
 kpi_info_today:'Heute gesammelte Eier in allen aktiven Herden.',kpi_info_henday:'Prozent der Hennen die heute gelegt haben. Ideal: >85%.',kpi_info_fcr:'Kg Futter pro kg produzierter Eier. Niedriger ist besser. Ideal: <2.2.',kpi_info_mortality:'Kumulierter Todesanteil am Gesamtbestand. Ziel: <3%.',kpi_info_cost_egg:'Gesamtkosten (Futter + Gesundheit + Ausgaben) geteilt durch produzierte Eier.',kpi_info_income_net:'Verkaufserlöse minus alle Ausgaben des laufenden Monats.',kpi_info_active_hens:'Gesamtzahl lebender Hennen in derzeit aktiven Herden.',kpi_info_alerts:'Anzahl der Situationen die Ihre sofortige Aufmerksamkeit erfordern.',info_fin_income:'Summe aller Verkäufe und Einnahmen des Monats.',info_fin_expenses:'Gesamte Betriebskosten: Futter, Gesundheit, Betrieb.',info_fin_gross:'Einnahmen minus direkte Kosten (vor Steuern).',info_fin_dep:'Monatliche Abschreibung auf Anlagenwerte.',info_fin_tax:'Geschätzte Steuer auf den Bruttogewinn.',info_fin_net:'Endgewinn nach Abschreibung und Steuern.',info_fin_cpe:'Gesamtkosten geteilt durch produzierte Eier.',info_fin_be:'Eier, die zur Kostendeckung benötigt werden.',info_feed_stock:'Kg Futter derzeit verfügbar.',info_feed_purchases:'Gesamtes gekauftes Futter und kumulierte Kosten.',info_feed_consumption:'Kg Futter, das von den Vögeln verbraucht wurde.',info_cli_total:'Gesamtzahl registrierter Kunden.',info_clm_total:'Gesamtzahl der Kundenreklamationen.',info_clm_sat:'Durchschnittliche Zufriedenheit nach Lösung (1-5 Sterne).',info_inv_in:'Gesamte Eier im Bestand eingegangen.',info_inv_out:'Gesamte Eier aus dem Bestand (Verkauf, Verlust).',info_inv_balance:'Verfügbare Eier: Eingänge minus Ausgänge.',info_inv_records:'Anzahl erfasster Bestandsbewegungen.',info_bio_pest:'Schädlingsdruckindex (0-100).',info_bio_visitors:'Externe Personen, die den Betrieb betreten haben.',info_bio_zones:'Bereiche mit Biosicherheitsprotokollen.',info_health_score:'Herdengesundheitsindex (0-100).',info_outbreaks:'Aktive Krankheitsausbrüche.',info_vaccines:'Ausstehende Impfungen laut Gesundheitskalender.',info_env_humidity:'Optimaler Bereich der relativen Luftfeuchtigkeit.',info_env_light:'Empfohlene Lichtstunden für maximale Produktion.',info_env_density:'Empfohlene Vögel pro Quadratmeter.',
-ana_channel_pricing:'Kanalpreise',cfg_action:'Aktion',cfg_add_user:'+ Benutzer hinzufügen',cfg_asset_value:'Gesamter Vermögenswert',cfg_audit:'Prüfprotokoll',cfg_backup_na:'Cache-API in diesem Browser nicht verfügbar.',cfg_backups:'Auto-Backup',cfg_dep_years:'Abschreibung (Jahre)',cfg_detail:'Detail',cfg_digits:'Ziffern',cfg_loading:'Laden...',cfg_module:'Modul',cfg_no_backups:'Noch keine Auto-Backups.',cfg_no_users:'Keine Benutzer konfiguriert.',cfg_restore:'Wiederherstellen',cfg_restore_confirm:'Von diesem Backup wiederherstellen?',cfg_restored:'Backup wiederhergestellt',cfg_role:'Rolle',cfg_size:'Größe',cfg_storage:'Speichernutzung',cfg_tax:'Steuern & Abschreibung',cfg_tax_rate:'Steuersatz (%)',cfg_timestamp:'Zeit',cfg_user:'Benutzer',cfg_users:'Benutzerverwaltung',ch_direct:'Direkt',ch_export:'Export',ch_organic:'Bio',ch_retail:'Einzelhandel',ch_wholesale:'Großhandel',confirm_delete_cascade:'Dieser Kunde hat zugehörige Datensätze. Löschen entfernt diese Verweise. Fortfahren?',fin_avg_price:'Durchschnittspreis',fin_channel:'Kanal',fin_channel_breakdown:'Umsatz nach Kanal',fin_depreciation:'Abschreibung/Monat',fin_gross_profit:'Bruttogewinn',fin_net_profit:'Nettogewinn',fin_tax:'Steuer',flock_curve_adjust:'Kurvenanpassung',flock_curve_tip:'1.0=Standard, 0.85=tropisch, 1.1=gemäßigt',optional:'Optional',pin_invalid:'Ungültige PIN',pin_login:'Anmelden',pin_select_user:'Benutzer wählen'
+ana_channel_pricing:'Kanalpreise',cfg_action:'Aktion',cfg_add_user:'+ Benutzer hinzufügen',cfg_asset_value:'Gesamter Vermögenswert',cfg_audit:'Prüfprotokoll',cfg_backup_na:'Cache-API in diesem Browser nicht verfügbar.',cfg_backups:'Auto-Backup',cfg_dep_years:'Abschreibung (Jahre)',cfg_detail:'Detail',cfg_digits:'Ziffern',cfg_loading:'Laden...',cfg_module:'Modul',cfg_no_backups:'Noch keine Auto-Backups.',cfg_no_users:'Keine Benutzer konfiguriert.',cfg_restore:'Wiederherstellen',cfg_restore_confirm:'Von diesem Backup wiederherstellen?',cfg_restored:'Backup wiederhergestellt',cfg_role:'Rolle',cfg_size:'Größe',cfg_storage:'Speichernutzung',cfg_tax:'Steuern & Abschreibung',cfg_tax_rate:'Steuersatz (%)',cfg_timestamp:'Zeit',cfg_user:'Benutzer',cfg_users:'Benutzerverwaltung',ch_direct:'Direkt',ch_export:'Export',ch_organic:'Bio',ch_retail:'Einzelhandel',ch_wholesale:'Großhandel',confirm_delete_cascade:'Dieser Kunde hat zugehörige Datensätze. Löschen entfernt diese Verweise. Fortfahren?',fin_avg_price:'Durchschnittspreis',fin_channel:'Kanal',fin_channel_breakdown:'Umsatz nach Kanal',fin_depreciation:'Abschreibung/Monat',fin_gross_profit:'Bruttogewinn',fin_net_profit:'Nettogewinn',fin_tax:'Steuer',flock_curve_adjust:'Kurvenanpassung',flock_curve_tip:'1.0=Standard, 0.85=tropisch, 1.1=gemäßigt',optional:'Optional',pin_invalid:'Ungültige PIN',pin_login:'Anmelden',pin_select_user:'Benutzer wählen',
+price_per_mo:'/Monat',trial_ended_title:'Ihr Testzeitraum ist abgelaufen',trial_ended_subtitle:'Wählen Sie einen Plan, um EGGlogU weiter zu nutzen — 40% Rabatt in den ersten 3 Monaten',btn_see_plans:'Pläne ansehen',trial_days_left:'Tage verbleibend im Enterprise-Test',trial_last_day:'Letzter Testtag!',trial_full_access:'Voller Zugang zu allen Modulen',trial_from_price:'Danach: ab $5/Monat (40% Rabatt)',billing_next_quarter:'Nächstes Quartal',billing_regular_price:'Regulärer Preis',
+perfil_title:'Mein Profil',perfil_subtitle:'Ihre Kontoinformationen',perfil_name:'Vollständiger Name',perfil_member_since:'Mitglied seit',perfil_change_pin:'PIN ändern',perfil_current_pin:'Aktuelle PIN',perfil_new_pin:'Neue PIN',perfil_confirm_pin:'PIN bestätigen',perfil_pin_changed:'PIN erfolgreich aktualisiert',perfil_profile_updated:'Profil aktualisiert',perfil_pin_mismatch:'PINs stimmen nicht überein',perfil_wrong_pin:'Aktuelle PIN ist falsch',
+reassign_title:'Konto Neu Zuweisen',reassign_btn:'Neu zuweisen',reassign_new_name:'Name des neuen Inhabers',reassign_new_email:'E-Mail des neuen Inhabers',reassign_new_pin:'PIN des neuen Inhabers',reassign_confirm:'Neuzuweisung Bestätigen',reassign_success:'Konto erfolgreich neu zugewiesen',reassign_no_self:'Sie können sich nicht selbst neu zuweisen',reassign_last_owner:'Der letzte aktive Eigentümer kann nicht neu zugewiesen werden',reassign_verify:'Bestätigen Sie Ihre PIN um fortzufahren',reassign_notify:'Benachrichtigung wird an den neuen Inhaber gesendet',
+billing_no_permission:'Sie haben keine Berechtigung für den Zugriff auf die Abrechnung',billing_cancel_sub:'Abonnement Kündigen',billing_cancel_confirm:'Ihr Plan bleibt bis {date} aktiv. Wir empfehlen Ihnen, Ihre Daten vor der Kündigung herunterzuladen.',billing_cancel_success:'Abonnement gekündigt',billing_delete_account:'Konto Löschen',billing_delete_warning:'Diese Aktion ist UNWIDERRUFLICH. Alle Daten gehen dauerhaft verloren.',billing_delete_type_confirm:'Geben Sie {word} zur Bestätigung ein',billing_delete_success:'Konto gelöscht',billing_current_plan:'Aktueller Plan',billing_manage_payments:'Zahlungen Verwalten',billing_change_plan:'Plan Ändern',billing_download_data:'Daten Herunterladen',
+dt_no_results:'Keine Ergebnisse für die angewandten Filter',dt_filters:'Filter',dt_selected:'ausgewählt',dt_deselect:'Alle abwählen',dt_showing:'Anzeige',dt_records:'Einträge',dt_of:'von',dt_clear_filters:'Filter löschen',dt_columns:'Spalten',dt_export_csv:'CSV exportieren',dt_export_excel:'Excel exportieren',dt_per_page:'Pro Seite',dt_sort_asc:'Aufsteigend sortieren',dt_sort_desc:'Absteigend sortieren',dt_filter:'Filtern',dt_select_all:'Alle auswählen',dt_search:'Suchen',dt_page:'Seite',
+rpt_title:'Berichte & Analysen',rpt_report:'Bericht',rpt_template:'Vorlage',rpt_period:'Zeitraum',rpt_period_total:'Gesamtzeitraum',rpt_generated:'Erstellt',rpt_invalid_template:'Ungültige Berichtsvorlage',rpt_tpl_production:'Produktion',rpt_tpl_financial:'Finanzen',rpt_tpl_health:'Gesundheit',rpt_tpl_feed:'Futter',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Letzte 7 Tage',rpt_period_30d:'Letzte 30 Tage',rpt_period_90d:'Letzte 90 Tage',rpt_period_12m:'Letzte 12 Monate',rpt_period_custom:'Benutzerdefiniert',rpt_production_summary:'Produktionsübersicht',rpt_total_eggs:'Eier Gesamt',rpt_avg_day:'Durchschn./Tag',rpt_culled:'Ausgemustert',rpt_broken_dirty:'Gebrochen / Schmutzig',rpt_loss:'Verlust',rpt_daily_production:'Tägliche Produktion',rpt_size_breakdown:'Aufschlüsselung nach Größe',rpt_flock_breakdown:'Aufschlüsselung nach Herde',rpt_broken:'Gebrochen',rpt_dirty:'Schmutzig',rpt_financial_pl:'Gewinn- und Verlustrechnung',rpt_transactions:'Transaktionen',rpt_margin:'Marge',rpt_overdue:'überfällig',rpt_monthly_trend:'Monatlicher Trend',rpt_by_category:'nach Kategorie',rpt_other:'Sonstige',rpt_health_overview:'Gesundheitsübersicht',rpt_applied_period:'im Zeitraum verabreicht',rpt_upcoming_vaccines:'Anstehende Impfungen',rpt_by_flock:'nach Herde',rpt_feed_efficiency:'Futtereffizienz',rpt_hen_day:'Henne/Tag',rpt_feed_cost:'Futterkosten',rpt_feed_stock:'Futterbestand',rpt_remaining:'verbleibend',rpt_weekly_consumption:'Wöchentlicher Verbrauch',rpt_by_feed_type:'nach Futterart',rpt_kpi_trends:'KPI-Trends',rpt_no_snapshots:'Keine KPI-Daten für diesen Zeitraum',rpt_kpi_chart:'Produktion & Legeleistung',rpt_kpi_fcr_mort:'FVW & Mortalität',rpt_type:'Typ',rpt_xlsx_missing:'XLSX-Bibliothek nicht verfügbar',rpt_pdf_missing:'PDF-Bibliotheken nicht verfügbar',rpt_pdf_error:'Fehler beim PDF-Export',wf_title:'Automatisierung',wf_create_rule:'Regel Erstellen',wf_active_rules:'Aktive Regeln',wf_executions:'Ausführungen',wf_last_24h:'Letzte 24h',wf_presets:'Vordefinierte Vorlagen',wf_rules:'Regeln',wf_no_rules:'Keine Regeln konfiguriert',wf_rule_added:'Regel hinzugefügt',wf_execution_log:'Ausführungsprotokoll',wf_rule:'Regel',wf_detail:'Detail',wf_last_fired:'Letzte Ausführung',wf_test:'Testen',wf_would_trigger:'Würde auslösen',wf_would_not_trigger:'Würde nicht auslösen',wf_rule_name:'Regelname',wf_condition:'Bedingung',wf_comparator:'Vergleich',wf_threshold:'Schwellenwert',wf_add_action:'Aktion Hinzufügen',wf_cooldown:'Wartezeit',wf_hours:'Stunden',wf_unnamed_rule:'Unbenannte Regel',wf_triggered:'Regel ausgelöst',wf_invalid_condition:'Ungültige Bedingung',wf_cond_deaths_spike:'Mortalitätsspitze',wf_cond_low_production:'Niedrige Produktion',wf_cond_feed_stock:'Futterbestand',wf_cond_vaccine_due:'Impfung Fällig',wf_cond_temperature:'Temperatur',wf_cond_payment_overdue:'Zahlung Überfällig',wf_cond_outbreak_active:'Aktiver Ausbruch',wf_cond_production_target:'Produktionsziel',wf_act_notify:'Benachrichtigen',wf_act_email:'E-Mail',wf_act_auto_log:'Auto-Protokoll',wf_act_auto_task:'Auto-Aufgabe',wf_act_update_status:'Status Aktualisieren',wf_readings_above:'Messwerte darüber',wf_no_target:'Kein Produktionsziel definiert',wf_below_target:'unter dem Ziel',storage_warning:'Lokaler Speicher fast voll (>80%). Bitte synchronisieren Sie Ihre Daten.',storage_full:'Lokaler Speicher voll. Speicherplatz wurde automatisch freigegeben.',sync_conflicts:'{n} Datensatz/Datensätze von einem anderen Benutzer aktualisiert',wf_browser_note:'Automatisierungsregeln werden ausgewertet, solange der Browser geöffnet ist.'
 },
 it:{
 save:'Salva',cancel:'Annulla',delete:'Elimina',edit:'Modifica',add:'Aggiungi',close:'Chiudi',actions:'Azioni',date:'Data',notes:'Note',name:'Nome',phone:'Telefono',email:'Email',address:'Indirizzo',confirm_delete:'Eliminare questo record?',no_data:'Nessun dato registrato',total:'Totale',all:'Tutti',loading:'Caricamento',search:'Cerca',from:'Da',to:'A',status:'Stato',export_csv:'Esporta CSV',today:'Oggi',active:'Attivo',inactive:'Inattivo',
@@ -362,7 +392,7 @@ ops_log_cat_general:'Generale',ops_log_cat_health:'Sanità',ops_log_cat_producti
 ops_per_name:'Nome',ops_per_role:'Ruolo',ops_per_salary:'Stipendio',ops_per_start:'Data Inizio',ops_per_active:'Attivo',ops_per_add:'Aggiungi Personale',
 env_title:'Condizioni Ambientali',env_add:'Nuovo Record',env_temp:'Temperatura (°C)',env_humidity:'Umidità (%)',env_light:'Ore di Luce',env_ventilation:'Ventilazione',env_density:'Densità (capi/m²)',env_optimal:'Intervallo Ottimale',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 ore',env_density_range:'4-5 capi/m²',
 cfg_title:'Impostazioni',cfg_farm:'Dettagli Allevamento',cfg_farm_name:'Nome Allevamento',cfg_location:'Posizione',cfg_capacity:'Capacità (capi)',cfg_currency:'Valuta',cfg_alerts:'Soglie di Avviso',cfg_min_feed:'Scorta Minima Mangime (kg)',cfg_max_mortality:'Mortalità Massima (%)',cfg_alert_days:'Giorni di Preavviso',cfg_data:'Dati',cfg_export:'Esporta (JSON)',cfg_import:'Importa (JSON)',cfg_reset:'Elimina Tutto',cfg_reset_confirm:'Eliminare TUTTI i dati definitivamente?',cfg_saved:'Salvato',cfg_exported:'Dati esportati',cfg_imported:'Dati importati',cfg_reset_done:'Dati eliminati',cfg_checklist:'Checklist Predefinita',cfg_checklist_items:'Attività checklist giornaliera',cfg_theme:'Tema Colore',cfg_theme_blue:'Blu Navy',cfg_theme_green:'Verde',cfg_theme_purple:'Viola',cfg_theme_black:'Nero',
-sidebar_subtitle:'Sistema Avicolo 360°',prod_shell_white:'Bianco',prod_shell_brown:'Marrone',prod_shell_cream:'Crema',required:'Campo obbligatorio',no_flocks_birthdate:'Nessun gruppo con data di nascita',vac_select_flocks:'Seleziona i gruppi per generare il calendario:',feed_type_placeholder:'Ovaiole, Starter, ecc.',avg_per_day:'Media/giorno',per_flock:'Gruppo',history:'Storico',env_latest_reading:'Ultima Lettura',env_ok:'OK',env_out_of_range:'Fuori intervallo',data_stats:'Statistiche Dati',final_warning:'⚠️ ULTIMO AVVERTIMENTO — TUTTI i dati verranno eliminati',total_salaries:'Stipendi Totali',eggs_unit:'uova',csv_income:'Entrata',csv_expense:'Uscita',fcr_unit:'kg mangime/kg uovo',lc_feed_starter:'Starter',lc_feed_grower:'Accrescimento',lc_feed_developer:'Sviluppo',lc_feed_prelay:'Pre-deposizione',lc_feed_layer:'Ovaiole',lc_feed_lowlay:'Bassa deposizione',lc_prod_label:'Prod.',lc_prod_first:'Prime uova',lc_mile_1:'Vaccini Marek, Newcastle+BI, Gumboro',lc_mile_2:'Richiamo Newcastle, sviluppo piumaggio',lc_mile_3:'Vaiolo Aviare, EAV, Corizza, Salmonella',lc_mile_4:'Richiamo Newcastle+BI, cambio dieta, 16h luce',lc_mile_5:'Picco produzione sett. 26-30, monitorare FCR',lc_mile_6:'Richiamo Newcastle ogni 8-12 sett., valutare redditività',lc_mile_7:'Valutare scarto vs muta forzata',lc_mile_8:'Vendita avicoli a scarto, pulizia capannone',vac_route_injection:'Iniezione',vac_route_ocular:'Oculare/spray',vac_route_water:'Acqua di bevanda',vac_route_wing:'Puntura alare',snapshots:'istantanee',error_prefix:'Errore',chk_collect_eggs:'Raccogliere uova',chk_feed_birds:'Alimentare gli avicoli',chk_check_water:'Controllare acqua',chk_check_health:'Controllare stato sanitario',chk_cleaning:'Pulizia',chk_record_temp:'Registrare temperatura',
+sidebar_subtitle:'Gestione Avicola Intelligente',prod_shell_white:'Bianco',prod_shell_brown:'Marrone',prod_shell_cream:'Crema',required:'Campo obbligatorio',no_flocks_birthdate:'Nessun gruppo con data di nascita',vac_select_flocks:'Seleziona i gruppi per generare il calendario:',feed_type_placeholder:'Ovaiole, Starter, ecc.',avg_per_day:'Media/giorno',per_flock:'Gruppo',history:'Storico',env_latest_reading:'Ultima Lettura',env_ok:'OK',env_out_of_range:'Fuori intervallo',data_stats:'Statistiche Dati',final_warning:'⚠️ ULTIMO AVVERTIMENTO — TUTTI i dati verranno eliminati',total_salaries:'Stipendi Totali',eggs_unit:'uova',csv_income:'Entrata',csv_expense:'Uscita',fcr_unit:'kg mangime/kg uovo',lc_feed_starter:'Starter',lc_feed_grower:'Accrescimento',lc_feed_developer:'Sviluppo',lc_feed_prelay:'Pre-deposizione',lc_feed_layer:'Ovaiole',lc_feed_lowlay:'Bassa deposizione',lc_prod_label:'Prod.',lc_prod_first:'Prime uova',lc_mile_1:'Vaccini Marek, Newcastle+BI, Gumboro',lc_mile_2:'Richiamo Newcastle, sviluppo piumaggio',lc_mile_3:'Vaiolo Aviare, EAV, Corizza, Salmonella',lc_mile_4:'Richiamo Newcastle+BI, cambio dieta, 16h luce',lc_mile_5:'Picco produzione sett. 26-30, monitorare FCR',lc_mile_6:'Richiamo Newcastle ogni 8-12 sett., valutare redditività',lc_mile_7:'Valutare scarto vs muta forzata',lc_mile_8:'Vendita avicoli a scarto, pulizia capannone',vac_route_injection:'Iniezione',vac_route_ocular:'Oculare/spray',vac_route_water:'Acqua di bevanda',vac_route_wing:'Puntura alare',snapshots:'istantanee',error_prefix:'Errore',chk_collect_eggs:'Raccogliere uova',chk_feed_birds:'Alimentare gli avicoli',chk_check_water:'Controllare acqua',chk_check_health:'Controllare stato sanitario',chk_cleaning:'Pulizia',chk_record_temp:'Registrare temperatura',
 weather_title:'Meteo',weather_temp:'Temperatura',weather_humidity:'Umidità',weather_wind:'Vento',weather_forecast:'Previsioni 3 Giorni',weather_no_key:'Imposta la posizione dell\'azienda per vedere il meteo',weather_heat_alert:'Allerta Stress da Calore',weather_thi:'Indice THI',weather_feels:'Percepita',weather_last_update:'Ultimo aggiornamento',weather_test:'Test',
 geo_set_location:'Posizione Allevamento',geo_use_gps:'Usa il mio GPS',geo_click_map:'Clicca sulla mappa per impostare la posizione',geo_lat:'Latitudine',geo_lng:'Longitudine',geo_saved:'Posizione salvata',
 iot_title:'Sensori IoT',iot_broker:'Broker MQTT (wss://)',iot_user:'Utente MQTT',iot_pass:'Password MQTT',iot_topic:'Prefisso Topic',iot_connect:'Connetti',iot_disconnect:'Disconnetti',iot_live:'IoT in Tempo Reale',iot_no_config:'Configurare MQTT nelle Impostazioni',iot_save_reading:'Salva lettura corrente',iot_connected:'Connesso',iot_disconnected:'Disconnesso',iot_ammonia:'Ammoniaca',iot_light:'Luce',iot_lux:'lux',iot_ppm:'ppm',
@@ -393,9 +423,15 @@ ana_segment_profit:'Redditività per Segmento',cfg_accessibility:'Accessibilità
 rec_title:'Raccomandazioni',rec_dismiss:'Ignora',rec_check_diet:'Controllare dieta / formulazione mangime / escludere malattia',rec_check_env:'Controllare ambiente / malattia / stress immediatamente',rec_below_curve:'Sotto la produzione standard — controllare stress, luce, mangime',rec_buy_feed:'Programmare acquisto mangime',rec_record_env:'Registrare condizioni ambientali',rec_disinfect:'Eseguire protocollo di disinfezione zona',rec_heat_plan:'Stress da calore prolungato — attivare piano di raffreddamento',rec_lab_samples:'Inviare campioni al laboratorio',rec_ventilation:'Aumentare ventilazione, controllare acqua fresca',
 auth_welcome:'Account creato. Benvenuto!',auth_error:'Credenziali non valide',auth_first_run:'Prima volta: inserisci nome utente e password per creare il tuo account.',login_subtitle:'Accedi o crea il tuo account',logout:'Esci',required:'Campo obbligatorio',invalid_email:'Email non valida',invalid_phone:'Telefono non valido',must_be_number:'Deve essere un numero',invalid_date:'Data non valida',invalid_format:'Formato non valido',min_length:'Lunghezza minima',max_length:'Lunghezza massima',min_value:'Valore minimo',max_value:'Valore massimo',error_network:'Errore di rete',error_unexpected:'Errore imprevisto',error_loading:'Errore di caricamento',
 ana_economics:'Economia',flock_purchase_cost:'Costo per capo',econ_cost_per_egg:'Costo/Uovo',econ_roi_per_bird:'ROI/Capo',econ_acquisition:'Acquisizione',econ_feed_cost:'Costo mangime',econ_health_cost:'Costo sanitario',econ_direct_expenses:'Spese dirette',econ_total_investment:'Investimento totale',econ_total_costs:'Costi totali',econ_net_result:'Risultato netto',econ_daily_cost_bird:'Costo giorno/capo',econ_days_active:'Giorni attivo',econ_no_data_guide:'Inserisci i costi di acquisto in Gruppi, le spese in Finanze e i costi in Vaccini/Medicamenti per vedere l\'analisi economica.',exp_flock:'Gruppo (opzionale)',health_cost:'Costo',econ_org_summary:'Riepilogo organizzazione',econ_cost_breakdown:'Ripartizione costi',econ_completeness:'Dati disponibili',
-nav_census:'Sospensioni',inv_total_in:'Totale Entrate',inv_total_out:'Totale Uscite',inv_balance:'Saldo',inv_records:'Registrazioni',inv_by_type:'Per Tipo di Uovo',source:'Origine',fin_egg_type:'Tipo',
+nav_census:'Sospensioni',nav_reports:'Report',nav_automation:'Automazione',inv_total_in:'Totale Entrate',inv_total_out:'Totale Uscite',inv_balance:'Saldo',inv_records:'Registrazioni',inv_by_type:'Per Tipo di Uovo',source:'Origine',fin_egg_type:'Tipo',
 kpi_info_today:'Uova raccolte oggi in tutti i gruppi attivi.',kpi_info_henday:'Percentuale di galline che hanno deposto oggi. Ideale: >85%.',kpi_info_fcr:'Kg di mangime per kg di uova prodotte. Più basso è meglio. Ideale: <2.2.',kpi_info_mortality:'Percentuale cumulativa di decessi sul totale dei capi. Obiettivo: <3%.',kpi_info_cost_egg:'Costo totale (mangime + sanità + spese) diviso per le uova prodotte.',kpi_info_income_net:'Ricavi delle vendite meno tutte le spese del mese corrente.',kpi_info_active_hens:'Totale di galline vive nei gruppi attualmente attivi.',kpi_info_alerts:'Numero di situazioni che richiedono la vostra attenzione immediata.',info_fin_income:'Somma di tutte le vendite e entrate del mese.',info_fin_expenses:'Totale spese operative: mangime, sanità, operazioni.',info_fin_gross:'Entrate meno costi diretti (prima di tasse).',info_fin_dep:'Ammortamento mensile del valore degli asset.',info_fin_tax:'Imposta stimata sull\'utile lordo.',info_fin_net:'Utile finale dopo ammortamento e tasse.',info_fin_cpe:'Costo totale diviso per uova prodotte.',info_fin_be:'Uova necessarie per coprire tutti i costi.',info_feed_stock:'Kg di mangime attualmente disponibile.',info_feed_purchases:'Totale mangime acquistato e costo cumulato.',info_feed_consumption:'Kg di mangime consumato dai volatili.',info_cli_total:'Numero totale di clienti registrati.',info_clm_total:'Totale reclami dei clienti.',info_clm_sat:'Soddisfazione media post-risoluzione (1-5 stelle).',info_inv_in:'Totale uova entrate in magazzino.',info_inv_out:'Totale uova uscite dal magazzino.',info_inv_balance:'Uova disponibili: entrate meno uscite.',info_inv_records:'Numero di movimenti registrati.',info_bio_pest:'Indice di pressione parassitaria (0-100).',info_bio_visitors:'Persone esterne entrate nell\'azienda.',info_bio_zones:'Zone con protocolli di biosicurezza.',info_health_score:'Indice di salute del lotto (0-100).',info_outbreaks:'Focolai di malattia attivi.',info_vaccines:'Vaccini in attesa di applicazione.',info_env_humidity:'Range ottimale di umidità relativa.',info_env_light:'Ore di luce raccomandate.',info_env_density:'Volatili per metro quadrato raccomandati.',
-ana_channel_pricing:'Prezzi per Canale',cfg_action:'Azione',cfg_add_user:'+ Aggiungi Utente',cfg_asset_value:'Valore Totale Attivi',cfg_audit:'Registro Audit',cfg_backup_na:'API Cache non disponibile in questo browser.',cfg_backups:'Backup Automatico',cfg_dep_years:'Ammortamento (anni)',cfg_detail:'Dettaglio',cfg_digits:'cifre',cfg_loading:'Caricamento...',cfg_module:'Modulo',cfg_no_backups:'Nessun backup automatico ancora.',cfg_no_users:'Nessun utente configurato.',cfg_restore:'Ripristina',cfg_restore_confirm:'Ripristinare da questo backup?',cfg_restored:'Backup ripristinato',cfg_role:'Ruolo',cfg_size:'Dimensione',cfg_storage:'Utilizzo Archiviazione',cfg_tax:'Tasse e Ammortamento',cfg_tax_rate:'Aliquota Fiscale (%)',cfg_timestamp:'Ora',cfg_user:'Utente',cfg_users:'Gestione Utenti',ch_direct:'Diretto',ch_export:'Esportazione',ch_organic:'Biologico',ch_retail:'Dettaglio',ch_wholesale:'Ingrosso',confirm_delete_cascade:'Questo cliente ha record associati. L\'eliminazione rimuoverà quei riferimenti. Continuare?',fin_avg_price:'Prezzo Medio',fin_channel:'Canale',fin_channel_breakdown:'Ricavi per Canale',fin_depreciation:'Ammortamento/mese',fin_gross_profit:'Utile Lordo',fin_net_profit:'Utile Netto',fin_tax:'Imposta',flock_curve_adjust:'Regolazione Curva',flock_curve_tip:'1.0=standard, 0.85=tropicale, 1.1=temperato',optional:'Opzionale',pin_invalid:'PIN non valido',pin_login:'Accedi',pin_select_user:'Seleziona utente'
+ana_channel_pricing:'Prezzi per Canale',cfg_action:'Azione',cfg_add_user:'+ Aggiungi Utente',cfg_asset_value:'Valore Totale Attivi',cfg_audit:'Registro Audit',cfg_backup_na:'API Cache non disponibile in questo browser.',cfg_backups:'Backup Automatico',cfg_dep_years:'Ammortamento (anni)',cfg_detail:'Dettaglio',cfg_digits:'cifre',cfg_loading:'Caricamento...',cfg_module:'Modulo',cfg_no_backups:'Nessun backup automatico ancora.',cfg_no_users:'Nessun utente configurato.',cfg_restore:'Ripristina',cfg_restore_confirm:'Ripristinare da questo backup?',cfg_restored:'Backup ripristinato',cfg_role:'Ruolo',cfg_size:'Dimensione',cfg_storage:'Utilizzo Archiviazione',cfg_tax:'Tasse e Ammortamento',cfg_tax_rate:'Aliquota Fiscale (%)',cfg_timestamp:'Ora',cfg_user:'Utente',cfg_users:'Gestione Utenti',ch_direct:'Diretto',ch_export:'Esportazione',ch_organic:'Biologico',ch_retail:'Dettaglio',ch_wholesale:'Ingrosso',confirm_delete_cascade:'Questo cliente ha record associati. L\'eliminazione rimuoverà quei riferimenti. Continuare?',fin_avg_price:'Prezzo Medio',fin_channel:'Canale',fin_channel_breakdown:'Ricavi per Canale',fin_depreciation:'Ammortamento/mese',fin_gross_profit:'Utile Lordo',fin_net_profit:'Utile Netto',fin_tax:'Imposta',flock_curve_adjust:'Regolazione Curva',flock_curve_tip:'1.0=standard, 0.85=tropicale, 1.1=temperato',optional:'Opzionale',pin_invalid:'PIN non valido',pin_login:'Accedi',pin_select_user:'Seleziona utente',
+price_per_mo:'/mese',trial_ended_title:'Il periodo di prova è terminato',trial_ended_subtitle:'Scegli un piano per continuare a usare EGGlogU — 40% di sconto nei primi 3 mesi',btn_see_plans:'Vedi piani',trial_days_left:'giorni rimasti della prova Enterprise',trial_last_day:'Ultimo giorno di prova!',trial_full_access:'Accesso completo a tutti i moduli',trial_from_price:'Dopo: da $5/mese (40% off)',billing_next_quarter:'Prossimo trimestre',billing_regular_price:'Prezzo normale',
+perfil_title:'Il Mio Profilo',perfil_subtitle:'Informazioni del tuo account',perfil_name:'Nome completo',perfil_member_since:'Membro dal',perfil_change_pin:'Cambia PIN',perfil_current_pin:'PIN Attuale',perfil_new_pin:'Nuovo PIN',perfil_confirm_pin:'Conferma PIN',perfil_pin_changed:'PIN aggiornato con successo',perfil_profile_updated:'Profilo aggiornato',perfil_pin_mismatch:'I PIN non corrispondono',perfil_wrong_pin:'PIN attuale errato',
+reassign_title:'Riassegna Account',reassign_btn:'Riassegna',reassign_new_name:'Nome del nuovo titolare',reassign_new_email:'Email del nuovo titolare',reassign_new_pin:'PIN del nuovo titolare',reassign_confirm:'Conferma Riassegnazione',reassign_success:'Account riassegnato con successo',reassign_no_self:'Non puoi riassegnare te stesso',reassign_last_owner:'Impossibile riassegnare l\'ultimo proprietario attivo',reassign_verify:'Verifica il tuo PIN per continuare',reassign_notify:'Verrà inviata una notifica al nuovo titolare',
+billing_no_permission:'Non hai i permessi per accedere alla fatturazione',billing_cancel_sub:'Annulla Abbonamento',billing_cancel_confirm:'Il tuo piano rimarrà attivo fino al {date}. Ti consigliamo di scaricare i tuoi dati prima di annullare.',billing_cancel_success:'Abbonamento annullato',billing_delete_account:'Elimina Account',billing_delete_warning:'Questa azione è IRREVERSIBILE. Tutti i dati andranno persi permanentemente.',billing_delete_type_confirm:'Digita {word} per confermare',billing_delete_success:'Account eliminato',billing_current_plan:'Piano Attuale',billing_manage_payments:'Gestisci Pagamenti',billing_change_plan:'Cambia Piano',billing_download_data:'Scarica Dati',
+dt_no_results:'Nessun risultato per i filtri applicati',dt_filters:'filtri',dt_selected:'selezionati',dt_deselect:'Deseleziona tutto',dt_showing:'Visualizzazione',dt_records:'record',dt_of:'di',dt_clear_filters:'Cancella filtri',dt_columns:'Colonne',dt_export_csv:'Esporta CSV',dt_export_excel:'Esporta Excel',dt_per_page:'Per pagina',dt_sort_asc:'Ordine crescente',dt_sort_desc:'Ordine decrescente',dt_filter:'Filtra',dt_select_all:'Seleziona tutto',dt_search:'Cerca',dt_page:'Pagina',
+rpt_title:'Report e Analisi',rpt_report:'Report',rpt_template:'Modello',rpt_period:'Periodo',rpt_period_total:'Totale del periodo',rpt_generated:'Generato',rpt_invalid_template:'Modello di report non valido',rpt_tpl_production:'Produzione',rpt_tpl_financial:'Finanziario',rpt_tpl_health:'Salute',rpt_tpl_feed:'Alimentazione',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Ultimi 7 giorni',rpt_period_30d:'Ultimi 30 giorni',rpt_period_90d:'Ultimi 90 giorni',rpt_period_12m:'Ultimi 12 mesi',rpt_period_custom:'Personalizzato',rpt_production_summary:'Riepilogo Produzione',rpt_total_eggs:'Totale Uova',rpt_avg_day:'Media/giorno',rpt_culled:'Scartate',rpt_broken_dirty:'Rotte / Sporche',rpt_loss:'perdita',rpt_daily_production:'Produzione Giornaliera',rpt_size_breakdown:'Distribuzione per Dimensione',rpt_flock_breakdown:'Distribuzione per Lotto',rpt_broken:'Rotte',rpt_dirty:'Sporche',rpt_financial_pl:'Conto Economico',rpt_transactions:'transazioni',rpt_margin:'Margine',rpt_overdue:'scaduto/i',rpt_monthly_trend:'Tendenza Mensile',rpt_by_category:'per Categoria',rpt_other:'Altri',rpt_health_overview:'Panoramica Sanitaria',rpt_applied_period:'somministrate nel periodo',rpt_upcoming_vaccines:'Prossime Vaccinazioni',rpt_by_flock:'per Lotto',rpt_feed_efficiency:'Efficienza Alimentare',rpt_hen_day:'gallina/giorno',rpt_feed_cost:'Costo Mangime',rpt_feed_stock:'Scorta Mangime',rpt_remaining:'rimanenti',rpt_weekly_consumption:'Consumo Settimanale',rpt_by_feed_type:'per Tipo di Mangime',rpt_kpi_trends:'Tendenze KPI',rpt_no_snapshots:'Nessun dato KPI per questo periodo',rpt_kpi_chart:'Produzione e Deposizione',rpt_kpi_fcr_mort:'ICA e Mortalità',rpt_type:'Tipo',rpt_xlsx_missing:'Libreria XLSX non disponibile',rpt_pdf_missing:'Librerie PDF non disponibili',rpt_pdf_error:'Errore nell\'esportazione PDF',wf_title:'Automazione',wf_create_rule:'Crea Regola',wf_active_rules:'Regole Attive',wf_executions:'Esecuzioni',wf_last_24h:'Ultime 24h',wf_presets:'Modelli Predefiniti',wf_rules:'Regole',wf_no_rules:'Nessuna regola configurata',wf_rule_added:'Regola aggiunta',wf_execution_log:'Registro Esecuzioni',wf_rule:'Regola',wf_detail:'Dettaglio',wf_last_fired:'Ultima Esecuzione',wf_test:'Testare',wf_would_trigger:'Si attiverebbe',wf_would_not_trigger:'Non si attiverebbe',wf_rule_name:'Nome della regola',wf_condition:'Condizione',wf_comparator:'Comparatore',wf_threshold:'Soglia',wf_add_action:'Aggiungi Azione',wf_cooldown:'Tempo di Attesa',wf_hours:'ore',wf_unnamed_rule:'Regola senza nome',wf_triggered:'Regola attivata',wf_invalid_condition:'Condizione non valida',wf_cond_deaths_spike:'Picco di Mortalità',wf_cond_low_production:'Bassa Produzione',wf_cond_feed_stock:'Scorta Mangime',wf_cond_vaccine_due:'Vaccino in Scadenza',wf_cond_temperature:'Temperatura',wf_cond_payment_overdue:'Pagamento Scaduto',wf_cond_outbreak_active:'Focolaio Attivo',wf_cond_production_target:'Obiettivo di Produzione',wf_act_notify:'Notificare',wf_act_email:'E-mail',wf_act_auto_log:'Auto-registrazione',wf_act_auto_task:'Auto-attività',wf_act_update_status:'Aggiorna Stato',wf_readings_above:'letture sopra',wf_no_target:'Nessun obiettivo di produzione definito',wf_below_target:'sotto l\'obiettivo',storage_warning:'Spazio di archiviazione locale quasi pieno (>80%). Considera di sincronizzare i tuoi dati.',storage_full:'Spazio di archiviazione locale pieno. Spazio liberato automaticamente.',sync_conflicts:'{n} record aggiornato/i da un altro utente',wf_browser_note:'Le regole di automazione vengono valutate mentre il browser è aperto.'
 },
 ja:{
 save:'保存',cancel:'キャンセル',delete:'削除',edit:'編集',add:'追加',close:'閉じる',actions:'操作',date:'日付',notes:'メモ',name:'名前',phone:'電話',email:'メール',address:'住所',confirm_delete:'このレコードを削除しますか？',no_data:'データがありません',total:'合計',all:'すべて',loading:'読み込み中',search:'検索',from:'開始',to:'終了',status:'ステータス',export_csv:'CSV出力',today:'今日',active:'有効',inactive:'無効',
@@ -421,7 +457,7 @@ ops_log_cat_general:'一般',ops_log_cat_health:'健康',ops_log_cat_production:
 ops_per_name:'名前',ops_per_role:'役職',ops_per_salary:'給与',ops_per_start:'入社日',ops_per_active:'在籍中',ops_per_add:'人員追加',
 env_title:'環境条件',env_add:'新規記録',env_temp:'温度（°C）',env_humidity:'湿度（%）',env_light:'照明時間',env_ventilation:'換気',env_density:'飼養密度（羽/m²）',env_optimal:'適正範囲',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16時間',env_density_range:'4-5羽/m²',
 cfg_title:'設定',cfg_farm:'農場情報',cfg_farm_name:'農場名',cfg_location:'所在地',cfg_capacity:'収容能力（羽）',cfg_currency:'通貨',cfg_alerts:'アラート閾値',cfg_min_feed:'最低飼料在庫（kg）',cfg_max_mortality:'最大死亡率（%）',cfg_alert_days:'アラート先行日数',cfg_data:'データ',cfg_export:'エクスポート（JSON）',cfg_import:'インポート（JSON）',cfg_reset:'全データ削除',cfg_reset_confirm:'すべてのデータを完全に削除しますか？',cfg_saved:'保存しました',cfg_exported:'データをエクスポートしました',cfg_imported:'データをインポートしました',cfg_reset_done:'データを削除しました',cfg_checklist:'デフォルトチェックリスト',cfg_checklist_items:'日次チェックリストのタスク',cfg_theme:'カラーテーマ',cfg_theme_blue:'ネイビーブルー',cfg_theme_green:'グリーン',cfg_theme_purple:'パープル',cfg_theme_black:'ブラック',
-sidebar_subtitle:'養鶏システム 360°',prod_shell_white:'白',prod_shell_brown:'赤（茶）',prod_shell_cream:'クリーム',required:'必須項目',no_flocks_birthdate:'孵化日のある鶏群がありません',vac_select_flocks:'カレンダーを生成する鶏群を選択：',feed_type_placeholder:'レイヤー、スターターなど',avg_per_day:'平均/日',per_flock:'鶏群',history:'履歴',env_latest_reading:'最新の計測値',env_ok:'正常',env_out_of_range:'範囲外',data_stats:'データ統計',final_warning:'⚠️ 最終警告 — すべてのデータが削除されます',total_salaries:'給与合計',eggs_unit:'卵',csv_income:'収入',csv_expense:'支出',fcr_unit:'kg飼料/kg卵',lc_feed_starter:'スターター',lc_feed_grower:'グロワー',lc_feed_developer:'デベロッパー',lc_feed_prelay:'プレレイ',lc_feed_layer:'レイヤー',lc_feed_lowlay:'ローレイ',lc_prod_label:'産卵',lc_prod_first:'初産卵',lc_mile_1:'マレック、ニューカッスル+IB、ガンボロワクチン',lc_mile_2:'ニューカッスル追加接種、羽毛発達',lc_mile_3:'鶏痘、AE、コリーザ、サルモネラ',lc_mile_4:'ニューカッスル+IB追加接種、飼料変更、16時間点灯',lc_mile_5:'ピーク産卵26-30週、FCRモニタリング',lc_mile_6:'ニューカッスル追加接種8-12週ごと、収益性評価',lc_mile_7:'淘汰または強制換羽を検討',lc_mile_8:'淘汰鶏を出荷、鶏舎清掃',vac_route_injection:'注射',vac_route_ocular:'点眼・噴霧',vac_route_water:'飲水投与',vac_route_wing:'翼膜刺種',snapshots:'スナップショット',error_prefix:'エラー',chk_collect_eggs:'採卵',chk_feed_birds:'給餌',chk_check_water:'飲水確認',chk_check_health:'健康チェック',chk_cleaning:'清掃',chk_record_temp:'温度記録',
+sidebar_subtitle:'インテリジェント養鶏管理',prod_shell_white:'白',prod_shell_brown:'赤（茶）',prod_shell_cream:'クリーム',required:'必須項目',no_flocks_birthdate:'孵化日のある鶏群がありません',vac_select_flocks:'カレンダーを生成する鶏群を選択：',feed_type_placeholder:'レイヤー、スターターなど',avg_per_day:'平均/日',per_flock:'鶏群',history:'履歴',env_latest_reading:'最新の計測値',env_ok:'正常',env_out_of_range:'範囲外',data_stats:'データ統計',final_warning:'⚠️ 最終警告 — すべてのデータが削除されます',total_salaries:'給与合計',eggs_unit:'卵',csv_income:'収入',csv_expense:'支出',fcr_unit:'kg飼料/kg卵',lc_feed_starter:'スターター',lc_feed_grower:'グロワー',lc_feed_developer:'デベロッパー',lc_feed_prelay:'プレレイ',lc_feed_layer:'レイヤー',lc_feed_lowlay:'ローレイ',lc_prod_label:'産卵',lc_prod_first:'初産卵',lc_mile_1:'マレック、ニューカッスル+IB、ガンボロワクチン',lc_mile_2:'ニューカッスル追加接種、羽毛発達',lc_mile_3:'鶏痘、AE、コリーザ、サルモネラ',lc_mile_4:'ニューカッスル+IB追加接種、飼料変更、16時間点灯',lc_mile_5:'ピーク産卵26-30週、FCRモニタリング',lc_mile_6:'ニューカッスル追加接種8-12週ごと、収益性評価',lc_mile_7:'淘汰または強制換羽を検討',lc_mile_8:'淘汰鶏を出荷、鶏舎清掃',vac_route_injection:'注射',vac_route_ocular:'点眼・噴霧',vac_route_water:'飲水投与',vac_route_wing:'翼膜刺種',snapshots:'スナップショット',error_prefix:'エラー',chk_collect_eggs:'採卵',chk_feed_birds:'給餌',chk_check_water:'飲水確認',chk_check_health:'健康チェック',chk_cleaning:'清掃',chk_record_temp:'温度記録',
 weather_title:'天気',weather_temp:'気温',weather_humidity:'湿度',weather_wind:'風速',weather_forecast:'3日間予報',weather_no_key:'天気を見るには農場の位置を設定してください',weather_heat_alert:'熱ストレス警報',weather_thi:'THI指数',weather_feels:'体感温度',weather_last_update:'最終更新',weather_test:'テスト',
 geo_set_location:'農場の位置',geo_use_gps:'GPSを使用',geo_click_map:'地図をクリックして位置を設定',geo_lat:'緯度',geo_lng:'経度',geo_saved:'位置を保存しました',
 iot_title:'IoTセンサー',iot_broker:'MQTTブローカー（wss://）',iot_user:'MQTTユーザー',iot_pass:'MQTTパスワード',iot_topic:'トピックプレフィックス',iot_connect:'接続',iot_disconnect:'切断',iot_live:'IoTライブ',iot_no_config:'設定でMQTTを構成してください',iot_save_reading:'現在の計測値を保存',iot_connected:'接続済み',iot_disconnected:'未接続',iot_ammonia:'アンモニア',iot_light:'照度',iot_lux:'lux',iot_ppm:'ppm',
@@ -452,9 +488,15 @@ ana_segment_profit:'セグメント別収益性',cfg_accessibility:'アクセシ
 rec_title:'推奨事項',rec_dismiss:'非表示にする',rec_check_diet:'飼料設計を確認・疾病の可能性を除外',rec_check_env:'環境・疾病・ストレスを直ちに確認',rec_below_curve:'標準産卵曲線を下回っています — ストレス・照明・飼料を確認',rec_buy_feed:'飼料の購入を計画してください',rec_record_env:'環境条件を記録してください',rec_disinfect:'ゾーンの消毒プロトコルを実施してください',rec_heat_plan:'長期間の熱ストレス — 冷却計画を実施してください',rec_lab_samples:'検体を検査機関に提出してください',rec_ventilation:'換気を強化し、新鮮な飲水を確認してください',
 auth_welcome:'アカウントが作成されました。ようこそ！',auth_error:'認証情報が正しくありません',auth_first_run:'初回：ユーザー名とパスワードを入力してアカウントを作成してください。',login_subtitle:'ログインまたはアカウント作成',logout:'ログアウト',required:'必須項目',invalid_email:'無効なメールアドレス',invalid_phone:'無効な電話番号',must_be_number:'数値を入力してください',invalid_date:'無効な日付',invalid_format:'無効な形式',min_length:'最小長',max_length:'最大長',min_value:'最小値',max_value:'最大値',error_network:'ネットワークエラー',error_unexpected:'予期しないエラー',error_loading:'読み込みエラー',
 ana_economics:'経済分析',flock_purchase_cost:'1羽あたりコスト',econ_cost_per_egg:'卵1個コスト',econ_roi_per_bird:'ROI/羽',econ_acquisition:'取得費',econ_feed_cost:'飼料費',econ_health_cost:'衛生費',econ_direct_expenses:'直接経費',econ_total_investment:'総投資額',econ_total_costs:'総コスト',econ_net_result:'純利益',econ_daily_cost_bird:'日額コスト/羽',econ_days_active:'稼働日数',econ_no_data_guide:'鶏群に購入コスト、財務に経費、ワクチン・投薬にコストを入力すると経済分析が表示されます。',exp_flock:'鶏群（任意）',health_cost:'費用',econ_org_summary:'組織サマリー',econ_cost_breakdown:'コスト内訳',econ_completeness:'利用可能データ',
-nav_census:'休薬期間',inv_total_in:'総入庫',inv_total_out:'総出庫',inv_balance:'在庫残高',inv_records:'記録',inv_by_type:'卵タイプ別',source:'産地',fin_egg_type:'種類',
+nav_census:'休薬期間',nav_reports:'レポート',nav_automation:'自動化',inv_total_in:'総入庫',inv_total_out:'総出庫',inv_balance:'在庫残高',inv_records:'記録',inv_by_type:'卵タイプ別',source:'産地',fin_egg_type:'種類',
 kpi_info_today:'全稼働鶏群の本日集卵数。',kpi_info_henday:'本日産卵した鶏の割合。理想: >85%。',kpi_info_fcr:'産卵1kgあたりの飼料kg。低いほど良い。理想: <2.2。',kpi_info_mortality:'総羽数に対する累積死亡率。目標: <3%。',kpi_info_cost_egg:'総コスト（飼料+衛生+経費）÷ 産卵数。',kpi_info_income_net:'当月の売上から全経費を差し引いた額。',kpi_info_active_hens:'現在稼働中の鶏群の生存鶏総数。',kpi_info_alerts:'即座に対応が必要な状況の数。',info_fin_income:'今月の売上と収入の合計。',info_fin_expenses:'運営費合計：飼料、衛生、運営。',info_fin_gross:'収入から直接費用を引いた額（税前）。',info_fin_dep:'資産の月次減価償却（鶏舎、設備）。',info_fin_tax:'設定税率に基づく推定税額。',info_fin_net:'減価償却と税金後の最終利益。',info_fin_cpe:'総コストを生産卵数で割った値。',info_fin_be:'全コストをカバーするのに必要な卵数。',info_feed_stock:'現在利用可能な飼料のkg。',info_feed_purchases:'購入した飼料の合計と累計費用。',info_feed_consumption:'鳥が消費した飼料のkg。',info_cli_total:'登録された顧客の総数。',info_clm_total:'顧客クレームの合計。',info_clm_sat:'解決後の平均満足度（1-5星）。',info_inv_in:'在庫に入った卵の合計。',info_inv_out:'在庫から出た卵の合計。',info_inv_balance:'利用可能な卵：入庫マイナス出庫。',info_inv_records:'記録された在庫移動の数。',info_bio_pest:'害虫圧力指数（0-100）。',info_bio_visitors:'農場に入った外部者。',info_bio_zones:'バイオセキュリティプロトコルのある区域。',info_health_score:'群れの健康指数（0-100）。',info_outbreaks:'対応が必要な活発な疾病発生。',info_vaccines:'衛生カレンダーによる未接種ワクチン。',info_env_humidity:'産卵鶏の最適湿度範囲。',info_env_light:'最大生産のための推奨照明時間。',info_env_density:'推奨される1㎡あたりの鳥数。',
-ana_channel_pricing:'チャネル別価格',cfg_action:'操作',cfg_add_user:'+ ユーザー追加',cfg_asset_value:'総資産価値',cfg_audit:'監査ログ',cfg_backup_na:'このブラウザではキャッシュAPIが利用できません。',cfg_backups:'自動バックアップ',cfg_dep_years:'減価償却（年）',cfg_detail:'詳細',cfg_digits:'桁',cfg_loading:'読み込み中...',cfg_module:'モジュール',cfg_no_backups:'自動バックアップはまだありません。',cfg_no_users:'ユーザー未設定。',cfg_restore:'復元',cfg_restore_confirm:'このバックアップから復元しますか？',cfg_restored:'バックアップ復元済み',cfg_role:'役割',cfg_size:'サイズ',cfg_storage:'ストレージ使用量',cfg_tax:'税金と減価償却',cfg_tax_rate:'税率（%）',cfg_timestamp:'時間',cfg_user:'ユーザー',cfg_users:'ユーザー管理',ch_direct:'直販',ch_export:'輸出',ch_organic:'有機',ch_retail:'小売',ch_wholesale:'卸売',confirm_delete_cascade:'この顧客には関連レコードがあります。削除するとそれらの参照も削除されます。続行しますか？',fin_avg_price:'平均価格',fin_channel:'チャネル',fin_channel_breakdown:'チャネル別収益',fin_depreciation:'減価償却/月',fin_gross_profit:'粗利益',fin_net_profit:'純利益',fin_tax:'税金',flock_curve_adjust:'カーブ調整',flock_curve_tip:'1.0=標準, 0.85=熱帯, 1.1=温帯',optional:'任意',pin_invalid:'無効なPIN',pin_login:'ログイン',pin_select_user:'ユーザーを選択'
+ana_channel_pricing:'チャネル別価格',cfg_action:'操作',cfg_add_user:'+ ユーザー追加',cfg_asset_value:'総資産価値',cfg_audit:'監査ログ',cfg_backup_na:'このブラウザではキャッシュAPIが利用できません。',cfg_backups:'自動バックアップ',cfg_dep_years:'減価償却（年）',cfg_detail:'詳細',cfg_digits:'桁',cfg_loading:'読み込み中...',cfg_module:'モジュール',cfg_no_backups:'自動バックアップはまだありません。',cfg_no_users:'ユーザー未設定。',cfg_restore:'復元',cfg_restore_confirm:'このバックアップから復元しますか？',cfg_restored:'バックアップ復元済み',cfg_role:'役割',cfg_size:'サイズ',cfg_storage:'ストレージ使用量',cfg_tax:'税金と減価償却',cfg_tax_rate:'税率（%）',cfg_timestamp:'時間',cfg_user:'ユーザー',cfg_users:'ユーザー管理',ch_direct:'直販',ch_export:'輸出',ch_organic:'有機',ch_retail:'小売',ch_wholesale:'卸売',confirm_delete_cascade:'この顧客には関連レコードがあります。削除するとそれらの参照も削除されます。続行しますか？',fin_avg_price:'平均価格',fin_channel:'チャネル',fin_channel_breakdown:'チャネル別収益',fin_depreciation:'減価償却/月',fin_gross_profit:'粗利益',fin_net_profit:'純利益',fin_tax:'税金',flock_curve_adjust:'カーブ調整',flock_curve_tip:'1.0=標準, 0.85=熱帯, 1.1=温帯',optional:'任意',pin_invalid:'無効なPIN',pin_login:'ログイン',pin_select_user:'ユーザーを選択',
+price_per_mo:'/月',trial_ended_title:'試用期間が終了しました',trial_ended_subtitle:'EGGlogUを引き続きご利用いただくにはプランをお選びください — 最初の3ヶ月40%オフ',btn_see_plans:'プランを見る',trial_days_left:'日間のEnterprise試用残り',trial_last_day:'試用最終日！',trial_full_access:'すべてのモジュールに完全アクセス',trial_from_price:'その後：$5/月から（40%オフ）',billing_next_quarter:'来四半期',billing_regular_price:'通常価格',
+perfil_title:'マイプロフィール',perfil_subtitle:'アカウント情報',perfil_name:'氏名',perfil_member_since:'メンバー登録日',perfil_change_pin:'PINを変更',perfil_current_pin:'現在のPIN',perfil_new_pin:'新しいPIN',perfil_confirm_pin:'PINを確認',perfil_pin_changed:'PINが正常に更新されました',perfil_profile_updated:'プロフィールが更新されました',perfil_pin_mismatch:'PINが一致しません',perfil_wrong_pin:'現在のPINが正しくありません',
+reassign_title:'アカウント再割り当て',reassign_btn:'再割り当て',reassign_new_name:'新しい所有者の名前',reassign_new_email:'新しい所有者のメール',reassign_new_pin:'新しい所有者のPIN',reassign_confirm:'再割り当てを確認',reassign_success:'アカウントが正常に再割り当てされました',reassign_no_self:'自分自身を再割り当てすることはできません',reassign_last_owner:'最後のアクティブなオーナーは再割り当てできません',reassign_verify:'続行するにはPINを確認してください',reassign_notify:'新しい所有者に通知が送信されます',
+billing_no_permission:'請求へのアクセス権限がありません',billing_cancel_sub:'サブスクリプションをキャンセル',billing_cancel_confirm:'{date}までプランは有効です。キャンセル前にデータをダウンロードすることをお勧めします。',billing_cancel_success:'サブスクリプションがキャンセルされました',billing_delete_account:'アカウントを削除',billing_delete_warning:'この操作は取り消せません。すべてのデータが完全に失われます。',billing_delete_type_confirm:'{word}と入力して確認',billing_delete_success:'アカウントが削除されました',billing_current_plan:'現在のプラン',billing_manage_payments:'支払い管理',billing_change_plan:'プラン変更',billing_download_data:'データをダウンロード',
+dt_no_results:'フィルターに一致する結果がありません',dt_filters:'フィルター',dt_selected:'選択済み',dt_deselect:'すべて解除',dt_showing:'表示中',dt_records:'件',dt_of:'/',dt_clear_filters:'フィルターをクリア',dt_columns:'列',dt_export_csv:'CSV出力',dt_export_excel:'Excel出力',dt_per_page:'件/ページ',dt_sort_asc:'昇順',dt_sort_desc:'降順',dt_filter:'フィルター',dt_select_all:'すべて選択',dt_search:'検索',dt_page:'ページ',
+rpt_title:'レポートと分析',rpt_report:'レポート',rpt_template:'テンプレート',rpt_period:'期間',rpt_period_total:'期間合計',rpt_generated:'生成日',rpt_invalid_template:'無効なレポートテンプレート',rpt_tpl_production:'生産',rpt_tpl_financial:'財務',rpt_tpl_health:'健康',rpt_tpl_feed:'飼料',rpt_tpl_kpi:'KPI',rpt_period_7d:'過去7日間',rpt_period_30d:'過去30日間',rpt_period_90d:'過去90日間',rpt_period_12m:'過去12ヶ月',rpt_period_custom:'カスタム',rpt_production_summary:'生産概要',rpt_total_eggs:'総卵数',rpt_avg_day:'平均/日',rpt_culled:'淘汰',rpt_broken_dirty:'破損 / 汚れ',rpt_loss:'損失',rpt_daily_production:'日次生産',rpt_size_breakdown:'サイズ別内訳',rpt_flock_breakdown:'群別内訳',rpt_broken:'破損',rpt_dirty:'汚れ',rpt_financial_pl:'損益計算書',rpt_transactions:'取引',rpt_margin:'利益率',rpt_overdue:'延滞',rpt_monthly_trend:'月次傾向',rpt_by_category:'カテゴリ別',rpt_other:'その他',rpt_health_overview:'健康概要',rpt_applied_period:'期間中に接種',rpt_upcoming_vaccines:'今後のワクチン接種',rpt_by_flock:'群別',rpt_feed_efficiency:'飼料効率',rpt_hen_day:'鶏/日',rpt_feed_cost:'飼料コスト',rpt_feed_stock:'飼料在庫',rpt_remaining:'残り',rpt_weekly_consumption:'週間消費量',rpt_by_feed_type:'飼料タイプ別',rpt_kpi_trends:'KPIトレンド',rpt_no_snapshots:'この期間のKPIデータがありません',rpt_kpi_chart:'生産と産卵',rpt_kpi_fcr_mort:'飼料要求率と死亡率',rpt_type:'タイプ',rpt_xlsx_missing:'XLSXライブラリが利用できません',rpt_pdf_missing:'PDFライブラリが利用できません',rpt_pdf_error:'PDFエクスポートエラー',wf_title:'自動化',wf_create_rule:'ルール作成',wf_active_rules:'有効なルール',wf_executions:'実行',wf_last_24h:'過去24時間',wf_presets:'プリセットテンプレート',wf_rules:'ルール',wf_no_rules:'ルールが設定されていません',wf_rule_added:'ルールを追加しました',wf_execution_log:'実行ログ',wf_rule:'ルール',wf_detail:'詳細',wf_last_fired:'最終実行',wf_test:'テスト',wf_would_trigger:'トリガーされます',wf_would_not_trigger:'トリガーされません',wf_rule_name:'ルール名',wf_condition:'条件',wf_comparator:'比較演算子',wf_threshold:'しきい値',wf_add_action:'アクション追加',wf_cooldown:'クールダウン',wf_hours:'時間',wf_unnamed_rule:'名前なしルール',wf_triggered:'ルールが発動しました',wf_invalid_condition:'無効な条件',wf_cond_deaths_spike:'死亡率急上昇',wf_cond_low_production:'低生産',wf_cond_feed_stock:'飼料在庫',wf_cond_vaccine_due:'ワクチン期限',wf_cond_temperature:'温度',wf_cond_payment_overdue:'支払い延滞',wf_cond_outbreak_active:'発生中',wf_cond_production_target:'生産目標',wf_act_notify:'通知',wf_act_email:'メール',wf_act_auto_log:'自動記録',wf_act_auto_task:'自動タスク',wf_act_update_status:'ステータス更新',wf_readings_above:'を超える読み取り',wf_no_target:'生産目標が未設定',wf_below_target:'目標未達',storage_warning:'ローカルストレージがほぼ満杯です（>80%）。データを同期してください。',storage_full:'ローカルストレージが満杯です。自動的に空き容量を確保しました。',sync_conflicts:'{n}件のレコードが他のユーザーにより更新されました',wf_browser_note:'自動化ルールはブラウザが開いている間に評価されます。'
 },
 zh:{
 save:'保存',cancel:'取消',delete:'删除',edit:'编辑',add:'添加',close:'关闭',actions:'操作',date:'日期',notes:'备注',name:'名称',phone:'电话',email:'邮箱',address:'地址',confirm_delete:'确定删除此记录？',no_data:'暂无数据',total:'合计',all:'全部',loading:'加载中',search:'搜索',from:'从',to:'至',status:'状态',export_csv:'导出CSV',today:'今天',active:'活跃',inactive:'停用',
@@ -480,7 +522,7 @@ ops_log_cat_general:'综合',ops_log_cat_health:'健康',ops_log_cat_production:
 ops_per_name:'姓名',ops_per_role:'职务',ops_per_salary:'薪资',ops_per_start:'入职日期',ops_per_active:'在职',ops_per_add:'添加人员',
 env_title:'环境条件',env_add:'新建记录',env_temp:'温度(°C)',env_humidity:'湿度(%)',env_light:'光照时数',env_ventilation:'通风',env_density:'饲养密度(只/m²)',env_optimal:'最佳范围',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16小时',env_density_range:'4-5只/m²',
 cfg_title:'设置',cfg_farm:'养殖场信息',cfg_farm_name:'养殖场名称',cfg_location:'位置',cfg_capacity:'容量(只)',cfg_currency:'货币',cfg_alerts:'警报阈值',cfg_min_feed:'最低饲料库存(kg)',cfg_max_mortality:'最高死亡率(%)',cfg_alert_days:'提前预警天数',cfg_data:'数据',cfg_export:'导出(JSON)',cfg_import:'导入(JSON)',cfg_reset:'删除全部',cfg_reset_confirm:'确定永久删除所有数据？',cfg_saved:'已保存',cfg_exported:'数据已导出',cfg_imported:'数据已导入',cfg_reset_done:'数据已删除',cfg_checklist:'默认检查表',cfg_checklist_items:'每日检查任务',cfg_theme:'颜色主题',cfg_theme_blue:'藏蓝色',cfg_theme_green:'绿色',cfg_theme_purple:'紫色',cfg_theme_black:'黑色',
-sidebar_subtitle:'家禽管理系统360°',prod_shell_white:'白色',prod_shell_brown:'褐色',prod_shell_cream:'米色',required:'必填项',no_flocks_birthdate:'无出生日期的鸡群',vac_select_flocks:'选择鸡群以生成日历：',feed_type_placeholder:'蛋鸡料、雏鸡料等',avg_per_day:'日均',per_flock:'鸡群',history:'历史',env_latest_reading:'最新读数',env_ok:'正常',env_out_of_range:'超出范围',data_stats:'数据统计',final_warning:'⚠️ 最终警告 - 所有数据将被删除',total_salaries:'工资总额',eggs_unit:'枚',csv_income:'收入',csv_expense:'支出',fcr_unit:'公斤饲料/公斤蛋',lc_feed_starter:'雏鸡料',lc_feed_grower:'育成料',lc_feed_developer:'发育料',lc_feed_prelay:'预产料',lc_feed_layer:'蛋鸡料',lc_feed_lowlay:'后期料',lc_prod_label:'产蛋',lc_prod_first:'初产蛋',lc_mile_1:'马立克、新城疫+传支、法氏囊疫苗',lc_mile_2:'新城疫加强免疫、羽毛发育',lc_mile_3:'鸡痘、禽脑脊髓炎、传染性鼻炎、沙门氏菌',lc_mile_4:'新城疫+传支加强免疫、换料、16小时光照',lc_mile_5:'产蛋高峰期第26-30周，监控FCR',lc_mile_6:'每8-12周加强新城疫免疫，评估盈利能力',lc_mile_7:'评估淘汰或强制换羽',lc_mile_8:'出售淘汰鸡、清洁鸡舍',vac_route_injection:'注射',vac_route_ocular:'点眼/喷雾',vac_route_water:'饮水',vac_route_wing:'翅膀刺种',snapshots:'快照',error_prefix:'错误',chk_collect_eggs:'捡蛋',chk_feed_birds:'喂料',chk_check_water:'检查饮水',chk_check_health:'检查健康',chk_cleaning:'清洁',chk_record_temp:'记录温度',
+sidebar_subtitle:'智能家禽管理',prod_shell_white:'白色',prod_shell_brown:'褐色',prod_shell_cream:'米色',required:'必填项',no_flocks_birthdate:'无出生日期的鸡群',vac_select_flocks:'选择鸡群以生成日历：',feed_type_placeholder:'蛋鸡料、雏鸡料等',avg_per_day:'日均',per_flock:'鸡群',history:'历史',env_latest_reading:'最新读数',env_ok:'正常',env_out_of_range:'超出范围',data_stats:'数据统计',final_warning:'⚠️ 最终警告 - 所有数据将被删除',total_salaries:'工资总额',eggs_unit:'枚',csv_income:'收入',csv_expense:'支出',fcr_unit:'公斤饲料/公斤蛋',lc_feed_starter:'雏鸡料',lc_feed_grower:'育成料',lc_feed_developer:'发育料',lc_feed_prelay:'预产料',lc_feed_layer:'蛋鸡料',lc_feed_lowlay:'后期料',lc_prod_label:'产蛋',lc_prod_first:'初产蛋',lc_mile_1:'马立克、新城疫+传支、法氏囊疫苗',lc_mile_2:'新城疫加强免疫、羽毛发育',lc_mile_3:'鸡痘、禽脑脊髓炎、传染性鼻炎、沙门氏菌',lc_mile_4:'新城疫+传支加强免疫、换料、16小时光照',lc_mile_5:'产蛋高峰期第26-30周，监控FCR',lc_mile_6:'每8-12周加强新城疫免疫，评估盈利能力',lc_mile_7:'评估淘汰或强制换羽',lc_mile_8:'出售淘汰鸡、清洁鸡舍',vac_route_injection:'注射',vac_route_ocular:'点眼/喷雾',vac_route_water:'饮水',vac_route_wing:'翅膀刺种',snapshots:'快照',error_prefix:'错误',chk_collect_eggs:'捡蛋',chk_feed_birds:'喂料',chk_check_water:'检查饮水',chk_check_health:'检查健康',chk_cleaning:'清洁',chk_record_temp:'记录温度',
 weather_title:'天气',weather_temp:'温度',weather_humidity:'湿度',weather_wind:'风力',weather_forecast:'3天预报',weather_no_key:'设置农场位置以查看天气',weather_heat_alert:'热应激警报',weather_thi:'THI指数',weather_feels:'体感温度',weather_last_update:'最后更新',weather_test:'测试',
 geo_set_location:'养殖场位置',geo_use_gps:'使用GPS定位',geo_click_map:'点击地图设置位置',geo_lat:'纬度',geo_lng:'经度',geo_saved:'位置已保存',
 iot_title:'IoT传感器',iot_broker:'MQTT服务器(wss://)',iot_user:'MQTT用户名',iot_pass:'MQTT密码',iot_topic:'主题前缀',iot_connect:'连接',iot_disconnect:'断开',iot_live:'IoT实时',iot_no_config:'请在设置中配置MQTT',iot_save_reading:'保存当前读数',iot_connected:'已连接',iot_disconnected:'已断开',iot_ammonia:'氨气',iot_light:'光照',iot_lux:'lux',iot_ppm:'ppm',
@@ -511,9 +553,15 @@ ana_segment_profit:'按细分盈利分析',cfg_accessibility:'无障碍',
 rec_title:'建议',rec_dismiss:'忽略',rec_check_diet:'检查日粮/饲料配方/排除疾病',rec_check_env:'立即检查环境/疾病/应激',rec_below_curve:'低于标准产蛋曲线 - 检查应激、光照、饲料',rec_buy_feed:'安排饲料采购',rec_record_env:'记录环境条件',rec_disinfect:'执行区域消毒规程',rec_heat_plan:'持续热应激 - 启动降温方案',rec_lab_samples:'采集样本送检',rec_ventilation:'加强通风，检查饮水供应',
 auth_welcome:'账户已创建。欢迎！',auth_error:'凭据不正确',auth_first_run:'首次使用：输入用户名和密码以创建您的账户。',login_subtitle:'登录或创建账户',logout:'退出登录',required:'必填项',invalid_email:'无效的邮箱',invalid_phone:'无效的电话号码',must_be_number:'必须是数字',invalid_date:'无效的日期',invalid_format:'无效的格式',min_length:'最小长度',max_length:'最大长度',min_value:'最小值',max_value:'最大值',error_network:'网络错误',error_unexpected:'意外错误',error_loading:'加载错误',
 ana_economics:'经济分析',flock_purchase_cost:'每只成本',econ_cost_per_egg:'单蛋成本',econ_roi_per_bird:'ROI/只',econ_acquisition:'采购成本',econ_feed_cost:'饲料成本',econ_health_cost:'卫生成本',econ_direct_expenses:'直接费用',econ_total_investment:'总投资',econ_total_costs:'总成本',econ_net_result:'净利润',econ_daily_cost_bird:'日均成本/只',econ_days_active:'活跃天数',econ_no_data_guide:'在鸡群中输入采购成本，在财务中输入费用，在疫苗/用药中输入成本，即可查看经济分析。',exp_flock:'鸡群（可选）',health_cost:'费用',econ_org_summary:'组织概览',econ_cost_breakdown:'成本明细',econ_completeness:'可用数据',
-nav_census:'停药期',inv_total_in:'总入库',inv_total_out:'总出库',inv_balance:'库存余额',inv_records:'记录',inv_by_type:'按蛋类型',source:'来源',fin_egg_type:'类型',
+nav_census:'停药期',nav_reports:'报告',nav_automation:'自动化',inv_total_in:'总入库',inv_total_out:'总出库',inv_balance:'库存余额',inv_records:'记录',inv_by_type:'按蛋类型',source:'来源',fin_egg_type:'类型',
 kpi_info_today:'所有活跃鸡群今日采蛋总量。',kpi_info_henday:'今日产蛋母鸡比例。理想值: >85%。',kpi_info_fcr:'每公斤蛋的饲料公斤数。越低越好。理想值: <2.2。',kpi_info_mortality:'占总鸡数的累计死亡百分比。目标: <3%。',kpi_info_cost_egg:'总成本（饲料+卫生+支出）除以产蛋数。',kpi_info_income_net:'当月销售收入减去所有支出。',kpi_info_active_hens:'当前活跃鸡群中的存活母鸡总数。',kpi_info_alerts:'需要立即关注的事项数量。',info_fin_income:'本月所有销售和收入的总和。',info_fin_expenses:'运营费用总计：饲料、健康、运营。',info_fin_gross:'收入减去直接成本（税前）。',info_fin_dep:'资产月度折旧（鸡舍、设备）。',info_fin_tax:'根据配置税率估算的税额。',info_fin_net:'折旧和税后最终利润。',info_fin_cpe:'总成本除以产蛋量。',info_fin_be:'覆盖所有成本所需的鸡蛋数量。',info_feed_stock:'当前可用饲料公斤数。',info_feed_purchases:'购买饲料总量和累计成本。',info_feed_consumption:'禽类消耗的饲料公斤数。',info_cli_total:'注册客户总数。',info_clm_total:'客户投诉总数。',info_clm_sat:'解决后平均满意度（1-5星）。',info_inv_in:'入库鸡蛋总数。',info_inv_out:'出库鸡蛋总数。',info_inv_balance:'可用鸡蛋：入库减出库。',info_inv_records:'记录的库存变动数。',info_bio_pest:'害虫压力指数（0-100）。',info_bio_visitors:'进入农场的外部人员。',info_bio_zones:'有生物安全协议的区域。',info_health_score:'鸡群健康指数（0-100）。',info_outbreaks:'需要关注的活跃疫病。',info_vaccines:'按健康日历待接种疫苗。',info_env_humidity:'蛋鸡最佳相对湿度范围。',info_env_light:'最大产量的推荐光照时间。',info_env_density:'推荐每平方米禽类数量。',
-ana_channel_pricing:'按渠道定价',cfg_action:'操作',cfg_add_user:'+ 添加用户',cfg_asset_value:'总资产价值',cfg_audit:'审计日志',cfg_backup_na:'此浏览器不支持缓存API。',cfg_backups:'自动备份',cfg_dep_years:'折旧（年）',cfg_detail:'详情',cfg_digits:'位数',cfg_loading:'加载中...',cfg_module:'模块',cfg_no_backups:'暂无自动备份。',cfg_no_users:'未配置用户。',cfg_restore:'恢复',cfg_restore_confirm:'从此备份恢复？',cfg_restored:'备份已恢复',cfg_role:'角色',cfg_size:'大小',cfg_storage:'存储使用量',cfg_tax:'税费与折旧',cfg_tax_rate:'税率（%）',cfg_timestamp:'时间',cfg_user:'用户',cfg_users:'用户管理',ch_direct:'直销',ch_export:'出口',ch_organic:'有机',ch_retail:'零售',ch_wholesale:'批发',confirm_delete_cascade:'该客户有关联记录。删除将移除这些引用。继续？',fin_avg_price:'均价',fin_channel:'渠道',fin_channel_breakdown:'按渠道收入',fin_depreciation:'折旧/月',fin_gross_profit:'毛利',fin_net_profit:'净利润',fin_tax:'税费',flock_curve_adjust:'曲线调整',flock_curve_tip:'1.0=标准, 0.85=热带, 1.1=温带',optional:'可选',pin_invalid:'PIN无效',pin_login:'登录',pin_select_user:'选择用户'
+ana_channel_pricing:'按渠道定价',cfg_action:'操作',cfg_add_user:'+ 添加用户',cfg_asset_value:'总资产价值',cfg_audit:'审计日志',cfg_backup_na:'此浏览器不支持缓存API。',cfg_backups:'自动备份',cfg_dep_years:'折旧（年）',cfg_detail:'详情',cfg_digits:'位数',cfg_loading:'加载中...',cfg_module:'模块',cfg_no_backups:'暂无自动备份。',cfg_no_users:'未配置用户。',cfg_restore:'恢复',cfg_restore_confirm:'从此备份恢复？',cfg_restored:'备份已恢复',cfg_role:'角色',cfg_size:'大小',cfg_storage:'存储使用量',cfg_tax:'税费与折旧',cfg_tax_rate:'税率（%）',cfg_timestamp:'时间',cfg_user:'用户',cfg_users:'用户管理',ch_direct:'直销',ch_export:'出口',ch_organic:'有机',ch_retail:'零售',ch_wholesale:'批发',confirm_delete_cascade:'该客户有关联记录。删除将移除这些引用。继续？',fin_avg_price:'均价',fin_channel:'渠道',fin_channel_breakdown:'按渠道收入',fin_depreciation:'折旧/月',fin_gross_profit:'毛利',fin_net_profit:'净利润',fin_tax:'税费',flock_curve_adjust:'曲线调整',flock_curve_tip:'1.0=标准, 0.85=热带, 1.1=温带',optional:'可选',pin_invalid:'PIN无效',pin_login:'登录',pin_select_user:'选择用户',
+price_per_mo:'/月',trial_ended_title:'试用期已结束',trial_ended_subtitle:'选择一个计划继续使用EGGlogU — 前3个月40%折扣',btn_see_plans:'查看计划',trial_days_left:'天Enterprise试用剩余',trial_last_day:'试用最后一天！',trial_full_access:'完全访问所有模块',trial_from_price:'之后：$5/月起（40%折扣）',billing_next_quarter:'下个季度',billing_regular_price:'常规价格',
+perfil_title:'我的资料',perfil_subtitle:'您的账户信息',perfil_name:'全名',perfil_member_since:'注册时间',perfil_change_pin:'更改PIN',perfil_current_pin:'当前PIN',perfil_new_pin:'新PIN',perfil_confirm_pin:'确认PIN',perfil_pin_changed:'PIN更新成功',perfil_profile_updated:'资料已更新',perfil_pin_mismatch:'PIN不匹配',perfil_wrong_pin:'当前PIN不正确',
+reassign_title:'重新分配账户',reassign_btn:'重新分配',reassign_new_name:'新持有人姓名',reassign_new_email:'新持有人邮箱',reassign_new_pin:'新持有人PIN',reassign_confirm:'确认重新分配',reassign_success:'账户重新分配成功',reassign_no_self:'不能重新分配给自己',reassign_last_owner:'无法重新分配最后一个活跃所有者',reassign_verify:'请验证您的PIN以继续',reassign_notify:'将向新持有人发送通知',
+billing_no_permission:'您没有访问账单的权限',billing_cancel_sub:'取消订阅',billing_cancel_confirm:'您的计划将保持活跃至{date}。建议在取消前下载您的数据。',billing_cancel_success:'订阅已取消',billing_delete_account:'删除账户',billing_delete_warning:'此操作不可撤销。所有数据将永久丢失。',billing_delete_type_confirm:'输入{word}以确认',billing_delete_success:'账户已删除',billing_current_plan:'当前计划',billing_manage_payments:'管理支付',billing_change_plan:'更改计划',billing_download_data:'下载数据',
+dt_no_results:'没有匹配筛选条件的结果',dt_filters:'筛选器',dt_selected:'已选择',dt_deselect:'取消全选',dt_showing:'显示',dt_records:'条记录',dt_of:'共',dt_clear_filters:'清除筛选',dt_columns:'列',dt_export_csv:'导出CSV',dt_export_excel:'导出Excel',dt_per_page:'每页',dt_sort_asc:'升序排列',dt_sort_desc:'降序排列',dt_filter:'筛选',dt_select_all:'全选',dt_search:'搜索',dt_page:'页',
+rpt_title:'报告与分析',rpt_report:'报告',rpt_template:'模板',rpt_period:'期间',rpt_period_total:'期间合计',rpt_generated:'生成时间',rpt_invalid_template:'无效的报告模板',rpt_tpl_production:'生产',rpt_tpl_financial:'财务',rpt_tpl_health:'健康',rpt_tpl_feed:'饲料',rpt_tpl_kpi:'KPI',rpt_period_7d:'最近7天',rpt_period_30d:'最近30天',rpt_period_90d:'最近90天',rpt_period_12m:'最近12个月',rpt_period_custom:'自定义',rpt_production_summary:'生产概要',rpt_total_eggs:'总鸡蛋数',rpt_avg_day:'平均/天',rpt_culled:'淘汰',rpt_broken_dirty:'破损 / 脏污',rpt_loss:'损失',rpt_daily_production:'每日产量',rpt_size_breakdown:'按大小分类',rpt_flock_breakdown:'按鸡群分类',rpt_broken:'破损',rpt_dirty:'脏污',rpt_financial_pl:'损益表',rpt_transactions:'笔交易',rpt_margin:'利润率',rpt_overdue:'逾期',rpt_monthly_trend:'月度趋势',rpt_by_category:'按类别',rpt_other:'其他',rpt_health_overview:'健康概览',rpt_applied_period:'期间已接种',rpt_upcoming_vaccines:'即将接种',rpt_by_flock:'按鸡群',rpt_feed_efficiency:'饲料效率',rpt_hen_day:'鸡/天',rpt_feed_cost:'饲料成本',rpt_feed_stock:'饲料库存',rpt_remaining:'剩余',rpt_weekly_consumption:'每周消耗',rpt_by_feed_type:'按饲料类型',rpt_kpi_trends:'KPI趋势',rpt_no_snapshots:'该期间无KPI数据',rpt_kpi_chart:'产量与产蛋率',rpt_kpi_fcr_mort:'料蛋比与死亡率',rpt_type:'类型',rpt_xlsx_missing:'XLSX库不可用',rpt_pdf_missing:'PDF库不可用',rpt_pdf_error:'PDF导出错误',wf_title:'自动化',wf_create_rule:'创建规则',wf_active_rules:'活跃规则',wf_executions:'执行次数',wf_last_24h:'最近24小时',wf_presets:'预设模板',wf_rules:'规则',wf_no_rules:'未配置规则',wf_rule_added:'规则已添加',wf_execution_log:'执行日志',wf_rule:'规则',wf_detail:'详情',wf_last_fired:'最后执行',wf_test:'测试',wf_would_trigger:'会触发',wf_would_not_trigger:'不会触发',wf_rule_name:'规则名称',wf_condition:'条件',wf_comparator:'比较器',wf_threshold:'阈值',wf_add_action:'添加动作',wf_cooldown:'冷却时间',wf_hours:'小时',wf_unnamed_rule:'未命名规则',wf_triggered:'规则已触发',wf_invalid_condition:'无效条件',wf_cond_deaths_spike:'死亡率飙升',wf_cond_low_production:'低产量',wf_cond_feed_stock:'饲料库存',wf_cond_vaccine_due:'疫苗到期',wf_cond_temperature:'温度',wf_cond_payment_overdue:'逾期付款',wf_cond_outbreak_active:'活跃疫情',wf_cond_production_target:'生产目标',wf_act_notify:'通知',wf_act_email:'邮件',wf_act_auto_log:'自动记录',wf_act_auto_task:'自动任务',wf_act_update_status:'更新状态',wf_readings_above:'超出读数',wf_no_target:'未定义生产目标',wf_below_target:'低于目标',storage_warning:'本地存储空间即将满（>80%）。请考虑同步您的数据。',storage_full:'本地存储空间已满。已自动释放空间。',sync_conflicts:'{n}条记录已被其他用户更新',wf_browser_note:'自动化规则在浏览器打开时进行评估。'
 },ru:{
 save:'Сохранить',cancel:'Отмена',delete:'Удалить',edit:'Редактировать',add:'Добавить',close:'Закрыть',actions:'Действия',date:'Дата',notes:'Заметки',name:'Имя',phone:'Телефон',email:'Эл. почта',address:'Адрес',confirm_delete:'Удалить эту запись?',no_data:'Нет записей',total:'Итого',all:'Все',loading:'Загрузка',search:'Поиск',from:'С',to:'По',status:'Статус',export_csv:'Экспорт CSV',today:'Сегодня',active:'Активный',inactive:'Неактивный',
 nav_dashboard:'Панель управления',nav_production:'Производство',nav_flocks:'Стадо',nav_health:'Здоровье',nav_feed:'Корм',nav_clients:'Клиенты',nav_finances:'Финансы',nav_analysis:'Анализ',nav_operations:'Операции',nav_environment:'Среда',nav_config:'Настройки',nav_support:'Поддержка',nav_admin:'Админ SaaS',nav_inventory:'Инвентарь',nav_superadmin:'Суперадмин',grp_production:'Производство',grp_health:'Здоровье',grp_commercial:'Коммерция',grp_management:'Управление',grp_system:'Система',grp_superadmin:'Суперадмин',
@@ -538,7 +586,7 @@ ops_log_cat_general:'Общее',ops_log_cat_health:'Здоровье',ops_log_c
 ops_per_name:'Имя',ops_per_role:'Должность',ops_per_salary:'Зарплата',ops_per_start:'Дата начала',ops_per_active:'Активный',ops_per_add:'Добавить сотрудника',
 env_title:'Условия среды',env_add:'Новая запись',env_temp:'Температура (°C)',env_humidity:'Влажность (%)',env_light:'Часы освещения',env_ventilation:'Вентиляция',env_density:'Плотность (голов/м²)',env_optimal:'Оптимальный диапазон',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 ч.',env_density_range:'4-5 голов/м²',
 cfg_title:'Настройки',cfg_farm:'Данные фермы',cfg_farm_name:'Название фермы',cfg_location:'Местоположение',cfg_capacity:'Вместимость (голов)',cfg_currency:'Валюта',cfg_alerts:'Пороги оповещений',cfg_min_feed:'Мин. запас корма (кг)',cfg_max_mortality:'Макс. падёж (%)',cfg_alert_days:'Дни предупреждения',cfg_data:'Данные',cfg_export:'Экспорт (JSON)',cfg_import:'Импорт (JSON)',cfg_reset:'Удалить всё',cfg_reset_confirm:'Удалить ВСЕ данные безвозвратно?',cfg_saved:'Сохранено',cfg_exported:'Данные экспортированы',cfg_imported:'Данные импортированы',cfg_reset_done:'Данные удалены',cfg_checklist:'Стандартный чек-лист',cfg_checklist_items:'Ежедневные задачи',cfg_theme:'Цветовая тема',cfg_theme_blue:'Тёмно-синяя',cfg_theme_green:'Зелёная',cfg_theme_purple:'Фиолетовая',cfg_theme_black:'Чёрная',
-sidebar_subtitle:'Птицеводческая система 360°',prod_shell_white:'Белая',prod_shell_brown:'Коричневая',prod_shell_cream:'Кремовая',required:'Обязательное поле',no_flocks_birthdate:'Нет стад с датой рождения',vac_select_flocks:'Выберите стада для генерации календаря:',feed_type_placeholder:'Несушки, стартер и т.д.',avg_per_day:'Ср./день',per_flock:'Стадо',history:'История',env_latest_reading:'Последние показания',env_ok:'Норма',env_out_of_range:'Вне диапазона',data_stats:'Статистика данных',final_warning:'⚠️ ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ — ВСЕ данные будут удалены',total_salaries:'Общая зарплата',eggs_unit:'яиц',csv_income:'Доход',csv_expense:'Расход',fcr_unit:'кг корма/кг яиц',lc_feed_starter:'Стартер',lc_feed_grower:'Ростовой',lc_feed_developer:'Девелоперный',lc_feed_prelay:'Предкладковый',lc_feed_layer:'Для несушек',lc_feed_lowlay:'Низкопродуктивный',lc_prod_label:'Прод.',lc_prod_first:'Первые яйца',lc_mile_1:'Вакцины: Марек, Ньюкасл+ИБ, Гамборо',lc_mile_2:'Ревакцинация Ньюкасл, развитие оперения',lc_mile_3:'Оспа птиц, АЭ, Коризa, Сальмонелла',lc_mile_4:'Ревакцинация Ньюкасл+ИБ, смена рациона, 16 ч. света',lc_mile_5:'Пик продуктивности нед. 26-30, контроль FCR',lc_mile_6:'Ревакцинация Ньюкасл каждые 8-12 нед., оценка рентабельности',lc_mile_7:'Оценка выбраковки или принудительной линьки',lc_mile_8:'Продажа выбракованной птицы, очистка птичника',vac_route_injection:'Инъекция',vac_route_ocular:'Окулярно/спрей',vac_route_water:'С водой',vac_route_wing:'В перепонку крыла',snapshots:'снимки',error_prefix:'Ошибка',chk_collect_eggs:'Собрать яйца',chk_feed_birds:'Накормить птицу',chk_check_water:'Проверить воду',chk_check_health:'Проверить здоровье',chk_cleaning:'Уборка',chk_record_temp:'Записать температуру',
+sidebar_subtitle:'Интеллектуальное птицеводство',prod_shell_white:'Белая',prod_shell_brown:'Коричневая',prod_shell_cream:'Кремовая',required:'Обязательное поле',no_flocks_birthdate:'Нет стад с датой рождения',vac_select_flocks:'Выберите стада для генерации календаря:',feed_type_placeholder:'Несушки, стартер и т.д.',avg_per_day:'Ср./день',per_flock:'Стадо',history:'История',env_latest_reading:'Последние показания',env_ok:'Норма',env_out_of_range:'Вне диапазона',data_stats:'Статистика данных',final_warning:'⚠️ ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ — ВСЕ данные будут удалены',total_salaries:'Общая зарплата',eggs_unit:'яиц',csv_income:'Доход',csv_expense:'Расход',fcr_unit:'кг корма/кг яиц',lc_feed_starter:'Стартер',lc_feed_grower:'Ростовой',lc_feed_developer:'Девелоперный',lc_feed_prelay:'Предкладковый',lc_feed_layer:'Для несушек',lc_feed_lowlay:'Низкопродуктивный',lc_prod_label:'Прод.',lc_prod_first:'Первые яйца',lc_mile_1:'Вакцины: Марек, Ньюкасл+ИБ, Гамборо',lc_mile_2:'Ревакцинация Ньюкасл, развитие оперения',lc_mile_3:'Оспа птиц, АЭ, Коризa, Сальмонелла',lc_mile_4:'Ревакцинация Ньюкасл+ИБ, смена рациона, 16 ч. света',lc_mile_5:'Пик продуктивности нед. 26-30, контроль FCR',lc_mile_6:'Ревакцинация Ньюкасл каждые 8-12 нед., оценка рентабельности',lc_mile_7:'Оценка выбраковки или принудительной линьки',lc_mile_8:'Продажа выбракованной птицы, очистка птичника',vac_route_injection:'Инъекция',vac_route_ocular:'Окулярно/спрей',vac_route_water:'С водой',vac_route_wing:'В перепонку крыла',snapshots:'снимки',error_prefix:'Ошибка',chk_collect_eggs:'Собрать яйца',chk_feed_birds:'Накормить птицу',chk_check_water:'Проверить воду',chk_check_health:'Проверить здоровье',chk_cleaning:'Уборка',chk_record_temp:'Записать температуру',
 weather_title:'Погода',weather_temp:'Температура',weather_humidity:'Влажность',weather_wind:'Ветер',weather_forecast:'Прогноз на 3 дня',weather_no_key:'Укажите местоположение фермы для отображения погоды',weather_heat_alert:'Тепловой стресс',weather_thi:'Индекс THI',weather_feels:'Ощущается как',weather_last_update:'Последнее обновление',weather_test:'Тест',
 geo_set_location:'Расположение фермы',geo_use_gps:'Использовать GPS',geo_click_map:'Нажмите на карту для выбора местоположения',geo_lat:'Широта',geo_lng:'Долгота',geo_saved:'Местоположение сохранено',
 iot_title:'Датчики IoT',iot_broker:'MQTT Брокер (wss://)',iot_user:'Пользователь MQTT',iot_pass:'Пароль MQTT',iot_topic:'Префикс топика',iot_connect:'Подключить',iot_disconnect:'Отключить',iot_live:'IoT в реальном времени',iot_no_config:'Настройте MQTT в настройках',iot_save_reading:'Сохранить текущие показания',iot_connected:'Подключено',iot_disconnected:'Отключено',iot_ammonia:'Аммиак',iot_light:'Освещение',iot_lux:'lux',iot_ppm:'ppm',
@@ -569,9 +617,15 @@ ana_segment_profit:'Рентабельность по сегментам',cfg_ac
 rec_title:'Рекомендации',rec_dismiss:'Отклонить',rec_check_diet:'Проверить рацион / рецептуру корма / исключить болезнь',rec_check_env:'Проверить среду / болезнь / стресс немедленно',rec_below_curve:'Ниже нормы — проверить стресс, освещение, корм',rec_buy_feed:'Запланировать закупку корма',rec_record_env:'Записать условия среды',rec_disinfect:'Провести дезинфекцию зоны',rec_heat_plan:'Длительный тепловой стресс — активировать план охлаждения',rec_lab_samples:'Отправить образцы в лабораторию',rec_ventilation:'Усилить вентиляцию, проверить свежую воду',
 auth_welcome:'Аккаунт создан. Добро пожаловать!',auth_error:'Неверные учётные данные',auth_first_run:'Первый вход: введите имя пользователя и пароль для создания аккаунта.',login_subtitle:'Войдите или создайте аккаунт',logout:'Выход',required:'Обязательное поле',invalid_email:'Некорректный email',invalid_phone:'Некорректный телефон',must_be_number:'Должно быть числом',invalid_date:'Некорректная дата',invalid_format:'Некорректный формат',min_length:'Мин. длина',max_length:'Макс. длина',min_value:'Мин. значение',max_value:'Макс. значение',error_network:'Ошибка сети',error_unexpected:'Непредвиденная ошибка',error_loading:'Ошибка загрузки',
 ana_economics:'Экономика',flock_purchase_cost:'Стоимость за голову',econ_cost_per_egg:'Стоимость/яйцо',econ_roi_per_bird:'ROI/голову',econ_acquisition:'Приобретение',econ_feed_cost:'Затраты на корм',econ_health_cost:'Затраты на здоровье',econ_direct_expenses:'Прямые расходы',econ_total_investment:'Общие инвестиции',econ_total_costs:'Общие затраты',econ_net_result:'Чистый результат',econ_daily_cost_bird:'Дневные затраты/голову',econ_days_active:'Дней активности',econ_no_data_guide:'Внесите стоимость покупки в Стадо, расходы в Финансы и затраты в Вакцины/Медикаменты для экономического анализа.',exp_flock:'Стадо (необязательно)',health_cost:'Стоимость',econ_org_summary:'Сводка по организации',econ_cost_breakdown:'Структура затрат',econ_completeness:'Полнота данных',
-nav_census:'Списание',inv_total_in:'Всего приход',inv_total_out:'Всего расход',inv_balance:'Баланс',inv_records:'Записи',inv_by_type:'По типу яиц',source:'Источник',fin_egg_type:'Тип',
+nav_census:'Списание',nav_reports:'Отчёты',nav_automation:'Автоматизация',inv_total_in:'Всего приход',inv_total_out:'Всего расход',inv_balance:'Баланс',inv_records:'Записи',inv_by_type:'По типу яиц',source:'Источник',fin_egg_type:'Тип',
 kpi_info_today:'Яиц собрано сегодня по всем активным стадам.',kpi_info_henday:'Процент кур, которые снеслись сегодня. Идеал: >85%.',kpi_info_fcr:'Кг корма на кг яиц. Чем ниже, тем лучше. Идеал: <2.2.',kpi_info_mortality:'Кумулятивный процент падежа от общего поголовья. Цель: <3%.',kpi_info_cost_egg:'Общие затраты (корм + здоровье + расходы) делённые на количество яиц.',kpi_info_income_net:'Выручка от продаж минус все расходы за текущий месяц.',kpi_info_active_hens:'Общее количество живых кур в активных стадах.',kpi_info_alerts:'Количество ситуаций, требующих вашего немедленного внимания.',info_fin_income:'Сумма всех продаж и доходов за месяц.',info_fin_expenses:'Общие операционные расходы: корм, здоровье, операции.',info_fin_gross:'Доход минус прямые затраты (до налогов).',info_fin_dep:'Ежемесячный износ активов (помещения, оборудование).',info_fin_tax:'Расчётный налог на валовую прибыль.',info_fin_net:'Чистая прибыль после амортизации и налогов.',info_fin_cpe:'Общая стоимость делённая на произведённые яйца.',info_fin_be:'Яиц необходимо для покрытия всех затрат.',info_feed_stock:'Кг корма в наличии.',info_feed_purchases:'Всего закупленного корма и суммарная стоимость.',info_feed_consumption:'Кг корма потреблённого птицей.',info_cli_total:'Общее количество зарегистрированных клиентов.',info_clm_total:'Всего рекламаций клиентов.',info_clm_sat:'Средняя удовлетворённость после решения (1-5 звёзд).',info_inv_in:'Всего яиц поступило на склад.',info_inv_out:'Всего яиц выбыло со склада.',info_inv_balance:'Доступные яйца: поступления минус выбытие.',info_inv_records:'Количество зарегистрированных движений.',info_bio_pest:'Индекс давления вредителей (0-100).',info_bio_visitors:'Внешние лица, посетившие ферму.',info_bio_zones:'Зоны с протоколами биобезопасности.',info_health_score:'Индекс здоровья стада (0-100).',info_outbreaks:'Активные вспышки заболеваний.',info_vaccines:'Вакцины ожидающие применения.',info_env_humidity:'Оптимальный диапазон влажности.',info_env_light:'Рекомендуемые часы освещения.',info_env_density:'Рекомендуемое количество птиц на м².',
-ana_channel_pricing:'Цены по каналам',cfg_action:'Действие',cfg_add_user:'+ Добавить пользователя',cfg_asset_value:'Общая стоимость активов',cfg_audit:'Журнал аудита',cfg_backup_na:'API кеша недоступен в этом браузере.',cfg_backups:'Авто-резервирование',cfg_dep_years:'Амортизация (лет)',cfg_detail:'Детали',cfg_digits:'цифр',cfg_loading:'Загрузка...',cfg_module:'Модуль',cfg_no_backups:'Авто-резервные копии пока отсутствуют.',cfg_no_users:'Пользователи не настроены.',cfg_restore:'Восстановить',cfg_restore_confirm:'Восстановить из этой резервной копии?',cfg_restored:'Резервная копия восстановлена',cfg_role:'Роль',cfg_size:'Размер',cfg_storage:'Использование хранилища',cfg_tax:'Налоги и амортизация',cfg_tax_rate:'Ставка налога (%)',cfg_timestamp:'Время',cfg_user:'Пользователь',cfg_users:'Управление пользователями',ch_direct:'Прямой',ch_export:'Экспорт',ch_organic:'Органический',ch_retail:'Розница',ch_wholesale:'Опт',confirm_delete_cascade:'У этого клиента есть связанные записи. Удаление уберёт эти ссылки. Продолжить?',fin_avg_price:'Средняя цена',fin_channel:'Канал',fin_channel_breakdown:'Выручка по каналам',fin_depreciation:'Амортизация/мес',fin_gross_profit:'Валовая прибыль',fin_net_profit:'Чистая прибыль',fin_tax:'Налог',flock_curve_adjust:'Коррекция кривой',flock_curve_tip:'1.0=стандарт, 0.85=тропики, 1.1=умеренный',optional:'Необязательно',pin_invalid:'Неверный PIN',pin_login:'Войти',pin_select_user:'Выбрать пользователя'
+ana_channel_pricing:'Цены по каналам',cfg_action:'Действие',cfg_add_user:'+ Добавить пользователя',cfg_asset_value:'Общая стоимость активов',cfg_audit:'Журнал аудита',cfg_backup_na:'API кеша недоступен в этом браузере.',cfg_backups:'Авто-резервирование',cfg_dep_years:'Амортизация (лет)',cfg_detail:'Детали',cfg_digits:'цифр',cfg_loading:'Загрузка...',cfg_module:'Модуль',cfg_no_backups:'Авто-резервные копии пока отсутствуют.',cfg_no_users:'Пользователи не настроены.',cfg_restore:'Восстановить',cfg_restore_confirm:'Восстановить из этой резервной копии?',cfg_restored:'Резервная копия восстановлена',cfg_role:'Роль',cfg_size:'Размер',cfg_storage:'Использование хранилища',cfg_tax:'Налоги и амортизация',cfg_tax_rate:'Ставка налога (%)',cfg_timestamp:'Время',cfg_user:'Пользователь',cfg_users:'Управление пользователями',ch_direct:'Прямой',ch_export:'Экспорт',ch_organic:'Органический',ch_retail:'Розница',ch_wholesale:'Опт',confirm_delete_cascade:'У этого клиента есть связанные записи. Удаление уберёт эти ссылки. Продолжить?',fin_avg_price:'Средняя цена',fin_channel:'Канал',fin_channel_breakdown:'Выручка по каналам',fin_depreciation:'Амортизация/мес',fin_gross_profit:'Валовая прибыль',fin_net_profit:'Чистая прибыль',fin_tax:'Налог',flock_curve_adjust:'Коррекция кривой',flock_curve_tip:'1.0=стандарт, 0.85=тропики, 1.1=умеренный',optional:'Необязательно',pin_invalid:'Неверный PIN',pin_login:'Войти',pin_select_user:'Выбрать пользователя',
+price_per_mo:'/мес',trial_ended_title:'Пробный период закончился',trial_ended_subtitle:'Выберите план, чтобы продолжить использовать EGGlogU — скидка 40% на первые 3 месяца',btn_see_plans:'Посмотреть планы',trial_days_left:'дней осталось пробного периода Enterprise',trial_last_day:'Последний день пробного периода!',trial_full_access:'Полный доступ ко всем модулям',trial_from_price:'После: от $5/мес (скидка 40%)',billing_next_quarter:'Следующий квартал',billing_regular_price:'Обычная цена',
+perfil_title:'Мой Профиль',perfil_subtitle:'Информация о вашем аккаунте',perfil_name:'Полное имя',perfil_member_since:'Участник с',perfil_change_pin:'Изменить PIN',perfil_current_pin:'Текущий PIN',perfil_new_pin:'Новый PIN',perfil_confirm_pin:'Подтвердить PIN',perfil_pin_changed:'PIN успешно обновлён',perfil_profile_updated:'Профиль обновлён',perfil_pin_mismatch:'PIN не совпадают',perfil_wrong_pin:'Текущий PIN неверен',
+reassign_title:'Переназначить Аккаунт',reassign_btn:'Переназначить',reassign_new_name:'Имя нового владельца',reassign_new_email:'Email нового владельца',reassign_new_pin:'PIN нового владельца',reassign_confirm:'Подтвердить Переназначение',reassign_success:'Аккаунт успешно переназначен',reassign_no_self:'Нельзя переназначить себе',reassign_last_owner:'Невозможно переназначить последнего активного владельца',reassign_verify:'Подтвердите свой PIN для продолжения',reassign_notify:'Уведомление будет отправлено новому владельцу',
+billing_no_permission:'У вас нет прав доступа к разделу оплаты',billing_cancel_sub:'Отменить Подписку',billing_cancel_confirm:'Ваш план останется активным до {date}. Рекомендуем скачать данные перед отменой.',billing_cancel_success:'Подписка отменена',billing_delete_account:'Удалить Аккаунт',billing_delete_warning:'Это действие НЕОБРАТИМО. Все данные будут безвозвратно утеряны.',billing_delete_type_confirm:'Введите {word} для подтверждения',billing_delete_success:'Аккаунт удалён',billing_current_plan:'Текущий План',billing_manage_payments:'Управление Платежами',billing_change_plan:'Сменить План',billing_download_data:'Скачать Данные',
+dt_no_results:'Нет результатов для примененных фильтров',dt_filters:'фильтры',dt_selected:'выбрано',dt_deselect:'Снять выделение',dt_showing:'Показано',dt_records:'записей',dt_of:'из',dt_clear_filters:'Очистить фильтры',dt_columns:'Столбцы',dt_export_csv:'Экспорт CSV',dt_export_excel:'Экспорт Excel',dt_per_page:'На странице',dt_sort_asc:'По возрастанию',dt_sort_desc:'По убыванию',dt_filter:'Фильтр',dt_select_all:'Выбрать все',dt_search:'Поиск',dt_page:'Страница',
+rpt_title:'Отчёты и Аналитика',rpt_report:'Отчёт',rpt_template:'Шаблон',rpt_period:'Период',rpt_period_total:'Итого за период',rpt_generated:'Создано',rpt_invalid_template:'Недопустимый шаблон отчёта',rpt_tpl_production:'Производство',rpt_tpl_financial:'Финансы',rpt_tpl_health:'Здоровье',rpt_tpl_feed:'Корм',rpt_tpl_kpi:'KPI',rpt_period_7d:'Последние 7 дней',rpt_period_30d:'Последние 30 дней',rpt_period_90d:'Последние 90 дней',rpt_period_12m:'Последние 12 месяцев',rpt_period_custom:'Произвольный',rpt_production_summary:'Сводка Производства',rpt_total_eggs:'Всего Яиц',rpt_avg_day:'Средн./день',rpt_culled:'Выбраковано',rpt_broken_dirty:'Бой / Грязные',rpt_loss:'потеря',rpt_daily_production:'Ежедневное Производство',rpt_size_breakdown:'По Размеру',rpt_flock_breakdown:'По Стаду',rpt_broken:'Бой',rpt_dirty:'Грязные',rpt_financial_pl:'Отчёт о Прибылях и Убытках',rpt_transactions:'транзакции',rpt_margin:'Маржа',rpt_overdue:'просрочено',rpt_monthly_trend:'Ежемесячный Тренд',rpt_by_category:'по Категории',rpt_other:'Прочее',rpt_health_overview:'Обзор Здоровья',rpt_applied_period:'применено за период',rpt_upcoming_vaccines:'Предстоящие Вакцинации',rpt_by_flock:'по Стаду',rpt_feed_efficiency:'Эффективность Кормления',rpt_hen_day:'курица/день',rpt_feed_cost:'Стоимость Корма',rpt_feed_stock:'Запас Корма',rpt_remaining:'осталось',rpt_weekly_consumption:'Недельный Расход',rpt_by_feed_type:'по Типу Корма',rpt_kpi_trends:'Тренды KPI',rpt_no_snapshots:'Нет данных KPI за этот период',rpt_kpi_chart:'Производство и Яйценоскость',rpt_kpi_fcr_mort:'Конверсия и Смертность',rpt_type:'Тип',rpt_xlsx_missing:'Библиотека XLSX недоступна',rpt_pdf_missing:'Библиотеки PDF недоступны',rpt_pdf_error:'Ошибка экспорта PDF',wf_title:'Автоматизация',wf_create_rule:'Создать Правило',wf_active_rules:'Активные Правила',wf_executions:'Выполнения',wf_last_24h:'Последние 24ч',wf_presets:'Готовые Шаблоны',wf_rules:'Правила',wf_no_rules:'Правила не настроены',wf_rule_added:'Правило добавлено',wf_execution_log:'Журнал Выполнений',wf_rule:'Правило',wf_detail:'Подробности',wf_last_fired:'Последнее Выполнение',wf_test:'Тест',wf_would_trigger:'Сработало бы',wf_would_not_trigger:'Не сработало бы',wf_rule_name:'Название правила',wf_condition:'Условие',wf_comparator:'Оператор',wf_threshold:'Порог',wf_add_action:'Добавить Действие',wf_cooldown:'Время Ожидания',wf_hours:'часов',wf_unnamed_rule:'Правило без имени',wf_triggered:'Правило сработало',wf_invalid_condition:'Недопустимое условие',wf_cond_deaths_spike:'Всплеск Смертности',wf_cond_low_production:'Низкая Продуктивность',wf_cond_feed_stock:'Запас Корма',wf_cond_vaccine_due:'Вакцинация Скоро',wf_cond_temperature:'Температура',wf_cond_payment_overdue:'Просроченный Платёж',wf_cond_outbreak_active:'Активная Вспышка',wf_cond_production_target:'Цель Производства',wf_act_notify:'Уведомить',wf_act_email:'Эл. почта',wf_act_auto_log:'Авто-запись',wf_act_auto_task:'Авто-задача',wf_act_update_status:'Обновить Статус',wf_readings_above:'показаний выше',wf_no_target:'Цель производства не задана',wf_below_target:'ниже цели',storage_warning:'Локальное хранилище почти заполнено (>80%). Рекомендуем синхронизировать данные.',storage_full:'Локальное хранилище заполнено. Место освобождено автоматически.',sync_conflicts:'{n} запись(ей) обновлено другим пользователем',wf_browser_note:'Правила автоматизации выполняются при открытом браузере.'
 },id:{
 save:'Simpan',cancel:'Batal',delete:'Hapus',edit:'Edit',add:'Tambah',close:'Tutup',actions:'Aksi',date:'Tanggal',notes:'Catatan',name:'Nama',phone:'Telepon',email:'Email',address:'Alamat',confirm_delete:'Hapus data ini?',no_data:'Tidak ada data',total:'Total',all:'Semua',loading:'Memuat',search:'Cari',from:'Dari',to:'Sampai',status:'Status',export_csv:'Ekspor CSV',today:'Hari Ini',active:'Aktif',inactive:'Tidak Aktif',
 nav_dashboard:'Dasbor',nav_production:'Produksi',nav_flocks:'Kelompok',nav_health:'Kesehatan',nav_feed:'Pakan',nav_clients:'Klien',nav_finances:'Keuangan',nav_analysis:'Analisis',nav_operations:'Operasi',nav_environment:'Lingkungan',nav_config:'Pengaturan',nav_support:'Dukungan',nav_admin:'Admin SaaS',nav_inventory:'Inventaris',nav_superadmin:'Superadmin',grp_production:'Produksi',grp_health:'Kesehatan',grp_commercial:'Komersial',grp_management:'Manajemen',grp_system:'Sistem',grp_superadmin:'Superadmin',
@@ -596,7 +650,7 @@ ops_log_cat_general:'Umum',ops_log_cat_health:'Kesehatan',ops_log_cat_production
 ops_per_name:'Nama',ops_per_role:'Jabatan',ops_per_salary:'Gaji',ops_per_start:'Tanggal Mulai',ops_per_active:'Aktif',ops_per_add:'Tambah Personel',
 env_title:'Kondisi Lingkungan',env_add:'Data Baru',env_temp:'Suhu (°C)',env_humidity:'Kelembaban (%)',env_light:'Jam Cahaya',env_ventilation:'Ventilasi',env_density:'Kepadatan (ekor/m²)',env_optimal:'Rentang Optimal',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 jam',env_density_range:'4-5 ekor/m²',
 cfg_title:'Pengaturan',cfg_farm:'Detail Peternakan',cfg_farm_name:'Nama Peternakan',cfg_location:'Lokasi',cfg_capacity:'Kapasitas (ekor)',cfg_currency:'Mata Uang',cfg_alerts:'Ambang Peringatan',cfg_min_feed:'Stok Pakan Min (kg)',cfg_max_mortality:'Mortalitas Maks (%)',cfg_alert_days:'Hari Peringatan',cfg_data:'Data',cfg_export:'Ekspor (JSON)',cfg_import:'Impor (JSON)',cfg_reset:'Hapus Semua',cfg_reset_confirm:'Hapus SEMUA data secara permanen?',cfg_saved:'Tersimpan',cfg_exported:'Data diekspor',cfg_imported:'Data diimpor',cfg_reset_done:'Data dihapus',cfg_checklist:'Checklist Bawaan',cfg_checklist_items:'Tugas checklist harian',cfg_theme:'Tema Warna',cfg_theme_blue:'Biru Tua',cfg_theme_green:'Hijau',cfg_theme_purple:'Ungu',cfg_theme_black:'Hitam',
-sidebar_subtitle:'Sistem Perunggasan 360°',prod_shell_white:'Putih',prod_shell_brown:'Cokelat',prod_shell_cream:'Krem',required:'Wajib diisi',no_flocks_birthdate:'Tidak ada kelompok dengan tanggal menetas',vac_select_flocks:'Pilih kelompok untuk membuat kalender:',feed_type_placeholder:'Layer, starter, dll.',avg_per_day:'Rata-rata/hari',per_flock:'Kelompok',history:'Riwayat',env_latest_reading:'Pembacaan Terakhir',env_ok:'OK',env_out_of_range:'Di luar rentang',data_stats:'Statistik Data',final_warning:'⚠️ PERINGATAN TERAKHIR — SEMUA data akan dihapus',total_salaries:'Total Gaji',eggs_unit:'telur',csv_income:'Pendapatan',csv_expense:'Pengeluaran',fcr_unit:'kg pakan/kg telur',lc_feed_starter:'Starter',lc_feed_grower:'Grower',lc_feed_developer:'Developer',lc_feed_prelay:'Pra-bertelur',lc_feed_layer:'Layer',lc_feed_lowlay:'Produksi rendah',lc_prod_label:'Prod',lc_prod_first:'Telur pertama',lc_mile_1:'Vaksin Marek, Newcastle+IB, Gumboro',lc_mile_2:'Booster Newcastle, perkembangan bulu',lc_mile_3:'Cacar Unggas, AE, Coryza, Salmonella',lc_mile_4:'Booster Newcastle+IB, ganti pakan, 16 jam cahaya',lc_mile_5:'Puncak produksi mgg 26-30, pantau FCR',lc_mile_6:'Booster Newcastle setiap 8-12 mgg, evaluasi profitabilitas',lc_mile_7:'Evaluasi afkir vs molting paksa',lc_mile_8:'Jual ayam afkir, bersihkan kandang',vac_route_injection:'Injeksi',vac_route_ocular:'Tetes mata/semprot',vac_route_water:'Air minum',vac_route_wing:'Tusuk sayap',snapshots:'snapshot',error_prefix:'Error',chk_collect_eggs:'Kumpulkan telur',chk_feed_birds:'Beri pakan',chk_check_water:'Periksa air',chk_check_health:'Periksa kesehatan',chk_cleaning:'Kebersihan',chk_record_temp:'Catat suhu',
+sidebar_subtitle:'Manajemen Unggas Cerdas',prod_shell_white:'Putih',prod_shell_brown:'Cokelat',prod_shell_cream:'Krem',required:'Wajib diisi',no_flocks_birthdate:'Tidak ada kelompok dengan tanggal menetas',vac_select_flocks:'Pilih kelompok untuk membuat kalender:',feed_type_placeholder:'Layer, starter, dll.',avg_per_day:'Rata-rata/hari',per_flock:'Kelompok',history:'Riwayat',env_latest_reading:'Pembacaan Terakhir',env_ok:'OK',env_out_of_range:'Di luar rentang',data_stats:'Statistik Data',final_warning:'⚠️ PERINGATAN TERAKHIR — SEMUA data akan dihapus',total_salaries:'Total Gaji',eggs_unit:'telur',csv_income:'Pendapatan',csv_expense:'Pengeluaran',fcr_unit:'kg pakan/kg telur',lc_feed_starter:'Starter',lc_feed_grower:'Grower',lc_feed_developer:'Developer',lc_feed_prelay:'Pra-bertelur',lc_feed_layer:'Layer',lc_feed_lowlay:'Produksi rendah',lc_prod_label:'Prod',lc_prod_first:'Telur pertama',lc_mile_1:'Vaksin Marek, Newcastle+IB, Gumboro',lc_mile_2:'Booster Newcastle, perkembangan bulu',lc_mile_3:'Cacar Unggas, AE, Coryza, Salmonella',lc_mile_4:'Booster Newcastle+IB, ganti pakan, 16 jam cahaya',lc_mile_5:'Puncak produksi mgg 26-30, pantau FCR',lc_mile_6:'Booster Newcastle setiap 8-12 mgg, evaluasi profitabilitas',lc_mile_7:'Evaluasi afkir vs molting paksa',lc_mile_8:'Jual ayam afkir, bersihkan kandang',vac_route_injection:'Injeksi',vac_route_ocular:'Tetes mata/semprot',vac_route_water:'Air minum',vac_route_wing:'Tusuk sayap',snapshots:'snapshot',error_prefix:'Error',chk_collect_eggs:'Kumpulkan telur',chk_feed_birds:'Beri pakan',chk_check_water:'Periksa air',chk_check_health:'Periksa kesehatan',chk_cleaning:'Kebersihan',chk_record_temp:'Catat suhu',
 weather_title:'Cuaca',weather_temp:'Suhu',weather_humidity:'Kelembaban',weather_wind:'Angin',weather_forecast:'Prakiraan 3 Hari',weather_no_key:'Atur lokasi peternakan untuk melihat cuaca',weather_heat_alert:'Peringatan Stres Panas',weather_thi:'Indeks THI',weather_feels:'Terasa seperti',weather_last_update:'Terakhir diperbarui',weather_test:'Tes',
 geo_set_location:'Lokasi Peternakan',geo_use_gps:'Gunakan GPS saya',geo_click_map:'Klik peta untuk menentukan lokasi',geo_lat:'Lintang',geo_lng:'Bujur',geo_saved:'Lokasi tersimpan',
 iot_title:'Sensor IoT',iot_broker:'MQTT Broker (wss://)',iot_user:'Pengguna MQTT',iot_pass:'Kata Sandi MQTT',iot_topic:'Prefiks Topik',iot_connect:'Hubungkan',iot_disconnect:'Putuskan',iot_live:'IoT Langsung',iot_no_config:'Konfigurasikan MQTT di Pengaturan',iot_save_reading:'Simpan pembacaan saat ini',iot_connected:'Terhubung',iot_disconnected:'Terputus',iot_ammonia:'Amonia',iot_light:'Cahaya',iot_lux:'lux',iot_ppm:'ppm',
@@ -627,9 +681,15 @@ ana_segment_profit:'Profitabilitas per Segmen',cfg_accessibility:'Aksesibilitas'
 rec_title:'Rekomendasi',rec_dismiss:'Abaikan',rec_check_diet:'Periksa pakan / formulasi / singkirkan penyakit',rec_check_env:'Periksa lingkungan / penyakit / stres segera',rec_below_curve:'Di bawah standar produksi — periksa stres, cahaya, pakan',rec_buy_feed:'Jadwalkan pembelian pakan',rec_record_env:'Catat kondisi lingkungan',rec_disinfect:'Lakukan protokol disinfeksi zona',rec_heat_plan:'Stres panas berkepanjangan — aktifkan rencana pendinginan',rec_lab_samples:'Kirim sampel ke laboratorium',rec_ventilation:'Tingkatkan ventilasi, periksa air segar',
 auth_welcome:'Akun dibuat. Selamat datang!',auth_error:'Kredensial tidak valid',auth_first_run:'Pertama kali: masukkan nama pengguna dan kata sandi untuk membuat akun.',login_subtitle:'Masuk atau buat akun Anda',logout:'Keluar',required:'Wajib diisi',invalid_email:'Email tidak valid',invalid_phone:'Telepon tidak valid',must_be_number:'Harus berupa angka',invalid_date:'Tanggal tidak valid',invalid_format:'Format tidak valid',min_length:'Panjang min',max_length:'Panjang maks',min_value:'Nilai min',max_value:'Nilai maks',error_network:'Kesalahan jaringan',error_unexpected:'Kesalahan tak terduga',error_loading:'Kesalahan memuat',
 ana_economics:'Ekonomi',flock_purchase_cost:'Biaya per Ekor',econ_cost_per_egg:'Biaya/Telur',econ_roi_per_bird:'ROI/Ekor',econ_acquisition:'Akuisisi',econ_feed_cost:'Biaya Pakan',econ_health_cost:'Biaya Kesehatan',econ_direct_expenses:'Biaya Langsung',econ_total_investment:'Total Investasi',econ_total_costs:'Total Biaya',econ_net_result:'Hasil Bersih',econ_daily_cost_bird:'Biaya Harian/Ekor',econ_days_active:'Hari Aktif',econ_no_data_guide:'Masukkan biaya pembelian di Kelompok, pengeluaran di Keuangan, dan biaya di Vaksin/Obat untuk melihat analisis ekonomi.',exp_flock:'Kelompok (opsional)',health_cost:'Biaya',econ_org_summary:'Ringkasan Organisasi',econ_cost_breakdown:'Rincian Biaya',econ_completeness:'Kelengkapan Data',
-nav_census:'Penarikan',inv_total_in:'Total Masuk',inv_total_out:'Total Keluar',inv_balance:'Saldo',inv_records:'Catatan',inv_by_type:'Per Jenis Telur',source:'Sumber',fin_egg_type:'Jenis',
+nav_census:'Penarikan',nav_reports:'Laporan',nav_automation:'Otomatisasi',inv_total_in:'Total Masuk',inv_total_out:'Total Keluar',inv_balance:'Saldo',inv_records:'Catatan',inv_by_type:'Per Jenis Telur',source:'Sumber',fin_egg_type:'Jenis',
 kpi_info_today:'Telur dikumpulkan hari ini dari semua kelompok aktif.',kpi_info_henday:'Persentase ayam yang bertelur hari ini. Ideal: >85%.',kpi_info_fcr:'Kg pakan per kg telur yang dihasilkan. Semakin rendah semakin baik. Ideal: <2.2.',kpi_info_mortality:'Persentase kematian kumulatif dari total ayam. Target: <3%.',kpi_info_cost_egg:'Total biaya (pakan + kesehatan + pengeluaran) dibagi telur yang dihasilkan.',kpi_info_income_net:'Pendapatan penjualan dikurangi semua pengeluaran untuk bulan berjalan.',kpi_info_active_hens:'Total ayam hidup dalam kelompok yang aktif.',kpi_info_alerts:'Jumlah situasi yang memerlukan perhatian segera Anda.',info_fin_income:'Jumlah semua penjualan dan pendapatan bulan ini.',info_fin_expenses:'Total biaya operasional: pakan, kesehatan, operasi.',info_fin_gross:'Pendapatan dikurangi biaya langsung (sebelum pajak).',info_fin_dep:'Depresiasi bulanan nilai aset (kandang, peralatan).',info_fin_tax:'Estimasi pajak atas laba kotor.',info_fin_net:'Laba akhir setelah depresiasi dan pajak.',info_fin_cpe:'Total biaya dibagi telur yang diproduksi.',info_fin_be:'Telur yang dibutuhkan untuk menutupi semua biaya.',info_feed_stock:'Kg pakan yang tersedia saat ini.',info_feed_purchases:'Total pakan yang dibeli dan biaya kumulatif.',info_feed_consumption:'Kg pakan yang dikonsumsi unggas.',info_cli_total:'Jumlah total klien terdaftar.',info_clm_total:'Total klaim klien yang tercatat.',info_clm_sat:'Kepuasan rata-rata pasca-resolusi (1-5 bintang).',info_inv_in:'Total telur masuk ke inventaris.',info_inv_out:'Total telur keluar dari inventaris.',info_inv_balance:'Telur tersedia: masuk dikurangi keluar.',info_inv_records:'Jumlah pergerakan inventaris tercatat.',info_bio_pest:'Indeks tekanan hama (0-100).',info_bio_visitors:'Orang luar yang memasuki peternakan.',info_bio_zones:'Area dengan protokol biosekuriti.',info_health_score:'Indeks kesehatan kawanan (0-100).',info_outbreaks:'Wabah penyakit aktif.',info_vaccines:'Vaksin menunggu aplikasi.',info_env_humidity:'Rentang kelembaban relatif optimal.',info_env_light:'Jam cahaya yang direkomendasikan.',info_env_density:'Unggas per meter persegi yang direkomendasikan.',
-ana_channel_pricing:'Harga per Saluran',cfg_action:'Aksi',cfg_add_user:'+ Tambah Pengguna',cfg_asset_value:'Total Nilai Aset',cfg_audit:'Log Audit',cfg_backup_na:'API Cache tidak tersedia di browser ini.',cfg_backups:'Cadangan Otomatis',cfg_dep_years:'Depresiasi (tahun)',cfg_detail:'Detail',cfg_digits:'digit',cfg_loading:'Memuat...',cfg_module:'Modul',cfg_no_backups:'Belum ada cadangan otomatis.',cfg_no_users:'Belum ada pengguna.',cfg_restore:'Pulihkan',cfg_restore_confirm:'Pulihkan dari cadangan ini?',cfg_restored:'Cadangan dipulihkan',cfg_role:'Peran',cfg_size:'Ukuran',cfg_storage:'Penggunaan Penyimpanan',cfg_tax:'Pajak & Depresiasi',cfg_tax_rate:'Tarif Pajak (%)',cfg_timestamp:'Waktu',cfg_user:'Pengguna',cfg_users:'Manajemen Pengguna',ch_direct:'Langsung',ch_export:'Ekspor',ch_organic:'Organik',ch_retail:'Eceran',ch_wholesale:'Grosir',confirm_delete_cascade:'Klien ini memiliki catatan terkait. Menghapus akan menghilangkan referensi tersebut. Lanjutkan?',fin_avg_price:'Harga Rata-rata',fin_channel:'Saluran',fin_channel_breakdown:'Pendapatan per Saluran',fin_depreciation:'Depresiasi/bln',fin_gross_profit:'Laba Kotor',fin_net_profit:'Laba Bersih',fin_tax:'Pajak',flock_curve_adjust:'Penyesuaian Kurva',flock_curve_tip:'1.0=standar, 0.85=tropis, 1.1=sedang',optional:'Opsional',pin_invalid:'PIN tidak valid',pin_login:'Masuk',pin_select_user:'Pilih pengguna'
+ana_channel_pricing:'Harga per Saluran',cfg_action:'Aksi',cfg_add_user:'+ Tambah Pengguna',cfg_asset_value:'Total Nilai Aset',cfg_audit:'Log Audit',cfg_backup_na:'API Cache tidak tersedia di browser ini.',cfg_backups:'Cadangan Otomatis',cfg_dep_years:'Depresiasi (tahun)',cfg_detail:'Detail',cfg_digits:'digit',cfg_loading:'Memuat...',cfg_module:'Modul',cfg_no_backups:'Belum ada cadangan otomatis.',cfg_no_users:'Belum ada pengguna.',cfg_restore:'Pulihkan',cfg_restore_confirm:'Pulihkan dari cadangan ini?',cfg_restored:'Cadangan dipulihkan',cfg_role:'Peran',cfg_size:'Ukuran',cfg_storage:'Penggunaan Penyimpanan',cfg_tax:'Pajak & Depresiasi',cfg_tax_rate:'Tarif Pajak (%)',cfg_timestamp:'Waktu',cfg_user:'Pengguna',cfg_users:'Manajemen Pengguna',ch_direct:'Langsung',ch_export:'Ekspor',ch_organic:'Organik',ch_retail:'Eceran',ch_wholesale:'Grosir',confirm_delete_cascade:'Klien ini memiliki catatan terkait. Menghapus akan menghilangkan referensi tersebut. Lanjutkan?',fin_avg_price:'Harga Rata-rata',fin_channel:'Saluran',fin_channel_breakdown:'Pendapatan per Saluran',fin_depreciation:'Depresiasi/bln',fin_gross_profit:'Laba Kotor',fin_net_profit:'Laba Bersih',fin_tax:'Pajak',flock_curve_adjust:'Penyesuaian Kurva',flock_curve_tip:'1.0=standar, 0.85=tropis, 1.1=sedang',optional:'Opsional',pin_invalid:'PIN tidak valid',pin_login:'Masuk',pin_select_user:'Pilih pengguna',
+price_per_mo:'/bulan',trial_ended_title:'Masa uji coba Anda telah berakhir',trial_ended_subtitle:'Pilih paket untuk terus menggunakan EGGlogU — diskon 40% selama 3 bulan pertama',btn_see_plans:'Lihat paket',trial_days_left:'hari tersisa uji coba Enterprise',trial_last_day:'Hari terakhir uji coba!',trial_full_access:'Akses penuh ke semua modul',trial_from_price:'Setelahnya: mulai $5/bulan (diskon 40%)',billing_next_quarter:'Kuartal berikutnya',billing_regular_price:'Harga normal',
+perfil_title:'Profil Saya',perfil_subtitle:'Informasi akun Anda',perfil_name:'Nama lengkap',perfil_member_since:'Anggota sejak',perfil_change_pin:'Ubah PIN',perfil_current_pin:'PIN Saat Ini',perfil_new_pin:'PIN Baru',perfil_confirm_pin:'Konfirmasi PIN',perfil_pin_changed:'PIN berhasil diperbarui',perfil_profile_updated:'Profil diperbarui',perfil_pin_mismatch:'PIN tidak cocok',perfil_wrong_pin:'PIN saat ini salah',
+reassign_title:'Alihkan Akun',reassign_btn:'Alihkan',reassign_new_name:'Nama pemegang baru',reassign_new_email:'Email pemegang baru',reassign_new_pin:'PIN pemegang baru',reassign_confirm:'Konfirmasi Pengalihan',reassign_success:'Akun berhasil dialihkan',reassign_no_self:'Anda tidak dapat mengalihkan diri sendiri',reassign_last_owner:'Tidak dapat mengalihkan pemilik aktif terakhir',reassign_verify:'Verifikasi PIN Anda untuk melanjutkan',reassign_notify:'Notifikasi akan dikirim ke pemegang baru',
+billing_no_permission:'Anda tidak memiliki izin untuk mengakses penagihan',billing_cancel_sub:'Batalkan Langganan',billing_cancel_confirm:'Paket Anda akan tetap aktif hingga {date}. Kami menyarankan untuk mengunduh data Anda sebelum membatalkan.',billing_cancel_success:'Langganan dibatalkan',billing_delete_account:'Hapus Akun',billing_delete_warning:'Tindakan ini TIDAK DAPAT DIBATALKAN. Semua data akan hilang secara permanen.',billing_delete_type_confirm:'Ketik {word} untuk mengonfirmasi',billing_delete_success:'Akun dihapus',billing_current_plan:'Paket Saat Ini',billing_manage_payments:'Kelola Pembayaran',billing_change_plan:'Ubah Paket',billing_download_data:'Unduh Data',
+dt_no_results:'Tidak ada hasil untuk filter yang diterapkan',dt_filters:'filter',dt_selected:'dipilih',dt_deselect:'Batalkan semua',dt_showing:'Menampilkan',dt_records:'data',dt_of:'dari',dt_clear_filters:'Hapus filter',dt_columns:'Kolom',dt_export_csv:'Ekspor CSV',dt_export_excel:'Ekspor Excel',dt_per_page:'Per halaman',dt_sort_asc:'Urutkan naik',dt_sort_desc:'Urutkan turun',dt_filter:'Filter',dt_select_all:'Pilih semua',dt_search:'Cari',dt_page:'Halaman',
+rpt_title:'Laporan & Analisis',rpt_report:'Laporan',rpt_template:'Template',rpt_period:'Periode',rpt_period_total:'Total periode',rpt_generated:'Dibuat',rpt_invalid_template:'Template laporan tidak valid',rpt_tpl_production:'Produksi',rpt_tpl_financial:'Keuangan',rpt_tpl_health:'Kesehatan',rpt_tpl_feed:'Pakan',rpt_tpl_kpi:'KPI',rpt_period_7d:'7 hari terakhir',rpt_period_30d:'30 hari terakhir',rpt_period_90d:'90 hari terakhir',rpt_period_12m:'12 bulan terakhir',rpt_period_custom:'Kustom',rpt_production_summary:'Ringkasan Produksi',rpt_total_eggs:'Total Telur',rpt_avg_day:'Rata-rata/hari',rpt_culled:'Diafkir',rpt_broken_dirty:'Pecah / Kotor',rpt_loss:'kerugian',rpt_daily_production:'Produksi Harian',rpt_size_breakdown:'Distribusi per Ukuran',rpt_flock_breakdown:'Distribusi per Kandang',rpt_broken:'Pecah',rpt_dirty:'Kotor',rpt_financial_pl:'Laba Rugi',rpt_transactions:'transaksi',rpt_margin:'Margin',rpt_overdue:'jatuh tempo',rpt_monthly_trend:'Tren Bulanan',rpt_by_category:'per Kategori',rpt_other:'Lainnya',rpt_health_overview:'Ringkasan Kesehatan',rpt_applied_period:'diberikan dalam periode',rpt_upcoming_vaccines:'Vaksinasi Mendatang',rpt_by_flock:'per Kandang',rpt_feed_efficiency:'Efisiensi Pakan',rpt_hen_day:'ayam/hari',rpt_feed_cost:'Biaya Pakan',rpt_feed_stock:'Stok Pakan',rpt_remaining:'tersisa',rpt_weekly_consumption:'Konsumsi Mingguan',rpt_by_feed_type:'per Jenis Pakan',rpt_kpi_trends:'Tren KPI',rpt_no_snapshots:'Tidak ada data KPI untuk periode ini',rpt_kpi_chart:'Produksi & Bertelur',rpt_kpi_fcr_mort:'FCR & Mortalitas',rpt_type:'Tipe',rpt_xlsx_missing:'Pustaka XLSX tidak tersedia',rpt_pdf_missing:'Pustaka PDF tidak tersedia',rpt_pdf_error:'Error saat ekspor PDF',wf_title:'Otomatisasi',wf_create_rule:'Buat Aturan',wf_active_rules:'Aturan Aktif',wf_executions:'Eksekusi',wf_last_24h:'24 jam terakhir',wf_presets:'Template Bawaan',wf_rules:'Aturan',wf_no_rules:'Tidak ada aturan dikonfigurasi',wf_rule_added:'Aturan ditambahkan',wf_execution_log:'Riwayat Eksekusi',wf_rule:'Aturan',wf_detail:'Detail',wf_last_fired:'Terakhir Dijalankan',wf_test:'Uji',wf_would_trigger:'Akan terpicu',wf_would_not_trigger:'Tidak akan terpicu',wf_rule_name:'Nama aturan',wf_condition:'Kondisi',wf_comparator:'Pembanding',wf_threshold:'Ambang batas',wf_add_action:'Tambah Aksi',wf_cooldown:'Waktu Tunggu',wf_hours:'jam',wf_unnamed_rule:'Aturan tanpa nama',wf_triggered:'Aturan terpicu',wf_invalid_condition:'Kondisi tidak valid',wf_cond_deaths_spike:'Lonjakan Mortalitas',wf_cond_low_production:'Produksi Rendah',wf_cond_feed_stock:'Stok Pakan',wf_cond_vaccine_due:'Vaksin Mendatang',wf_cond_temperature:'Suhu',wf_cond_payment_overdue:'Pembayaran Jatuh Tempo',wf_cond_outbreak_active:'Wabah Aktif',wf_cond_production_target:'Target Produksi',wf_act_notify:'Notifikasi',wf_act_email:'Email',wf_act_auto_log:'Auto-log',wf_act_auto_task:'Auto-tugas',wf_act_update_status:'Update Status',wf_readings_above:'pembacaan di atas',wf_no_target:'Target produksi belum ditentukan',wf_below_target:'di bawah target',storage_warning:'Penyimpanan lokal hampir penuh (>80%). Pertimbangkan untuk menyinkronkan data Anda.',storage_full:'Penyimpanan lokal penuh. Ruang telah dibebaskan secara otomatis.',sync_conflicts:'{n} catatan diperbarui oleh pengguna lain',wf_browser_note:'Aturan otomatisasi dievaluasi saat browser terbuka.'
 }
 ,ar:{
 save:'حفظ',cancel:'إلغاء',delete:'حذف',edit:'تعديل',add:'إضافة',close:'إغلاق',actions:'إجراءات',date:'التاريخ',notes:'ملاحظات',name:'الاسم',phone:'الهاتف',email:'البريد الإلكتروني',address:'العنوان',confirm_delete:'حذف هذا السجل؟',no_data:'لا توجد بيانات مسجلة',total:'الإجمالي',all:'الكل',loading:'جارٍ التحميل',search:'بحث',from:'من',to:'إلى',status:'الحالة',export_csv:'تصدير CSV',today:'اليوم',active:'نشط',inactive:'غير نشط',
@@ -655,7 +715,7 @@ ops_log_cat_general:'عام',ops_log_cat_health:'صحة',ops_log_cat_production:
 ops_per_name:'الاسم',ops_per_role:'الدور',ops_per_salary:'الراتب',ops_per_start:'تاريخ البدء',ops_per_active:'نشط',ops_per_add:'إضافة موظف',
 env_title:'الظروف البيئية',env_add:'سجل جديد',env_temp:'الحرارة (°C)',env_humidity:'الرطوبة (%)',env_light:'ساعات الإضاءة',env_ventilation:'التهوية',env_density:'الكثافة (طائر/م²)',env_optimal:'النطاق المثالي',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 ساعة',env_density_range:'4-5 طائر/م²',
 cfg_title:'الإعدادات',cfg_farm:'بيانات المزرعة',cfg_farm_name:'اسم المزرعة',cfg_location:'الموقع',cfg_capacity:'السعة (طائر)',cfg_currency:'العملة',cfg_alerts:'حدود التنبيهات',cfg_min_feed:'أدنى مخزون علف (كغ)',cfg_max_mortality:'أقصى نفوق (%)',cfg_alert_days:'أيام التنبيه المسبق',cfg_data:'البيانات',cfg_export:'تصدير (JSON)',cfg_import:'استيراد (JSON)',cfg_reset:'حذف الكل',cfg_reset_confirm:'حذف جميع البيانات نهائياً؟',cfg_saved:'تم الحفظ',cfg_exported:'تم تصدير البيانات',cfg_imported:'تم استيراد البيانات',cfg_reset_done:'تم حذف البيانات',cfg_checklist:'قائمة المهام الافتراضية',cfg_checklist_items:'مهام القائمة اليومية',cfg_theme:'سمة الألوان',cfg_theme_blue:'أزرق داكن',cfg_theme_green:'أخضر',cfg_theme_purple:'بنفسجي',cfg_theme_black:'أسود',
-sidebar_subtitle:'نظام دواجن 360°',prod_shell_white:'أبيض',prod_shell_brown:'بني',prod_shell_cream:'كريمي',required:'حقل مطلوب',no_flocks_birthdate:'لا توجد قطعان بتاريخ فقس',vac_select_flocks:'اختر القطعان لتوليد الجدول:',feed_type_placeholder:'بياض، بادئ، إلخ.',avg_per_day:'متوسط/يوم',per_flock:'القطيع',history:'السجل',env_latest_reading:'آخر قراءة',env_ok:'جيد',env_out_of_range:'خارج النطاق',data_stats:'إحصائيات البيانات',final_warning:'⚠️ تحذير أخير — سيتم حذف جميع البيانات',total_salaries:'إجمالي الرواتب',eggs_unit:'بيضة',csv_income:'إيراد',csv_expense:'مصروف',fcr_unit:'كغ علف/كغ بيض',lc_feed_starter:'بادئ',lc_feed_grower:'نامي',lc_feed_developer:'مطوّر',lc_feed_prelay:'ما قبل الإنتاج',lc_feed_layer:'بياض',lc_feed_lowlay:'انخفاض إنتاج',lc_prod_label:'إنتاج',lc_prod_first:'أول بيض',lc_mile_1:'لقاحات Marek، Newcastle+IB، Gumboro',lc_mile_2:'جرعة معززة Newcastle، نمو الريش',lc_mile_3:'جدري الدواجن، AE، الزكام المعدي، Salmonella',lc_mile_4:'جرعة معززة Newcastle+IB، تغيير العلف، 16 ساعة إضاءة',lc_mile_5:'ذروة الإنتاج أسبوع 26-30، مراقبة FCR',lc_mile_6:'جرعة معززة Newcastle كل 8-12 أسبوع، تقييم الربحية',lc_mile_7:'تقييم الاستبعاد مقابل القلش الإجباري',lc_mile_8:'بيع الطيور المستبعدة، تنظيف العنبر',vac_route_injection:'حقن',vac_route_ocular:'رش عيني/رذاذ',vac_route_water:'مياه الشرب',vac_route_wing:'وخز الجناح',snapshots:'لقطات',error_prefix:'خطأ',chk_collect_eggs:'جمع البيض',chk_feed_birds:'تقديم العلف',chk_check_water:'فحص المياه',chk_check_health:'فحص الصحة',chk_cleaning:'التنظيف',chk_record_temp:'تسجيل الحرارة',
+sidebar_subtitle:'إدارة دواجن ذكية',prod_shell_white:'أبيض',prod_shell_brown:'بني',prod_shell_cream:'كريمي',required:'حقل مطلوب',no_flocks_birthdate:'لا توجد قطعان بتاريخ فقس',vac_select_flocks:'اختر القطعان لتوليد الجدول:',feed_type_placeholder:'بياض، بادئ، إلخ.',avg_per_day:'متوسط/يوم',per_flock:'القطيع',history:'السجل',env_latest_reading:'آخر قراءة',env_ok:'جيد',env_out_of_range:'خارج النطاق',data_stats:'إحصائيات البيانات',final_warning:'⚠️ تحذير أخير — سيتم حذف جميع البيانات',total_salaries:'إجمالي الرواتب',eggs_unit:'بيضة',csv_income:'إيراد',csv_expense:'مصروف',fcr_unit:'كغ علف/كغ بيض',lc_feed_starter:'بادئ',lc_feed_grower:'نامي',lc_feed_developer:'مطوّر',lc_feed_prelay:'ما قبل الإنتاج',lc_feed_layer:'بياض',lc_feed_lowlay:'انخفاض إنتاج',lc_prod_label:'إنتاج',lc_prod_first:'أول بيض',lc_mile_1:'لقاحات Marek، Newcastle+IB، Gumboro',lc_mile_2:'جرعة معززة Newcastle، نمو الريش',lc_mile_3:'جدري الدواجن، AE، الزكام المعدي، Salmonella',lc_mile_4:'جرعة معززة Newcastle+IB، تغيير العلف، 16 ساعة إضاءة',lc_mile_5:'ذروة الإنتاج أسبوع 26-30، مراقبة FCR',lc_mile_6:'جرعة معززة Newcastle كل 8-12 أسبوع، تقييم الربحية',lc_mile_7:'تقييم الاستبعاد مقابل القلش الإجباري',lc_mile_8:'بيع الطيور المستبعدة، تنظيف العنبر',vac_route_injection:'حقن',vac_route_ocular:'رش عيني/رذاذ',vac_route_water:'مياه الشرب',vac_route_wing:'وخز الجناح',snapshots:'لقطات',error_prefix:'خطأ',chk_collect_eggs:'جمع البيض',chk_feed_birds:'تقديم العلف',chk_check_water:'فحص المياه',chk_check_health:'فحص الصحة',chk_cleaning:'التنظيف',chk_record_temp:'تسجيل الحرارة',
 weather_title:'الطقس',weather_temp:'الحرارة',weather_humidity:'الرطوبة',weather_wind:'الرياح',weather_forecast:'توقعات 3 أيام',weather_no_key:'حدد موقع المزرعة لعرض الطقس',weather_heat_alert:'تنبيه إجهاد حراري',weather_thi:'مؤشر THI',weather_feels:'الإحساس الحراري',weather_last_update:'آخر تحديث',weather_test:'اختبار',
 geo_set_location:'موقع المزرعة',geo_use_gps:'استخدام GPS',geo_click_map:'انقر على الخريطة لتحديد الموقع',geo_lat:'خط العرض',geo_lng:'خط الطول',geo_saved:'تم حفظ الموقع',
 iot_title:'أجهزة استشعار IoT',iot_broker:'وسيط MQTT (wss://)',iot_user:'مستخدم MQTT',iot_pass:'كلمة مرور MQTT',iot_topic:'بادئة الموضوع',iot_connect:'اتصال',iot_disconnect:'قطع الاتصال',iot_live:'IoT مباشر',iot_no_config:'قم بإعداد MQTT في الإعدادات',iot_save_reading:'حفظ القراءة الحالية',iot_connected:'متصل',iot_disconnected:'غير متصل',iot_ammonia:'أمونيا',iot_light:'إضاءة',iot_lux:'lux',iot_ppm:'ppm',
@@ -686,9 +746,15 @@ ana_segment_profit:'الربحية حسب الشريحة',cfg_accessibility:'إ�
 rec_title:'التوصيات',rec_dismiss:'تجاهل',rec_check_diet:'تحقق من النظام الغذائي / تصميم العلف / استبعد الأمراض',rec_check_env:'تحقق من البيئة / الأمراض / الإجهاد فوراً',rec_below_curve:'أقل من الإنتاج القياسي — تحقق من الإجهاد والإضاءة والعلف',rec_buy_feed:'جدولة شراء الأعلاف',rec_record_env:'سجّل الظروف البيئية',rec_disinfect:'نفّذ بروتوكول تعقيم المنطقة',rec_heat_plan:'إجهاد حراري مطوّل — فعّل خطة التبريد',rec_lab_samples:'خذ عينات للمختبر',rec_ventilation:'زِد التهوية، تحقق من المياه العذبة',
 auth_welcome:'تم إنشاء الحساب. مرحباً!',auth_error:'بيانات اعتماد غير صالحة',auth_first_run:'أول مرة: أدخل اسم المستخدم وكلمة المرور لإنشاء حسابك.',login_subtitle:'سجّل الدخول أو أنشئ حسابك',logout:'تسجيل الخروج',required:'حقل مطلوب',invalid_email:'بريد إلكتروني غير صالح',invalid_phone:'هاتف غير صالح',must_be_number:'يجب أن يكون رقماً',invalid_date:'تاريخ غير صالح',invalid_format:'تنسيق غير صالح',min_length:'الحد الأدنى للطول',max_length:'الحد الأقصى للطول',min_value:'الحد الأدنى للقيمة',max_value:'الحد الأقصى للقيمة',error_network:'خطأ في الشبكة',error_unexpected:'خطأ غير متوقع',error_loading:'خطأ في التحميل',
 ana_economics:'الاقتصاد',flock_purchase_cost:'تكلفة الطائر',econ_cost_per_egg:'التكلفة/بيضة',econ_roi_per_bird:'العائد/طائر',econ_acquisition:'الاقتناء',econ_feed_cost:'تكلفة العلف',econ_health_cost:'تكلفة الصحة',econ_direct_expenses:'مصاريف مباشرة',econ_total_investment:'إجمالي الاستثمار',econ_total_costs:'إجمالي التكاليف',econ_net_result:'صافي النتيجة',econ_daily_cost_bird:'التكلفة اليومية/طائر',econ_days_active:'أيام النشاط',econ_no_data_guide:'أدخل تكاليف الشراء في القطعان، والمصروفات في المالية، والتكاليف في اللقاحات/الأدوية لعرض التحليل الاقتصادي.',exp_flock:'القطيع (اختياري)',health_cost:'التكلفة',econ_org_summary:'ملخص المنظمة',econ_cost_breakdown:'تفصيل التكاليف',econ_completeness:'البيانات المتاحة',
-nav_census:'السحوبات',inv_total_in:'إجمالي الوارد',inv_total_out:'إجمالي الصادر',inv_balance:'الرصيد',inv_records:'السجلات',inv_by_type:'حسب نوع البيض',source:'المصدر',fin_egg_type:'النوع',
+nav_census:'السحوبات',nav_reports:'التقارير',nav_automation:'الأتمتة',inv_total_in:'إجمالي الوارد',inv_total_out:'إجمالي الصادر',inv_balance:'الرصيد',inv_records:'السجلات',inv_by_type:'حسب نوع البيض',source:'المصدر',fin_egg_type:'النوع',
 kpi_info_today:'البيض المجموع اليوم من جميع القطعان النشطة.',kpi_info_henday:'نسبة الدجاج التي أنتجت اليوم. المثالي: >85%.',kpi_info_fcr:'كغ علف لكل كغ بيض منتج. الأقل أفضل. المثالي: <2.2.',kpi_info_mortality:'نسبة النفوق التراكمية من إجمالي الطيور. المستهدف: <3%.',kpi_info_cost_egg:'إجمالي التكلفة (علف + صحة + مصاريف) مقسوماً على البيض المنتج.',kpi_info_income_net:'إيرادات المبيعات مطروحاً منها جميع المصروفات للشهر الحالي.',kpi_info_active_hens:'إجمالي الدجاج الحي في القطعان النشطة حالياً.',kpi_info_alerts:'عدد الحالات التي تتطلب انتباهك الفوري.',info_fin_income:'مجموع جميع المبيعات والدخل هذا الشهر.',info_fin_expenses:'إجمالي نفقات التشغيل: علف، صحة، عمليات.',info_fin_gross:'الإيرادات ناقص التكاليف المباشرة (قبل الضرائب).',info_fin_dep:'الاستهلاك الشهري لقيمة الأصول.',info_fin_tax:'الضريبة المقدرة على إجمالي الربح.',info_fin_net:'الربح النهائي بعد الاستهلاك والضرائب.',info_fin_cpe:'التكلفة الإجمالية مقسومة على البيض المنتج.',info_fin_be:'البيض اللازم لتغطية جميع التكاليف.',info_feed_stock:'كجم العلف المتوفر حالياً.',info_feed_purchases:'إجمالي العلف المشترى والتكلفة التراكمية.',info_feed_consumption:'كجم العلف المستهلك من الطيور.',info_cli_total:'إجمالي عدد العملاء المسجلين.',info_clm_total:'إجمالي شكاوى العملاء.',info_clm_sat:'متوسط الرضا بعد الحل (1-5 نجوم).',info_inv_in:'إجمالي البيض الداخل للمخزون.',info_inv_out:'إجمالي البيض الخارج من المخزون.',info_inv_balance:'البيض المتاح: الداخل ناقص الخارج.',info_inv_records:'عدد حركات المخزون المسجلة.',info_bio_pest:'مؤشر ضغط الآفات (0-100).',info_bio_visitors:'الأشخاص الخارجيون الذين دخلوا المزرعة.',info_bio_zones:'مناطق ببروتوكولات الأمن الحيوي.',info_health_score:'مؤشر صحة القطيع (0-100).',info_outbreaks:'تفشي أمراض نشطة.',info_vaccines:'لقاحات في انتظار التطبيق.',info_env_humidity:'نطاق الرطوبة النسبية المثالي.',info_env_light:'ساعات الإضاءة الموصى بها.',info_env_density:'الطيور لكل متر مربع الموصى بها.',
-ana_channel_pricing:'التسعير حسب القناة',cfg_action:'إجراء',cfg_add_user:'+ إضافة مستخدم',cfg_asset_value:'إجمالي قيمة الأصول',cfg_audit:'سجل المراجعة',cfg_backup_na:'واجهة التخزين المؤقت غير متوفرة في هذا المتصفح.',cfg_backups:'نسخ احتياطي تلقائي',cfg_dep_years:'الإهلاك (سنوات)',cfg_detail:'تفاصيل',cfg_digits:'أرقام',cfg_loading:'جاري التحميل...',cfg_module:'وحدة',cfg_no_backups:'لا توجد نسخ احتياطية تلقائية بعد.',cfg_no_users:'لا يوجد مستخدمون.',cfg_restore:'استعادة',cfg_restore_confirm:'استعادة من هذه النسخة؟',cfg_restored:'تم استعادة النسخة',cfg_role:'الدور',cfg_size:'الحجم',cfg_storage:'استخدام التخزين',cfg_tax:'الضرائب والإهلاك',cfg_tax_rate:'معدل الضريبة (%)',cfg_timestamp:'الوقت',cfg_user:'مستخدم',cfg_users:'إدارة المستخدمين',ch_direct:'مباشر',ch_export:'تصدير',ch_organic:'عضوي',ch_retail:'تجزئة',ch_wholesale:'جملة',confirm_delete_cascade:'هذا العميل لديه سجلات مرتبطة. الحذف سيزيل تلك المراجع. متابعة؟',fin_avg_price:'متوسط السعر',fin_channel:'القناة',fin_channel_breakdown:'الإيرادات حسب القناة',fin_depreciation:'الإهلاك/شهر',fin_gross_profit:'الربح الإجمالي',fin_net_profit:'صافي الربح',fin_tax:'الضريبة',flock_curve_adjust:'تعديل المنحنى',flock_curve_tip:'1.0=قياسي, 0.85=استوائي, 1.1=معتدل',optional:'اختياري',pin_invalid:'رمز PIN غير صالح',pin_login:'تسجيل الدخول',pin_select_user:'اختر المستخدم'
+ana_channel_pricing:'التسعير حسب القناة',cfg_action:'إجراء',cfg_add_user:'+ إضافة مستخدم',cfg_asset_value:'إجمالي قيمة الأصول',cfg_audit:'سجل المراجعة',cfg_backup_na:'واجهة التخزين المؤقت غير متوفرة في هذا المتصفح.',cfg_backups:'نسخ احتياطي تلقائي',cfg_dep_years:'الإهلاك (سنوات)',cfg_detail:'تفاصيل',cfg_digits:'أرقام',cfg_loading:'جاري التحميل...',cfg_module:'وحدة',cfg_no_backups:'لا توجد نسخ احتياطية تلقائية بعد.',cfg_no_users:'لا يوجد مستخدمون.',cfg_restore:'استعادة',cfg_restore_confirm:'استعادة من هذه النسخة؟',cfg_restored:'تم استعادة النسخة',cfg_role:'الدور',cfg_size:'الحجم',cfg_storage:'استخدام التخزين',cfg_tax:'الضرائب والإهلاك',cfg_tax_rate:'معدل الضريبة (%)',cfg_timestamp:'الوقت',cfg_user:'مستخدم',cfg_users:'إدارة المستخدمين',ch_direct:'مباشر',ch_export:'تصدير',ch_organic:'عضوي',ch_retail:'تجزئة',ch_wholesale:'جملة',confirm_delete_cascade:'هذا العميل لديه سجلات مرتبطة. الحذف سيزيل تلك المراجع. متابعة؟',fin_avg_price:'متوسط السعر',fin_channel:'القناة',fin_channel_breakdown:'الإيرادات حسب القناة',fin_depreciation:'الإهلاك/شهر',fin_gross_profit:'الربح الإجمالي',fin_net_profit:'صافي الربح',fin_tax:'الضريبة',flock_curve_adjust:'تعديل المنحنى',flock_curve_tip:'1.0=قياسي, 0.85=استوائي, 1.1=معتدل',optional:'اختياري',pin_invalid:'رمز PIN غير صالح',pin_login:'تسجيل الدخول',pin_select_user:'اختر المستخدم',
+price_per_mo:'/شهر',trial_ended_title:'انتهت فترة التجربة',trial_ended_subtitle:'اختر خطة لمتابعة استخدام EGGlogU — خصم 40% في أول 3 أشهر',btn_see_plans:'عرض الخطط',trial_days_left:'أيام متبقية من تجربة Enterprise',trial_last_day:'آخر يوم في الفترة التجريبية!',trial_full_access:'وصول كامل لجميع الوحدات',trial_from_price:'بعد ذلك: من $5/شهر (خصم 40%)',billing_next_quarter:'الربع القادم',billing_regular_price:'السعر العادي',
+perfil_title:'ملفي الشخصي',perfil_subtitle:'معلومات حسابك',perfil_name:'الاسم الكامل',perfil_member_since:'عضو منذ',perfil_change_pin:'تغيير رمز PIN',perfil_current_pin:'رمز PIN الحالي',perfil_new_pin:'رمز PIN الجديد',perfil_confirm_pin:'تأكيد رمز PIN',perfil_pin_changed:'تم تحديث رمز PIN بنجاح',perfil_profile_updated:'تم تحديث الملف الشخصي',perfil_pin_mismatch:'رموز PIN غير متطابقة',perfil_wrong_pin:'رمز PIN الحالي غير صحيح',
+reassign_title:'إعادة تعيين الحساب',reassign_btn:'إعادة تعيين',reassign_new_name:'اسم المالك الجديد',reassign_new_email:'بريد المالك الجديد',reassign_new_pin:'رمز PIN للمالك الجديد',reassign_confirm:'تأكيد إعادة التعيين',reassign_success:'تم إعادة تعيين الحساب بنجاح',reassign_no_self:'لا يمكنك إعادة تعيين نفسك',reassign_last_owner:'لا يمكن إعادة تعيين المالك النشط الأخير',reassign_verify:'تحقق من رمز PIN الخاص بك للمتابعة',reassign_notify:'سيتم إرسال إشعار للمالك الجديد',
+billing_no_permission:'ليس لديك صلاحية للوصول إلى الفوترة',billing_cancel_sub:'إلغاء الاشتراك',billing_cancel_confirm:'ستبقى خطتك نشطة حتى {date}. نوصي بتنزيل بياناتك قبل الإلغاء.',billing_cancel_success:'تم إلغاء الاشتراك',billing_delete_account:'حذف الحساب',billing_delete_warning:'هذا الإجراء لا رجعة فيه. ستفقد جميع البيانات نهائياً.',billing_delete_type_confirm:'اكتب {word} للتأكيد',billing_delete_success:'تم حذف الحساب',billing_current_plan:'الخطة الحالية',billing_manage_payments:'إدارة المدفوعات',billing_change_plan:'تغيير الخطة',billing_download_data:'تنزيل البيانات',
+dt_no_results:'لا توجد نتائج للفلاتر المطبقة',dt_filters:'فلاتر',dt_selected:'محدد',dt_deselect:'إلغاء تحديد الكل',dt_showing:'عرض',dt_records:'سجلات',dt_of:'من',dt_clear_filters:'مسح الفلاتر',dt_columns:'أعمدة',dt_export_csv:'تصدير CSV',dt_export_excel:'تصدير Excel',dt_per_page:'لكل صفحة',dt_sort_asc:'ترتيب تصاعدي',dt_sort_desc:'ترتيب تنازلي',dt_filter:'تصفية',dt_select_all:'تحديد الكل',dt_search:'بحث',dt_page:'صفحة',
+rpt_title:'التقارير والتحليلات',rpt_report:'تقرير',rpt_template:'قالب',rpt_period:'الفترة',rpt_period_total:'إجمالي الفترة',rpt_generated:'تاريخ الإنشاء',rpt_invalid_template:'قالب تقرير غير صالح',rpt_tpl_production:'الإنتاج',rpt_tpl_financial:'المالية',rpt_tpl_health:'الصحة',rpt_tpl_feed:'العلف',rpt_tpl_kpi:'مؤشرات الأداء',rpt_period_7d:'آخر 7 أيام',rpt_period_30d:'آخر 30 يوم',rpt_period_90d:'آخر 90 يوم',rpt_period_12m:'آخر 12 شهر',rpt_period_custom:'مخصص',rpt_production_summary:'ملخص الإنتاج',rpt_total_eggs:'إجمالي البيض',rpt_avg_day:'المتوسط/يوم',rpt_culled:'مستبعد',rpt_broken_dirty:'مكسور / متسخ',rpt_loss:'خسارة',rpt_daily_production:'الإنتاج اليومي',rpt_size_breakdown:'توزيع حسب الحجم',rpt_flock_breakdown:'توزيع حسب القطيع',rpt_broken:'مكسور',rpt_dirty:'متسخ',rpt_financial_pl:'بيان الأرباح والخسائر',rpt_transactions:'معاملات',rpt_margin:'الهامش',rpt_overdue:'متأخر',rpt_monthly_trend:'الاتجاه الشهري',rpt_by_category:'حسب الفئة',rpt_other:'أخرى',rpt_health_overview:'نظرة صحية عامة',rpt_applied_period:'تم تطبيقها في الفترة',rpt_upcoming_vaccines:'التطعيمات القادمة',rpt_by_flock:'حسب القطيع',rpt_feed_efficiency:'كفاءة العلف',rpt_hen_day:'دجاجة/يوم',rpt_feed_cost:'تكلفة العلف',rpt_feed_stock:'مخزون العلف',rpt_remaining:'متبقي',rpt_weekly_consumption:'الاستهلاك الأسبوعي',rpt_by_feed_type:'حسب نوع العلف',rpt_kpi_trends:'اتجاهات مؤشرات الأداء',rpt_no_snapshots:'لا توجد بيانات مؤشرات لهذه الفترة',rpt_kpi_chart:'الإنتاج والبياض',rpt_kpi_fcr_mort:'معدل التحويل والنفوق',rpt_type:'النوع',rpt_xlsx_missing:'مكتبة XLSX غير متوفرة',rpt_pdf_missing:'مكتبات PDF غير متوفرة',rpt_pdf_error:'خطأ في تصدير PDF',wf_title:'الأتمتة',wf_create_rule:'إنشاء قاعدة',wf_active_rules:'القواعد النشطة',wf_executions:'عمليات التنفيذ',wf_last_24h:'آخر 24 ساعة',wf_presets:'قوالب جاهزة',wf_rules:'القواعد',wf_no_rules:'لا توجد قواعد مكوّنة',wf_rule_added:'تمت إضافة القاعدة',wf_execution_log:'سجل التنفيذ',wf_rule:'قاعدة',wf_detail:'التفاصيل',wf_last_fired:'آخر تنفيذ',wf_test:'اختبار',wf_would_trigger:'سيتم التشغيل',wf_would_not_trigger:'لن يتم التشغيل',wf_rule_name:'اسم القاعدة',wf_condition:'الشرط',wf_comparator:'المقارن',wf_threshold:'الحد',wf_add_action:'إضافة إجراء',wf_cooldown:'وقت الانتظار',wf_hours:'ساعات',wf_unnamed_rule:'قاعدة بدون اسم',wf_triggered:'تم تشغيل القاعدة',wf_invalid_condition:'شرط غير صالح',wf_cond_deaths_spike:'ارتفاع النفوق',wf_cond_low_production:'إنتاج منخفض',wf_cond_feed_stock:'مخزون العلف',wf_cond_vaccine_due:'تطعيم مستحق',wf_cond_temperature:'الحرارة',wf_cond_payment_overdue:'دفعة متأخرة',wf_cond_outbreak_active:'تفشي نشط',wf_cond_production_target:'هدف الإنتاج',wf_act_notify:'إشعار',wf_act_email:'بريد',wf_act_auto_log:'تسجيل تلقائي',wf_act_auto_task:'مهمة تلقائية',wf_act_update_status:'تحديث الحالة',wf_readings_above:'قراءات فوق',wf_no_target:'لم يتم تحديد هدف الإنتاج',wf_below_target:'أقل من الهدف',storage_warning:'التخزين المحلي ممتلئ تقريباً (>80%). يُرجى مزامنة بياناتك.',storage_full:'التخزين المحلي ممتلئ. تم تحرير المساحة تلقائياً.',sync_conflicts:'{n} سجل(ات) تم تحديثها بواسطة مستخدم آخر',wf_browser_note:'يتم تقييم قواعد الأتمتة أثناء فتح المتصفح.'
 },ko:{
 save:'저장',cancel:'취소',delete:'삭제',edit:'수정',add:'추가',close:'닫기',actions:'작업',date:'날짜',notes:'메모',name:'이름',phone:'전화',email:'이메일',address:'주소',confirm_delete:'이 기록을 삭제하시겠습니까?',no_data:'기록된 데이터 없음',total:'합계',all:'전체',loading:'로딩 중',search:'검색',from:'시작',to:'종료',status:'상태',export_csv:'CSV 내보내기',today:'오늘',active:'활성',inactive:'비활성',
 nav_dashboard:'대시보드',nav_production:'생산',nav_flocks:'계군',nav_health:'건강',nav_feed:'사료',nav_clients:'고객',nav_finances:'재무',nav_analysis:'분석',nav_operations:'운영',nav_environment:'환경',nav_config:'설정',nav_support:'지원',nav_admin:'SaaS 관리',nav_inventory:'재고',nav_superadmin:'최고관리자',grp_production:'생산',grp_health:'건강',grp_commercial:'영업',grp_management:'관리',grp_system:'시스템',grp_superadmin:'최고관리자',
@@ -713,7 +779,7 @@ ops_log_cat_general:'일반',ops_log_cat_health:'건강',ops_log_cat_production:
 ops_per_name:'이름',ops_per_role:'직책',ops_per_salary:'급여',ops_per_start:'입사일',ops_per_active:'활성',ops_per_add:'인력 추가',
 env_title:'환경 조건',env_add:'새 기록',env_temp:'온도 (°C)',env_humidity:'습도 (%)',env_light:'조명 시간',env_ventilation:'환기',env_density:'사육 밀도 (수/m²)',env_optimal:'적정 범위',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16시간',env_density_range:'4-5수/m²',
 cfg_title:'설정',cfg_farm:'농장 정보',cfg_farm_name:'농장 이름',cfg_location:'위치',cfg_capacity:'수용 능력 (수)',cfg_currency:'통화',cfg_alerts:'알림 기준값',cfg_min_feed:'최소 사료 재고 (kg)',cfg_max_mortality:'최대 폐사율 (%)',cfg_alert_days:'사전 알림 일수',cfg_data:'데이터',cfg_export:'내보내기 (JSON)',cfg_import:'가져오기 (JSON)',cfg_reset:'전체 삭제',cfg_reset_confirm:'모든 데이터를 영구적으로 삭제하시겠습니까?',cfg_saved:'저장됨',cfg_exported:'데이터 내보내기 완료',cfg_imported:'데이터 가져오기 완료',cfg_reset_done:'데이터 삭제 완료',cfg_checklist:'기본 체크리스트',cfg_checklist_items:'일일 체크리스트 항목',cfg_theme:'색상 테마',cfg_theme_blue:'네이비 블루',cfg_theme_green:'그린',cfg_theme_purple:'퍼플',cfg_theme_black:'블랙',
-sidebar_subtitle:'양계 시스템 360°',prod_shell_white:'백색',prod_shell_brown:'갈색',prod_shell_cream:'크림색',required:'필수 항목',no_flocks_birthdate:'부화일이 있는 계군 없음',vac_select_flocks:'일정 생성할 계군을 선택하세요:',feed_type_placeholder:'산란계용, 초이용 등',avg_per_day:'일평균',per_flock:'계군',history:'이력',env_latest_reading:'최근 측정값',env_ok:'정상',env_out_of_range:'범위 초과',data_stats:'데이터 통계',final_warning:'⚠️ 최종 경고 — 모든 데이터가 삭제됩니다',total_salaries:'총 급여',eggs_unit:'개',csv_income:'수입',csv_expense:'지출',fcr_unit:'kg 사료/kg 계란',lc_feed_starter:'초이',lc_feed_grower:'육성이',lc_feed_developer:'중추이',lc_feed_prelay:'산란 전이',lc_feed_layer:'산란이',lc_feed_lowlay:'저산란이',lc_prod_label:'생산',lc_prod_first:'초산',lc_mile_1:'Marek, Newcastle+IB, Gumboro 백신',lc_mile_2:'Newcastle 추가 접종, 깃털 발달',lc_mile_3:'계두, AE, 전염성 코리자, Salmonella',lc_mile_4:'Newcastle+IB 추가 접종, 사료 변경, 16시간 점등',lc_mile_5:'산란 최성기 26-30주, FCR 모니터링',lc_mile_6:'Newcastle 추가 접종 8-12주 간격, 수익성 평가',lc_mile_7:'도태 또는 강제 환우 평가',lc_mile_8:'도태계 판매, 계사 청소',vac_route_injection:'주사',vac_route_ocular:'점안/분무',vac_route_water:'음수',vac_route_wing:'익막',snapshots:'스냅샷',error_prefix:'오류',chk_collect_eggs:'집란',chk_feed_birds:'급이',chk_check_water:'급수 확인',chk_check_health:'건강 확인',chk_cleaning:'청소',chk_record_temp:'온도 기록',
+sidebar_subtitle:'스마트 양계 관리',prod_shell_white:'백색',prod_shell_brown:'갈색',prod_shell_cream:'크림색',required:'필수 항목',no_flocks_birthdate:'부화일이 있는 계군 없음',vac_select_flocks:'일정 생성할 계군을 선택하세요:',feed_type_placeholder:'산란계용, 초이용 등',avg_per_day:'일평균',per_flock:'계군',history:'이력',env_latest_reading:'최근 측정값',env_ok:'정상',env_out_of_range:'범위 초과',data_stats:'데이터 통계',final_warning:'⚠️ 최종 경고 — 모든 데이터가 삭제됩니다',total_salaries:'총 급여',eggs_unit:'개',csv_income:'수입',csv_expense:'지출',fcr_unit:'kg 사료/kg 계란',lc_feed_starter:'초이',lc_feed_grower:'육성이',lc_feed_developer:'중추이',lc_feed_prelay:'산란 전이',lc_feed_layer:'산란이',lc_feed_lowlay:'저산란이',lc_prod_label:'생산',lc_prod_first:'초산',lc_mile_1:'Marek, Newcastle+IB, Gumboro 백신',lc_mile_2:'Newcastle 추가 접종, 깃털 발달',lc_mile_3:'계두, AE, 전염성 코리자, Salmonella',lc_mile_4:'Newcastle+IB 추가 접종, 사료 변경, 16시간 점등',lc_mile_5:'산란 최성기 26-30주, FCR 모니터링',lc_mile_6:'Newcastle 추가 접종 8-12주 간격, 수익성 평가',lc_mile_7:'도태 또는 강제 환우 평가',lc_mile_8:'도태계 판매, 계사 청소',vac_route_injection:'주사',vac_route_ocular:'점안/분무',vac_route_water:'음수',vac_route_wing:'익막',snapshots:'스냅샷',error_prefix:'오류',chk_collect_eggs:'집란',chk_feed_birds:'급이',chk_check_water:'급수 확인',chk_check_health:'건강 확인',chk_cleaning:'청소',chk_record_temp:'온도 기록',
 weather_title:'날씨',weather_temp:'온도',weather_humidity:'습도',weather_wind:'바람',weather_forecast:'3일 예보',weather_no_key:'날씨를 보려면 농장 위치를 설정하세요',weather_heat_alert:'열 스트레스 경보',weather_thi:'THI 지수',weather_feels:'체감 온도',weather_last_update:'최종 업데이트',weather_test:'테스트',
 geo_set_location:'농장 위치',geo_use_gps:'GPS 사용',geo_click_map:'지도를 클릭하여 위치 설정',geo_lat:'위도',geo_lng:'경도',geo_saved:'위치 저장됨',
 iot_title:'IoT 센서',iot_broker:'MQTT 브로커 (wss://)',iot_user:'MQTT 사용자',iot_pass:'MQTT 비밀번호',iot_topic:'토픽 접두사',iot_connect:'연결',iot_disconnect:'연결 해제',iot_live:'IoT 실시간',iot_no_config:'설정에서 MQTT를 구성하세요',iot_save_reading:'현재 측정값 저장',iot_connected:'연결됨',iot_disconnected:'연결 해제됨',iot_ammonia:'암모니아',iot_light:'조도',iot_lux:'lux',iot_ppm:'ppm',
@@ -744,9 +810,15 @@ ana_segment_profit:'부문별 수익성',cfg_accessibility:'접근성',
 rec_title:'권장 사항',rec_dismiss:'무시',rec_check_diet:'사료 배합 / 사료 설계 / 질병 여부 확인',rec_check_env:'환경 / 질병 / 스트레스 즉시 확인',rec_below_curve:'표준 생산량 미달 — 스트레스, 점등, 사료 확인',rec_buy_feed:'사료 구매 일정 수립',rec_record_env:'환경 조건 기록',rec_disinfect:'구역 소독 프로토콜 실행',rec_heat_plan:'장기 열 스트레스 — 냉각 계획 가동',rec_lab_samples:'검체 채취하여 실험실 제출',rec_ventilation:'환기 증가, 신선한 물 확인',
 auth_welcome:'계정이 생성되었습니다. 환영합니다!',auth_error:'잘못된 자격 증명',auth_first_run:'처음 사용: 사용자 이름과 비밀번호를 입력하여 계정을 생성하세요.',login_subtitle:'로그인 또는 계정 생성',logout:'로그아웃',required:'필수 항목',invalid_email:'잘못된 이메일',invalid_phone:'잘못된 전화번호',must_be_number:'숫자여야 합니다',invalid_date:'잘못된 날짜',invalid_format:'잘못된 형식',min_length:'최소 길이',max_length:'최대 길이',min_value:'최솟값',max_value:'최댓값',error_network:'네트워크 오류',error_unexpected:'예기치 않은 오류',error_loading:'로딩 오류',
 ana_economics:'경제성',flock_purchase_cost:'수당 비용',econ_cost_per_egg:'계란당 비용',econ_roi_per_bird:'수당 ROI',econ_acquisition:'입식',econ_feed_cost:'사료비',econ_health_cost:'위생비',econ_direct_expenses:'직접 경비',econ_total_investment:'총 투자',econ_total_costs:'총 비용',econ_net_result:'순이익',econ_daily_cost_bird:'일일 수당 비용',econ_days_active:'활성 일수',econ_no_data_guide:'경제 분석을 보려면 계군에 구매 비용, 재무에 지출, 백신/약품에 비용을 입력하세요.',exp_flock:'계군 (선택)',health_cost:'비용',econ_org_summary:'조직 요약',econ_cost_breakdown:'비용 내역',econ_completeness:'데이터 완성도',
-nav_census:'출고',inv_total_in:'총 입고',inv_total_out:'총 출고',inv_balance:'잔고',inv_records:'기록',inv_by_type:'계란 유형별',source:'출처',fin_egg_type:'유형',
+nav_census:'출고',nav_reports:'보고서',nav_automation:'자동화',inv_total_in:'총 입고',inv_total_out:'총 출고',inv_balance:'잔고',inv_records:'기록',inv_by_type:'계란 유형별',source:'출처',fin_egg_type:'유형',
 kpi_info_today:'모든 활성 계군에서 오늘 수집한 계란.',kpi_info_henday:'오늘 산란한 닭의 비율. 이상적: >85%.',kpi_info_fcr:'생산된 계란 kg당 사료 kg. 낮을수록 좋음. 이상적: <2.2.',kpi_info_mortality:'총 가금 대비 누적 폐사 비율. 목표: <3%.',kpi_info_cost_egg:'총 비용(사료 + 위생 + 경비)을 생산 계란 수로 나눈 값.',kpi_info_income_net:'이번 달 매출에서 모든 지출을 뺀 금액.',kpi_info_active_hens:'현재 활성 계군의 총 생존 산란계.',kpi_info_alerts:'즉각적인 주의가 필요한 상황의 수.',info_fin_income:'이번 달 모든 판매 및 수입 합계.',info_fin_expenses:'총 운영비: 사료, 건강, 운영.',info_fin_gross:'수입에서 직접비를 뺀 금액(세전).',info_fin_dep:'자산의 월간 감가상각(계사, 장비).',info_fin_tax:'설정 세율에 따른 추정 세금.',info_fin_net:'감가상각 및 세금 후 최종 이익.',info_fin_cpe:'총 비용을 생산된 계란으로 나눈 값.',info_fin_be:'모든 비용을 충당하는 데 필요한 계란 수.',info_feed_stock:'현재 사용 가능한 사료 kg.',info_feed_purchases:'구매한 사료 총량과 누적 비용.',info_feed_consumption:'가금류가 소비한 사료 kg.',info_cli_total:'등록된 고객 총 수.',info_clm_total:'고객 클레임 총 수.',info_clm_sat:'해결 후 평균 만족도(1-5 별).',info_inv_in:'재고에 입고된 총 계란 수.',info_inv_out:'재고에서 출고된 총 계란 수.',info_inv_balance:'사용 가능한 계란: 입고 빼기 출고.',info_inv_records:'기록된 재고 이동 수.',info_bio_pest:'해충 압력 지수(0-100).',info_bio_visitors:'농장에 출입한 외부인.',info_bio_zones:'생물보안 프로토콜이 있는 구역.',info_health_score:'닭떼 건강 지수(0-100).',info_outbreaks:'주의가 필요한 활성 질병 발생.',info_vaccines:'건강 캘린더에 따른 미접종 백신.',info_env_humidity:'산란계 최적 상대습도 범위.',info_env_light:'최대 생산을 위한 권장 조명시간.',info_env_density:'평방미터당 권장 가금류 수.',
-ana_channel_pricing:'채널별 가격',cfg_action:'작업',cfg_add_user:'+ 사용자 추가',cfg_asset_value:'총 자산 가치',cfg_audit:'감사 로그',cfg_backup_na:'이 브라우저에서 캐시 API를 사용할 수 없습니다.',cfg_backups:'자동 백업',cfg_dep_years:'감가상각 (년)',cfg_detail:'상세',cfg_digits:'자리',cfg_loading:'로딩...',cfg_module:'모듈',cfg_no_backups:'자동 백업이 아직 없습니다.',cfg_no_users:'구성된 사용자 없음.',cfg_restore:'복원',cfg_restore_confirm:'이 백업에서 복원하시겠습니까?',cfg_restored:'백업 복원됨',cfg_role:'역할',cfg_size:'크기',cfg_storage:'스토리지 사용량',cfg_tax:'세금 및 감가상각',cfg_tax_rate:'세율 (%)',cfg_timestamp:'시간',cfg_user:'사용자',cfg_users:'사용자 관리',ch_direct:'직판',ch_export:'수출',ch_organic:'유기농',ch_retail:'소매',ch_wholesale:'도매',confirm_delete_cascade:'이 고객에게 연관된 기록이 있습니다. 삭제하면 해당 참조도 제거됩니다. 계속하시겠습니까?',fin_avg_price:'평균 가격',fin_channel:'채널',fin_channel_breakdown:'채널별 수익',fin_depreciation:'감가상각/월',fin_gross_profit:'매출총이익',fin_net_profit:'순이익',fin_tax:'세금',flock_curve_adjust:'커브 조정',flock_curve_tip:'1.0=표준, 0.85=열대, 1.1=온대',optional:'선택사항',pin_invalid:'잘못된 PIN',pin_login:'로그인',pin_select_user:'사용자 선택'
+ana_channel_pricing:'채널별 가격',cfg_action:'작업',cfg_add_user:'+ 사용자 추가',cfg_asset_value:'총 자산 가치',cfg_audit:'감사 로그',cfg_backup_na:'이 브라우저에서 캐시 API를 사용할 수 없습니다.',cfg_backups:'자동 백업',cfg_dep_years:'감가상각 (년)',cfg_detail:'상세',cfg_digits:'자리',cfg_loading:'로딩...',cfg_module:'모듈',cfg_no_backups:'자동 백업이 아직 없습니다.',cfg_no_users:'구성된 사용자 없음.',cfg_restore:'복원',cfg_restore_confirm:'이 백업에서 복원하시겠습니까?',cfg_restored:'백업 복원됨',cfg_role:'역할',cfg_size:'크기',cfg_storage:'스토리지 사용량',cfg_tax:'세금 및 감가상각',cfg_tax_rate:'세율 (%)',cfg_timestamp:'시간',cfg_user:'사용자',cfg_users:'사용자 관리',ch_direct:'직판',ch_export:'수출',ch_organic:'유기농',ch_retail:'소매',ch_wholesale:'도매',confirm_delete_cascade:'이 고객에게 연관된 기록이 있습니다. 삭제하면 해당 참조도 제거됩니다. 계속하시겠습니까?',fin_avg_price:'평균 가격',fin_channel:'채널',fin_channel_breakdown:'채널별 수익',fin_depreciation:'감가상각/월',fin_gross_profit:'매출총이익',fin_net_profit:'순이익',fin_tax:'세금',flock_curve_adjust:'커브 조정',flock_curve_tip:'1.0=표준, 0.85=열대, 1.1=온대',optional:'선택사항',pin_invalid:'잘못된 PIN',pin_login:'로그인',pin_select_user:'사용자 선택',
+price_per_mo:'/월',trial_ended_title:'체험 기간이 종료되었습니다',trial_ended_subtitle:'EGGlogU를 계속 사용하려면 플랜을 선택하세요 — 처음 3개월 40% 할인',btn_see_plans:'플랜 보기',trial_days_left:'일 남은 Enterprise 체험',trial_last_day:'체험 마지막 날!',trial_full_access:'모든 모듈에 대한 전체 액세스',trial_from_price:'이후: $5/월부터 (40% 할인)',billing_next_quarter:'다음 분기',billing_regular_price:'정상 가격',
+perfil_title:'내 프로필',perfil_subtitle:'계정 정보',perfil_name:'전체 이름',perfil_member_since:'가입일',perfil_change_pin:'PIN 변경',perfil_current_pin:'현재 PIN',perfil_new_pin:'새 PIN',perfil_confirm_pin:'PIN 확인',perfil_pin_changed:'PIN이 성공적으로 업데이트되었습니다',perfil_profile_updated:'프로필이 업데이트되었습니다',perfil_pin_mismatch:'PIN이 일치하지 않습니다',perfil_wrong_pin:'현재 PIN이 올바르지 않습니다',
+reassign_title:'계정 재할당',reassign_btn:'재할당',reassign_new_name:'새 소유자 이름',reassign_new_email:'새 소유자 이메일',reassign_new_pin:'새 소유자 PIN',reassign_confirm:'재할당 확인',reassign_success:'계정이 성공적으로 재할당되었습니다',reassign_no_self:'자기 자신에게 재할당할 수 없습니다',reassign_last_owner:'마지막 활성 소유자는 재할당할 수 없습니다',reassign_verify:'계속하려면 PIN을 확인하세요',reassign_notify:'새 소유자에게 알림이 전송됩니다',
+billing_no_permission:'결제 접근 권한이 없습니다',billing_cancel_sub:'구독 취소',billing_cancel_confirm:'{date}까지 플랜이 유지됩니다. 취소 전에 데이터를 다운로드하는 것을 권장합니다.',billing_cancel_success:'구독이 취소되었습니다',billing_delete_account:'계정 삭제',billing_delete_warning:'이 작업은 되돌릴 수 없습니다. 모든 데이터가 영구적으로 삭제됩니다.',billing_delete_type_confirm:'{word}을(를) 입력하여 확인',billing_delete_success:'계정이 삭제되었습니다',billing_current_plan:'현재 플랜',billing_manage_payments:'결제 관리',billing_change_plan:'플랜 변경',billing_download_data:'데이터 다운로드',
+dt_no_results:'필터 조건에 맞는 결과가 없습니다',dt_filters:'필터',dt_selected:'선택됨',dt_deselect:'전체 해제',dt_showing:'표시',dt_records:'건',dt_of:'/',dt_clear_filters:'필터 초기화',dt_columns:'열',dt_export_csv:'CSV 내보내기',dt_export_excel:'Excel 내보내기',dt_per_page:'페이지당',dt_sort_asc:'오름차순',dt_sort_desc:'내림차순',dt_filter:'필터',dt_select_all:'전체 선택',dt_search:'검색',dt_page:'페이지',
+rpt_title:'보고서 및 분석',rpt_report:'보고서',rpt_template:'템플릿',rpt_period:'기간',rpt_period_total:'기간 합계',rpt_generated:'생성일',rpt_invalid_template:'유효하지 않은 보고서 템플릿',rpt_tpl_production:'생산',rpt_tpl_financial:'재무',rpt_tpl_health:'건강',rpt_tpl_feed:'사료',rpt_tpl_kpi:'KPI',rpt_period_7d:'최근 7일',rpt_period_30d:'최근 30일',rpt_period_90d:'최근 90일',rpt_period_12m:'최근 12개월',rpt_period_custom:'사용자 지정',rpt_production_summary:'생산 요약',rpt_total_eggs:'총 계란수',rpt_avg_day:'평균/일',rpt_culled:'도태',rpt_broken_dirty:'파손 / 오염',rpt_loss:'손실',rpt_daily_production:'일일 생산',rpt_size_breakdown:'크기별 분류',rpt_flock_breakdown:'계군별 분류',rpt_broken:'파손',rpt_dirty:'오염',rpt_financial_pl:'손익계산서',rpt_transactions:'건 거래',rpt_margin:'마진',rpt_overdue:'연체',rpt_monthly_trend:'월별 추세',rpt_by_category:'카테고리별',rpt_other:'기타',rpt_health_overview:'건강 개요',rpt_applied_period:'기간 내 접종',rpt_upcoming_vaccines:'예정 백신 접종',rpt_by_flock:'계군별',rpt_feed_efficiency:'사료 효율',rpt_hen_day:'닭/일',rpt_feed_cost:'사료 비용',rpt_feed_stock:'사료 재고',rpt_remaining:'남음',rpt_weekly_consumption:'주간 소비량',rpt_by_feed_type:'사료 종류별',rpt_kpi_trends:'KPI 추세',rpt_no_snapshots:'해당 기간의 KPI 데이터 없음',rpt_kpi_chart:'생산 및 산란',rpt_kpi_fcr_mort:'사료요구율 및 폐사율',rpt_type:'유형',rpt_xlsx_missing:'XLSX 라이브러리를 사용할 수 없음',rpt_pdf_missing:'PDF 라이브러리를 사용할 수 없음',rpt_pdf_error:'PDF 내보내기 오류',wf_title:'자동화',wf_create_rule:'규칙 생성',wf_active_rules:'활성 규칙',wf_executions:'실행',wf_last_24h:'최근 24시간',wf_presets:'프리셋 템플릿',wf_rules:'규칙',wf_no_rules:'설정된 규칙 없음',wf_rule_added:'규칙 추가됨',wf_execution_log:'실행 기록',wf_rule:'규칙',wf_detail:'상세',wf_last_fired:'마지막 실행',wf_test:'테스트',wf_would_trigger:'트리거됨',wf_would_not_trigger:'트리거 안 됨',wf_rule_name:'규칙 이름',wf_condition:'조건',wf_comparator:'비교 연산자',wf_threshold:'임계값',wf_add_action:'동작 추가',wf_cooldown:'대기 시간',wf_hours:'시간',wf_unnamed_rule:'이름 없는 규칙',wf_triggered:'규칙이 발동됨',wf_invalid_condition:'유효하지 않은 조건',wf_cond_deaths_spike:'폐사 급증',wf_cond_low_production:'저생산',wf_cond_feed_stock:'사료 재고',wf_cond_vaccine_due:'백신 예정',wf_cond_temperature:'온도',wf_cond_payment_overdue:'연체 결제',wf_cond_outbreak_active:'활성 발생',wf_cond_production_target:'생산 목표',wf_act_notify:'알림',wf_act_email:'이메일',wf_act_auto_log:'자동 기록',wf_act_auto_task:'자동 작업',wf_act_update_status:'상태 업데이트',wf_readings_above:'이상 판독',wf_no_target:'생산 목표 미설정',wf_below_target:'목표 미달',storage_warning:'로컬 저장 공간이 거의 가득 찼습니다 (>80%). 데이터를 동기화하세요.',storage_full:'로컬 저장 공간이 가득 찼습니다. 자동으로 공간을 확보했습니다.',sync_conflicts:'{n}개 레코드가 다른 사용자에 의해 업데이트됨',wf_browser_note:'자동화 규칙은 브라우저가 열려 있을 때 평가됩니다.'
 }
 ,th:{
 save:'บันทึก',cancel:'ยกเลิก',delete:'ลบ',edit:'แก้ไข',add:'เพิ่ม',close:'ปิด',actions:'การดำเนินการ',date:'วันที่',notes:'หมายเหตุ',name:'ชื่อ',phone:'โทรศัพท์',email:'อีเมล',address:'ที่อยู่',confirm_delete:'ลบรายการนี้?',no_data:'ไม่มีข้อมูล',total:'รวม',all:'ทั้งหมด',loading:'กำลังโหลด',search:'ค้นหา',from:'จาก',to:'ถึง',status:'สถานะ',export_csv:'ส่งออก CSV',today:'วันนี้',active:'ใช้งาน',inactive:'ไม่ใช้งาน',
@@ -772,7 +844,7 @@ ops_log_cat_general:'ทั่วไป',ops_log_cat_health:'สุขภาพ'
 ops_per_name:'ชื่อ',ops_per_role:'ตำแหน่ง',ops_per_salary:'เงินเดือน',ops_per_start:'วันเริ่มงาน',ops_per_active:'ใช้งาน',ops_per_add:'เพิ่มบุคลากร',
 env_title:'สภาพแวดล้อม',env_add:'เพิ่มรายการ',env_temp:'อุณหภูมิ (°C)',env_humidity:'ความชื้น (%)',env_light:'ชั่วโมงแสง',env_ventilation:'การระบายอากาศ',env_density:'ความหนาแน่น (ตัว/ตร.ม.)',env_optimal:'ช่วงที่เหมาะสม',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 ชม.',env_density_range:'4-5 ตัว/ตร.ม.',
 cfg_title:'ตั้งค่า',cfg_farm:'รายละเอียดฟาร์ม',cfg_farm_name:'ชื่อฟาร์ม',cfg_location:'ที่ตั้ง',cfg_capacity:'ความจุ (ตัว)',cfg_currency:'สกุลเงิน',cfg_alerts:'เกณฑ์การแจ้งเตือน',cfg_min_feed:'สต็อกอาหารขั้นต่ำ (กก.)',cfg_max_mortality:'อัตราตายสูงสุด (%)',cfg_alert_days:'จำนวนวันแจ้งเตือนล่วงหน้า',cfg_data:'ข้อมูล',cfg_export:'ส่งออก (JSON)',cfg_import:'นำเข้า (JSON)',cfg_reset:'ลบทั้งหมด',cfg_reset_confirm:'ลบข้อมูลทั้งหมดถาวร?',cfg_saved:'บันทึกแล้ว',cfg_exported:'ส่งออกข้อมูลแล้ว',cfg_imported:'นำเข้าข้อมูลแล้ว',cfg_reset_done:'ลบข้อมูลแล้ว',cfg_checklist:'รายการตรวจสอบเริ่มต้น',cfg_checklist_items:'งานตรวจสอบประจำวัน',cfg_theme:'ธีมสี',cfg_theme_blue:'น้ำเงินกรมท่า',cfg_theme_green:'เขียว',cfg_theme_purple:'ม่วง',cfg_theme_black:'ดำ',
-sidebar_subtitle:'ระบบสัตว์ปีก 360°',prod_shell_white:'ขาว',prod_shell_brown:'น้ำตาล',prod_shell_cream:'ครีม',required:'ต้องกรอก',no_flocks_birthdate:'ไม่มีฝูงที่มีวันเกิด',vac_select_flocks:'เลือกฝูงเพื่อสร้างปฏิทิน:',feed_type_placeholder:'ไข่, สตาร์ทเตอร์ ฯลฯ',avg_per_day:'เฉลี่ย/วัน',per_flock:'ฝูง',history:'ประวัติ',env_latest_reading:'ค่าล่าสุด',env_ok:'ปกติ',env_out_of_range:'นอกช่วง',data_stats:'สถิติข้อมูล',final_warning:'⚠️ คำเตือนสุดท้าย — ข้อมูลทั้งหมดจะถูกลบ',total_salaries:'เงินเดือนรวม',eggs_unit:'ฟอง',csv_income:'รายรับ',csv_expense:'รายจ่าย',fcr_unit:'กก. อาหาร/กก. ไข่',lc_feed_starter:'สตาร์ทเตอร์',lc_feed_grower:'โกรเวอร์',lc_feed_developer:'ดีเวลอปเปอร์',lc_feed_prelay:'ก่อนไข่',lc_feed_layer:'ไข่',lc_feed_lowlay:'ไข่ต่ำ',lc_prod_label:'ผลผลิต',lc_prod_first:'ไข่ฟองแรก',lc_mile_1:'วัคซีน Marek, Newcastle+IB, Gumboro',lc_mile_2:'วัคซีนกระตุ้น Newcastle, การพัฒนาขนนก',lc_mile_3:'ฝีดาษ, AE, หวัดหน้าบวม, Salmonella',lc_mile_4:'วัคซีนกระตุ้น Newcastle+IB, เปลี่ยนอาหาร, แสง 16 ชม.',lc_mile_5:'ผลผลิตสูงสุด สัปดาห์ 26-30, ติดตาม FCR',lc_mile_6:'วัคซีนกระตุ้น Newcastle ทุก 8-12 สัปดาห์, ประเมินกำไร',lc_mile_7:'ประเมินคัดทิ้งหรือบังคับผลัดขน',lc_mile_8:'ขายไก่คัดทิ้ง, ทำความสะอาดโรงเรือน',vac_route_injection:'ฉีด',vac_route_ocular:'หยอดตา/พ่น',vac_route_water:'ผสมน้ำ',vac_route_wing:'แทงปีก',snapshots:'สแนปชอต',error_prefix:'ข้อผิดพลาด',chk_collect_eggs:'เก็บไข่',chk_feed_birds:'ให้อาหารไก่',chk_check_water:'ตรวจน้ำ',chk_check_health:'ตรวจสุขภาพ',chk_cleaning:'ทำความสะอาด',chk_record_temp:'บันทึกอุณหภูมิ',
+sidebar_subtitle:'การจัดการสัตว์ปีกอัจฉริยะ',prod_shell_white:'ขาว',prod_shell_brown:'น้ำตาล',prod_shell_cream:'ครีม',required:'ต้องกรอก',no_flocks_birthdate:'ไม่มีฝูงที่มีวันเกิด',vac_select_flocks:'เลือกฝูงเพื่อสร้างปฏิทิน:',feed_type_placeholder:'ไข่, สตาร์ทเตอร์ ฯลฯ',avg_per_day:'เฉลี่ย/วัน',per_flock:'ฝูง',history:'ประวัติ',env_latest_reading:'ค่าล่าสุด',env_ok:'ปกติ',env_out_of_range:'นอกช่วง',data_stats:'สถิติข้อมูล',final_warning:'⚠️ คำเตือนสุดท้าย — ข้อมูลทั้งหมดจะถูกลบ',total_salaries:'เงินเดือนรวม',eggs_unit:'ฟอง',csv_income:'รายรับ',csv_expense:'รายจ่าย',fcr_unit:'กก. อาหาร/กก. ไข่',lc_feed_starter:'สตาร์ทเตอร์',lc_feed_grower:'โกรเวอร์',lc_feed_developer:'ดีเวลอปเปอร์',lc_feed_prelay:'ก่อนไข่',lc_feed_layer:'ไข่',lc_feed_lowlay:'ไข่ต่ำ',lc_prod_label:'ผลผลิต',lc_prod_first:'ไข่ฟองแรก',lc_mile_1:'วัคซีน Marek, Newcastle+IB, Gumboro',lc_mile_2:'วัคซีนกระตุ้น Newcastle, การพัฒนาขนนก',lc_mile_3:'ฝีดาษ, AE, หวัดหน้าบวม, Salmonella',lc_mile_4:'วัคซีนกระตุ้น Newcastle+IB, เปลี่ยนอาหาร, แสง 16 ชม.',lc_mile_5:'ผลผลิตสูงสุด สัปดาห์ 26-30, ติดตาม FCR',lc_mile_6:'วัคซีนกระตุ้น Newcastle ทุก 8-12 สัปดาห์, ประเมินกำไร',lc_mile_7:'ประเมินคัดทิ้งหรือบังคับผลัดขน',lc_mile_8:'ขายไก่คัดทิ้ง, ทำความสะอาดโรงเรือน',vac_route_injection:'ฉีด',vac_route_ocular:'หยอดตา/พ่น',vac_route_water:'ผสมน้ำ',vac_route_wing:'แทงปีก',snapshots:'สแนปชอต',error_prefix:'ข้อผิดพลาด',chk_collect_eggs:'เก็บไข่',chk_feed_birds:'ให้อาหารไก่',chk_check_water:'ตรวจน้ำ',chk_check_health:'ตรวจสุขภาพ',chk_cleaning:'ทำความสะอาด',chk_record_temp:'บันทึกอุณหภูมิ',
 weather_title:'สภาพอากาศ',weather_temp:'อุณหภูมิ',weather_humidity:'ความชื้น',weather_wind:'ลม',weather_forecast:'พยากรณ์ 3 วัน',weather_no_key:'ตั้งค่าตำแหน่งฟาร์มเพื่อดูสภาพอากาศ',weather_heat_alert:'แจ้งเตือนความเครียดจากความร้อน',weather_thi:'ดัชนี THI',weather_feels:'รู้สึกเหมือน',weather_last_update:'อัปเดตล่าสุด',weather_test:'ทดสอบ',
 geo_set_location:'ที่ตั้งฟาร์ม',geo_use_gps:'ใช้ GPS ของฉัน',geo_click_map:'คลิกแผนที่เพื่อตั้งที่ตั้ง',geo_lat:'ละติจูด',geo_lng:'ลองจิจูด',geo_saved:'บันทึกที่ตั้งแล้ว',
 iot_title:'เซ็นเซอร์ IoT',iot_broker:'MQTT Broker (wss://)',iot_user:'ผู้ใช้ MQTT',iot_pass:'รหัสผ่าน MQTT',iot_topic:'คำนำหน้าหัวข้อ',iot_connect:'เชื่อมต่อ',iot_disconnect:'ตัดการเชื่อมต่อ',iot_live:'IoT สด',iot_no_config:'ตั้งค่า MQTT ในการตั้งค่า',iot_save_reading:'บันทึกค่าปัจจุบัน',iot_connected:'เชื่อมต่อแล้ว',iot_disconnected:'ตัดการเชื่อมต่อแล้ว',iot_ammonia:'แอมโมเนีย',iot_light:'แสง',iot_lux:'ลักซ์',iot_ppm:'ppm',
@@ -803,9 +875,15 @@ ana_segment_profit:'กำไรตามส่วน',cfg_accessibility:'กา
 rec_title:'คำแนะนำ',rec_dismiss:'ปิด',rec_check_diet:'ตรวจอาหาร / สูตรอาหาร / ตัดโรคออก',rec_check_env:'ตรวจสภาพแวดล้อม / โรค / ความเครียดทันที',rec_below_curve:'ต่ำกว่ามาตรฐาน — ตรวจความเครียด, แสง, อาหาร',rec_buy_feed:'วางแผนซื้ออาหารสัตว์',rec_record_env:'บันทึกสภาพแวดล้อม',rec_disinfect:'ดำเนินการฆ่าเชื้อโซน',rec_heat_plan:'ความเครียดจากความร้อนนาน — เปิดแผนระบายความร้อน',rec_lab_samples:'ส่งตัวอย่างไปห้องปฏิบัติการ',rec_ventilation:'เพิ่มการระบายอากาศ ตรวจน้ำสะอาด',
 auth_welcome:'สร้างบัญชีแล้ว ยินดีต้อนรับ!',auth_error:'ข้อมูลรับรองไม่ถูกต้อง',auth_first_run:'ครั้งแรก: ใส่ชื่อผู้ใช้และรหัสผ่านเพื่อสร้างบัญชี',login_subtitle:'ลงชื่อเข้าใช้หรือสร้างบัญชี',logout:'ออกจากระบบ',required:'ต้องกรอก',invalid_email:'อีเมลไม่ถูกต้อง',invalid_phone:'โทรศัพท์ไม่ถูกต้อง',must_be_number:'ต้องเป็นตัวเลข',invalid_date:'วันที่ไม่ถูกต้อง',invalid_format:'รูปแบบไม่ถูกต้อง',min_length:'ความยาวขั้นต่ำ',max_length:'ความยาวสูงสุด',min_value:'ค่าขั้นต่ำ',max_value:'ค่าสูงสุด',error_network:'ข้อผิดพลาดเครือข่าย',error_unexpected:'ข้อผิดพลาดที่ไม่คาดคิด',error_loading:'ข้อผิดพลาดในการโหลด',
 ana_economics:'เศรษฐศาสตร์',flock_purchase_cost:'ต้นทุนต่อตัว',econ_cost_per_egg:'ต้นทุน/ฟอง',econ_roi_per_bird:'ROI/ตัว',econ_acquisition:'การจัดซื้อ',econ_feed_cost:'ต้นทุนอาหาร',econ_health_cost:'ต้นทุนสุขภาพ',econ_direct_expenses:'ค่าใช้จ่ายตรง',econ_total_investment:'การลงทุนรวม',econ_total_costs:'ต้นทุนรวม',econ_net_result:'ผลลัพธ์สุทธิ',econ_daily_cost_bird:'ต้นทุนรายวัน/ตัว',econ_days_active:'วันที่ใช้งาน',econ_no_data_guide:'กรอกต้นทุนซื้อในฝูงไก่ ค่าใช้จ่ายในการเงิน และต้นทุนในวัคซีน/ยา เพื่อดูการวิเคราะห์เศรษฐศาสตร์',exp_flock:'ฝูง (ไม่บังคับ)',health_cost:'ต้นทุน',econ_org_summary:'สรุปองค์กร',econ_cost_breakdown:'รายละเอียดต้นทุน',econ_completeness:'ข้อมูลที่มี',
-nav_census:'การหยุดยา',inv_total_in:'รับเข้ารวม',inv_total_out:'จ่ายออกรวม',inv_balance:'ยอมคงเหลือ',inv_records:'รายการ',inv_by_type:'ตามประเภทไข่',source:'แหล่งที่มา',fin_egg_type:'ประเภท',
+nav_census:'การหยุดยา',nav_reports:'รายงาน',nav_automation:'ระบบอัตโนมัติ',inv_total_in:'รับเข้ารวม',inv_total_out:'จ่ายออกรวม',inv_balance:'ยอมคงเหลือ',inv_records:'รายการ',inv_by_type:'ตามประเภทไข่',source:'แหล่งที่มา',fin_egg_type:'ประเภท',
 kpi_info_today:'ไข่ที่เก็บวันนี้จากทุกฝูงที่ใช้งาน',kpi_info_henday:'เปอร์เซ็นต์แม่ไก่ที่ออกไข่วันนี้ เป้าหมาย: >85%',kpi_info_fcr:'กก. อาหารต่อ กก. ไข่ที่ผลิต ยิ่งต่ำยิ่งดี เป้าหมาย: <2.2',kpi_info_mortality:'เปอร์เซ็นต์การตายสะสมต่อจำนวนไก่ทั้งหมด เป้าหมาย: <3%',kpi_info_cost_egg:'ต้นทุนรวม (อาหาร + สุขภาพ + ค่าใช้จ่าย) หารด้วยไข่ที่ผลิต',kpi_info_income_net:'รายได้จากการขายหักค่าใช้จ่ายทั้งหมดในเดือนนี้',kpi_info_active_hens:'จำนวนแม่ไก่ที่มีชีวิตในฝูงที่ใช้งาน',kpi_info_alerts:'จำนวนสถานการณ์ที่ต้องดำเนินการทันที',info_fin_income:'ยอดรวมการขายและรายได้ทั้งหมดในเดือนนี้',info_fin_expenses:'ค่าใช้จ่ายดำเนินงานทั้งหมด: อาหาร สุขภาพ การดำเนินงาน',info_fin_gross:'รายได้หักต้นทุนตรง (ก่อนภาษี)',info_fin_dep:'ค่าเสื่อมราคาสินทรัพย์รายเดือน',info_fin_tax:'ภาษีโดยประมาณจากกำไรขั้นต้น',info_fin_net:'กำไรสุทธิหลังค่าเสื่อมราคาและภาษี',info_fin_cpe:'ต้นทุนรวมหารด้วยจำนวนไข่ที่ผลิต',info_fin_be:'จำนวนไข่ที่ต้องผลิตเพื่อคุ้มทุน',info_feed_stock:'กก.อาหารที่มีอยู่ในปัจจุบัน',info_feed_purchases:'อาหารที่ซื้อทั้งหมดและต้นทุนสะสม',info_feed_consumption:'กก.อาหารที่สัตว์ปีกบริโภค',info_cli_total:'จำนวนลูกค้าที่ลงทะเบียนทั้งหมด',info_clm_total:'จำนวนการร้องเรียนของลูกค้าทั้งหมด',info_clm_sat:'ความพึงพอใจเฉลี่ยหลังแก้ไข (1-5 ดาว)',info_inv_in:'ไข่ทั้งหมดที่เข้าคลัง',info_inv_out:'ไข่ทั้งหมดที่ออกจากคลัง',info_inv_balance:'ไข่ที่มีอยู่: เข้าหักออก',info_inv_records:'จำนวนการเคลื่อนไหวสินค้าคงคลัง',info_bio_pest:'ดัชนีความกดดันจากศัตรูพืช (0-100)',info_bio_visitors:'บุคคลภายนอกที่เข้าฟาร์ม',info_bio_zones:'พื้นที่ที่มีโปรโตคอลความปลอดภัยทางชีวภาพ',info_health_score:'ดัชนีสุขภาพฝูง (0-100)',info_outbreaks:'การระบาดของโรคที่ยังดำเนินอยู่',info_vaccines:'วัคซีนที่รอการฉีด',info_env_humidity:'ช่วงความชื้นสัมพัทธ์ที่เหมาะสม',info_env_light:'ชั่วโมงแสงที่แนะนำ',info_env_density:'จำนวนสัตว์ปีกต่อตารางเมตรที่แนะนำ',
-ana_channel_pricing:'ราคาตามช่องทาง',cfg_action:'การดำเนินการ',cfg_add_user:'+ เพิ่มผู้ใช้',cfg_asset_value:'มูลค่าสินทรัพย์รวม',cfg_audit:'บันทึกตรวจสอบ',cfg_backup_na:'API แคชไม่พร้อมใช้งานในเบราว์เซอร์นี้',cfg_backups:'สำรองข้อมูลอัตโนมัติ',cfg_dep_years:'ค่าเสื่อมราคา (ปี)',cfg_detail:'รายละเอียด',cfg_digits:'หลัก',cfg_loading:'กำลังโหลด...',cfg_module:'โมดูล',cfg_no_backups:'ยังไม่มีการสำรองข้อมูลอัตโนมัติ',cfg_no_users:'ไม่มีผู้ใช้ที่กำหนดค่า',cfg_restore:'กู้คืน',cfg_restore_confirm:'กู้คืนจากการสำรองนี้?',cfg_restored:'กู้คืนสำรองข้อมูลแล้ว',cfg_role:'บทบาท',cfg_size:'ขนาด',cfg_storage:'การใช้พื้นที่จัดเก็บ',cfg_tax:'ภาษีและค่าเสื่อมราคา',cfg_tax_rate:'อัตราภาษี (%)',cfg_timestamp:'เวลา',cfg_user:'ผู้ใช้',cfg_users:'การจัดการผู้ใช้',ch_direct:'ขายตรง',ch_export:'ส่งออก',ch_organic:'ออร์แกนิก',ch_retail:'ค้าปลีก',ch_wholesale:'ค้าส่ง',confirm_delete_cascade:'ลูกค้านี้มีบันทึกที่เกี่ยวข้อง การลบจะลบการอ้างอิงเหล่านั้น ดำเนินการต่อ?',fin_avg_price:'ราคาเฉลี่ย',fin_channel:'ช่องทาง',fin_channel_breakdown:'รายได้ตามช่องทาง',fin_depreciation:'ค่าเสื่อม/เดือน',fin_gross_profit:'กำไรขั้นต้น',fin_net_profit:'กำไรสุทธิ',fin_tax:'ภาษี',flock_curve_adjust:'ปรับเส้นโค้ง',flock_curve_tip:'1.0=มาตรฐาน, 0.85=เขตร้อน, 1.1=เขตอบอุ่น',optional:'ไม่บังคับ',pin_invalid:'PIN ไม่ถูกต้อง',pin_login:'เข้าสู่ระบบ',pin_select_user:'เลือกผู้ใช้'
+ana_channel_pricing:'ราคาตามช่องทาง',cfg_action:'การดำเนินการ',cfg_add_user:'+ เพิ่มผู้ใช้',cfg_asset_value:'มูลค่าสินทรัพย์รวม',cfg_audit:'บันทึกตรวจสอบ',cfg_backup_na:'API แคชไม่พร้อมใช้งานในเบราว์เซอร์นี้',cfg_backups:'สำรองข้อมูลอัตโนมัติ',cfg_dep_years:'ค่าเสื่อมราคา (ปี)',cfg_detail:'รายละเอียด',cfg_digits:'หลัก',cfg_loading:'กำลังโหลด...',cfg_module:'โมดูล',cfg_no_backups:'ยังไม่มีการสำรองข้อมูลอัตโนมัติ',cfg_no_users:'ไม่มีผู้ใช้ที่กำหนดค่า',cfg_restore:'กู้คืน',cfg_restore_confirm:'กู้คืนจากการสำรองนี้?',cfg_restored:'กู้คืนสำรองข้อมูลแล้ว',cfg_role:'บทบาท',cfg_size:'ขนาด',cfg_storage:'การใช้พื้นที่จัดเก็บ',cfg_tax:'ภาษีและค่าเสื่อมราคา',cfg_tax_rate:'อัตราภาษี (%)',cfg_timestamp:'เวลา',cfg_user:'ผู้ใช้',cfg_users:'การจัดการผู้ใช้',ch_direct:'ขายตรง',ch_export:'ส่งออก',ch_organic:'ออร์แกนิก',ch_retail:'ค้าปลีก',ch_wholesale:'ค้าส่ง',confirm_delete_cascade:'ลูกค้านี้มีบันทึกที่เกี่ยวข้อง การลบจะลบการอ้างอิงเหล่านั้น ดำเนินการต่อ?',fin_avg_price:'ราคาเฉลี่ย',fin_channel:'ช่องทาง',fin_channel_breakdown:'รายได้ตามช่องทาง',fin_depreciation:'ค่าเสื่อม/เดือน',fin_gross_profit:'กำไรขั้นต้น',fin_net_profit:'กำไรสุทธิ',fin_tax:'ภาษี',flock_curve_adjust:'ปรับเส้นโค้ง',flock_curve_tip:'1.0=มาตรฐาน, 0.85=เขตร้อน, 1.1=เขตอบอุ่น',optional:'ไม่บังคับ',pin_invalid:'PIN ไม่ถูกต้อง',pin_login:'เข้าสู่ระบบ',pin_select_user:'เลือกผู้ใช้',
+price_per_mo:'/เดือน',trial_ended_title:'หมดระยะเวลาทดลองใช้',trial_ended_subtitle:'เลือกแพ็คเกจเพื่อใช้ EGGlogU ต่อ — ลด 40% ใน 3 เดือนแรก',btn_see_plans:'ดูแพ็คเกจ',trial_days_left:'วันที่เหลือของการทดลอง Enterprise',trial_last_day:'วันสุดท้ายของการทดลอง!',trial_full_access:'เข้าถึงทุกโมดูลอย่างเต็มที่',trial_from_price:'หลังจากนั้น: เริ่มต้น $5/เดือน (ลด 40%)',billing_next_quarter:'ไตรมาสถัดไป',billing_regular_price:'ราคาปกติ',
+perfil_title:'โปรไฟล์ของฉัน',perfil_subtitle:'ข้อมูลบัญชีของคุณ',perfil_name:'ชื่อเต็ม',perfil_member_since:'สมาชิกตั้งแต่',perfil_change_pin:'เปลี่ยน PIN',perfil_current_pin:'PIN ปัจจุบัน',perfil_new_pin:'PIN ใหม่',perfil_confirm_pin:'ยืนยัน PIN',perfil_pin_changed:'อัปเดต PIN สำเร็จ',perfil_profile_updated:'อัปเดตโปรไฟล์แล้ว',perfil_pin_mismatch:'PIN ไม่ตรงกัน',perfil_wrong_pin:'PIN ปัจจุบันไม่ถูกต้อง',
+reassign_title:'โอนบัญชี',reassign_btn:'โอน',reassign_new_name:'ชื่อผู้ถือครองใหม่',reassign_new_email:'อีเมลผู้ถือครองใหม่',reassign_new_pin:'PIN ผู้ถือครองใหม่',reassign_confirm:'ยืนยันการโอน',reassign_success:'โอนบัญชีสำเร็จ',reassign_no_self:'ไม่สามารถโอนให้ตัวเองได้',reassign_last_owner:'ไม่สามารถโอนเจ้าของที่ใช้งานอยู่คนสุดท้ายได้',reassign_verify:'ยืนยัน PIN ของคุณเพื่อดำเนินการต่อ',reassign_notify:'จะส่งการแจ้งเตือนไปยังผู้ถือครองใหม่',
+billing_no_permission:'คุณไม่มีสิทธิ์เข้าถึงการเรียกเก็บเงิน',billing_cancel_sub:'ยกเลิกการสมัครสมาชิก',billing_cancel_confirm:'แพ็คเกจของคุณจะยังใช้งานได้จนถึง {date} แนะนำให้ดาวน์โหลดข้อมูลก่อนยกเลิก',billing_cancel_success:'ยกเลิกการสมัครสมาชิกแล้ว',billing_delete_account:'ลบบัญชี',billing_delete_warning:'การดำเนินการนี้ไม่สามารถย้อนกลับได้ ข้อมูลทั้งหมดจะสูญหายอย่างถาวร',billing_delete_type_confirm:'พิมพ์ {word} เพื่อยืนยัน',billing_delete_success:'ลบบัญชีแล้ว',billing_current_plan:'แพ็คเกจปัจจุบัน',billing_manage_payments:'จัดการการชำระเงิน',billing_change_plan:'เปลี่ยนแพ็คเกจ',billing_download_data:'ดาวน์โหลดข้อมูล',
+dt_no_results:'ไม่พบผลลัพธ์ตามตัวกรองที่ใช้',dt_filters:'ตัวกรอง',dt_selected:'ที่เลือก',dt_deselect:'ยกเลิกการเลือกทั้งหมด',dt_showing:'แสดง',dt_records:'รายการ',dt_of:'จาก',dt_clear_filters:'ล้างตัวกรอง',dt_columns:'คอลัมน์',dt_export_csv:'ส่งออก CSV',dt_export_excel:'ส่งออก Excel',dt_per_page:'ต่อหน้า',dt_sort_asc:'เรียงจากน้อยไปมาก',dt_sort_desc:'เรียงจากมากไปน้อย',dt_filter:'กรอง',dt_select_all:'เลือกทั้งหมด',dt_search:'ค้นหา',dt_page:'หน้า',
+rpt_title:'รายงานและการวิเคราะห์',rpt_report:'รายงาน',rpt_template:'เทมเพลต',rpt_period:'ช่วงเวลา',rpt_period_total:'รวมช่วงเวลา',rpt_generated:'สร้างเมื่อ',rpt_invalid_template:'เทมเพลตรายงานไม่ถูกต้อง',rpt_tpl_production:'การผลิต',rpt_tpl_financial:'การเงิน',rpt_tpl_health:'สุขภาพ',rpt_tpl_feed:'อาหารสัตว์',rpt_tpl_kpi:'KPI',rpt_period_7d:'7 วันล่าสุด',rpt_period_30d:'30 วันล่าสุด',rpt_period_90d:'90 วันล่าสุด',rpt_period_12m:'12 เดือนล่าสุด',rpt_period_custom:'กำหนดเอง',rpt_production_summary:'สรุปการผลิต',rpt_total_eggs:'ไข่ทั้งหมด',rpt_avg_day:'เฉลี่ย/วัน',rpt_culled:'คัดทิ้ง',rpt_broken_dirty:'แตก / สกปรก',rpt_loss:'สูญเสีย',rpt_daily_production:'ผลผลิตรายวัน',rpt_size_breakdown:'แยกตามขนาด',rpt_flock_breakdown:'แยกตามฝูง',rpt_broken:'แตก',rpt_dirty:'สกปรก',rpt_financial_pl:'งบกำไรขาดทุน',rpt_transactions:'รายการ',rpt_margin:'กำไร',rpt_overdue:'ค้างชำระ',rpt_monthly_trend:'แนวโน้มรายเดือน',rpt_by_category:'ตามหมวดหมู่',rpt_other:'อื่นๆ',rpt_health_overview:'ภาพรวมสุขภาพ',rpt_applied_period:'ฉีดในช่วงเวลา',rpt_upcoming_vaccines:'การฉีดวัคซีนที่จะมาถึง',rpt_by_flock:'ตามฝูง',rpt_feed_efficiency:'ประสิทธิภาพอาหาร',rpt_hen_day:'ตัว/วัน',rpt_feed_cost:'ต้นทุนอาหาร',rpt_feed_stock:'สต็อกอาหาร',rpt_remaining:'เหลือ',rpt_weekly_consumption:'การบริโภครายสัปดาห์',rpt_by_feed_type:'ตามชนิดอาหาร',rpt_kpi_trends:'แนวโน้ม KPI',rpt_no_snapshots:'ไม่มีข้อมูล KPI สำหรับช่วงเวลานี้',rpt_kpi_chart:'การผลิตและการไข่',rpt_kpi_fcr_mort:'FCR และอัตราตาย',rpt_type:'ประเภท',rpt_xlsx_missing:'ไลบรารี XLSX ไม่พร้อมใช้งาน',rpt_pdf_missing:'ไลบรารี PDF ไม่พร้อมใช้งาน',rpt_pdf_error:'ข้อผิดพลาดในการส่งออก PDF',wf_title:'ระบบอัตโนมัติ',wf_create_rule:'สร้างกฎ',wf_active_rules:'กฎที่ใช้งาน',wf_executions:'การดำเนินการ',wf_last_24h:'24 ชม.ล่าสุด',wf_presets:'เทมเพลตสำเร็จรูป',wf_rules:'กฎ',wf_no_rules:'ไม่มีกฎที่กำหนด',wf_rule_added:'เพิ่มกฎแล้ว',wf_execution_log:'บันทึกการดำเนินการ',wf_rule:'กฎ',wf_detail:'รายละเอียด',wf_last_fired:'ดำเนินการล่าสุด',wf_test:'ทดสอบ',wf_would_trigger:'จะถูกเรียก',wf_would_not_trigger:'จะไม่ถูกเรียก',wf_rule_name:'ชื่อกฎ',wf_condition:'เงื่อนไข',wf_comparator:'ตัวเปรียบเทียบ',wf_threshold:'เกณฑ์',wf_add_action:'เพิ่มการกระทำ',wf_cooldown:'เวลารอ',wf_hours:'ชั่วโมง',wf_unnamed_rule:'กฎไม่มีชื่อ',wf_triggered:'กฎถูกเรียกใช้',wf_invalid_condition:'เงื่อนไขไม่ถูกต้อง',wf_cond_deaths_spike:'การตายพุ่งสูง',wf_cond_low_production:'ผลผลิตต่ำ',wf_cond_feed_stock:'สต็อกอาหาร',wf_cond_vaccine_due:'วัคซีนครบกำหนด',wf_cond_temperature:'อุณหภูมิ',wf_cond_payment_overdue:'ชำระเงินเกินกำหนด',wf_cond_outbreak_active:'การระบาดที่ยังดำเนินอยู่',wf_cond_production_target:'เป้าหมายการผลิต',wf_act_notify:'แจ้งเตือน',wf_act_email:'อีเมล',wf_act_auto_log:'บันทึกอัตโนมัติ',wf_act_auto_task:'งานอัตโนมัติ',wf_act_update_status:'อัปเดตสถานะ',wf_readings_above:'ค่าเกิน',wf_no_target:'ไม่ได้กำหนดเป้าหมายการผลิต',wf_below_target:'ต่ำกว่าเป้า',storage_warning:'พื้นที่จัดเก็บในเครื่องใกล้เต็ม (>80%) โปรดซิงค์ข้อมูลของคุณ',storage_full:'พื้นที่จัดเก็บในเครื่องเต็ม ได้เพิ่มพื้นที่ว่างอัตโนมัติ',sync_conflicts:'{n} รายการถูกอัปเดตโดยผู้ใช้อื่น',wf_browser_note:'กฎอัตโนมัติจะถูกประเมินขณะที่เบราว์เซอร์เปิดอยู่'
 },vi:{
 save:'Lưu',cancel:'Hủy',delete:'Xóa',edit:'Sửa',add:'Thêm',close:'Đóng',actions:'Thao tác',date:'Ngày',notes:'Ghi chú',name:'Tên',phone:'Điện thoại',email:'Email',address:'Địa chỉ',confirm_delete:'Xóa bản ghi này?',no_data:'Không có dữ liệu',total:'Tổng',all:'Tất cả',loading:'Đang tải',search:'Tìm kiếm',from:'Từ',to:'Đến',status:'Trạng thái',export_csv:'Xuất CSV',today:'Hôm nay',active:'Hoạt động',inactive:'Không hoạt động',
 nav_dashboard:'Bảng điều khiển',nav_production:'Sản xuất',nav_flocks:'Đàn gà',nav_health:'Sức khỏe',nav_feed:'Thức ăn',nav_clients:'Khách hàng',nav_finances:'Tài chính',nav_analysis:'Phân tích',nav_operations:'Vận hành',nav_environment:'Môi trường',nav_config:'Cài đặt',nav_support:'Hỗ trợ',nav_admin:'Quản trị SaaS',nav_inventory:'Kho',nav_superadmin:'Quản trị cao nhất',grp_production:'Sản xuất',grp_health:'Sức khỏe',grp_commercial:'Thương mại',grp_management:'Quản lý',grp_system:'Hệ thống',grp_superadmin:'Quản trị cao nhất',
@@ -830,7 +908,7 @@ ops_log_cat_general:'Chung',ops_log_cat_health:'Sức khỏe',ops_log_cat_produc
 ops_per_name:'Tên',ops_per_role:'Vai trò',ops_per_salary:'Lương',ops_per_start:'Ngày bắt đầu',ops_per_active:'Đang làm việc',ops_per_add:'Thêm nhân sự',
 env_title:'Điều kiện môi trường',env_add:'Thêm bản ghi',env_temp:'Nhiệt độ (°C)',env_humidity:'Độ ẩm (%)',env_light:'Giờ chiếu sáng',env_ventilation:'Thông gió',env_density:'Mật độ (con/m²)',env_optimal:'Khoảng tối ưu',env_temp_range:'18-24°C',env_humidity_range:'40-70%',env_light_range:'14-16 giờ',env_density_range:'4-5 con/m²',
 cfg_title:'Cài đặt',cfg_farm:'Thông tin trang trại',cfg_farm_name:'Tên trang trại',cfg_location:'Vị trí',cfg_capacity:'Sức chứa (con)',cfg_currency:'Tiền tệ',cfg_alerts:'Ngưỡng cảnh báo',cfg_min_feed:'Tồn kho thức ăn tối thiểu (kg)',cfg_max_mortality:'Tỷ lệ chết tối đa (%)',cfg_alert_days:'Số ngày cảnh báo trước',cfg_data:'Dữ liệu',cfg_export:'Xuất (JSON)',cfg_import:'Nhập (JSON)',cfg_reset:'Xóa tất cả',cfg_reset_confirm:'Xóa TẤT CẢ dữ liệu vĩnh viễn?',cfg_saved:'Đã lưu',cfg_exported:'Đã xuất dữ liệu',cfg_imported:'Đã nhập dữ liệu',cfg_reset_done:'Đã xóa dữ liệu',cfg_checklist:'Danh sách kiểm tra mặc định',cfg_checklist_items:'Công việc kiểm tra hàng ngày',cfg_theme:'Giao diện màu',cfg_theme_blue:'Xanh navy',cfg_theme_green:'Xanh lá',cfg_theme_purple:'Tím',cfg_theme_black:'Đen',
-sidebar_subtitle:'Hệ thống gia cầm 360°',prod_shell_white:'Trắng',prod_shell_brown:'Nâu',prod_shell_cream:'Kem',required:'Trường bắt buộc',no_flocks_birthdate:'Không có đàn có ngày sinh',vac_select_flocks:'Chọn đàn để tạo lịch:',feed_type_placeholder:'Đẻ trứng, Khởi động, v.v.',avg_per_day:'TB/ngày',per_flock:'Đàn',history:'Lịch sử',env_latest_reading:'Giá trị mới nhất',env_ok:'Bình thường',env_out_of_range:'Ngoài khoảng',data_stats:'Thống kê dữ liệu',final_warning:'⚠️ CẢNH BÁO CUỐI CÙNG — TẤT CẢ dữ liệu sẽ bị xóa',total_salaries:'Tổng lương',eggs_unit:'trứng',csv_income:'Thu nhập',csv_expense:'Chi phí',fcr_unit:'kg thức ăn/kg trứng',lc_feed_starter:'Khởi động',lc_feed_grower:'Tăng trưởng',lc_feed_developer:'Phát triển',lc_feed_prelay:'Tiền đẻ',lc_feed_layer:'Đẻ trứng',lc_feed_lowlay:'Đẻ thấp',lc_prod_label:'Sản lượng',lc_prod_first:'Trứng đầu tiên',lc_mile_1:'Vắc-xin Marek, Newcastle+IB, Gumboro',lc_mile_2:'Nhắc lại Newcastle, phát triển lông',lc_mile_3:'Đậu gà, AE, Sổ mũi truyền nhiễm, Salmonella',lc_mile_4:'Nhắc lại Newcastle+IB, đổi thức ăn, 16 giờ chiếu sáng',lc_mile_5:'Đỉnh sản lượng tuần 26-30, theo dõi FCR',lc_mile_6:'Nhắc lại Newcastle mỗi 8-12 tuần, đánh giá lợi nhuận',lc_mile_7:'Đánh giá loại thải hoặc thay lông cưỡng bức',lc_mile_8:'Bán gà loại thải, vệ sinh chuồng',vac_route_injection:'Tiêm',vac_route_ocular:'Nhỏ mắt/phun',vac_route_water:'Pha nước',vac_route_wing:'Chích cánh',snapshots:'ảnh chụp',error_prefix:'Lỗi',chk_collect_eggs:'Thu trứng',chk_feed_birds:'Cho gà ăn',chk_check_water:'Kiểm tra nước',chk_check_health:'Kiểm tra sức khỏe',chk_cleaning:'Vệ sinh',chk_record_temp:'Ghi nhiệt độ',
+sidebar_subtitle:'Quản lý gia cầm thông minh',prod_shell_white:'Trắng',prod_shell_brown:'Nâu',prod_shell_cream:'Kem',required:'Trường bắt buộc',no_flocks_birthdate:'Không có đàn có ngày sinh',vac_select_flocks:'Chọn đàn để tạo lịch:',feed_type_placeholder:'Đẻ trứng, Khởi động, v.v.',avg_per_day:'TB/ngày',per_flock:'Đàn',history:'Lịch sử',env_latest_reading:'Giá trị mới nhất',env_ok:'Bình thường',env_out_of_range:'Ngoài khoảng',data_stats:'Thống kê dữ liệu',final_warning:'⚠️ CẢNH BÁO CUỐI CÙNG — TẤT CẢ dữ liệu sẽ bị xóa',total_salaries:'Tổng lương',eggs_unit:'trứng',csv_income:'Thu nhập',csv_expense:'Chi phí',fcr_unit:'kg thức ăn/kg trứng',lc_feed_starter:'Khởi động',lc_feed_grower:'Tăng trưởng',lc_feed_developer:'Phát triển',lc_feed_prelay:'Tiền đẻ',lc_feed_layer:'Đẻ trứng',lc_feed_lowlay:'Đẻ thấp',lc_prod_label:'Sản lượng',lc_prod_first:'Trứng đầu tiên',lc_mile_1:'Vắc-xin Marek, Newcastle+IB, Gumboro',lc_mile_2:'Nhắc lại Newcastle, phát triển lông',lc_mile_3:'Đậu gà, AE, Sổ mũi truyền nhiễm, Salmonella',lc_mile_4:'Nhắc lại Newcastle+IB, đổi thức ăn, 16 giờ chiếu sáng',lc_mile_5:'Đỉnh sản lượng tuần 26-30, theo dõi FCR',lc_mile_6:'Nhắc lại Newcastle mỗi 8-12 tuần, đánh giá lợi nhuận',lc_mile_7:'Đánh giá loại thải hoặc thay lông cưỡng bức',lc_mile_8:'Bán gà loại thải, vệ sinh chuồng',vac_route_injection:'Tiêm',vac_route_ocular:'Nhỏ mắt/phun',vac_route_water:'Pha nước',vac_route_wing:'Chích cánh',snapshots:'ảnh chụp',error_prefix:'Lỗi',chk_collect_eggs:'Thu trứng',chk_feed_birds:'Cho gà ăn',chk_check_water:'Kiểm tra nước',chk_check_health:'Kiểm tra sức khỏe',chk_cleaning:'Vệ sinh',chk_record_temp:'Ghi nhiệt độ',
 weather_title:'Thời tiết',weather_temp:'Nhiệt độ',weather_humidity:'Độ ẩm',weather_wind:'Gió',weather_forecast:'Dự báo 3 ngày',weather_no_key:'Đặt vị trí trang trại để xem thời tiết',weather_heat_alert:'Cảnh báo sốc nhiệt',weather_thi:'Chỉ số THI',weather_feels:'Cảm giác như',weather_last_update:'Cập nhật lần cuối',weather_test:'Thử nghiệm',
 geo_set_location:'Vị trí trang trại',geo_use_gps:'Dùng GPS của tôi',geo_click_map:'Nhấn bản đồ để đặt vị trí',geo_lat:'Vĩ độ',geo_lng:'Kinh độ',geo_saved:'Đã lưu vị trí',
 iot_title:'Cảm biến IoT',iot_broker:'MQTT Broker (wss://)',iot_user:'Tên đăng nhập MQTT',iot_pass:'Mật khẩu MQTT',iot_topic:'Tiền tố chủ đề',iot_connect:'Kết nối',iot_disconnect:'Ngắt kết nối',iot_live:'IoT trực tiếp',iot_no_config:'Cấu hình MQTT trong Cài đặt',iot_save_reading:'Lưu giá trị hiện tại',iot_connected:'Đã kết nối',iot_disconnected:'Đã ngắt kết nối',iot_ammonia:'Amoniac',iot_light:'Ánh sáng',iot_lux:'lux',iot_ppm:'ppm',
@@ -861,9 +939,15 @@ ana_segment_profit:'Lợi nhuận theo phân khúc',cfg_accessibility:'Trợ nă
 rec_title:'Khuyến nghị',rec_dismiss:'Bỏ qua',rec_check_diet:'Kiểm tra khẩu phần / công thức thức ăn / loại trừ bệnh',rec_check_env:'Kiểm tra môi trường / bệnh / stress ngay lập tức',rec_below_curve:'Dưới tiêu chuẩn sản lượng — kiểm tra stress, ánh sáng, thức ăn',rec_buy_feed:'Lên lịch mua thức ăn',rec_record_env:'Ghi nhận điều kiện môi trường',rec_disinfect:'Thực hiện quy trình khử trùng khu vực',rec_heat_plan:'Sốc nhiệt kéo dài — kích hoạt kế hoạch làm mát',rec_lab_samples:'Lấy mẫu gửi phòng thí nghiệm',rec_ventilation:'Tăng thông gió, kiểm tra nước sạch',
 auth_welcome:'Đã tạo tài khoản. Chào mừng!',auth_error:'Thông tin đăng nhập không hợp lệ',auth_first_run:'Lần đầu: nhập tên đăng nhập và mật khẩu để tạo tài khoản.',login_subtitle:'Đăng nhập hoặc tạo tài khoản',logout:'Đăng xuất',required:'Trường bắt buộc',invalid_email:'Email không hợp lệ',invalid_phone:'Số điện thoại không hợp lệ',must_be_number:'Phải là số',invalid_date:'Ngày không hợp lệ',invalid_format:'Định dạng không hợp lệ',min_length:'Độ dài tối thiểu',max_length:'Độ dài tối đa',min_value:'Giá trị tối thiểu',max_value:'Giá trị tối đa',error_network:'Lỗi mạng',error_unexpected:'Lỗi không mong đợi',error_loading:'Lỗi khi tải',
 ana_economics:'Kinh tế',flock_purchase_cost:'Chi phí/Con',econ_cost_per_egg:'Chi phí/Trứng',econ_roi_per_bird:'ROI/Con',econ_acquisition:'Mua sắm',econ_feed_cost:'Chi phí thức ăn',econ_health_cost:'Chi phí sức khỏe',econ_direct_expenses:'Chi phí trực tiếp',econ_total_investment:'Tổng đầu tư',econ_total_costs:'Tổng chi phí',econ_net_result:'Kết quả ròng',econ_daily_cost_bird:'Chi phí hàng ngày/Con',econ_days_active:'Ngày hoạt động',econ_no_data_guide:'Nhập chi phí mua trong Đàn gà, chi phí trong Tài chính, và chi phí trong Vắc-xin/Thuốc để xem phân tích kinh tế.',exp_flock:'Đàn (tùy chọn)',health_cost:'Chi phí',econ_org_summary:'Tổng kết tổ chức',econ_cost_breakdown:'Phân tích chi phí',econ_completeness:'Dữ liệu có sẵn',
-nav_census:'Ngưng thuốc',inv_total_in:'Tổng nhập',inv_total_out:'Tổng xuất',inv_balance:'Tồn kho',inv_records:'Bản ghi',inv_by_type:'Theo loại trứng',source:'Nguồn',fin_egg_type:'Loại',
+nav_census:'Ngưng thuốc',nav_reports:'Báo cáo',nav_automation:'Tự động hóa',inv_total_in:'Tổng nhập',inv_total_out:'Tổng xuất',inv_balance:'Tồn kho',inv_records:'Bản ghi',inv_by_type:'Theo loại trứng',source:'Nguồn',fin_egg_type:'Loại',
 kpi_info_today:'Trứng thu hoạch hôm nay từ tất cả các đàn đang hoạt động.',kpi_info_henday:'Phần trăm gà mái đẻ trứng hôm nay. Lý tưởng: >85%.',kpi_info_fcr:'Kg thức ăn trên kg trứng sản xuất. Càng thấp càng tốt. Lý tưởng: <2.2.',kpi_info_mortality:'Phần trăm chết tích lũy trên tổng số gà. Mục tiêu: <3%.',kpi_info_cost_egg:'Tổng chi phí (thức ăn + sức khỏe + chi phí khác) chia cho số trứng sản xuất.',kpi_info_income_net:'Doanh thu bán hàng trừ tất cả chi phí trong tháng hiện tại.',kpi_info_active_hens:'Tổng số gà mái còn sống trong các đàn đang hoạt động.',kpi_info_alerts:'Số tình huống cần bạn xử lý ngay lập tức.',info_fin_income:'Tổng tất cả doanh thu và thu nhập trong tháng.',info_fin_expenses:'Tổng chi phí vận hành: thức ăn, sức khỏe, vận hành.',info_fin_gross:'Doanh thu trừ chi phí trực tiếp (trước thuế).',info_fin_dep:'Khấu hao tài sản hàng tháng (chuồng, thiết bị).',info_fin_tax:'Thuế ước tính trên lợi nhuận gộp.',info_fin_net:'Lợi nhuận cuối cùng sau khấu hao và thuế.',info_fin_cpe:'Tổng chi phí chia cho số trứng sản xuất.',info_fin_be:'Số trứng cần thiết để bù đắp mọi chi phí.',info_feed_stock:'Kg thức ăn hiện có.',info_feed_purchases:'Tổng thức ăn mua và chi phí tích lũy.',info_feed_consumption:'Kg thức ăn gia cầm tiêu thụ.',info_cli_total:'Tổng số khách hàng đã đăng ký.',info_clm_total:'Tổng số khiếu nại khách hàng.',info_clm_sat:'Mức hài lòng trung bình sau giải quyết (1-5 sao).',info_inv_in:'Tổng trứng nhập kho.',info_inv_out:'Tổng trứng xuất kho.',info_inv_balance:'Trứng có sẵn: nhập trừ xuất.',info_inv_records:'Số lượng biến động kho ghi nhận.',info_bio_pest:'Chỉ số áp lực dịch hại (0-100).',info_bio_visitors:'Người ngoài đã vào trang trại.',info_bio_zones:'Khu vực có quy trình an toàn sinh học.',info_health_score:'Chỉ số sức khỏe đàn (0-100).',info_outbreaks:'Dịch bệnh đang hoạt động.',info_vaccines:'Vắc xin chờ tiêm theo lịch.',info_env_humidity:'Phạm vi độ ẩm tương đối tối ưu.',info_env_light:'Giờ chiếu sáng khuyến nghị.',info_env_density:'Gia cầm trên mét vuông khuyến nghị.',
-ana_channel_pricing:'Giá theo Kênh',cfg_action:'Hành động',cfg_add_user:'+ Thêm Người dùng',cfg_asset_value:'Tổng Giá trị Tài sản',cfg_audit:'Nhật ký Kiểm toán',cfg_backup_na:'API Cache không khả dụng trên trình duyệt này.',cfg_backups:'Sao lưu Tự động',cfg_dep_years:'Khấu hao (năm)',cfg_detail:'Chi tiết',cfg_digits:'chữ số',cfg_loading:'Đang tải...',cfg_module:'Mô-đun',cfg_no_backups:'Chưa có sao lưu tự động.',cfg_no_users:'Chưa cấu hình người dùng.',cfg_restore:'Khôi phục',cfg_restore_confirm:'Khôi phục từ bản sao lưu này?',cfg_restored:'Đã khôi phục sao lưu',cfg_role:'Vai trò',cfg_size:'Kích thước',cfg_storage:'Sử dụng Lưu trữ',cfg_tax:'Thuế & Khấu hao',cfg_tax_rate:'Thuế suất (%)',cfg_timestamp:'Thời gian',cfg_user:'Người dùng',cfg_users:'Quản lý Người dùng',ch_direct:'Trực tiếp',ch_export:'Xuất khẩu',ch_organic:'Hữu cơ',ch_retail:'Bán lẻ',ch_wholesale:'Bán sỉ',confirm_delete_cascade:'Khách hàng này có bản ghi liên quan. Xóa sẽ loại bỏ các tham chiếu đó. Tiếp tục?',fin_avg_price:'Giá TB',fin_channel:'Kênh',fin_channel_breakdown:'Doanh thu theo Kênh',fin_depreciation:'Khấu hao/tháng',fin_gross_profit:'Lợi nhuận Gộp',fin_net_profit:'Lợi nhuận Ròng',fin_tax:'Thuế',flock_curve_adjust:'Điều chỉnh Đường cong',flock_curve_tip:'1.0=tiêu chuẩn, 0.85=nhiệt đới, 1.1=ôn đới',optional:'Tùy chọn',pin_invalid:'PIN không hợp lệ',pin_login:'Đăng nhập',pin_select_user:'Chọn người dùng'
+ana_channel_pricing:'Giá theo Kênh',cfg_action:'Hành động',cfg_add_user:'+ Thêm Người dùng',cfg_asset_value:'Tổng Giá trị Tài sản',cfg_audit:'Nhật ký Kiểm toán',cfg_backup_na:'API Cache không khả dụng trên trình duyệt này.',cfg_backups:'Sao lưu Tự động',cfg_dep_years:'Khấu hao (năm)',cfg_detail:'Chi tiết',cfg_digits:'chữ số',cfg_loading:'Đang tải...',cfg_module:'Mô-đun',cfg_no_backups:'Chưa có sao lưu tự động.',cfg_no_users:'Chưa cấu hình người dùng.',cfg_restore:'Khôi phục',cfg_restore_confirm:'Khôi phục từ bản sao lưu này?',cfg_restored:'Đã khôi phục sao lưu',cfg_role:'Vai trò',cfg_size:'Kích thước',cfg_storage:'Sử dụng Lưu trữ',cfg_tax:'Thuế & Khấu hao',cfg_tax_rate:'Thuế suất (%)',cfg_timestamp:'Thời gian',cfg_user:'Người dùng',cfg_users:'Quản lý Người dùng',ch_direct:'Trực tiếp',ch_export:'Xuất khẩu',ch_organic:'Hữu cơ',ch_retail:'Bán lẻ',ch_wholesale:'Bán sỉ',confirm_delete_cascade:'Khách hàng này có bản ghi liên quan. Xóa sẽ loại bỏ các tham chiếu đó. Tiếp tục?',fin_avg_price:'Giá TB',fin_channel:'Kênh',fin_channel_breakdown:'Doanh thu theo Kênh',fin_depreciation:'Khấu hao/tháng',fin_gross_profit:'Lợi nhuận Gộp',fin_net_profit:'Lợi nhuận Ròng',fin_tax:'Thuế',flock_curve_adjust:'Điều chỉnh Đường cong',flock_curve_tip:'1.0=tiêu chuẩn, 0.85=nhiệt đới, 1.1=ôn đới',optional:'Tùy chọn',pin_invalid:'PIN không hợp lệ',pin_login:'Đăng nhập',pin_select_user:'Chọn người dùng',
+price_per_mo:'/tháng',trial_ended_title:'Thời gian dùng thử đã kết thúc',trial_ended_subtitle:'Chọn gói để tiếp tục sử dụng EGGlogU — giảm 40% trong 3 tháng đầu',btn_see_plans:'Xem gói',trial_days_left:'ngày còn lại dùng thử Enterprise',trial_last_day:'Ngày cuối cùng dùng thử!',trial_full_access:'Truy cập đầy đủ tất cả các mô-đun',trial_from_price:'Sau đó: từ $5/tháng (giảm 40%)',billing_next_quarter:'Quý tiếp theo',billing_regular_price:'Giá thường',
+perfil_title:'Hồ Sơ Của Tôi',perfil_subtitle:'Thông tin tài khoản của bạn',perfil_name:'Họ và tên',perfil_member_since:'Thành viên từ',perfil_change_pin:'Đổi PIN',perfil_current_pin:'PIN Hiện tại',perfil_new_pin:'PIN Mới',perfil_confirm_pin:'Xác nhận PIN',perfil_pin_changed:'Cập nhật PIN thành công',perfil_profile_updated:'Hồ sơ đã được cập nhật',perfil_pin_mismatch:'PIN không khớp',perfil_wrong_pin:'PIN hiện tại không đúng',
+reassign_title:'Chuyển Nhượng Tài Khoản',reassign_btn:'Chuyển nhượng',reassign_new_name:'Tên người nắm giữ mới',reassign_new_email:'Email người nắm giữ mới',reassign_new_pin:'PIN người nắm giữ mới',reassign_confirm:'Xác Nhận Chuyển Nhượng',reassign_success:'Chuyển nhượng tài khoản thành công',reassign_no_self:'Bạn không thể chuyển nhượng cho chính mình',reassign_last_owner:'Không thể chuyển nhượng chủ sở hữu hoạt động cuối cùng',reassign_verify:'Xác minh PIN của bạn để tiếp tục',reassign_notify:'Thông báo sẽ được gửi đến người nắm giữ mới',
+billing_no_permission:'Bạn không có quyền truy cập thanh toán',billing_cancel_sub:'Hủy Đăng Ký',billing_cancel_confirm:'Gói của bạn sẽ vẫn hoạt động đến {date}. Chúng tôi khuyên bạn nên tải xuống dữ liệu trước khi hủy.',billing_cancel_success:'Đã hủy đăng ký',billing_delete_account:'Xóa Tài Khoản',billing_delete_warning:'Hành động này KHÔNG THỂ HOÀN TÁC. Tất cả dữ liệu sẽ bị mất vĩnh viễn.',billing_delete_type_confirm:'Nhập {word} để xác nhận',billing_delete_success:'Tài khoản đã bị xóa',billing_current_plan:'Gói Hiện Tại',billing_manage_payments:'Quản Lý Thanh Toán',billing_change_plan:'Đổi Gói',billing_download_data:'Tải Xuống Dữ Liệu',
+dt_no_results:'Không có kết quả phù hợp với bộ lọc',dt_filters:'bộ lọc',dt_selected:'đã chọn',dt_deselect:'Bỏ chọn tất cả',dt_showing:'Hiển thị',dt_records:'bản ghi',dt_of:'trong',dt_clear_filters:'Xóa bộ lọc',dt_columns:'Cột',dt_export_csv:'Xuất CSV',dt_export_excel:'Xuất Excel',dt_per_page:'Mỗi trang',dt_sort_asc:'Sắp xếp tăng dần',dt_sort_desc:'Sắp xếp giảm dần',dt_filter:'Lọc',dt_select_all:'Chọn tất cả',dt_search:'Tìm kiếm',dt_page:'Trang',
+rpt_title:'Báo cáo & Phân tích',rpt_report:'Báo cáo',rpt_template:'Mẫu',rpt_period:'Kỳ',rpt_period_total:'Tổng kỳ',rpt_generated:'Ngày tạo',rpt_invalid_template:'Mẫu báo cáo không hợp lệ',rpt_tpl_production:'Sản xuất',rpt_tpl_financial:'Tài chính',rpt_tpl_health:'Sức khỏe',rpt_tpl_feed:'Thức ăn',rpt_tpl_kpi:'KPI',rpt_period_7d:'7 ngày gần nhất',rpt_period_30d:'30 ngày gần nhất',rpt_period_90d:'90 ngày gần nhất',rpt_period_12m:'12 tháng gần nhất',rpt_period_custom:'Tùy chỉnh',rpt_production_summary:'Tóm tắt Sản xuất',rpt_total_eggs:'Tổng Trứng',rpt_avg_day:'TB/ngày',rpt_culled:'Loại thải',rpt_broken_dirty:'Vỡ / Bẩn',rpt_loss:'hao hụt',rpt_daily_production:'Sản lượng Hàng ngày',rpt_size_breakdown:'Phân loại theo Kích cỡ',rpt_flock_breakdown:'Phân loại theo Đàn',rpt_broken:'Vỡ',rpt_dirty:'Bẩn',rpt_financial_pl:'Báo cáo Lãi Lỗ',rpt_transactions:'giao dịch',rpt_margin:'Biên lợi nhuận',rpt_overdue:'quá hạn',rpt_monthly_trend:'Xu hướng Hàng tháng',rpt_by_category:'theo Danh mục',rpt_other:'Khác',rpt_health_overview:'Tổng quan Sức khỏe',rpt_applied_period:'đã tiêm trong kỳ',rpt_upcoming_vaccines:'Tiêm phòng Sắp tới',rpt_by_flock:'theo Đàn',rpt_feed_efficiency:'Hiệu quả Thức ăn',rpt_hen_day:'gà/ngày',rpt_feed_cost:'Chi phí Thức ăn',rpt_feed_stock:'Tồn kho Thức ăn',rpt_remaining:'còn lại',rpt_weekly_consumption:'Tiêu thụ Hàng tuần',rpt_by_feed_type:'theo Loại Thức ăn',rpt_kpi_trends:'Xu hướng KPI',rpt_no_snapshots:'Không có dữ liệu KPI cho kỳ này',rpt_kpi_chart:'Sản lượng & Đẻ trứng',rpt_kpi_fcr_mort:'FCR & Tỷ lệ chết',rpt_type:'Loại',rpt_xlsx_missing:'Thư viện XLSX không khả dụng',rpt_pdf_missing:'Thư viện PDF không khả dụng',rpt_pdf_error:'Lỗi xuất PDF',wf_title:'Tự động hóa',wf_create_rule:'Tạo Quy tắc',wf_active_rules:'Quy tắc Hoạt động',wf_executions:'Lần thực thi',wf_last_24h:'24 giờ gần nhất',wf_presets:'Mẫu Có sẵn',wf_rules:'Quy tắc',wf_no_rules:'Chưa cấu hình quy tắc',wf_rule_added:'Đã thêm quy tắc',wf_execution_log:'Nhật ký Thực thi',wf_rule:'Quy tắc',wf_detail:'Chi tiết',wf_last_fired:'Lần chạy cuối',wf_test:'Thử',wf_would_trigger:'Sẽ kích hoạt',wf_would_not_trigger:'Sẽ không kích hoạt',wf_rule_name:'Tên quy tắc',wf_condition:'Điều kiện',wf_comparator:'So sánh',wf_threshold:'Ngưỡng',wf_add_action:'Thêm Hành động',wf_cooldown:'Thời gian chờ',wf_hours:'giờ',wf_unnamed_rule:'Quy tắc chưa đặt tên',wf_triggered:'Quy tắc đã kích hoạt',wf_invalid_condition:'Điều kiện không hợp lệ',wf_cond_deaths_spike:'Tỷ lệ chết tăng đột biến',wf_cond_low_production:'Sản lượng thấp',wf_cond_feed_stock:'Tồn kho Thức ăn',wf_cond_vaccine_due:'Vắc-xin sắp đến hạn',wf_cond_temperature:'Nhiệt độ',wf_cond_payment_overdue:'Thanh toán quá hạn',wf_cond_outbreak_active:'Dịch bệnh đang diễn ra',wf_cond_production_target:'Mục tiêu Sản xuất',wf_act_notify:'Thông báo',wf_act_email:'Email',wf_act_auto_log:'Tự ghi nhận',wf_act_auto_task:'Tự tạo việc',wf_act_update_status:'Cập nhật Trạng thái',wf_readings_above:'chỉ số vượt',wf_no_target:'Chưa đặt mục tiêu sản xuất',wf_below_target:'dưới mục tiêu',storage_warning:'Bộ nhớ cục bộ gần đầy (>80%). Hãy cân nhắc đồng bộ dữ liệu.',storage_full:'Bộ nhớ cục bộ đã đầy. Đã tự động giải phóng dung lượng.',sync_conflicts:'{n} bản ghi đã được cập nhật bởi người dùng khác',wf_browser_note:'Các quy tắc tự động được đánh giá khi trình duyệt đang mở.'
 }
 };
 
@@ -893,11 +977,19 @@ const th=THEMES[name]||THEMES.blue;const s=document.documentElement.style;
 s.setProperty('--primary',th.primary);s.setProperty('--primary-light',th['primary-light']);
 s.setProperty('--primary-dark',th['primary-dark']);s.setProperty('--sidebar-bg',th['sidebar-bg']);
 s.setProperty('--primary-hover','rgba('+th.rgb+',.04)');s.setProperty('--primary-ring','rgba('+th.rgb+',.15)');
-s.setProperty('--primary-fill','rgba('+th.rgb+',.1)');localStorage.setItem('egglogu_theme',name);
+s.setProperty('--primary-fill','rgba('+th.rgb+',.1)');_safeSetItem('egglogu_theme',name);
 Object.keys(CHARTS).forEach(k=>{if(CHARTS[k]){try{CHARTS[k].destroy();}catch(e){}}});CHARTS={};
 }
 function themeColor(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
 function themeRgba(a){const th=THEMES[localStorage.getItem('egglogu_theme')||'blue']||THEMES.blue;return'rgba('+th.rgb+','+a+')';}
+
+// ============ LAZY LIB LOADER ============
+const _loadedLibs={};
+function _loadLib(name,url){if(_loadedLibs[name])return _loadedLibs[name];_loadedLibs[name]=new Promise((res,rej)=>{const s=document.createElement('script');s.src=url;s.onload=()=>res();s.onerror=()=>rej(new Error('Failed to load '+name));document.head.appendChild(s);});return _loadedLibs[name];}
+async function _ensureChart(){if(typeof Chart!=='undefined')return;await _loadLib('chartjs','https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js');}
+async function _ensureLeaflet(){if(typeof L!=='undefined')return;await _loadLib('leaflet','https://unpkg.com/leaflet@1/dist/leaflet.js');}
+async function _ensureXLSX(){if(typeof XLSX!=='undefined')return;await _loadLib('xlsx','https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js');}
+async function _ensureMQTT(){if(typeof mqtt!=='undefined')return;await _loadLib('mqtt','https://unpkg.com/mqtt@5/dist/mqtt.min.js');}
 
 // ============ CORE ============
 let LANG=localStorage.getItem('egglogu_lang')||'es';
@@ -916,13 +1008,42 @@ function currency(){return(DATA||loadData()).farm.currency||'$';}
 function todayStr(){return new Date().toISOString().substring(0,10);}
 
 // ============ SECURITY: XSS Prevention ============
+/**
+ * Sanitizes a string by escaping HTML special characters to prevent XSS attacks.
+ * @param {string} str - The string to sanitize
+ * @returns {string} The escaped string with &, <, >, ", ' replaced by HTML entities
+ */
 function sanitizeHTML(str){
 if(typeof str!=='string')return String(str||'');
 const map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'};
 return str.replace(/[&<>"']/g,c=>map[c]);
 }
+/**
+ * Escapes a string for safe use inside HTML attributes.
+ * @param {string} str - The attribute value to escape
+ * @returns {string} The sanitized string safe for HTML attribute insertion
+ */
 function escapeAttr(str){return sanitizeHTML(String(str||''));}
 function safeHTML(tpl,...vals){return tpl.reduce((out,s,i)=>out+s+(i<vals.length?sanitizeHTML(String(vals[i])):''),'');}
+
+// ============ Lazy loader for heavy third-party libs ============
+const _lazyLibs={};
+function loadLib(name,url){
+  if(_lazyLibs[name])return _lazyLibs[name];
+  _lazyLibs[name]=new Promise((resolve,reject)=>{
+    if(window[name]){resolve(window[name]);return;}
+    const s=document.createElement('script');
+    s.src=url;s.onload=()=>resolve(window[name]);
+    s.onerror=()=>reject(new Error('Failed to load '+name));
+    document.head.appendChild(s);
+  });
+  return _lazyLibs[name];
+}
+const LAZY_URLS={
+  html2canvas:'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+  jspdf:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js',
+  XLSX:'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.mini.min.js'
+};
 
 // ============ SECURITY: Input Validation ============
 function validateInput(value,rules={}){
@@ -974,6 +1095,37 @@ function confirmYes(){$('confirm-overlay').classList.remove('open');if(_confirmR
 function confirmNo(){$('confirm-overlay').classList.remove('open');if(_confirmResolve){_confirmResolve(false);_confirmResolve=null;}}
 
 // ============ API SERVICE LAYER (Backend Connection) ============
+
+// Circuit breaker for external APIs
+const _circuitBreakers={};
+function _getBreaker(key){
+  if(!_circuitBreakers[key])_circuitBreakers[key]={failures:0,lastFail:0,state:'closed'};
+  return _circuitBreakers[key];
+}
+function _cbFetch(url,opts,key,threshold=3,cooldownMs=30000){
+  const cb=_getBreaker(key||url);
+  if(cb.state==='open'){
+    if(Date.now()-cb.lastFail<cooldownMs)return Promise.reject(new Error('Circuit open: '+key));
+    cb.state='half-open';
+  }
+  return fetch(url,opts).then(r=>{
+    if(r.ok){cb.failures=0;cb.state='closed';}
+    else{cb.failures++;cb.lastFail=Date.now();if(cb.failures>=threshold)cb.state='open';}
+    return r;
+  }).catch(e=>{
+    cb.failures++;cb.lastFail=Date.now();if(cb.failures>=threshold)cb.state='open';
+    throw e;
+  });
+}
+
+// CSRF token helper
+function _getCsrfToken(){
+  const meta=document.querySelector('meta[name="csrf-token"]');
+  if(meta)return meta.content;
+  const m=document.cookie.match(/csrf_token=([^;]+)/);
+  return m?m[1]:'';
+}
+
 const API_BASE=localStorage.getItem('egglogu_api_base')||'https://api.egglogu.com/api/v1';
 const _GOOGLE_CLIENT_ID=localStorage.getItem('egglogu_google_client_id')||'';window._GOOGLE_CLIENT_ID=_GOOGLE_CLIENT_ID;
 // SECURITY MODEL — localStorage Token Storage
@@ -983,13 +1135,19 @@ const _GOOGLE_CLIENT_ID=localStorage.getItem('egglogu_google_client_id')||'';win
 // short-lived with refresh rotation, (4) the alternative (httpOnly cookies) is incompatible
 // with offline-first PWA architecture. XSS is mitigated via sanitizeHTML() on all user input.
 // NEVER store raw passwords, PINs, or API keys in localStorage.
+/**
+ * API service object handling all HTTP communication with the backend.
+ * Manages JWT tokens (access + refresh), auto-refresh on 401, offline queueing
+ * for POST/PUT requests, and server sync flush.
+ * @type {Object}
+ */
 const apiService={
   _token:null,_refreshToken:null,_online:navigator.onLine,_syncQueue:[],
 
   // Token management — JWTs only, never raw credentials
   setTokens(access,refresh){
     this._token=access;this._refreshToken=refresh;
-    localStorage.setItem('egglogu_tokens',JSON.stringify({access,refresh}));
+    _safeSetItem('egglogu_tokens',JSON.stringify({access,refresh}));
   },
   getToken(){
     if(this._token)return this._token;
@@ -1005,7 +1163,7 @@ const apiService={
   // Core HTTP wrapper
   async request(method,path,body,retry=true){
     const token=this.getToken();
-    const opts={method,headers:{'Content-Type':'application/json'}};
+    const opts={method,headers:{'Content-Type':'application/json','X-CSRF-Token':_getCsrfToken()}};
     if(token)opts.headers['Authorization']='Bearer '+token;
     if(body&&method!=='GET')opts.body=JSON.stringify(body);
     let resp;
@@ -1056,6 +1214,8 @@ const apiService={
     }catch(e){return false;}
   },
   async getMe(){return this.request('GET','/auth/me');},
+  async updateProfile(data){return this.request('PATCH','/auth/me',data);},
+  async notifyReassignment(data){return this.request('POST','/auth/notify-reassignment',data);},
   async forgotPassword(email){return this.request('POST','/auth/forgot-password',{email});},
   async resetPassword(token,newPassword){return this.request('POST','/auth/reset-password',{token,new_password:newPassword});},
   async googleAuth(credential,orgName){const resp=await this.request('POST','/auth/google',{credential,organization_name:orgName||''});if(resp.access_token)this.setTokens(resp.access_token,resp.refresh_token);return resp;},
@@ -1074,6 +1234,8 @@ const apiService={
   async getPricing(){return this.request('GET','/billing/pricing');},
   async getBillingStatus(){return this.request('GET','/billing/status');},
   async getPortalUrl(){return this.request('GET','/billing/portal');},
+  async cancelSubscription(){return this.request('POST','/billing/cancel-subscription');},
+  async deleteAccount(password,confirmText){return this.request('DELETE','/billing/delete-account',{password,confirm_text:confirmText});},
 
   // Support
   async getFaq(q='',category=''){const p=new URLSearchParams();if(q)p.set('q',q);if(category)p.set('category',category);return this.request('GET','/support/faq'+(p.toString()?'?'+p:''));},
@@ -1292,7 +1454,7 @@ if(navigator.onLine&&user.includes('@')){
 // Local auth fallback (offline or non-email username)
 if(isFirstRun()){
 const { hash, salt } = await hashPassword(pass);
-localStorage.setItem(AUTH_KEY,JSON.stringify({user:user,hash:hash,salt:salt}));
+_safeSetItem(AUTH_KEY,JSON.stringify({user:user,hash:hash,salt:salt}));
 sessionStorage.setItem(AUTH_SESSION,'true');
 $('login-screen').classList.add('hidden');
 init();
@@ -1311,7 +1473,7 @@ if (stored.salt) {
   const legacyHash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   if (stored.user === user && stored.hash === legacyHash) {
     const { hash: newHash, salt: newSalt } = await hashPassword(pass);
-    localStorage.setItem(AUTH_KEY, JSON.stringify({ user: user, hash: newHash, salt: newSalt }));
+    _safeSetItem(AUTH_KEY, JSON.stringify({ user: user, hash: newHash, salt: newSalt }));
     match = true;
   }
 }
@@ -1631,6 +1793,11 @@ function onMedSelect(){const sel=$('m-name');if(!sel)return;const med=CATALOGS.m
 function onExpenseCatChange(){const cat=$('fe-cat')?.value;const descEl=$('fe-desc');if(!descEl||!cat)return;const opts=CATALOGS.expenseDescriptions[cat]||[];descEl.innerHTML=catalogSelect(opts,descEl.value,true);}
 function onHouseChange(){const house=$('tb-house')?.value;const rackEl=$('tb-rack');if(!rackEl)return;rackEl.innerHTML=rackSelect(house,rackEl.value);}
 function onProdFlockChange(){const fid=$('p-flock')?.value;const shellEl=$('p-shell');if(!fid||!shellEl)return;const D=loadData();const f=D.flocks.find(x=>x.id===fid);if(f){const b=COMMERCIAL_BREEDS.find(x=>x.id===f.breed);if(b&&b.eggColor){const colorMap={'Blanco':'blanco','Marrón':'marron','Marrón oscuro':'marron','Crema':'crema','Azul/Verde':'crema','Verde oliva':'crema'};shellEl.value=colorMap[b.eggColor]||'';}}}
+/**
+ * Loads application data from localStorage, applying migrations for missing fields.
+ * Returns cached DATA if already loaded; otherwise parses from storage or falls back to DEFAULT_DATA.
+ * @returns {Object} The full application data object (farm, flocks, production, settings, etc.)
+ */
 function loadData(){
 if(DATA)return DATA;
 try{const r=localStorage.getItem('egglogu_data');
@@ -1675,7 +1842,12 @@ if(DATA.settings.darkMode===undefined)DATA.settings.darkMode=false;
 }catch(e){DATA=JSON.parse(JSON.stringify(DEFAULT_DATA));}
 return DATA;
 }
-function saveData(d){DATA=d||DATA;localStorage.setItem('egglogu_data',JSON.stringify(DATA));scheduleAutoBackup();scheduleSyncToServer();}
+/**
+ * Persists application data to localStorage, schedules auto-backup and server sync,
+ * and triggers WorkflowEngine evaluation if available.
+ * @param {Object} [d] - Data object to save; if omitted, saves the current cached DATA
+ */
+function saveData(d){DATA=d||DATA;_safeSetItem('egglogu_data',JSON.stringify(DATA));scheduleAutoBackup();scheduleSyncToServer();if(typeof WorkflowEngine!=='undefined')try{WorkflowEngine.evaluate(DATA);}catch(e){console.warn('WorkflowEngine.evaluate error:',e);}}
 
 // ============ SERVER SYNC (dual-write: localStorage + API) — Delta Sync ============
 let _syncTimer=null;let _lastSyncTime=localStorage.getItem('egglogu_last_sync')||null;let _isSyncing=false;
@@ -1713,19 +1885,17 @@ async function syncToServer(){
         deltaCount+=changed.length;
       }
     }
-    if(deltaCount===0){console.log('[Sync] Δ 0 records — skipped');_isSyncing=false;return;}
+    if(deltaCount===0){_isSyncing=false;return;}
     const payload={last_synced_at:_lastSyncTime,data:delta};
     const resp=await apiService.syncToServer(payload);
-    if(resp&&resp.synced>0)console.log('[Sync] Δ '+resp.synced+' records synced');
-    if(resp&&resp.conflicts&&resp.conflicts.length)console.warn('[Sync] Conflicts:',resp.conflicts);
+    if(resp&&resp.conflicts&&resp.conflicts.length){console.warn('[Sync] Conflicts:',resp.conflicts);const n=resp.conflict_count||resp.conflicts.length;toast(t('sync_conflicts').replace('{n}',n),true);}
     // Merge server changes back into local data
     if(resp&&resp.server_changes)_mergeServerChanges(D,resp.server_changes);
     _lastSyncTime=resp&&resp.server_now?resp.server_now:new Date().toISOString();
-    localStorage.setItem('egglogu_last_sync',_lastSyncTime);
+    _safeSetItem('egglogu_last_sync',_lastSyncTime);
     _saveSyncSnapshot(D);
     // Save merged data locally (bypass scheduleSyncToServer to avoid loop)
-    DATA=D;localStorage.setItem('egglogu_data',JSON.stringify(DATA));
-    console.log('[Sync] Δ '+deltaCount+' records pushed');
+    DATA=D;_safeSetItem('egglogu_data',JSON.stringify(DATA));
   }catch(e){
     console.warn('[Sync] Failed, will retry:',e.message);
   }finally{_isSyncing=false;}
@@ -1737,7 +1907,7 @@ function _saveSyncSnapshot(D){
     for(const r of records){const rid=r.id||r.date||JSON.stringify(r).substring(0,64);m[rid]=JSON.stringify(r);}
     snap[key]=m;
   }
-  try{localStorage.setItem('egglogu_sync_snapshot',JSON.stringify(snap));}catch(e){console.warn('[Sync] Snapshot save failed:',e.message);}
+  try{_safeSetItem('egglogu_sync_snapshot',JSON.stringify(snap));}catch(e){console.warn('[Sync] Snapshot save failed:',e.message);}
 }
 function _mergeServerChanges(D,changes){
   const REVERSE_MAP={
@@ -1773,7 +1943,7 @@ function _mergeServerChanges(D,changes){
       }
     }
   }
-  if(merged>0)console.log('[Sync] Merged '+merged+' server changes');
+  /* merged server changes applied */
 }
 
 // ============ SERVER DATA LOAD (initial hydration via delta sync) ============
@@ -1790,7 +1960,7 @@ async function loadFromServer(){
     if(syncResp&&syncResp.server_changes)_mergeServerChanges(D,syncResp.server_changes);
     if(syncResp&&syncResp.server_now){
       _lastSyncTime=syncResp.server_now;
-      localStorage.setItem('egglogu_last_sync',_lastSyncTime);
+      _safeSetItem('egglogu_last_sync',_lastSyncTime);
     }
     if(billing){
       D.settings.plan=D.settings.plan||{};
@@ -1811,9 +1981,8 @@ async function loadFromServer(){
       if(billing.current_period_end)D.settings.plan.nextBilling=billing.current_period_end;
     }
     // Save merged data locally — bypass sync to avoid loop
-    DATA=D;localStorage.setItem('egglogu_data',JSON.stringify(DATA));scheduleAutoBackup();
+    DATA=D;_safeSetItem('egglogu_data',JSON.stringify(DATA));scheduleAutoBackup();
     _saveSyncSnapshot(D);
-    console.log('[Server] Data loaded via delta sync');
   }catch(e){
     console.warn('[Server] Load failed, using local data:',e.message);
   }
@@ -2109,9 +2278,9 @@ anonymized:anon};
 };
 function showVengPanel(errors,warnings){
 let h='';
-if(errors.length){h+='<div style="background:#fee;border:1px solid #f88;border-radius:8px;padding:10px;margin:8px 0"><strong style="color:#c00">⛔ VENG Errors</strong><ul style="margin:4px 0;padding-left:20px;color:#900">';
+if(errors.length){h+='<div class="dm-error-box" style="background:#fee;border:1px solid #f88;border-radius:8px;padding:10px;margin:8px 0"><strong style="color:#c00">⛔ VENG Errors</strong><ul style="margin:4px 0;padding-left:20px;color:#900">';
 errors.forEach(e=>{h+='<li>'+sanitizeHTML(e.msg)+'</li>';});h+='</ul></div>';}
-if(warnings.length){h+='<div style="background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:10px;margin:8px 0"><strong style="color:#e65100">⚠ VENG Warnings</strong> <span style="font-size:12px;color:#795548">(save again to override)</span><ul style="margin:4px 0;padding-left:20px;color:#6d4c00">';
+if(warnings.length){h+='<div class="dm-warn-box" style="background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:10px;margin:8px 0"><strong style="color:#e65100">⚠ VENG Warnings</strong> <span class="dm-text-muted" style="font-size:12px;color:#795548">(save again to override)</span><ul style="margin:4px 0;padding-left:20px;color:#6d4c00">';
 warnings.forEach(w=>{h+='<li>'+sanitizeHTML(w.msg)+'</li>';});h+='</ul></div>';}
 let panel=$('veng-panel');
 if(!panel){const mb=$('modal-body');if(mb){panel=document.createElement('div');panel.id='veng-panel';mb.prepend(panel);}}
@@ -2128,7 +2297,7 @@ const csC=cs.overall>=80?'':'danger';
 h+=kpi('Farm Health',cs.overall+'/100',cs.critical+' critical, '+cs.warning+' warnings',csC);
 h+='</div>';
 if(cs.findings.length>0){h+='<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">';
-cs.findings.filter(f=>f.sev==='critical').slice(0,3).forEach(f=>{h+='<span style="background:#ffcdd2;color:#b71c1c;padding:3px 10px;border-radius:10px;font-size:12px">'+f.code+'</span>';});
+cs.findings.filter(f=>f.sev==='critical').slice(0,3).forEach(f=>{h+='<span class="dm-badge-critical" style="background:#ffcdd2;color:#b71c1c;padding:3px 10px;border-radius:10px;font-size:12px">'+f.code+'</span>';});
 h+=' <a href="javascript:nav(\'carencias\')" style="font-size:12px;color:var(--primary);align-self:center">View all →</a></div>';}
 h+='</div><div class="card" style="border-left:4px solid '+(cs.overall>=80?'var(--success)':cs.overall>=60?'var(--warning)':'var(--danger)')+'">';
 h+='<h3>🔍 Deficiency Census</h3><div style="display:flex;gap:10px;flex-wrap:wrap">';
@@ -2158,7 +2327,7 @@ function logAudit(action,module,detail,before,after){
 const D=loadData();if(!D.auditLog)D.auditLog=[];
 D.auditLog.push({ts:new Date().toISOString(),user:_currentUser.name,action,module,detail:detail||'',before:before||null,after:after||null});
 if(D.auditLog.length>10000)D.auditLog=D.auditLog.slice(-10000);
-DATA=D;localStorage.setItem('egglogu_data',JSON.stringify(DATA));
+DATA=D;_safeSetItem('egglogu_data',JSON.stringify(DATA));
 }
 
 // ============ AUTO-BACKUP via Cache API (A7) ============
@@ -2196,13 +2365,17 @@ const r=await cache.match(new Request(url));if(!r)return toast('Backup not found
 const data=await r.json();DATA=data;saveData(data);toast(t('cfg_imported')||'Restored');nav('config');
 }catch(e){toast('Error: '+e.message,true);}
 }
-function getStorageUsage(){try{const d=localStorage.getItem('egglogu_data');return d?d.length:0;}catch(e){return 0;}}
+function getStorageUsage(){try{return _getFullStorageUsage();}catch(e){return 0;}}
+function _getFullStorageUsage(){let total=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);const v=localStorage.getItem(k);total+=(k.length+v.length)*2;}return total;}
+const _STORAGE_QUOTA=5*1024*1024;
+const _STORAGE_EVICTION_ORDER=['egglogu_sync_snapshot','egglogu_bugs','egglogu_suggestions','egglogu_offline_tickets'];
+function _safeSetItem(key,value){try{localStorage.setItem(key,value);const usage=_getFullStorageUsage();if(usage>_STORAGE_QUOTA*0.8){toast(t('storage_warning'),true);}return true;}catch(e){if(e.name==='QuotaExceededError'||e.code===22||e.code===1014){for(const evictKey of _STORAGE_EVICTION_ORDER){if(localStorage.getItem(evictKey)){localStorage.removeItem(evictKey);try{localStorage.setItem(key,value);return true;}catch(_){}}}toast(t('storage_full'),true);return false;}throw e;}}
 
 // ============ ROLE PERMISSIONS (A8) ============
 const ROLE_PERMISSIONS={
-superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
-owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
-manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
+superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','reportes','automatizacion','admin','config','soporte','superadmin'],
+owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','reportes','automatizacion','admin','config','soporte'],
+manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','reportes','automatizacion','soporte'],
 worker:['dashboard','produccion','lotes','alimento','ambiente','soporte'],
 vet:['dashboard','lotes','ambiente','sanidad','bioseguridad','trazabilidad','carencias','soporte']
 };
@@ -2211,14 +2384,14 @@ const MODULE_GROUPS={
 production:['produccion','lotes','alimento','ambiente'],
 health:['sanidad','bioseguridad'],
 commercial:['clientes','inventario','finanzas'],
-management:['analisis','operaciones','trazabilidad','planificacion','carencias'],
+management:['analisis','operaciones','trazabilidad','planificacion','carencias','reportes','automatizacion'],
 system:['admin','config']
 };
 const DEFAULT_ROLE_PERMS=JSON.parse(JSON.stringify(ROLE_PERMISSIONS));
 const ROLE_MAX_MODULES={
-superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte','superadmin'],
-owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','admin','config','soporte'],
-manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','soporte'],
+superadmin:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','reportes','automatizacion','admin','config','soporte','superadmin'],
+owner:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','reportes','automatizacion','admin','config','soporte'],
+manager:['dashboard','produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','carencias','reportes','automatizacion','soporte'],
 worker:['dashboard','produccion','lotes','alimento','ambiente','operaciones','soporte'],
 vet:['dashboard','sanidad','bioseguridad','lotes','ambiente','trazabilidad','planificacion','carencias','soporte']
 };
@@ -2380,7 +2553,7 @@ saveData(D);
 }
 
 // ============ UI HELPERS ============
-const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','trazabilidad','carencias','soporte','admin','superadmin']);
+const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','trazabilidad','carencias','reportes','automatizacion','soporte','admin','superadmin']);
 function toggleNavGroup(lbl){
 const links=lbl.nextElementSibling;if(!links||!links.classList.contains('nav-group-links'))return;
 lbl.classList.toggle('grp-open');links.classList.toggle('grp-open');
@@ -2650,7 +2823,7 @@ if(Array.isArray(D[k]))D[k]=D[k].filter(r=>!String(r.id||'').startsWith('demo-')
 saveData(D);
 // Remove UI
 document.querySelectorAll('.wt-overlay,.wt-narration,.wt-controls').forEach(el=>el.remove());
-if(markDone!==false)localStorage.setItem('egglogu_walkthrough_done','1');
+if(markDone!==false)_safeSetItem('egglogu_walkthrough_done','1');
 nav(currentSection||'dashboard');
 }
 
@@ -2685,9 +2858,11 @@ const tourName=_wtL('t'+(_wtTourIdx+1)+'_name');
 // Intro narration for first step of tour
 const introKey='t'+(_wtTourIdx+1)+'s1';
 const narrText=_wtStepIdx===0?_wtL(introKey)+'<br><br>'+_wtL(step.narr):_wtL(step.narr);
-nr.innerHTML='<div class="wt-narration-icon">'+tour.icon+'</div>'
-+'<div class="wt-narration-tour">'+tourName+'</div>'
-+'<div class="wt-narration-text">'+narrText+'</div>';
+nr.innerHTML='';
+const iconDiv=document.createElement('div');iconDiv.className='wt-narration-icon';iconDiv.textContent=tour.icon;
+const tourDiv=document.createElement('div');tourDiv.className='wt-narration-tour';tourDiv.textContent=tourName;
+const narrDiv=document.createElement('div');narrDiv.className='wt-narration-text';narrDiv.innerHTML=narrText;
+nr.append(iconDiv,tourDiv,narrDiv);
 }
 // Spotlight
 setTimeout(()=>{_wtSpotlight(step.highlight);},300);
@@ -2760,19 +2935,38 @@ _wtRenderStep();
 }
 // ============ END WALKTHROUGH ENGINE ============
 
+/**
+ * Cleans up resources from the current section before navigating away.
+ * Destroys Chart.js instances, removes Leaflet map, disconnects MQTT, and clears active timers.
+ */
+function _cleanupSection(){
+destroyCharts();
+if(geoMap){try{geoMap.remove();}catch(e){}geoMap=null;geoMarker=null;}
+if(mqttClient){try{mqttClient.end(true);}catch(e){}mqttClient=null;mqttConnected=false;}
+if(_pinLockCountdownTimer){clearInterval(_pinLockCountdownTimer);_pinLockCountdownTimer=null;}
+if(typeof _wtTimer!=='undefined'&&_wtTimer){clearTimeout(_wtTimer);_wtTimer=null;}
+}
+/**
+ * Main SPA router. Navigates to a section, cleaning up the previous one, updating nav state,
+ * and rendering the target section. Blocks non-dashboard access when trial is suspended.
+ * @param {string} section - Section ID (e.g. 'dashboard', 'produccion', 'finanzas', 'config')
+ */
 function nav(section){
 // Suspension gate — trial expired, force to dashboard
 const _p=(loadData().settings.plan||{});
 if(_p.status==='suspended'&&section!=='dashboard'&&section!=='config'){
 section='dashboard';showToast('Tu prueba ha terminado. Suscribete para continuar.','error');
 }
+_cleanupSection();
 currentSection=section;document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
 $('sec-'+section).classList.add('active');
 document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',a.dataset.section===section));
 openNavGroupFor(section);
 $('sidebar').classList.remove('open');
-const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
-if(R[section]){
+const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,reportes:renderReportes,automatizacion:renderAutomatizacion,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
+const _rb=window.__routeBridge?.getRouteOverride(section);
+if(_rb){_rb();postRenderA11y(section);}
+else if(R[section]){
 if(HEAVY_SECTIONS.has(section)){$('sec-'+section).innerHTML='<div class="loading-spinner" aria-label="Loading"></div>';requestAnimationFrame(()=>{R[section]();postRenderA11y(section);});}
 else{R[section]();postRenderA11y(section);}
 }
@@ -2785,9 +2979,17 @@ setTimeout(()=>{const first=$('modal-overlay').querySelector('input,select,texta
 function closeModal(){$('modal-overlay').classList.remove('open');if(_modalTrigger&&_modalTrigger.focus)_modalTrigger.focus();_modalTrigger=null;_vengWarningsShown=false;}
 function toast(msg,err=false){const e=$('toast');e.textContent=msg;e.className='toast show'+(err?' error':'');setTimeout(()=>e.className='toast',3000);}
 function emptyState(icon,msg,btn,act){let h=`<div class="empty-state"><div class="empty-icon">${sanitizeHTML(icon)}</div><p>${sanitizeHTML(msg)}</p>`;if(btn)h+=`<button class="btn btn-primary" onclick="${escapeAttr(act)}">${sanitizeHTML(btn)}</button>`;return h+'</div>';}
-function switchLang(l){LANG=l;localStorage.setItem('egglogu_lang',l);document.documentElement.lang=l;document.documentElement.dir=(l==='ar')?'rtl':'ltr';const lt=$('langToggle');if(lt){lt.querySelectorAll('.lang-grid button').forEach(b=>{b.classList.toggle('active',b.id==='btn-'+l);});const names={es:'Español',en:'English',pt:'Português',fr:'Français',de:'Deutsch',it:'Italiano',ja:'日本語',zh:'中文',ru:'Русский',id:'Bahasa Indonesia',ar:'العربية',ko:'한국어',th:'ไทย',vi:'Tiếng Việt'};const lc=$('langCurrent');if(lc)lc.textContent=names[l]||l;lt.classList.remove('open');}document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
+/**
+ * Switches the UI language, updates localStorage, sets HTML dir (RTL for Arabic),
+ * refreshes all translatable elements, and re-renders the current section.
+ * @param {string} l - Language code (e.g. 'es', 'en', 'pt', 'fr', 'de', 'it', 'ja', 'zh', 'ar')
+ */
+function switchLang(l){LANG=l;_safeSetItem('egglogu_lang',l);document.documentElement.lang=l;document.documentElement.dir=(l==='ar')?'rtl':'ltr';const lt=$('langToggle');if(lt){lt.querySelectorAll('.lang-grid button').forEach(b=>{b.classList.toggle('active',b.id==='btn-'+l);});const names={es:'Español',en:'English',pt:'Português',fr:'Français',de:'Deutsch',it:'Italiano',ja:'日本語',zh:'中文',ru:'Русский',id:'Bahasa Indonesia',ar:'العربية',ko:'한국어',th:'ไทย',vi:'Tiếng Việt'};const lc=$('langCurrent');if(lc)lc.textContent=names[l]||l;lt.classList.remove('open');}document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));nav(currentSection);}
 function flockSelect(sel,all=false){const D=loadData();const active=D.flocks.filter(f=>f.status!=='descarte');let h=all?`<option value="">${t('all')}</option>`:'';if(all||active.length!==1)h+='<option value="">--</option>';active.forEach(f=>{const autoSel=(!sel&&active.length===1)||f.id===sel;h+=`<option value="${escapeAttr(f.id)}"${autoSel?' selected':''}>${sanitizeHTML(f.name)}</option>`;});return h;}
 function clientSelect(sel){const D=loadData();let h='<option value="">--</option>';D.clients.forEach(c=>{h+=`<option value="${escapeAttr(c.id)}"${c.id===sel?' selected':''}>${sanitizeHTML(c.name)}</option>`;});return h;}
+/**
+ * Destroys all active Chart.js instances stored in the CHARTS registry and resets it.
+ */
 function destroyCharts(){Object.values(CHARTS).forEach(c=>{try{c.destroy();}catch(e){}});CHARTS={};}
 
 // ============ ALERTS ============
@@ -2817,6 +3019,8 @@ if(recentCross.length)alerts.push({type:'danger',icon:'⚠️',msg:`${t('alert_b
 }
 const openClaims=(D.clientClaims||[]).filter(c=>c.status!=='resolved').length;
 if(openClaims>0)alerts.push({type:'warning',icon:'📋',msg:t('clm_alert_open').replace('{n}',openClaims)});
+// Merge workflow automation alerts
+if(typeof WorkflowEngine!=='undefined')try{const wfAlerts=WorkflowEngine.getAlerts(D);if(wfAlerts&&wfAlerts.length)alerts.push(...wfAlerts);}catch(e){}
 return alerts;
 }
 
@@ -2832,29 +3036,30 @@ const discLabel=p.discount_label||'';
 const tierName=(PLAN_TIERS[p.tier]||{}).name||p.tier||'';
 
 // Suspended — trial expired, show pricing tiers to hook them
+const pmo=t('price_per_mo');
 if(p.status==='suspended'){
 return `<div class="card" style="background:linear-gradient(135deg,#dc3545,#c82333);color:#fff;padding:24px;margin-bottom:16px;text-align:center">
-<h3 style="margin:0 0 8px;font-size:1.3em">Tu periodo de prueba ha terminado</h3>
-<p style="margin:0 0 16px;opacity:.9">Elige un plan para seguir usando EGGlogU — 40% off los primeros 3 meses</p>
+<h3 style="margin:0 0 8px;font-size:1.3em">${t('trial_ended_title')}</h3>
+<p style="margin:0 0 16px;opacity:.9">${t('trial_ended_subtitle')}</p>
 <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
 <div onclick="showUpgradeModal()" style="cursor:pointer;background:rgba(255,255,255,.15);border-radius:12px;padding:16px;min-width:120px">
 <div style="font-size:.8em;opacity:.7">Hobby</div>
-<div><span style="text-decoration:line-through;opacity:.5">$9</span> <strong style="font-size:1.4em">$5</strong><small>/mes</small></div>
+<div><span style="text-decoration:line-through;opacity:.5">$9</span> <strong style="font-size:1.4em">$5</strong><small>${pmo}</small></div>
 </div>
 <div onclick="showUpgradeModal()" style="cursor:pointer;background:rgba(255,255,255,.15);border-radius:12px;padding:16px;min-width:120px">
 <div style="font-size:.8em;opacity:.7">Starter</div>
-<div><span style="text-decoration:line-through;opacity:.5">$19</span> <strong style="font-size:1.4em">$11</strong><small>/mes</small></div>
+<div><span style="text-decoration:line-through;opacity:.5">$19</span> <strong style="font-size:1.4em">$11</strong><small>${pmo}</small></div>
 </div>
 <div onclick="showUpgradeModal()" style="cursor:pointer;background:rgba(255,255,255,.25);border:2px solid #fff;border-radius:12px;padding:16px;min-width:120px">
 <div style="font-size:.8em">⭐ Pro</div>
-<div><span style="text-decoration:line-through;opacity:.5">$49</span> <strong style="font-size:1.4em">$29</strong><small>/mes</small></div>
+<div><span style="text-decoration:line-through;opacity:.5">$49</span> <strong style="font-size:1.4em">$29</strong><small>${pmo}</small></div>
 </div>
 <div onclick="showUpgradeModal()" style="cursor:pointer;background:rgba(255,255,255,.15);border-radius:12px;padding:16px;min-width:120px">
 <div style="font-size:.8em;opacity:.7">Enterprise</div>
-<div><span style="text-decoration:line-through;opacity:.5">$99</span> <strong style="font-size:1.4em">$59</strong><small>/mes</small></div>
+<div><span style="text-decoration:line-through;opacity:.5">$99</span> <strong style="font-size:1.4em">$59</strong><small>${pmo}</small></div>
 </div>
 </div>
-<button class="btn" onclick="showUpgradeModal()" style="background:#fff;color:#dc3545;font-weight:700;padding:12px 32px;font-size:1.1em;border:none;border-radius:8px;cursor:pointer">Ver planes</button>
+<button class="btn dm-white-btn" onclick="showUpgradeModal()" style="background:#fff;color:#dc3545;font-weight:700;padding:12px 32px;font-size:1.1em;border:none;border-radius:8px;cursor:pointer">${t('btn_see_plans')}</button>
 </div>`;
 }
 
@@ -2862,11 +3067,11 @@ return `<div class="card" style="background:linear-gradient(135deg,#dc3545,#c823
 if(!p.is_trial && phase>0 && phase<4 && discPct>0){
 return `<div class="card" style="background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:16px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
 <div>
-<strong style="font-size:1.1em">${tierName}: $${curPrice}/mes</strong>
+<strong style="font-size:1.1em">${tierName}: $${curPrice}${pmo}</strong>
 <span style="background:rgba(255,255,255,.2);padding:2px 10px;border-radius:12px;font-size:.85em;margin-left:8px">${discPct}% off</span>
-${nextPrice?`<br><span style="opacity:.7;font-size:.85em">Proximo trimestre: $${nextPrice}/mes</span>`:''}
+${nextPrice?`<br><span style="opacity:.7;font-size:.85em">${t('billing_next_quarter')}: $${nextPrice}${pmo}</span>`:''}
 </div>
-<span style="opacity:.6;font-size:.8em">Precio regular: $${basePrice}/mes</span>
+<span style="opacity:.6;font-size:.8em">${t('billing_regular_price')}: $${basePrice}${pmo}</span>
 </div>`;
 }
 
@@ -2878,21 +3083,29 @@ const urgent=days<=7;
 const bg=urgent?'linear-gradient(135deg,#fef3c7,#fde68a)':'linear-gradient(135deg,var(--primary-fill),var(--accent-fill))';
 const textColor=urgent?'#92400e':'var(--text)';
 return `<div class="card" style="background:${bg};padding:16px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-<div style="color:${textColor}"><strong style="font-size:1.1em">${days>0?days+' dias restantes de prueba Enterprise':'Ultimo dia de prueba!'}</strong>
-<br><span style="opacity:.8">Acceso completo a todos los modulos</span>
-${urgent?`<br><span style="opacity:.7;font-size:.85em">Despues: desde $5/mes (40% off)</span>`:''}</div>
-${days<=7?`<button class="btn btn-primary" onclick="showUpgradeModal()" style="white-space:nowrap">Ver planes</button>`:''}
+<div style="color:${textColor}"><strong style="font-size:1.1em">${days>0?days+' '+t('trial_days_left'):t('trial_last_day')}</strong>
+<br><span style="opacity:.8">${t('trial_full_access')}</span>
+${urgent?`<br><span style="opacity:.7;font-size:.85em">${t('trial_from_price')}</span>`:''}</div>
+${days<=7?`<button class="btn btn-primary" onclick="showUpgradeModal()" style="white-space:nowrap">${t('btn_see_plans')}</button>`:''}
 </div>`;
 }
 async function startSubscription(plan='pro',interval='month'){
+if(_currentUser&&!['owner','manager','superadmin'].includes(_currentUser.role)){showToast(t('billing_no_permission')||'No permission','error');return;}
 try{
 showToast('Redirigiendo a pago seguro...','info');
 const res=await apiService.createCheckout(plan,interval);
-if(res&&res.checkout_url)window.location.href=res.checkout_url;
+if(res&&res.checkout_url){
+  try{const u=new URL(res.checkout_url);if(u.hostname.endsWith('stripe.com')||u.hostname===location.hostname){window.location.href=res.checkout_url;}else{showToast('Invalid checkout URL','error');}}
+  catch(e){showToast('Invalid checkout URL','error');}
+}
 }catch(e){showToast('Error al iniciar pago: '+e.message,'error');}
 }
 
 // ============ DASHBOARD ============
+/**
+ * Renders the main dashboard with KPI cards, alerts, recommendations, weather widget,
+ * trend chart, and quick-entry forms. Delegates to campo/vet dashboards if those modes are active.
+ */
 function renderDashboard(){
 const D=loadData();
 if(D.settings.campoMode){$('sec-dashboard').innerHTML=renderCampoDashboard(D);return;}
@@ -2956,19 +3169,22 @@ function renderFlocks(){
 const D=loadData();let h=`<div class="page-header"><h2>${t('flock_title')}</h2><button class="btn btn-primary" onclick="showFlockForm()">${t('flock_add')}</button></div>`;
 if(!D.flocks.length){h+=emptyState('🐔',t('no_data'),t('flock_add'),'showFlockForm()');}
 else{
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('flock_name')}</th><th>${t('flock_breed')}</th><th>${t('flock_count')}</th><th>${t('flock_current')}</th><th>${t('flock_age')}</th><th>${t('lc_current_stage')}</th><th>${t('flock_status')}</th><th>${t('flock_health')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-D.flocks.forEach(f=>{const age=flockAge(f);const cur=activeHensByFlock(f.id);const hs=healthScore(f.id);const lc=flockLifecycleStage(f);
-const bi=breedInfo(f.breed||f.targetCurve);
-h+=`<tr><td><strong>${sanitizeHTML(f.name)}</strong></td><td>${sanitizeHTML(breedName(f.breed||f.targetCurve))}${bi&&bi.eggColor!=='-'?'<br><small style="color:var(--text-light)">'+sanitizeHTML(bi.eggColor)+'</small>':''}</td><td>${fmtNum(f.count)}</td><td>${fmtNum(cur)}</td>
-<td>${age.weeks} ${t('flock_weeks')} (${age.days} ${t('flock_days')})</td>
-<td><span style="background:${lc.color};padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600">${lc.icon} ${t(lc.key)}</span></td>
-<td>${statusBadge(f.status)}</td><td>${healthBadge(hs)}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFlockForm('${escapeAttr(f.id)}')">${t('edit')}</button>
-<button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="showFlockRoadmap('${escapeAttr(f.id)}')">${t('flock_roadmap')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteFlock('${escapeAttr(f.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';}
+const flocksEnriched=D.flocks.map(f=>{const age=flockAge(f);const cur=activeHensByFlock(f.id);const hs=healthScore(f.id);const lc=flockLifecycleStage(f);const bi=breedInfo(f.breed||f.targetCurve);return{...f,_age:age,_cur:cur,_hs:hs,_lc:lc,_bi:bi};});
+h+=DataTable.create({
+id:'flocks',data:flocksEnriched,onRefresh:'renderFlocks',emptyIcon:'🐔',emptyText:t('no_data'),
+columns:[
+{key:'name',label:t('flock_name'),type:'text',sortable:true,filterable:true,render:r=>'<strong>'+sanitizeHTML(r.name)+'</strong>'},
+{key:'_breed',label:t('flock_breed'),type:'text',sortable:true,getValue:r=>breedName(r.breed||r.targetCurve),render:r=>sanitizeHTML(breedName(r.breed||r.targetCurve))+(r._bi&&r._bi.eggColor!=='-'?'<br><small style="color:var(--text-light)">'+sanitizeHTML(r._bi.eggColor)+'</small>':'')},
+{key:'count',label:t('flock_count'),type:'number',sortable:true,render:r=>fmtNum(r.count)},
+{key:'_cur',label:t('flock_current'),type:'number',sortable:true,render:r=>fmtNum(r._cur)},
+{key:'_ageWeeks',label:t('flock_age'),type:'number',sortable:true,getValue:r=>r._age.weeks,render:r=>r._age.weeks+' '+t('flock_weeks')+' ('+r._age.days+' '+t('flock_days')+')'},
+{key:'_lcStage',label:t('lc_current_stage'),type:'text',sortable:true,getValue:r=>r._lc.stage,render:r=>'<span style="background:'+r._lc.color+';padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600">'+r._lc.icon+' '+t(r._lc.key)+'</span>'},
+{key:'status',label:t('flock_status'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'cria',label:t('flock_status_cria')},{value:'recria',label:t('flock_status_recria')},{value:'produccion',label:t('flock_status_produccion')},{value:'descarte',label:t('flock_status_descarte')}],render:r=>statusBadge(r.status)},
+{key:'_hs',label:t('flock_health'),type:'number',sortable:true,render:r=>healthBadge(r._hs)}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFlockForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-sm" style="background:var(--accent);color:#fff" onclick="showFlockRoadmap('${escapeAttr(r.id)}')">${t('flock_roadmap')}</button><button class="btn btn-danger btn-sm" onclick="deleteFlock('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.flocks=D.flocks.filter(f=>!ids.includes(f.id));saveData(D);renderFlocks();}}]
+});}
 $('sec-lotes').innerHTML=h;
 }
 function showFlockRoadmap(fid){
@@ -3073,33 +3289,25 @@ saveData(D);toast(t('cfg_saved'));renderFlocks();
 // ============ PRODUCTION ============
 function renderProduction(){
 const D=loadData();let h=`<div class="page-header"><h2>${t('prod_title')}</h2><button class="btn btn-primary" onclick="showProdForm()">${t('prod_add')}</button></div>`;
-h+=`<div class="filter-bar"><select onchange="filterProd()" id="pf-flock">${flockSelect('',true)}</select>
-<input type="date" id="pf-from" onchange="filterProd()"><input type="date" id="pf-to" onchange="filterProd()"></div>`;
-if(!D.dailyProduction.length){h+=emptyState('🥚',t('no_data'),t('prod_add'),'showProdForm()');}
-else{h+='<div id="prod-table"></div>';}
-$('sec-produccion').innerHTML=h;if(D.dailyProduction.length)filterProd();
+if(!D.dailyProduction.length){h+=emptyState('🥚',t('no_data'),t('prod_add'),'showProdForm()');$('sec-produccion').innerHTML=h;return;}
+h+=DataTable.create({
+id:'production',data:D.dailyProduction,onRefresh:'renderProduction',emptyIcon:'🥚',emptyText:t('no_data'),
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'flockId',label:t('prod_flock'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.flocks.map(f=>({value:f.id,label:f.name})),render:r=>{const f=D.flocks.find(x=>x.id===r.flockId);return f?sanitizeHTML(f.name):'-';}},
+{key:'eggsCollected',label:t('prod_eggs'),type:'number',sortable:true,render:r=>'<strong>'+fmtNum(r.eggsCollected)+'</strong>'},
+{key:'_sizes',label:'S/M/L/XL/J',type:'text',getValue:r=>[r.eggsS||0,r.eggsM||0,r.eggsL||0,r.eggsXL||0,r.eggsJumbo||0].join('/')},
+{key:'eggType',label:t('prod_egg_type'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'conventional',label:t('prod_type_conventional')},{value:'free_range',label:t('prod_type_free_range')},{value:'organic',label:t('prod_type_organic')},{value:'pasture_raised',label:t('prod_type_pasture')},{value:'decorative',label:t('prod_type_decorative')}],render:r=>r.eggType?t('prod_type_'+r.eggType):'-'},
+{key:'marketChannel',label:t('prod_market'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'wholesale',label:t('prod_market_wholesale')},{value:'supermarket',label:t('prod_market_supermarket')},{value:'restaurant',label:t('prod_market_restaurant')},{value:'direct',label:t('prod_market_direct')},{value:'export',label:t('prod_market_export')},{value:'pasteurized',label:t('prod_market_pasteurized')}],render:r=>r.marketChannel?t('prod_market_'+r.marketChannel):'-'},
+{key:'eggsBroken',label:t('prod_broken'),type:'number',sortable:true,render:r=>fmtNum(r.eggsBroken||0)},
+{key:'deaths',label:t('prod_deaths'),type:'number',sortable:true,render:r=>r.deaths?'<span style="color:var(--danger)">'+r.deaths+'</span>':'-'}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showProdForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteProd('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(confirm(t('confirm_delete'))){const D2=loadData();ids.forEach(id=>{const old=D2.dailyProduction.find(p=>p.id===id);if(old)logAudit('delete','production','Bulk delete',old,null);D2.dailyProduction=D2.dailyProduction.filter(p=>p.id!==id);});saveData(D2);renderProduction();}}}]
+});
+$('sec-produccion').innerHTML=h;
 }
-function filterProd(){
-const D=loadData();const fid=$('pf-flock')?.value||'';const fr=$('pf-from')?.value||'';const to=$('pf-to')?.value||'';
-let recs=D.dailyProduction.sort((a,b)=>b.date.localeCompare(a.date));
-if(fid)recs=recs.filter(r=>r.flockId===fid);if(fr)recs=recs.filter(r=>r.date>=fr);if(to)recs=recs.filter(r=>r.date<=to);
-const pg=paginate(recs,_pageState.production||1,PAGE_SIZE);
-let h='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('date')}</th><th>${t('prod_flock')}</th><th>${t('prod_eggs')}</th><th>S/M/L/XL/J</th><th>${t('prod_egg_type')}</th><th>${t('prod_market')}</th><th>${t('prod_broken')}</th><th>${t('prod_deaths')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-pg.items.forEach(p=>{const f=D.flocks.find(x=>x.id===p.flockId);
-const etype=p.eggType?t('prod_type_'+p.eggType):'-';
-const mchan=p.marketChannel?t('prod_market_'+p.marketChannel):'-';
-h+=`<tr><td>${fmtDate(p.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td><td><strong>${fmtNum(p.eggsCollected)}</strong></td>
-<td>${[p.eggsS||0,p.eggsM||0,p.eggsL||0,p.eggsXL||0,p.eggsJumbo||0].join('/')}</td>
-<td>${etype}</td><td>${mchan}</td>
-<td>${fmtNum(p.eggsBroken||0)}</td><td>${p.deaths?'<span style="color:var(--danger)">'+p.deaths+'</span>':'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showProdForm('${escapeAttr(p.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteProd('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';
-h+=paginationControls('production',pg.page,pg.totalPages,function(p){_pageState.production=p;filterProd();});
-const w=$('prod-table');if(w)w.innerHTML=h;
-}
+function filterProd(){renderProduction();}
 function showProdForm(id){
 const D=loadData();const p=id?D.dailyProduction.find(x=>x.id===id):null;
 openModal(p?t('edit'):t('prod_add'),`
@@ -3180,29 +3388,25 @@ else h+=renderOutbreaksTab(D);
 $('sec-sanidad').innerHTML=h;
 }
 function renderVaccinesTab(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('vac_title')}</h3><div class="btn-group">
-<button class="btn btn-secondary btn-sm" onclick="showGenVaccines()">${t('vac_generate')}</button>
-<button class="btn btn-primary btn-sm" onclick="showVaccineForm()">${t('vac_add')}</button></div></div>`;
-h+=`<div class="filter-bar"><select id="vf-flock" onchange="renderSanidad()">${flockSelect('',true)}</select>
-<select id="vf-status" onchange="renderSanidad()"><option value="">${t('all')}</option><option value="pending">${t('vac_pending')}</option><option value="overdue">${t('vac_overdue')}</option><option value="applied">${t('vac_applied_status')}</option></select></div>`;
-const fid=document.getElementById('vf-flock')?.value||'';const st=document.getElementById('vf-status')?.value||'';
-let vacs=D.vaccines.sort((a,b)=>a.scheduledDate.localeCompare(b.scheduledDate));
-if(fid)vacs=vacs.filter(v=>v.flockId===fid);
 const today=todayStr();
-vacs=vacs.map(v=>{const eff=v.status==='applied'?'applied':v.scheduledDate<today?'overdue':'pending';return{...v,effectiveStatus:eff};});
-if(st)vacs=vacs.filter(v=>v.effectiveStatus===st);
-if(!vacs.length)return h+emptyState('💉',t('no_data'));
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('prod_flock')}</th><th>${t('vac_vaccine')}</th><th>${t('vac_route')}</th><th>${t('vac_scheduled')}</th><th>${t('vac_applied')}</th><th>${t('vac_batch')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-vacs.forEach(v=>{const f=D.flocks.find(x=>x.id===v.flockId);
-h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(v.vaccineName)}</td><td>${v.route?t(v.route):'-'}</td><td>${fmtDate(v.scheduledDate)}</td>
-<td>${v.appliedDate?fmtDate(v.appliedDate):'-'}</td><td>${sanitizeHTML(v.batchNumber||'-')}</td>
-<td>${statusBadge(v.effectiveStatus)}</td>
-<td><div class="btn-group">${v.effectiveStatus!=='applied'?`<button class="btn btn-primary btn-sm" onclick="markVaccineApplied('${escapeAttr(v.id)}')">${t('vac_mark_applied')}</button>`:''}
-<button class="btn btn-secondary btn-sm" onclick="showVaccineForm('${escapeAttr(v.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteVaccine('${escapeAttr(v.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+const vacs=D.vaccines.map(v=>{const eff=v.status==='applied'?'applied':v.scheduledDate<today?'overdue':'pending';return{...v,effectiveStatus:eff};});
+return DataTable.create({
+id:'vaccines',data:vacs,onRefresh:'renderSanidad',emptyIcon:'💉',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('vac_title')}</h3><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showGenVaccines()">${t('vac_generate')}</button><button class="btn btn-primary btn-sm" onclick="showVaccineForm()">${t('vac_add')}</button></div></div>`,
+columns:[
+{key:'flockId',label:t('prod_flock'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.flocks.map(f=>({value:f.id,label:f.name})),render:r=>{const f=D.flocks.find(x=>x.id===r.flockId);return f?sanitizeHTML(f.name):'-';}},
+{key:'vaccineName',label:t('vac_vaccine'),type:'text',sortable:true},
+{key:'route',label:t('vac_route'),type:'text',render:r=>r.route?t(r.route):'-'},
+{key:'scheduledDate',label:t('vac_scheduled'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'appliedDate',label:t('vac_applied'),type:'date',sortable:true,render:r=>r.appliedDate?fmtDate(r.appliedDate):'-'},
+{key:'batchNumber',label:t('vac_batch'),type:'text'},
+{key:'effectiveStatus',label:t('status'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'pending',label:t('vac_pending')},{value:'overdue',label:t('vac_overdue')},{value:'applied',label:t('vac_applied_status')}],render:r=>statusBadge(r.effectiveStatus)}
+],
+actions:r=>`<div class="btn-group">${r.effectiveStatus!=='applied'?`<button class="btn btn-primary btn-sm" onclick="markVaccineApplied('${escapeAttr(r.id)}')">${t('vac_mark_applied')}</button>`:''}
+<button class="btn btn-secondary btn-sm" onclick="showVaccineForm('${escapeAttr(r.id)}')">${t('edit')}</button>
+<button class="btn btn-danger btn-sm" onclick="deleteVaccine('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(confirm(t('confirm_delete'))){const D2=loadData();ids.forEach(id=>{D2.vaccines=D2.vaccines.filter(v=>v.id!==id);});saveData(D2);renderSanidad();}}}]
+});
 }
 function showGenVaccines(){
 const D=loadData();const flocks=D.flocks.filter(f=>f.birthDate&&f.status!=='descarte');
@@ -3257,22 +3461,25 @@ v.appliedDate=todayStr();v.status='applied';saveData(D);toast(t('cfg_saved'));re
 async function deleteVaccine(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.vaccines=D.vaccines.filter(v=>v.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
 
 function renderMedicationsTab(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('med_title')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showMedForm()">${t('med_add')}</button></div>`;
-if(!D.medications.length)return h+emptyState('💊',t('no_data'));
 const today=todayStr();
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('prod_flock')}</th><th>${t('med_name')}</th><th>${t('med_reason')}</th><th>${t('med_dosage')}</th><th>${t('med_start')}</th><th>${t('med_end')}</th><th>${t('med_withdrawal')}</th><th>${t('med_withdrawal_end')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-D.medications.forEach(m=>{const f=D.flocks.find(x=>x.id===m.flockId);
-const inWD=m.withdrawalEnd&&m.withdrawalEnd>=today;
-h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(m.name)}</td><td>${sanitizeHTML(m.reason||'-')}</td><td>${sanitizeHTML(m.dosage||'-')}</td>
-<td>${fmtDate(m.startDate)}</td><td>${fmtDate(m.endDate)}</td><td>${m.withdrawalDays||'-'}</td>
-<td>${fmtDate(m.withdrawalEnd)}</td>
-<td>${inWD?'<span class="badge badge-warning">'+t('med_in_withdrawal')+'</span>':'<span class="badge badge-success">OK</span>'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showMedForm('${escapeAttr(m.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteMed('${escapeAttr(m.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+const meds=D.medications.map(m=>{const inWD=m.withdrawalEnd&&m.withdrawalEnd>=today;return{...m,wdStatus:inWD?'withdrawal':'ok'};});
+return DataTable.create({
+id:'medications',data:meds,onRefresh:'renderSanidad',emptyIcon:'💊',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('med_title')}</h3><button class="btn btn-primary btn-sm" onclick="showMedForm()">${t('med_add')}</button></div>`,
+columns:[
+{key:'flockId',label:t('prod_flock'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.flocks.map(f=>({value:f.id,label:f.name})),render:r=>{const f=D.flocks.find(x=>x.id===r.flockId);return f?sanitizeHTML(f.name):'-';}},
+{key:'name',label:t('med_name'),type:'text',sortable:true,filterable:true,render:r=>sanitizeHTML(r.name)},
+{key:'reason',label:t('med_reason'),type:'text',sortable:true,render:r=>sanitizeHTML(r.reason||'-')},
+{key:'dosage',label:t('med_dosage'),type:'text',render:r=>sanitizeHTML(r.dosage||'-')},
+{key:'startDate',label:t('med_start'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'endDate',label:t('med_end'),type:'date',sortable:true},
+{key:'withdrawalDays',label:t('med_withdrawal'),type:'number',sortable:true,render:r=>r.withdrawalDays||'-'},
+{key:'withdrawalEnd',label:t('med_withdrawal_end'),type:'date',sortable:true},
+{key:'wdStatus',label:t('status'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'withdrawal',label:t('med_in_withdrawal')},{value:'ok',label:'OK'}],render:r=>r.wdStatus==='withdrawal'?'<span class="badge badge-warning">'+t('med_in_withdrawal')+'</span>':'<span class="badge badge-success">OK</span>'}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showMedForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteMed('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.medications=D.medications.filter(m=>!ids.includes(m.id));saveData(D);renderSanidad();}}]
+});
 }
 function showMedForm(id){
 const D=loadData();const m=id?D.medications.find(x=>x.id===id):null;
@@ -3304,19 +3511,22 @@ saveData(D);closeModal();toast(t('cfg_saved'));renderSanidad();
 async function deleteMed(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.medications=D.medications.filter(m=>m.id!==id);saveData(D);toast(t('cfg_saved'));renderSanidad();}
 
 function renderOutbreaksTab(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('out_title')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showOutbreakForm()">${t('out_add')}</button></div>`;
-if(!D.outbreaks.length)return h+emptyState('🦠',t('no_data'));
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('prod_flock')}</th><th>${t('out_disease')}</th><th>${t('out_start')}</th><th>${t('out_end')}</th><th>${t('out_affected')}</th><th>${t('out_deaths')}</th><th>${t('out_loss')}</th><th>${t('status')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-D.outbreaks.forEach(o=>{const f=D.flocks.find(x=>x.id===o.flockId);
-h+=`<tr><td>${f?sanitizeHTML(f.name):'-'}</td><td>${sanitizeHTML(o.disease)}</td><td>${fmtDate(o.startDate)}</td><td>${fmtDate(o.endDate)}</td>
-<td>${fmtNum(o.affected||0)}</td><td>${o.deaths?'<span style="color:var(--danger)">'+o.deaths+'</span>':'-'}</td>
-<td>${fmtMoney(o.economicLoss||0)}</td><td>${statusBadge(o.status)}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showOutbreakForm('${escapeAttr(o.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteOutbreak('${escapeAttr(o.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+return DataTable.create({
+id:'outbreaks',data:D.outbreaks,onRefresh:'renderSanidad',emptyIcon:'🦠',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('out_title')}</h3><button class="btn btn-primary btn-sm" onclick="showOutbreakForm()">${t('out_add')}</button></div>`,
+columns:[
+{key:'flockId',label:t('prod_flock'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.flocks.map(f=>({value:f.id,label:f.name})),render:r=>{const f=D.flocks.find(x=>x.id===r.flockId);return f?sanitizeHTML(f.name):'-';}},
+{key:'disease',label:t('out_disease'),type:'text',sortable:true,filterable:true,render:r=>sanitizeHTML(r.disease)},
+{key:'startDate',label:t('out_start'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'endDate',label:t('out_end'),type:'date',sortable:true},
+{key:'affected',label:t('out_affected'),type:'number',sortable:true,render:r=>fmtNum(r.affected||0)},
+{key:'deaths',label:t('out_deaths'),type:'number',sortable:true,render:r=>r.deaths?'<span style="color:var(--danger)">'+r.deaths+'</span>':'-'},
+{key:'economicLoss',label:t('out_loss'),type:'number',sortable:true,render:r=>fmtMoney(r.economicLoss||0)},
+{key:'status',label:t('status'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'active',label:t('out_active')},{value:'controlled',label:t('out_controlled')},{value:'resolved',label:t('out_resolved')}],render:r=>statusBadge(r.status)}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showOutbreakForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteOutbreak('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.outbreaks=D.outbreaks.filter(o=>!ids.includes(o.id));saveData(D);renderSanidad();}}]
+});
 }
 function showOutbreakForm(id){
 const D=loadData();const o=id?D.outbreaks.find(x=>x.id===id):null;
@@ -3378,19 +3588,20 @@ else h+=renderFeedConsumption(D);
 $('sec-alimento').innerHTML=h;
 }
 function renderFeedPurchases(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('feed_purchases')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showFeedPurchaseForm()">${t('feed_add_purchase')}</button></div>`;
-if(!D.feed.purchases.length)return h+emptyState('📦',t('no_data'));
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('date')}</th><th>${t('feed_type')}</th><th>${t('feed_qty')}</th><th>${t('feed_cost')}</th><th>$/kg</th><th>${t('feed_supplier')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-D.feed.purchases.sort((a,b)=>b.date.localeCompare(a.date)).forEach(p=>{
-const ppkg=p.quantityKg>0?(p.cost/p.quantityKg):0;
-h+=`<tr><td>${fmtDate(p.date)}</td><td>${sanitizeHTML(p.type||'-')}</td><td>${fmtNum(p.quantityKg,1)}</td>
-<td>${fmtMoney(p.cost)}</td><td>${fmtMoney(ppkg)}</td><td>${sanitizeHTML(p.supplier||'-')}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedPurchaseForm('${escapeAttr(p.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteFeedPurchase('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+return DataTable.create({
+id:'feedPurchases',data:D.feed.purchases,onRefresh:'renderFeed',emptyIcon:'📦',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('feed_purchases')}</h3><button class="btn btn-primary btn-sm" onclick="showFeedPurchaseForm()">${t('feed_add_purchase')}</button></div>`,
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'type',label:t('feed_type'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[...new Set(D.feed.purchases.map(p=>p.type).filter(Boolean))].map(v=>({value:v,label:v})),render:r=>sanitizeHTML(r.type||'-')},
+{key:'quantityKg',label:t('feed_qty'),type:'number',sortable:true,render:r=>fmtNum(r.quantityKg,1)},
+{key:'cost',label:t('feed_cost'),type:'number',sortable:true,render:r=>fmtMoney(r.cost)},
+{key:'_ppkg',label:'$/kg',type:'number',sortable:true,getValue:r=>r.quantityKg>0?(r.cost/r.quantityKg):0,render:r=>fmtMoney(r.quantityKg>0?(r.cost/r.quantityKg):0)},
+{key:'supplier',label:t('feed_supplier'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[...new Set(D.feed.purchases.map(p=>p.supplier).filter(Boolean))].map(v=>({value:v,label:v})),render:r=>sanitizeHTML(r.supplier||'-')}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedPurchaseForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteFeedPurchase('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.feed.purchases=D.feed.purchases.filter(p=>!ids.includes(p.id));saveData(D);renderFeed();}}]
+});
 }
 function showFeedPurchaseForm(id){
 const D=loadData();const p=id?D.feed.purchases.find(x=>x.id===id):null;
@@ -3416,17 +3627,18 @@ saveData(D);closeModal();toast(t('cfg_saved'));renderFeed();
 async function deleteFeedPurchase(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.feed.purchases=D.feed.purchases.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderFeed();}
 
 function renderFeedConsumption(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('feed_consumption')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showFeedConsForm()">${t('feed_add_consumption')}</button></div>`;
-if(!D.feed.consumption.length)return h+emptyState('🍽️',t('no_data'));
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('date')}</th><th>${t('feed_flock')}</th><th>${t('feed_qty')}</th><th>${t('feed_type')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-D.feed.consumption.sort((a,b)=>b.date.localeCompare(a.date)).forEach(c=>{const f=D.flocks.find(x=>x.id===c.flockId);
-h+=`<tr><td>${fmtDate(c.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td><td>${fmtNum(c.quantityKg,1)} kg</td><td>${sanitizeHTML(c.type||'-')}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedConsForm('${escapeAttr(c.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteFeedCons('${escapeAttr(c.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+return DataTable.create({
+id:'feedConsumption',data:D.feed.consumption,onRefresh:'renderFeed',emptyIcon:'🍽️',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('feed_consumption')}</h3><button class="btn btn-primary btn-sm" onclick="showFeedConsForm()">${t('feed_add_consumption')}</button></div>`,
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'flockId',label:t('feed_flock'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.flocks.map(f=>({value:f.id,label:f.name})),render:r=>{const f=D.flocks.find(x=>x.id===r.flockId);return f?sanitizeHTML(f.name):'-';}},
+{key:'quantityKg',label:t('feed_qty'),type:'number',sortable:true,render:r=>fmtNum(r.quantityKg,1)+' kg'},
+{key:'type',label:t('feed_type'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[...new Set(D.feed.consumption.map(c=>c.type).filter(Boolean))].map(v=>({value:v,label:v})),render:r=>sanitizeHTML(r.type||'-')}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showFeedConsForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteFeedCons('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.feed.consumption=D.feed.consumption.filter(c=>!ids.includes(c.id));saveData(D);renderFeed();}}]
+});
 }
 function showFeedConsForm(id){
 const D=loadData();const c=id?D.feed.consumption.find(x=>x.id===id):null;
@@ -3479,21 +3691,20 @@ else h+=renderClaimsList(D);
 $('sec-clientes').innerHTML=h;
 }
 function renderClientList(D){
-let h=`<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" onclick="showClientForm()">${t('cli_add')}</button></div>`;
-if(!D.clients.length) return h+emptyState('👥',t('no_data'),t('cli_add'),'showClientForm()');
-const pg=paginate(D.clients,_pageState.clients||1,PAGE_SIZE);
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('name')}</th><th>${t('phone')}</th><th>${t('email')}</th><th>${t('cli_route')}</th><th>${t('cli_price')} (S/M/L/XL/J)</th><th>${t('notes')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-pg.items.forEach(c=>{
-const prices=[c.priceS||'-',c.priceM||'-',c.priceL||'-',c.priceXL||'-',c.priceJumbo||'-'].join(' / ');
-h+=`<tr><td><strong>${sanitizeHTML(c.name)}</strong></td><td>${sanitizeHTML(c.phone||'-')}</td><td>${sanitizeHTML(c.email||'-')}</td><td>${sanitizeHTML(c.route||'-')}</td>
-<td>${sanitizeHTML(prices)}</td><td>${sanitizeHTML(c.notes||'-')}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showClientForm('${escapeAttr(c.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteClient('${escapeAttr(c.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';
-h+=paginationControls('clients',pg.page,pg.totalPages,function(p){_pageState.clients=p;renderClients();});
-return h;
+return DataTable.create({
+id:'clients',data:D.clients,onRefresh:'renderClients',emptyIcon:'👥',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" onclick="showClientForm()">${t('cli_add')}</button></div>`,
+columns:[
+{key:'name',label:t('name'),type:'text',sortable:true,filterable:true,render:r=>'<strong>'+sanitizeHTML(r.name)+'</strong>'},
+{key:'phone',label:t('phone'),type:'text',sortable:true,render:r=>sanitizeHTML(r.phone||'-')},
+{key:'email',label:t('email'),type:'text',sortable:true,render:r=>sanitizeHTML(r.email||'-')},
+{key:'route',label:t('cli_route'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[...new Set(D.clients.map(c=>c.route).filter(Boolean))].map(v=>({value:v,label:v})),render:r=>sanitizeHTML(r.route||'-')},
+{key:'_prices',label:t('cli_price')+' (S/M/L/XL/J)',type:'text',getValue:r=>[r.priceS||'-',r.priceM||'-',r.priceL||'-',r.priceXL||'-',r.priceJumbo||'-'].join(' / ')},
+{key:'notes',label:t('notes'),type:'text',render:r=>sanitizeHTML(r.notes||'-')}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showClientForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteClient('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.clients=D.clients.filter(c=>!ids.includes(c.id));saveData(D);renderClients();}}]
+});
 }
 function renderClaimsList(D){
 const claims=D.clientClaims||[];
@@ -3689,25 +3900,22 @@ else h+=renderFinSummary(D);
 $('sec-finanzas').innerHTML=h;
 }
 function renderFinIncome(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_income')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showIncomeForm()">${t('fin_add_income')}</button></div>`;
-if(!D.finances.income.length)return h+emptyState('📈',t('no_data'));
 const tot=D.finances.income.reduce((s,i)=>s+((i.quantity||0)*(i.unitPrice||0)||(i.amount||0)),0);
-h+=`<div class="kpi-grid">${kpi(t('fin_total_income'),fmtMoney(tot))}</div>`;
-const incSorted=D.finances.income.sort((a,b)=>b.date.localeCompare(a.date));
-const pgI=paginate(incSorted,_pageState.income||1,PAGE_SIZE);
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('date')}</th><th>${t('fin_type')}</th><th>${t('fin_qty')}</th><th>${t('fin_unit_price')}</th><th>${t('total')}</th><th>${t('fin_client')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-pgI.items.forEach(i=>{
-const cl=D.clients.find(c=>c.id===i.clientId);const amt=(i.quantity||0)*(i.unitPrice||0)||(i.amount||0);
-h+=`<tr><td>${fmtDate(i.date)}</td><td>${t('fin_type_'+i.type)||sanitizeHTML(i.type||'-')}</td><td>${fmtNum(i.quantity||0)}</td>
-<td>${fmtMoney(i.unitPrice||0)}</td><td><strong>${fmtMoney(amt)}</strong></td><td>${cl?sanitizeHTML(cl.name):sanitizeHTML(i.clientName||'-')}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showIncomeForm('${escapeAttr(i.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteIncome('${escapeAttr(i.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';
-h+=paginationControls('income',pgI.page,pgI.totalPages,function(p){_pageState.income=p;renderFinances();});
-return h;
+return DataTable.create({
+id:'fin-income',data:D.finances.income,onRefresh:'renderFinances',emptyIcon:'📈',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_income')}</h3><button class="btn btn-primary btn-sm" onclick="showIncomeForm()">${t('fin_add_income')}</button></div>`,
+kpiHtml:D.finances.income.length?`<div class="kpi-grid">${kpi(t('fin_total_income'),fmtMoney(tot))}</div>`:'',
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'type',label:t('fin_type'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'eggs',label:t('fin_type_eggs')},{value:'birds',label:t('fin_type_birds')},{value:'manure',label:t('fin_type_manure')},{value:'other',label:t('fin_type_other')}],render:r=>t('fin_type_'+r.type)||sanitizeHTML(r.type||'-')},
+{key:'quantity',label:t('fin_qty'),type:'number',sortable:true},
+{key:'unitPrice',label:t('fin_unit_price'),type:'money',sortable:true},
+{key:'_total',label:t('total'),type:'money',sortable:true,getValue:r=>(r.quantity||0)*(r.unitPrice||0)||(r.amount||0)},
+{key:'clientId',label:t('fin_client'),type:'text',render:r=>{const cl=D.clients.find(c=>c.id===r.clientId);return cl?sanitizeHTML(cl.name):sanitizeHTML(r.clientName||'-');}}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showIncomeForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteIncome('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(confirm(t('confirm_delete'))){const D2=loadData();ids.forEach(id=>{const old=D2.finances.income.find(i=>i.id===id);if(old)logAudit('delete','income','Bulk delete',old,null);D2.finances.income=D2.finances.income.filter(i=>i.id!==id);});saveData(D2);renderFinances();}}}]
+});
 }
 function showIncomeForm(id){
 const D=loadData();const i=id?D.finances.income.find(x=>x.id===id):null;
@@ -3756,24 +3964,20 @@ saveData(D);closeModal();toast(t('cfg_saved'));renderFinances();
 async function deleteIncome(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();const old=D.finances.income.find(i=>i.id===id);logAudit('delete','income','Delete income',old,null);D.finances.income=D.finances.income.filter(i=>i.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
 
 function renderFinExpenses(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_expenses')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showExpenseForm()">${t('fin_add_expense')}</button></div>`;
-if(!D.finances.expenses.length)return h+emptyState('📉',t('no_data'));
 const tot=D.finances.expenses.reduce((s,e)=>s+(e.amount||0),0);
-h+=`<div class="kpi-grid">${kpi(t('fin_total_expenses'),fmtMoney(tot),'','danger')}</div>`;
-const expSorted=D.finances.expenses.sort((a,b)=>b.date.localeCompare(a.date));
-const pgE=paginate(expSorted,_pageState.expenses||1,PAGE_SIZE);
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('date')}</th><th>${t('fin_category')}</th><th>${t('fin_description')}</th><th>${t('fin_amount')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-pgE.items.forEach(e=>{
-h+=`<tr><td>${fmtDate(e.date)}</td><td>${t('fin_cat_'+e.category)||sanitizeHTML(e.category||'-')}</td><td>${sanitizeHTML(e.description||'-')}</td>
-<td><strong>${fmtMoney(e.amount)}</strong></td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showExpenseForm('${escapeAttr(e.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteExpense('${escapeAttr(e.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';
-h+=paginationControls('expenses',pgE.page,pgE.totalPages,function(p){_pageState.expenses=p;renderFinances();});
-return h;
+return DataTable.create({
+id:'fin-expenses',data:D.finances.expenses,onRefresh:'renderFinances',emptyIcon:'📉',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_expenses')}</h3><button class="btn btn-primary btn-sm" onclick="showExpenseForm()">${t('fin_add_expense')}</button></div>`,
+kpiHtml:D.finances.expenses.length?`<div class="kpi-grid">${kpi(t('fin_total_expenses'),fmtMoney(tot),'','danger')}</div>`:'',
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'category',label:t('fin_category'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'feed',label:t('fin_cat_feed')},{value:'vaccines',label:t('fin_cat_vaccines')},{value:'transport',label:t('fin_cat_transport')},{value:'labor',label:t('fin_cat_labor')},{value:'infrastructure',label:t('fin_cat_infrastructure')},{value:'bird_purchase',label:t('fin_cat_bird_purchase')},{value:'other',label:t('fin_cat_other')}],render:r=>t('fin_cat_'+r.category)||sanitizeHTML(r.category||'-')},
+{key:'description',label:t('fin_description'),type:'text',sortable:true},
+{key:'amount',label:t('fin_amount'),type:'money',sortable:true}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showExpenseForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteExpense('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(confirm(t('confirm_delete'))){const D2=loadData();ids.forEach(id=>{const old=D2.finances.expenses.find(e=>e.id===id);if(old)logAudit('delete','expense','Bulk delete',old,null);D2.finances.expenses=D2.finances.expenses.filter(e=>e.id!==id);});saveData(D2);renderFinances();}}}]
+});
 }
 function showExpenseForm(id){
 const D=loadData();const e=id?D.finances.expenses.find(x=>x.id===id):null;
@@ -3803,22 +4007,26 @@ saveData(D);closeModal();toast(t('cfg_saved'));renderFinances();
 async function deleteExpense(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();const old=D.finances.expenses.find(e=>e.id===id);logAudit('delete','expenses','Delete expense',old,null);D.finances.expenses=D.finances.expenses.filter(e=>e.id!==id);saveData(D);toast(t('cfg_saved'));renderFinances();}
 
 function renderFinReceivables(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_receivables')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showReceivableForm()">${t('fin_add_receivable')}</button></div>`;
-if(!D.finances.receivables.length)return h+emptyState('📋',t('no_data'));
+if(!D.finances.receivables.length){
+let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_receivables')}</h3><button class="btn btn-primary btn-sm" onclick="showReceivableForm()">${t('fin_add_receivable')}</button></div>`;
+return h+emptyState('📋',t('no_data'));
+}
 const pending=D.finances.receivables.filter(r=>!r.paid);const tot=pending.reduce((s,r)=>s+(r.amount||0),0);
-h+=`<div class="kpi-grid">${kpi(t('fin_receivables'),fmtMoney(tot),pending.length+' '+t('vac_pending').toLowerCase(),'warning')}</div>`;
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('date')}</th><th>${t('fin_client')}</th><th>${t('fin_description')}</th><th>${t('fin_amount')}</th><th>${t('fin_due_date')}</th><th>${t('fin_paid')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-D.finances.receivables.sort((a,b)=>b.date.localeCompare(a.date)).forEach(r=>{
-const cl=D.clients.find(c=>c.id===r.clientId);
-h+=`<tr><td>${fmtDate(r.date)}</td><td>${cl?sanitizeHTML(cl.name):sanitizeHTML(r.clientName||'-')}</td><td>${sanitizeHTML(r.description||'-')}</td>
-<td><strong>${fmtMoney(r.amount)}</strong></td><td>${fmtDate(r.dueDate)}</td>
-<td><input type="checkbox" ${r.paid?'checked':''} onchange="toggleReceivablePaid('${escapeAttr(r.id)}',this.checked)"></td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showReceivableForm('${escapeAttr(r.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteReceivable('${escapeAttr(r.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';return h;
+return DataTable.create({
+id:'receivables',data:D.finances.receivables,onRefresh:'renderFinances',emptyIcon:'📋',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_receivables')}</h3><button class="btn btn-primary btn-sm" onclick="showReceivableForm()">${t('fin_add_receivable')}</button></div>`,
+kpiHtml:`<div class="kpi-grid">${kpi(t('fin_receivables'),fmtMoney(tot),pending.length+' '+t('vac_pending').toLowerCase(),'warning')}</div>`,
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'clientId',label:t('fin_client'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.clients.map(c=>({value:c.id,label:c.name})),render:r=>{const cl=D.clients.find(c=>c.id===r.clientId);return cl?sanitizeHTML(cl.name):sanitizeHTML(r.clientName||'-');}},
+{key:'description',label:t('fin_description'),type:'text',sortable:true,render:r=>sanitizeHTML(r.description||'-')},
+{key:'amount',label:t('fin_amount'),type:'number',sortable:true,render:r=>'<strong>'+fmtMoney(r.amount)+'</strong>'},
+{key:'dueDate',label:t('fin_due_date'),type:'date',sortable:true},
+{key:'paid',label:t('fin_paid'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'true',label:t('yes')||'Sí'},{value:'false',label:t('no')||'No'}],getValue:r=>String(!!r.paid),render:r=>`<input type="checkbox" ${r.paid?'checked':''} onchange="toggleReceivablePaid('${escapeAttr(r.id)}',this.checked)">`}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showReceivableForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteReceivable('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.finances.receivables=D.finances.receivables.filter(r=>!ids.includes(r.id));saveData(D);renderFinances();}}]
+});
 }
 function showReceivableForm(id){
 const D=loadData();const r=id?D.finances.receivables.find(x=>x.id===id):null;
@@ -3908,10 +4116,10 @@ const mv=VENG.mathv(D);
 h+='<div class="card" style="border-left:4px solid '+(mv.pct===100?'var(--success)':'var(--danger)')+'">';
 h+='<h3>🔒 Math Verification — '+(mv.pct===100?'✓ All Passed':'⚠ '+mv.checks.filter(c=>!c.ok).length+' Failed')+'</h3>';
 h+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0">';
-mv.checks.forEach(c=>{h+='<div style="padding:6px 12px;border-radius:6px;font-size:13px;background:'+(c.ok?'#e8f5e9;color:#2e7d32':'#fce4ec;color:#c62828')+'">'+(c.ok?'✓':'✗')+' '+sanitizeHTML(c.name)+'</div>';});
+mv.checks.forEach(c=>{h+='<div class="'+(c.ok?'dm-badge-success':'dm-badge-critical')+'" style="padding:6px 12px;border-radius:6px;font-size:13px;background:'+(c.ok?'#e8f5e9;color:#2e7d32':'#fce4ec;color:#c62828')+'">'+(c.ok?'✓':'✗')+' '+sanitizeHTML(c.name)+'</div>';});
 h+='</div>';
 if(mv.checks.some(c=>!c.ok)){h+='<details><summary style="cursor:pointer;color:var(--danger);font-weight:600">View failures</summary>';
-mv.checks.filter(c=>!c.ok).forEach(c=>{h+='<div style="margin:4px 0;padding:6px;background:#fff3e0;border-radius:4px;font-size:12px">'+sanitizeHTML(c.name)+': '+sanitizeHTML(c.detail)+'</div>';});
+mv.checks.filter(c=>!c.ok).forEach(c=>{h+='<div class="dm-warn-box" style="margin:4px 0;padding:6px;background:#fff3e0;border-radius:4px;font-size:12px">'+sanitizeHTML(c.name)+': '+sanitizeHTML(c.detail)+'</div>';});
 h+='</details>';}
 h+='</div>';
 h+=`<div class="card"><button class="btn btn-secondary" onclick="exportFinCSV()">${t('export_csv')}</button></div>`;
@@ -3948,8 +4156,6 @@ $('sec-analisis').innerHTML=h;
 }
 function renderAnaComparison(D){
 if(!D.flocks.length)return emptyState('🔄',t('no_data'));
-let h='<div class="card"><h3>'+t('ana_comparison')+'</h3><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('flock_name')}</th><th>${t('flock_count')}</th><th>${t('flock_current')}</th><th>${t('kpi_henday')} (7d)</th><th>FCR (30d)</th><th>${t('kpi_mortality')} %</th><th>${t('flock_health')}</th></tr></thead><tbody>`;
 const stats=D.flocks.map(f=>{
 const cur=activeHensByFlock(f.id);const l7=D.dailyProduction.filter(p=>p.flockId===f.id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
 const avgE=l7.length>0?l7.reduce((s,p)=>s+(p.eggsCollected||0),0)/l7.length:0;
@@ -3960,19 +4166,28 @@ const tfkg=f30.reduce((s,c)=>s+(c.quantityKg||0),0);const tekg=e30.reduce((s,p)=
 const fcr=tekg>0?tfkg/tekg:0;
 const deaths=D.dailyProduction.filter(p=>p.flockId===f.id).reduce((s,p)=>s+(p.deaths||0),0);
 const mort=f.count>0?(deaths/f.count*100):0;const hs=healthScore(f.id);
-return{f,cur,hd,fcr,mort,hs};
+return{id:f.id,name:f.name,count:f.count,cur,hd,fcr,mort,hs};
 });
 stats.sort((a,b)=>b.hd-a.hd);
-stats.forEach(s=>{
-h+=`<tr><td><strong>${sanitizeHTML(s.f.name)}</strong></td><td>${fmtNum(s.f.count)}</td><td>${fmtNum(s.cur)}</td>
-<td style="color:${s.hd>=80?'var(--success)':s.hd>=60?'var(--warning)':'var(--danger)'}">${fmtNum(s.hd,1)}%</td>
-<td>${s.fcr>0?fmtNum(s.fcr,2):'-'}</td><td>${fmtNum(s.mort,1)}%</td><td>${healthBadge(s.hs)}</td></tr>`;});
-h+='</tbody></table></div></div>';
+let kpiHtml='';
 if(stats.length>=2){
-h+=`<div class="kpi-grid">${kpi(t('ana_best_flock'),sanitizeHTML(stats[0].f.name),'Hen-Day: '+fmtNum(stats[0].hd,1)+'%')}`;
-h+=kpi(t('ana_worst_flock'),sanitizeHTML(stats[stats.length-1].f.name),'Hen-Day: '+fmtNum(stats[stats.length-1].hd,1)+'%','danger');
-h+='</div>';}
-return h;
+kpiHtml=`<div class="kpi-grid">${kpi(t('ana_best_flock'),sanitizeHTML(stats[0].name),'Hen-Day: '+fmtNum(stats[0].hd,1)+'%')}`;
+kpiHtml+=kpi(t('ana_worst_flock'),sanitizeHTML(stats[stats.length-1].name),'Hen-Day: '+fmtNum(stats[stats.length-1].hd,1)+'%','danger')+'</div>';
+}
+return DataTable.create({
+id:'anaComparison',data:stats,onRefresh:'renderAnalysis',emptyIcon:'🔄',emptyText:t('no_data'),
+headerHtml:'<div class="card"><h3>'+t('ana_comparison')+'</h3></div>',
+kpiHtml:kpiHtml,
+columns:[
+{key:'name',label:t('flock_name'),type:'text',sortable:true,render:r=>'<strong>'+sanitizeHTML(r.name)+'</strong>'},
+{key:'count',label:t('flock_count'),type:'number',sortable:true,render:r=>fmtNum(r.count)},
+{key:'cur',label:t('flock_current'),type:'number',sortable:true,render:r=>fmtNum(r.cur)},
+{key:'hd',label:t('kpi_henday')+' (7d)',type:'number',sortable:true,render:r=>'<span style="color:'+(r.hd>=80?'var(--success)':r.hd>=60?'var(--warning)':'var(--danger)')+'">'+fmtNum(r.hd,1)+'%</span>'},
+{key:'fcr',label:'FCR (30d)',type:'number',sortable:true,render:r=>r.fcr>0?fmtNum(r.fcr,2):'-'},
+{key:'mort',label:t('kpi_mortality')+' %',type:'number',sortable:true,render:r=>fmtNum(r.mort,1)+'%'},
+{key:'hs',label:t('flock_health'),type:'number',sortable:true,render:r=>healthBadge(r.hs)}
+]
+});
 }
 function renderAnaSeasonality(D){
 const months={};D.dailyProduction.forEach(p=>{const m=p.date?.substring(5,7);if(!m)return;if(!months[m])months[m]={eggs:0,days:new Set()};months[m].eggs+=(p.eggsCollected||0);months[m].days.add(p.date);});
@@ -4267,21 +4482,26 @@ saveData(D);closeModal();toast(t('cfg_saved'));renderOperations();
 async function deleteLog(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.logbook=D.logbook.filter(l=>l.id!==id);saveData(D);toast(t('cfg_saved'));renderOperations();}
 
 function renderOpsPersonnel(D){
-let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('ops_personnel')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showPersonnelForm()">${t('ops_per_add')}</button></div>`;
-if(!D.personnel.length)return h+emptyState('👷',t('no_data'));
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('ops_per_name')}</th><th>${t('ops_per_role')}</th><th>${t('ops_per_salary')}</th><th>${t('ops_per_start')}</th><th>${t('ops_per_active')}</th><th>${t('actions')}</th>`;
-h+='</tr></thead><tbody>';
-D.personnel.forEach(p=>{
-h+=`<tr><td><strong>${sanitizeHTML(p.name)}</strong></td><td>${sanitizeHTML(p.role||'-')}</td><td>${fmtMoney(p.salary||0)}</td><td>${fmtDate(p.startDate)}</td>
-<td>${p.active?'<span class="badge badge-success">'+t('active')+'</span>':'<span class="badge badge-secondary">'+t('inactive')+'</span>'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showPersonnelForm('${escapeAttr(p.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deletePersonnel('${escapeAttr(p.id)}')">${t('delete')}</button></div></td></tr>`;});
-h+='</tbody></table></div></div>';
+if(!D.personnel.length){
+let h=`<div class="page-header" style="margin-bottom:12px"><h3>${t('ops_personnel')}</h3><button class="btn btn-primary btn-sm" onclick="showPersonnelForm()">${t('ops_per_add')}</button></div>`;
+return h+emptyState('👷',t('no_data'));
+}
 const totalSalary=D.personnel.filter(p=>p.active).reduce((s,p)=>s+(p.salary||0),0);
-h+=`<div class="kpi-grid">${kpi(t('total_salaries'),fmtMoney(totalSalary),D.personnel.filter(p=>p.active).length+' '+t('active').toLowerCase())}</div>`;
-return h;
+const activeCount=D.personnel.filter(p=>p.active).length;
+return DataTable.create({
+id:'personnel',data:D.personnel,onRefresh:'renderOperations',emptyIcon:'👷',emptyText:t('no_data'),
+headerHtml:`<div class="page-header" style="margin-bottom:12px"><h3>${t('ops_personnel')}</h3><button class="btn btn-primary btn-sm" onclick="showPersonnelForm()">${t('ops_per_add')}</button></div>`,
+kpiHtml:`<div class="kpi-grid">${kpi(t('total_salaries'),fmtMoney(totalSalary),activeCount+' '+t('active').toLowerCase())}</div>`,
+columns:[
+{key:'name',label:t('ops_per_name'),type:'text',sortable:true,filterable:true,render:r=>'<strong>'+sanitizeHTML(r.name)+'</strong>'},
+{key:'role',label:t('ops_per_role'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[...new Set(D.personnel.map(p=>p.role).filter(Boolean))].map(v=>({value:v,label:v})),render:r=>sanitizeHTML(r.role||'-')},
+{key:'salary',label:t('ops_per_salary'),type:'number',sortable:true,render:r=>fmtMoney(r.salary||0)},
+{key:'startDate',label:t('ops_per_start'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'active',label:t('ops_per_active'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'true',label:t('active')},{value:'false',label:t('inactive')}],getValue:r=>String(!!r.active),render:r=>r.active?'<span class="badge badge-success">'+t('active')+'</span>':'<span class="badge badge-secondary">'+t('inactive')+'</span>'}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showPersonnelForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deletePersonnel('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.personnel=D.personnel.filter(p=>!ids.includes(p.id));saveData(D);renderOperations();}}]
+});
 }
 function showPersonnelForm(id){
 const D=loadData();const p=id?D.personnel.find(x=>x.id===id):null;
@@ -4371,25 +4591,32 @@ h+=`<div class="card"><div style="display:flex;align-items:center;gap:12px;margi
 return h;
 }
 function renderEnvHistory(D){
-let h='';
 if(!D.environment.length)return emptyState('📊',t('no_data'));
-h+='<div class="card"><h3>'+t('env_history')+'</h3><div class="chart-container"><canvas id="chart-env"></canvas></div></div>';
+let h='<div class="card"><h3>'+t('env_history')+'</h3><div class="chart-container"><canvas id="chart-env"></canvas></div></div>';
 setTimeout(()=>{
 const c=document.getElementById('chart-env');if(!c)return;
-const recs=D.environment.sort((a,b)=>a.date.localeCompare(b.date)).slice(-30);
+const recs=[...D.environment].sort((a,b)=>a.date.localeCompare(b.date)).slice(-30);
 CHARTS.env=new Chart(c,{type:'line',data:{labels:recs.map(r=>r.date.substring(5)),datasets:[
 {label:t('env_temp')+' °C',data:recs.map(r=>r.temperature),borderColor:'#C62828',tension:.3,yAxisID:'y'},
 {label:t('env_humidity')+' %',data:recs.map(r=>r.humidity),borderColor:themeColor('--primary'),tension:.3,yAxisID:'y1'}
 ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
 scales:{y:{position:'left',title:{display:true,text:'°C'}},y1:{position:'right',title:{display:true,text:'%'},grid:{drawOnChartArea:false}}}}});
 },100);
-h+='<div class="card"><div class="table-wrap"><table><thead><tr>';
-h+=`<th>${t('date')}</th><th>${t('env_temp')}</th><th>${t('env_humidity')}</th><th>${t('env_light')}</th><th>${t('env_ammonia')}</th><th>THI</th><th>${t('notes')}</th></tr></thead><tbody>`;
-D.environment.sort((a,b)=>b.date.localeCompare(a.date)).forEach(e=>{
-const thi=(e.temperature&&e.humidity)?calcTHI(e.temperature,e.humidity):null;
-h+=`<tr><td>${fmtDate(e.date)}</td><td>${e.temperature||'-'}°C</td><td>${e.humidity||'-'}%</td>
-<td>${e.lightHours||'-'} hrs</td><td>${e.ammoniaLevel||'-'} ppm</td><td>${thi?thi.toFixed(1):'-'}</td><td>${sanitizeHTML(e.notes||'-')}</td></tr>`;});
-h+='</tbody></table></div></div>';
+const envData=D.environment.map(e=>{const thi=(e.temperature&&e.humidity)?calcTHI(e.temperature,e.humidity):null;return{...e,_thi:thi};});
+h+=DataTable.create({
+id:'envHistory',data:envData,onRefresh:'renderEnvironment',emptyIcon:'📊',emptyText:t('no_data'),
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'temperature',label:t('env_temp'),type:'number',sortable:true,render:r=>(r.temperature||'-')+'°C'},
+{key:'humidity',label:t('env_humidity'),type:'number',sortable:true,render:r=>(r.humidity||'-')+'%'},
+{key:'lightHours',label:t('env_light'),type:'number',sortable:true,render:r=>(r.lightHours||'-')+' hrs'},
+{key:'ammoniaLevel',label:t('env_ammonia'),type:'number',sortable:true,render:r=>(r.ammoniaLevel||'-')+' ppm'},
+{key:'_thi',label:'THI',type:'number',sortable:true,render:r=>r._thi?r._thi.toFixed(1):'-'},
+{key:'notes',label:t('notes'),type:'text',render:r=>sanitizeHTML(r.notes||'-')}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showEnvForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteEnv('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.environment=D.environment.filter(e=>!ids.includes(e.id));saveData(D);renderEnvironment();}}]
+});
 return h;
 }
 function showEnvForm(id){
@@ -4437,10 +4664,10 @@ h+='<div class="kpi-card"><div class="kpi-label">'+m.icon+' '+m.label+'</div><di
 h+='</div></div></div>';
 // Summary counts
 h+='<div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">';
-if(c.critical>0)h+='<span style="background:#ffcdd2;color:#b71c1c;padding:4px 12px;border-radius:12px;font-weight:600">'+c.critical+' Critical</span>';
-if(c.warning>0)h+='<span style="background:#fff9c4;color:#f57f17;padding:4px 12px;border-radius:12px;font-weight:600">'+c.warning+' Warning</span>';
-if(c.info>0)h+='<span style="background:#e3f2fd;color:#1565c0;padding:4px 12px;border-radius:12px;font-weight:600">'+c.info+' Info</span>';
-if(c.findings.length===0)h+='<span style="background:#c8e6c9;color:#2e7d32;padding:4px 12px;border-radius:12px;font-weight:600">No deficiencies detected</span>';
+if(c.critical>0)h+='<span class="dm-badge-critical" style="background:#ffcdd2;color:#b71c1c;padding:4px 12px;border-radius:12px;font-weight:600">'+c.critical+' Critical</span>';
+if(c.warning>0)h+='<span class="dm-badge-warning" style="background:#fff9c4;color:#f57f17;padding:4px 12px;border-radius:12px;font-weight:600">'+c.warning+' Warning</span>';
+if(c.info>0)h+='<span class="dm-badge-info" style="background:#e3f2fd;color:#1565c0;padding:4px 12px;border-radius:12px;font-weight:600">'+c.info+' Info</span>';
+if(c.findings.length===0)h+='<span class="dm-badge-success" style="background:#c8e6c9;color:#2e7d32;padding:4px 12px;border-radius:12px;font-weight:600">No deficiencies detected</span>';
 h+='</div></div>';
 // Findings by category
 Object.keys(catMeta).forEach(cat=>{
@@ -4452,7 +4679,7 @@ h+='<div class="table-wrap"><table><thead><tr><th style="width:80px">Severity</t
 items.forEach(f=>{
 const sevColor=f.sev==='critical'?'#c62828':f.sev==='warning'?'#e65100':'#1565c0';
 const sevBg=f.sev==='critical'?'#ffcdd2':f.sev==='warning'?'#fff9c4':'#e3f2fd';
-h+='<tr><td><span style="background:'+sevBg+';color:'+sevColor+';padding:2px 8px;border-radius:8px;font-size:12px;font-weight:600">'+f.sev.toUpperCase()+'</span></td>';
+h+='<tr><td><span class="'+(f.sev==='critical'?'dm-badge-critical':f.sev==='warning'?'dm-badge-warning':'dm-badge-info')+'" style="background:'+sevBg+';color:'+sevColor+';padding:2px 8px;border-radius:8px;font-size:12px;font-weight:600">'+f.sev.toUpperCase()+'</span></td>';
 h+='<td style="font-family:monospace;font-size:12px;color:var(--text-light)">'+f.code+'</td>';
 h+='<td>'+sanitizeHTML(f.msg)+'<br><small style="color:var(--primary)">→ '+sanitizeHTML(f.rec)+'</small></td>';
 h+='<td style="font-weight:600;text-align:center">'+f.metric+' '+f.unit+'</td>';
@@ -4845,7 +5072,7 @@ const priority=$('sup-priority')?.value||'medium';
 if(!subject||!desc){showToast('Completa asunto y descripcion','error');return;}
 if(!navigator.onLine){
 _offlineTicketQueue.push({subject,description:desc,priority,created_offline:new Date().toISOString()});
-localStorage.setItem('egglogu_offline_tickets',JSON.stringify(_offlineTicketQueue));
+_safeSetItem('egglogu_offline_tickets',JSON.stringify(_offlineTicketQueue));
 showToast(_sL().ticket_offline,'info');
 $('sup-subject').value='';$('sup-desc').value='';
 renderSoporte();return;
@@ -4993,7 +5220,8 @@ ticket_id:'#Ticket',subject:'Asunto',priority:'Prioridad',category:'Categoría',
 region:'Región',price:'Precio Promedio',production:'Producción',demand:'Demanda',supply:'Oferta',trend:'Tendencia',add_entry:'Nueva Entrada',date:'Fecha',source:'Fuente',notes:'Notas',save:'Guardar',
 no_data:'Sin datos',error:'Error al cargar datos',hours:'hrs',confirm_delete_org:'ELIMINAR ORGANIZACIÓN COMPLETA. Esto es IRREVERSIBLE.',confirm_delete_ticket:'Eliminar ticket permanentemente?',confirm_delete_user:'Eliminar usuario permanentemente?',
 total_production:'Producción Total',feature_requests:'Solicitudes',critical_tickets:'Críticos',response_avg:'Resp. Promedio',
-tab_settings:'Mi Cuenta',current_pw:'Contraseña Actual',new_pw:'Nueva Contraseña',confirm_pw:'Confirmar Contraseña',change_pw:'Cambiar Contraseña',pw_changed:'Contraseña cambiada exitosamente',pw_mismatch:'Las contraseñas no coinciden',pw_rules:'Mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número, 1 símbolo',account_info:'Información de Cuenta'},
+tab_settings:'Mi Cuenta',current_pw:'Contraseña Actual',new_pw:'Nueva Contraseña',confirm_pw:'Confirmar Contraseña',change_pw:'Cambiar Contraseña',pw_changed:'Contraseña cambiada exitosamente',pw_mismatch:'Las contraseñas no coinciden',pw_rules:'Mínimo 8 caracteres, 1 mayúscula, 1 minúscula, 1 número, 1 símbolo',account_info:'Información de Cuenta',
+tab_crm:'CRM',crm_orgs:'Clientes',crm_360:'Vista 360°',crm_health:'Salud',crm_ltv:'LTV',crm_risk:'Riesgo',crm_notes:'Notas',crm_discounts:'Descuentos',crm_retention:'Retención',crm_credit_notes:'Notas de Crédito',crm_invoices:'Facturas',crm_payment_methods:'Métodos de Pago',crm_refund:'Reembolso',crm_change_plan:'Cambiar Plan',crm_report:'Reporte CRM',crm_apply_discount:'Aplicar Descuento',crm_issue_refund:'Emitir Reembolso',crm_issue_credit:'Emitir Nota de Crédito',crm_percent_off:'% Descuento',crm_duration:'Duración (meses)',crm_reason:'Motivo',crm_amount:'Monto (centavos)',crm_currency:'Moneda',crm_new_plan:'Nuevo Plan',crm_interval:'Intervalo',crm_active:'Activo',crm_revoke:'Revocar',crm_back:'Volver',crm_export:'Exportar',crm_score:'Puntuación',crm_subscription:'Suscripción',crm_billing_history:'Historial Facturación',crm_no_notes:'Sin notas',crm_add_note:'Agregar Nota',crm_pinned:'Fijada',crm_evaluate:'Evaluar Retención',crm_rules:'Reglas',crm_events:'Eventos',crm_trigger:'Disparador',crm_action:'Acción',crm_result:'Resultado',crm_conditions:'Condiciones',crm_template:'Plantilla Email',crm_avg_health:'Salud Promedio',crm_total_ltv:'LTV Total',crm_active_discounts:'Descuentos Activos',crm_events_30d:'Eventos (30d)',crm_credits_total:'Total Créditos',crm_payment_id:'ID Pago',crm_confirm_refund:'¿Confirmar reembolso?',crm_month:'mes',crm_year:'año'},
 en:{title:'Superadmin Panel',tab_dashboard:'Dashboard',tab_inventory:'Global Inventory',tab_accounts:'Accounts',tab_tickets:'Tickets',tab_market:'Market',
 loading:'Loading...',total_orgs:'Organizations',total_users:'Users',active_users:'Active',mrr:'Estimated MRR',total_eggs:'Eggs in Stock',open_tickets:'Open Tickets',bug_tickets:'Bugs',avg_resolution:'Avg. Resolution',sla:'SLA',support_rating:'Support Rating',new_orgs_30d:'New Orgs (30d)',new_users_30d:'New Users (30d)',plan_dist:'Plan Distribution',
 org_name:'Organization',plan:'Plan',users:'Users',farms:'Farms',status:'Status',created:'Created',last_activity:'Last Activity',actions:'Actions',deactivate:'Deactivate',activate:'Activate',delete:'Delete',
@@ -5003,7 +5231,8 @@ ticket_id:'#Ticket',subject:'Subject',priority:'Priority',category:'Category',or
 region:'Region',price:'Avg. Price',production:'Production',demand:'Demand',supply:'Supply',trend:'Trend',add_entry:'New Entry',date:'Date',source:'Source',notes:'Notes',save:'Save',
 no_data:'No data',error:'Error loading data',hours:'hrs',confirm_delete_org:'DELETE ENTIRE ORGANIZATION. This is IRREVERSIBLE.',confirm_delete_ticket:'Permanently delete ticket?',confirm_delete_user:'Permanently delete user?',
 total_production:'Total Production',feature_requests:'Feature Requests',critical_tickets:'Critical',response_avg:'Avg. Response',
-tab_settings:'My Account',current_pw:'Current Password',new_pw:'New Password',confirm_pw:'Confirm Password',change_pw:'Change Password',pw_changed:'Password changed successfully',pw_mismatch:'Passwords do not match',pw_rules:'Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol',account_info:'Account Info'}};
+tab_settings:'My Account',current_pw:'Current Password',new_pw:'New Password',confirm_pw:'Confirm Password',change_pw:'Change Password',pw_changed:'Password changed successfully',pw_mismatch:'Passwords do not match',pw_rules:'Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol',account_info:'Account Info',
+tab_crm:'CRM',crm_orgs:'Customers',crm_360:'360° View',crm_health:'Health',crm_ltv:'LTV',crm_risk:'Risk',crm_notes:'Notes',crm_discounts:'Discounts',crm_retention:'Retention',crm_credit_notes:'Credit Notes',crm_invoices:'Invoices',crm_payment_methods:'Payment Methods',crm_refund:'Refund',crm_change_plan:'Change Plan',crm_report:'CRM Report',crm_apply_discount:'Apply Discount',crm_issue_refund:'Issue Refund',crm_issue_credit:'Issue Credit Note',crm_percent_off:'% Off',crm_duration:'Duration (months)',crm_reason:'Reason',crm_amount:'Amount (cents)',crm_currency:'Currency',crm_new_plan:'New Plan',crm_interval:'Interval',crm_active:'Active',crm_revoke:'Revoke',crm_back:'Back',crm_export:'Export',crm_score:'Score',crm_subscription:'Subscription',crm_billing_history:'Billing History',crm_no_notes:'No notes',crm_add_note:'Add Note',crm_pinned:'Pinned',crm_evaluate:'Evaluate Retention',crm_rules:'Rules',crm_events:'Events',crm_trigger:'Trigger',crm_action:'Action',crm_result:'Result',crm_conditions:'Conditions',crm_template:'Email Template',crm_avg_health:'Avg Health',crm_total_ltv:'Total LTV',crm_active_discounts:'Active Discounts',crm_events_30d:'Events (30d)',crm_credits_total:'Total Credits',crm_payment_id:'Payment ID',crm_confirm_refund:'Confirm refund?',crm_month:'month',crm_year:'year'}};
 const lang=document.documentElement.lang||'es';
 const lbl=L[lang]||L[Object.keys(L).find(k=>lang.startsWith(k))]||L.es;
 
@@ -5013,6 +5242,7 @@ const tabs=[
 {id:'sa-accounts',label:lbl.tab_accounts,icon:'🏢'},
 {id:'sa-tickets',label:lbl.tab_tickets,icon:'🎫'},
 {id:'sa-market',label:lbl.tab_market,icon:'📈'},
+{id:'sa-crm',label:lbl.tab_crm,icon:'💼'},
 {id:'sa-settings',label:lbl.tab_settings,icon:'⚙️'}
 ];
 
@@ -5035,6 +5265,7 @@ else if(_saTab==='sa-inventory')await _saRenderInventory(ct,lbl);
 else if(_saTab==='sa-accounts')await _saRenderAccounts(ct,lbl);
 else if(_saTab==='sa-tickets')await _saRenderTickets(ct,lbl);
 else if(_saTab==='sa-market')await _saRenderMarket(ct,lbl);
+else if(_saTab==='sa-crm')await _saRenderCRM(ct,lbl);
 else if(_saTab==='sa-settings')_saRenderSettings(ct,lbl);
 }catch(e){ct.innerHTML=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
 }
@@ -5265,6 +5496,472 @@ showToast('Entrada creada');renderSuperadmin();
 }catch(err){showToast('Error: '+err.message,'error');}
 }
 
+// ── CRM State ────────────────────────────────────────────────────
+let _crmView='list'; // 'list' | '360' | 'report' | 'retention'
+let _crmOrgId=null;
+let _crmOrgName='';
+
+async function _saRenderCRM(ct,lbl){
+let h='';
+try{
+// Sub-nav for CRM sections
+const views=[
+{id:'list',label:lbl.crm_orgs,icon:'🏢'},
+{id:'report',label:lbl.crm_report,icon:'📊'},
+{id:'retention',label:lbl.crm_retention,icon:'🔄'}
+];
+h+=`<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">`;
+views.forEach(v=>{
+h+=`<button class="btn ${_crmView===v.id?'btn-primary':'btn-secondary'} btn-sm" onclick="_crmView='${v.id}';_crmOrgId=null;renderSuperadmin()">${v.icon} ${v.label}</button>`;
+});
+if(_crmView==='360'&&_crmOrgName){
+h+=`<span class="badge badge-info" style="align-self:center;font-size:0.85rem">360° ${_crmOrgName}</span>`;
+}
+h+=`</div>`;
+
+if(_crmView==='list')h+=await _crmRenderOrgList(lbl);
+else if(_crmView==='360'&&_crmOrgId)h+=await _crmRender360(lbl);
+else if(_crmView==='report')h+=await _crmRenderReport(lbl);
+else if(_crmView==='retention')h+=await _crmRenderRetention(lbl);
+else h+=await _crmRenderOrgList(lbl);
+}catch(e){h=`<div class="card"><p style="color:var(--danger)">${lbl.error}: ${e.message}</p></div>`;}
+ct.innerHTML=h;
+}
+
+async function _crmRenderOrgList(lbl){
+const data=await _saFetch('/crm/report');
+const orgs=await _saFetch('/organizations');
+let h=`<div class="card"><h3>🏢 ${lbl.crm_orgs}</h3>`;
+if(!orgs||!orgs.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p></div>`;return h;}
+
+// KPIs row
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px">
+<div class="kpi-card"><div class="kpi-label">${lbl.total_orgs}</div><div class="kpi-value">${data.total_orgs||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_avg_health}</div><div class="kpi-value" style="color:${(data.avg_health_score||0)>=70?'var(--success)':(data.avg_health_score||0)>=40?'var(--warning)':'var(--danger)'}">${(data.avg_health_score||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_total_ltv}</div><div class="kpi-value" style="color:var(--success)">$${(data.total_ltv||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_active_discounts}</div><div class="kpi-value">${data.active_discounts||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_events_30d}</div><div class="kpi-value">${data.retention_events_30d||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_credits_total}</div><div class="kpi-value">$${((data.credit_notes_total_cents||0)/100).toFixed(2)}</div></div>
+</div>`;
+
+// Risk distribution
+if(data.risk_distribution){
+h+=`<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">`;
+const riskColors={low:'var(--success)',medium:'var(--warning)',high:'#ff5722',critical:'var(--danger)'};
+const riskLabels={low:'Bajo',medium:'Medio',high:'Alto',critical:'Crítico'};
+Object.entries(data.risk_distribution).forEach(([r,c])=>{
+h+=`<div style="padding:6px 14px;border-radius:20px;background:${riskColors[r]||'var(--bg-card)'};color:#fff;font-size:0.8rem;font-weight:600">${riskLabels[r]||r}: ${c}</div>`;
+});
+h+=`</div>`;}
+
+// Org table with health score
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.org_name}</th><th>${lbl.plan}</th><th>${lbl.crm_score}</th><th>${lbl.crm_risk}</th><th>${lbl.crm_ltv}</th><th>${lbl.users}</th><th>${lbl.farms}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+for(const o of orgs){
+let hs=0,risk='low';
+try{const h360=await apiService.request('GET','/superadmin/organizations/'+o.id+'/crm-360');hs=h360.health?.score||0;risk=h360.health?.risk||'low';}catch(e){}
+const riskColors={low:'success',medium:'warning',high:'danger',critical:'danger'};
+const planColors={hobby:'secondary',starter:'info',pro:'info',enterprise:'warning'};
+h+=`<tr>
+<td><strong>${o.name||'-'}</strong><br><span style="font-size:0.75rem;color:var(--text-light)">${o.slug||''}</span></td>
+<td><span class="badge badge-${planColors[o.plan]||'secondary'}">${(o.plan||'free').toUpperCase()}</span></td>
+<td><div style="display:flex;align-items:center;gap:6px"><div style="width:40px;height:6px;background:var(--bg-card);border-radius:3px;overflow:hidden"><div style="width:${hs}%;height:100%;background:${hs>=70?'var(--success)':hs>=40?'var(--warning)':'var(--danger)'}"></div></div><span style="font-size:0.85rem;font-weight:600">${hs}</span></div></td>
+<td><span class="badge badge-${riskColors[risk]||'secondary'}">${risk.toUpperCase()}</span></td>
+<td style="font-weight:600">$${(hs*10).toFixed(0)}</td>
+<td>${o.user_count||0}</td>
+<td>${o.farm_count||0}</td>
+<td><button class="btn btn-primary btn-sm" onclick="_crmView='360';_crmOrgId='${o.id}';_crmOrgName='${(o.name||'').replace(/'/g,"\\'")}';renderSuperadmin()">360°</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmExport('${o.id}','json')">${lbl.crm_export}</button></td>
+</tr>`;
+}
+h+=`</tbody></table></div></div>`;
+return h;
+}
+
+async function _crmRender360(lbl){
+const data=await apiService.request('GET','/superadmin/organizations/'+_crmOrgId+'/crm-360');
+let h=`<button class="btn btn-secondary btn-sm" onclick="_crmView='list';_crmOrgId=null;renderSuperadmin()" style="margin-bottom:12px">← ${lbl.crm_back}</button>`;
+
+// Header with health score
+const hs=data.health||{};
+const org=data.organization||{};
+h+=`<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<div><h3 style="margin:0">${org.name||_crmOrgName}</h3><span style="color:var(--text-light);font-size:0.85rem">${org.slug||''} · ${org.tier||''}</span></div>
+<div style="display:flex;gap:16px;align-items:center">
+<div style="text-align:center"><div style="font-size:2rem;font-weight:700;color:${(hs.score||0)>=70?'var(--success)':(hs.score||0)>=40?'var(--warning)':'var(--danger)'}">${hs.score||0}</div><div style="font-size:0.7rem;color:var(--text-light)">${lbl.crm_health}</div></div>
+<div style="text-align:center"><div style="font-size:1.3rem;font-weight:700;color:var(--success)">$${(data.ltv?.total_value||0).toFixed(0)}</div><div style="font-size:0.7rem;color:var(--text-light)">${lbl.crm_ltv}</div></div>
+<span class="badge badge-${(hs.risk||'low')==='low'?'success':(hs.risk||'low')==='medium'?'warning':'danger'}" style="font-size:0.9rem;padding:6px 12px">${(hs.risk||'low').toUpperCase()}</span>
+</div></div></div>`;
+
+// Subscription info
+const sub=data.subscription||{};
+if(sub.plan||sub.status){
+h+=`<div class="card" style="margin-bottom:14px"><h3>💳 ${lbl.crm_subscription}</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+<div class="kpi-card"><div class="kpi-label">${lbl.plan}</div><div class="kpi-value" style="font-size:0.95rem">${(sub.plan||'-').toUpperCase()}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.status}</div><div class="kpi-value" style="font-size:0.95rem">${sub.status||'-'}</div></div>
+<div class="kpi-card"><div class="kpi-label">Stripe</div><div class="kpi-value" style="font-size:0.7rem">${sub.stripe_subscription_id||'-'}</div></div>
+</div></div>`;
+}
+
+// Actions row
+h+=`<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+<button class="btn btn-primary btn-sm" onclick="_crmShowDiscountModal('${_crmOrgId}')">🏷️ ${lbl.crm_apply_discount}</button>
+<button class="btn btn-warning btn-sm" onclick="_crmShowRefundModal('${_crmOrgId}')">💸 ${lbl.crm_issue_refund}</button>
+<button class="btn btn-info btn-sm" onclick="_crmShowCreditModal('${_crmOrgId}')">📝 ${lbl.crm_issue_credit}</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmShowPlanModal('${_crmOrgId}')">🔄 ${lbl.crm_change_plan}</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmExport('${_crmOrgId}','csv')">📥 CSV</button>
+<button class="btn btn-secondary btn-sm" onclick="_crmExport('${_crmOrgId}','json')">📥 JSON</button>
+</div>`;
+
+// Notes section
+h+=`<div class="card" style="margin-bottom:14px"><h3>📝 ${lbl.crm_notes}</h3>`;
+h+=`<form onsubmit="_crmAddNote(event,'${_crmOrgId}');return false" style="display:flex;gap:8px;margin-bottom:12px">
+<input type="text" id="crm-note-input" placeholder="${lbl.crm_add_note}..." style="flex:1" required>
+<select id="crm-note-type"><option value="general">General</option><option value="billing">Billing</option><option value="support">Support</option><option value="retention">Retention</option></select>
+<button type="submit" class="btn btn-primary btn-sm">${lbl.save}</button></form>`;
+const notes=data.notes||[];
+if(!notes.length){h+=`<p style="color:var(--text-light)">${lbl.crm_no_notes}</p>`;}
+else{
+notes.forEach(n=>{
+h+=`<div style="padding:10px;border-left:3px solid ${n.is_pinned?'var(--warning)':'var(--border)'};margin-bottom:8px;background:var(--bg-card);border-radius:0 6px 6px 0">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-weight:600;font-size:0.85rem">${n.note_type||'general'}${n.is_pinned?' 📌':''}</span>
+<div style="display:flex;gap:4px;align-items:center">
+<span style="font-size:0.7rem;color:var(--text-light)">${n.created_at?n.created_at.substring(0,10):''}</span>
+<button class="btn btn-secondary btn-sm" style="padding:2px 6px;font-size:0.7rem" onclick="_crmTogglePin('${_crmOrgId}','${n.id}',${!n.is_pinned})">${n.is_pinned?'Unpin':'Pin'}</button>
+<button class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:0.7rem" onclick="_crmDeleteNote('${_crmOrgId}','${n.id}')">×</button>
+</div></div>
+<p style="margin:4px 0 0;font-size:0.9rem">${n.content}</p></div>`;
+});}
+h+=`</div>`;
+
+// Discounts
+h+=`<div class="card" style="margin-bottom:14px"><h3>🏷️ ${lbl.crm_discounts}</h3>`;
+const discounts=data.discounts||[];
+if(!discounts.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.crm_percent_off}</th><th>${lbl.crm_duration}</th><th>${lbl.crm_reason}</th><th>${lbl.crm_active}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+discounts.forEach(d=>{
+h+=`<tr><td style="font-weight:700">${d.percent_off}%</td><td>${d.duration_months} ${lbl.crm_month}</td><td>${d.reason||'-'}</td>
+<td><span class="badge badge-${d.is_active?'success':'secondary'}">${d.is_active?lbl.crm_active:'Expired'}</span></td>
+<td>${d.is_active?`<button class="btn btn-danger btn-sm" onclick="_crmRevokeDiscount('${d.id}')">${lbl.crm_revoke}</button>`:'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+
+// Credit Notes
+h+=`<div class="card" style="margin-bottom:14px"><h3>📋 ${lbl.crm_credit_notes}</h3>`;
+const credits=data.credit_notes||[];
+if(!credits.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.crm_amount}</th><th>${lbl.crm_currency}</th><th>${lbl.crm_reason}</th><th>${lbl.status}</th><th>${lbl.created}</th></tr></thead><tbody>`;
+credits.forEach(c=>{
+h+=`<tr><td style="font-weight:700">$${(c.amount_cents/100).toFixed(2)}</td><td>${c.currency}</td><td>${c.reason||'-'}</td>
+<td><span class="badge badge-${c.status==='issued'?'success':'secondary'}">${c.status}</span></td>
+<td>${c.created_at?c.created_at.substring(0,10):'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+
+// Users & Farms summary
+h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">`;
+h+=`<div class="card"><h3>👥 ${lbl.users} (${(data.users||[]).length})</h3>`;
+(data.users||[]).forEach(u=>{
+h+=`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.85rem"><strong>${u.full_name||u.email}</strong> · <span class="badge badge-secondary">${u.role||'-'}</span></div>`;
+});
+h+=`</div>`;
+h+=`<div class="card"><h3>🏠 ${lbl.farms} (${(data.farms||[]).length})</h3>`;
+(data.farms||[]).forEach(f=>{
+h+=`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.85rem"><strong>${f.name||'-'}</strong> · ${f.location||''}</div>`;
+});
+h+=`</div></div>`;
+
+// Stats
+h+=`<div class="card" style="margin-bottom:14px"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+<div class="kpi-card"><div class="kpi-label">${lbl.open_tickets}</div><div class="kpi-value">${data.open_tickets||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">Flocks</div><div class="kpi-value">${data.total_flocks||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.total_eggs}</div><div class="kpi-value">${(data.total_eggs_in_stock||0).toLocaleString()}</div></div>
+</div></div>`;
+
+return h;
+}
+
+async function _crmRenderReport(lbl){
+const data=await _saFetch('/crm/report');
+let h=`<div class="card"><h3>📊 ${lbl.crm_report}</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px">
+<div class="kpi-card"><div class="kpi-label">${lbl.total_orgs}</div><div class="kpi-value">${data.total_orgs||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.active_users}</div><div class="kpi-value" style="color:var(--success)">${data.active_orgs||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_avg_health}</div><div class="kpi-value" style="color:${(data.avg_health_score||0)>=70?'var(--success)':'var(--warning)'}">${(data.avg_health_score||0).toFixed(1)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_total_ltv}</div><div class="kpi-value" style="color:var(--success)">$${(data.total_ltv||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_ltv} (${lbl.crm_avg_health})</div><div class="kpi-value">$${(data.avg_ltv||0).toFixed(0)}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_active_discounts}</div><div class="kpi-value">${data.active_discounts||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_events_30d}</div><div class="kpi-value">${data.retention_events_30d||0}</div></div>
+<div class="kpi-card"><div class="kpi-label">${lbl.crm_credits_total}</div><div class="kpi-value">$${((data.credit_notes_total_cents||0)/100).toFixed(2)}</div></div>
+</div>`;
+
+// Risk distribution chart
+if(data.risk_distribution){
+h+=`<div style="margin-top:16px"><h4>${lbl.crm_risk} Distribution</h4>
+<div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap">`;
+const riskColors={low:'var(--success)',medium:'var(--warning)',high:'#ff5722',critical:'var(--danger)'};
+Object.entries(data.risk_distribution).forEach(([r,c])=>{
+const total=data.total_orgs||1;
+const pct=((c/total)*100).toFixed(0);
+h+=`<div style="flex:1;min-width:120px;text-align:center">
+<div style="background:var(--bg-card);border-radius:8px;padding:12px;border:2px solid ${riskColors[r]||'var(--border)'}">
+<div style="font-size:1.5rem;font-weight:700;color:${riskColors[r]||'var(--text)'}">${c}</div>
+<div style="font-size:0.75rem;color:var(--text-light)">${r.toUpperCase()} (${pct}%)</div>
+</div></div>`;
+});
+h+=`</div></div>`;}
+h+=`</div>`;
+return h;
+}
+
+async function _crmRenderRetention(lbl){
+let h='';
+// Retention rules
+const rules=await apiService.request('GET','/superadmin/retention-rules');
+const events=await apiService.request('GET','/superadmin/retention-events?limit=20');
+
+h+=`<div class="card" style="margin-bottom:14px"><h3>📋 ${lbl.crm_rules}</h3>
+<div style="margin-bottom:12px"><button class="btn btn-primary btn-sm" onclick="_crmShowRuleModal()">${lbl.crm_add_note} Rule</button>
+<button class="btn btn-warning btn-sm" onclick="_crmEvaluateRetention()">${lbl.crm_evaluate}</button></div>`;
+if(!rules||!rules.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>Name</th><th>${lbl.crm_trigger}</th><th>${lbl.crm_action}</th><th>% Off</th><th>${lbl.crm_active}</th><th>${lbl.actions}</th></tr></thead><tbody>`;
+rules.forEach(r=>{
+h+=`<tr><td><strong>${r.name}</strong></td><td>${r.trigger_type}</td><td>${r.action_type}</td><td>${r.discount_percent}%</td>
+<td><span class="badge badge-${r.is_active?'success':'secondary'}">${r.is_active?'ON':'OFF'}</span></td>
+<td><button class="btn btn-secondary btn-sm" onclick="_crmToggleRule('${r.id}',${!r.is_active})">${r.is_active?'Disable':'Enable'}</button>
+<button class="btn btn-danger btn-sm" onclick="_crmDeleteRule('${r.id}')">×</button></td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+
+// Events log
+h+=`<div class="card"><h3>📜 ${lbl.crm_events}</h3>`;
+const evtList=events.items||events||[];
+if(!evtList.length){h+=`<p style="color:var(--text-light)">${lbl.no_data}</p>`;}
+else{
+h+=`<div class="table-wrap"><table><thead><tr><th>${lbl.org}</th><th>${lbl.crm_trigger}</th><th>${lbl.crm_action}</th><th>${lbl.crm_result}</th><th>${lbl.date}</th></tr></thead><tbody>`;
+evtList.forEach(ev=>{
+h+=`<tr><td>${ev.organization_id?ev.organization_id.substring(0,8)+'...':'-'}</td><td>${ev.trigger_type}</td><td>${ev.action_taken}</td><td>${ev.result||'-'}</td><td>${ev.created_at?ev.created_at.substring(0,10):'-'}</td></tr>`;
+});
+h+=`</tbody></table></div>`;}
+h+=`</div>`;
+return h;
+}
+
+// ── CRM Action Functions ────────────────────────────────────────
+function _crmShowDiscountModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{pct:'% Off',dur:'Duration (months)',reason:'Reason',apply:'Apply Discount'}:{pct:'% Descuento',dur:'Duración (meses)',reason:'Motivo',apply:'Aplicar Descuento'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>🏷️ ${lbl.apply}</h3>
+<form onsubmit="_crmApplyDiscount(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.pct}</label><input type="number" id="crm-d-pct" min="1" max="100" required></div>
+<div><label>${lbl.dur}</label><input type="number" id="crm-d-dur" min="1" max="36" value="1" required></div>
+<div><label>${lbl.reason}</label><input type="text" id="crm-d-reason" required></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-primary">${lbl.apply}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmApplyDiscount(e,orgId){
+e.preventDefault();
+const body={percent_off:parseInt(document.getElementById('crm-d-pct').value),duration_months:parseInt(document.getElementById('crm-d-dur').value),reason:document.getElementById('crm-d-reason').value};
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/discounts',body);
+document.getElementById('crm-modal')?.remove();showToast('Descuento aplicado');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowRefundModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{pid:'Payment Intent ID',amount:'Amount (cents, empty=full)',reason:'Reason',issue:'Issue Refund'}:{pid:'Payment Intent ID',amount:'Monto (centavos, vacío=total)',reason:'Motivo',issue:'Emitir Reembolso'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>💸 ${lbl.issue}</h3>
+<form onsubmit="_crmIssueRefund(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.pid}</label><input type="text" id="crm-r-pid" placeholder="pi_..." required></div>
+<div><label>${lbl.amount}</label><input type="number" id="crm-r-amt" min="1" placeholder="Leave empty for full refund"></div>
+<div><label>${lbl.reason}</label><input type="text" id="crm-r-reason" value="requested_by_customer"></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-warning">${lbl.issue}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmIssueRefund(e,orgId){
+e.preventDefault();
+const lang=document.documentElement.lang||'es';
+if(!confirm(lang==='en'?'Confirm refund?':'¿Confirmar reembolso?'))return;
+const body={payment_intent_id:document.getElementById('crm-r-pid').value,reason:document.getElementById('crm-r-reason').value};
+const amt=document.getElementById('crm-r-amt').value;
+if(amt)body.amount_cents=parseInt(amt);
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/refund',body);
+document.getElementById('crm-modal')?.remove();showToast('Reembolso emitido');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowCreditModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{amount:'Amount (cents)',currency:'Currency',reason:'Reason',issue:'Issue Credit Note'}:{amount:'Monto (centavos)',currency:'Moneda',reason:'Motivo',issue:'Emitir Nota de Crédito'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>📝 ${lbl.issue}</h3>
+<form onsubmit="_crmIssueCreditNote(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.amount}</label><input type="number" id="crm-c-amt" min="1" required></div>
+<div><label>${lbl.currency}</label><input type="text" id="crm-c-cur" value="usd" maxlength="3"></div>
+<div><label>${lbl.reason}</label><input type="text" id="crm-c-reason" required></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-info">${lbl.issue}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmIssueCreditNote(e,orgId){
+e.preventDefault();
+const body={amount_cents:parseInt(document.getElementById('crm-c-amt').value),currency:document.getElementById('crm-c-cur').value,reason:document.getElementById('crm-c-reason').value};
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/credit-notes',body);
+document.getElementById('crm-modal')?.remove();showToast('Nota de crédito emitida');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowPlanModal(orgId){
+const lang=document.documentElement.lang||'es';
+const lbl=lang==='en'?{plan:'New Plan',interval:'Interval',month:'Month',year:'Year',change:'Change Plan'}:{plan:'Nuevo Plan',interval:'Intervalo',month:'Mes',year:'Año',change:'Cambiar Plan'};
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:400px">
+<h3>🔄 ${lbl.change}</h3>
+<form onsubmit="_crmChangePlan(event,'${orgId}');return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>${lbl.plan}</label><select id="crm-p-plan"><option value="hobby">Hobby ($9)</option><option value="starter">Starter ($19)</option><option value="pro">Pro ($49)</option><option value="enterprise">Enterprise ($99)</option></select></div>
+<div><label>${lbl.interval}</label><select id="crm-p-int"><option value="month">${lbl.month}</option><option value="year">${lbl.year}</option></select></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-primary">${lbl.change}</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmChangePlan(e,orgId){
+e.preventDefault();
+const body={new_plan:document.getElementById('crm-p-plan').value,interval:document.getElementById('crm-p-int').value};
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/change-plan',body);
+document.getElementById('crm-modal')?.remove();showToast('Plan cambiado');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmAddNote(e,orgId){
+e.preventDefault();
+const content=document.getElementById('crm-note-input').value;
+const note_type=document.getElementById('crm-note-type').value;
+try{
+await apiService.request('POST','/superadmin/organizations/'+orgId+'/notes',{content,note_type,is_pinned:false});
+showToast('Nota agregada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmTogglePin(orgId,noteId,pin){
+try{
+await apiService.request('PATCH','/superadmin/organizations/'+orgId+'/notes/'+noteId,{is_pinned:pin});
+renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmDeleteNote(orgId,noteId){
+if(!confirm('Delete note?'))return;
+try{
+await apiService.request('DELETE','/superadmin/organizations/'+orgId+'/notes/'+noteId);
+showToast('Nota eliminada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmRevokeDiscount(discountId){
+if(!confirm('Revoke discount?'))return;
+try{
+await apiService.request('DELETE','/superadmin/discounts/'+discountId);
+showToast('Descuento revocado');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmExport(orgId,fmt){
+try{
+const data=await apiService.request('GET','/superadmin/organizations/'+orgId+'/export?format='+fmt);
+const blob=new Blob([typeof data==='string'?data:JSON.stringify(data,null,2)],{type:fmt==='csv'?'text/csv':'application/json'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download=`crm_${orgId.substring(0,8)}.${fmt}`;a.click();
+URL.revokeObjectURL(url);
+showToast('Exportado');
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+function _crmShowRuleModal(){
+const lang=document.documentElement.lang||'es';
+const modal=document.createElement('div');
+modal.className='modal-overlay';modal.id='crm-modal';
+modal.innerHTML=`<div class="modal-content" style="max-width:450px">
+<h3>📋 New Retention Rule</h3>
+<form onsubmit="_crmCreateRule(event);return false" style="display:flex;flex-direction:column;gap:12px">
+<div><label>Name</label><input type="text" id="crm-rule-name" required></div>
+<div><label>Trigger</label><select id="crm-rule-trigger"><option value="churn_risk">Churn Risk</option><option value="payment_failed">Payment Failed</option><option value="low_usage">Low Usage</option><option value="downgrade_request">Downgrade Request</option><option value="trial_expiring">Trial Expiring</option></select></div>
+<div><label>Action</label><select id="crm-rule-action"><option value="flag_for_review">Flag for Review</option><option value="auto_discount">Auto Discount</option><option value="send_email">Send Email</option><option value="extend_trial">Extend Trial</option></select></div>
+<div><label>Discount %</label><input type="number" id="crm-rule-disc" min="0" max="100" value="0"></div>
+<div><label>Email Template Key</label><input type="text" id="crm-rule-tpl" placeholder="optional"></div>
+<div style="display:flex;gap:8px"><button type="submit" class="btn btn-primary">Create</button>
+<button type="button" class="btn btn-secondary" onclick="document.getElementById('crm-modal').remove()">Cancel</button></div>
+</form></div>`;
+document.body.appendChild(modal);
+}
+
+async function _crmCreateRule(e){
+e.preventDefault();
+const body={
+name:document.getElementById('crm-rule-name').value,
+trigger_type:document.getElementById('crm-rule-trigger').value,
+action_type:document.getElementById('crm-rule-action').value,
+discount_percent:parseInt(document.getElementById('crm-rule-disc').value)||0,
+email_template_key:document.getElementById('crm-rule-tpl').value||null,
+conditions:{}
+};
+try{
+await apiService.request('POST','/superadmin/retention-rules',body);
+document.getElementById('crm-modal')?.remove();showToast('Regla creada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmToggleRule(ruleId,active){
+try{
+await apiService.request('PATCH','/superadmin/retention-rules/'+ruleId,{is_active:active});
+renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmDeleteRule(ruleId){
+if(!confirm('Delete rule?'))return;
+try{
+await apiService.request('DELETE','/superadmin/retention-rules/'+ruleId);
+showToast('Regla eliminada');renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
+async function _crmEvaluateRetention(){
+try{
+const res=await apiService.request('POST','/superadmin/retention/evaluate');
+showToast(`Evaluación completa: ${res.events_created||0} eventos`);renderSuperadmin();
+}catch(err){showToast('Error: '+err.message,'error');}
+}
+
 function _saRenderSettings(ct,lbl){
 const u=_currentUser||{};
 let h=`<div class="card" style="margin-bottom:16px"><h3>👤 ${lbl.account_info}</h3>
@@ -5310,8 +6007,14 @@ const audit=D.auditLog||[];
 const cur=plan.currency||'USD';
 
 // i18n labels inline (avoids editing 8 language blocks for 40+ keys)
-const L={es:{title:'Admin SaaS',plan_overview:'Resumen del Plan',current_plan:'Plan Actual',monthly_cost:'Costo Mensual',max_flocks:'Lotes Máx.',included_users:'Usuarios Incluidos',extra_cost:'Costo Extra/Usuario',billing:'Ciclo Facturación',user_kpis:'KPIs de Usuarios',total_users:'Total Usuarios',active_users:'Usuarios Activos',inactive_users:'Inactivos',by_role:'Por Rol',activation_kpis:'KPIs de Activación',activation_rate:'Tasa Activación',avg_time_activate:'Tiempo Promedio Activación',pending_activations:'Activaciones Pendientes',churn_kpis:'KPIs de Churn',monthly_churn:'Churn Mensual',retention:'Retención',deactivated_30d:'Desactivados (30d)',revenue_kpis:'KPIs de Revenue',mrr:'MRR (Ingreso Mensual Recurrente)',base_revenue:'Revenue Base',extra_user_revenue:'Revenue Usuarios Extra',total_mrr:'MRR Total',user_table:'Tabla de Usuarios',name:'Nombre',email:'Email',role:'Rol',status:'Estado',since:'Desde',actions:'Acciones',active:'Activo',inactive:'Inactivo',pending:'Pendiente',no_users:'No hay usuarios registrados',upgrade_plan:'Cambiar Plan',upgrade:'Upgrade',current:'(Actual)',audit_recent:'Actividad Reciente',no_audit:'Sin registros de auditoría',deactivate:'Desactivar',activate:'Activar',days:'días',confirm_deactivate:'¿Desactivar este usuario?',confirm_activate:'¿Reactivar este usuario?',plan_changed:'Plan actualizado exitosamente',user_toggled:'Estado del usuario actualizado',add_user:'Agregar Usuario',delete_user:'Eliminar',billing_title:'Facturación y Pagos',billing_next:'Próxima Facturación',billing_cycle:'Ciclo',billing_base:'Cargo Base',billing_extra:'Usuarios Extra',billing_total:'Total por Ciclo',billing_ledger:'Historial de Cobros',billing_type:'Tipo',billing_desc:'Descripción',billing_amount:'Monto',billing_monthly:'Cobro mensual',billing_activation_charge:'Cargo proporcional activación',billing_deactivation_credit:'Crédito desactivación',billing_auto_note:'Sistema autogestionable — los cobros y créditos se calculan automáticamente según activaciones/desactivaciones de usuarios. No se requiere intervención manual.'},
-en:{title:'SaaS Admin',plan_overview:'Plan Overview',current_plan:'Current Plan',monthly_cost:'Monthly Cost',max_flocks:'Max Flocks',included_users:'Included Users',extra_cost:'Extra User Cost',billing:'Billing Cycle',user_kpis:'User KPIs',total_users:'Total Users',active_users:'Active Users',inactive_users:'Inactive',by_role:'By Role',activation_kpis:'Activation KPIs',activation_rate:'Activation Rate',avg_time_activate:'Avg. Time to Activate',pending_activations:'Pending Activations',churn_kpis:'Churn KPIs',monthly_churn:'Monthly Churn',retention:'Retention',deactivated_30d:'Deactivated (30d)',revenue_kpis:'Revenue KPIs',mrr:'MRR (Monthly Recurring Revenue)',base_revenue:'Base Revenue',extra_user_revenue:'Extra User Revenue',total_mrr:'Total MRR',user_table:'User Table',name:'Name',email:'Email',role:'Role',status:'Status',since:'Since',actions:'Actions',active:'Active',inactive:'Inactive',pending:'Pending',no_users:'No registered users',upgrade_plan:'Change Plan',upgrade:'Upgrade',current:'(Current)',audit_recent:'Recent Activity',no_audit:'No audit records',deactivate:'Deactivate',activate:'Activate',days:'days',confirm_deactivate:'Deactivate this user?',confirm_activate:'Reactivate this user?',plan_changed:'Plan updated successfully',user_toggled:'User status updated',add_user:'Add User',delete_user:'Delete',billing_title:'Billing & Payments',billing_next:'Next Billing',billing_cycle:'Cycle',billing_base:'Base Charge',billing_extra:'Extra Users',billing_total:'Total per Cycle',billing_ledger:'Payment History',billing_type:'Type',billing_desc:'Description',billing_amount:'Amount',billing_monthly:'Monthly charge',billing_activation_charge:'Proportional activation charge',billing_deactivation_credit:'Deactivation credit',billing_auto_note:'Self-managed system — charges and credits are calculated automatically based on user activations/deactivations. No manual intervention required.'}};
+const L={es:{title:'Admin SaaS',plan_overview:'Resumen del Plan',current_plan:'Plan Actual',monthly_cost:'Costo Mensual',max_flocks:'Lotes Máx.',included_users:'Usuarios Incluidos',extra_cost:'Costo Extra/Usuario',billing:'Ciclo Facturación',user_kpis:'KPIs de Usuarios',total_users:'Total Usuarios',active_users:'Usuarios Activos',inactive_users:'Inactivos',by_role:'Por Rol',activation_kpis:'KPIs de Activación',activation_rate:'Tasa Activación',avg_time_activate:'Tiempo Promedio Activación',pending_activations:'Activaciones Pendientes',churn_kpis:'KPIs de Cancelación',monthly_churn:'Cancelación Mensual',retention:'Retención',deactivated_30d:'Desactivados (30d)',revenue_kpis:'KPIs de Ingresos',mrr:'MRR (Ingreso Mensual Recurrente)',base_revenue:'Ingreso Base',extra_user_revenue:'Ingreso Usuarios Extra',total_mrr:'MRR Total',user_table:'Tabla de Usuarios',name:'Nombre',email:'Email',role:'Rol',status:'Estado',since:'Desde',actions:'Acciones',active:'Activo',inactive:'Inactivo',pending:'Pendiente',no_users:'No hay usuarios registrados',upgrade_plan:'Cambiar Plan',upgrade:'Upgrade',current:'(Actual)',audit_recent:'Actividad Reciente',no_audit:'Sin registros de auditoría',deactivate:'Desactivar',activate:'Activar',days:'días',confirm_deactivate:'¿Desactivar este usuario?',confirm_activate:'¿Reactivar este usuario?',plan_changed:'Plan actualizado exitosamente',user_toggled:'Estado del usuario actualizado',add_user:'Agregar Usuario',delete_user:'Eliminar',billing_title:'Facturación y Pagos',billing_next:'Próxima Facturación',billing_cycle:'Ciclo',billing_base:'Cargo Base',billing_extra:'Usuarios Extra',billing_total:'Total por Ciclo',billing_ledger:'Historial de Cobros',billing_type:'Tipo',billing_desc:'Descripción',billing_amount:'Monto',billing_monthly:'Cobro mensual',billing_activation_charge:'Cargo proporcional activación',billing_deactivation_credit:'Crédito desactivación',billing_auto_note:'Sistema autogestionable — los cobros y créditos se calculan automáticamente según activaciones/desactivaciones de usuarios. No se requiere intervención manual.'},
+en:{title:'SaaS Admin',plan_overview:'Plan Overview',current_plan:'Current Plan',monthly_cost:'Monthly Cost',max_flocks:'Max Flocks',included_users:'Included Users',extra_cost:'Extra User Cost',billing:'Billing Cycle',user_kpis:'User KPIs',total_users:'Total Users',active_users:'Active Users',inactive_users:'Inactive',by_role:'By Role',activation_kpis:'Activation KPIs',activation_rate:'Activation Rate',avg_time_activate:'Avg. Time to Activate',pending_activations:'Pending Activations',churn_kpis:'Churn KPIs',monthly_churn:'Monthly Churn',retention:'Retention',deactivated_30d:'Deactivated (30d)',revenue_kpis:'Revenue KPIs',mrr:'MRR (Monthly Recurring Revenue)',base_revenue:'Base Revenue',extra_user_revenue:'Extra User Revenue',total_mrr:'Total MRR',user_table:'User Table',name:'Name',email:'Email',role:'Role',status:'Status',since:'Since',actions:'Actions',active:'Active',inactive:'Inactive',pending:'Pending',no_users:'No registered users',upgrade_plan:'Change Plan',upgrade:'Upgrade',current:'(Current)',audit_recent:'Recent Activity',no_audit:'No audit records',deactivate:'Deactivate',activate:'Activate',days:'days',confirm_deactivate:'Deactivate this user?',confirm_activate:'Reactivate this user?',plan_changed:'Plan updated successfully',user_toggled:'User status updated',add_user:'Add User',delete_user:'Delete',billing_title:'Billing & Payments',billing_next:'Next Billing',billing_cycle:'Cycle',billing_base:'Base Charge',billing_extra:'Extra Users',billing_total:'Total per Cycle',billing_ledger:'Payment History',billing_type:'Type',billing_desc:'Description',billing_amount:'Amount',billing_monthly:'Monthly charge',billing_activation_charge:'Proportional activation charge',billing_deactivation_credit:'Deactivation credit',billing_auto_note:'Self-managed system — charges and credits are calculated automatically based on user activations/deactivations. No manual intervention required.'},
+pt:{title:'Admin SaaS',plan_overview:'Resumo do Plano',current_plan:'Plano Atual',monthly_cost:'Custo Mensal',max_flocks:'Lotes Máx.',included_users:'Usuários Incluídos',extra_cost:'Custo Extra/Usuário',billing:'Ciclo de Faturamento',user_kpis:'KPIs de Usuários',total_users:'Total de Usuários',active_users:'Usuários Ativos',inactive_users:'Inativos',by_role:'Por Função',activation_kpis:'KPIs de Ativação',activation_rate:'Taxa de Ativação',avg_time_activate:'Tempo Médio de Ativação',pending_activations:'Ativações Pendentes',churn_kpis:'KPIs de Cancelamento',monthly_churn:'Cancelamento Mensal',retention:'Retenção',deactivated_30d:'Desativados (30d)',revenue_kpis:'KPIs de Receita',mrr:'MRR (Receita Mensal Recorrente)',base_revenue:'Receita Base',extra_user_revenue:'Receita Usuários Extra',total_mrr:'MRR Total',user_table:'Tabela de Usuários',name:'Nome',email:'Email',role:'Função',status:'Status',since:'Desde',actions:'Ações',active:'Ativo',inactive:'Inativo',pending:'Pendente',no_users:'Nenhum usuário registrado',upgrade_plan:'Alterar Plano',upgrade:'Upgrade',current:'(Atual)',audit_recent:'Atividade Recente',no_audit:'Sem registros de auditoria',deactivate:'Desativar',activate:'Ativar',days:'dias',confirm_deactivate:'Desativar este usuário?',confirm_activate:'Reativar este usuário?',plan_changed:'Plano atualizado com sucesso',user_toggled:'Status do usuário atualizado',add_user:'Adicionar Usuário',delete_user:'Excluir',billing_title:'Faturamento e Pagamentos',billing_next:'Próximo Faturamento',billing_cycle:'Ciclo',billing_base:'Cobrança Base',billing_extra:'Usuários Extra',billing_total:'Total por Ciclo',billing_ledger:'Histórico de Cobranças',billing_type:'Tipo',billing_desc:'Descrição',billing_amount:'Valor',billing_monthly:'Cobrança mensal',billing_activation_charge:'Cobrança proporcional de ativação',billing_deactivation_credit:'Crédito de desativação',billing_auto_note:'Sistema autogerenciável — cobranças e créditos são calculados automaticamente com base em ativações/desativações de usuários. Nenhuma intervenção manual necessária.'},
+fr:{title:'Admin SaaS',plan_overview:'Aperçu du Plan',current_plan:'Plan Actuel',monthly_cost:'Coût Mensuel',max_flocks:'Lots Max.',included_users:'Utilisateurs Inclus',extra_cost:'Coût Extra/Utilisateur',billing:'Cycle de Facturation',user_kpis:'KPIs Utilisateurs',total_users:'Total Utilisateurs',active_users:'Utilisateurs Actifs',inactive_users:'Inactifs',by_role:'Par Rôle',activation_kpis:"KPIs d'Activation",activation_rate:"Taux d'Activation",avg_time_activate:"Temps Moyen d'Activation",pending_activations:'Activations en Attente',churn_kpis:"KPIs d'Attrition",monthly_churn:'Attrition Mensuelle',retention:'Rétention',deactivated_30d:'Désactivés (30j)',revenue_kpis:'KPIs de Revenus',mrr:'MRR (Revenu Mensuel Récurrent)',base_revenue:'Revenu de Base',extra_user_revenue:'Revenu Utilisateurs Extra',total_mrr:'MRR Total',user_table:'Tableau des Utilisateurs',name:'Nom',email:'Email',role:'Rôle',status:'Statut',since:'Depuis',actions:'Actions',active:'Actif',inactive:'Inactif',pending:'En attente',no_users:"Aucun utilisateur enregistré",upgrade_plan:'Changer de Plan',upgrade:'Upgrade',current:'(Actuel)',audit_recent:'Activité Récente',no_audit:"Aucun enregistrement d'audit",deactivate:'Désactiver',activate:'Activer',days:'jours',confirm_deactivate:'Désactiver cet utilisateur ?',confirm_activate:'Réactiver cet utilisateur ?',plan_changed:'Plan mis à jour avec succès',user_toggled:"Statut de l'utilisateur mis à jour",add_user:'Ajouter Utilisateur',delete_user:'Supprimer',billing_title:'Facturation et Paiements',billing_next:'Prochaine Facturation',billing_cycle:'Cycle',billing_base:'Frais de Base',billing_extra:'Utilisateurs Extra',billing_total:'Total par Cycle',billing_ledger:'Historique des Paiements',billing_type:'Type',billing_desc:'Description',billing_amount:'Montant',billing_monthly:'Frais mensuel',billing_activation_charge:"Frais proportionnel d'activation",billing_deactivation_credit:'Crédit de désactivation',billing_auto_note:'Système autogéré — les frais et crédits sont calculés automatiquement selon les activations/désactivations. Aucune intervention manuelle requise.'},
+de:{title:'SaaS-Admin',plan_overview:'Planübersicht',current_plan:'Aktueller Plan',monthly_cost:'Monatliche Kosten',max_flocks:'Max. Herden',included_users:'Enthaltene Nutzer',extra_cost:'Extrakosten/Nutzer',billing:'Abrechnungszyklus',user_kpis:'Nutzer-KPIs',total_users:'Nutzer Gesamt',active_users:'Aktive Nutzer',inactive_users:'Inaktiv',by_role:'Nach Rolle',activation_kpis:'Aktivierungs-KPIs',activation_rate:'Aktivierungsrate',avg_time_activate:'Durchschn. Aktivierungszeit',pending_activations:'Ausstehende Aktivierungen',churn_kpis:'Abwanderungs-KPIs',monthly_churn:'Monatliche Abwanderung',retention:'Bindung',deactivated_30d:'Deaktiviert (30T)',revenue_kpis:'Umsatz-KPIs',mrr:'MRR (Monatlich wiederkehrender Umsatz)',base_revenue:'Basisumsatz',extra_user_revenue:'Umsatz Extra-Nutzer',total_mrr:'MRR Gesamt',user_table:'Nutzertabelle',name:'Name',email:'E-Mail',role:'Rolle',status:'Status',since:'Seit',actions:'Aktionen',active:'Aktiv',inactive:'Inaktiv',pending:'Ausstehend',no_users:'Keine registrierten Nutzer',upgrade_plan:'Plan ändern',upgrade:'Upgrade',current:'(Aktuell)',audit_recent:'Letzte Aktivität',no_audit:'Keine Audit-Einträge',deactivate:'Deaktivieren',activate:'Aktivieren',days:'Tage',confirm_deactivate:'Diesen Nutzer deaktivieren?',confirm_activate:'Diesen Nutzer reaktivieren?',plan_changed:'Plan erfolgreich aktualisiert',user_toggled:'Nutzerstatus aktualisiert',add_user:'Nutzer hinzufügen',delete_user:'Löschen',billing_title:'Abrechnung & Zahlungen',billing_next:'Nächste Abrechnung',billing_cycle:'Zyklus',billing_base:'Grundgebühr',billing_extra:'Extra-Nutzer',billing_total:'Gesamt pro Zyklus',billing_ledger:'Zahlungsverlauf',billing_type:'Typ',billing_desc:'Beschreibung',billing_amount:'Betrag',billing_monthly:'Monatliche Gebühr',billing_activation_charge:'Anteilige Aktivierungsgebühr',billing_deactivation_credit:'Deaktivierungsgutschrift',billing_auto_note:'Selbstverwaltetes System — Gebühren und Gutschriften werden automatisch basierend auf Nutzer-Aktivierungen/-Deaktivierungen berechnet. Kein manueller Eingriff erforderlich.'},
+it:{title:'Admin SaaS',plan_overview:'Riepilogo Piano',current_plan:'Piano Attuale',monthly_cost:'Costo Mensile',max_flocks:'Lotti Max.',included_users:'Utenti Inclusi',extra_cost:'Costo Extra/Utente',billing:'Ciclo di Fatturazione',user_kpis:'KPI Utenti',total_users:'Utenti Totali',active_users:'Utenti Attivi',inactive_users:'Inattivi',by_role:'Per Ruolo',activation_kpis:'KPI di Attivazione',activation_rate:'Tasso di Attivazione',avg_time_activate:'Tempo Medio di Attivazione',pending_activations:'Attivazioni in Sospeso',churn_kpis:'KPI di Abbandono',monthly_churn:'Abbandono Mensile',retention:'Fidelizzazione',deactivated_30d:'Disattivati (30g)',revenue_kpis:'KPI di Ricavi',mrr:'MRR (Ricavo Mensile Ricorrente)',base_revenue:'Ricavo Base',extra_user_revenue:'Ricavo Utenti Extra',total_mrr:'MRR Totale',user_table:'Tabella Utenti',name:'Nome',email:'Email',role:'Ruolo',status:'Stato',since:'Dal',actions:'Azioni',active:'Attivo',inactive:'Inattivo',pending:'In attesa',no_users:'Nessun utente registrato',upgrade_plan:'Cambia Piano',upgrade:'Upgrade',current:'(Attuale)',audit_recent:'Attività Recente',no_audit:'Nessun registro di audit',deactivate:'Disattiva',activate:'Attiva',days:'giorni',confirm_deactivate:'Disattivare questo utente?',confirm_activate:'Riattivare questo utente?',plan_changed:'Piano aggiornato con successo',user_toggled:"Stato dell'utente aggiornato",add_user:'Aggiungi Utente',delete_user:'Elimina',billing_title:'Fatturazione e Pagamenti',billing_next:'Prossima Fatturazione',billing_cycle:'Ciclo',billing_base:'Addebito Base',billing_extra:'Utenti Extra',billing_total:'Totale per Ciclo',billing_ledger:'Storico Pagamenti',billing_type:'Tipo',billing_desc:'Descrizione',billing_amount:'Importo',billing_monthly:'Addebito mensile',billing_activation_charge:'Addebito proporzionale attivazione',billing_deactivation_credit:'Credito disattivazione',billing_auto_note:'Sistema autogestito — addebiti e crediti vengono calcolati automaticamente in base ad attivazioni/disattivazioni degli utenti. Nessun intervento manuale necessario.'},
+ja:{title:'SaaS管理',plan_overview:'プラン概要',current_plan:'現在のプラン',monthly_cost:'月額費用',max_flocks:'最大鶏群数',included_users:'含まれるユーザー数',extra_cost:'追加ユーザー費用',billing:'請求サイクル',user_kpis:'ユーザーKPI',total_users:'合計ユーザー',active_users:'アクティブユーザー',inactive_users:'非アクティブ',by_role:'役割別',activation_kpis:'アクティベーションKPI',activation_rate:'アクティベーション率',avg_time_activate:'平均アクティベーション時間',pending_activations:'保留中のアクティベーション',churn_kpis:'解約KPI',monthly_churn:'月間解約率',retention:'リテンション',deactivated_30d:'無効化済み (30日)',revenue_kpis:'収益KPI',mrr:'MRR (月間経常収益)',base_revenue:'基本収益',extra_user_revenue:'追加ユーザー収益',total_mrr:'MRR合計',user_table:'ユーザー一覧',name:'名前',email:'メール',role:'役割',status:'ステータス',since:'開始日',actions:'操作',active:'アクティブ',inactive:'非アクティブ',pending:'保留中',no_users:'登録ユーザーなし',upgrade_plan:'プラン変更',upgrade:'アップグレード',current:'(現在)',audit_recent:'最近のアクティビティ',no_audit:'監査記録なし',deactivate:'無効化',activate:'有効化',days:'日',confirm_deactivate:'このユーザーを無効化しますか？',confirm_activate:'このユーザーを再有効化しますか？',plan_changed:'プランが正常に更新されました',user_toggled:'ユーザーステータスが更新されました',add_user:'ユーザー追加',delete_user:'削除',billing_title:'請求と支払い',billing_next:'次回請求',billing_cycle:'サイクル',billing_base:'基本料金',billing_extra:'追加ユーザー',billing_total:'サイクルあたり合計',billing_ledger:'支払い履歴',billing_type:'種類',billing_desc:'説明',billing_amount:'金額',billing_monthly:'月額請求',billing_activation_charge:'按分アクティベーション料金',billing_deactivation_credit:'無効化クレジット',billing_auto_note:'自己管理型システム — ユーザーの有効化/無効化に基づいて料金とクレジットが自動計算されます。手動操作は不要です。'},
+zh:{title:'SaaS管理',plan_overview:'方案概览',current_plan:'当前方案',monthly_cost:'月费',max_flocks:'最大批次',included_users:'包含用户数',extra_cost:'额外用户费用',billing:'计费周期',user_kpis:'用户KPI',total_users:'总用户数',active_users:'活跃用户',inactive_users:'不活跃',by_role:'按角色',activation_kpis:'激活KPI',activation_rate:'激活率',avg_time_activate:'平均激活时间',pending_activations:'待激活',churn_kpis:'流失KPI',monthly_churn:'月流失率',retention:'留存率',deactivated_30d:'已停用 (30天)',revenue_kpis:'收入KPI',mrr:'MRR (月度经常性收入)',base_revenue:'基础收入',extra_user_revenue:'额外用户收入',total_mrr:'MRR总计',user_table:'用户表',name:'姓名',email:'邮箱',role:'角色',status:'状态',since:'起始',actions:'操作',active:'活跃',inactive:'不活跃',pending:'待处理',no_users:'暂无注册用户',upgrade_plan:'更改方案',upgrade:'升级',current:'(当前)',audit_recent:'最近活动',no_audit:'暂无审计记录',deactivate:'停用',activate:'启用',days:'天',confirm_deactivate:'停用此用户？',confirm_activate:'重新启用此用户？',plan_changed:'方案更新成功',user_toggled:'用户状态已更新',add_user:'添加用户',delete_user:'删除',billing_title:'账单与支付',billing_next:'下次账单',billing_cycle:'周期',billing_base:'基础费用',billing_extra:'额外用户',billing_total:'每周期总计',billing_ledger:'支付记录',billing_type:'类型',billing_desc:'描述',billing_amount:'金额',billing_monthly:'月度收费',billing_activation_charge:'按比例激活费用',billing_deactivation_credit:'停用退款',billing_auto_note:'自管理系统 — 费用和退款根据用户激活/停用自动计算。无需人工干预。'}};
 const lang=document.documentElement.lang||'es';
 const lbl=L[lang]||L[Object.keys(L).find(k=>lang.startsWith(k))]||L.es;
 
@@ -5428,7 +6131,7 @@ const deleteBtn=u.status!=='active'&&!isOwnerSelf
 ?`<button class="btn btn-sm" style="background:#b71c1c;font-size:0.72rem;padding:3px 8px;margin-left:4px" onclick="removeUser('${u.id}')">${lbl.delete_user}</button>`:'';
 const editBtn=`<button class="btn btn-sm" style="background:var(--primary);font-size:0.72rem;padding:3px 8px;margin-left:4px" onclick="showUserForm('${u.id}')">✏</button>`;
 h+=`<tr>
-<td><strong>${sanitizeHTML(u.name||'—')}</strong>${u.isExtra?'<span style="font-size:0.65rem;background:var(--warning);color:#000;padding:1px 5px;border-radius:8px;margin-left:4px">EXTRA</span>':''}</td>
+<td><strong>${sanitizeHTML(u.name||'—')}</strong>${u.isExtra?'<span class="dm-text-default" style="font-size:0.65rem;background:var(--warning);color:#000;padding:1px 5px;border-radius:8px;margin-left:4px">EXTRA</span>':''}</td>
 <td>${sanitizeHTML(u.email||u.workerId||'—')}</td>
 <td><span style="text-transform:capitalize">${u.role||'—'}</span></td>
 <td><span style="color:${statusColor};font-weight:600">● ${statusText}</span></td>
@@ -5516,6 +6219,7 @@ $('sec-admin').innerHTML=h;
 }
 
 function showUpgradeModal(){
+if(_currentUser&&!['owner','manager','superadmin'].includes(_currentUser.role)){showToast(t('billing_no_permission')||'No permission','error');return;}
 const D=loadData();
 const plan=D.settings.plan||{};
 const lang=document.documentElement.lang||'es';
@@ -5547,11 +6251,11 @@ let body=`<div style="text-align:center;padding:16px 8px">`;
 // Monthly/Annual toggle
 body+=`<div style="display:inline-flex;background:var(--bg-secondary);border-radius:8px;padding:3px;margin-bottom:20px" id="${uid}_toggle">
 <button id="${uid}_mo" onclick="document.getElementById('${uid}_mo').classList.add('active');document.getElementById('${uid}_yr').classList.remove('active');document.querySelectorAll('.upg-yr').forEach(e=>e.style.display='none');document.querySelectorAll('.upg-mo').forEach(e=>e.style.display='')" class="btn active" style="padding:6px 18px;font-size:.9em;border-radius:6px">${isEs?'Mensual':'Monthly'}</button>
-<button id="${uid}_yr" onclick="document.getElementById('${uid}_yr').classList.add('active');document.getElementById('${uid}_mo').classList.remove('active');document.querySelectorAll('.upg-mo').forEach(e=>e.style.display='none');document.querySelectorAll('.upg-yr').forEach(e=>e.style.display='')" class="btn" style="padding:6px 18px;font-size:.9em;border-radius:6px">${isEs?'Anual — 2 meses gratis':'Annual — 2 months free'}</button>
+<button id="${uid}_yr" onclick="document.getElementById('${uid}_yr').classList.add('active');document.getElementById('${uid}_mo').classList.remove('active');document.querySelectorAll('.upg-mo').forEach(e=>e.style.display='none');document.querySelectorAll('.upg-yr').forEach(e=>e.style.display='')" class="btn" style="padding:6px 18px;font-size:.9em;border-radius:6px">${isEs?'Anual':'Annual'}</button>
 </div>`;
 
 if(!isPaying){
-body+=`<div style="display:inline-block;background:#dcfce7;color:#166534;padding:4px 14px;border-radius:12px;font-size:.85rem;margin-bottom:16px">40% off — ${isEs?'primeros 3 meses':'first 3 months'}</div>`;
+body+=`<div class="dm-badge-success" style="display:inline-block;background:#dcfce7;color:#166534;padding:4px 14px;border-radius:12px;font-size:.85rem;margin-bottom:16px">40% off — ${isEs?'primeros 3 meses':'first 3 months'}</div>`;
 }
 
 // Tier cards grid
@@ -5617,10 +6321,95 @@ openModal(isEs?'Planes EGGlogU':'EGGlogU Plans',body);
 
 async function openBillingPortal(){
 if(!apiService.isLoggedIn())return;
+if(_currentUser&&!['owner','manager','superadmin'].includes(_currentUser.role)){showToast(t('billing_no_permission')||'No permission','error');return;}
 try{
   const resp=await apiService.getPortalUrl();
-  if(resp&&resp.url)window.open(resp.url,'_blank');
+  if(resp&&resp.url){
+  try{const u=new URL(resp.url);if(u.hostname.endsWith('stripe.com')||u.hostname.endsWith('billing.stripe.com')||u.hostname===location.hostname){window.open(resp.url,'_blank');}else{showToast('Invalid portal URL','error');}}
+  catch(e){showToast('Invalid portal URL','error');}
+}
 }catch(e){toast('Error: '+e.message,true);}
+}
+
+function showCancelSubscriptionModal(){
+if(_currentUser&&!['owner','manager','superadmin'].includes(_currentUser.role))return;
+const D=loadData();
+const plan=D.settings.plan||{};
+const periodEnd=plan.current_period_end?new Date(plan.current_period_end).toLocaleDateString():'—';
+const isEs=(document.documentElement.lang||'es').startsWith('es');
+const body=`<div style="text-align:center;padding:16px">
+<div style="font-size:3em;margin-bottom:12px">⚠️</div>
+<h3 style="margin-bottom:8px">${t('billing_cancel_sub')}</h3>
+<p style="color:var(--text-muted);margin-bottom:16px">${t('billing_cancel_confirm').replace('{date}',periodEnd)}</p>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:20px;text-align:left;font-size:.9em">
+<div>📋 ${isEs?'Tu plan seguirá activo hasta':'Your plan stays active until'}: <strong>${periodEnd}</strong></div>
+<div>💳 ${isEs?'No se realizarán más cobros':'No further charges will be made'}</div>
+<div>📦 ${isEs?'Tus datos se mantienen mientras la cuenta exista':'Your data is preserved while the account exists'}</div>
+<div>🔄 ${isEs?'Si vuelves más adelante, podrás subir tu info pasada, se verá el gap de inactividad, y continúas con el presente':'If you return later, you can upload your past data, the inactivity gap will show, and you continue with the present'}</div>
+<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">💡 <strong>${isEs?'Recomendación':'Recommendation'}:</strong> ${isEs?'Descarga tus datos antes de cancelar':'Download your data before cancelling'}</div>
+</div>
+<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+<button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
+<button class="btn btn-secondary" onclick="closeModal();exportData()" style="border-color:#2563eb;color:#2563eb">📥 ${t('billing_download_data')}</button>
+<button class="btn" style="background:#dc2626;color:#fff" onclick="confirmCancelSubscription()">${t('billing_cancel_sub')}</button>
+</div></div>`;
+openModal(t('billing_cancel_sub'),body);
+}
+
+async function confirmCancelSubscription(){
+try{
+const res=await apiService.cancelSubscription();
+closeModal();
+showToast(t('billing_cancel_success')||'Subscription cancelled','success');
+await loadBillingStatus();
+nav('config');
+}catch(e){showToast('Error: '+e.message,'error');}
+}
+
+function showDeleteAccountModal(){
+if(!_currentUser||_currentUser.role!=='owner'){showToast(t('billing_no_permission')||'No permission','error');return;}
+const isEs=(document.documentElement.lang||'es').startsWith('es');
+const confirmWord=isEs?'ELIMINAR':'DELETE';
+const body=`<div style="text-align:center;padding:16px">
+<div style="font-size:3em;margin-bottom:12px">🗑️</div>
+<h3 style="color:#dc2626;margin-bottom:8px">${t('billing_delete_account')}</h3>
+<p style="color:var(--text-muted);margin-bottom:8px">${t('billing_delete_warning')}</p>
+<div class="dm-light-panel" style="background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius);padding:12px;margin-bottom:12px;text-align:left;font-size:.85em;color:#991b1b">
+<div>❌ ${isEs?'Todos los datos se perderán permanentemente':'All data will be permanently lost'}</div>
+<div>❌ ${isEs?'Todos los usuarios serán desactivados':'All users will be deactivated'}</div>
+<div>❌ ${isEs?'La suscripción será cancelada':'Subscription will be cancelled'}</div>
+<div>❌ ${isEs?'Esta acción NO se puede deshacer':'This action CANNOT be undone'}</div>
+</div>
+<div class="dm-light-panel" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);padding:10px;margin-bottom:16px;text-align:center;font-size:.85em;color:#1e40af">
+<button class="btn btn-sm" onclick="exportData()" style="background:#2563eb;color:#fff;margin-right:8px">📥 ${t('billing_download_data')}</button>
+${isEs?'Descarga tus datos antes de eliminar la cuenta':'Download your data before deleting your account'}
+</div>
+<div class="form-group" style="text-align:left;margin-bottom:12px">
+<label>${t('billing_delete_type_confirm').replace('{word}',confirmWord)}</label>
+<input id="del-confirm-text" placeholder="${confirmWord}" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius)">
+</div>
+<div class="form-group" style="text-align:left;margin-bottom:16px">
+<label>${isEs?'Contraseña del Owner':'Owner password'}</label>
+<input type="password" id="del-password" placeholder="${isEs?'Tu contraseña':'Your password'}" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius)">
+</div>
+<div style="display:flex;gap:12px;justify-content:center">
+<button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button>
+<button class="btn" style="background:#dc2626;color:#fff" onclick="confirmDeleteAccount('${confirmWord}')">${t('billing_delete_account')}</button>
+</div></div>`;
+openModal(t('billing_delete_account'),body);
+}
+
+async function confirmDeleteAccount(confirmWord){
+const text=document.getElementById('del-confirm-text')?.value?.trim();
+const pwd=document.getElementById('del-password')?.value;
+if(text!==confirmWord){showToast(t('billing_delete_type_confirm').replace('{word}',confirmWord),'error');return;}
+if(!pwd){showToast(t('required')||'Required','error');return;}
+try{
+const res=await apiService.deleteAccount(pwd,text);
+closeModal();
+showToast(t('billing_delete_success')||'Account deleted','success');
+setTimeout(()=>{apiService.logout();location.reload();},1500);
+}catch(e){showToast('Error: '+e.message,'error');}
 }
 
 async function loadBillingStatus(){
@@ -5646,7 +6435,7 @@ try{
   D.settings.plan.discount_label=status.discount_label||'';
   D.settings.plan.billing_interval=status.billing_interval||'month';
   if(status.current_period_end)D.settings.plan.nextBilling=status.current_period_end;
-  DATA=D;localStorage.setItem('egglogu_data',JSON.stringify(DATA));
+  DATA=D;_safeSetItem('egglogu_data',JSON.stringify(DATA));
 }catch(e){console.warn('[Billing] Status check failed:',e.message);}
 }
 
@@ -5659,10 +6448,220 @@ else reactivateUser(userId);
 // Helper: refresh correct section after user management operations
 function refreshUserSection(){if(currentSection==='admin')renderAdmin();else renderConfig();}
 
+// === PROFILE FUNCTIONS ===
+function renderProfileCard(){
+const D=loadData();
+const me=D.users.find(u=>u.id===_currentUser.id);
+if(!me)return'';
+const roleBadge={'owner':'primary','manager':'secondary','vet':'info','worker':'warning','viewer':'default'};
+const badge=roleBadge[me.role]||'default';
+const memberSince=me.created?new Date(me.created).toLocaleDateString():(me.activatedAt?new Date(me.activatedAt).toLocaleDateString():'—');
+return`<div class="card" style="margin-bottom:1.5rem">
+<h3>👤 ${t('perfil_title')}</h3>
+<p style="color:var(--text-secondary);margin-bottom:1rem">${t('perfil_subtitle')}</p>
+<div class="form-row">
+<div class="form-group"><label>${t('perfil_name')}</label>
+<input id="profile-name" value="${escapeAttr(me.name||'')}" maxlength="200"></div>
+<div class="form-group"><label>${t('email')}</label>
+<input value="${escapeAttr(me.email||'')}" disabled style="opacity:.6;cursor:not-allowed"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>${t('cfg_role')}</label>
+<span class="badge badge-${badge}" style="font-size:.85rem;padding:.3rem .8rem">${me.role.toUpperCase()}</span></div>
+<div class="form-group"><label>${t('perfil_member_since')}</label>
+<span style="font-size:.95rem">${memberSince}</span></div>
+</div>
+<div style="display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap">
+<button class="btn btn-primary btn-sm" onclick="saveProfile()">💾 ${t('save')}</button>
+<button class="btn btn-secondary btn-sm" onclick="showChangePinModal()">🔑 ${t('perfil_change_pin')}</button>
+</div></div>`;
+}
+async function saveProfile(){
+const nameInput=$('profile-name');
+if(!nameInput)return;
+const newName=nameInput.value.trim();
+if(!newName){toast(t('required'),true);return;}
+const D=loadData();
+const me=D.users.find(u=>u.id===_currentUser.id);
+if(!me)return;
+const oldName=me.name;
+me.name=newName;
+_currentUser.name=newName;
+saveData(D);
+logAudit('profile_update','config','Name updated',{name:oldName},{name:newName});
+if(apiService.isLoggedIn()){
+try{await apiService.updateProfile({full_name:newName});}catch(e){console.warn('Profile sync failed:',e);}
+}
+toast(t('perfil_profile_updated'));
+}
+function showChangePinModal(){
+if(isPinLocked()){toast(t('pin_invalid'),true);return;}
+openModal(t('perfil_change_pin'),`
+<div class="form-group"><label>${t('perfil_current_pin')}</label>
+<input type="password" id="pin-current" maxlength="8" inputmode="numeric" autocomplete="off"></div>
+<div class="form-group"><label>${t('perfil_new_pin')}</label>
+<input type="password" id="pin-new" maxlength="8" inputmode="numeric" autocomplete="off"></div>
+<div class="form-group"><label>${t('perfil_confirm_pin')}</label>
+<input type="password" id="pin-confirm" maxlength="8" inputmode="numeric" autocomplete="off"></div>
+<div id="pin-change-err" style="color:var(--red);font-size:.85rem;min-height:1.2rem;margin-top:.5rem"></div>
+<div style="display:flex;gap:10px;margin-top:1rem">
+<button class="btn btn-primary" onclick="executeChangePin()">💾 ${t('save')}</button>
+<button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button></div>`);
+}
+async function executeChangePin(){
+const current=$('pin-current')?.value||'';
+const newPin=$('pin-new')?.value||'';
+const confirm=$('pin-confirm')?.value||'';
+const errEl=$('pin-change-err');
+if(!current||!newPin||!confirm){if(errEl)errEl.textContent=t('required');return;}
+if(newPin!==confirm){if(errEl)errEl.textContent=t('perfil_pin_mismatch');return;}
+if(newPin.length<4){if(errEl)errEl.textContent=t('min_length')+': 4';return;}
+const D=loadData();
+const me=D.users.find(u=>u.id===_currentUser.id);
+if(!me){if(errEl)errEl.textContent=t('error_unexpected');return;}
+const valid=await verifyPinHash(current,me.pinHash,me.pinSalt);
+if(!valid){recordPinFailure();if(isPinLocked()){showPinLockCountdown(errEl);}else{if(errEl)errEl.textContent=t('perfil_wrong_pin');}return;}
+resetPinAttempts();
+const{hash,salt}=await hashPin(newPin);
+me.pinHash=hash;me.pinSalt=salt;
+delete me.pin;
+saveData(D);
+logAudit('pin_change','config','PIN changed for '+me.name,null,null);
+closeModal();
+toast(t('perfil_pin_changed'));
+}
+
+// === REASSIGNMENT FUNCTIONS ===
+const REASSIGN_HIERARCHY={owner:['manager','vet','worker','viewer'],manager:['vet','worker','viewer']};
+function canReassign(myRole,targetRole){
+return REASSIGN_HIERARCHY[myRole]&&REASSIGN_HIERARCHY[myRole].includes(targetRole);
+}
+function showReassignForm(userId){
+const D=loadData();
+const target=D.users.find(u=>u.id===userId);
+if(!target||target.status!=='active')return;
+if(target.id===_currentUser.id){toast(t('reassign_no_self'),true);return;}
+if(!canReassign(_currentUser.role,target.role)){toast(t('error_unexpected'),true);return;}
+// Check last active owner
+if(target.role==='owner'){
+const activeOwners=D.users.filter(u=>u.role==='owner'&&u.status==='active');
+if(activeOwners.length<=1){toast(t('reassign_last_owner'),true);return;}
+}
+openModal(t('reassign_title'),`
+<p style="margin-bottom:1rem;color:var(--text-secondary)">${t('reassign_notify')}</p>
+<div class="form-group"><label>${t('reassign_new_name')}</label>
+<input id="reassign-name" maxlength="200" autocomplete="off"></div>
+<div class="form-group"><label>${t('reassign_new_email')}</label>
+<input type="email" id="reassign-email" autocomplete="off"></div>
+<div class="form-group"><label>${t('reassign_new_pin')}</label>
+<input type="password" id="reassign-pin" maxlength="8" inputmode="numeric" autocomplete="off"></div>
+<div id="reassign-err" style="color:var(--red);font-size:.85rem;min-height:1.2rem;margin-top:.5rem"></div>
+<div style="display:flex;gap:10px;margin-top:1rem">
+<button class="btn btn-primary" onclick="verifyReassignment('${escapeAttr(userId)}')">${t('reassign_confirm')}</button>
+<button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button></div>`);
+}
+function verifyReassignment(userId){
+const name=$('reassign-name')?.value.trim();
+const email=$('reassign-email')?.value.trim();
+const pin=$('reassign-pin')?.value;
+const errEl=$('reassign-err');
+if(!name||!pin){if(errEl)errEl.textContent=t('required');return;}
+if(pin.length<4){if(errEl)errEl.textContent=t('min_length')+': 4';return;}
+if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){if(errEl)errEl.textContent=t('invalid_email');return;}
+// Store temp data and show PIN re-auth
+const tmpData={userId,name,email,pin};
+closeModal();
+if(isPinLocked()){toast(t('pin_invalid'),true);return;}
+openModal(t('reassign_verify'),`
+<p style="margin-bottom:1rem">${t('reassign_verify')}</p>
+<div class="form-group"><label>${t('perfil_current_pin')}</label>
+<input type="password" id="reauth-pin" maxlength="8" inputmode="numeric" autocomplete="off"></div>
+<div id="reauth-err" style="color:var(--red);font-size:.85rem;min-height:1.2rem;margin-top:.5rem"></div>
+<div style="display:flex;gap:10px;margin-top:1rem">
+<button class="btn btn-primary" onclick="executeReassignment()">✅ ${t('reassign_confirm')}</button>
+<button class="btn btn-secondary" onclick="closeModal()">${t('cancel')}</button></div>`);
+window._reassignTmp=tmpData;
+}
+async function executeReassignment(){
+const reauthPin=$('reauth-pin')?.value||'';
+const errEl=$('reauth-err');
+if(!reauthPin){if(errEl)errEl.textContent=t('required');return;}
+const D=loadData();
+const me=D.users.find(u=>u.id===_currentUser.id);
+if(!me){if(errEl)errEl.textContent=t('error_unexpected');return;}
+const valid=await verifyPinHash(reauthPin,me.pinHash,me.pinSalt);
+if(!valid){recordPinFailure();if(isPinLocked()){showPinLockCountdown(errEl);}else{if(errEl)errEl.textContent=t('perfil_wrong_pin');}return;}
+resetPinAttempts();
+const tmp=window._reassignTmp;
+if(!tmp){closeModal();return;}
+const target=D.users.find(u=>u.id===tmp.userId);
+if(!target){closeModal();toast(t('error_unexpected'),true);return;}
+// Archive old data
+const beforeState={name:target.name,email:target.email,id:target.id};
+// Generate new tracking ID
+const newId=genId();
+// Update target user
+target.reassignedFrom={name:target.name,email:target.email,oldId:target.id,reassignedAt:new Date().toISOString(),reassignedBy:_currentUser.name};
+target.name=tmp.name;
+target.email=tmp.email||'';
+target.id=newId;
+// Hash new PIN
+const{hash,salt}=await hashPin(tmp.pin);
+target.pinHash=hash;target.pinSalt=salt;delete target.pin;
+saveData(D);
+logAudit('account_reassign','config','Account reassigned: '+beforeState.name+' → '+tmp.name,beforeState,{name:tmp.name,email:tmp.email,id:newId});
+// Send notification email (fire-and-forget)
+if(tmp.email&&apiService.isLoggedIn()){
+try{await apiService.notifyReassignment({new_email:tmp.email,new_name:tmp.name,role:target.role});}catch(e){console.warn('Reassignment notification failed:',e);}
+}
+window._reassignTmp=null;
+closeModal();
+toast(t('reassign_success'));
+refreshUserSection();
+}
+
+// === BILLING CARD (Settings) ===
+function renderBillingCard(){
+if(!_currentUser||!['owner','manager','superadmin'].includes(_currentUser.role))return'';
+const D=loadData();
+const plan=D.settings.plan||{};
+const tier=(plan.tier||'free').toUpperCase();
+const status=plan.status||'inactive';
+const interval=plan.interval||'month';
+const periodEnd=plan.current_period_end?new Date(plan.current_period_end).toLocaleDateString():'—';
+const isEs=(document.documentElement.lang||'es').startsWith('es');
+const isOwner=_currentUser.role==='owner'||_currentUser.role==='superadmin';
+const statusColor=status==='active'?'#16a34a':status==='trialing'?'#2563eb':status==='cancelled'?'#dc2626':'#6b7280';
+const statusLabel=status==='active'?(isEs?'Activo':'Active'):status==='trialing'?(isEs?'Prueba':'Trial'):status==='cancelled'?(isEs?'Cancelado':'Cancelled'):(isEs?'Inactivo':'Inactive');
+let h=`<div class="card" style="margin-bottom:1.5rem">
+<h3>💳 ${t('billing_current_plan')}</h3>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+<span style="font-size:1.4em;font-weight:700">${tier}</span>
+<span style="background:${statusColor};color:#fff;padding:2px 10px;border-radius:12px;font-size:.8em;font-weight:600">${statusLabel}</span>
+<span style="color:var(--text-muted);font-size:.85em">${interval==='year'?(isEs?'Anual':'Annual'):(isEs?'Mensual':'Monthly')}</span>
+</div>`;
+if(plan.current_period_end){
+h+=`<p style="color:var(--text-secondary);font-size:.9em;margin-bottom:16px">📅 ${isEs?'Próximo cobro':'Next charge'}: <strong>${periodEnd}</strong></p>`;
+}
+h+=`<div style="display:flex;gap:10px;flex-wrap:wrap">`;
+h+=`<button class="btn btn-primary btn-sm" onclick="showUpgradeModal()">📊 ${t('billing_change_plan')}</button>`;
+h+=`<button class="btn btn-secondary btn-sm" onclick="openBillingPortal()">💳 ${t('billing_manage_payments')}</button>`;
+if(status==='active'||status==='trialing'){
+h+=`<button class="btn btn-sm" style="background:#dc2626;color:#fff" onclick="showCancelSubscriptionModal()">✋ ${t('billing_cancel_sub')}</button>`;
+}
+if(isOwner){
+h+=`<button class="btn btn-sm" style="background:#7f1d1d;color:#fff" onclick="showDeleteAccountModal()">🗑️ ${t('billing_delete_account')}</button>`;
+}
+h+=`</div></div>`;
+return h;
+}
+
 // === CONFIG MODULE ===
 function renderConfig(){
 const D=loadData();
 let h=`<div class="page-header"><h2>${t('cfg_title')}</h2></div>`;
+h+=renderProfileCard();
+h+=renderBillingCard();
 // Theme picker
 const curTheme=localStorage.getItem('egglogu_theme')||'blue';
 h+='<div class="card"><h3>'+t('cfg_theme')+'</h3><div style="display:flex;gap:12px;flex-wrap:wrap">';
@@ -5768,6 +6767,7 @@ h+=`<tr><td><strong>${sanitizeHTML(u.name)}</strong>${isExtra?'<br><span style="
 <td>${statusBadge}${u.activatedAt?'<br><span style="font-size:10px;color:var(--text-light)">'+u.activatedAt+'</span>':''}${billingInfo}${chargeInfo}${deactInfo}</td>
 <td><div class="btn-group">${u.status==='active'||u.status==='pending'?'<button class="btn btn-secondary btn-sm" onclick="showUserForm(\''+escapeAttr(u.id)+'\')">'+t('edit')+'</button>':''}
 ${u.status==='active'?'<button class="btn btn-danger btn-sm" onclick="deactivateUser(\''+escapeAttr(u.id)+'\')">Desactivar</button>':''}
+${u.status==='active'&&u.id!==_currentUser.id&&canReassign(_currentUser.role,u.role)?'<button class="btn btn-sm" style="background:#607d8b;font-size:0.72rem;padding:3px 8px" onclick="showReassignForm(\''+escapeAttr(u.id)+'\')">'+t('reassign_btn')+'</button>':''}
 ${u.status==='pending'&&u.activationToken?'<button class="btn btn-primary btn-sm" onclick="resendActivation(\''+escapeAttr(u.id)+'\')">Reenviar</button>':''}
 ${u.status==='inactive'||u.status==='expired'?'<button class="btn btn-primary btn-sm" onclick="reactivateUser(\''+escapeAttr(u.id)+'\')">Reactivar</button><button class="btn btn-danger btn-sm" onclick="removeUser(\''+escapeAttr(u.id)+'\')">Eliminar</button>':''}</div></td></tr>`;});
 h+='</tbody></table></div>';}else{h+=`<p style="color:var(--text-light)">${t('cfg_no_users')||'No users configured. App runs without authentication.'}</p>`;}
@@ -5777,11 +6777,11 @@ if(_currentUser.role==='owner'){
 h+=`<div class="card"><h3>Permisos por Rol</h3><p style="color:var(--text-light);font-size:13px;margin-bottom:12px">Personaliza qué módulos ve cada rol. Dashboard siempre visible.</p>`;
 h+='<div class="table-wrap"><table id="perms-table"><thead><tr><th>Módulo</th><th>Grupo</th><th>Manager</th><th>Worker</th><th>Vet</th></tr></thead><tbody>';
 const groupNames={production:'Producción',health:'Salud',commercial:'Comercial',management:'Gestión',system:'Sistema'};
-const allMods=['produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','config'];
+const allMods=['produccion','lotes','alimento','ambiente','sanidad','bioseguridad','clientes','inventario','finanzas','analisis','operaciones','trazabilidad','planificacion','reportes','automatizacion','config'];
 const modGroup={};Object.entries(MODULE_GROUPS).forEach(([g,ms])=>ms.forEach(m=>modGroup[m]=g));
 const customPerms=D.settings.customPermissions||{};
 allMods.forEach(m=>{
-const grp=modGroup[m]||'?';const label=t('nav_'+{produccion:'production',lotes:'flocks',alimento:'feed',ambiente:'environment',sanidad:'health',bioseguridad:'biosecurity',clientes:'clients',inventario:'inventory',finanzas:'finances',analisis:'analysis',operaciones:'operations',trazabilidad:'traceability',planificacion:'planning',config:'config'}[m])||m;
+const grp=modGroup[m]||'?';const label=t('nav_'+{produccion:'production',lotes:'flocks',alimento:'feed',ambiente:'environment',sanidad:'health',bioseguridad:'biosecurity',clientes:'clients',inventario:'inventory',finanzas:'finances',analisis:'analysis',operaciones:'operations',trazabilidad:'traceability',planificacion:'planning',reportes:'reports',automatizacion:'automation',config:'config'}[m])||m;
 h+=`<tr><td>${label}</td><td><span class="badge badge-secondary" style="font-size:10px">${groupNames[grp]||grp}</span></td>`;
 ['manager','worker','vet'].forEach(role=>{
 const base=ROLE_PERMISSIONS[role]||[];
@@ -5815,13 +6815,14 @@ h+=`<div class="card"><h3>${t('cfg_audit')||'Audit Log'}</h3>
 <input id="audit-search" placeholder="${t('search')||'Search...'}" oninput="renderAuditLog()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:var(--radius)"></div>
 <div id="audit-log-table"></div></div>`;
 // Stats
-const stats={flocks:D.flocks.length,production:D.dailyProduction.length,vaccines:D.vaccines.length,
-medications:D.medications.length,outbreaks:D.outbreaks.length,feedPurchases:D.feed.purchases.length,
-feedConsumption:D.feed.consumption.length,clients:D.clients.length,income:D.finances.income.length,
-expenses:D.finances.expenses.length,environment:D.environment.length,logbook:D.logbook.length,
-personnel:D.personnel.length,snapshots:D.kpiSnapshots.length,inventory:D.inventory.length,auditLog:D.auditLog.length,users:D.users.length};
+const stats=[
+[t('nav_flocks'),D.flocks.length],[t('nav_production'),D.dailyProduction.length],[t('san_vaccines'),D.vaccines.length],
+[t('med_title'),D.medications.length],[t('out_title'),D.outbreaks.length],[t('feed_purchases'),D.feed.purchases.length],
+[t('feed_consumption'),D.feed.consumption.length],[t('nav_clients'),D.clients.length],[t('fin_income'),D.finances.income.length],
+[t('fin_expenses'),D.finances.expenses.length],[t('nav_environment'),D.environment.length],[t('ops_logbook'),D.logbook.length],
+[t('ops_personnel'),D.personnel.length],[t('snapshots'),D.kpiSnapshots.length],[t('nav_inventory'),D.inventory.length],[t('cfg_audit'),D.auditLog.length],[t('cfg_users'),D.users.length]];
 h+='<div class="card"><h3>'+t('data_stats')+'</h3>';
-Object.entries(stats).forEach(([k,v])=>{h+=`<div class="stat-row"><span class="stat-label">${k}</span><span class="stat-value">${v}</span></div>`;});
+stats.forEach(([label,v])=>{h+=`<div class="stat-row"><span class="stat-label">${label}</span><span class="stat-value">${v}</span></div>`;});
 h+='</div>';
 $('sec-config').innerHTML=h;
 // Load backup list asynchronously
@@ -6239,20 +7240,18 @@ ROLE_PERMISSIONS[role]=perms;
 }
 
 function renderAuditLog(){
-const D=loadData();const fr=$('audit-from')?.value||'';const to=$('audit-to')?.value||'';const q=($('audit-search')?.value||'').toLowerCase();
-let recs=[...D.auditLog].sort((a,b)=>(b.ts||'').localeCompare(a.ts||''));
-if(fr)recs=recs.filter(r=>(r.ts||'').substring(0,10)>=fr);
-if(to)recs=recs.filter(r=>(r.ts||'').substring(0,10)<=to);
-if(q)recs=recs.filter(r=>(r.action||'').toLowerCase().includes(q)||(r.module||'').toLowerCase().includes(q)||(r.detail||'').toLowerCase().includes(q)||(r.user||'').toLowerCase().includes(q));
-const pg=paginate(recs,_pageState.auditLog||1,PAGE_SIZE);
-let h='<div class="table-wrap"><table><thead><tr><th>'+(t('cfg_timestamp')||'Time')+'</th><th>'+(t('cfg_user')||'User')+'</th><th>'+(t('cfg_action')||'Action')+'</th><th>'+(t('cfg_module')||'Module')+'</th><th>'+(t('cfg_detail')||'Detail')+'</th></tr></thead><tbody>';
-if(!pg.items.length)h+=`<tr><td colspan="5" style="text-align:center;color:var(--text-light)">${t('no_data')}</td></tr>`;
-pg.items.forEach(r=>{h+=`<tr><td style="font-size:12px;white-space:nowrap">${(r.ts||'').replace('T',' ').substring(0,19)}</td><td>${sanitizeHTML(r.user||'-')}</td>
-<td><span class="badge badge-${r.action==='create'?'success':r.action==='delete'?'danger':'info'}">${r.action}</span></td>
-<td>${sanitizeHTML(r.module||'-')}</td><td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis">${sanitizeHTML(r.detail||'-')}</td></tr>`;});
-h+='</tbody></table></div>';
-h+=paginationControls('auditLog',pg.page,pg.totalPages,function(p){_pageState.auditLog=p;renderAuditLog();});
-const el=$('audit-log-table');if(el)el.innerHTML=h;
+const D=loadData();
+const el=$('audit-log-table');if(!el)return;
+el.innerHTML=DataTable.create({
+id:'auditLog',data:D.auditLog,onRefresh:'renderAuditLog',emptyIcon:'📋',emptyText:t('no_data'),
+columns:[
+{key:'ts',label:t('cfg_timestamp')||'Time',type:'date',sortable:true,filterable:true,filterType:'date-range',getValue:r=>(r.ts||'').substring(0,10),render:r=>'<span style="font-size:12px;white-space:nowrap">'+(r.ts||'').replace('T',' ').substring(0,19)+'</span>'},
+{key:'user',label:t('cfg_user')||'User',type:'text',sortable:true,filterable:true,render:r=>sanitizeHTML(r.user||'-')},
+{key:'action',label:t('cfg_action')||'Action',type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'create',label:'create'},{value:'update',label:'update'},{value:'delete',label:'delete'}],render:r=>'<span class="badge badge-'+(r.action==='create'?'success':r.action==='delete'?'danger':'info')+'">'+r.action+'</span>'},
+{key:'module',label:t('cfg_module')||'Module',type:'text',sortable:true,filterable:true,render:r=>sanitizeHTML(r.module||'-')},
+{key:'detail',label:t('cfg_detail')||'Detail',type:'text',render:r=>'<span style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;display:inline-block">'+sanitizeHTML(r.detail||'-')+'</span>'}
+]
+});
 }
 function exportData(){
 const D=loadData();const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
@@ -6677,21 +7676,25 @@ return Math.min(100,Math.round(score));
 }
 function renderBioVisitors(D){
 const bio=D.biosecurity;
-let h=`<div class="card"><div class="page-header"><h3>👤 ${t('bio_visitors')}</h3>
-<button class="btn btn-primary btn-sm" onclick="showBioVisitorForm()">${t('bio_add_visitor')}</button></div>`;
-if(!bio.visitors.length)return h+emptyState('👤',t('no_data'))+'</div>';
-h+=`<div class="table-wrap"><table><thead><tr><th>${t('date')}</th><th>${t('bio_visitor_name')}</th><th>${t('bio_visitor_company')}</th>
-<th>${t('bio_visitor_purpose')}</th><th>${t('bio_visitor_zone')}</th><th>${t('bio_visitor_plate')}</th>
-<th>${t('bio_visitor_disinfected')}</th><th>${t('actions')}</th></tr></thead><tbody>`;
-bio.visitors.sort((a,b)=>b.date.localeCompare(a.date)).forEach(v=>{
-const crossRisk=v.fromFarmHealth&&v.fromFarmHealth!=='healthy';
-h+=`<tr${crossRisk?' style="background:#FFF3E0"':''}>
-<td>${fmtDate(v.date)}</td><td>${sanitizeHTML(v.name)}${crossRisk?' <span title="'+t('bio_cross_risk')+'" style="color:var(--danger)">⚠️</span>':''}</td>
-<td>${sanitizeHTML(v.company||'-')}</td><td>${sanitizeHTML(v.purpose||'-')}</td><td>${sanitizeHTML(v.zone||'-')}</td><td>${sanitizeHTML(v.vehiclePlate||'-')}</td>
-<td>${v.disinfected?'✅':'❌'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBioVisitorForm('${escapeAttr(v.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteBioVisitor('${escapeAttr(v.id)}')">${t('delete')}</button></div></td></tr>`;});
-return h+'</tbody></table></div></div>';
+if(!bio.visitors.length){
+return `<div class="card"><div class="page-header"><h3>👤 ${t('bio_visitors')}</h3><button class="btn btn-primary btn-sm" onclick="showBioVisitorForm()">${t('bio_add_visitor')}</button></div>`+emptyState('👤',t('no_data'))+'</div>';
+}
+const zones=[...new Set(bio.visitors.map(v=>v.zone).filter(Boolean))];
+return DataTable.create({
+id:'bioVisitors',data:bio.visitors,onRefresh:'renderBiosecurity',emptyIcon:'👤',emptyText:t('no_data'),
+headerHtml:`<div class="page-header"><h3>👤 ${t('bio_visitors')}</h3><button class="btn btn-primary btn-sm" onclick="showBioVisitorForm()">${t('bio_add_visitor')}</button></div>`,
+columns:[
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'name',label:t('bio_visitor_name'),type:'text',sortable:true,filterable:true,render:r=>{const crossRisk=r.fromFarmHealth&&r.fromFarmHealth!=='healthy';return sanitizeHTML(r.name)+(crossRisk?' <span title="'+t('bio_cross_risk')+'" style="color:var(--danger)">⚠️</span>':'');}},
+{key:'company',label:t('bio_visitor_company'),type:'text',sortable:true,render:r=>sanitizeHTML(r.company||'-')},
+{key:'purpose',label:t('bio_visitor_purpose'),type:'text',sortable:true,render:r=>sanitizeHTML(r.purpose||'-')},
+{key:'zone',label:t('bio_visitor_zone'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:zones.map(v=>({value:v,label:v})),render:r=>sanitizeHTML(r.zone||'-')},
+{key:'vehiclePlate',label:t('bio_visitor_plate'),type:'text',sortable:true,render:r=>sanitizeHTML(r.vehiclePlate||'-')},
+{key:'disinfected',label:t('bio_visitor_disinfected'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'true',label:'✅'},{value:'false',label:'❌'}],getValue:r=>String(!!r.disinfected),render:r=>r.disinfected?'✅':'❌'}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBioVisitorForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteBioVisitor('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.biosecurity.visitors=D.biosecurity.visitors.filter(v=>!ids.includes(v.id));saveData(D);renderBiosecurity();}}]
+});
 }
 function showBioVisitorForm(id){
 const D=loadData();const v=id?D.biosecurity.visitors.find(x=>x.id===id):null;
@@ -6891,21 +7894,24 @@ h+=`<div id="batch-list">`;h+=renderBatchList(batches,D);h+=`</div>`;
 $('sec-trazabilidad').innerHTML=h;
 }
 function renderBatchList(batches,D){
-let h=`<div class="card"><div class="table-wrap"><table><thead><tr>
-<th>${t('trace_batch_id')}</th><th>${t('date')}</th><th>${t('prod_flock')}</th><th>${t('trace_house')}</th>
-<th>${t('trace_rack')}</th><th>${t('trace_box_count')}</th><th>${t('trace_eggs_per_box')}</th>
-<th>${t('prod_egg_type')}</th><th>${t('fin_client')}</th><th>${t('trace_delivery')}</th><th>${t('actions')}</th>
-</tr></thead><tbody>`;
-batches.sort((a,b)=>b.date.localeCompare(a.date)).forEach(b=>{
-const f=D.flocks.find(x=>x.id===b.flockId);const c=D.clients.find(x=>x.id===b.clientId);
-h+=`<tr><td><code>${sanitizeHTML(b.id.substring(0,8))}</code></td><td>${fmtDate(b.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td>
-<td>${sanitizeHTML(b.house||'-')}</td><td>${sanitizeHTML(b.rackNumber||'-')}</td><td>${fmtNum(b.boxCount)}</td><td>${fmtNum(b.eggsPerBox)}</td>
-<td>${b.eggType?t('prod_type_'+b.eggType)||sanitizeHTML(b.eggType):'-'}</td>
-<td>${c?sanitizeHTML(c.name):'-'}</td><td>${b.deliveryDate?fmtDate(b.deliveryDate):'-'}</td>
-<td><div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBatchTrace('${escapeAttr(b.id)}')" title="${t('trace_origin')}">🔍</button>
-<button class="btn btn-secondary btn-sm" onclick="showBatchForm('${escapeAttr(b.id)}')">${t('edit')}</button>
-<button class="btn btn-danger btn-sm" onclick="deleteBatch('${escapeAttr(b.id)}')">${t('delete')}</button></div></td></tr>`;});
-return h+'</tbody></table></div></div>';
+if(!batches.length)return '';
+return DataTable.create({
+id:'batches',data:batches,onRefresh:'renderTraceability',emptyIcon:'📦',emptyText:t('no_data'),
+columns:[
+{key:'id',label:t('trace_batch_id'),type:'text',sortable:true,render:r=>'<code>'+sanitizeHTML(r.id.substring(0,8))+'</code>'},
+{key:'date',label:t('date'),type:'date',sortable:true,filterable:true,filterType:'date-range'},
+{key:'flockId',label:t('prod_flock'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.flocks.map(f=>({value:f.id,label:f.name})),render:r=>{const f=D.flocks.find(x=>x.id===r.flockId);return f?sanitizeHTML(f.name):'-';}},
+{key:'house',label:t('trace_house'),type:'text',sortable:true,render:r=>sanitizeHTML(r.house||'-')},
+{key:'rackNumber',label:t('trace_rack'),type:'text',sortable:true,render:r=>sanitizeHTML(r.rackNumber||'-')},
+{key:'boxCount',label:t('trace_box_count'),type:'number',sortable:true,render:r=>fmtNum(r.boxCount)},
+{key:'eggsPerBox',label:t('trace_eggs_per_box'),type:'number',sortable:true,render:r=>fmtNum(r.eggsPerBox)},
+{key:'eggType',label:t('prod_egg_type'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:[{value:'conventional',label:t('prod_type_conventional')},{value:'free_range',label:t('prod_type_free_range')},{value:'organic',label:t('prod_type_organic')},{value:'pasture_raised',label:t('prod_type_pasture')},{value:'decorative',label:t('prod_type_decorative')}],render:r=>r.eggType?t('prod_type_'+r.eggType)||sanitizeHTML(r.eggType):'-'},
+{key:'clientId',label:t('fin_client'),type:'text',sortable:true,filterable:true,filterType:'select',filterOptions:D.clients.map(c=>({value:c.id,label:c.name})),render:r=>{const c=D.clients.find(x=>x.id===r.clientId);return c?sanitizeHTML(c.name):'-';}},
+{key:'deliveryDate',label:t('trace_delivery'),type:'date',sortable:true,render:r=>r.deliveryDate?fmtDate(r.deliveryDate):'-'}
+],
+actions:r=>`<div class="btn-group"><button class="btn btn-secondary btn-sm" onclick="showBatchTrace('${escapeAttr(r.id)}')" title="${t('trace_origin')}">🔍</button><button class="btn btn-secondary btn-sm" onclick="showBatchForm('${escapeAttr(r.id)}')">${t('edit')}</button><button class="btn btn-danger btn-sm" onclick="deleteBatch('${escapeAttr(r.id)}')">${t('delete')}</button></div>`,
+bulkActions:[{label:t('delete'),icon:'🗑️',danger:true,action:ids=>{if(!confirm(t('confirm_delete')))return;const D=loadData();D.traceability.batches=D.traceability.batches.filter(b=>!ids.includes(b.id));saveData(D);renderTraceability();}}]
+});
 }
 function showBatchForm(id){
 const D=loadData();const b=id?D.traceability.batches.find(x=>x.id===id):null;
@@ -7108,7 +8114,7 @@ h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi
 h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_mortality')}</div><div class="campo-kpi">${fmtNum(snap.mortality,1)}%</div></div>`;
 h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_alerts')}</div><div class="campo-kpi">${alerts.length}</div></div>`;
 h+=`</div>`;
-h+=`<button class="campo-btn-big" onclick="showCampoQuickEntry()">📝 ${t('campo_today')}</button>`;
+h+=renderQuickEntry();
 if(alerts.length){h+=`<div class="card" style="margin-top:16px"><h3>${t('dash_alerts')}</h3>`;
 alerts.forEach(a=>{h+=`<div class="alert-card alert-${sanitizeHTML(a.type)}">${sanitizeHTML(a.icon)} ${a.msg}</div>`;});h+='</div>';}
 return h;
@@ -7324,10 +8330,25 @@ document.body.classList.remove('font-small','font-normal','font-large','font-xla
 document.body.classList.add('font-'+scale);
 const D=loadData();D.settings.fontScale=scale;saveData(D);
 }
+/**
+ * Toggles dark mode on/off, persists the setting, and swaps the CSS theme.
+ * Restores the previous color theme when dark mode is turned off.
+ * @param {boolean} on - True to enable dark mode, false to disable
+ */
 function applyDarkMode(on){
 document.body.classList.toggle('dark-mode',on);
 const D=loadData();D.settings.darkMode=on;saveData(D);
-if(on){applyTheme('dark');localStorage.setItem('egglogu_theme','dark');}
+if(on){
+if(localStorage.getItem('egglogu_theme')!=='dark'){
+_safeSetItem('egglogu_theme_prev',localStorage.getItem('egglogu_theme')||'blue');
+}
+applyTheme('dark');_safeSetItem('egglogu_theme','dark');
+}else{
+const prev=localStorage.getItem('egglogu_theme_prev')||'blue';
+applyTheme(prev);_safeSetItem('egglogu_theme',prev);
+}
+const tb=document.getElementById('dark-toggle-btn');
+if(tb)tb.textContent=on?'\u263E '+t('cfg_theme_dark'):'\u2600 '+t('cfg_font_normal');
 }
 
 // ============ PIN LOGIN (A8) ============
@@ -7351,11 +8372,11 @@ h+='<div class="form-group" style="margin-top:12px"><input type="password" id="p
 h+='<button onclick="verifyPin()" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:8px">'+(t('pin_login')||'Login')+'</button>';
 // Sign Up button
 h+='<button onclick="showSignUp()" style="width:100%;padding:12px;background:transparent;color:var(--primary,#1a73e8);border:2px solid var(--primary,#1a73e8);border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:10px">'+(isEs?'Crear Cuenta':'Sign Up')+'</button>';
-h+='<div class="login-divider" style="margin:14px 0"><hr style="flex:1;border:none;border-top:1px solid #E0E0E0"><span style="color:#9E9E9E;font-size:13px;padding:0 12px">'+(isEs?'o conecta con':'or connect with')+'</span><hr style="flex:1;border:none;border-top:1px solid #E0E0E0"></div>';
+h+='<div class="login-divider" style="margin:14px 0"><hr class="dm-divider" style="flex:1;border:none;border-top:1px solid #E0E0E0"><span style="color:#9E9E9E;font-size:13px;padding:0 12px">'+(isEs?'o conecta con':'or connect with')+'</span><hr class="dm-divider" style="flex:1;border:none;border-top:1px solid #E0E0E0"></div>';
 h+='<div style="display:flex;flex-direction:column;gap:8px">';
-h+='<button class="social-btn google" onclick="signInWithGoogle()" style="width:100%;padding:10px 16px;background:#fff;color:#444;border:1px solid #dadce0;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</button>';
-h+='<button class="social-btn apple" onclick="signInWithApple()" style="width:100%;padding:10px 16px;background:#000;color:#fff;border:1px solid #000;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Apple</button>';
-h+='<button class="social-btn microsoft" onclick="signInWithMicrosoft()" style="width:100%;padding:10px 16px;background:#fff;color:#5E5E5E;border:1px solid #8C8C8C;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>Outlook</button>';
+h+='<button class="social-btn google social-btn-google" onclick="signInWithGoogle()" style="width:100%;padding:10px 16px;background:#fff;color:#444;border:1px solid #dadce0;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</button>';
+h+='<button class="social-btn apple social-btn-apple" onclick="signInWithApple()" style="width:100%;padding:10px 16px;background:#000;color:#fff;border:1px solid #000;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Apple</button>';
+h+='<button class="social-btn microsoft social-btn-ms" onclick="signInWithMicrosoft()" style="width:100%;padding:10px 16px;background:#fff;color:#5E5E5E;border:1px solid #8C8C8C;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><svg width="18" height="18" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>Outlook</button>';
 h+='</div>';
 // Forgot PIN / Password links
 h+='<div style="margin-top:12px"><a href="javascript:void(0)" onclick="showForgotPin()" style="color:var(--text-light,#666);font-size:13px;text-decoration:underline;cursor:pointer">'+(isEs?'Restablecer PIN':'Reset PIN')+'</a>';
@@ -7386,11 +8407,11 @@ h+='<div class="form-group" style="margin-bottom:10px"><input type="password" id
 h+='<p style="color:var(--text-light,#888);font-size:11px;margin:-6px 0 10px;text-align:center">'+(isEs?'Este PIN te permite acceder sin conexión':'This PIN lets you access the app offline')+'</p>';
 h+='<button onclick="processSignUp()" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:8px">'+(isEs?'Crear Cuenta':'Create Account')+'</button>';
 h+='<p id="signup-error" style="color:var(--danger,red);margin-top:8px;display:none"></p>';
-h+='<div class="login-divider" style="display:flex;align-items:center;gap:12px;margin:14px 0"><hr style="flex:1;border:none;border-top:1px solid #E0E0E0"><span style="color:#9E9E9E;font-size:13px">'+(isEs?'o regístrate con':'or sign up with')+'</span><hr style="flex:1;border:none;border-top:1px solid #E0E0E0"></div>';
+h+='<div class="login-divider" style="display:flex;align-items:center;gap:12px;margin:14px 0"><hr class="dm-divider" style="flex:1;border:none;border-top:1px solid #E0E0E0"><span style="color:#9E9E9E;font-size:13px">'+(isEs?'o regístrate con':'or sign up with')+'</span><hr class="dm-divider" style="flex:1;border:none;border-top:1px solid #E0E0E0"></div>';
 h+='<div style="display:flex;gap:8px">';
-h+='<button onclick="signInWithGoogle()" style="flex:1;padding:10px;background:#fff;color:#444;border:1px solid #dadce0;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</button>';
-h+='<button onclick="signInWithApple()" style="flex:1;padding:10px;background:#000;color:#fff;border:1px solid #000;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Apple</button>';
-h+='<button onclick="signInWithMicrosoft()" style="flex:1;padding:10px;background:#fff;color:#5E5E5E;border:1px solid #8C8C8C;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>Outlook</button>';
+h+='<button class="social-btn-google" onclick="signInWithGoogle()" style="flex:1;padding:10px;background:#fff;color:#444;border:1px solid #dadce0;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</button>';
+h+='<button class="social-btn-apple" onclick="signInWithApple()" style="flex:1;padding:10px;background:#000;color:#fff;border:1px solid #000;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Apple</button>';
+h+='<button class="social-btn-ms" onclick="signInWithMicrosoft()" style="flex:1;padding:10px;background:#fff;color:#5E5E5E;border:1px solid #8C8C8C;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>Outlook</button>';
 h+='</div>';
 h+='</div></div>';
 overlay.innerHTML=h;document.body.appendChild(overlay);
@@ -7413,11 +8434,11 @@ h+='<div class="form-group" style="margin-bottom:10px"><input type="password" id
 h+='<p style="color:var(--text-light,#888);font-size:11px;margin:-6px 0 10px;text-align:center">'+(isEs?'Este PIN te permite acceder sin conexión':'This PIN lets you access the app offline')+'</p>';
 h+='<button onclick="processSignUp()" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:8px">'+(isEs?'Crear Cuenta':'Create Account')+'</button>';
 h+='<p id="signup-error" style="color:var(--danger,red);margin-top:8px;display:none"></p>';
-h+='<div class="login-divider" style="display:flex;align-items:center;gap:12px;margin:14px 0"><hr style="flex:1;border:none;border-top:1px solid #E0E0E0"><span style="color:#9E9E9E;font-size:13px">'+(isEs?'o regístrate con':'or sign up with')+'</span><hr style="flex:1;border:none;border-top:1px solid #E0E0E0"></div>';
+h+='<div class="login-divider" style="display:flex;align-items:center;gap:12px;margin:14px 0"><hr class="dm-divider" style="flex:1;border:none;border-top:1px solid #E0E0E0"><span style="color:#9E9E9E;font-size:13px">'+(isEs?'o regístrate con':'or sign up with')+'</span><hr class="dm-divider" style="flex:1;border:none;border-top:1px solid #E0E0E0"></div>';
 h+='<div style="display:flex;gap:8px">';
-h+='<button onclick="signInWithGoogle()" style="flex:1;padding:10px;background:#fff;color:#444;border:1px solid #dadce0;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</button>';
-h+='<button onclick="signInWithApple()" style="flex:1;padding:10px;background:#000;color:#fff;border:1px solid #000;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Apple</button>';
-h+='<button onclick="signInWithMicrosoft()" style="flex:1;padding:10px;background:#fff;color:#5E5E5E;border:1px solid #8C8C8C;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>Outlook</button>';
+h+='<button class="social-btn-google" onclick="signInWithGoogle()" style="flex:1;padding:10px;background:#fff;color:#444;border:1px solid #dadce0;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.08)"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59a14.5 14.5 0 0 1 0-9.18l-7.98-6.19a24.01 24.01 0 0 0 0 21.56l7.98-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</button>';
+h+='<button class="social-btn-apple" onclick="signInWithApple()" style="flex:1;padding:10px;background:#000;color:#fff;border:1px solid #000;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>Apple</button>';
+h+='<button class="social-btn-ms" onclick="signInWithMicrosoft()" style="flex:1;padding:10px;background:#fff;color:#5E5E5E;border:1px solid #8C8C8C;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px"><svg width="16" height="16" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>Outlook</button>';
 h+='</div>';
 h+='</div></div>';
 overlay.innerHTML=h;
@@ -7620,11 +8641,11 @@ if(loginScreen){
   const card=loginScreen.querySelector('.login-card');
   if(card){
     card.innerHTML='<h2 style="color:var(--primary);margin-bottom:4px">🔒 '+(isEs?'Restablecer Contraseña':'Reset Password')+'</h2>'
-      +'<p style="color:#757575;font-size:13px;margin-bottom:24px">'+(isEs?'Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.':'Enter your email and we\'ll send you a password reset link.')+'</p>'
-      +'<input type="email" id="forgot-pw-email" placeholder="Email" style="width:100%;padding:12px 16px;border:1px solid #E0E0E0;border-radius:var(--radius);font-size:15px;margin-bottom:12px">'
+      +'<p class="dm-text-muted" style="color:#757575;font-size:13px;margin-bottom:24px">'+(isEs?'Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.':'Enter your email and we\'ll send you a password reset link.')+'</p>'
+      +'<input type="email" id="forgot-pw-email" class="dm-input" placeholder="Email" style="width:100%;padding:12px 16px;border:1px solid #E0E0E0;border-radius:var(--radius);font-size:15px;margin-bottom:12px">'
       +'<button onclick="processForgotPassword()" class="login-btn" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:8px">'+(isEs?'Enviar Enlace':'Send Reset Link')+'</button>'
       +'<p id="forgot-pw-msg" style="font-size:13px;margin-top:12px;display:none"></p>'
-      +'<div style="margin-top:16px"><a href="javascript:void(0)" onclick="location.reload()" style="color:#757575;font-size:13px;text-decoration:underline;cursor:pointer">&#8592; '+(isEs?'Volver al Login':'Back to Login')+'</a></div>';
+      +'<div style="margin-top:16px"><a href="javascript:void(0)" onclick="location.reload()" class="dm-text-muted" style="color:#757575;font-size:13px;text-decoration:underline;cursor:pointer">&#8592; '+(isEs?'Volver al Login':'Back to Login')+'</a></div>';
     $('forgot-pw-email')?.focus();
     $('forgot-pw-email')?.addEventListener('keydown',e=>{if(e.key==='Enter')processForgotPassword();});
   }
@@ -7666,9 +8687,9 @@ if(loginScreen){
   const card=loginScreen.querySelector('.login-card');
   if(card){
     card.innerHTML='<h2 style="color:var(--primary);margin-bottom:4px">🔑 '+(isEs?'Nueva Contraseña':'New Password')+'</h2>'
-      +'<p style="color:#757575;font-size:13px;margin-bottom:24px">'+(isEs?'Ingresa tu nueva contraseña.':'Enter your new password.')+'</p>'
-      +'<input type="password" id="reset-pw-new" placeholder="'+(isEs?'Nueva contraseña':'New password')+'" autocomplete="new-password" style="width:100%;padding:12px 16px;border:1px solid #E0E0E0;border-radius:var(--radius);font-size:15px;margin-bottom:12px">'
-      +'<input type="password" id="reset-pw-confirm" placeholder="'+(isEs?'Confirmar contraseña':'Confirm password')+'" autocomplete="new-password" style="width:100%;padding:12px 16px;border:1px solid #E0E0E0;border-radius:var(--radius);font-size:15px;margin-bottom:12px">'
+      +'<p class="dm-text-muted" style="color:#757575;font-size:13px;margin-bottom:24px">'+(isEs?'Ingresa tu nueva contraseña.':'Enter your new password.')+'</p>'
+      +'<input type="password" id="reset-pw-new" class="dm-input" placeholder="'+(isEs?'Nueva contraseña':'New password')+'" autocomplete="new-password" style="width:100%;padding:12px 16px;border:1px solid #E0E0E0;border-radius:var(--radius);font-size:15px;margin-bottom:12px">'
+      +'<input type="password" id="reset-pw-confirm" class="dm-input" placeholder="'+(isEs?'Confirmar contraseña':'Confirm password')+'" autocomplete="new-password" style="width:100%;padding:12px 16px;border:1px solid #E0E0E0;border-radius:var(--radius);font-size:15px;margin-bottom:12px">'
       +'<button onclick="processResetPassword(\''+escapeAttr(token)+'\')" class="login-btn" style="width:100%;padding:12px;background:var(--primary,#1a73e8);color:#fff;border:none;border-radius:var(--radius);font-size:16px;cursor:pointer;margin-top:8px">'+(isEs?'Cambiar Contraseña':'Change Password')+'</button>'
       +'<p id="reset-pw-msg" style="font-size:13px;margin-top:12px;display:none"></p>';
     $('reset-pw-new')?.focus();
@@ -7786,11 +8807,11 @@ DATA=null;loadData();const savedTheme=localStorage.getItem('egglogu_theme');if(s
 // Apply saved settings
 const D=loadData();
 // SECURITY: Migrate any remaining plaintext PINs to SHA-256 hashed format
-if(D.users&&D.users.length){let _pinMigrated=false;for(const u of D.users){if(u.pin&&!u.pinHash){const m=await migratePinIfNeeded(u);if(m)_pinMigrated=true;}}if(_pinMigrated){saveData(D);console.log('[EGGlogU] Migrated plaintext PINs to hashed format');}
+if(D.users&&D.users.length){let _pinMigrated=false;for(const u of D.users){if(u.pin&&!u.pinHash){const m=await migratePinIfNeeded(u);if(m)_pinMigrated=true;}}if(_pinMigrated){saveData(D);}
 // Also remove any plaintext passwords that may have been stored in user objects
 D.users.forEach(u=>{if(u.password){delete u.password;_pinMigrated=true;}});if(_pinMigrated)saveData(D);}
 if(D.settings.fontScale&&D.settings.fontScale!=='normal')applyFontScale(D.settings.fontScale);
-if(D.settings.darkMode)document.body.classList.add('dark-mode');
+if(D.settings.darkMode){document.body.classList.add('dark-mode');const _dtb=document.getElementById('dark-toggle-btn');if(_dtb)_dtb.textContent='\u263E '+t('cfg_theme_dark');}
 applyCampoMode(D);
 switchLang(LANG);
 // PIN login if users exist (A8) — skip if already JWT-authenticated
@@ -7820,38 +8841,96 @@ if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.le
 if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
 else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
 });
+// Start workflow automation engine (5-min interval)
+if(typeof startWorkflowEvaluation==='function')startWorkflowEvaluation();
 }
 window.addEventListener('DOMContentLoaded',init);
 
-// ============ BUG REPORTER WIDGET ============
+// ============ WEB VITALS TRACKING ============
+if('PerformanceObserver' in window){
+  // LCP
+  try{new PerformanceObserver(l=>{l.getEntries().forEach(e=>{console.log('[WebVital] LCP:',e.startTime.toFixed(0)+'ms');_safeSetItem('egglogu_lcp',e.startTime.toFixed(0));});}).observe({type:'largest-contentful-paint',buffered:true});}catch(e){}
+  // FID
+  try{new PerformanceObserver(l=>{l.getEntries().forEach(e=>{console.log('[WebVital] FID:',e.processingStart-e.startTime+'ms');_safeSetItem('egglogu_fid',(e.processingStart-e.startTime).toFixed(0));});}).observe({type:'first-input',buffered:true});}catch(e){}
+  // CLS
+  try{let cls=0;new PerformanceObserver(l=>{l.getEntries().forEach(e=>{if(!e.hadRecentInput){cls+=e.value;console.log('[WebVital] CLS:',cls.toFixed(3));_safeSetItem('egglogu_cls',cls.toFixed(3));}});}).observe({type:'layout-shift',buffered:true});}catch(e){}
+}
+
+// ============ BUG REPORTER + SUGGESTIONS WIDGET ============
 (function(){
 const STORAGE_KEY='egglogu_bugs';
+const SUGGEST_KEY='egglogu_suggestions';
+let _widgetTab='bugs'; // 'bugs' | 'suggestions'
 function loadBugs(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch(e){return[];}}
-function saveBugs(b){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(b.slice(-200)));_bugUpdateBadge();}catch(e){}}
+function saveBugs(b){try{_safeSetItem(STORAGE_KEY,JSON.stringify(b.slice(-200)));_bugUpdateBadge();}catch(e){}}
+function loadSuggestions(){try{return JSON.parse(localStorage.getItem(SUGGEST_KEY)||'[]');}catch(e){return[];}}
+function saveSuggestions(s){try{_safeSetItem(SUGGEST_KEY,JSON.stringify(s.slice(-200)));_bugUpdateBadge();}catch(e){}}
 
 function injectBugWidget(){
+// FAB button
 const fab=document.createElement('div');
 fab.id='bug-fab';
-fab.innerHTML=`<span style="font-size:20px">🐛</span><span id="bug-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#f44336;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center">0</span>`;
-fab.style.cssText='position:fixed;bottom:20px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(244,67,54,.4);z-index:99999;transition:transform .2s,box-shadow .2s;user-select:none';
-fab.onmouseenter=()=>{fab.style.transform='scale(1.12)';fab.style.boxShadow='0 6px 24px rgba(244,67,54,.5)';};
-fab.onmouseleave=()=>{fab.style.transform='scale(1)';fab.style.boxShadow='0 4px 16px rgba(244,67,54,.4)';};
-fab.onclick=toggleBugPanel;
+fab.innerHTML=`<span style="font-size:18px">💬</span><span id="bug-badge" style="display:none;position:absolute;top:-4px;right:-4px;background:#f44336;color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center">0</span>`;
+fab.style.cssText='position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#5c6bc0,#3949ab);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(57,73,171,.4);z-index:99999;transition:transform .2s,box-shadow .2s;user-select:none';
+fab.onmouseenter=()=>{fab.style.transform='scale(1.1)';fab.style.boxShadow='0 6px 20px rgba(57,73,171,.5)';};
+fab.onmouseleave=()=>{fab.style.transform='scale(1)';fab.style.boxShadow='0 4px 16px rgba(57,73,171,.4)';};
+fab.onclick=_toggleFeedbackBubble;
 document.body.appendChild(fab);
 _bugUpdateBadge();
 
+// Bubble chooser (Bug or Suggestion)
+const bubble=document.createElement('div');
+bubble.id='feedback-bubble';
+bubble.style.cssText='position:fixed;bottom:76px;right:20px;background:var(--card,#1e1e2e);border:1px solid var(--border,#333);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.35);z-index:99998;display:none;padding:12px;min-width:200px;font-family:inherit;font-size:13px;color:var(--text,#eee)';
+document.body.appendChild(bubble);
+
+// Full panel (opens after choosing type)
 const panel=document.createElement('div');
 panel.id='bug-panel';
-panel.style.cssText='position:fixed;bottom:80px;right:20px;width:400px;max-height:80vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
+panel.style.cssText='position:fixed;bottom:80px;right:20px;width:380px;max-height:75vh;background:var(--card,#1a1a2e);border:1px solid var(--border,#333);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:inherit;font-size:13px;color:var(--text,#eee)';
 document.body.appendChild(panel);
 }
 
-function toggleBugPanel(){
+// Toggle the chooser bubble (Bug / Suggestion)
+function _toggleFeedbackBubble(){
+const bubble=document.getElementById('feedback-bubble');
+const panel=document.getElementById('bug-panel');
+if(!bubble)return;
+// If panel is open, close everything
+if(panel&&panel.style.display==='flex'){panel.style.display='none';bubble.style.display='none';return;}
+// Toggle bubble
+if(bubble.style.display==='block'){bubble.style.display='none';return;}
+const isEs=typeof LANG!=='undefined'&&LANG.startsWith('es');
+const bugs=loadBugs();const suggestions=loadSuggestions();
+const unsentB=bugs.filter(x=>!x.sent).length;const unsentS=suggestions.filter(x=>!x.sent).length;
+bubble.innerHTML=`
+<div style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--text-muted,#999)">${isEs?'Enviar feedback':'Send feedback'}</div>
+<button onclick="_openFeedbackType('bugs')" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:1px solid rgba(244,67,54,.2);border-radius:10px;background:rgba(244,67,54,.06);color:var(--text,#eee);cursor:pointer;font-size:13px;margin-bottom:8px;text-align:left;transition:background .15s">
+<span style="font-size:20px">🐛</span>
+<div><div style="font-weight:600">${isEs?'Reportar Bug':'Report Bug'}</div><div style="font-size:11px;color:var(--text-muted,#888);margin-top:2px">${isEs?'Algo no funciona bien':'Something isn\'t working'}</div></div>
+${unsentB?`<span style="margin-left:auto;background:#f44336;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">${unsentB}</span>`:''}
+</button>
+<button onclick="_openFeedbackType('suggestions')" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:1px solid rgba(124,77,255,.2);border-radius:10px;background:rgba(124,77,255,.06);color:var(--text,#eee);cursor:pointer;font-size:13px;text-align:left;transition:background .15s">
+<span style="font-size:20px">💡</span>
+<div><div style="font-weight:600">${isEs?'Sugerencia':'Suggestion'}</div><div style="font-size:11px;color:var(--text-muted,#888);margin-top:2px">${isEs?'Ideas para mejorar':'Ideas to improve'}</div></div>
+${unsentS?`<span style="margin-left:auto;background:#7c4dff;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">${unsentS}</span>`:''}
+</button>`;
+bubble.style.display='block';
+}
+
+// Open the full panel for a specific type
+window._openFeedbackType=function(type){
+const bubble=document.getElementById('feedback-bubble');
+if(bubble)bubble.style.display='none';
+_widgetTab=type;
 const p=document.getElementById('bug-panel');
 if(!p)return;
-if(p.style.display==='flex'){p.style.display='none';return;}
 p.style.display='flex';
 renderBugPanel();
+};
+
+function toggleBugPanel(){
+_toggleFeedbackBubble();
 }
 
 function _formatBugText(b){
@@ -7863,50 +8942,55 @@ return txt;
 
 function renderBugPanel(){
 const p=document.getElementById('bug-panel');if(!p)return;
-const bugs=loadBugs();
-const unsent=bugs.filter(x=>!x.sent);
-const sent=bugs.filter(x=>x.sent);
+const isEs=typeof LANG!=='undefined'&&LANG.startsWith('es');
+const tabBugs=_widgetTab==='bugs';
+const bugs=loadBugs();const suggestions=loadSuggestions();
+const unsent=bugs.filter(x=>!x.sent);const unsentSug=suggestions.filter(x=>!x.sent);
+
+// Header with back button and type indicator
+const headerBg=tabBugs?'linear-gradient(135deg,#ff5722,#d32f2f)':'linear-gradient(135deg,#7c4dff,#651fff)';
+const headerIcon=tabBugs?'🐛':'💡';
+const headerTitle=tabBugs?(isEs?'Reportar Bug':'Report Bug'):(isEs?'Sugerencia':'Suggestion');
+
+let h=`<div style="padding:10px 16px;background:${headerBg};color:#fff;display:flex;justify-content:space-between;align-items:center">
+<div style="display:flex;align-items:center;gap:8px">
+<button onclick="_backToBubble()" style="background:rgba(255,255,255,.2);border:none;color:#fff;font-size:14px;cursor:pointer;padding:4px 8px;border-radius:6px;line-height:1" title="${isEs?'Volver':'Back'}">←</button>
+<span style="font-weight:700;font-size:13px">${headerIcon} ${headerTitle}</span>
+</div>
+<button onclick="document.getElementById('bug-panel').style.display='none'" style="background:none;border:none;color:#fff;font-size:16px;cursor:pointer;padding:0 4px;line-height:1">✕</button>
+</div>`;
+
+if(tabBugs){
 const section=typeof currentSection!=='undefined'?currentSection:'?';
 const user=typeof _currentUser!=='undefined'&&_currentUser?_currentUser.name:'—';
 const errCount=_bugErrors.length;
-
-let h=`<div style="padding:14px 16px;background:linear-gradient(135deg,#ff5722,#d32f2f);color:#fff;font-weight:700;display:flex;justify-content:space-between;align-items:center">
-<span>🐛 Bug Reporter</span>
-<div style="display:flex;align-items:center;gap:8px">
-${unsent.length?`<span style="background:rgba(255,255,255,.25);padding:2px 8px;border-radius:10px;font-size:11px">${unsent.length} pendiente${unsent.length!==1?'s':''}</span>`:''}
-<button onclick="document.getElementById('bug-panel').style.display='none'" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0 4px">✕</button>
-</div></div>`;
-
-h+=`<div style="padding:10px 16px;background:rgba(255,152,0,.08);border-bottom:1px solid var(--border,#333);font-size:11px">
+h+=`<div style="padding:8px 16px;background:rgba(255,152,0,.06);border-bottom:1px solid var(--border,#333);font-size:11px">
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<span><strong>Seccion:</strong> <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">${section}</code></span>
-<span><strong>Usuario:</strong> ${sanitizeHTML(user)}</span>
-<span><strong>Errores JS:</strong> <span style="color:${errCount?'#f44336':'#4caf50'};font-weight:700">${errCount}</span></span>
+<span><strong>${isEs?'Sección':'Section'}:</strong> <code style="background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px">${section}</code></span>
+<span><strong>${isEs?'Usuario':'User'}:</strong> ${sanitizeHTML(user)}</span>
+${errCount?`<span><strong>JS:</strong> <span style="color:#f44336;font-weight:700">${errCount}</span></span>`:''}
 </div></div>`;
-
 h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#333)">
 <div style="margin-bottom:8px"><select id="bug-severity" style="width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px">
-<option value="low">🟡 Bajo — Visual/cosmetico</option>
-<option value="medium" selected>🟠 Medio — Funcionalidad parcial</option>
-<option value="high">🔴 Alto — Funcionalidad rota</option>
-<option value="critical">💀 Critico — Perdida de datos/crash</option>
+<option value="low">🟡 ${isEs?'Bajo — Visual/cosmético':'Low — Visual/cosmetic'}</option>
+<option value="medium" selected>🟠 ${isEs?'Medio — Funcionalidad parcial':'Medium — Partial functionality'}</option>
+<option value="high">🔴 ${isEs?'Alto — Funcionalidad rota':'High — Broken functionality'}</option>
+<option value="critical">💀 ${isEs?'Crítico — Pérdida de datos/crash':'Critical — Data loss/crash'}</option>
 </select></div>
-<div style="margin-bottom:8px"><textarea id="bug-desc" rows="2" placeholder="Opcional — describe que paso (requerido si ya reportaste en esta seccion)" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
+<div style="margin-bottom:8px"><textarea id="bug-desc" rows="3" placeholder="${isEs?'Describe qué pasó...':'Describe what happened...'}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
 <div style="display:flex;gap:8px">
-<button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">+ Reportar Bug</button>
-${errCount?`<button onclick="_attachErrors()" style="padding:8px 12px;border:none;border-radius:8px;background:rgba(255,152,0,.2);color:#ff9800;cursor:pointer;font-size:11px;font-weight:600" title="Adjuntar errores capturados">📎 ${errCount} err</button>`:''}
+<button onclick="_submitBug()" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff5722,#f44336);color:#fff;font-weight:700;cursor:pointer;font-size:12px">+ ${isEs?'Reportar Bug':'Report Bug'}</button>
+${errCount?`<button onclick="_attachErrors()" style="padding:8px 12px;border:none;border-radius:8px;background:rgba(255,152,0,.2);color:#ff9800;cursor:pointer;font-size:11px;font-weight:600" title="${isEs?'Adjuntar errores capturados':'Attach captured errors'}">📎 ${errCount}</button>`:''}
 </div></div>`;
-
-h+=`<div style="flex:1;overflow-y:auto;max-height:40vh">`;
+h+=`<div style="flex:1;overflow-y:auto;max-height:35vh">`;
 if(bugs.length===0){
-h+=`<div style="text-align:center;padding:30px 16px;color:var(--text-muted,#666)">
-<div style="font-size:32px;margin-bottom:8px">✨</div>
-<div>No hay bugs reportados</div>
-<div style="font-size:11px;margin-top:4px">Navega la app y reporta cualquier problema que encuentres</div>
+h+=`<div style="text-align:center;padding:24px 16px;color:var(--text-muted,#666)">
+<div style="font-size:28px;margin-bottom:6px">✨</div>
+<div style="font-size:12px">${isEs?'No hay bugs reportados':'No bugs reported'}</div>
 </div>`;
 }else{
 if(unsent.length>0){
-h+=`<div style="padding:6px 16px;background:rgba(255,87,34,.06);font-size:10px;font-weight:700;color:#ff5722;text-transform:uppercase;letter-spacing:.5px">Pendientes de envio (${unsent.length})</div>`;
+h+=`<div style="padding:6px 16px;background:rgba(255,87,34,.06);font-size:10px;font-weight:700;color:#ff5722;text-transform:uppercase;letter-spacing:.5px">${isEs?'Pendientes':'Pending'} (${unsent.length})</div>`;
 }
 bugs.slice().reverse().forEach((b,i)=>{
 const idx=bugs.length-1-i;
@@ -7914,47 +8998,103 @@ const isSent=!!b.sent;
 const sevIcon={low:'🟡',medium:'🟠',high:'🔴',critical:'💀'}[b.severity]||'🟠';
 const ts=new Date(b.ts).toLocaleString();
 const errBadge=b.errors?.length?`<span style="background:rgba(244,67,54,.15);color:#f44336;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">${b.errors.length} err</span>`:'';
-const sentBadge=isSent?`<span style="background:rgba(76,175,80,.15);color:#4caf50;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">✓ Enviado</span>`:`<span style="background:rgba(255,152,0,.15);color:#ff9800;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">Pendiente</span>`;
+const sentBadge=isSent?`<span style="background:rgba(76,175,80,.15);color:#4caf50;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">✓</span>`:`<span style="background:rgba(255,152,0,.15);color:#ff9800;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">${isEs?'Pendiente':'Pending'}</span>`;
 const opacity=isSent?'0.55':'1';
-h+=`<div style="padding:10px 16px;border-bottom:1px solid var(--border,#222);opacity:${opacity}">
+h+=`<div style="padding:8px 16px;border-bottom:1px solid var(--border,#222);opacity:${opacity}">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
 <div style="flex:1;min-width:0">
-<div style="font-size:11px;color:var(--text-muted,#666);margin-bottom:3px">${ts} · <code style="font-size:10px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">${sanitizeHTML(b.section)}</code> ${errBadge} ${sentBadge}</div>
+<div style="font-size:10px;color:var(--text-muted,#666);margin-bottom:2px">${ts} · <code style="font-size:10px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">${sanitizeHTML(b.section)}</code> ${errBadge} ${sentBadge}</div>
 <div style="font-size:12px;line-height:1.4">${sevIcon} ${sanitizeHTML(b.desc)}</div>`;
 if(b.errors?.length){
-h+=`<details style="margin-top:4px"><summary style="font-size:10px;color:#f44336;cursor:pointer">Ver errores adjuntos (${b.errors.length})</summary>
-<div style="margin-top:4px;font-size:10px;font-family:monospace;background:rgba(0,0,0,.3);padding:6px 8px;border-radius:6px;max-height:120px;overflow-y:auto">`;
+h+=`<details style="margin-top:4px"><summary style="font-size:10px;color:#f44336;cursor:pointer">${isEs?'Ver errores':'View errors'} (${b.errors.length})</summary>
+<div style="margin-top:4px;font-size:10px;font-family:monospace;background:rgba(0,0,0,.3);padding:6px 8px;border-radius:6px;max-height:100px;overflow-y:auto">`;
 b.errors.forEach(e=>{
-h+=`<div style="margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:3px">
-<span style="color:#f44336">${sanitizeHTML(e.type)}</span> @ <span style="color:#64b5f6">${sanitizeHTML(e.src)}:${e.line}:${e.col}</span><br>
+h+=`<div style="margin-bottom:3px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:2px">
+<span style="color:#f44336">${sanitizeHTML(e.type)}</span> @ <span style="color:#64b5f6">${sanitizeHTML(e.src)}:${e.line}</span><br>
 <span style="color:#fff">${sanitizeHTML(e.msg)}</span>
-${e.stack?'<br><span style="color:#888">'+sanitizeHTML(e.stack.substring(0,150))+'</span>':''}
 </div>`;
 });
 h+=`</div></details>`;
 }
 h+=`</div>
-<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-${!isSent?`<button onclick="_sendBug(${idx})" style="background:none;border:1px solid rgba(76,175,80,.4);color:#4caf50;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px;white-space:nowrap" title="Enviar este bug">📨</button>`:''}
-<button onclick="_deleteBug(${idx})" style="background:none;border:none;color:var(--text-muted,#666);cursor:pointer;font-size:14px;padding:2px;text-align:center" title="Eliminar">🗑</button>
+<div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+${!isSent?`<button onclick="_sendBug(${idx})" style="background:none;border:1px solid rgba(76,175,80,.4);color:#4caf50;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px" title="${isEs?'Enviar':'Send'}">📨</button>`:''}
+<button onclick="_deleteBug(${idx})" style="background:none;border:none;color:var(--text-muted,#666);cursor:pointer;font-size:13px;padding:2px;text-align:center" title="${isEs?'Eliminar':'Delete'}">🗑</button>
 </div>
 </div></div>`;
 });
 }
 h+=`</div>`;
-
 if(bugs.length>0){
-h+=`<div style="padding:8px 16px;border-top:1px solid var(--border,#333);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-<span style="font-size:11px;color:var(--text-muted,#666)">${bugs.length} bug${bugs.length!==1?'s':''} · ${unsent.length} pendiente${unsent.length!==1?'s':''}</span>
-<div style="display:flex;gap:6px;flex-wrap:wrap">
-${unsent.length>0?`<button onclick="_sendAllBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:linear-gradient(135deg,#4caf50,#388e3c);color:#fff;cursor:pointer;font-size:11px;font-weight:600">📨 Enviar ${unsent.length>1?'todos ('+unsent.length+')':'1'}</button>`:''}
-<button onclick="_exportBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(255,255,255,.08);color:var(--text,#eee);cursor:pointer;font-size:11px">📋 Exportar</button>
-<button onclick="_clearBugs()" style="padding:4px 10px;border:none;border-radius:6px;background:rgba(244,67,54,.1);color:#f44336;cursor:pointer;font-size:11px">🗑 Limpiar</button>
+h+=`<div style="padding:6px 16px;border-top:1px solid var(--border,#333);display:flex;justify-content:space-between;align-items:center;gap:6px">
+<span style="font-size:10px;color:var(--text-muted,#666)">${bugs.length} bug${bugs.length!==1?'s':''} · ${unsent.length} ${isEs?'pend.':'pend.'}</span>
+<div style="display:flex;gap:4px">
+${unsent.length>0?`<button onclick="_sendAllBugs()" style="padding:3px 8px;border:none;border-radius:5px;background:linear-gradient(135deg,#4caf50,#388e3c);color:#fff;cursor:pointer;font-size:10px;font-weight:600">📨 ${unsent.length}</button>`:''}
+<button onclick="_exportBugs()" style="padding:3px 8px;border:none;border-radius:5px;background:rgba(255,255,255,.08);color:var(--text,#eee);cursor:pointer;font-size:10px">📋</button>
+<button onclick="_clearBugs()" style="padding:3px 8px;border:none;border-radius:5px;background:rgba(244,67,54,.1);color:#f44336;cursor:pointer;font-size:10px">🗑</button>
 </div></div>`;
 }
-
+}else{
+// ——— SUGGESTIONS ———
+h+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border,#333)">
+<div style="margin-bottom:8px"><select id="sug-category" style="width:100%;padding:6px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px">
+<option value="feature">🚀 ${isEs?'Nueva función':'New feature'}</option>
+<option value="improvement">🔧 ${isEs?'Mejora existente':'Improvement'}</option>
+<option value="ux">🎨 ${isEs?'Diseño / UX':'Design / UX'}</option>
+<option value="other">💬 ${isEs?'Otro':'Other'}</option>
+</select></div>
+<div style="margin-bottom:8px"><textarea id="sug-desc" rows="3" placeholder="${isEs?'Describe tu sugerencia...':'Describe your suggestion...'}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border,#333);background:var(--bg,#111);color:var(--text,#eee);font-size:12px;resize:vertical;box-sizing:border-box"></textarea></div>
+<button onclick="_submitSuggestion()" style="width:100%;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#7c4dff,#651fff);color:#fff;font-weight:700;cursor:pointer;font-size:12px">+ ${isEs?'Enviar Sugerencia':'Submit Suggestion'}</button>
+</div>`;
+h+=`<div style="flex:1;overflow-y:auto;max-height:35vh">`;
+if(suggestions.length===0){
+h+=`<div style="text-align:center;padding:24px 16px;color:var(--text-muted,#666)">
+<div style="font-size:28px;margin-bottom:6px">💡</div>
+<div style="font-size:12px">${isEs?'No hay sugerencias aún':'No suggestions yet'}</div>
+</div>`;
+}else{
+if(unsentSug.length>0){
+h+=`<div style="padding:6px 16px;background:rgba(124,77,255,.06);font-size:10px;font-weight:700;color:#7c4dff;text-transform:uppercase;letter-spacing:.5px">${isEs?'Pendientes':'Pending'} (${unsentSug.length})</div>`;
+}
+suggestions.slice().reverse().forEach((s,i)=>{
+const idx=suggestions.length-1-i;
+const isSent=!!s.sent;
+const catIcon={feature:'🚀',improvement:'🔧',ux:'🎨',other:'💬'}[s.category]||'💬';
+const ts=new Date(s.ts).toLocaleString();
+const sentBadge=isSent?`<span style="background:rgba(76,175,80,.15);color:#4caf50;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">✓</span>`:`<span style="background:rgba(124,77,255,.15);color:#7c4dff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px">${isEs?'Pendiente':'Pending'}</span>`;
+const opacity=isSent?'0.55':'1';
+h+=`<div style="padding:8px 16px;border-bottom:1px solid var(--border,#222);opacity:${opacity}">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+<div style="flex:1;min-width:0">
+<div style="font-size:10px;color:var(--text-muted,#666);margin-bottom:2px">${ts} · <code style="font-size:10px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">${sanitizeHTML(s.section)}</code> ${sentBadge}</div>
+<div style="font-size:12px;line-height:1.4">${catIcon} ${sanitizeHTML(s.desc)}</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+${!isSent?`<button onclick="_sendSuggestion(${idx})" style="background:none;border:1px solid rgba(76,175,80,.4);color:#4caf50;cursor:pointer;font-size:11px;padding:2px 8px;border-radius:4px" title="${isEs?'Enviar':'Send'}">📨</button>`:''}
+<button onclick="_deleteSuggestion(${idx})" style="background:none;border:none;color:var(--text-muted,#666);cursor:pointer;font-size:13px;padding:2px;text-align:center" title="${isEs?'Eliminar':'Delete'}">🗑</button>
+</div>
+</div></div>`;
+});
+}
+h+=`</div>`;
+if(suggestions.length>0){
+h+=`<div style="padding:6px 16px;border-top:1px solid var(--border,#333);display:flex;justify-content:space-between;align-items:center;gap:6px">
+<span style="font-size:10px;color:var(--text-muted,#666)">${suggestions.length} ${isEs?'sug.':'sug.'}${suggestions.length!==1?'s':''} · ${unsentSug.length} ${isEs?'pend.':'pend.'}</span>
+<div style="display:flex;gap:4px">
+${unsentSug.length>0?`<button onclick="_sendAllSuggestions()" style="padding:3px 8px;border:none;border-radius:5px;background:linear-gradient(135deg,#4caf50,#388e3c);color:#fff;cursor:pointer;font-size:10px;font-weight:600">📨 ${unsentSug.length}</button>`:''}
+<button onclick="_exportSuggestions()" style="padding:3px 8px;border:none;border-radius:5px;background:rgba(255,255,255,.08);color:var(--text,#eee);cursor:pointer;font-size:10px">📋</button>
+<button onclick="_clearSuggestions()" style="padding:3px 8px;border:none;border-radius:5px;background:rgba(244,67,54,.1);color:#f44336;cursor:pointer;font-size:10px">🗑</button>
+</div></div>`;
+}
+}
 p.innerHTML=h;
 }
+
+// Back to bubble chooser
+window._backToBubble=function(){
+document.getElementById('bug-panel').style.display='none';
+_toggleFeedbackBubble();
+};
 
 // Submit bug — desc optional for first report in section, required if duplicate section
 window._submitBug=function(){
@@ -8056,13 +9196,182 @@ URL.revokeObjectURL(a.href);
 toast?.('📋 Bugs exportados ('+bugs.length+')');
 };
 
+// Tab switch
+window._switchWidgetTab=function(tab){
+_widgetTab=tab;
+renderBugPanel();
+};
+
+// Submit suggestion
+window._submitSuggestion=function(){
+const desc=document.getElementById('sug-desc')?.value?.trim()||'';
+if(!desc){toast?.('Describe tu sugerencia',true);document.getElementById('sug-desc')?.focus();return;}
+const sug={
+id:typeof genId!=='undefined'?genId():Date.now().toString(36),
+ts:new Date().toISOString(),
+section:typeof currentSection!=='undefined'?currentSection:'?',
+user:typeof _currentUser!=='undefined'&&_currentUser?_currentUser.name:'anon',
+category:document.getElementById('sug-category')?.value||'feature',
+desc:desc,
+ua:navigator.userAgent.substring(0,100),
+viewport:window.innerWidth+'x'+window.innerHeight,
+lang:typeof LANG!=='undefined'?LANG:'?',
+sent:false
+};
+const suggestions=loadSuggestions();
+suggestions.push(sug);
+saveSuggestions(suggestions);
+document.getElementById('sug-desc').value='';
+const isEs=typeof LANG!=='undefined'&&LANG.startsWith('es');
+toast?.(isEs?'💡 Sugerencia guardada':'💡 Suggestion saved');
+renderBugPanel();
+};
+
+function _formatSuggestionText(s){
+const cat={feature:'Nueva función',improvement:'Mejora',ux:'Diseño/UX',other:'Otro'}[s.category]||s.category;
+return `[${cat.toUpperCase()}] ${s.desc}\nSeccion: ${s.section} | Usuario: ${s.user} | ${new Date(s.ts).toLocaleString()}\nViewport: ${s.viewport} | Lang: ${s.lang}`;
+}
+
+// Send single suggestion
+window._sendSuggestion=function(idx){
+const suggestions=loadSuggestions();
+if(!suggestions[idx])return;
+const txt=_formatSuggestionText(suggestions[idx]);
+navigator.clipboard.writeText(txt).then(()=>{
+toast?.('📋 Sugerencia copiada al portapapeles');
+}).catch(()=>{
+const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+toast?.('📋 Sugerencia copiada');
+});
+suggestions[idx].sent=true;
+suggestions[idx].sentAt=new Date().toISOString();
+saveSuggestions(suggestions);
+renderBugPanel();
+};
+
+// Send all suggestions
+window._sendAllSuggestions=function(){
+const suggestions=loadSuggestions();
+const unsent=suggestions.filter(x=>!x.sent);
+if(!unsent.length)return;
+let report='═══ EGGlogU Suggestions ═══\nFecha: '+new Date().toLocaleString()+'\nTotal: '+unsent.length+'\n\n';
+unsent.forEach((s,i)=>{report+='--- Sugerencia '+(i+1)+' ---\n'+_formatSuggestionText(s)+'\n\n';});
+navigator.clipboard.writeText(report).then(()=>{
+toast?.('📨 '+unsent.length+' sugerencia(s) copiadas al portapapeles');
+}).catch(()=>{
+const ta=document.createElement('textarea');ta.value=report;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+toast?.('📨 '+unsent.length+' sugerencia(s) copiadas');
+});
+suggestions.forEach(s=>{if(!s.sent){s.sent=true;s.sentAt=new Date().toISOString();}});
+saveSuggestions(suggestions);
+renderBugPanel();
+};
+
+// Delete suggestion
+window._deleteSuggestion=function(idx){
+const suggestions=loadSuggestions();
+suggestions.splice(idx,1);
+saveSuggestions(suggestions);
+renderBugPanel();
+};
+
+// Clear all suggestions
+window._clearSuggestions=function(){
+const isEs=typeof LANG!=='undefined'&&LANG.startsWith('es');
+if(!confirm(isEs?'¿Eliminar todas las sugerencias?':'Delete all suggestions?'))return;
+saveSuggestions([]);
+renderBugPanel();
+};
+
+// Export suggestions
+window._exportSuggestions=function(){
+const suggestions=loadSuggestions();
+if(!suggestions.length)return;
+const blob=new Blob([JSON.stringify(suggestions,null,2)],{type:'application/json'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download='egglogu_suggestions_'+new Date().toISOString().split('T')[0]+'.json';
+a.click();
+URL.revokeObjectURL(a.href);
+toast?.('📋 Sugerencias exportadas ('+suggestions.length+')');
+};
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',injectBugWidget);
 else injectBugWidget();
 })();
 
+// ============ EVENT DELEGATION (CSP-safe — no inline handlers) ============
+(function(){
+'use strict';
+
+// --- Click delegation ---
+document.addEventListener('click',function(e){
+  // Nav sections (sidebar links with data-section)
+  var secEl=e.target.closest('[data-section]');
+  if(secEl&&secEl.tagName==='A'){nav(secEl.dataset.section);return;}
+
+  // Nav group collapse labels
+  var grpEl=e.target.closest('.nav-group-label');
+  if(grpEl){toggleNavGroup(grpEl);return;}
+
+  // Language switch buttons
+  var langEl=e.target.closest('[data-lang]');
+  if(langEl){switchLang(langEl.dataset.lang);return;}
+
+  // Generic data-action dispatch
+  var actionEl=e.target.closest('[data-action]');
+  if(actionEl){
+    var fn=actionEl.dataset.action;
+    var actions={
+      signInWithGoogle:signInWithGoogle,
+      signInWithApple:signInWithApple,
+      signInWithMicrosoft:signInWithMicrosoft,
+      doLogin:doLogin,
+      showSignUpFromLogin:showSignUpFromLogin,
+      showForgotPassword:showForgotPassword,
+      confirmNo:confirmNo,
+      confirmYes:confirmYes,
+      toggleCampoMode:toggleCampoMode,
+      toggleVetMode:toggleVetMode,
+      doLogout:doLogout,
+      toggleSidebar:toggleSidebar,
+      closeModal:closeModal,
+      toggleLangCollapse:function(){actionEl.parentElement.classList.toggle('open');},
+      toggleDarkMode:function(){
+        var D=loadData();
+        D.settings.darkMode=!D.settings.darkMode;
+        saveData(D);
+        applyDarkMode(D.settings.darkMode);
+        var btn=document.getElementById('dark-toggle-btn');
+        if(btn)btn.textContent=D.settings.darkMode?'\u263E Oscuro':'\u2600 Claro';
+      }
+    };
+    if(actions[fn])actions[fn]();
+    return;
+  }
+
+  // Modal overlay close (click on overlay but NOT inside .modal)
+  if(e.target.id==='modal-overlay'){closeModal();return;}
+});
+
+// --- Keydown delegation (Enter on password field) ---
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&e.target.id==='login-pass'){doLogin();}
+});
+
+// --- Focus/blur delegation for skip-link accessibility ---
+var _skipLink=document.getElementById('skip-link');
+if(_skipLink){
+  _skipLink.addEventListener('focus',function(){
+    this.style.cssText='position:fixed;left:0;top:0;z-index:9999;padding:12px 24px;background:var(--primary);color:#fff;font-weight:600;text-decoration:none;border-radius:0 0 8px 0';
+  });
+  _skipLink.addEventListener('blur',function(){
+    this.style.cssText='position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden';
+  });
+}
+})();
+
 // ============ SERVICE WORKER ============
 if('serviceWorker' in navigator){
-navigator.serviceWorker.register('sw.js').then(reg=>{
-console.log('SW registered',reg.scope);
-}).catch(e=>console.log('SW registration failed',e));
+navigator.serviceWorker.register('sw.js').catch(e=>console.error('SW registration failed',e));
 }

@@ -13,7 +13,10 @@ import { flockSelect, logAudit, scheduleAutoBackup, safeSetItem } from '../core/
 
 const $ = id => document.getElementById(id);
 
-const _GOOGLE_CLIENT_ID = localStorage.getItem('egglogu_google_client_id') || '';
+let _GOOGLE_CLIENT_ID = localStorage.getItem('egglogu_google_client_id') || '';
+let _MICROSOFT_CLIENT_ID = localStorage.getItem('egglogu_microsoft_client_id') || '';
+let _MICROSOFT_TENANT_ID = localStorage.getItem('egglogu_microsoft_tenant_id') || 'common';
+let _msalInstance = null;
 window._GOOGLE_CLIENT_ID = _GOOGLE_CLIENT_ID;
 
 let _pinLockCountdownTimer = null;
@@ -324,25 +327,75 @@ function showPinLockCountdown(errEl) {
 }
 
 // ─── Google Sign-In ───
-function signInWithGoogle() {
+async function signInWithGoogle() {
+  // If no client ID cached, try fetching from backend on-demand
+  if (!_GOOGLE_CLIENT_ID) {
+    try {
+      const cfg = await apiService.getAuthConfig();
+      if (cfg.google_client_id) {
+        _GOOGLE_CLIENT_ID = cfg.google_client_id;
+        window._GOOGLE_CLIENT_ID = _GOOGLE_CLIENT_ID;
+        localStorage.setItem('egglogu_google_client_id', _GOOGLE_CLIENT_ID);
+      }
+    } catch (e) { /* backend unreachable */ }
+  }
+  if (!_GOOGLE_CLIENT_ID) {
+    alert('Google Sign-In no configurado. Verifica la conexión al servidor.');
+    return;
+  }
   if (typeof google === 'undefined' || !google.accounts) {
-    Bus.emit('toast', { msg: 'Google Sign-In loading...' });
+    alert('Google Sign-In cargando... intenta de nuevo en unos segundos.');
     setTimeout(signInWithGoogle, 500);
     return;
   }
-  google.accounts.id.initialize({
+  // Use popup token flow — works on localhost and all domains
+  const client = google.accounts.oauth2.initTokenClient({
     client_id: _GOOGLE_CLIENT_ID,
-    callback: handleGoogleCallback,
-    auto_select: false,
-    cancel_on_tap_outside: true
-  });
-  google.accounts.id.prompt((notification) => {
-    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-      google.accounts.oauth2.initCodeClient || google.accounts.id.renderButton(
-        document.createElement('div'), { theme: 'outline', size: 'large' }
-      );
+    scope: 'openid email profile',
+    callback: async (tokenResponse) => {
+      if (!tokenResponse || tokenResponse.error) {
+        Bus.emit('toast', { msg: 'Google Sign-In cancelled', type: 'warning' });
+        return;
+      }
+      // Exchange Google access token for user info, then get ID token via backend
+      try {
+        const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
+        }).then(r => r.json());
+        // Send to backend — we pass the access_token, backend verifies via Google
+        await handleGoogleAccessToken(tokenResponse.access_token, userInfo);
+      } catch (e) {
+        Bus.emit('toast', { msg: e.message || 'Google Sign-In error', type: 'error' });
+      }
     }
   });
+  client.requestAccessToken({ prompt: 'select_account' });
+}
+
+async function handleGoogleAccessToken(accessToken) {
+  try {
+    const isEs = (document.documentElement.lang || 'es').startsWith('es');
+    const resp = await apiService.request('POST', '/auth/google', { access_token: accessToken });
+    apiService.setTokens(resp.access_token, resp.refresh_token);
+    const me = await apiService.getMe();
+    setCurrentUser({ name: me.full_name, role: me.role, id: me.id, email: me.email });
+    sessionStorage.setItem(AUTH_SESSION, 'true');
+    await createLocalOAuthUser(me);
+    $('login-screen')?.classList.add('hidden');
+    const pinOverlay = $('pin-login-overlay');
+    if (pinOverlay) pinOverlay.remove();
+    const appEl = document.querySelector('.app');
+    if (appEl) appEl.style.display = '';
+    resetLoginAttempts();
+    await initApp();
+    await loadFromServer();
+    Bus.emit('auth:ready');
+    Bus.emit('toast', { msg: (isEs ? 'Bienvenido, ' : 'Welcome, ') + me.full_name + '!' });
+  } catch (e) {
+    const errEl = $('login-error') || $('signup-error') || $('pin-error');
+    if (errEl) { errEl.textContent = e.message || 'Google Sign-In error'; errEl.style.display = 'block'; }
+    else { Bus.emit('toast', { msg: e.message || 'Google Sign-In error', type: 'error' }); }
+  }
 }
 
 async function handleGoogleCallback(response) {
@@ -371,12 +424,12 @@ async function handleGoogleCallback(response) {
   }
 }
 
-async function createLocalOAuthUser(me) {
+async function createLocalOAuthUser(me, provider = 'google') {
   const D = Store.get();
   const exists = D.users.some(u => u.email && u.email.toLowerCase() === me.email.toLowerCase());
   if (!exists) {
     const { hash: pinHash, salt: pinSalt } = await hashPin('0000');
-    D.users.push({ id: me.id || genId(), name: me.full_name, email: me.email, role: me.role || 'owner', pinHash, pinSalt, oauth: 'google', status: 'active', activatedAt: todayStr(), created: todayStr() });
+    D.users.push({ id: me.id || genId(), name: me.full_name, email: me.email, role: me.role || 'owner', pinHash, pinSalt, oauth: provider, status: 'active', activatedAt: todayStr(), created: todayStr() });
     if (!D.settings.ownerEmail) D.settings.ownerEmail = me.email;
     Store.save(D);
   }
@@ -386,8 +439,99 @@ function signInWithApple() {
   Bus.emit('toast', { msg: 'Apple Sign-In estara disponible pronto', type: 'info' });
 }
 
-function signInWithMicrosoft() {
-  Bus.emit('toast', { msg: 'Microsoft/Outlook Sign-In estara disponible pronto', type: 'info' });
+function _loadMsalScript() {
+  return new Promise((resolve, reject) => {
+    if (typeof msal !== 'undefined' && msal.PublicClientApplication) { resolve(); return; }
+    if (document.querySelector('script[src*="msal-browser"]')) {
+      const check = setInterval(() => {
+        if (typeof msal !== 'undefined' && msal.PublicClientApplication) { clearInterval(check); resolve(); }
+      }, 100);
+      setTimeout(() => { clearInterval(check); reject(new Error('MSAL load timeout')); }, 10000);
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = 'https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js';
+    s.onload = () => {
+      const check = setInterval(() => {
+        if (typeof msal !== 'undefined' && msal.PublicClientApplication) { clearInterval(check); resolve(); }
+      }, 50);
+      setTimeout(() => { clearInterval(check); reject(new Error('MSAL init timeout')); }, 5000);
+    };
+    s.onerror = () => reject(new Error('Failed to load MSAL'));
+    document.head.appendChild(s);
+  });
+}
+
+async function signInWithMicrosoft() {
+  if (!_MICROSOFT_CLIENT_ID) {
+    Bus.emit('toast', { msg: 'Microsoft Sign-In not configured', type: 'error' });
+    return;
+  }
+
+  try {
+    await _loadMsalScript();
+  } catch (e) {
+    Bus.emit('toast', { msg: 'Could not load Microsoft Sign-In library', type: 'error' });
+    return;
+  }
+
+  try {
+    if (!_msalInstance) {
+      _msalInstance = new msal.PublicClientApplication({
+        auth: {
+          clientId: _MICROSOFT_CLIENT_ID,
+          authority: 'https://login.microsoftonline.com/' + _MICROSOFT_TENANT_ID,
+          redirectUri: window.location.origin + '/egglogu.html'
+        },
+        cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: false }
+      });
+      await _msalInstance.initialize();
+    }
+
+    const loginResponse = await _msalInstance.loginPopup({
+      scopes: ['User.Read', 'openid', 'profile', 'email'],
+      prompt: 'select_account'
+    });
+
+    if (!loginResponse || !loginResponse.accessToken) {
+      Bus.emit('toast', { msg: 'Microsoft Sign-In cancelled', type: 'warning' });
+      return;
+    }
+
+    await handleMicrosoftCallback(loginResponse.accessToken);
+  } catch (e) {
+    if (e.errorCode === 'user_cancelled' || e.name === 'BrowserAuthError') {
+      return;
+    }
+    const errEl = $('login-error') || $('signup-error') || $('pin-error');
+    if (errEl) { errEl.textContent = e.message || 'Microsoft Sign-In error'; errEl.style.display = 'block'; }
+    else { Bus.emit('toast', { msg: e.message || 'Microsoft Sign-In error', type: 'error' }); }
+  }
+}
+
+async function handleMicrosoftCallback(accessToken) {
+  try {
+    const isEs = (document.documentElement.lang || 'es').startsWith('es');
+    await apiService.microsoftAuth(accessToken);
+    const me = await apiService.getMe();
+    setCurrentUser({ name: me.full_name, role: me.role, id: me.id, email: me.email });
+    sessionStorage.setItem(AUTH_SESSION, 'true');
+    await createLocalOAuthUser(me, 'microsoft');
+    $('login-screen')?.classList.add('hidden');
+    const pinOverlay = $('pin-login-overlay');
+    if (pinOverlay) pinOverlay.remove();
+    const appEl = document.querySelector('.app');
+    if (appEl) appEl.style.display = '';
+    resetLoginAttempts();
+    await initApp();
+    await loadFromServer();
+    Bus.emit('auth:ready');
+    Bus.emit('toast', { msg: (isEs ? 'Bienvenido, ' : 'Welcome, ') + me.full_name + '!' });
+  } catch (e) {
+    const errEl = $('login-error') || $('signup-error') || $('pin-error');
+    if (errEl) { errEl.textContent = e.message || 'Microsoft Sign-In error'; errEl.style.display = 'block'; }
+    else { Bus.emit('toast', { msg: e.message || 'Microsoft Sign-In error', type: 'error' }); }
+  }
 }
 
 // ─── Login ───
@@ -950,6 +1094,26 @@ async function initApp() {
 }
 
 async function bootAuth() {
+  // Fetch OAuth client IDs from backend
+  if (navigator.onLine) {
+    try {
+      const cfg = await apiService.getAuthConfig();
+      if (cfg.google_client_id) {
+        _GOOGLE_CLIENT_ID = cfg.google_client_id;
+        window._GOOGLE_CLIENT_ID = _GOOGLE_CLIENT_ID;
+        localStorage.setItem('egglogu_google_client_id', _GOOGLE_CLIENT_ID);
+      }
+      if (cfg.microsoft_client_id) {
+        _MICROSOFT_CLIENT_ID = cfg.microsoft_client_id;
+        localStorage.setItem('egglogu_microsoft_client_id', _MICROSOFT_CLIENT_ID);
+      }
+      if (cfg.microsoft_tenant_id) {
+        _MICROSOFT_TENANT_ID = cfg.microsoft_tenant_id;
+        localStorage.setItem('egglogu_microsoft_tenant_id', _MICROSOFT_TENANT_ID);
+      }
+    } catch (e) { /* offline or backend unavailable — use cached values */ }
+  }
+
   // Handle password reset from URL
   if (await handlePasswordReset()) return;
 

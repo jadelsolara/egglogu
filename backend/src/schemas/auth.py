@@ -56,7 +56,8 @@ class UserRead(BaseModel):
 
 
 class GoogleAuthRequest(BaseModel):
-    credential: str
+    credential: str = ""  # ID token (One Tap flow)
+    access_token: str = ""  # Access token (popup flow)
     organization_name: str = ""
 
 

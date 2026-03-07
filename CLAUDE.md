@@ -37,6 +37,20 @@ Auth: JWT + Google OAuth + Apple Sign-In + Microsoft Identity + Resend email ver
 - Bug triage: cosmetic+functional = auto-fix path, critical+blocker = team review escalation
 - 8-language support with 17 new translation keys per language
 
+## BASE64 IMAGES — CRITICAL READ RULE
+- egglogu.html contains inline base64 images on lines ~440 and ~472 (login logo + sidebar logo)
+- favicon.svg, icons/icon.svg also contain embedded base64
+- src/assets/sidebar-logo-base64.txt is a raw base64 dump
+- **NEVER read these files without line limits that skip the base64 lines**
+- Reading base64 image data causes API error "Could not process image" and crashes the session
+- Safe patterns:
+  - `Read(file, limit=430)` to read before the first base64 line
+  - `Read(file, offset=475, limit=N)` to read after the base64 lines
+  - Use `Grep` to find specific content (grep skips binary-like data)
+  - Use `Bash(wc -l file)` to check file length before reading
+- **NEVER read sidebar-logo-base64.txt or any file that is purely base64**
+- When editing egglogu.html near base64 lines, use `Grep` to get surrounding context, then `Edit` with exact string match — do NOT read the base64 lines
+
 ## Active Work
 - Post-launch: live at egglogu.com, monitoring and iterating
 - Support module operational (tickets, FAQ, auto-responses, AI assistant v2.0)

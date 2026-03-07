@@ -47,7 +47,7 @@ class EggApp extends HTMLElement {
       <style>
         :host { display: flex; min-height: 100vh; font-family: var(--font, 'Inter', system-ui, sans-serif); }
         .app-layout { display: flex; width: 100%; min-height: 100vh; }
-        .main-content { flex: 1; padding: 24px; overflow-y: auto; background: var(--bg, #f5f7fa); }
+        .main-content { flex: 1; padding: 20px 30px; overflow-y: auto; background: var(--bg, #f5f7fa); margin-left: var(--sidebar-width, 240px); min-height: 100vh; }
         .section { display: none; }
         .section.active { display: block; }
         .loading-spinner {
@@ -60,7 +60,7 @@ class EggApp extends HTMLElement {
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 768px) {
-          .main-content { padding: 12px; }
+          .main-content { margin-left: 0; padding: 60px 15px 20px; }
         }
       </style>
       <div class="app-layout">

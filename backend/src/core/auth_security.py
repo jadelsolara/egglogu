@@ -58,9 +58,11 @@ async def blacklist_token(jti: str, expires_in_seconds: int) -> None:
 
 
 async def is_token_blacklisted(jti: str) -> bool:
-    """Check if a token JTI is blacklisted. Fail-closed: Redis down = treat as blacklisted."""
+    """Check if a token JTI is blacklisted. Fail-closed in production, fail-open in dev."""
     redis = await _get_redis()
     if not redis:
+        if "sqlite" in settings.DATABASE_URL:
+            return False
         logger.error("Redis unavailable for token blacklist check — fail-closed")
         return True
     try:
@@ -103,9 +105,11 @@ LOCKOUT_WINDOW_SECONDS = 1800  # 30 minutes
 
 
 async def record_failed_login(email: str) -> int:
-    """Increment failed login counter. Fail-closed: Redis down = return max attempts."""
+    """Increment failed login counter. Fail-closed in production, fail-open in dev."""
     redis = await _get_redis()
     if not redis:
+        if "sqlite" in settings.DATABASE_URL:
+            return 0
         logger.error(
             "Redis unavailable for login lockout — fail-closed, returning max attempts"
         )
@@ -133,9 +137,12 @@ async def clear_failed_logins(email: str) -> None:
 
 
 async def is_account_locked(email: str) -> bool:
-    """Check if account is locked. Fail-closed: Redis down = treat as locked."""
+    """Check if account is locked. Fail-closed in production, fail-open in dev."""
     redis = await _get_redis()
     if not redis:
+        if "sqlite" in settings.DATABASE_URL:
+            logger.warning("Redis unavailable for lockout check — dev mode, fail-open")
+            return False
         logger.error("Redis unavailable for account lockout check — fail-closed")
         return True
     try:

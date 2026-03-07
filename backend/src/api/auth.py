@@ -658,19 +658,47 @@ async def google_auth(
     if not await check_rate_limit(f"google:{ip}", 10, 900):
         raise RateLimitError("Too many attempts. Try again in 15 minutes.")
 
-    try:
-        payload = google_id_token.verify_oauth2_token(
-            data.credential, GoogleRequest(), settings.GOOGLE_CLIENT_ID
-        )
-    except ValueError:
-        await log_login_attempt(
-            db, "unknown", LoginResult.bad_creds, ip, ua, method="google"
-        )
-        raise UnauthorizedError("Invalid Google token")
+    email = None
+    name = ""
+    sub = None
 
-    email = payload.get("email")
-    name = payload.get("name", "")
-    sub = payload.get("sub")
+    if data.access_token:
+        # Popup flow: verify access_token via Google userinfo API
+        import httpx as _httpx
+
+        try:
+            async with _httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    headers={"Authorization": f"Bearer {data.access_token}"},
+                )
+                if resp.status_code != 200:
+                    raise ValueError("Invalid access token")
+                payload = resp.json()
+                email = payload.get("email")
+                name = payload.get("name", "")
+                sub = payload.get("sub")
+        except Exception:
+            await log_login_attempt(
+                db, "unknown", LoginResult.bad_creds, ip, ua, method="google"
+            )
+            raise UnauthorizedError("Invalid Google token")
+    elif data.credential:
+        # One Tap flow: verify ID token JWT
+        try:
+            payload = google_id_token.verify_oauth2_token(
+                data.credential, GoogleRequest(), settings.GOOGLE_CLIENT_ID
+            )
+            email = payload.get("email")
+            name = payload.get("name", "")
+            sub = payload.get("sub")
+        except ValueError:
+            await log_login_attempt(
+                db, "unknown", LoginResult.bad_creds, ip, ua, method="google"
+            )
+            raise UnauthorizedError("Invalid Google token")
+    else:
+        raise UnauthorizedError("No credential or access_token provided")
     if not email or not sub:
         raise UnauthorizedError("Invalid Google token payload")
 

@@ -33,7 +33,8 @@ function _getCsrfToken() {
   return m ? m[1] : '';
 }
 
-const API_BASE = localStorage.getItem('egglogu_api_base') || 'https://api.egglogu.com/api/v1';
+const _isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const API_BASE = localStorage.getItem('egglogu_api_base') || (_isLocal ? 'http://localhost:8000/api/v1' : 'https://api.egglogu.com/api/v1');
 
 export const apiService = {
   _token: null, _refreshToken: null, _online: navigator.onLine, _syncQueue: [],
@@ -64,6 +65,10 @@ export const apiService = {
     try { resp = await fetch(API_BASE + path, opts); } catch (e) {
       if (method !== 'GET' && body) { this._syncQueue.push({ method, path, body, ts: Date.now() }); }
       throw new Error('offline');
+    }
+    if (resp.status === 503) {
+      const err = await resp.json().catch(() => ({}));
+      if (err.error === 'offline') throw new Error('offline');
     }
     if (resp.status === 401 && retry) {
       const refreshed = await this.refresh();
@@ -110,8 +115,13 @@ export const apiService = {
   async notifyReassignment(data) { return this.request('POST', '/auth/notify-reassignment', data); },
   async forgotPassword(email) { return this.request('POST', '/auth/forgot-password', { email }); },
   async resetPassword(token, newPassword) { return this.request('POST', '/auth/reset-password', { token, new_password: newPassword }); },
+  async getAuthConfig() { return this.request('GET', '/auth/config'); },
   async googleAuth(credential, orgName) {
     const resp = await this.request('POST', '/auth/google', { credential, organization_name: orgName || '' });
+    if (resp.access_token) this.setTokens(resp.access_token, resp.refresh_token); return resp;
+  },
+  async microsoftAuth(accessToken, orgName) {
+    const resp = await this.request('POST', '/auth/microsoft', { access_token: accessToken, organization_name: orgName || '' });
     if (resp.access_token) this.setTokens(resp.access_token, resp.refresh_token); return resp;
   },
 
