@@ -8089,21 +8089,25 @@ document.body.classList.toggle('campo-mode',D.settings.campoMode);
 document.body.classList.toggle('vet-mode',D.settings.vetMode);
 $('btn-campo')?.classList.toggle('active',D.settings.campoMode);
 $('btn-vet')?.classList.toggle('active',D.settings.vetMode);
-// Hide non-essential nav items in campo mode
-document.querySelectorAll('#main-nav a').forEach(a=>{
-const s=a.dataset.section;
-if(D.settings.campoMode&&!['dashboard','produccion','lotes','alimento','ambiente'].includes(s)){a.classList.add('campo-hide');}
-else if(D.settings.vetMode&&!['dashboard','lotes','ambiente','sanidad','bioseguridad','trazabilidad'].includes(s)){a.classList.add('campo-hide');}
-else{a.classList.remove('campo-hide');}
+// First: remove ALL campo-hide classes to reset state
+document.querySelectorAll('.campo-hide').forEach(el=>el.classList.remove('campo-hide'));
+// Then: apply filters only if a mode is active
+if(D.settings.campoMode||D.settings.vetMode){
+const allowed=D.settings.campoMode
+  ?['dashboard','produccion','lotes','alimento','ambiente']
+  :['dashboard','lotes','ambiente','sanidad','bioseguridad','trazabilidad','bienestar'];
+document.querySelectorAll('#main-nav a[data-section]').forEach(a=>{
+  if(!allowed.includes(a.dataset.section))a.classList.add('campo-hide');
 });
 // Hide group labels + group containers whose modules are all hidden
 document.querySelectorAll('.nav-group-label').forEach(lbl=>{
-const grp=lbl.nextElementSibling;
-if(!grp||!grp.classList.contains('nav-group-links'))return;
-const allHidden=Array.from(grp.querySelectorAll('a[data-section]')).every(a=>a.classList.contains('campo-hide'));
-lbl.classList.toggle('campo-hide',allHidden);
-grp.classList.toggle('campo-hide',allHidden);
+  const grp=lbl.nextElementSibling;
+  if(!grp||!grp.classList.contains('nav-group-links'))return;
+  const allHidden=Array.from(grp.querySelectorAll('a[data-section]')).every(a=>a.classList.contains('campo-hide'));
+  lbl.classList.toggle('campo-hide',allHidden);
+  grp.classList.toggle('campo-hide',allHidden);
 });
+}
 }
 function renderCampoDashboard(D){
 const snap=computeKpiSnapshot();const alerts=getAlerts(D);

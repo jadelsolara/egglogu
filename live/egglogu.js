@@ -108,7 +108,8 @@ perfil_title:'Mi Perfil',perfil_subtitle:'Información de tu cuenta',perfil_name
 reassign_title:'Reasignar Cuenta',reassign_btn:'Reasignar',reassign_new_name:'Nombre del nuevo titular',reassign_new_email:'Email del nuevo titular',reassign_new_pin:'PIN del nuevo titular',reassign_confirm:'Confirmar Reasignación',reassign_success:'Cuenta reasignada exitosamente',reassign_no_self:'No puedes reasignarte a ti mismo',reassign_last_owner:'No se puede reasignar al último owner activo',reassign_verify:'Verifica tu PIN para continuar',reassign_notify:'Se enviará notificación al nuevo titular',
 billing_no_permission:'No tienes permisos para acceder a facturación',billing_cancel_sub:'Cancelar Suscripción',billing_cancel_confirm:'Tu plan seguirá activo hasta {date}. Te recomendamos descargar tus datos antes de cancelar.',billing_cancel_success:'Suscripción cancelada',billing_delete_account:'Eliminar Cuenta',billing_delete_warning:'Esta acción es IRREVERSIBLE. Todos los datos se perderán permanentemente.',billing_delete_type_confirm:'Escribe {word} para confirmar',billing_delete_success:'Cuenta eliminada',billing_current_plan:'Plan Actual',billing_manage_payments:'Gestionar Pagos',billing_change_plan:'Cambiar Plan',billing_download_data:'Descargar Datos',
 dt_no_results:'Sin resultados para los filtros aplicados',dt_filters:'filtros',dt_selected:'seleccionados',dt_deselect:'Deseleccionar todo',dt_showing:'Mostrando',dt_records:'registros',dt_of:'de',dt_clear_filters:'Limpiar filtros',dt_columns:'Columnas',dt_export_csv:'Exportar CSV',dt_export_excel:'Exportar Excel',dt_per_page:'Por página',dt_sort_asc:'Ordenar ascendente',dt_sort_desc:'Ordenar descendente',dt_filter:'Filtrar',dt_select_all:'Seleccionar todo',dt_search:'Buscar',dt_page:'Página',
-rpt_title:'Reportes y Análisis',rpt_report:'Reporte',rpt_template:'Plantilla',rpt_period:'Período',rpt_period_total:'Total del período',rpt_generated:'Generado',rpt_invalid_template:'Plantilla de reporte no válida',rpt_tpl_production:'Producción',rpt_tpl_financial:'Financiero',rpt_tpl_health:'Salud',rpt_tpl_feed:'Alimentación',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Últimos 7 días',rpt_period_30d:'Últimos 30 días',rpt_period_90d:'Últimos 90 días',rpt_period_12m:'Últimos 12 meses',rpt_period_custom:'Personalizado',rpt_production_summary:'Resumen de Producción',rpt_total_eggs:'Total Huevos',rpt_avg_day:'Promedio/día',rpt_culled:'Descartadas',rpt_broken_dirty:'Rotos / Sucios',rpt_loss:'pérdida',rpt_daily_production:'Producción Diaria',rpt_size_breakdown:'Desglose por Tamaño',rpt_flock_breakdown:'Desglose por Lote',rpt_broken:'Rotos',rpt_dirty:'Sucios',rpt_financial_pl:'Estado de Resultados',rpt_transactions:'transacciones',rpt_margin:'Margen',rpt_overdue:'vencido(s)',rpt_monthly_trend:'Tendencia Mensual',rpt_by_category:'por Categoría',rpt_other:'Otros',rpt_health_overview:'Resumen de Salud',rpt_applied_period:'aplicadas en el período',rpt_upcoming_vaccines:'Próximas Vacunaciones',rpt_by_flock:'por Lote',rpt_feed_efficiency:'Eficiencia Alimenticia',rpt_hen_day:'gallina/día',rpt_feed_cost:'Costo Alimento',rpt_feed_stock:'Stock de Alimento',rpt_remaining:'restantes',rpt_weekly_consumption:'Consumo Semanal',rpt_by_feed_type:'por Tipo de Alimento',rpt_kpi_trends:'Tendencias KPI',rpt_no_snapshots:'No hay datos de KPI para este período',rpt_kpi_chart:'Producción y Postura',rpt_kpi_fcr_mort:'Conversión y Mortalidad',rpt_type:'Tipo',rpt_xlsx_missing:'Librería XLSX no disponible',rpt_pdf_missing:'Librerías PDF no disponibles',rpt_pdf_error:'Error al exportar PDF',wf_title:'Automatización',wf_create_rule:'Crear Regla',wf_active_rules:'Reglas Activas',wf_executions:'Ejecuciones',wf_last_24h:'Últimas 24h',wf_presets:'Plantillas Predefinidas',wf_rules:'Reglas',wf_no_rules:'No hay reglas configuradas',wf_rule_added:'Regla agregada',wf_execution_log:'Historial de Ejecuciones',wf_rule:'Regla',wf_detail:'Detalle',wf_last_fired:'Última Ejecución',wf_test:'Probar',wf_would_trigger:'Se activaría',wf_would_not_trigger:'No se activaría',wf_rule_name:'Nombre de la regla',wf_condition:'Condición',wf_comparator:'Comparador',wf_threshold:'Umbral',wf_add_action:'Agregar Acción',wf_cooldown:'Tiempo de Espera',wf_hours:'horas',wf_unnamed_rule:'Regla sin nombre',wf_triggered:'Regla activada',wf_invalid_condition:'Condición no válida',wf_cond_deaths_spike:'Pico de Mortalidad',wf_cond_low_production:'Baja Producción',wf_cond_feed_stock:'Stock de Alimento',wf_cond_vaccine_due:'Vacuna Pendiente',wf_cond_temperature:'Temperatura',wf_cond_payment_overdue:'Pago Vencido',wf_cond_outbreak_active:'Brote Activo',wf_cond_production_target:'Meta de Producción',wf_act_notify:'Notificar',wf_act_email:'Correo',wf_act_auto_log:'Auto-registro',wf_act_auto_task:'Auto-tarea',wf_act_update_status:'Actualizar Estado',wf_readings_above:'lecturas por encima',wf_no_target:'Sin meta de producción definida',wf_below_target:'por debajo de la meta',storage_warning:'Almacenamiento local casi lleno (>80%). Considera sincronizar tus datos.',storage_full:'Almacenamiento local lleno. Se liberó espacio automáticamente.',sync_conflicts:'{n} registro(s) actualizado(s) por otro usuario',wf_browser_note:'Las reglas de automatización se evalúan mientras el navegador está abierto.'
+rpt_title:'Reportes y Análisis',rpt_report:'Reporte',rpt_template:'Plantilla',rpt_period:'Período',rpt_period_total:'Total del período',rpt_generated:'Generado',rpt_invalid_template:'Plantilla de reporte no válida',rpt_tpl_production:'Producción',rpt_tpl_financial:'Financiero',rpt_tpl_health:'Salud',rpt_tpl_feed:'Alimentación',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Últimos 7 días',rpt_period_30d:'Últimos 30 días',rpt_period_90d:'Últimos 90 días',rpt_period_12m:'Últimos 12 meses',rpt_period_custom:'Personalizado',rpt_production_summary:'Resumen de Producción',rpt_total_eggs:'Total Huevos',rpt_avg_day:'Promedio/día',rpt_culled:'Descartadas',rpt_broken_dirty:'Rotos / Sucios',rpt_loss:'pérdida',rpt_daily_production:'Producción Diaria',rpt_size_breakdown:'Desglose por Tamaño',rpt_flock_breakdown:'Desglose por Lote',rpt_broken:'Rotos',rpt_dirty:'Sucios',rpt_financial_pl:'Estado de Resultados',rpt_transactions:'transacciones',rpt_margin:'Margen',rpt_overdue:'vencido(s)',rpt_monthly_trend:'Tendencia Mensual',rpt_by_category:'por Categoría',rpt_other:'Otros',rpt_health_overview:'Resumen de Salud',rpt_applied_period:'aplicadas en el período',rpt_upcoming_vaccines:'Próximas Vacunaciones',rpt_by_flock:'por Lote',rpt_feed_efficiency:'Eficiencia Alimenticia',rpt_hen_day:'gallina/día',rpt_feed_cost:'Costo Alimento',rpt_feed_stock:'Stock de Alimento',rpt_remaining:'restantes',rpt_weekly_consumption:'Consumo Semanal',rpt_by_feed_type:'por Tipo de Alimento',rpt_kpi_trends:'Tendencias KPI',rpt_no_snapshots:'No hay datos de KPI para este período',rpt_kpi_chart:'Producción y Postura',rpt_kpi_fcr_mort:'Conversión y Mortalidad',rpt_type:'Tipo',rpt_xlsx_missing:'Librería XLSX no disponible',rpt_pdf_missing:'Librerías PDF no disponibles',rpt_pdf_error:'Error al exportar PDF',wf_title:'Automatización',wf_create_rule:'Crear Regla',wf_active_rules:'Reglas Activas',wf_executions:'Ejecuciones',wf_last_24h:'Últimas 24h',wf_presets:'Plantillas Predefinidas',wf_rules:'Reglas',wf_no_rules:'No hay reglas configuradas',wf_rule_added:'Regla agregada',wf_execution_log:'Historial de Ejecuciones',wf_rule:'Regla',wf_detail:'Detalle',wf_last_fired:'Última Ejecución',wf_test:'Probar',wf_would_trigger:'Se activaría',wf_would_not_trigger:'No se activaría',wf_rule_name:'Nombre de la regla',wf_condition:'Condición',wf_comparator:'Comparador',wf_threshold:'Umbral',wf_add_action:'Agregar Acción',wf_cooldown:'Tiempo de Espera',wf_hours:'horas',wf_unnamed_rule:'Regla sin nombre',wf_triggered:'Regla activada',wf_invalid_condition:'Condición no válida',wf_cond_deaths_spike:'Pico de Mortalidad',wf_cond_low_production:'Baja Producción',wf_cond_feed_stock:'Stock de Alimento',wf_cond_vaccine_due:'Vacuna Pendiente',wf_cond_temperature:'Temperatura',wf_cond_payment_overdue:'Pago Vencido',wf_cond_outbreak_active:'Brote Activo',wf_cond_production_target:'Meta de Producción',wf_act_notify:'Notificar',wf_act_email:'Correo',wf_act_auto_log:'Auto-registro',wf_act_auto_task:'Auto-tarea',wf_act_update_status:'Actualizar Estado',wf_readings_above:'lecturas por encima',wf_no_target:'Sin meta de producción definida',wf_below_target:'por debajo de la meta',storage_warning:'Almacenamiento local casi lleno (>80%). Considera sincronizar tus datos.',storage_full:'Almacenamiento local lleno. Se liberó espacio automáticamente.',sync_conflicts:'{n} registro(s) actualizado(s) por otro usuario',wf_browser_note:'Las reglas de automatización se evalúan mientras el navegador está abierto.',
+nav_welfare:'Bienestar Animal',wel_title:'Bienestar Animal — Welfare Quality',wel_new:'Nueva Evaluación',wel_assessor:'Evaluador',wel_system:'Sistema',wel_sys_cage:'Jaula',wel_sys_barn:'Galpón',wel_sys_free:'Libre',wel_sys_organic:'Orgánico',wel_sample_size:'Tamaño de Muestra',wel_principle:'Principio',wel_p1:'Buena Alimentación',wel_p2:'Buen Alojamiento',wel_p3:'Buena Salud',wel_p4:'Comportamiento Apropiado',wel_c1:'Ausencia de hambre prolongada',wel_c2:'Ausencia de sed prolongada',wel_c3:'Confort en el descanso',wel_c4:'Confort térmico',wel_c5:'Facilidad de movimiento',wel_c6:'Ausencia de lesiones',wel_c7:'Ausencia de enfermedad',wel_c8:'Ausencia de dolor por manejo',wel_c9:'Expresión de comportamiento social',wel_c10:'Expresión de otros comportamientos',wel_c11:'Buena relación humano-animal',wel_c12:'Estado emocional positivo',wel_score:'Puntuación',wel_category:'Categoría',wel_excellent:'Excelente',wel_enhanced:'Mejorado',wel_acceptable:'Aceptable',wel_not_classified:'No Clasificado',wel_keel_prominence:'Prominencia de Quilla',wel_keel_prominence_desc:'Palpar quilla en 100 aves: 0=normal, 1=delgada, 2=emaciada',wel_water:'Disponibilidad de Agua',wel_water_desc:'Acceso funcional a agua limpia: 0=adecuado, 2=inadecuado',wel_perches:'Perchas',wel_perch_shape:'Forma de percha',wel_perch_resting:'Zona de descanso',wel_cm_per_bird:'cm por ave',wel_red_mites:'Ácaros Rojos',wel_dust_sheet:'Test de Polvo (4 láminas)',wel_panting:'Jadeo / Amontonamiento',wel_panting_desc:'% de aves con jadeo o amontonamiento (peor de 3 observaciones)',wel_density:'Densidad (cm²/ave)',wel_horizontal:'Movimiento Horizontal',wel_vertical:'Movimiento Vertical',wel_perforated:'Pisos Perforados (%)',wel_clinical:'Evaluación Clínica (100 aves)',wel_keel_damage:'Daño de Quilla',wel_skin_lesions:'Lesiones de Piel',wel_foot_pad:'Lesiones Plantares',wel_toe_damage:'Daño en Dedos',wel_beak_damage:'Daño/Anomalía de Pico',wel_comb_pecking:'Heridas por Picoteo en Cresta',wel_plumage_head:'Plumaje — Cabeza',wel_plumage_body:'Plumaje — Cuerpo',wel_mortality_pct:'Mortalidad (%)',wel_enlarged_crops:'Buches Agrandados',wel_eye_pathology:'Patología Ocular',wel_respiratory:'Infecciones Respiratorias',wel_enteritis:'Enteritis',wel_parasites:'Parásitos',wel_comb_abnormal:'Anomalías de Cresta',wel_beak_treatment:'Tratamiento de Pico',wel_nest_space:'Espacio de Nido',wel_litter_quality:'Calidad de Cama',wel_litter_material:'Material de Cama',wel_enrichment:'Enriquecimiento',wel_free_range:'Acceso al Aire Libre',wel_cover_range:'Cobertura del Rango (%)',wel_veranda:'Veranda (cm²/ave)',wel_enrichment_use:'Uso de Enriquecimiento',wel_adt:'Test de Distancia de Evitación (ADT)',wel_adt_desc:'Distancia promedio (cm) — 21 aves de 3 ubicaciones',wel_not_test:'Test de Objeto Novedoso (NOT)',wel_not_desc:'Promedio de aves a ≤30cm — 4 ubicaciones × 12 conteos',wel_qba:'Evaluación Cualitativa del Comportamiento (QBA)',wel_qba_desc:'20 descriptores en escala 0-125mm',wel_qba_active:'Activa',wel_qba_relaxed:'Relajada',wel_qba_comfortable:'Confortable',wel_qba_fearful:'Temerosa',wel_qba_agitated:'Agitada',wel_qba_confident:'Segura',wel_qba_depressed:'Deprimida',wel_qba_calm:'Calmada',wel_qba_content:'Satisfecha',wel_qba_tense:'Tensa',wel_qba_unsure:'Insegura',wel_qba_energetic:'Enérgica',wel_qba_frustrated:'Frustrada',wel_qba_bored:'Aburrida',wel_qba_friendly:'Amigable',wel_qba_occupied:'Positivamente Ocupada',wel_qba_scared:'Asustada',wel_qba_nervous:'Nerviosa',wel_qba_happy:'Feliz',wel_qba_distressed:'Angustiada',wel_score_0:'Normal/Bueno',wel_score_1:'Comprometido',wel_score_2:'Perjudicado',wel_birds_assessed:'Aves Evaluadas',wel_pct_score0:'% Puntuación 0',wel_pct_score1:'% Puntuación 1',wel_pct_score2:'% Puntuación 2',wel_overall:'Resultado General',wel_history:'Historial de Evaluaciones',wel_no_assessments:'Sin evaluaciones registradas',wel_start:'Iniciar Evaluación',wel_finish:'Finalizar y Calcular',wel_step:'Paso',wel_of:'de',wel_conditions:'Condiciones Clínicas',wel_behaviour:'Comportamiento',wel_housing:'Alojamiento',wel_feeding:'Alimentación',wel_health:'Salud',wel_next:'Siguiente',wel_prev:'Anterior',wel_adequate:'Adecuado',wel_inadequate:'Inadecuado',wel_good:'Bueno',wel_moderate:'Moderado',wel_severe:'Severo',wel_present:'Presente',wel_absent:'Ausente',wel_protocol_ref:'Protocolo Welfare Quality v2.0 para Gallinas Ponedoras'
 },en:{
 save:'Save',cancel:'Cancel',delete:'Delete',edit:'Edit',add:'Add',close:'Close',actions:'Actions',date:'Date',notes:'Notes',name:'Name',phone:'Phone',email:'Email',address:'Address',confirm_delete:'Delete this record?',no_data:'No data recorded',total:'Total',all:'All',loading:'Loading',search:'Search',from:'From',to:'To',status:'Status',export_csv:'Export CSV',today:'Today',active:'Active',inactive:'Inactive',
 nav_dashboard:'Dashboard',nav_production:'Production',nav_flocks:'Flocks',nav_health:'Health',nav_feed:'Feed',nav_clients:'Clients',nav_finances:'Finances',nav_analysis:'Analysis',nav_operations:'Operations',nav_environment:'Environment',nav_config:'Settings',nav_support:'Support',nav_admin:'SaaS Admin',nav_inventory:'Inventory',nav_superadmin:'Superadmin',grp_production:'Production',grp_health:'Health',grp_commercial:'Commercial',grp_management:'Management',grp_system:'System',grp_superadmin:'Superadmin',
@@ -172,7 +173,8 @@ perfil_title:'My Profile',perfil_subtitle:'Your account information',perfil_name
 reassign_title:'Reassign Account',reassign_btn:'Reassign',reassign_new_name:'New holder name',reassign_new_email:'New holder email',reassign_new_pin:'New holder PIN',reassign_confirm:'Confirm Reassignment',reassign_success:'Account reassigned successfully',reassign_no_self:'You cannot reassign yourself',reassign_last_owner:'Cannot reassign the last active owner',reassign_verify:'Verify your PIN to continue',reassign_notify:'Notification will be sent to the new holder',
 billing_no_permission:'You do not have permission to access billing',billing_cancel_sub:'Cancel Subscription',billing_cancel_confirm:'Your plan will remain active until {date}. We recommend downloading your data before cancelling.',billing_cancel_success:'Subscription cancelled',billing_delete_account:'Delete Account',billing_delete_warning:'This action is IRREVERSIBLE. All data will be permanently lost.',billing_delete_type_confirm:'Type {word} to confirm',billing_delete_success:'Account deleted',billing_current_plan:'Current Plan',billing_manage_payments:'Manage Payments',billing_change_plan:'Change Plan',billing_download_data:'Download Data',
 dt_no_results:'No results match your filters',dt_filters:'filters',dt_selected:'selected',dt_deselect:'Deselect all',dt_showing:'Showing',dt_records:'records',dt_of:'of',dt_clear_filters:'Clear filters',dt_columns:'Columns',dt_export_csv:'Export CSV',dt_export_excel:'Export Excel',dt_per_page:'Per page',dt_sort_asc:'Sort ascending',dt_sort_desc:'Sort descending',dt_filter:'Filter',dt_select_all:'Select all',dt_search:'Search',dt_page:'Page',
-rpt_title:'Reports & Analytics',rpt_report:'Report',rpt_template:'Template',rpt_period:'Period',rpt_period_total:'Period total',rpt_generated:'Generated',rpt_invalid_template:'Invalid report template',rpt_tpl_production:'Production',rpt_tpl_financial:'Financial',rpt_tpl_health:'Health',rpt_tpl_feed:'Feed',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Last 7 days',rpt_period_30d:'Last 30 days',rpt_period_90d:'Last 90 days',rpt_period_12m:'Last 12 months',rpt_period_custom:'Custom',rpt_production_summary:'Production Summary',rpt_total_eggs:'Total Eggs',rpt_avg_day:'Avg/day',rpt_culled:'Culled',rpt_broken_dirty:'Broken / Dirty',rpt_loss:'loss',rpt_daily_production:'Daily Production',rpt_size_breakdown:'Size Breakdown',rpt_flock_breakdown:'Flock Breakdown',rpt_broken:'Broken',rpt_dirty:'Dirty',rpt_financial_pl:'Profit & Loss',rpt_transactions:'transactions',rpt_margin:'Margin',rpt_overdue:'overdue',rpt_monthly_trend:'Monthly Trend',rpt_by_category:'by Category',rpt_other:'Other',rpt_health_overview:'Health Overview',rpt_applied_period:'applied in period',rpt_upcoming_vaccines:'Upcoming Vaccinations',rpt_by_flock:'by Flock',rpt_feed_efficiency:'Feed Efficiency',rpt_hen_day:'hen/day',rpt_feed_cost:'Feed Cost',rpt_feed_stock:'Feed Stock',rpt_remaining:'remaining',rpt_weekly_consumption:'Weekly Consumption',rpt_by_feed_type:'by Feed Type',rpt_kpi_trends:'KPI Trends',rpt_no_snapshots:'No KPI data for this period',rpt_kpi_chart:'Production & Laying',rpt_kpi_fcr_mort:'FCR & Mortality',rpt_type:'Type',rpt_xlsx_missing:'XLSX library not available',rpt_pdf_missing:'PDF libraries not available',rpt_pdf_error:'Error exporting PDF',wf_title:'Automation',wf_create_rule:'Create Rule',wf_active_rules:'Active Rules',wf_executions:'Executions',wf_last_24h:'Last 24h',wf_presets:'Preset Templates',wf_rules:'Rules',wf_no_rules:'No rules configured',wf_rule_added:'Rule added',wf_execution_log:'Execution Log',wf_rule:'Rule',wf_detail:'Detail',wf_last_fired:'Last Fired',wf_test:'Test',wf_would_trigger:'Would trigger',wf_would_not_trigger:'Would not trigger',wf_rule_name:'Rule name',wf_condition:'Condition',wf_comparator:'Comparator',wf_threshold:'Threshold',wf_add_action:'Add Action',wf_cooldown:'Cooldown',wf_hours:'hours',wf_unnamed_rule:'Unnamed rule',wf_triggered:'Rule triggered',wf_invalid_condition:'Invalid condition',wf_cond_deaths_spike:'Mortality Spike',wf_cond_low_production:'Low Production',wf_cond_feed_stock:'Feed Stock',wf_cond_vaccine_due:'Vaccine Due',wf_cond_temperature:'Temperature',wf_cond_payment_overdue:'Payment Overdue',wf_cond_outbreak_active:'Active Outbreak',wf_cond_production_target:'Production Target',wf_act_notify:'Notify',wf_act_email:'Email',wf_act_auto_log:'Auto-log',wf_act_auto_task:'Auto-task',wf_act_update_status:'Update Status',wf_readings_above:'readings above',wf_no_target:'No production target defined',wf_below_target:'below target',storage_warning:'Local storage almost full (>80%). Consider syncing your data.',storage_full:'Local storage full. Space was freed automatically.',sync_conflicts:'{n} record(s) updated by another user',wf_browser_note:'Automation rules are evaluated while the browser is open.'
+rpt_title:'Reports & Analytics',rpt_report:'Report',rpt_template:'Template',rpt_period:'Period',rpt_period_total:'Period total',rpt_generated:'Generated',rpt_invalid_template:'Invalid report template',rpt_tpl_production:'Production',rpt_tpl_financial:'Financial',rpt_tpl_health:'Health',rpt_tpl_feed:'Feed',rpt_tpl_kpi:'KPIs',rpt_period_7d:'Last 7 days',rpt_period_30d:'Last 30 days',rpt_period_90d:'Last 90 days',rpt_period_12m:'Last 12 months',rpt_period_custom:'Custom',rpt_production_summary:'Production Summary',rpt_total_eggs:'Total Eggs',rpt_avg_day:'Avg/day',rpt_culled:'Culled',rpt_broken_dirty:'Broken / Dirty',rpt_loss:'loss',rpt_daily_production:'Daily Production',rpt_size_breakdown:'Size Breakdown',rpt_flock_breakdown:'Flock Breakdown',rpt_broken:'Broken',rpt_dirty:'Dirty',rpt_financial_pl:'Profit & Loss',rpt_transactions:'transactions',rpt_margin:'Margin',rpt_overdue:'overdue',rpt_monthly_trend:'Monthly Trend',rpt_by_category:'by Category',rpt_other:'Other',rpt_health_overview:'Health Overview',rpt_applied_period:'applied in period',rpt_upcoming_vaccines:'Upcoming Vaccinations',rpt_by_flock:'by Flock',rpt_feed_efficiency:'Feed Efficiency',rpt_hen_day:'hen/day',rpt_feed_cost:'Feed Cost',rpt_feed_stock:'Feed Stock',rpt_remaining:'remaining',rpt_weekly_consumption:'Weekly Consumption',rpt_by_feed_type:'by Feed Type',rpt_kpi_trends:'KPI Trends',rpt_no_snapshots:'No KPI data for this period',rpt_kpi_chart:'Production & Laying',rpt_kpi_fcr_mort:'FCR & Mortality',rpt_type:'Type',rpt_xlsx_missing:'XLSX library not available',rpt_pdf_missing:'PDF libraries not available',rpt_pdf_error:'Error exporting PDF',wf_title:'Automation',wf_create_rule:'Create Rule',wf_active_rules:'Active Rules',wf_executions:'Executions',wf_last_24h:'Last 24h',wf_presets:'Preset Templates',wf_rules:'Rules',wf_no_rules:'No rules configured',wf_rule_added:'Rule added',wf_execution_log:'Execution Log',wf_rule:'Rule',wf_detail:'Detail',wf_last_fired:'Last Fired',wf_test:'Test',wf_would_trigger:'Would trigger',wf_would_not_trigger:'Would not trigger',wf_rule_name:'Rule name',wf_condition:'Condition',wf_comparator:'Comparator',wf_threshold:'Threshold',wf_add_action:'Add Action',wf_cooldown:'Cooldown',wf_hours:'hours',wf_unnamed_rule:'Unnamed rule',wf_triggered:'Rule triggered',wf_invalid_condition:'Invalid condition',wf_cond_deaths_spike:'Mortality Spike',wf_cond_low_production:'Low Production',wf_cond_feed_stock:'Feed Stock',wf_cond_vaccine_due:'Vaccine Due',wf_cond_temperature:'Temperature',wf_cond_payment_overdue:'Payment Overdue',wf_cond_outbreak_active:'Active Outbreak',wf_cond_production_target:'Production Target',wf_act_notify:'Notify',wf_act_email:'Email',wf_act_auto_log:'Auto-log',wf_act_auto_task:'Auto-task',wf_act_update_status:'Update Status',wf_readings_above:'readings above',wf_no_target:'No production target defined',wf_below_target:'below target',storage_warning:'Local storage almost full (>80%). Consider syncing your data.',storage_full:'Local storage full. Space was freed automatically.',sync_conflicts:'{n} record(s) updated by another user',wf_browser_note:'Automation rules are evaluated while the browser is open.',
+nav_welfare:'Animal Welfare',wel_title:'Animal Welfare — Welfare Quality',wel_new:'New Assessment',wel_assessor:'Assessor',wel_system:'System',wel_sys_cage:'Cage',wel_sys_barn:'Barn',wel_sys_free:'Free Range',wel_sys_organic:'Organic',wel_sample_size:'Sample Size',wel_principle:'Principle',wel_p1:'Good Feeding',wel_p2:'Good Housing',wel_p3:'Good Health',wel_p4:'Appropriate Behaviour',wel_c1:'Absence of prolonged hunger',wel_c2:'Absence of prolonged thirst',wel_c3:'Comfort around resting',wel_c4:'Thermal comfort',wel_c5:'Ease of movement',wel_c6:'Absence of injuries',wel_c7:'Absence of disease',wel_c8:'Absence of pain induced by management',wel_c9:'Expression of social behaviours',wel_c10:'Expression of other behaviours',wel_c11:'Good human-animal relationship',wel_c12:'Positive emotional state',wel_score:'Score',wel_category:'Category',wel_excellent:'Excellent',wel_enhanced:'Enhanced',wel_acceptable:'Acceptable',wel_not_classified:'Not Classified',wel_keel_prominence:'Keel Bone Prominence',wel_keel_prominence_desc:'Palpate keel on 100 birds: 0=normal, 1=thin, 2=emaciated',wel_water:'Water Availability',wel_water_desc:'Functional access to clean water: 0=adequate, 2=inadequate',wel_perches:'Perches',wel_perch_shape:'Perch shape',wel_perch_resting:'Resting zone',wel_cm_per_bird:'cm per bird',wel_red_mites:'Red Mites',wel_dust_sheet:'Dust Sheet Test (4 sheets)',wel_panting:'Panting / Huddling',wel_panting_desc:'% of birds panting or huddling (worst of 3 observations)',wel_density:'Stocking Density (cm²/bird)',wel_horizontal:'Horizontal Movement',wel_vertical:'Vertical Movement',wel_perforated:'Perforated Floors (%)',wel_clinical:'Clinical Scoring (100 birds)',wel_keel_damage:'Keel Bone Damage',wel_skin_lesions:'Skin Lesions',wel_foot_pad:'Foot Pad Lesions',wel_toe_damage:'Toe Damage',wel_beak_damage:'Beak Damage/Abnormality',wel_comb_pecking:'Comb Pecking Wounds',wel_plumage_head:'Plumage — Head',wel_plumage_body:'Plumage — Body',wel_mortality_pct:'Mortality (%)',wel_enlarged_crops:'Enlarged Crops',wel_eye_pathology:'Eye Pathology',wel_respiratory:'Respiratory Infections',wel_enteritis:'Enteritis',wel_parasites:'Parasites',wel_comb_abnormal:'Comb Abnormalities',wel_beak_treatment:'Beak Treatment',wel_nest_space:'Nest Space',wel_litter_quality:'Litter Quality',wel_litter_material:'Litter Material',wel_enrichment:'Enrichment',wel_free_range:'Free Range Access',wel_cover_range:'Range Cover (%)',wel_veranda:'Veranda (cm²/bird)',wel_enrichment_use:'Enrichment Use',wel_adt:'Avoidance Distance Test (ADT)',wel_adt_desc:'Average distance (cm) — 21 birds from 3 locations',wel_not_test:'Novel Object Test (NOT)',wel_not_desc:'Average birds within 30cm — 4 locations × 12 counts',wel_qba:'Qualitative Behaviour Assessment (QBA)',wel_qba_desc:'20 descriptors on 0-125mm scale',wel_qba_active:'Active',wel_qba_relaxed:'Relaxed',wel_qba_comfortable:'Comfortable',wel_qba_fearful:'Fearful',wel_qba_agitated:'Agitated',wel_qba_confident:'Confident',wel_qba_depressed:'Depressed',wel_qba_calm:'Calm',wel_qba_content:'Content',wel_qba_tense:'Tense',wel_qba_unsure:'Unsure',wel_qba_energetic:'Energetic',wel_qba_frustrated:'Frustrated',wel_qba_bored:'Bored',wel_qba_friendly:'Friendly',wel_qba_occupied:'Positively Occupied',wel_qba_scared:'Scared',wel_qba_nervous:'Nervous',wel_qba_happy:'Happy',wel_qba_distressed:'Distressed',wel_score_0:'Normal/Good',wel_score_1:'Compromised',wel_score_2:'Jeopardized',wel_birds_assessed:'Birds Assessed',wel_pct_score0:'% Score 0',wel_pct_score1:'% Score 1',wel_pct_score2:'% Score 2',wel_overall:'Overall Result',wel_history:'Assessment History',wel_no_assessments:'No assessments recorded',wel_start:'Start Assessment',wel_finish:'Finish & Calculate',wel_step:'Step',wel_of:'of',wel_conditions:'Clinical Conditions',wel_behaviour:'Behaviour',wel_housing:'Housing',wel_feeding:'Feeding',wel_health:'Health',wel_next:'Next',wel_prev:'Previous',wel_adequate:'Adequate',wel_inadequate:'Inadequate',wel_good:'Good',wel_moderate:'Moderate',wel_severe:'Severe',wel_present:'Present',wel_absent:'Absent',wel_protocol_ref:'Welfare Quality Protocol v2.0 for Laying Hens'
 },pt:{
 save:'Salvar',cancel:'Cancelar',delete:'Excluir',edit:'Editar',add:'Adicionar',close:'Fechar',actions:'Ações',date:'Data',notes:'Observações',name:'Nome',phone:'Telefone',email:'Email',address:'Endereço',confirm_delete:'Excluir este registro?',no_data:'Nenhum dado registrado',total:'Total',all:'Todos',loading:'Carregando',search:'Buscar',from:'De',to:'Até',status:'Status',export_csv:'Exportar CSV',today:'Hoje',active:'Ativo',inactive:'Inativo',
 nav_dashboard:'Dashboard',nav_production:'Produção',nav_flocks:'Lotes',nav_health:'Sanidade',nav_feed:'Alimentação',nav_clients:'Clientes',nav_finances:'Finanças',nav_analysis:'Análise',nav_operations:'Operações',nav_environment:'Ambiente',nav_config:'Configuração',nav_support:'Suporte',nav_admin:'Admin SaaS',nav_inventory:'Inventário',nav_superadmin:'Superadmin',grp_production:'Produção',grp_health:'Saúde',grp_commercial:'Comercial',grp_management:'Gestão',grp_system:'Sistema',grp_superadmin:'Superadmin',
@@ -1522,6 +1524,7 @@ inventory:[],
 environment:[],checklist:[],logbook:[],personnel:[],
 kpiSnapshots:[],weatherCache:[],stressEvents:[],iotReadings:[],predictions:[],
 biosecurity:{visitors:[],zones:[],pestSightings:[],protocols:[]},
+welfare:{assessments:[]},
 traceability:{batches:[]},
 productionPlans:[],
 auditLog:[],
@@ -1824,6 +1827,8 @@ if(!DATA.biosecurity.visitors)DATA.biosecurity.visitors=[];
 if(!DATA.biosecurity.zones)DATA.biosecurity.zones=[];
 if(!DATA.biosecurity.pestSightings)DATA.biosecurity.pestSightings=[];
 if(!DATA.biosecurity.protocols)DATA.biosecurity.protocols=[];
+if(!DATA.welfare)DATA.welfare={assessments:[]};
+if(!DATA.welfare.assessments)DATA.welfare.assessments=[];
 if(!DATA.traceability)DATA.traceability={batches:[]};
 if(!DATA.traceability.batches)DATA.traceability.batches=[];
 if(!DATA.productionPlans)DATA.productionPlans=[];
@@ -2553,7 +2558,7 @@ saveData(D);
 }
 
 // ============ UI HELPERS ============
-const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','trazabilidad','carencias','reportes','automatizacion','soporte','admin','superadmin']);
+const HEAVY_SECTIONS=new Set(['dashboard','analisis','finanzas','bioseguridad','bienestar','trazabilidad','carencias','reportes','automatizacion','soporte','admin','superadmin']);
 function toggleNavGroup(lbl){
 const links=lbl.nextElementSibling;if(!links||!links.classList.contains('nav-group-links'))return;
 lbl.classList.toggle('grp-open');links.classList.toggle('grp-open');
@@ -2963,7 +2968,7 @@ $('sec-'+section).classList.add('active');
 document.querySelectorAll('#main-nav a').forEach(a=>a.classList.toggle('active',a.dataset.section===section));
 openNavGroupFor(section);
 $('sidebar').classList.remove('open');
-const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,reportes:renderReportes,automatizacion:renderAutomatizacion,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
+const R={dashboard:renderDashboard,lotes:renderFlocks,produccion:renderProduction,sanidad:renderSanidad,alimento:renderFeed,clientes:renderClients,inventario:renderInventory,finanzas:renderFinances,analisis:renderAnalysis,operaciones:renderOperations,bioseguridad:renderBiosecurity,bienestar:renderBienestar,trazabilidad:renderTraceability,planificacion:renderPlanning,ambiente:renderEnvironment,carencias:renderCarencias,reportes:renderReportes,automatizacion:renderAutomatizacion,soporte:renderSoporte,admin:renderAdmin,config:renderConfig,superadmin:renderSuperadmin};
 const _rb=window.__routeBridge?.getRouteOverride(section);
 if(_rb){_rb();postRenderA11y(section);}
 else if(R[section]){
@@ -8078,6 +8083,392 @@ saveData(D);closeModal();toast(t('cfg_saved'));renderPlanning();
 }
 async function deletePlan(id){if(!await showConfirm(t('confirm_delete')))return;const D=loadData();D.productionPlans=D.productionPlans.filter(p=>p.id!==id);saveData(D);toast(t('cfg_saved'));renderPlanning();}
 
+// ============ ANIMAL WELFARE MODULE (Welfare Quality v2.0) ============
+let _welStep=0;
+let _welDraft=null;
+const WEL_QBA_KEYS=['active','relaxed','comfortable','fearful','agitated','confident','depressed','calm','content','tense','unsure','energetic','frustrated','bored','friendly','occupied','scared','nervous','happy','distressed'];
+const WEL_QBA_NEGATIVE=new Set(['fearful','agitated','depressed','tense','unsure','frustrated','bored','scared','nervous','distressed']);
+const WEL_CLINICAL_KEYS=['keel_damage','skin_lesions','foot_pad','toe_damage','beak_damage','comb_pecking','plumage_head','plumage_body'];
+const WEL_CONDITION_KEYS=['enlarged_crops','eye_pathology','respiratory','enteritis','parasites','comb_abnormal','beak_treatment'];
+
+function renderBienestar(){
+const D=loadData();const assessments=D.welfare.assessments;
+let h=`<div class="page-header"><h2>${t('wel_title')}</h2>
+<div class="btn-group"><button class="btn btn-primary" onclick="showWelfareForm()">${t('wel_new')}</button></div></div>`;
+// KPIs
+const last=assessments.length?assessments[assessments.length-1]:null;
+const catColors={excellent:'#4caf50',enhanced:'#2196f3',acceptable:'#ff9800',not_classified:'#f44336'};
+h+=`<div class="kpi-grid" style="margin-bottom:16px">`;
+h+=`<div class="kpi-card"><div class="kpi-label">${t('total')}</div><div class="kpi-value">${assessments.length}</div></div>`;
+if(last){
+const cc=catColors[last.overallCategory]||'#999';
+h+=`<div class="kpi-card"><div class="kpi-label">${t('wel_overall')}</div><div class="kpi-value" style="color:${cc}">${t('wel_'+last.overallCategory)}</div></div>`;
+h+=`<div class="kpi-card"><div class="kpi-label">${t('wel_p1')}</div><div class="kpi-value">${fmtNum(last.principleScores.feeding,0)}/100</div></div>`;
+h+=`<div class="kpi-card"><div class="kpi-label">${t('wel_p2')}</div><div class="kpi-value">${fmtNum(last.principleScores.housing,0)}/100</div></div>`;
+h+=`<div class="kpi-card"><div class="kpi-label">${t('wel_p3')}</div><div class="kpi-value">${fmtNum(last.principleScores.health,0)}/100</div></div>`;
+h+=`<div class="kpi-card"><div class="kpi-label">${t('wel_p4')}</div><div class="kpi-value">${fmtNum(last.principleScores.behaviour,0)}/100</div></div>`;
+}
+h+=`</div>`;
+// Protocol reference
+h+=`<div class="card" style="background:var(--bg-secondary);padding:12px 16px;margin-bottom:16px;font-size:.85em;opacity:.8"><strong>${t('wel_protocol_ref')}</strong> — 4 ${t('wel_principle')}s, 12 ${t('wel_score')}s, ${t('wel_sample_size')}: 100</div>`;
+// History
+if(!assessments.length){h+=emptyState('🐾',t('wel_no_assessments'),t('wel_new'),'showWelfareForm()');$('sec-bienestar').innerHTML=h;return;}
+h+=`<h3 style="margin:16px 0 8px">${t('wel_history')}</h3>`;
+h+=`<div class="table-responsive"><table class="data-table"><thead><tr>
+<th>${t('date')}</th><th>${t('prod_flock')}</th><th>${t('wel_system')}</th><th>${t('wel_assessor')}</th>
+<th>${t('wel_p1')}</th><th>${t('wel_p2')}</th><th>${t('wel_p3')}</th><th>${t('wel_p4')}</th>
+<th>${t('wel_category')}</th><th>${t('actions')}</th></tr></thead><tbody>`;
+assessments.slice().reverse().forEach(a=>{
+const f=D.flocks.find(x=>x.id===a.flockId);
+const cc=catColors[a.overallCategory]||'#999';
+h+=`<tr>
+<td>${fmtDate(a.date)}</td><td>${f?sanitizeHTML(f.name):'-'}</td>
+<td>${t('wel_sys_'+(a.systemType||'barn'))}</td><td>${sanitizeHTML(a.assessor||'-')}</td>
+<td>${fmtNum(a.principleScores.feeding,0)}</td><td>${fmtNum(a.principleScores.housing,0)}</td>
+<td>${fmtNum(a.principleScores.health,0)}</td><td>${fmtNum(a.principleScores.behaviour,0)}</td>
+<td><span style="color:${cc};font-weight:600">${t('wel_'+a.overallCategory)}</span></td>
+<td><button class="btn btn-sm" onclick="viewWelfareDetail('${escapeAttr(a.id)}')">${t('edit')}</button>
+<button class="btn btn-sm btn-danger" onclick="deleteWelfare('${escapeAttr(a.id)}')">${t('delete')}</button></td></tr>`;
+});
+h+=`</tbody></table></div>`;
+// Trend chart
+if(assessments.length>=2){
+h+=`<div class="card" style="margin-top:16px;padding:16px"><h4>${t('wel_history')}</h4><canvas id="wel-trend-chart" height="200"></canvas></div>`;
+}
+$('sec-bienestar').innerHTML=h;
+if(assessments.length>=2)renderWelfareTrend(assessments);
+}
+
+function renderWelfareTrend(assessments){
+const ctx=document.getElementById('wel-trend-chart');if(!ctx)return;
+const labels=assessments.map(a=>fmtDate(a.date));
+const ds=[
+{label:t('wel_p1'),data:assessments.map(a=>a.principleScores.feeding),borderColor:'#4caf50',fill:false,tension:.3},
+{label:t('wel_p2'),data:assessments.map(a=>a.principleScores.housing),borderColor:'#2196f3',fill:false,tension:.3},
+{label:t('wel_p3'),data:assessments.map(a=>a.principleScores.health),borderColor:'#ff9800',fill:false,tension:.3},
+{label:t('wel_p4'),data:assessments.map(a=>a.principleScores.behaviour),borderColor:'#9c27b0',fill:false,tension:.3}
+];
+if(CHARTS['wel-trend'])try{CHARTS['wel-trend'].destroy();}catch(e){}
+CHARTS['wel-trend']=new Chart(ctx,{type:'line',data:{labels,datasets:ds},options:{responsive:true,scales:{y:{min:0,max:100}},plugins:{legend:{position:'bottom'}}}});
+}
+
+function showWelfareForm(id){
+const D=loadData();
+if(id){_welDraft=JSON.parse(JSON.stringify(D.welfare.assessments.find(a=>a.id===id)));if(!_welDraft)return;}
+else{_welDraft={id:genId(),flockId:'',date:todayStr(),assessor:'',systemType:'barn',totalBirds:0,sampleSize:100,
+feeding:{keelProminence:{s0:0,s1:0,s2:0},water:0},
+housing:{perchShape:0,perchResting:0,cmPerBird:0,redMites:0,dustSheet:[0,0,0,0],pantingPct:0,density:0,horizontal:0,vertical:0,perforatedPct:0},
+health:{clinical:{keel_damage:{s0:0,s1:0,s2:0},skin_lesions:{s0:0,s1:0,s2:0},foot_pad:{s0:0,s1:0,s2:0},toe_damage:{s0:0,s1:0,s2:0},beak_damage:{s0:0,s1:0,s2:0},comb_pecking:{s0:0,s1:0,s2:0},plumage_head:{s0:0,s1:0,s2:0},plumage_body:{s0:0,s1:0,s2:0}},
+mortalityPct:0,conditions:{enlarged_crops:0,eye_pathology:0,respiratory:0,enteritis:0,parasites:0,comb_abnormal:0,beak_treatment:0}},
+behaviour:{nestSpace:0,litterQuality:0,litterMaterial:0,enrichmentFeeding:0,enrichmentAmount:0,freeRange:0,coverPct:0,verandaCm2:0,enrichmentUse:[0,0,0],
+adt:[],not:[],qba:WEL_QBA_KEYS.map(()=>0)},
+overallCategory:'not_classified',principleScores:{feeding:0,housing:0,health:0,behaviour:0},criteriaScores:{}};}
+_welStep=0;
+renderWelfareWizard();
+}
+
+function renderWelfareWizard(){
+const d=_welDraft;const D=loadData();
+const steps=[t('wel_feeding'),t('wel_housing'),t('wel_health'),t('wel_behaviour')];
+let h=`<div class="card" style="padding:24px">`;
+// Stepper
+h+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap">`;
+steps.forEach((s,i)=>{
+const active=i===_welStep;
+h+=`<div onclick="_welStep=${i};renderWelfareWizard()" style="cursor:pointer;padding:8px 16px;border-radius:20px;font-weight:${active?700:400};background:${active?'var(--primary)':'var(--bg-secondary)'};color:${active?'#fff':'inherit'};font-size:.9em">${i+1}. ${s}</div>`;
+if(i<steps.length-1)h+=`<span style="opacity:.3">→</span>`;
+});
+h+=`</div>`;
+// Header fields (only on step 0)
+if(_welStep===0){
+h+=`<div class="form-row"><div class="form-group"><label>${t('prod_flock')}</label><select id="wel-flock" onchange="_welDraft.flockId=this.value">${flockSelect(d.flockId)}</select></div>
+<div class="form-group"><label>${t('date')}</label><input type="date" id="wel-date" value="${d.date}" onchange="_welDraft.date=this.value"></div>
+<div class="form-group"><label>${t('wel_assessor')}</label><input id="wel-assessor" value="${sanitizeHTML(d.assessor)}" onchange="_welDraft.assessor=this.value"></div>
+<div class="form-group"><label>${t('wel_system')}</label><select id="wel-system" onchange="_welDraft.systemType=this.value">
+<option value="cage"${d.systemType==='cage'?' selected':''}>${t('wel_sys_cage')}</option>
+<option value="barn"${d.systemType==='barn'?' selected':''}>${t('wel_sys_barn')}</option>
+<option value="free"${d.systemType==='free'?' selected':''}>${t('wel_sys_free')}</option>
+<option value="organic"${d.systemType==='organic'?' selected':''}>${t('wel_sys_organic')}</option>
+</select></div></div><hr style="margin:16px 0">`;
+}
+// Step content
+if(_welStep===0)h+=renderWelFeeding(d);
+else if(_welStep===1)h+=renderWelHousing(d);
+else if(_welStep===2)h+=renderWelHealth(d);
+else if(_welStep===3)h+=renderWelBehaviour(d);
+// Navigation
+h+=`<div style="display:flex;justify-content:space-between;margin-top:20px">`;
+h+=_welStep>0?`<button class="btn btn-secondary" onclick="_welStep--;renderWelfareWizard()">${t('wel_prev')}</button>`:`<span></span>`;
+if(_welStep<3)h+=`<button class="btn btn-primary" onclick="welSaveStep();_welStep++;renderWelfareWizard()">${t('wel_next')}</button>`;
+else h+=`<button class="btn btn-primary" onclick="welFinish()">${t('wel_finish')}</button>`;
+h+=`</div></div>`;
+$('sec-bienestar').innerHTML=h;
+}
+
+function renderWelFeeding(d){
+let h=`<h3>${t('wel_p1')}</h3>`;
+// Criterion 1: Keel Bone Prominence
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_keel_prominence')}</h4>
+<p style="font-size:.85em;opacity:.7;margin:0 0 12px">${t('wel_keel_prominence_desc')}</p>
+<div class="form-row">
+<div class="form-group"><label>${t('wel_score_0')} (0)</label><input type="number" min="0" max="100" value="${d.feeding.keelProminence.s0}" onchange="_welDraft.feeding.keelProminence.s0=+this.value"></div>
+<div class="form-group"><label>${t('wel_score_1')} (1)</label><input type="number" min="0" max="100" value="${d.feeding.keelProminence.s1}" onchange="_welDraft.feeding.keelProminence.s1=+this.value"></div>
+<div class="form-group"><label>${t('wel_score_2')} (2)</label><input type="number" min="0" max="100" value="${d.feeding.keelProminence.s2}" onchange="_welDraft.feeding.keelProminence.s2=+this.value"></div>
+</div></div>`;
+// Criterion 2: Water Availability
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_water')}</h4>
+<p style="font-size:.85em;opacity:.7;margin:0 0 12px">${t('wel_water_desc')}</p>
+<div class="form-row"><div class="form-group"><label>${t('wel_score')}</label>
+<select onchange="_welDraft.feeding.water=+this.value">
+<option value="0"${d.feeding.water===0?' selected':''}>0 — ${t('wel_adequate')}</option>
+<option value="2"${d.feeding.water===2?' selected':''}>2 — ${t('wel_inadequate')}</option>
+</select></div></div></div>`;
+return h;
+}
+
+function renderWelHousing(d){
+let h=`<h3>${t('wel_p2')}</h3>`;
+// Perches
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_perches')}</h4>
+<div class="form-row">
+<div class="form-group"><label>${t('wel_perch_shape')}</label><select onchange="_welDraft.housing.perchShape=+this.value">
+<option value="0"${d.housing.perchShape===0?' selected':''}>0 — ${t('wel_good')}</option>
+<option value="2"${d.housing.perchShape===2?' selected':''}>2 — ${t('wel_severe')}</option></select></div>
+<div class="form-group"><label>${t('wel_perch_resting')}</label><select onchange="_welDraft.housing.perchResting=+this.value">
+<option value="0"${d.housing.perchResting===0?' selected':''}>0 — ${t('wel_adequate')}</option>
+<option value="2"${d.housing.perchResting===2?' selected':''}>2 — ${t('wel_inadequate')}</option></select></div>
+<div class="form-group"><label>${t('wel_cm_per_bird')}</label><input type="number" min="0" step="0.1" value="${d.housing.cmPerBird}" onchange="_welDraft.housing.cmPerBird=+this.value"></div>
+</div></div>`;
+// Red Mites & Dust
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_red_mites')} / ${t('wel_dust_sheet')}</h4>
+<div class="form-row">
+<div class="form-group"><label>${t('wel_red_mites')}</label><select onchange="_welDraft.housing.redMites=+this.value">
+<option value="0"${d.housing.redMites===0?' selected':''}>0 — ${t('wel_absent')}</option>
+<option value="1"${d.housing.redMites===1?' selected':''}>1 — ${t('wel_moderate')}</option>
+<option value="2"${d.housing.redMites===2?' selected':''}>2 — ${t('wel_severe')}</option></select></div>
+${d.housing.dustSheet.map((v,i)=>`<div class="form-group"><label>${t('wel_dust_sheet')} ${i+1}</label><select onchange="_welDraft.housing.dustSheet[${i}]=+this.value">
+<option value="0"${v===0?' selected':''}>0</option><option value="1"${v===1?' selected':''}>1</option><option value="2"${v===2?' selected':''}>2</option></select></div>`).join('')}
+</div></div>`;
+// Thermal & Movement
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_panting')}</h4>
+<p style="font-size:.85em;opacity:.7;margin:0 0 12px">${t('wel_panting_desc')}</p>
+<div class="form-row">
+<div class="form-group"><label>%</label><input type="number" min="0" max="100" step="0.1" value="${d.housing.pantingPct}" onchange="_welDraft.housing.pantingPct=+this.value"></div>
+<div class="form-group"><label>${t('wel_density')}</label><input type="number" min="0" step="1" value="${d.housing.density}" onchange="_welDraft.housing.density=+this.value"></div>
+</div></div>`;
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_horizontal')} / ${t('wel_vertical')}</h4>
+<div class="form-row">
+<div class="form-group"><label>${t('wel_horizontal')}</label><select onchange="_welDraft.housing.horizontal=+this.value">
+<option value="0"${d.housing.horizontal===0?' selected':''}>0 — ${t('wel_good')}</option>
+<option value="1"${d.housing.horizontal===1?' selected':''}>1 — ${t('wel_moderate')}</option>
+<option value="2"${d.housing.horizontal===2?' selected':''}>2 — ${t('wel_severe')}</option></select></div>
+<div class="form-group"><label>${t('wel_vertical')}</label><select onchange="_welDraft.housing.vertical=+this.value">
+<option value="0"${d.housing.vertical===0?' selected':''}>0 — ${t('wel_good')}</option>
+<option value="1"${d.housing.vertical===1?' selected':''}>1 — ${t('wel_moderate')}</option>
+<option value="2"${d.housing.vertical===2?' selected':''}>2 — ${t('wel_severe')}</option></select></div>
+<div class="form-group"><label>${t('wel_perforated')}</label><input type="number" min="0" max="100" step="0.1" value="${d.housing.perforatedPct}" onchange="_welDraft.housing.perforatedPct=+this.value"></div>
+</div></div>`;
+return h;
+}
+
+function renderWelHealth(d){
+let h=`<h3>${t('wel_p3')}</h3>`;
+// Clinical scoring summary — aggregate counts per measure
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_clinical')}</h4>
+<p style="font-size:.85em;opacity:.7;margin:0 0 12px">${t('wel_birds_assessed')}: ${d.sampleSize||100}</p>
+<div class="table-responsive"><table class="data-table"><thead><tr><th>${t('wel_score')}</th><th>${t('wel_pct_score0')}</th><th>${t('wel_pct_score1')}</th><th>${t('wel_pct_score2')}</th></tr></thead><tbody>`;
+WEL_CLINICAL_KEYS.forEach(k=>{
+const ck=d.health.clinical[k]||{s0:0,s1:0,s2:0};
+const label=t('wel_'+k);
+h+=`<tr><td><strong>${label}</strong></td>
+<td><input type="number" min="0" max="100" style="width:70px" value="${ck.s0}" onchange="_welDraft.health.clinical['${k}'].s0=+this.value"></td>
+<td><input type="number" min="0" max="100" style="width:70px" value="${ck.s1}" onchange="_welDraft.health.clinical['${k}'].s1=+this.value"></td>
+<td><input type="number" min="0" max="100" style="width:70px" value="${ck.s2}" onchange="_welDraft.health.clinical['${k}'].s2=+this.value"></td></tr>`;
+});
+h+=`</tbody></table></div></div>`;
+// Mortality
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_mortality_pct')}</h4>
+<div class="form-row"><div class="form-group"><label>%</label>
+<input type="number" min="0" max="100" step="0.01" value="${d.health.mortalityPct}" onchange="_welDraft.health.mortalityPct=+this.value"></div></div></div>`;
+// Clinical conditions
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_conditions')}</h4>
+<div class="table-responsive"><table class="data-table"><thead><tr><th>${t('wel_conditions')}</th><th>${t('wel_score')} (0-2)</th></tr></thead><tbody>`;
+WEL_CONDITION_KEYS.forEach(k=>{
+const v=d.health.conditions[k]||0;
+h+=`<tr><td>${t('wel_'+k)}</td><td><select onchange="_welDraft.health.conditions['${k}']=+this.value">
+<option value="0"${v===0?' selected':''}>0 — ${t('wel_absent')}</option>
+<option value="1"${v===1?' selected':''}>1 — ${t('wel_moderate')}</option>
+<option value="2"${v===2?' selected':''}>2 — ${t('wel_severe')}</option></select></td></tr>`;
+});
+h+=`</tbody></table></div></div>`;
+return h;
+}
+
+function renderWelBehaviour(d){
+let h=`<h3>${t('wel_p4')}</h3>`;
+// Nest, Litter, Enrichment
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_nest_space')} / ${t('wel_litter_quality')} / ${t('wel_enrichment')}</h4>
+<div class="form-row">
+<div class="form-group"><label>${t('wel_nest_space')} (cm²)</label><input type="number" min="0" step="1" value="${d.behaviour.nestSpace}" onchange="_welDraft.behaviour.nestSpace=+this.value"></div>
+<div class="form-group"><label>${t('wel_litter_quality')}</label><select onchange="_welDraft.behaviour.litterQuality=+this.value">
+<option value="0"${d.behaviour.litterQuality===0?' selected':''}>0 — ${t('wel_good')}</option>
+<option value="1"${d.behaviour.litterQuality===1?' selected':''}>1 — ${t('wel_moderate')}</option>
+<option value="2"${d.behaviour.litterQuality===2?' selected':''}>2 — ${t('wel_severe')}</option></select></div>
+<div class="form-group"><label>${t('wel_litter_material')}</label><select onchange="_welDraft.behaviour.litterMaterial=+this.value">
+<option value="0"${d.behaviour.litterMaterial===0?' selected':''}>0 — ${t('wel_adequate')}</option>
+<option value="2"${d.behaviour.litterMaterial===2?' selected':''}>2 — ${t('wel_inadequate')}</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>${t('wel_enrichment')} (${t('wel_feeding')})</label><select onchange="_welDraft.behaviour.enrichmentFeeding=+this.value">
+<option value="0"${d.behaviour.enrichmentFeeding===0?' selected':''}>0 — ${t('wel_adequate')}</option>
+<option value="2"${d.behaviour.enrichmentFeeding===2?' selected':''}>2 — ${t('wel_inadequate')}</option></select></div>
+<div class="form-group"><label>${t('wel_enrichment')} (${t('wel_score')})</label><select onchange="_welDraft.behaviour.enrichmentAmount=+this.value">
+<option value="0"${d.behaviour.enrichmentAmount===0?' selected':''}>0</option>
+<option value="1"${d.behaviour.enrichmentAmount===1?' selected':''}>1</option>
+<option value="2"${d.behaviour.enrichmentAmount===2?' selected':''}>2</option></select></div>
+<div class="form-group"><label>${t('wel_free_range')}</label><select onchange="_welDraft.behaviour.freeRange=+this.value">
+<option value="0"${d.behaviour.freeRange===0?' selected':''}>0 — ${t('wel_good')}</option>
+<option value="1"${d.behaviour.freeRange===1?' selected':''}>1 — ${t('wel_moderate')}</option>
+<option value="2"${d.behaviour.freeRange===2?' selected':''}>2 — ${t('wel_severe')}</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>${t('wel_cover_range')}</label><input type="number" min="0" max="100" step="0.1" value="${d.behaviour.coverPct}" onchange="_welDraft.behaviour.coverPct=+this.value"></div>
+<div class="form-group"><label>${t('wel_veranda')}</label><input type="number" min="0" step="1" value="${d.behaviour.verandaCm2}" onchange="_welDraft.behaviour.verandaCm2=+this.value"></div>
+</div></div>`;
+// Enrichment Use (3 scoring moments)
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_enrichment_use')}</h4>
+<div class="form-row">${d.behaviour.enrichmentUse.map((v,i)=>`<div class="form-group"><label>#${i+1} (0-4)</label>
+<input type="number" min="0" max="4" value="${v}" onchange="_welDraft.behaviour.enrichmentUse[${i}]=+this.value"></div>`).join('')}</div></div>`;
+// ADT
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_adt')}</h4>
+<p style="font-size:.85em;opacity:.7;margin:0 0 12px">${t('wel_adt_desc')}</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">`;
+for(let i=0;i<21;i++){
+const v=d.behaviour.adt[i]||0;
+h+=`<div style="width:60px"><label style="font-size:.75em">#${i+1}</label>
+<input type="number" min="0" max="200" style="width:100%" value="${v}" onchange="_welDraft.behaviour.adt[${i}]=+this.value"></div>`;
+}
+h+=`</div></div>`;
+// NOT
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_not_test')}</h4>
+<p style="font-size:.85em;opacity:.7;margin:0 0 12px">${t('wel_not_desc')}</p>
+<div class="table-responsive"><table class="data-table"><thead><tr><th></th>`;
+for(let t2=1;t2<=12;t2++)h+=`<th>T${t2}</th>`;
+h+=`</tr></thead><tbody>`;
+for(let loc=0;loc<4;loc++){
+h+=`<tr><td><strong>Loc ${loc+1}</strong></td>`;
+for(let ti=0;ti<12;ti++){
+const idx=loc*12+ti;
+const v=(d.behaviour.not[idx])||0;
+h+=`<td><input type="number" min="0" max="50" style="width:45px" value="${v}" onchange="_welDraft.behaviour.not[${idx}]=+this.value"></td>`;
+}
+h+=`</tr>`;
+}
+h+=`</tbody></table></div></div>`;
+// QBA
+h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4>${t('wel_qba')}</h4>
+<p style="font-size:.85em;opacity:.7;margin:0 0 12px">${t('wel_qba_desc')}</p>`;
+WEL_QBA_KEYS.forEach((k,i)=>{
+const v=d.behaviour.qba[i]||0;
+const isNeg=WEL_QBA_NEGATIVE.has(k);
+h+=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+<span style="width:180px;font-size:.9em;${isNeg?'color:#e53935;font-style:italic':''}">${t('wel_qba_'+k)}${isNeg?' ↓':''}</span>
+<input type="range" min="0" max="125" value="${v}" style="flex:1" oninput="_welDraft.behaviour.qba[${i}]=+this.value;this.nextElementSibling.textContent=this.value+'mm'">
+<span style="width:45px;font-size:.85em;text-align:right">${v}mm</span></div>`;
+});
+h+=`</div>`;
+return h;
+}
+
+function welSaveStep(){/* draft is updated via onchange handlers */}
+
+function welFinish(){
+const d=_welDraft;
+if(!d.flockId){toast(t('qe_select_flock'),true);return;}
+// Calculate scores
+d.principleScores=calcWelfareScores(d);
+d.overallCategory=calcWelfareCategory(d.principleScores);
+d.criteriaScores=calcWelfareCriteria(d);
+// Save
+const D=loadData();
+const idx=D.welfare.assessments.findIndex(a=>a.id===d.id);
+if(idx>=0)D.welfare.assessments[idx]=d;
+else D.welfare.assessments.push(d);
+saveData(D);_welDraft=null;_welStep=0;
+toast(t('cfg_saved'));renderBienestar();
+}
+
+function calcWelfareCriteria(d){
+const c={};
+const kp=d.feeding.keelProminence;const kpTotal=kp.s0+kp.s1+kp.s2||1;
+c.c1=Math.max(0,100-((kp.s2/kpTotal)*100)*2.5);
+c.c2=d.feeding.water===0?100:20;
+// Housing criteria
+const dustAvg=d.housing.dustSheet.reduce((a,b)=>a+b,0)/4;
+c.c3=Math.max(0,100-((d.housing.perchShape+d.housing.perchResting)/4*100)-(dustAvg/2*30)-(d.housing.redMites/2*20));
+c.c4=Math.max(0,100-(d.housing.pantingPct*2));
+const movPenalty=(d.housing.horizontal+d.housing.vertical)/4*100;
+const densPenalty=d.housing.density>0?Math.max(0,(750-d.housing.density)/750*30):0;
+c.c5=Math.max(0,100-movPenalty-densPenalty-(d.housing.perforatedPct>50?20:0));
+// Health criteria
+let injScore=0;
+WEL_CLINICAL_KEYS.forEach(k=>{const ck=d.health.clinical[k];const tot=ck.s0+ck.s1+ck.s2||1;injScore+=(ck.s2/tot)*100;});
+c.c6=Math.max(0,100-(injScore/WEL_CLINICAL_KEYS.length)*1.5);
+let condScore=0;
+WEL_CONDITION_KEYS.forEach(k=>{condScore+=d.health.conditions[k];});
+c.c7=Math.max(0,100-(condScore/WEL_CONDITION_KEYS.length)*25-(d.health.mortalityPct*5));
+const beakPct=d.health.clinical.beak_damage?(d.health.clinical.beak_damage.s2/(d.health.clinical.beak_damage.s0+d.health.clinical.beak_damage.s1+d.health.clinical.beak_damage.s2||1))*100:0;
+c.c8=Math.max(0,100-beakPct*1.5-(d.health.conditions.beak_treatment||0)*20);
+// Behaviour criteria
+const pHead=d.health.clinical.plumage_head;const pBody=d.health.clinical.plumage_body;const cPeck=d.health.clinical.comb_pecking;
+const pHT=pHead.s0+pHead.s1+pHead.s2||1;const pBT=pBody.s0+pBody.s1+pBody.s2||1;const cPT=cPeck.s0+cPeck.s1+cPeck.s2||1;
+c.c9=Math.max(0,100-((pHead.s2/pHT)*100+(pBody.s2/pBT)*100+(cPeck.s2/cPT)*100)/3*2);
+c.c10=Math.max(0,100-(d.behaviour.litterQuality+d.behaviour.litterMaterial+d.behaviour.enrichmentFeeding+d.behaviour.enrichmentAmount)/8*100-(d.behaviour.freeRange/2*20));
+// Human-animal: ADT & NOT
+const adtVals=d.behaviour.adt.filter(v=>v>0);
+const adtAvg=adtVals.length?adtVals.reduce((a,b)=>a+b,0)/adtVals.length:50;
+const notVals=d.behaviour.not.filter(v=>v>0);
+const notAvg=notVals.length?notVals.reduce((a,b)=>a+b,0)/notVals.length:0;
+c.c11=Math.max(0,Math.min(100,100-(adtAvg-10)*2+notAvg*3));
+// QBA
+const posSum=d.behaviour.qba.filter((_,i)=>!WEL_QBA_NEGATIVE.has(WEL_QBA_KEYS[i])).reduce((a,b)=>a+b,0);
+const negSum=d.behaviour.qba.filter((_,i)=>WEL_QBA_NEGATIVE.has(WEL_QBA_KEYS[i])).reduce((a,b)=>a+b,0);
+const qbaScore=(posSum/(10*125))*100-(negSum/(10*125))*50;
+c.c12=Math.max(0,Math.min(100,50+qbaScore));
+return c;
+}
+
+function calcWelfareScores(d){
+const c=calcWelfareCriteria(d);
+return{
+feeding:Math.round((c.c1*0.6+c.c2*0.4)),
+housing:Math.round((c.c3*0.33+c.c4*0.27+c.c5*0.4)),
+health:Math.round((c.c6*0.33+c.c7*0.34+c.c8*0.33)),
+behaviour:Math.round((c.c9*0.25+c.c10*0.25+c.c11*0.25+c.c12*0.25))
+};
+}
+
+function calcWelfareCategory(ps){
+const vals=Object.values(ps);
+const allAbove55=vals.every(v=>v>55);
+const twoAbove80=vals.filter(v=>v>80).length>=2;
+if(allAbove55&&twoAbove80)return 'excellent';
+const allAbove20=vals.every(v=>v>20);
+const twoAbove55=vals.filter(v=>v>55).length>=2;
+if(allAbove20&&twoAbove55)return 'enhanced';
+const allAbove10=vals.every(v=>v>10);
+const threeAbove20=vals.filter(v=>v>20).length>=3;
+if(allAbove10&&threeAbove20)return 'acceptable';
+return 'not_classified';
+}
+
+function viewWelfareDetail(id){showWelfareForm(id);}
+async function deleteWelfare(id){
+if(!await showConfirm(t('confirm_delete')))return;
+const D=loadData();D.welfare.assessments=D.welfare.assessments.filter(a=>a.id!==id);
+saveData(D);toast(t('cfg_saved'));renderBienestar();
+}
+
 // ============ CAMPO MODE ============
 function toggleCampoMode(){
 const D=loadData();D.settings.campoMode=!D.settings.campoMode;
@@ -8089,34 +8480,75 @@ document.body.classList.toggle('campo-mode',D.settings.campoMode);
 document.body.classList.toggle('vet-mode',D.settings.vetMode);
 $('btn-campo')?.classList.toggle('active',D.settings.campoMode);
 $('btn-vet')?.classList.toggle('active',D.settings.vetMode);
-// Hide non-essential nav items in campo mode
-document.querySelectorAll('#main-nav a').forEach(a=>{
-const s=a.dataset.section;
-if(D.settings.campoMode&&!['dashboard','produccion','lotes','alimento','ambiente'].includes(s)){a.classList.add('campo-hide');}
-else if(D.settings.vetMode&&!['dashboard','lotes','ambiente','sanidad','bioseguridad','trazabilidad'].includes(s)){a.classList.add('campo-hide');}
-else{a.classList.remove('campo-hide');}
+// First: remove ALL campo-hide classes to reset state
+document.querySelectorAll('.campo-hide').forEach(el=>el.classList.remove('campo-hide'));
+// Then: apply filters only if a mode is active
+if(D.settings.campoMode||D.settings.vetMode){
+const allowed=D.settings.campoMode
+  ?['dashboard','produccion','lotes','alimento','ambiente']
+  :['dashboard','lotes','ambiente','sanidad','bioseguridad','trazabilidad','bienestar'];
+document.querySelectorAll('#main-nav a[data-section]').forEach(a=>{
+  if(!allowed.includes(a.dataset.section))a.classList.add('campo-hide');
 });
 // Hide group labels + group containers whose modules are all hidden
 document.querySelectorAll('.nav-group-label').forEach(lbl=>{
-const grp=lbl.nextElementSibling;
-if(!grp||!grp.classList.contains('nav-group-links'))return;
-const allHidden=Array.from(grp.querySelectorAll('a[data-section]')).every(a=>a.classList.contains('campo-hide'));
-lbl.classList.toggle('campo-hide',allHidden);
-grp.classList.toggle('campo-hide',allHidden);
+  const grp=lbl.nextElementSibling;
+  if(!grp||!grp.classList.contains('nav-group-links'))return;
+  const allHidden=Array.from(grp.querySelectorAll('a[data-section]')).every(a=>a.classList.contains('campo-hide'));
+  lbl.classList.toggle('campo-hide',allHidden);
+  grp.classList.toggle('campo-hide',allHidden);
 });
+}
 }
 function renderCampoDashboard(D){
 const snap=computeKpiSnapshot();const alerts=getAlerts(D);
-let h=`<div style="text-align:center;padding:20px 0"><h2>🌾 ${t('nav_campo_mode')}</h2></div>`;
-h+=`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin:0 auto">`;
-h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_today')}</div><div class="campo-kpi">${fmtNum(snap.eggsToday)}</div></div>`;
-h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_henday')}</div><div class="campo-kpi">${fmtNum(snap.henDay,1)}%</div></div>`;
-h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_mortality')}</div><div class="campo-kpi">${fmtNum(snap.mortality,1)}%</div></div>`;
-h+=`<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_alerts')}</div><div class="campo-kpi">${alerts.length}</div></div>`;
+const today=todayStr();const todayProd=D.dailyProduction.filter(p=>p.date===today);
+const todayEggs=todayProd.reduce((s,p)=>s+(p.eggsCollected||0),0);
+const todayDeaths=todayProd.reduce((s,p)=>s+(p.deaths||0),0);
+const feedStock=D.feed.purchases.reduce((s,p)=>s+(p.quantityKg||0),0)-D.feed.consumption.reduce((s,c)=>s+(c.quantityKg||0),0);
+const activeFlocks=D.flocks.filter(f=>f.status!=='descarte');
+// Header
+let h=`<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;flex-wrap:wrap;gap:12px">
+<div><h2 style="margin:0">🌾 ${t('nav_campo_mode')}</h2><span style="opacity:.6;font-size:.85em">${fmtDate(today)} — ${activeFlocks.length} ${t('kpi_active_flocks').toLowerCase()}</span></div>
+<button class="btn btn-primary" onclick="showCampoQuickEntry()" style="font-size:1.1em;padding:12px 24px;border-radius:12px">📝 ${t('campo_quick_entry')}</button></div>`;
+// KPIs — large touch-friendly grid
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px">`;
+const kpiStyle='padding:20px;text-align:center;border-radius:12px';
+const valStyle='font-size:2em;font-weight:700;margin:4px 0';
+const lblStyle='font-size:.8em;opacity:.6;text-transform:uppercase;letter-spacing:.5px';
+h+=`<div class="kpi-card" style="${kpiStyle}"><div style="${lblStyle}">${t('kpi_today')}</div><div style="${valStyle};color:#4caf50">${fmtNum(todayEggs)}</div><div style="font-size:.75em;opacity:.5">🥚</div></div>`;
+h+=`<div class="kpi-card" style="${kpiStyle}"><div style="${lblStyle}">${t('kpi_henday')}</div><div style="${valStyle};color:${snap.henDay>=80?'#4caf50':snap.henDay>=60?'#ff9800':'#f44336'}">${fmtNum(snap.henDay,1)}%</div><div style="font-size:.75em;opacity:.5">${snap.henDay>=80?'🟢':snap.henDay>=60?'🟡':'🔴'}</div></div>`;
+h+=`<div class="kpi-card" style="${kpiStyle}"><div style="${lblStyle}">${t('kpi_mortality')}</div><div style="${valStyle};color:${snap.mortality<=3?'#4caf50':snap.mortality<=5?'#ff9800':'#f44336'}">${fmtNum(snap.mortality,1)}%</div><div style="font-size:.75em;opacity:.5">${todayDeaths>0?'⚠️ '+todayDeaths+' hoy':'✅'}</div></div>`;
+h+=`<div class="kpi-card" style="${kpiStyle}"><div style="${lblStyle}">${t('kpi_active_hens')}</div><div style="${valStyle}">${fmtNum(activeHens())}</div><div style="font-size:.75em;opacity:.5">🐔</div></div>`;
+h+=`<div class="kpi-card" style="${kpiStyle}"><div style="${lblStyle}">${t('kpi_fcr')}</div><div style="${valStyle};color:${snap.fcr>0&&snap.fcr<=2.2?'#4caf50':snap.fcr>2.2?'#ff9800':'#999'}">${snap.fcr>0?fmtNum(snap.fcr,2):'—'}</div><div style="font-size:.75em;opacity:.5">${snap.fcr>0&&snap.fcr<=2.2?'🟢':'🟡'}</div></div>`;
+h+=`<div class="kpi-card" style="${kpiStyle}"><div style="${lblStyle}">Stock Alimento</div><div style="${valStyle};color:${feedStock>100?'#4caf50':feedStock>30?'#ff9800':'#f44336'}">${fmtNum(feedStock,0)} kg</div><div style="font-size:.75em;opacity:.5">🌾</div></div>`;
 h+=`</div>`;
+// Flock status cards
+if(activeFlocks.length){
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:16px">`;
+activeFlocks.forEach(f=>{
+const fp=D.dailyProduction.filter(p=>p.flockId===f.id&&p.date===today);
+const fe=fp.reduce((s,p)=>s+(p.eggsCollected||0),0);
+const hs=computeFlockHealthScore(f.id,D);
+const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate))/(7*86400000)):0;
+h+=`<div class="card" style="padding:16px;border-left:4px solid ${hs>=70?'#4caf50':hs>=40?'#ff9800':'#f44336'}">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><strong>${sanitizeHTML(f.name)}</strong><br><span style="font-size:.8em;opacity:.6">${sanitizeHTML(f.breed||'')} — ${age} ${t('flock_weeks')}</span></div>
+<div style="text-align:right"><div style="font-size:1.5em;font-weight:700;color:#4caf50">${fmtNum(fe)}</div><div style="font-size:.75em;opacity:.6">🥚 ${t('today')}</div></div>
+</div>
+<div style="display:flex;gap:16px;margin-top:8px;font-size:.85em;opacity:.7">
+<span>🐔 ${fmtNum(f.count||0)}</span><span>❤️ ${hs}/100</span><span>${f.status==='produccion'?'🟢':'🟡'} ${t('flock_status_'+f.status)}</span>
+</div></div>`;
+});
+h+=`</div>`;
+}
+// Alerts
+if(alerts.length){h+=`<div class="card" style="padding:16px;margin-bottom:16px"><h3 style="margin:0 0 12px">⚠️ ${t('dash_alerts')} (${alerts.length})</h3>`;
+alerts.slice(0,5).forEach(a=>{h+=`<div class="alert-card alert-${sanitizeHTML(a.type)}" style="margin-bottom:8px">${sanitizeHTML(a.icon)} ${a.msg}</div>`;});
+if(alerts.length>5)h+=`<div style="text-align:center;opacity:.6;font-size:.85em">+${alerts.length-5} más</div>`;
+h+='</div>';}
+// Quick entry inline
 h+=renderQuickEntry();
-if(alerts.length){h+=`<div class="card" style="margin-top:16px"><h3>${t('dash_alerts')}</h3>`;
-alerts.forEach(a=>{h+=`<div class="alert-card alert-${sanitizeHTML(a.type)}">${sanitizeHTML(a.icon)} ${a.msg}</div>`;});h+='</div>';}
 return h;
 }
 function showCampoQuickEntry(){
@@ -8144,38 +8576,100 @@ saveData(D);applyCampoMode(D);
 if(D.settings.vetMode)showVetDashboard();else nav('dashboard');
 }
 function showVetDashboard(){
-const D=loadData();
-let h=`<div style="text-align:center;padding:12px 0"><h2>🩺 ${t('nav_vet_mode')}</h2></div>`;
-h+=`<div class="form-group"><label>${t('vet_select_farm')}</label><select id="vet-flock" onchange="renderVetFlock()">${flockSelect('',true)}</select></div>`;
-h+=`<div id="vet-content"></div>`;
-h+=`<div class="card" style="margin-top:16px"><h4>${t('actions')}</h4><div class="btn-group">
-<button class="btn btn-primary" onclick="vetAction('visit')">✅ ${t('vet_visit')}</button>
+const D=loadData();const today=todayStr();
+const activeFlocks=D.flocks.filter(f=>f.status!=='descarte');
+const allOutbreaks=D.outbreaks.filter(o=>o.status==='active');
+const allPendingVac=D.vaccines.filter(v=>v.status!=='applied');
+const overdueVac=allPendingVac.filter(v=>v.scheduledDate<today);
+const activeMeds=D.medications.filter(m=>m.withdrawalEnd&&m.withdrawalEnd>=today);
+const recentVisitors=D.biosecurity.visitors.filter(v=>v.fromFarmHealth==='outbreak'&&v.date>=new Date(Date.now()-7*86400000).toISOString().substring(0,10));
+// Header
+let h=`<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;flex-wrap:wrap;gap:12px">
+<div><h2 style="margin:0">🩺 ${t('nav_vet_mode')}</h2><span style="opacity:.6;font-size:.85em">${fmtDate(today)} — ${activeFlocks.length} ${t('kpi_active_flocks').toLowerCase()}</span></div>
+<div class="btn-group"><button class="btn btn-primary" onclick="vetAction('visit')">✅ ${t('vet_visit')}</button>
 <button class="btn btn-secondary" onclick="vetAction('vaccines')">💉 ${t('vet_vaccines')}</button>
 <button class="btn btn-secondary" onclick="vetAction('pending')">⏳ ${t('vet_pending')}</button></div></div>`;
+// Summary KPIs
+const kS='padding:20px;text-align:center;border-radius:12px';
+const vS='font-size:2em;font-weight:700;margin:4px 0';
+const lS='font-size:.8em;opacity:.6;text-transform:uppercase;letter-spacing:.5px';
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px">`;
+h+=`<div class="kpi-card" style="${kS}"><div style="${lS}">Brotes Activos</div><div style="${vS};color:${allOutbreaks.length?'#f44336':'#4caf50'}">${allOutbreaks.length}</div><div style="font-size:.75em;opacity:.5">${allOutbreaks.length?'🔴 '+allOutbreaks.map(o=>sanitizeHTML(o.disease)).join(', '):'✅'}</div></div>`;
+h+=`<div class="kpi-card" style="${kS}"><div style="${lS}">Vacunas Vencidas</div><div style="${vS};color:${overdueVac.length?'#f44336':'#4caf50'}">${overdueVac.length}</div><div style="font-size:.75em;opacity:.5">${overdueVac.length?'⚠️':'✅'} de ${allPendingVac.length} pendientes</div></div>`;
+h+=`<div class="kpi-card" style="${kS}"><div style="${lS}">Medicamentos Activos</div><div style="${vS};color:${activeMeds.length?'#ff9800':'#999'}">${activeMeds.length}</div><div style="font-size:.75em;opacity:.5">${activeMeds.length?'⏳ en período de retiro':'—'}</div></div>`;
+h+=`<div class="kpi-card" style="${kS}"><div style="${lS}">Riesgo Bioseg.</div><div style="${vS};color:${recentVisitors.length?'#f44336':'#4caf50'}">${recentVisitors.length?'ALTO':'OK'}</div><div style="font-size:.75em;opacity:.5">${recentVisitors.length?'🚨 visitas de granjas con brote':'🛡️'}</div></div>`;
+h+=`</div>`;
+// Cross-contamination alert
+if(recentVisitors.length){h+=`<div class="alert-card alert-danger" style="margin-bottom:16px">🚨 <strong>Alerta de contaminación cruzada:</strong> ${recentVisitors.map(v=>sanitizeHTML(v.name)).join(', ')} — visitantes de granjas con brote activo en los últimos 7 días</div>`;}
+// Flock selector
+h+=`<div class="card" style="padding:16px;margin-bottom:16px"><div class="form-row"><div class="form-group" style="flex:1"><label>${t('vet_select_farm')}</label><select id="vet-flock" onchange="renderVetFlock()" style="font-size:1.05em;padding:10px">${flockSelect('',true)}</select></div></div></div>`;
+h+=`<div id="vet-content"></div>`;
+// Flock health overview cards
+h+=`<h3 style="margin:16px 0 8px">Estado Sanitario por Lote</h3>`;
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:16px">`;
+activeFlocks.forEach(f=>{
+const hs=computeFlockHealthScore(f.id,D);
+const fo=D.outbreaks.filter(o=>o.flockId===f.id&&o.status==='active');
+const fv=D.vaccines.filter(v=>v.flockId===f.id&&v.status!=='applied');
+const fvOverdue=fv.filter(v=>v.scheduledDate<today);
+const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate))/(7*86400000)):0;
+const borderColor=hs>=70?'#4caf50':hs>=40?'#ff9800':'#f44336';
+h+=`<div class="card" style="padding:16px;border-left:4px solid ${borderColor};cursor:pointer" onclick="document.getElementById('vet-flock').value='${escapeAttr(f.id)}';renderVetFlock()">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><strong>${sanitizeHTML(f.name)}</strong><br><span style="font-size:.8em;opacity:.6">${sanitizeHTML(f.breed||'')} — ${age} ${t('flock_weeks')} — 🐔 ${fmtNum(f.count||0)}</span></div>
+<div style="text-align:right"><div style="font-size:1.8em;font-weight:700;color:${borderColor}">${hs}</div><div style="font-size:.7em;opacity:.5">/100</div></div></div>
+<div style="display:flex;gap:12px;margin-top:8px;font-size:.82em">
+${fo.length?`<span style="color:#f44336">🦠 ${fo.length} brote${fo.length>1?'s':''}</span>`:'<span style="color:#4caf50">✅ Sin brotes</span>'}
+${fvOverdue.length?`<span style="color:#f44336">💉 ${fvOverdue.length} vencida${fvOverdue.length>1?'s':''}</span>`:fv.length?`<span style="color:#ff9800">💉 ${fv.length} pendiente${fv.length>1?'s':''}</span>`:'<span style="opacity:.5">💉 Al día</span>'}
+</div></div>`;
+});
+h+=`</div>`;
 $('sec-dashboard').innerHTML=h;
 }
 function renderVetFlock(){
-const fid=$('vet-flock')?.value;const D=loadData();
+const fid=$('vet-flock')?.value;const D=loadData();const today=todayStr();
 if(!fid){$('vet-content').innerHTML='';return;}
 const f=D.flocks.find(x=>x.id===fid);if(!f)return;
 const hs=computeFlockHealthScore(fid,D);
 const outbreaks=D.outbreaks.filter(o=>o.flockId===fid&&o.status==='active');
 const lastEnv=D.environment.length>0?D.environment[D.environment.length-1]:null;
 const pendingVac=D.vaccines.filter(v=>v.flockId===fid&&v.status!=='applied');
-let h=`<div class="kpi-grid">`;
-h+=kpi(t('flock_health'),hs+'/100','',hs<50?'danger':hs<70?'warning':'',t('info_health_score'));
-h+=kpi(t('out_title'),outbreaks.length.toString(),outbreaks.length?t('out_active'):'✅',outbreaks.length?'danger':'',t('info_outbreaks'));
-h+=kpi(t('vac_title'),pendingVac.length.toString(),t('vac_pending'),'',t('info_vaccines'));
+const overdueVac=pendingVac.filter(v=>v.scheduledDate<today);
+const flockMeds=D.medications.filter(m=>m.flockId===fid);
+const activeMeds=flockMeds.filter(m=>m.withdrawalEnd&&m.withdrawalEnd>=today);
+const stressEv=D.stressEvents.filter(e=>e.flockId===fid).slice(-5).reverse();
+const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate))/(7*86400000)):0;
+// Health score bar
+let h=`<div class="card" style="padding:16px;margin-bottom:12px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<h3 style="margin:0">${sanitizeHTML(f.name)} — ${t('flock_health')}</h3>
+<span style="font-size:1.4em;font-weight:700;color:${hs>=70?'#4caf50':hs>=40?'#ff9800':'#f44336'}">${hs}/100</span></div>
+<div style="background:var(--bg-secondary);border-radius:8px;height:12px;overflow:hidden">
+<div style="width:${hs}%;height:100%;background:${hs>=70?'#4caf50':hs>=40?'#ff9800':'#f44336'};border-radius:8px;transition:width .3s"></div></div>
+<div style="display:flex;gap:16px;margin-top:12px;font-size:.85em;opacity:.7;flex-wrap:wrap">
+<span>🐔 ${fmtNum(f.count||0)} aves</span><span>📅 ${age} ${t('flock_weeks')}</span>
+<span>📋 ${f.status==='produccion'?'🟢':'🟡'} ${t('flock_status_'+f.status)}</span>
+${f.breed?`<span>🧬 ${sanitizeHTML(f.breed)}</span>`:''}
+</div></div>`;
+// KPI row
+h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px">`;
+h+=`<div class="kpi-card" style="padding:14px;text-align:center"><div style="font-size:.75em;opacity:.6">Brotes</div><div style="font-size:1.5em;font-weight:700;color:${outbreaks.length?'#f44336':'#4caf50'}">${outbreaks.length}</div></div>`;
+h+=`<div class="kpi-card" style="padding:14px;text-align:center"><div style="font-size:.75em;opacity:.6">Vacunas Pend.</div><div style="font-size:1.5em;font-weight:700;color:${overdueVac.length?'#f44336':pendingVac.length?'#ff9800':'#4caf50'}">${pendingVac.length}</div></div>`;
+h+=`<div class="kpi-card" style="padding:14px;text-align:center"><div style="font-size:.75em;opacity:.6">Med. Activos</div><div style="font-size:1.5em;font-weight:700;color:${activeMeds.length?'#ff9800':'#999'}">${activeMeds.length}</div></div>`;
+if(lastEnv){h+=`<div class="kpi-card" style="padding:14px;text-align:center"><div style="font-size:.75em;opacity:.6">Ambiente</div><div style="font-size:1.2em;font-weight:600">${lastEnv.temperature||'—'}°C / ${lastEnv.humidity||'—'}%</div></div>`;}
 h+=`</div>`;
-if(outbreaks.length){h+=`<div class="card"><h4>🦠 ${t('out_title')}</h4>`;
-outbreaks.forEach(o=>{h+=`<div class="alert-card alert-danger">${sanitizeHTML(o.disease)} - ${fmtDate(o.startDate)} | ${sanitizeHTML(o.treatment||'-')}</div>`;});h+='</div>';}
-if(lastEnv){h+=`<div class="card"><h4>🌡️ ${t('env_title')}</h4>
-<p>${t('env_temp')}: ${lastEnv.temperature||'-'}°C | ${t('env_humidity')}: ${lastEnv.humidity||'-'}%</p></div>`;}
-if(pendingVac.length){h+=`<div class="card"><h4>💉 ${t('vac_title')}</h4>`;
-pendingVac.forEach(v=>{h+=`<div class="alert-card alert-${v.scheduledDate<todayStr()?'danger':'warning'}">${sanitizeHTML(v.vaccineName)} - ${fmtDate(v.scheduledDate)} (${v.scheduledDate<todayStr()?t('vac_overdue'):t('vac_pending')})</div>`;});h+='</div>';}
-// Cross-contamination check from biosecurity visitors
-const recentVisitors=D.biosecurity.visitors.filter(v=>v.fromFarmHealth==='outbreak'&&v.date>=new Date(Date.now()-7*86400000).toISOString().substring(0,10));
-if(recentVisitors.length){h+=`<div class="alert-card alert-danger">${t('bio_cross_risk')}: ${recentVisitors.map(v=>sanitizeHTML(v.name)).join(', ')}</div>`;}
+// Outbreaks
+if(outbreaks.length){h+=`<div class="card" style="padding:16px;margin-bottom:12px;border-left:4px solid #f44336"><h4 style="margin:0 0 8px">🦠 ${t('out_title')}</h4>`;
+outbreaks.forEach(o=>{h+=`<div class="alert-card alert-danger" style="margin-bottom:6px"><strong>${sanitizeHTML(o.disease)}</strong> — ${fmtDate(o.startDate)}<br><span style="font-size:.85em">${t('health_cost')}: ${sanitizeHTML(o.treatment||'Sin tratamiento registrado')}</span></div>`;});h+='</div>';}
+// Vaccines
+if(pendingVac.length){h+=`<div class="card" style="padding:16px;margin-bottom:12px;border-left:4px solid ${overdueVac.length?'#f44336':'#ff9800'}"><h4 style="margin:0 0 8px">💉 ${t('vac_title')} (${pendingVac.length})</h4>`;
+pendingVac.forEach(v=>{const overdue=v.scheduledDate<today;h+=`<div class="alert-card alert-${overdue?'danger':'warning'}" style="margin-bottom:6px"><strong>${sanitizeHTML(v.vaccineName)}</strong> — ${fmtDate(v.scheduledDate)} <span style="font-size:.85em">(${overdue?'⚠️ VENCIDA':t('vac_pending')})</span></div>`;});h+='</div>';}
+// Active medications
+if(activeMeds.length){h+=`<div class="card" style="padding:16px;margin-bottom:12px;border-left:4px solid #ff9800"><h4 style="margin:0 0 8px">💊 Medicamentos en Período de Retiro</h4>`;
+activeMeds.forEach(m=>{h+=`<div class="alert-card alert-warning" style="margin-bottom:6px"><strong>${sanitizeHTML(m.name)}</strong> — Retiro hasta: ${fmtDate(m.withdrawalEnd)}</div>`;});h+='</div>';}
+// Stress events
+if(stressEv.length){h+=`<div class="card" style="padding:16px;margin-bottom:12px"><h4 style="margin:0 0 8px">⚡ Eventos de Estrés Recientes</h4>`;
+stressEv.forEach(e=>{h+=`<div style="padding:6px 0;border-bottom:1px solid var(--bg-secondary);font-size:.9em"><strong>${fmtDate(e.date)}</strong> — ${sanitizeHTML(e.type||'')} ${sanitizeHTML(e.notes||'')}</div>`;});h+='</div>';}
 $('vet-content').innerHTML=h;
 }
 function vetAction(type){
