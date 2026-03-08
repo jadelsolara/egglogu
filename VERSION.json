@@ -1,0 +1,39 @@
+{
+  "product": "EGGlogU",
+  "pillars": {
+    "aesthetic": {
+      "version": "1.0.0",
+      "description": "CSS, layout, colores, fuentes, responsive",
+      "scope": "egglogu.html lines 26-478 (<style> block)",
+      "lastChanged": "2026-03-08",
+      "changelog": [
+        "1.0.0 — Baseline: sidebar logo 44px, nav groups closed by default, KPI cards layout"
+      ]
+    },
+    "functional": {
+      "version": "1.0.0",
+      "description": "Lógica JS, cálculos, API, IndexedDB, sync, reportes",
+      "scope": "dist/egglogu-app.js (bundle principal)",
+      "lastChanged": "2026-03-08",
+      "changelog": [
+        "1.0.0 — Baseline: 14 módulos, offline-first, dual-write sync"
+      ]
+    },
+    "operational": {
+      "version": "2.0.0",
+      "description": "Deploy, SW, caching, headers, build pipeline",
+      "scope": "sw.js, _headers, build.sh, manifest.json",
+      "lastChanged": "2026-03-08",
+      "changelog": [
+        "1.0.0 — Original: cache-first SW, manual deploy",
+        "2.0.0 — Rewrite: hashed assets, network-first SW, automated build"
+      ]
+    }
+  },
+  "build": {
+    "number": 3,
+    "lastBuildTime": "2026-03-08T12:57:07Z",
+    "jsBundle": "dist/egglogu-app.fb0275ec.js",
+    "changedPillars": "FUNCIONAL,HTML-ESTRUCTURA"
+  }
+}

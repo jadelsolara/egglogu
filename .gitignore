@@ -32,6 +32,8 @@ pgdata/
 node_modules/
 frontend/node_modules/
 dist/
+!live/dist/
+!live/app/dist/
 
 # Backups / Archives
 *.bak
