@@ -90,27 +90,35 @@ nav {
 nav::-webkit-scrollbar { width: 4px; }
 nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 4px; }
 nav a {
-  display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-  color: rgba(255,255,255,.8); text-decoration: none; transition: all .2s;
-  cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; gap: 10px; padding: 9px 16px 9px 20px;
+  color: rgba(255,255,255,.75); text-decoration: none; transition: all .2s ease;
+  cursor: pointer; font-size: 13px; border-radius: 0 20px 20px 0; margin-right: 12px;
+  font-weight: 400; letter-spacing: .2px;
 }
-nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
 nav a.active {
-  background: rgba(255,255,255,.2); color: #fff;
-  font-weight: 600; border-left: 3px solid #FF8F00;
+  background: linear-gradient(90deg, rgba(255,143,0,.18) 0%, rgba(255,143,0,.06) 100%);
+  color: #fff; font-weight: 600; border-left: 3px solid #FF8F00;
+  margin-left: -1px;
 }
-nav a i { font-style: normal; font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+nav a i { font-style: normal; font-size: 17px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 8px; background: rgba(255,255,255,.06); transition: background .2s; }
+nav a:hover i { background: rgba(255,255,255,.1); }
+nav a.active i { background: rgba(255,143,0,.2); }
 .nav-group-label {
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
-  color: rgba(255,255,255,.4); padding: 16px 20px 6px; cursor: pointer;
-  user-select: none; transition: color .2s;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px;
+  color: rgba(255,255,255,.35); padding: 18px 20px 8px; cursor: pointer;
+  user-select: none; transition: color .2s; display: flex; align-items: center; gap: 8px;
+}
+.nav-group-label::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.08); margin-left: 4px;
 }
 .nav-group-label:hover { color: rgba(255,255,255,.6); }
 .nav-group-label::before {
-  content: '\\25B6'; font-size: 8px; margin-right: 6px; display: inline-block;
-  transition: transform .2s;
+  content: ''; width: 6px; height: 6px; border-right: 1.5px solid rgba(255,255,255,.5);
+  border-bottom: 1.5px solid rgba(255,255,255,.5); display: inline-block;
+  transition: transform .25s ease; transform: rotate(-45deg); flex-shrink: 0;
 }
-.nav-group-label.grp-open::before { transform: rotate(90deg); }
+.nav-group-label.grp-open::before { transform: rotate(45deg); }
 .nav-group-links { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
 .nav-group-links.grp-open { max-height: 600px; }
 .mode-toggles { padding: 8px 12px; display: flex; gap: 6px; }
