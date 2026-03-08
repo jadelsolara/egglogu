@@ -1,3 +1,16 @@
+// ============ DEVICE DETECTION ============
+(function(){
+const w=window.innerWidth;
+const cl=document.documentElement.classList;
+cl.remove('device-desktop','device-tablet','device-mobile');
+if(w>=1024)cl.add('device-desktop');
+else if(w>=768)cl.add('device-tablet');
+else cl.add('device-mobile');
+window.addEventListener('resize',function(){
+  const w2=window.innerWidth;cl.remove('device-desktop','device-tablet','device-mobile');
+  if(w2>=1024)cl.add('device-desktop');else if(w2>=768)cl.add('device-tablet');else cl.add('device-mobile');
+});
+})();
 // ============ GLOBAL ERROR HANDLER + BUG REPORTER ============
 const _bugErrors=[];const _BUG_ERROR_CAP=50;
 window.onerror = function(msg, src, line, col, err) {
