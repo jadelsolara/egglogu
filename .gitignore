@@ -38,6 +38,7 @@ dist/
 # Backups / Archives
 *.bak
 *.bak.*
+!live/egglogu.html.bak.*_locked
 backups_archive/
 correos/
 
