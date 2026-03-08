@@ -70,7 +70,7 @@ const ui={es:{save:"Guardar",cancel:"Cancelar",delete:"Eliminar",edit:"Editar",a
             <i>${i.icon}</i><span>${o(i.key)}</span></a>`;e+="</div>"}return e}_setActive(e){this._currentSection=e;const t=this.shadowRoot.querySelector("nav");t&&t.querySelectorAll("a").forEach(a=>{a.classList.toggle("active",a.dataset.section===e)})}_bindEvents(){const e=this.shadowRoot;e.addEventListener("click",t=>{var l,c;const a=t.target.closest("a[data-section]");if(a){const d=a.dataset.section;this._setActive(d),p.emit("nav:request",{section:d}),(l=e.querySelector(".sidebar"))==null||l.classList.remove("open");return}const i=t.target.closest("button[data-lang]");if(i){Wt(i.dataset.lang);return}const n=t.target.closest("button[data-action]");if(n){const d=n.dataset.action;d==="toggleLang"?(c=e.querySelector(".lang-collapse"))==null||c.classList.toggle("open"):d==="campo"?p.emit("mode:campo"):d==="vet"?p.emit("mode:vet"):d==="logout"&&p.emit("auth:logout")}const r=t.target.closest(".nav-group-label");if(r){r.classList.toggle("grp-open");const d=r.nextElementSibling;d!=null&&d.classList.contains("nav-group-links")&&d.classList.toggle("grp-open")}})}toggle(){var e;(e=this.shadowRoot.querySelector(".sidebar"))==null||e.classList.toggle("open")}close(){var e;(e=this.shadowRoot.querySelector(".sidebar"))==null||e.classList.remove("open")}_styles(){return`
 :host { display: block; }
 .sidebar {
-  width: 240px; background: #0E2240; color: #fff;
+  width: 240px; background: linear-gradient(180deg, #0E2240 0%, #162d50 60%, #1a3a5c 100%); color: #fff;
   display: flex; flex-direction: column;
   position: fixed; height: 100vh; z-index: 100;
   transition: transform .3s;
