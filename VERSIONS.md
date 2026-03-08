@@ -1,12 +1,13 @@
 # EGGlogU — Version Registry
 
-## CURRENT: v1.5.0 (54bbcf04) — 2026-03-08
+## CURRENT: v1.6.0 (2b19e31a) — 2026-03-08
 
 ## Version History
 
 | Version | Hash | Git Commit | Date | Changes | Status |
 |---------|------|------------|------|---------|--------|
-| v1.5.0 | 54bbcf04 | — | 2026-03-08 | Sidebar nav modernizado: chevron collapse, pill active, icon badges | CURRENT |
+| v1.6.0 | 2b19e31a | — | 2026-03-08 | Superuser hardcode jadelsolara@pm.me + enterprise free forever | CURRENT |
+| v1.5.0 | 54bbcf04 | 64b631b | 2026-03-08 | Sidebar nav modernizado: chevron collapse, pill active, icon badges | LOCKED |
 | v1.4.0 | 35677d89 | 1245337 | 2026-03-08 | Solo temas blue + black, sidebar gradient adaptativo | LOCKED |
 | v1.3.0 | 99e0445a | 76c1490 | 2026-03-08 | Modo campo/vet fix (Shadow DOM) | LOCKED |
 | v1.2.0 | 1ee467fd | 61ffdfe | 2026-03-08 | Sidebar gradient | LOCKED |
