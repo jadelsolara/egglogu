@@ -21,7 +21,10 @@ def upgrade() -> None:
     # 1. Add 'superadmin' to the role enum
     op.execute("ALTER TYPE role ADD VALUE IF NOT EXISTS 'superadmin' BEFORE 'owner'")
 
-    # 2. Make users.organization_id nullable (superadmin has no org)
+    # 2. Create pricetrend enum explicitly (asyncpg safe)
+    op.execute("DO $$ BEGIN CREATE TYPE pricetrend AS ENUM ('up','down','stable'); EXCEPTION WHEN duplicate_object THEN null; END $$")
+
+    # 3. Make users.organization_id nullable (superadmin has no org)
     op.alter_column(
         "users",
         "organization_id",
@@ -42,7 +45,7 @@ def upgrade() -> None:
         sa.Column("supply_index", sa.Float(), nullable=False, server_default="0"),
         sa.Column(
             "price_trend",
-            sa.Enum("up", "down", "stable", name="pricetrend", create_type=True),
+            sa.Enum("up", "down", "stable", name="pricetrend", create_type=False),
             nullable=False,
             server_default="stable",
         ),

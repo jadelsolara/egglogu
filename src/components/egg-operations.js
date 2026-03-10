@@ -75,6 +75,9 @@ class EggOperations extends HTMLElement {
   _styles() {
     return `<style>
       :host { display: block; }
+      .empty-state { text-align: center; padding: 40px; color: var(--text-light, #757575); }
+      .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+      .empty-state p { margin: 0 0 16px; }
       .page-header {
         display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
@@ -130,7 +133,7 @@ class EggOperations extends HTMLElement {
 
       /* KPI grid */
       .kpi-grid {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        display: grid; grid-template-columns: repeat(4, 1fr);
         gap: 12px; margin-bottom: 16px;
       }
 
@@ -240,6 +243,9 @@ class EggOperations extends HTMLElement {
       .dt-card-check { margin-bottom: 6px; }
       .dt-th-check, .dt-td-check { width: 36px; text-align: center; }
 
+      @media (max-width: 900px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
       @media (max-width: 768px) {
         .dt-table-desktop { display: none; }
         .dt-mobile-cards { display: block; }

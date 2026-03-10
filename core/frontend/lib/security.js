@@ -1,0 +1,1 @@
+export { hashPassword, hashPin, verifyPinHash, migratePinIfNeeded, isPinLocked, pinLockRemaining, recordPinFailure, resetPinAttempts, getLoginAttempts, recordLoginFailure, resetLoginAttempts, isLoginLocked, isFirstRun, isAuthenticated, AUTH_KEY, AUTH_SESSION } from '../../../src/core/security.js';

@@ -148,6 +148,9 @@ class EggPlanning extends HTMLElement {
   _styles() {
     return `<style>
       :host { display: block; }
+      .empty-state { text-align: center; padding: 40px; color: var(--text-light, #757575); }
+      .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+      .empty-state p { margin: 0 0 16px; }
       .page-header {
         display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
@@ -170,7 +173,7 @@ class EggPlanning extends HTMLElement {
       /* Plan grid */
       .plan-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 16px;
       }
 
@@ -201,6 +204,9 @@ class EggPlanning extends HTMLElement {
         border-top: 1px solid var(--border, #eee); padding-top: 8px;
       }
 
+      @media (max-width: 900px) {
+        .plan-grid { grid-template-columns: repeat(2, 1fr); }
+      }
       @media (max-width: 768px) {
         .plan-grid { grid-template-columns: 1fr; }
       }

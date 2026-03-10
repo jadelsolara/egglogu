@@ -88,7 +88,7 @@ class EggFinances extends HTMLElement {
       .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
       .page-header h2 { margin: 0; color: var(--primary-dark, #0E2240); }
       .page-header h3 { margin: 0; color: var(--primary-dark, #0E2240); }
-      .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+      .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
       .kpi-card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); position: relative; }
       .kpi-card.danger { border-left: 4px solid var(--danger, #dc3545); }
       .kpi-card.warning { border-left: 4px solid var(--warning, #ffc107); }
@@ -163,8 +163,10 @@ class EggFinances extends HTMLElement {
       .dt-card-label { color: var(--text-light, #888); }
       .dt-card-actions { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
       .dt-card-check { margin-bottom: 6px; }
-      @media (max-width: 768px) {
+      @media (max-width: 900px) {
         .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 768px) {
         .dt-table-desktop { display: none; }
         .dt-mobile-cards { display: block; }
       }

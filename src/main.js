@@ -26,11 +26,13 @@ import './components/egg-carencias.js';
 import './components/egg-operations.js';
 import './components/egg-traceability.js';
 import './components/egg-biosecurity.js';
+import './components/egg-welfare.js';
 import './components/egg-finances.js';
 import './components/egg-analysis.js';
 import './components/egg-automatizacion.js';
 import './components/egg-reportes.js';
 import './components/egg-soporte.js';
+import './components/egg-community.js';
 import './components/egg-environment.js';
 import './components/egg-planning.js';
 import './components/egg-superadmin.js';
@@ -41,6 +43,7 @@ import './components/egg-config.js';
 import { bootAuth, syncToServer, applyDarkMode } from './boot/auth.js';
 import { Bus } from './core/bus.js';
 import { Store } from './core/store.js';
+import { apiService } from './core/api.js';
 import { scheduleAutoBackup } from './core/helpers.js';
 
 // 4b. Mode event handlers (emitted by egg-sidebar shadow DOM)
@@ -76,30 +79,9 @@ window.addEventListener('unhandledrejection', function(e) {
   console.error('[EGGlogU Unhandled Promise]', e.reason);
 });
 
-// 6. Data-action delegation for login screen and sidebar buttons
+// 6. Data-action delegation for login screen (light DOM only)
+// Sidebar/nav/lang/mode actions are handled inside Shadow DOM by egg-sidebar.js
 document.addEventListener('click', function(e) {
-  // Nav links (data-section)
-  const navEl = e.target.closest('[data-section]');
-  if (navEl) {
-    e.preventDefault();
-    Bus.emit('nav:request', { section: navEl.dataset.section });
-    return;
-  }
-
-  // Nav group toggle
-  const grpEl = e.target.closest('.nav-group-label');
-  if (grpEl) {
-    grpEl.classList.toggle('grp-open');
-    const next = grpEl.nextElementSibling;
-    if (next && next.classList.contains('nav-group-links')) next.classList.toggle('grp-open');
-    return;
-  }
-
-  // Language switch
-  const langEl = e.target.closest('[data-lang]');
-  if (langEl) { switchLang(langEl.dataset.lang); return; }
-
-  // Generic data-action dispatch
   const actionEl = e.target.closest('[data-action]');
   if (actionEl) {
     const fn = actionEl.dataset.action;
@@ -111,33 +93,6 @@ document.addEventListener('click', function(e) {
       showSignUpFromLogin: window.showSignUpFromLogin,
       showForgotPassword: window.showForgotPassword,
       doLogout: window.doLogout,
-      toggleSidebar: function() {
-        const sb = document.getElementById('sidebar');
-        if (sb) sb.classList.toggle('open');
-      },
-      toggleCampoMode: function() {
-        const D = Store.get();
-        D.settings.campoMode = !D.settings.campoMode;
-        if (D.settings.campoMode) D.settings.vetMode = false;
-        Store.save(D);
-        Bus.emit('nav:request', { section: 'dashboard' });
-      },
-      toggleVetMode: function() {
-        const D = Store.get();
-        D.settings.vetMode = !D.settings.vetMode;
-        if (D.settings.vetMode) D.settings.campoMode = false;
-        Store.save(D);
-        Bus.emit('nav:request', { section: 'dashboard' });
-      },
-      toggleDarkMode: function() {
-        const D = Store.get();
-        D.settings.darkMode = !D.settings.darkMode;
-        Store.save(D);
-        applyDarkMode(D.settings.darkMode);
-      },
-      toggleLangCollapse: function() {
-        actionEl.parentElement.classList.toggle('open');
-      },
       closeModal: function() { Bus.emit('modal:close'); },
       confirmNo: function() { Bus.emit('confirm:result', { value: false }); },
       confirmYes: function() { Bus.emit('confirm:result', { value: true }); },
@@ -145,9 +100,6 @@ document.addEventListener('click', function(e) {
     if (actions[fn]) actions[fn]();
     return;
   }
-
-  // Modal overlay close
-  if (e.target.id === 'modal-overlay') { Bus.emit('modal:close'); }
 });
 
 // Enter on password field
@@ -190,7 +142,53 @@ function mountApp() {
     // Replace monolith content with modular app shell
     contentArea.innerHTML = '<egg-app></egg-app>';
   }
+
+  // Fetch geo-targeted outbreak alerts and store in transient data
+  fetchOutbreakAlerts();
+
+  // Request geolocation for biosecurity, outbreak radius, and weather
+  requestGeolocation();
 }
+
+async function fetchOutbreakAlerts() {
+  try {
+    if (!apiService.isLoggedIn()) return;
+    const alerts = await apiService.getOutbreakAlerts();
+    const D = Store.get();
+    D._outbreakAlerts = alerts || [];
+    Bus.emit('data:changed', { source: 'outbreak-alerts' });
+  } catch (e) {
+    // Offline or no farms with coords — silent fail, alerts just won't show
+    console.debug('[OutbreakAlerts] Could not fetch:', e.message);
+  }
+}
+
+function requestGeolocation() {
+  if (!navigator.geolocation) return;
+  const D = Store.get();
+  // Only request if farm has no coordinates yet
+  if (D.farm.lat && D.farm.lng) return;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const D = Store.get();
+      if (!D.farm.lat && !D.farm.lng) {
+        D.farm.lat = pos.coords.latitude;
+        D.farm.lng = pos.coords.longitude;
+        Store.save(D, 'geolocation');
+        // Re-fetch outbreak alerts now that we have coordinates
+        fetchOutbreakAlerts();
+      }
+    },
+    (err) => {
+      console.debug('[Geolocation] Denied or unavailable:', err.message);
+    },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 }
+  );
+}
+
+// Refresh outbreak alerts periodically (every 30 min)
+setInterval(fetchOutbreakAlerts, 30 * 60 * 1000);
 
 // 8. Web Vitals tracking
 if ('PerformanceObserver' in window) {

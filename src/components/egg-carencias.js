@@ -194,7 +194,7 @@ class EggCarencias extends HTMLElement {
 
       /* ── KPI Grid ── */
       .kpi-grid {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px;
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
       }
       .kpi-card {
         background: var(--card, #fff); border-radius: 8px; padding: 12px;
@@ -276,9 +276,11 @@ class EggCarencias extends HTMLElement {
       :host-context(body.dark-mode) .anon-pre { background: #383838; border-color: #555; color: #E0E0E0; }
 
       /* ── Responsive ── */
+      @media (max-width: 900px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
       @media (max-width: 768px) {
         .score-header { flex-direction: column; }
-        .kpi-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
         .score-number { font-size: 36px; }
         .btn-row { flex-direction: column; }
         .btn { width: 100%; justify-content: center; }

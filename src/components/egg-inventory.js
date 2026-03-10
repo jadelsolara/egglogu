@@ -197,7 +197,7 @@ class EggInventory extends HTMLElement {
 
       /* KPI Grid */
       .kpi-grid {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        display: grid; grid-template-columns: repeat(4, 1fr);
         gap: 12px; margin-bottom: 16px;
       }
       .kpi-card {
@@ -258,7 +258,7 @@ class EggInventory extends HTMLElement {
       }
       .dt-page-buttons { display: flex; gap: 4px; }
 
-      @media (max-width: 768px) {
+      @media (max-width: 900px) {
         .kpi-grid { grid-template-columns: repeat(2, 1fr); }
         .filter-bar { flex-direction: column; }
         .filter-bar select, .filter-bar input { width: 100%; }

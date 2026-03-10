@@ -1,7 +1,10 @@
+import logging
 import os
 import re
 import uuid
 from datetime import datetime, timedelta, timezone
+
+logger = logging.getLogger("egglogu.auth")
 
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy import select
@@ -91,11 +94,31 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 def _slugify(name: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-    return slug
+    return slug or "org"
+
+
+async def _unique_slug(name: str, db) -> str:
+    """Generate a unique org slug, appending a short suffix on collision."""
+    from src.models.auth import Organization as Org
+
+    base = _slugify(name)
+    slug = base
+    for i in range(1, 100):
+        exists = await db.execute(select(Org).where(Org.slug == slug))
+        if not exists.scalar_one_or_none():
+            return slug
+        slug = f"{base}-{i}"
+    # Fallback: append random hex
+    import secrets as _sec
+    return f"{base}-{_sec.token_hex(4)}"
 
 
 def _client_ip(request: Request) -> str:
-    """Extract real client IP, respecting reverse proxy headers."""
+    """Extract real client IP — Cloudflare first, then standard proxy headers."""
+    # Cloudflare always sets this to the true client IP
+    cf_ip = request.headers.get("cf-connecting-ip")
+    if cf_ip:
+        return cf_ip.strip()
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
         return forwarded.split(",")[0].strip()
@@ -195,9 +218,8 @@ async def register(
     if existing.scalar_one_or_none():
         raise ConflictError("Email already registered")
 
-    org = Organization(
-        name=data.organization_name, slug=_slugify(data.organization_name)
-    )
+    slug = await _unique_slug(data.organization_name, db)
+    org = Organization(name=data.organization_name, slug=slug)
     db.add(org)
     await db.flush()
 
@@ -224,15 +246,19 @@ async def register(
         geo_country=data.geo_country,
         geo_city=data.geo_city,
         geo_region=data.geo_region,
-        geo_timezone=data.geo_timezone,
-        geo_lat=data.geo_lat,
-        geo_lng=data.geo_lng,
+        geo_timezone=getattr(data, "geo_timezone", None),
+        geo_lat=getattr(data, "geo_lat", None),
+        geo_lng=getattr(data, "geo_lng", None),
     )
     db.add(user)
     await db.flush()
 
-    await send_verification_email(data.email, verification_token)
-    await send_welcome(data.email, data.full_name)
+    # Emails are best-effort — registration must succeed even if email fails
+    try:
+        await send_verification_email(data.email, verification_token)
+        await send_welcome(data.email, data.full_name)
+    except Exception as e:
+        logger.error("Post-registration email failed for %s: %s", data.email, e)
 
     return MessageResponse(message="Account created. Check your email to verify.")
 

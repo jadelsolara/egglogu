@@ -28,6 +28,7 @@ from src.core.stripe import (
     create_checkout_session,
     create_customer_portal,
     create_launch_checkout_session,
+    create_promo75_checkout_session,
     get_effective_price,
     get_phase_discount,
 )
@@ -166,6 +167,33 @@ async def create_checkout_launch(
     return {"checkout_url": url}
 
 
+class Promo75CheckoutRequest(BaseModel):
+    success_url: str | None = None
+    cancel_url: str | None = None
+
+
+@router.post("/create-checkout-promo75")
+async def create_checkout_promo75(
+    data: Promo75CheckoutRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(require_role("owner", "manager")),
+):
+    """Create a recurring $75/mo subscription for the Enterprise promo."""
+    sub = await get_subscription(user.organization_id, db)
+    customer_id = sub.stripe_customer_id if sub else None
+
+    success = data.success_url or f"{settings.FRONTEND_URL}/?billing=promo75-success"
+    cancel = data.cancel_url or f"{settings.FRONTEND_URL}/?billing=cancel"
+
+    url = await create_promo75_checkout_session(
+        org_id=str(user.organization_id),
+        success_url=success,
+        cancel_url=cancel,
+        customer_id=customer_id,
+    )
+    return {"checkout_url": url}
+
+
 @router.post("/webhook", status_code=status.HTTP_200_OK)
 async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
     payload = await request.body()
@@ -218,6 +246,22 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
                         "Launch promo activated: org %s → Enterprise for 90 days (expires %s)",
                         org_uuid,
                         sub.current_period_end.isoformat(),
+                    )
+                elif plan_str == "promo75":
+                    # Promo: recurring $75/mo → Enterprise access
+                    sub.stripe_customer_id = customer_id
+                    sub.stripe_subscription_id = subscription_id
+                    sub.plan = PlanTier.enterprise
+                    sub.is_trial = False
+                    sub.status = SubscriptionStatus.active
+                    sub.discount_phase = 0
+                    sub.months_subscribed = 0
+                    sub.billing_interval = "promo75"
+                    await db.flush()
+                    await invalidate_subscription_cache(org_uuid)
+                    logger.info(
+                        "Promo75 activated: org %s → Enterprise at $75/mo (recurring)",
+                        org_uuid,
                     )
                 else:
                     sub.stripe_customer_id = customer_id

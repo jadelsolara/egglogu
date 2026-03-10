@@ -26,7 +26,28 @@ class Organization(TimestampMixin, Base):
     slug: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     tier: Mapped[str] = mapped_column(String(20), default="free")
 
-    users: Mapped[list["User"]] = relationship(back_populates="organization")
+    # FarmLogU multi-vertical: which product line this org operates
+    # Default "eggs" = backward compatible with existing EGGlogU orgs
+    vertical: Mapped[str] = mapped_column(String(20), default="eggs", index=True)
+
+    # Optional: parent holding org for FarmLogU consolidated view
+    # (e.g. JA Inversiones → owns EGGlogU org + future PigLogu org)
+    holding_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("organizations.id", ondelete="SET NULL"), default=None
+    )
+
+    users: Mapped[list["User"]] = relationship(
+        back_populates="organization", foreign_keys="User.organization_id"
+    )
+    child_orgs: Mapped[list["Organization"]] = relationship(
+        back_populates="parent_holding",
+        foreign_keys="Organization.holding_id",
+    )
+    parent_holding: Mapped[Optional["Organization"]] = relationship(
+        back_populates="child_orgs",
+        remote_side="Organization.id",
+        foreign_keys="Organization.holding_id",
+    )
 
 
 class User(TimestampMixin, Base):

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: rounded square, same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- Ham/pork chop containment shape (white, like the egg) — tilted oval -->
+  <ellipse cx="256" cy="260" rx="185" ry="180" fill="#FFFFFF"/>
+
+  <!-- Pig body — PROFILE VIEW like the chicken, facing left -->
+  <!-- Body mass (fills lower part of containment) -->
+  <ellipse cx="280" cy="310" rx="140" ry="110" fill="#F9A8D4"/>
+
+  <!-- Head (overlapping, profile) -->
+  <circle cx="175" cy="260" r="95" fill="#F9A8D4"/>
+
+  <!-- Ear (one visible, profile) -->
+  <ellipse cx="210" cy="165" rx="35" ry="50" fill="#F472B6" transform="rotate(15,210,165)"/>
+  <ellipse cx="210" cy="170" rx="22" ry="32" fill="#EC4899" transform="rotate(15,210,170)"/>
+
+  <!-- Snout (profile, pointing left) -->
+  <ellipse cx="105" cy="285" rx="48" ry="36" fill="#F472B6"/>
+
+  <!-- Nostril (one visible in profile) -->
+  <ellipse cx="88" cy="283" rx="10" ry="12" fill="#DB2777"/>
+
+  <!-- Eye — SAME style as EGGlogU chicken (big, expressive, profile) -->
+  <circle cx="165" cy="250" r="30" fill="#FFFFFF"/>
+  <circle cx="158" cy="254" r="18" fill="#1F2937"/>
+  <circle cx="152" cy="247" r="7" fill="#FFFFFF"/>
+
+  <!-- Cheek blush -->
+  <ellipse cx="140" cy="300" rx="22" ry="15" fill="#F472B6" opacity="0.45"/>
+
+  <!-- Mouth line -->
+  <path d="M95 305 Q108 316, 125 310" fill="none" stroke="#DB2777" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Curly tail (peeking from right side) -->
+  <path d="M410 240 C425 225, 435 240, 425 255 C415 270, 430 275, 440 260" fill="none" stroke="#F472B6" stroke-width="8" stroke-linecap="round"/>
+</svg>

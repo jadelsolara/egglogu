@@ -18,6 +18,11 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    # ── Create enums explicitly (asyncpg safe) ──
+    op.execute("DO $$ BEGIN CREATE TYPE reporttemplate AS ENUM ('production','financial','health','feed','kpi'); EXCEPTION WHEN duplicate_object THEN null; END $$")
+    op.execute("DO $$ BEGIN CREATE TYPE reportfrequency AS ENUM ('daily','weekly','monthly'); EXCEPTION WHEN duplicate_object THEN null; END $$")
+    op.execute("DO $$ BEGIN CREATE TYPE workflowtrigger AS ENUM ('data_change','schedule','threshold'); EXCEPTION WHEN duplicate_object THEN null; END $$")
+
     # ── Report Schedules ──
     op.create_table(
         "report_schedules",
@@ -45,12 +50,12 @@ def upgrade() -> None:
         sa.Column("name", sa.String(200), nullable=False),
         sa.Column(
             "template",
-            sa.Enum("production", "financial", "health", "feed", "kpi", name="reporttemplate"),
+            sa.Enum("production", "financial", "health", "feed", "kpi", name="reporttemplate", create_type=False),
             nullable=False,
         ),
         sa.Column(
             "frequency",
-            sa.Enum("daily", "weekly", "monthly", name="reportfrequency"),
+            sa.Enum("daily", "weekly", "monthly", name="reportfrequency", create_type=False),
             nullable=False,
         ),
         sa.Column("recipients", sa.Text(), nullable=True),
@@ -155,7 +160,7 @@ def upgrade() -> None:
         sa.Column("preset", sa.String(50), nullable=True),
         sa.Column(
             "trigger_type",
-            sa.Enum("data_change", "schedule", "threshold", name="workflowtrigger"),
+            sa.Enum("data_change", "schedule", "threshold", name="workflowtrigger", create_type=False),
             nullable=False,
         ),
         sa.Column("conditions", postgresql.JSONB(), nullable=False),

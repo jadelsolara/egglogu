@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- White egg containment -->
+  <path d="M256 68 C160 68, 82 160, 82 268 C82 385, 155 448, 256 448 C357 448, 430 385, 430 268 C430 160, 352 68, 256 68Z" fill="#FFFFFF"/>
+
+  <!-- PIG — profile facing left, smooth curves -->
+  <!-- Main body — round, plump, smooth -->
+  <path d="M155 260 C155 205, 210 170, 290 170 C370 170, 400 210, 405 265 C410 320, 385 390, 310 405 C235 420, 155 375, 155 315 Z" fill="#F9A8C8"/>
+
+  <!-- Belly area — lighter pink -->
+  <path d="M180 310 C180 280, 220 260, 290 265 C360 270, 380 300, 375 335 C370 370, 330 395, 280 398 C230 401, 180 370, 180 340 Z" fill="#FCC8DE"/>
+
+  <!-- Head — smooth profile, proportional -->
+  <path d="M100 220 C100 175, 135 145, 185 145 C235 145, 265 170, 265 210 C265 250, 245 280, 205 290 C165 300, 115 280, 105 255 C100 242, 98 232, 100 220Z" fill="#F9A8C8"/>
+
+  <!-- Snout — the pig's signature, big and round -->
+  <ellipse cx="108" cy="235" rx="38" ry="30" fill="#F48BAE"/>
+  <!-- Nostrils -->
+  <ellipse cx="98" cy="232" rx="8" ry="10" fill="#D46A8A"/>
+  <ellipse cx="118" cy="232" rx="8" ry="10" fill="#D46A8A"/>
+
+  <!-- Ear — big, floppy, forward-pointing -->
+  <path d="M185 148 C195 108, 225 95, 238 108 C250 120, 245 148, 228 158 C215 165, 195 162, 185 148Z" fill="#E88AAD"/>
+  <path d="M195 142 C200 118, 222 110, 230 118 C238 126, 234 145, 222 152 C214 156, 200 152, 195 142Z" fill="#F9C4D8"/>
+
+  <!-- Eye — SAME style as EGGlogU chicken -->
+  <circle cx="168" cy="208" r="24" fill="#FFFFFF"/>
+  <circle cx="161" cy="213" r="15" fill="#2D3748"/>
+  <circle cx="155" cy="206" r="6" fill="#FFFFFF"/>
+
+  <!-- Mouth/smile -->
+  <path d="M92 260 Q108 275, 128 268" fill="none" stroke="#D46A8A" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Cheek blush -->
+  <circle cx="145" cy="255" r="15" fill="#F48BAE" opacity="0.35"/>
+
+  <!-- Legs — clean, simple -->
+  <rect x="200" y="395" width="18" height="35" rx="7" fill="#F9A8C8"/>
+  <rect x="235" y="398" width="18" height="32" rx="7" fill="#F9A8C8"/>
+  <rect x="330" y="392" width="18" height="38" rx="7" fill="#F9A8C8"/>
+  <rect x="360" y="395" width="18" height="35" rx="7" fill="#F9A8C8"/>
+
+  <!-- Hooves -->
+  <path d="M198 428 C198 435, 204 438, 209 438 C214 438, 220 435, 220 428" fill="#D46A8A"/>
+  <path d="M233 428 C233 435, 239 438, 244 438 C249 438, 255 435, 255 428" fill="#D46A8A"/>
+  <path d="M328 428 C328 435, 334 438, 339 438 C344 438, 350 435, 350 428" fill="#D46A8A"/>
+  <path d="M358 428 C358 435, 364 438, 369 438 C374 438, 380 435, 380 428" fill="#D46A8A"/>
+
+  <!-- Curly tail — signature! -->
+  <path d="M400 290 C415 275, 425 260, 418 250 C410 240, 400 248, 405 260 C410 272, 420 265, 418 255" stroke="#F48BAE" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- Shield containment (white, like the egg) -->
+  <path d="M256 62 C155 62, 82 135, 82 225 L82 340 C82 410, 155 450, 256 450 C357 450, 430 410, 430 340 L430 225 C430 135, 357 62, 256 62Z" fill="#FFFFFF"/>
+
+  <!-- Green rolling hills (base) -->
+  <ellipse cx="256" cy="400" rx="160" ry="50" fill="#22C55E"/>
+  <ellipse cx="180" cy="390" rx="100" ry="40" fill="#16A34A"/>
+
+  <!-- Barn — profile view, slightly angled like the chicken -->
+  <rect x="175" y="230" width="160" height="130" rx="6" fill="#DC2626"/>
+
+  <!-- Barn roof -->
+  <path d="M160 235 L255 165 L350 235" fill="#B91C1C" stroke="#991B1B" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- Silo -->
+  <rect x="340" y="200" width="45" height="165" rx="22" fill="#9CA3AF"/>
+  <ellipse cx="362" cy="200" rx="23" ry="8" fill="#6B7280"/>
+
+  <!-- Barn door -->
+  <path d="M225 360 L225 280 A30 30 0 0 1 285 280 L285 360" fill="#7F1D1D"/>
+
+  <!-- Hay loft window (X pattern) -->
+  <rect x="225" y="195" width="60" height="30" rx="4" fill="#FDE68A"/>
+  <line x1="225" y1="195" x2="285" y2="225" stroke="#B91C1C" stroke-width="3"/>
+  <line x1="285" y1="195" x2="225" y2="225" stroke="#B91C1C" stroke-width="3"/>
+
+  <!-- Weather vane on top -->
+  <line x1="255" y1="165" x2="255" y2="130" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <path d="M240 135 L255 130 L270 135" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Sun -->
+  <circle cx="385" cy="115" r="22" fill="#FBBF24"/>
+  <!-- Sun rays -->
+  <line x1="385" y1="85" x2="385" y2="75" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <line x1="410" y1="95" x2="418" y2="88" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <line x1="415" y1="115" x2="425" y2="115" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <line x1="360" y1="95" x2="352" y2="88" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Fence in foreground -->
+  <line x1="100" y1="370" x2="170" y2="370" stroke="#92700C" stroke-width="5" stroke-linecap="round"/>
+  <line x1="110" y1="350" x2="110" y2="385" stroke="#92700C" stroke-width="5" stroke-linecap="round"/>
+  <line x1="140" y1="350" x2="140" y2="385" stroke="#92700C" stroke-width="5" stroke-linecap="round"/>
+  <line x1="165" y1="350" x2="165" y2="385" stroke="#92700C" stroke-width="5" stroke-linecap="round"/>
+</svg>

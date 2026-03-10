@@ -49,9 +49,14 @@ def upgrade() -> None:
     )
 
     # Inventory & support filtering
-    op.create_index(
-        "ix_stock_movements_type", "stock_movements", ["movement_type"]
-    )
+    conn = op.get_bind()
+    result = conn.execute(text(
+        "SELECT 1 FROM information_schema.tables WHERE table_name = 'stock_movements'"
+    ))
+    if result.fetchone() is not None:
+        op.create_index(
+            "ix_stock_movements_type", "stock_movements", ["movement_type"]
+        )
     op.create_index(
         "ix_support_tickets_status", "support_tickets", ["status"]
     )
@@ -65,7 +70,12 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index("ix_feed_consumption_flock", table_name="feed_consumption")
     op.drop_index("ix_support_tickets_status", table_name="support_tickets")
-    op.drop_index("ix_stock_movements_type", table_name="stock_movements")
+    conn = op.get_bind()
+    result = conn.execute(text(
+        "SELECT 1 FROM information_schema.tables WHERE table_name = 'stock_movements'"
+    ))
+    if result.fetchone() is not None:
+        op.drop_index("ix_stock_movements_type", table_name="stock_movements")
     op.drop_index("ix_incomes_org_updated", table_name="incomes")
     op.drop_index("ix_expenses_org_updated", table_name="expenses")
     op.drop_index("ix_medications_flock", table_name="medications")

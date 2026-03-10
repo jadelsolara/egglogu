@@ -20,18 +20,20 @@ const SECTION_TAGS = {
   operaciones: 'egg-operations',
   ambiente: 'egg-environment',
   carencias: 'egg-carencias',
+  bienestar: 'egg-welfare',
   bioseguridad: 'egg-biosecurity',
   trazabilidad: 'egg-traceability',
   planificacion: 'egg-planning',
   reportes: 'egg-reportes',
   automatizacion: 'egg-automatizacion',
   soporte: 'egg-soporte',
+  comunidad: 'egg-community',
   admin: 'egg-admin',
   config: 'egg-config',
   superadmin: 'egg-superadmin'
 };
 
-const HEAVY = new Set(['dashboard', 'analisis', 'finanzas', 'bioseguridad', 'trazabilidad', 'carencias', 'reportes', 'automatizacion', 'soporte', 'admin', 'superadmin']);
+const HEAVY = new Set(['dashboard', 'analisis', 'finanzas', 'bioseguridad', 'trazabilidad', 'carencias', 'reportes', 'automatizacion', 'soporte', 'comunidad', 'admin', 'superadmin']);
 
 class EggApp extends HTMLElement {
   constructor() {
@@ -47,7 +49,7 @@ class EggApp extends HTMLElement {
       <style>
         :host { display: flex; min-height: 100vh; font-family: var(--font, 'Inter', system-ui, sans-serif); }
         .app-layout { display: flex; width: 100%; min-height: 100vh; }
-        .main-content { flex: 1; padding: 20px 30px; overflow-y: auto; background: var(--bg, #f5f7fa); margin-left: var(--sidebar-width, 240px); min-height: 100vh; }
+        .main-content { padding: 20px 30px; overflow-y: auto; background: var(--bg, #f5f7fa); margin-left: var(--sidebar-width, 240px); min-height: 100vh; width: calc(100vw - var(--sidebar-width, 240px)); max-width: calc(100vw - var(--sidebar-width, 240px)); box-sizing: border-box; overflow-x: hidden; }
         .section { display: none; }
         .section.active { display: block; }
         .loading-spinner {
@@ -60,11 +62,11 @@ class EggApp extends HTMLElement {
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 768px) {
-          .main-content { margin-left: 0; padding: 60px 15px 20px; }
+          .main-content { margin-left: 0; width: 100vw; padding: 60px 15px 20px; }
         }
       </style>
       <div class="app-layout">
-        <egg-sidebar></egg-sidebar>
+        <egg-sidebar><img slot="logo" src="icons/icon-192.png" alt="EGGlogU" width="40" height="48" style="border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.25)"></egg-sidebar>
         <main class="main-content" id="content-area"></main>
       </div>
       <egg-toast></egg-toast>
@@ -89,6 +91,10 @@ class EggApp extends HTMLElement {
 
     // Navigate to dashboard (auth already handled by bootAuth in main.js)
     this.navigate('dashboard');
+
+    // Re-emit auth:ready so sidebar renders with correct user role
+    // (original auth:ready fires before sidebar exists in DOM)
+    setTimeout(() => Bus.emit('auth:ready'), 100);
 
     // Keyboard handlers
     this._setupKeyboard();

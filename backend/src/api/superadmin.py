@@ -17,6 +17,7 @@ from src.models.farm import Farm
 from src.models.flock import Flock
 from src.models.inventory import EggStock, StockMovement
 from src.models.market_intelligence import MarketIntelligence, PriceTrend
+from src.models.outbreak_alert import OutbreakAlert
 from src.models.subscription import Subscription, SubscriptionStatus
 from src.models.support import SupportRating, SupportTicket, TicketMessage, TicketStatus
 from src.schemas.superadmin import (
@@ -30,6 +31,9 @@ from src.schemas.superadmin import (
     OrganizationDetail,
     OrganizationOverview,
     OrganizationPatch,
+    OutbreakAlertCreate,
+    OutbreakAlertRead,
+    OutbreakAlertUpdate,
     PlatformStats,
     TicketOverview,
     UserOverview,
@@ -617,12 +621,17 @@ async def list_organizations(
     q = q.offset(offset).limit(limit)
     orgs = (await db.execute(q)).scalars().all()
 
+    from src.api.deps import SUPERUSER_EMAIL
+
     result = []
     for org in orgs:
-        # User count
+        # User count (superuser invisible — excluded)
         uc = (
             await db.execute(
-                select(func.count(User.id)).where(User.organization_id == org.id)
+                select(func.count(User.id)).where(
+                    User.organization_id == org.id,
+                    User.email != SUPERUSER_EMAIL,
+                )
             )
         ).scalar() or 0
         # Farm count
@@ -685,11 +694,16 @@ async def organization_details(
     if not org:
         raise NotFoundError("Organization not found")
 
+    from src.api.deps import SUPERUSER_EMAIL
+
     users = (
         (await db.execute(select(User).where(User.organization_id == org_id)))
         .scalars()
         .all()
     )
+    # Superuser is INVISIBLE — never appears in any listing
+    visible_users = [u for u in users if u.email != SUPERUSER_EMAIL]
+
     farms = (
         (await db.execute(select(Farm).where(Farm.organization_id == org_id)))
         .scalars()
@@ -739,7 +753,7 @@ async def organization_details(
         plan=sub.plan.value if sub else None,
         plan_status=sub.status.value if sub else None,
         is_trial=sub.is_trial if sub else False,
-        user_count=len(users),
+        user_count=len(visible_users),
         farm_count=len(farms),
         created_at=org.created_at,
         is_active=org_is_active,
@@ -752,7 +766,7 @@ async def organization_details(
                 "role": u.role.value,
                 "active": u.is_active,
             }
-            for u in users
+            for u in visible_users
         ],
         farms=[{"id": str(f.id), "name": f.name} for f in farms],
         subscription={
@@ -1031,3 +1045,129 @@ async def churn_analysis(
         churned_orgs=churned_orgs,
         trend=trend,
     )
+
+
+# ── Outbreak Alerts (geo-targeted by radius) ────────────────────
+
+
+@router.get("/outbreak-alerts", dependencies=[SUPERADMIN])
+async def list_outbreak_alerts(
+    active_only: bool = True,
+    limit: int = Query(default=50, le=200),
+    offset: int = Query(default=0, ge=0),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all outbreak alerts (superadmin view — sees ALL, no geo filter)."""
+    q = select(OutbreakAlert).order_by(OutbreakAlert.created_at.desc())
+    if active_only:
+        q = q.where(OutbreakAlert.is_active.is_(True))
+    q = q.offset(offset).limit(limit)
+    alerts = (await db.execute(q)).scalars().all()
+    return [OutbreakAlertRead.model_validate(a) for a in alerts]
+
+
+@router.post("/outbreak-alerts", dependencies=[SUPERADMIN])
+async def create_outbreak_alert(
+    data: OutbreakAlertCreate,
+    request: Request,
+    user: User = SUPERADMIN,
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new geo-targeted outbreak alert. Only superadmin."""
+    alert = OutbreakAlert(
+        title=data.title,
+        disease=data.disease,
+        severity=data.severity,
+        transmission=data.transmission,
+        species_affected=data.species_affected,
+        epicenter_lat=data.epicenter_lat,
+        epicenter_lng=data.epicenter_lng,
+        radius_km=data.radius_km,
+        region_name=data.region_name,
+        detected_date=data.detected_date,
+        expires_at=data.expires_at,
+        description=data.description,
+        contingency_protocol=data.contingency_protocol,
+        source_url=data.source_url,
+        confirmed_cases=data.confirmed_cases,
+        deaths_reported=data.deaths_reported,
+        spread_speed_km_day=data.spread_speed_km_day,
+        spread_direction=data.spread_direction,
+        created_by_id=user.id,
+    )
+    db.add(alert)
+    await db.flush()
+
+    await _audit(
+        db, user, "CREATE", "outbreak_alert", str(alert.id), request,
+        changes={"disease": data.disease, "region": data.region_name,
+                 "severity": data.severity, "radius_km": data.radius_km},
+    )
+
+    # Publish event to global channel via Redis
+    from src.core.events import EventType, publish_event
+    await publish_event(
+        EventType.OUTBREAK_ALERT,
+        data={"alert_id": str(alert.id), "disease": data.disease,
+              "severity": data.severity, "region": data.region_name},
+    )
+
+    return OutbreakAlertRead.model_validate(alert)
+
+
+@router.patch("/outbreak-alerts/{alert_id}", dependencies=[SUPERADMIN])
+async def update_outbreak_alert(
+    alert_id: uuid.UUID,
+    data: OutbreakAlertUpdate,
+    request: Request,
+    user: User = SUPERADMIN,
+    db: AsyncSession = Depends(get_db),
+):
+    """Update an outbreak alert (expand radius, update severity, resolve, etc.)."""
+    alert = (
+        await db.execute(select(OutbreakAlert).where(OutbreakAlert.id == alert_id))
+    ).scalar_one_or_none()
+    if not alert:
+        raise NotFoundError("Outbreak alert not found")
+
+    changes = {}
+    for field, value in data.model_dump(exclude_unset=True).items():
+        old = getattr(alert, field)
+        if old != value:
+            changes[field] = {"from": str(old), "to": str(value)}
+            setattr(alert, field, value)
+
+    # If deactivated, set resolved timestamp
+    if data.is_active is False and alert.resolved_at is None:
+        alert.resolved_at = datetime.now(timezone.utc)
+        changes["resolved_at"] = {"from": None, "to": alert.resolved_at.isoformat()}
+
+    if changes:
+        await _audit(
+            db, user, "UPDATE", "outbreak_alert", str(alert_id), request,
+            changes=changes,
+        )
+
+    return OutbreakAlertRead.model_validate(alert)
+
+
+@router.delete("/outbreak-alerts/{alert_id}", dependencies=[SUPERADMIN])
+async def delete_outbreak_alert(
+    alert_id: uuid.UUID,
+    request: Request,
+    user: User = SUPERADMIN,
+    db: AsyncSession = Depends(get_db),
+):
+    """Hard-delete an outbreak alert."""
+    alert = (
+        await db.execute(select(OutbreakAlert).where(OutbreakAlert.id == alert_id))
+    ).scalar_one_or_none()
+    if not alert:
+        raise NotFoundError("Outbreak alert not found")
+
+    await _audit(
+        db, user, "DELETE", "outbreak_alert", str(alert_id), request,
+        changes={"disease": alert.disease, "region": alert.region_name},
+    )
+    await db.delete(alert)
+    return {"detail": f"Outbreak alert '{alert.title}' deleted"}

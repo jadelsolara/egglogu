@@ -579,7 +579,7 @@ class EggAutomatizacion extends HTMLElement {
 
       /* KPI grid */
       .kpi-grid {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        display: grid; grid-template-columns: repeat(4, 1fr);
         gap: 12px; margin-bottom: 16px;
       }
       .kpi-card {
@@ -688,10 +688,12 @@ class EggAutomatizacion extends HTMLElement {
       .dt-card-check { margin-bottom: 6px; }
       .dt-th-check, .dt-td-check { width: 36px; text-align: center; }
 
+      @media (max-width: 900px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
       @media (max-width: 768px) {
         .dt-table-desktop { display: none; }
         .dt-mobile-cards { display: block; }
-        .kpi-grid { grid-template-columns: 1fr 1fr; }
       }
     </style>`;
   }

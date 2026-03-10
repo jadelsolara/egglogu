@@ -6,6 +6,7 @@ import { Store } from '../core/store.js';
 import { t, getLang } from '../core/i18n.js';
 import { sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId } from '../core/utils.js';
 import { computeKpiSnapshot, saveKpiSnapshot, snapshotDelta, getAlerts, getRecommendations } from '../core/kpi.js';
+import { generateFarmReport } from '../core/farm-report.js';
 import { kpi, currency, flockSelect, feedTypeSelect, catalogSelect, logAudit } from '../core/helpers.js';
 import { activeHens } from '../core/veng.js';
 import { VENG } from '../core/veng.js';
@@ -52,6 +53,7 @@ class EggDashboard extends HTMLElement {
     let h = this._baseStyle();
     h += `<div class="page-header"><h2>${t('dash_title')}</h2><div class="btn-group"><button class="btn btn-secondary" data-action="snapshot">${t('dash_snapshot')}</button><span>${sanitizeHTML(D.farm.name)}</span></div></div>`;
     h += this._renderTrialBanner(D);
+    h += this._renderOutbreakAlerts(D);
     h += '<div class="kpi-grid">';
     h += kpi(t('kpi_today'), fmtNum(snap.eggsToday), '', '', t('kpi_info_today'));
     h += kpi(t('kpi_henday'), fmtNum(snap.henDay, 1) + '%', fmtNum(snap.activeHens) + ' ' + (t('kpi_active_hens') || '').toLowerCase() + (prevSnap ? snapshotDelta(snap.henDay, prevSnap.henDay) : ''), snap.henDay < 50 ? 'danger' : snap.henDay < 70 ? 'warning' : '', t('kpi_info_henday'));
@@ -63,32 +65,38 @@ class EggDashboard extends HTMLElement {
     h += kpi(t('kpi_alerts'), alerts.length.toString(), alerts.length > 0 ? '\u26A0' : '\u2713', alerts.length > 0 ? 'warning' : '', t('kpi_info_alerts'));
     h += '</div>';
 
-    // Quick Entry
-    h += this._renderQuickEntry(D);
+    // ── 2-column: Farm Report | Alerts + Recs ──
+    h += '<div class="dash-grid">';
 
-    // Alerts
+    // Farm Status Report (narrative vet-style)
+    h += '<div>' + this._renderFarmReport(D) + '</div>';
+
+    // Right column: Alerts + Recommendations
+    h += '<div>';
     if (alerts.length) {
       h += `<div class="card"><h3>${t('dash_alerts')}</h3>`;
       alerts.forEach(a => { h += `<div class="alert-card alert-${sanitizeHTML(a.type)}">${sanitizeHTML(a.icon)} ${a.msg}</div>`; });
       h += '</div>';
     }
-
-    // Recommendations
     const recs = getRecommendations(D);
     if (recs.length) {
       h += `<div class="rec-card"><h3>\uD83D\uDCA1 ${t('rec_title')}</h3>`;
       recs.forEach(r => { h += `<div class="rec-item"><span class="rec-priority ${r.priority}">${r.priority.toUpperCase()}</span><span>${r.icon} ${r.msg}</span></div>`; });
       h += '</div>';
     }
-
-    // Weather
+    // Weather inside right column
     if (D.farm.lat !== null && D.farm.lng !== null) {
       h += '<div id="weather-widget"><div class="weather-widget"><p style="color:var(--text-light)">' + t('weather_title') + '...</p></div></div>';
     } else {
       h += `<div class="card" style="background:var(--primary-fill)"><p style="color:var(--text-light)">${t('weather_no_key')} <a data-action="go-config" style="color:var(--primary);cursor:pointer">${t('cfg_title')}</a></p></div>`;
     }
+    h += '</div>';
+    h += '</div>';
 
-    // Trend Chart
+    // Quick Entry (full width)
+    h += this._renderQuickEntry(D);
+
+    // Trend Chart (full width)
     h += `<div class="card"><h3>${t('dash_trend')}</h3><div class="chart-container"><canvas id="chart-trend"></canvas></div></div>`;
 
     // KPI History
@@ -120,7 +128,7 @@ class EggDashboard extends HTMLElement {
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn-primary { background: var(--primary, #1A3C6E); color: #fff; border: none; }
       .btn:hover { opacity: 0.85; }
-      .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+      .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
       .kpi-card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); position: relative; }
       .kpi-card.danger { border-left: 4px solid var(--danger, #dc3545); }
       .kpi-card.warning { border-left: 4px solid var(--warning, #ffc107); }
@@ -172,11 +180,154 @@ class EggDashboard extends HTMLElement {
       .health-score.bad { background: #ffebee; color: #c62828; }
       details summary { cursor: pointer; font-weight: 600; color: var(--text-secondary, #555); }
       .dm-badge-critical { background: #ffcdd2; color: #b71c1c; padding: 3px 10px; border-radius: 10px; font-size: 12px; }
+      /* Farm Report */
+      .farm-report { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 16px; border-left: 4px solid var(--primary, #1A3C6E); }
+      .farm-report h3 { margin: 0 0 4px; color: var(--primary-dark, #0E2240); display: flex; align-items: center; gap: 8px; }
+      .farm-report .report-date { font-size: 12px; color: var(--text-light, #888); margin-bottom: 14px; }
+      .report-summary { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-weight: 600; font-size: 14px; }
+      .report-summary.ok { background: #e8f5e9; color: #2e7d32; }
+      .report-summary.warning { background: #fff8e1; color: #e65100; }
+      .report-summary.danger { background: #ffebee; color: #c62828; }
+      .report-section { margin-bottom: 12px; }
+      .report-section h4 { margin: 0 0 8px; font-size: 14px; color: var(--text-secondary, #555); border-bottom: 1px solid var(--border, #eee); padding-bottom: 4px; }
+      .report-line { font-size: 13px; line-height: 1.6; color: var(--text, #333); padding: 2px 0; }
+      .report-line.danger { color: #c62828; font-weight: 600; }
+      .report-line.warning { color: #e65100; }
+      .report-line.ok { color: #2e7d32; }
+      .report-line.info { color: var(--text, #333); }
+      .report-toggle { background: none; border: 1px solid var(--border, #ddd); border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; color: var(--text-light, #888); }
+      .report-toggle:hover { background: var(--bg-secondary, #f5f5f5); }
+      /* Outbreak Alert Banners */
+      .outbreak-alerts { margin-bottom: 16px; }
+      .outbreak-alert-card {
+        background: linear-gradient(135deg, #ffebee 0%, #fff8e1 100%);
+        border: 2px solid #c62828; border-radius: 10px;
+        padding: 16px 20px; margin-bottom: 10px;
+        animation: outbreak-pulse 2s ease-in-out infinite alternate;
+      }
+      .outbreak-alert-card.critical { border-color: #b71c1c; background: linear-gradient(135deg, #ffcdd2 0%, #ffebee 100%); }
+      .outbreak-alert-card.high { border-color: #e65100; background: linear-gradient(135deg, #ffe0b2 0%, #fff3e0 100%); }
+      .outbreak-alert-card.moderate { border-color: #f57f17; background: linear-gradient(135deg, #fff9c4 0%, #fffde7 100%); }
+      .outbreak-alert-card.low { border-color: #558b2f; background: linear-gradient(135deg, #dcedc8 0%, #f1f8e9 100%); }
+      @keyframes outbreak-pulse { 0% { box-shadow: 0 0 0 0 rgba(198,40,40,.15); } 100% { box-shadow: 0 0 12px 4px rgba(198,40,40,.25); } }
+      .outbreak-alert-card.low { animation: none; }
+      .outbreak-alert-card.moderate { animation: none; }
+      .outbreak-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+      .outbreak-header h4 { margin: 0; font-size: 15px; color: #b71c1c; flex: 1; }
+      .outbreak-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 2px 10px; border-radius: 10px; }
+      .outbreak-badge.critical { background: #c62828; color: #fff; }
+      .outbreak-badge.high { background: #e65100; color: #fff; }
+      .outbreak-badge.moderate { background: #f57f17; color: #fff; }
+      .outbreak-badge.low { background: #558b2f; color: #fff; }
+      .outbreak-dist { font-size: 12px; font-weight: 600; color: #c62828; }
+      .outbreak-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #555; margin-bottom: 8px; }
+      .outbreak-meta span { display: flex; align-items: center; gap: 4px; }
+      .outbreak-contingency { background: rgba(0,0,0,.05); border-radius: 6px; padding: 10px 14px; font-size: 13px; line-height: 1.5; color: #333; margin-top: 8px; }
+      .outbreak-contingency strong { color: #b71c1c; }
+      .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+      .dash-grid > div > .card:last-child, .dash-grid > div > .rec-card:last-child { margin-bottom: 0; }
+      @media (max-width: 900px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+        .dash-grid { grid-template-columns: 1fr; }
+      }
       @media (max-width: 600px) {
         .kpi-grid { grid-template-columns: repeat(2, 1fr); }
         .qe-grid { grid-template-columns: 1fr; }
+        .dash-grid { grid-template-columns: 1fr; }
       }
     </style>`;
+  }
+
+  _renderFarmReport(D) {
+    const report = generateFarmReport(D);
+    const lang = getLang();
+    const hHealth = lang === 'en' ? 'Health Status' : 'Estado Sanitario';
+    const hOps = lang === 'en' ? 'Operations & Production' : 'Operación y Producción';
+    const hFin = lang === 'en' ? 'Finances' : 'Finanzas';
+    const hTitle = lang === 'en' ? 'Farm Status Report' : 'Reporte del Gallinero';
+    const toggleTxt = lang === 'en' ? 'Show details' : 'Ver detalle';
+
+    let h = `<div class="farm-report">`;
+    h += `<h3>\uD83D\uDCCB ${sanitizeHTML(hTitle)}</h3>`;
+    h += `<div class="report-date">${fmtDate(report.date)}</div>`;
+
+    // Executive summary
+    h += `<div class="report-summary ${report.summary.severity}">${sanitizeHTML(report.summary.text)}</div>`;
+
+    // Health section
+    h += `<div class="report-section"><h4>\uD83E\uDE7A ${sanitizeHTML(hHealth)}</h4>`;
+    report.health.forEach(l => { h += `<div class="report-line ${l.severity}">${sanitizeHTML(l.text)}</div>`; });
+    h += '</div>';
+
+    // Ops section
+    h += `<div class="report-section"><h4>\uD83C\uDF3E ${sanitizeHTML(hOps)}</h4>`;
+    report.ops.forEach(l => { h += `<div class="report-line ${l.severity}">${sanitizeHTML(l.text)}</div>`; });
+    h += '</div>';
+
+    // Finance section
+    h += `<div class="report-section"><h4>\uD83D\uDCB0 ${sanitizeHTML(hFin)}</h4>`;
+    report.fin.forEach(l => { h += `<div class="report-line ${l.severity}">${sanitizeHTML(l.text)}</div>`; });
+    h += '</div>';
+
+    h += '</div>';
+    return h;
+  }
+
+  _renderOutbreakAlerts(D) {
+    const alerts = D._outbreakAlerts || [];
+    if (!alerts.length) return '';
+    const lang = getLang();
+    const en = lang === 'en';
+
+    let h = '<div class="outbreak-alerts">';
+    for (const a of alerts) {
+      const sev = sanitizeHTML(a.severity || 'moderate');
+      h += `<div class="outbreak-alert-card ${sev}">`;
+      h += '<div class="outbreak-header">';
+      h += `<h4>\u26A0\uFE0F ${sanitizeHTML(a.title)}</h4>`;
+      h += `<span class="outbreak-badge ${sev}">${sev.toUpperCase()}</span>`;
+      h += `<span class="outbreak-dist">${a.distance_km} km</span>`;
+      h += '</div>';
+
+      h += '<div class="outbreak-meta">';
+      h += `<span>\uD83E\uDDA0 ${sanitizeHTML(a.disease)}</span>`;
+      h += `<span>\uD83C\uDF0D ${sanitizeHTML(a.region_name)}</span>`;
+      h += `<span>\uD83D\uDCC5 ${sanitizeHTML(a.detected_date)}</span>`;
+      if (a.transmission && a.transmission !== 'unknown') {
+        const txLabel = en ? 'Transmission' : 'Transmisión';
+        h += `<span>\uD83D\uDD2C ${txLabel}: ${sanitizeHTML(a.transmission)}</span>`;
+      }
+      if (a.confirmed_cases > 0) {
+        const casesLabel = en ? 'cases' : 'casos';
+        h += `<span>\uD83D\uDCCA ${a.confirmed_cases} ${casesLabel}</span>`;
+      }
+      if (a.deaths_reported > 0) {
+        const deathsLabel = en ? 'deaths' : 'muertes';
+        h += `<span>\u2620\uFE0F ${a.deaths_reported} ${deathsLabel}</span>`;
+      }
+      if (a.spread_speed_km_day) {
+        h += `<span>\uD83D\uDCA8 ${a.spread_speed_km_day} km/${en ? 'day' : 'día'}${a.spread_direction ? ' ' + sanitizeHTML(a.spread_direction) : ''}</span>`;
+      }
+      h += '</div>';
+
+      if (a.description) {
+        h += `<div style="font-size:13px;color:#333;margin-bottom:6px">${sanitizeHTML(a.description)}</div>`;
+      }
+
+      if (a.contingency_protocol) {
+        const cpLabel = en ? 'Contingency Protocol' : 'Protocolo de Contingencia';
+        h += `<div class="outbreak-contingency"><strong>\uD83D\uDEE1\uFE0F ${cpLabel}:</strong><br>${sanitizeHTML(a.contingency_protocol)}</div>`;
+      }
+
+      if (a.source_url) {
+        const srcLabel = en ? 'Source' : 'Fuente';
+        h += `<div style="margin-top:6px;font-size:11px"><a href="${escapeAttr(a.source_url)}" target="_blank" rel="noopener" style="color:#1565c0">\uD83D\uDD17 ${srcLabel}</a></div>`;
+      }
+
+      h += '</div>';
+    }
+    h += '</div>';
+    return h;
   }
 
   _renderQuickEntry(D) {

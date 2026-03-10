@@ -1,3 +1,4 @@
+import logging
 import re
 import secrets
 
@@ -5,6 +6,8 @@ import httpx
 
 from src.config import settings
 from src.core.email_archive import archive_email
+
+logger = logging.getLogger("egglogu.email")
 
 
 def generate_token() -> str:
@@ -21,17 +24,22 @@ async def _send_email(
     archive_email(tipo, to, subject, _strip_html(html))
     if not settings.RESEND_API_KEY:
         return
-    async with httpx.AsyncClient() as client:
-        await client.post(
-            "https://api.resend.com/emails",
-            headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}"},
-            json={
-                "from": f"EGGlogU <noreply@{settings.EMAIL_FROM_DOMAIN}>",
-                "to": [to],
-                "subject": subject,
-                "html": html,
-            },
-        )
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.post(
+                "https://api.resend.com/emails",
+                headers={"Authorization": f"Bearer {settings.RESEND_API_KEY}"},
+                json={
+                    "from": f"EGGlogU <noreply@{settings.EMAIL_FROM_DOMAIN}>",
+                    "to": [to],
+                    "subject": subject,
+                    "html": html,
+                },
+            )
+            if resp.status_code >= 400:
+                logger.error("Resend API error %s: %s", resp.status_code, resp.text[:200])
+    except Exception as e:
+        logger.error("Failed to send email to %s: %s", to, e)
 
 
 async def send_verification_email(email: str, token: str) -> None:

@@ -657,7 +657,7 @@ class EggBiosecurity extends HTMLElement {
 
       /* ── KPI Grid ── */
       .kpi-grid {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
       }
       .kpi-card {
         background: var(--card, #fff); border-radius: 12px; padding: 16px;
@@ -837,11 +837,13 @@ class EggBiosecurity extends HTMLElement {
       :host-context(body.dark-mode) .dt-export-btns button { background: #383838; color: #E0E0E0; border-color: #555; }
 
       /* ── Responsive ── */
+      @media (max-width: 900px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
       @media (max-width: 768px) {
         .page-header { flex-direction: column; align-items: flex-start; }
         .tabs { gap: 0; }
         .tab { padding: 8px 12px; font-size: 13px; }
-        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
       }
     </style>`;
   }

@@ -8,7 +8,7 @@ import { apiService } from '../core/api.js';
 import { t, switchLang } from '../core/i18n.js';
 import { sanitizeHTML, escapeAttr, genId, todayStr } from '../core/utils.js';
 import { hashPassword, hashPin, verifyPinHash, migratePinIfNeeded, isFirstRun, isAuthenticated, AUTH_KEY, AUTH_SESSION, isPinLocked, pinLockRemaining, recordPinFailure, resetPinAttempts, getLoginAttempts, recordLoginFailure, resetLoginAttempts, isLoginLocked } from '../core/security.js';
-import { setCurrentUser, getCurrentUser, hasPermission, ROLE_PERMISSIONS } from '../core/permissions.js';
+import { setCurrentUser, getCurrentUser, hasPermission, ROLE_PERMISSIONS, isSuperuserEmail } from '../core/permissions.js';
 import { flockSelect, logAudit, scheduleAutoBackup, safeSetItem } from '../core/helpers.js';
 
 const $ = id => document.getElementById(id);
@@ -628,6 +628,7 @@ async function doLogin() {
 function doLogout() {
   apiService.clearTokens();
   sessionStorage.removeItem(AUTH_SESSION);
+  localStorage.removeItem('egglogu_current_user');
   location.reload();
 }
 
@@ -717,8 +718,9 @@ async function verifyPin() {
   }
 
   resetPinAttempts();
-  setCurrentUser({ name: user.name, role: user.role, id: user.id });
-  logAudit('login', 'auth', 'User login: ' + user.name + ' (' + user.role + ')', null, { user: user.name, role: user.role });
+  const userEmail = user.email || D.settings.ownerEmail || '';
+  setCurrentUser({ name: user.name, role: user.role, id: user.id, email: userEmail });
+  logAudit('login', 'auth', 'User login: ' + user.name + ' (' + getCurrentUser().role + ')', null, { user: user.name, role: getCurrentUser().role });
   const overlay = $('pin-login-overlay');
   if (overlay) overlay.remove();
   const appEl = document.querySelector('.app');
@@ -831,7 +833,7 @@ async function processSignUp() {
   if (!D.settings.ownerEmail) D.settings.ownerEmail = email;
   Store.save(D);
   logAudit('signup', 'auth', 'New user signup (local): ' + name + ' (owner)', null, { user: name, role: 'owner', email });
-  setCurrentUser({ name: newUser.name, role: newUser.role, id: newUser.id });
+  setCurrentUser({ name: newUser.name, role: newUser.role, id: newUser.id, email: newUser.email });
   const overlay = $('pin-login-overlay');
   if (overlay) overlay.remove();
   const appEl = document.querySelector('.app');
@@ -1094,6 +1096,17 @@ async function initApp() {
 }
 
 async function bootAuth() {
+  // DEV BYPASS — force superadmin, skip login (local only)
+  const _devBypass = location.hostname === 'localhost' || location.protocol === 'file:';
+  if (_devBypass) {
+    console.log('[Auth] DEV BYPASS — forcing superadmin');
+    setCurrentUser({ name: 'Jose Antonio', role: 'superadmin', id: 1, email: 'jadelsolara@pm.me' });
+    try { document.getElementById('login-screen').classList.add('hidden'); } catch(_){}
+    try { await initApp(); } catch(e) { console.warn('[Auth] initApp error:', e); }
+    applyRoleNav();
+    return true;
+  }
+
   // Fetch OAuth client IDs from backend
   if (navigator.onLine) {
     try {
@@ -1148,7 +1161,31 @@ async function bootAuth() {
   const user = getCurrentUser();
 
   // JWT user — skip PIN
-  if (apiService.isLoggedIn() && user.email) {
+  if (apiService.isLoggedIn()) {
+    // Ensure current user is set (may not be if token was still valid without refresh)
+    if (!user.email) {
+      let resolved = false;
+      // Try API first
+      try {
+        const me = await apiService.getMe();
+        if (me && me.email) {
+          setCurrentUser({ name: me.full_name, role: me.role, id: me.id, email: me.email });
+          resolved = true;
+        }
+      } catch (e) { console.warn('[Auth] getMe failed, trying JWT decode:', e.message); }
+      // Fallback: decode JWT payload for email
+      if (!resolved) {
+        try {
+          const token = apiService.getToken();
+          if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.email || payload.sub) {
+              setCurrentUser({ name: payload.full_name || payload.name || user.name, role: payload.role || user.role, id: payload.sub || user.id, email: payload.email || '' });
+            }
+          }
+        } catch (e) { console.warn('[Auth] JWT decode fallback failed:', e.message); }
+      }
+    }
     applyRoleNav();
     loadFromServer();
     return true;

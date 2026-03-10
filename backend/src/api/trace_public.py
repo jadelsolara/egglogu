@@ -1,9 +1,9 @@
 """
 Public traceability endpoint — NO AUTH required.
 
-A client or food inspector scans the QR code on an egg box/tray,
-which resolves to GET /trace/{batch_code}. This returns origin,
-flock, farm, and logistics info for that batch.
+A client or food inspector scans the QR code on a product package,
+which resolves to GET /trace/{batch_code}. Returns origin, farm,
+and logistics info for that batch. Works for any FarmLogU vertical.
 """
 
 from fastapi import APIRouter, Depends, Request
@@ -14,11 +14,10 @@ from sqlalchemy.orm import selectinload
 from src.core.exceptions import NotFoundError, RateLimitError
 from src.core.rate_limit import check_rate_limit
 from src.database import get_db
-from src.models.flock import Flock
 from src.models.traceability import TraceabilityBatch
 from src.schemas.traceability import (
     TraceFarmInfo,
-    TraceFlockInfo,
+    TraceOriginInfo,
     TracePublicResponse,
 )
 
@@ -32,6 +31,7 @@ async def public_trace(
     """
     Public endpoint: scan QR -> get batch origin info.
     No authentication required. Rate limited per IP.
+    Works for any product category (eggs, pork, dairy, crops, etc.).
     """
     client_ip = request.client.host if request.client else "unknown"
     if not await check_rate_limit(
@@ -42,7 +42,7 @@ async def public_trace(
     result = await db.execute(
         select(TraceabilityBatch)
         .options(
-            selectinload(TraceabilityBatch.flock).selectinload(Flock.farm),
+            selectinload(TraceabilityBatch.farm),
             selectinload(TraceabilityBatch.client),
         )
         .where(TraceabilityBatch.batch_code == batch_code)
@@ -51,29 +51,34 @@ async def public_trace(
     if not batch:
         raise NotFoundError("Batch not found. This code may be invalid or expired.")
 
-    # Build flock info
-    flock_info = None
+    # Build origin info (generic — works for flock, herd, field)
     farm_info = None
-    if batch.flock:
-        flock_info = TraceFlockInfo(
-            name=batch.flock.name,
-            breed=batch.flock.breed,
-            housing_type=batch.flock.housing_type,
-            start_date=batch.flock.start_date,
+    origin_info = None
+
+    if batch.farm:
+        farm_info = TraceFarmInfo(name=batch.farm.name)
+
+    if batch.source_id:
+        origin_info = TraceOriginInfo(
+            name=batch.origin_location,
+            type=batch.source_type,
         )
-        if batch.flock.farm:
-            farm_info = TraceFarmInfo(name=batch.flock.farm.name)
 
     return TracePublicResponse(
         batch_code=batch.batch_code,
         date=batch.date,
-        total_eggs=batch.box_count * batch.eggs_per_box,
-        box_count=batch.box_count,
-        eggs_per_box=batch.eggs_per_box,
-        egg_type=batch.egg_type,
-        house=batch.house,
+        product_category=batch.product_category.value,
+        product_name=batch.product_name,
+        product_type=batch.product_type,
+        quantity=batch.quantity,
+        unit_of_measure=batch.unit_of_measure,
+        container_count=batch.container_count,
+        units_per_container=batch.units_per_container,
+        quality_grade=batch.quality_grade,
+        origin_location=batch.origin_location,
         delivery_date=batch.delivery_date,
-        flock=flock_info,
+        best_before=batch.best_before,
         farm=farm_info,
+        origin=origin_info,
         packed_at=batch.created_at,
     )

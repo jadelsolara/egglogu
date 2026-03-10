@@ -30,6 +30,7 @@ class EventType:
     FINANCE_INCOME = "finance.income"
     FINANCE_EXPENSE = "finance.expense"
     SYSTEM_ALERT = "system.alert"
+    OUTBREAK_ALERT = "outbreak.alert"
 
 
 def _channel_for_farm(farm_id: str) -> str:

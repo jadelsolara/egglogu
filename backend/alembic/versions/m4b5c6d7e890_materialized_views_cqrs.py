@@ -28,18 +28,17 @@ def upgrade() -> None:
             f.name AS flock_name,
             dp.date,
             dp.total_eggs,
-            dp.broken_eggs,
-            dp.mortality,
+            dp.broken,
+            dp.deaths,
             f.current_count,
             CASE WHEN f.current_count > 0
                  THEN ROUND((dp.total_eggs::numeric / f.current_count) * 100, 2)
                  ELSE 0
             END AS hen_day_pct,
-            dp.avg_egg_weight_g,
+            dp.egg_mass_g,
             dp.created_at
         FROM daily_production dp
         JOIN flocks f ON f.id = dp.flock_id
-        WHERE dp.deleted_at IS NULL
         ORDER BY dp.organization_id, dp.flock_id, dp.date
         WITH DATA
     """)
@@ -61,14 +60,13 @@ def upgrade() -> None:
                      THEN (dp.total_eggs::numeric / f.current_count) * 100
                      ELSE 0
                 END
-            ), 2) AS avg_hen_day_pct,
+            )::numeric, 2) AS avg_hen_day_pct,
             SUM(dp.total_eggs)::bigint AS total_eggs,
-            SUM(COALESCE(dp.broken_eggs, 0))::int AS total_broken,
-            SUM(COALESCE(dp.mortality, 0))::int AS total_mortality,
-            ROUND(AVG(dp.avg_egg_weight_g), 1) AS avg_egg_weight_g
+            SUM(COALESCE(dp.broken, 0))::int AS total_broken,
+            SUM(COALESCE(dp.deaths, 0))::int AS total_mortality,
+            ROUND(AVG(dp.egg_mass_g)::numeric, 1) AS avg_egg_mass_g
         FROM daily_production dp
         JOIN flocks f ON f.id = dp.flock_id
-        WHERE dp.deleted_at IS NULL
         GROUP BY dp.organization_id, dp.flock_id, DATE_TRUNC('week', dp.date)
         ORDER BY dp.organization_id, dp.flock_id, week_start
         WITH DATA
@@ -82,42 +80,43 @@ def upgrade() -> None:
     op.execute("""
         CREATE MATERIALIZED VIEW IF NOT EXISTS mv_monthly_costs AS
         SELECT
-            fc.organization_id,
-            fc.flock_id,
-            DATE_TRUNC('month', fc.date)::date AS month_start,
-            SUM(fc.feed_kg)::numeric(12,2) AS total_feed_kg,
-            (SELECT ROUND(
-                CASE WHEN SUM(fp2.kg) > 0
-                     THEN SUM(fp2.total_cost) / SUM(fp2.kg)
-                     ELSE 0
-                END, 4)
-             FROM feed_purchases fp2
-             WHERE fp2.organization_id = fc.organization_id
-            ) AS avg_feed_price_per_kg,
+            sub.organization_id,
+            sub.flock_id,
+            sub.month_start,
+            sub.total_feed_kg,
+            COALESCE((
+                SELECT ROUND((
+                    CASE WHEN SUM(fp2.kg) > 0
+                         THEN SUM(fp2.total_cost) / SUM(fp2.kg)
+                         ELSE 0
+                    END)::numeric, 4)
+                FROM feed_purchases fp2
+                WHERE fp2.organization_id = sub.organization_id
+            ), 0) AS avg_feed_price_per_kg,
             COALESCE((
                 SELECT SUM(v.cost) FROM vaccines v
-                WHERE v.flock_id = fc.flock_id
-                  AND v.organization_id = fc.organization_id
-                  AND DATE_TRUNC('month', v.date) = DATE_TRUNC('month', fc.date)
+                WHERE v.flock_id = sub.flock_id
+                  AND v.organization_id = sub.organization_id
+                  AND DATE_TRUNC('month', v.date) = sub.month_start
                   AND v.cost IS NOT NULL
             ), 0)::numeric(12,2) AS vaccine_cost,
             COALESCE((
                 SELECT SUM(m.cost) FROM medications m
-                WHERE m.flock_id = fc.flock_id
-                  AND m.organization_id = fc.organization_id
-                  AND DATE_TRUNC('month', m.start_date) = DATE_TRUNC('month', fc.date)
+                WHERE m.flock_id = sub.flock_id
+                  AND m.organization_id = sub.organization_id
+                  AND DATE_TRUNC('month', m.date) = sub.month_start
                   AND m.cost IS NOT NULL
-            ), 0)::numeric(12,2) AS medication_cost,
-            COALESCE((
-                SELECT SUM(e.amount) FROM expenses e
-                WHERE e.flock_id = fc.flock_id
-                  AND e.organization_id = fc.organization_id
-                  AND DATE_TRUNC('month', e.date) = DATE_TRUNC('month', fc.date)
-            ), 0)::numeric(12,2) AS direct_expenses
-        FROM feed_consumption fc
-        WHERE fc.deleted_at IS NULL
-        GROUP BY fc.organization_id, fc.flock_id, DATE_TRUNC('month', fc.date)
-        ORDER BY fc.organization_id, fc.flock_id, month_start
+            ), 0)::numeric(12,2) AS medication_cost
+        FROM (
+            SELECT
+                fc.organization_id,
+                fc.flock_id,
+                DATE_TRUNC('month', fc.date)::date AS month_start,
+                SUM(fc.feed_kg)::numeric(12,2) AS total_feed_kg
+            FROM feed_consumption fc
+            GROUP BY fc.organization_id, fc.flock_id, DATE_TRUNC('month', fc.date)
+        ) sub
+        ORDER BY sub.organization_id, sub.flock_id, sub.month_start
         WITH DATA
     """)
     op.execute("""
@@ -133,11 +132,10 @@ def upgrade() -> None:
             dp.date,
             COUNT(DISTINCT dp.flock_id)::int AS active_flocks,
             SUM(dp.total_eggs)::bigint AS total_eggs,
-            SUM(COALESCE(dp.broken_eggs, 0))::int AS total_broken,
-            SUM(COALESCE(dp.mortality, 0))::int AS total_mortality,
-            ROUND(AVG(dp.avg_egg_weight_g), 1) AS avg_egg_weight_g
+            SUM(COALESCE(dp.broken, 0))::int AS total_broken,
+            SUM(COALESCE(dp.deaths, 0))::int AS total_mortality,
+            ROUND(AVG(dp.egg_mass_g)::numeric, 1) AS avg_egg_mass_g
         FROM daily_production dp
-        WHERE dp.deleted_at IS NULL
         GROUP BY dp.organization_id, dp.date
         ORDER BY dp.organization_id, dp.date
         WITH DATA
@@ -151,42 +149,45 @@ def upgrade() -> None:
     op.execute("""
         CREATE MATERIALIZED VIEW IF NOT EXISTS mv_flock_fcr AS
         SELECT
-            fc.organization_id,
-            fc.flock_id,
-            DATE_TRUNC('week', fc.date)::date AS week_start,
-            SUM(fc.feed_kg)::numeric(12,2) AS feed_kg,
+            sub.organization_id,
+            sub.flock_id,
+            sub.week_start,
+            sub.feed_kg,
             COALESCE((
-                SELECT SUM(dp.total_eggs * COALESCE(dp.avg_egg_weight_g, 60.0) / 1000.0)
+                SELECT SUM(dp.total_eggs * COALESCE(dp.egg_mass_g, 60.0) / 1000.0)
                 FROM daily_production dp
-                WHERE dp.flock_id = fc.flock_id
-                  AND dp.organization_id = fc.organization_id
-                  AND DATE_TRUNC('week', dp.date) = DATE_TRUNC('week', fc.date)
-                  AND dp.deleted_at IS NULL
+                WHERE dp.flock_id = sub.flock_id
+                  AND dp.organization_id = sub.organization_id
+                  AND DATE_TRUNC('week', dp.date) = sub.week_start
             ), 0)::numeric(12,2) AS egg_mass_kg,
             CASE
                 WHEN COALESCE((
-                    SELECT SUM(dp.total_eggs * COALESCE(dp.avg_egg_weight_g, 60.0) / 1000.0)
+                    SELECT SUM(dp.total_eggs * COALESCE(dp.egg_mass_g, 60.0) / 1000.0)
                     FROM daily_production dp
-                    WHERE dp.flock_id = fc.flock_id
-                      AND dp.organization_id = fc.organization_id
-                      AND DATE_TRUNC('week', dp.date) = DATE_TRUNC('week', fc.date)
-                      AND dp.deleted_at IS NULL
+                    WHERE dp.flock_id = sub.flock_id
+                      AND dp.organization_id = sub.organization_id
+                      AND DATE_TRUNC('week', dp.date) = sub.week_start
                 ), 0) > 0
-                THEN ROUND(
-                    SUM(fc.feed_kg) / (
-                        SELECT SUM(dp.total_eggs * COALESCE(dp.avg_egg_weight_g, 60.0) / 1000.0)
+                THEN ROUND((
+                    sub.feed_kg / (
+                        SELECT SUM(dp.total_eggs * COALESCE(dp.egg_mass_g, 60.0) / 1000.0)
                         FROM daily_production dp
-                        WHERE dp.flock_id = fc.flock_id
-                          AND dp.organization_id = fc.organization_id
-                          AND DATE_TRUNC('week', dp.date) = DATE_TRUNC('week', fc.date)
-                          AND dp.deleted_at IS NULL
-                    ), 3)
+                        WHERE dp.flock_id = sub.flock_id
+                          AND dp.organization_id = sub.organization_id
+                          AND DATE_TRUNC('week', dp.date) = sub.week_start
+                    ))::numeric, 3)
                 ELSE NULL
             END AS fcr
-        FROM feed_consumption fc
-        WHERE fc.deleted_at IS NULL
-        GROUP BY fc.organization_id, fc.flock_id, DATE_TRUNC('week', fc.date)
-        ORDER BY fc.organization_id, fc.flock_id, week_start
+        FROM (
+            SELECT
+                fc.organization_id,
+                fc.flock_id,
+                DATE_TRUNC('week', fc.date)::date AS week_start,
+                SUM(fc.feed_kg)::numeric(12,2) AS feed_kg
+            FROM feed_consumption fc
+            GROUP BY fc.organization_id, fc.flock_id, DATE_TRUNC('week', fc.date)
+        ) sub
+        ORDER BY sub.organization_id, sub.flock_id, sub.week_start
         WITH DATA
     """)
     op.execute("""

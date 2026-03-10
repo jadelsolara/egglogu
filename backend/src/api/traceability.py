@@ -1,3 +1,10 @@
+"""
+Traceability API — Core product batch tracking (FarmLogU Platform).
+
+Works for any vertical: eggs, pork, beef, dairy, crops.
+Batch code format: {PREFIX}-{ORIGIN}-{DATE}-{SEQ}
+"""
+
 import uuid
 from datetime import date as date_type
 
@@ -10,8 +17,7 @@ from src.config import settings
 from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
-from src.models.flock import Flock
-from src.models.traceability import TraceabilityBatch
+from src.models.traceability import TraceabilityBatch, ProductCategory
 from src.schemas.traceability import (
     TraceabilityBatchCreate,
     TraceabilityBatchRead,
@@ -21,30 +27,50 @@ from src.schemas.traceability import (
 router = APIRouter(prefix="/traceability", tags=["traceability"])
 
 
+# ── Batch code prefix by product category ──
+CATEGORY_PREFIX = {
+    ProductCategory.EGGS: "EGG",
+    ProductCategory.POULTRY_MEAT: "PLT",
+    ProductCategory.PORK: "PRK",
+    ProductCategory.BEEF: "BEF",
+    ProductCategory.DAIRY: "DRY",
+    ProductCategory.CROPS: "CRP",
+    ProductCategory.FEED: "FED",
+    ProductCategory.BYPRODUCT: "BYP",
+    ProductCategory.OTHER: "OTH",
+}
+
+
 async def _generate_batch_code(
-    flock_id: uuid.UUID, batch_date: date_type, db: AsyncSession
+    category: ProductCategory,
+    origin_name: str | None,
+    batch_date: date_type,
+    db: AsyncSession,
 ) -> str:
-    """Generate batch code like BOX-FlockName-20260210-001."""
-    # Get flock name for readable code
-    result = await db.execute(select(Flock.name).where(Flock.id == flock_id))
-    flock_name = result.scalar_one_or_none() or "UNK"
-    # Sanitize: take first 8 chars, uppercase, no spaces
-    flock_short = flock_name[:8].upper().replace(" ", "")
+    """Generate batch code: {CAT}-{ORIGIN}-{DATE}-{SEQ}
 
+    Examples:
+    - EGG-LOTE1-20260308-001 (eggs from flock LOTE1)
+    - PRK-BARN2-20260308-001 (pork from barn 2)
+    - DRY-HERD3-20260308-001 (dairy from herd 3)
+    """
+    prefix = CATEGORY_PREFIX.get(category, "OTH")
+    origin_short = (origin_name or "GEN")[:8].upper().replace(" ", "")
     date_str = batch_date.strftime("%Y%m%d")
-    prefix = f"BOX-{flock_short}-{date_str}"
+    code_prefix = f"{prefix}-{origin_short}-{date_str}"
 
-    # Count existing batches with same prefix to get sequence number
     count_result = await db.execute(
-        select(func.count()).where(TraceabilityBatch.batch_code.like(f"{prefix}%"))
+        select(func.count()).where(
+            TraceabilityBatch.batch_code.like(f"{code_prefix}%")
+        )
     )
     seq = (count_result.scalar() or 0) + 1
-
-    return f"{prefix}-{seq:03d}"
+    return f"{code_prefix}-{seq:03d}"
 
 
 @router.get("/batches", response_model=list[TraceabilityBatchRead])
 async def list_batches(
+    category: ProductCategory | None = None,
     page: int = Query(1, ge=1),
     size: int = Query(50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
@@ -53,10 +79,10 @@ async def list_batches(
     stmt = (
         select(TraceabilityBatch)
         .where(TraceabilityBatch.organization_id == user.organization_id)
-        .order_by(TraceabilityBatch.id)
-        .offset((page - 1) * size)
-        .limit(size)
     )
+    if category:
+        stmt = stmt.where(TraceabilityBatch.product_category == category)
+    stmt = stmt.order_by(TraceabilityBatch.date.desc()).offset((page - 1) * size).limit(size)
     result = await db.execute(stmt)
     return result.scalars().all()
 
@@ -89,7 +115,15 @@ async def create_batch(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("traceability")),
 ):
-    batch_code = await _generate_batch_code(data.flock_id, data.date, db)
+    # Resolve origin name for batch code
+    origin_name = data.origin_location
+    if not origin_name and data.source_id:
+        # Try to get a readable name from the source
+        origin_name = str(data.source_id)[:8]
+
+    batch_code = await _generate_batch_code(
+        data.product_category, origin_name, data.date, db
+    )
     qr_url = f"{settings.FRONTEND_URL}/trace/{batch_code}"
 
     obj = TraceabilityBatch(

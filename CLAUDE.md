@@ -17,7 +17,7 @@ Auth: JWT + Google OAuth + Apple Sign-In + Microsoft Identity + Resend email ver
 - 8 languages (ES, EN, PT, FR, DE, IT, JA, ZH)
 - Multi-tenant: Organization → Farm → Flock → DailyProduction
 - Offline-first: IndexedDB local, dual-write sync when online
-- Pricing: Hobby $9/mo / Starter $19/mo / Pro $49/mo / Enterprise $99/mo (30-day free trial)
+- Pricing: Hobbyist FREE / Starter $49/mo / Professional $99/mo / Enterprise $199/mo (30-day free trial, launch promo $75/mo x3 months)
 - 18 API route modules, 21+ SQLAlchemy models
 
 ## Deployment

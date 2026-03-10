@@ -87,8 +87,9 @@ class ProfitLossSnapshotCreate(BaseModel):
     period_end: date
     total_revenue: float = 0.0
     total_cost: float = 0.0
-    eggs_produced: Optional[int] = None
-    eggs_sold: Optional[int] = None
+    units_produced: Optional[int] = None
+    units_sold: Optional[int] = None
+    unit_of_measure: Optional[str] = None  # "units", "kg", "liters", "tonnes"
     notes: Optional[str] = None
 
 
@@ -104,8 +105,9 @@ class ProfitLossSnapshotRead(BaseModel):
     margin_pct: float
     cost_breakdown: Optional[dict]
     revenue_breakdown: Optional[dict]
-    eggs_produced: Optional[int]
-    eggs_sold: Optional[int]
-    cost_per_egg: Optional[float]
-    cost_per_dozen: Optional[float]
+    units_produced: Optional[int]
+    units_sold: Optional[int]
+    cost_per_unit: Optional[float]
+    cost_per_standard_unit: Optional[float]
+    unit_of_measure: Optional[str]
     notes: Optional[str]

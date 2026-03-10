@@ -18,23 +18,22 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Add new enum values to plantier that match the Python PlanTier enum:
-    # hobby, starter, pro, enterprise
-    # The original migration had: free, pro, business, enterprise
-    # We need: hobby (new), starter (new) — pro and enterprise already exist
-    op.execute("ALTER TYPE plantier ADD VALUE IF NOT EXISTS 'hobby'")
-    op.execute("ALTER TYPE plantier ADD VALUE IF NOT EXISTS 'starter'")
-
-    # Migrate existing rows from old tier names to new ones
-    # 'business' -> 'starter' (pro stays as pro, enterprise stays as enterprise)
+    # Recreate plantier enum with new tier names: hobby, starter, pro, enterprise
+    # (was: free, pro, business, enterprise)
+    # Must convert to text first to avoid "new enum value must be committed" error
+    op.execute("ALTER TABLE subscriptions ALTER COLUMN plan TYPE text")
     op.execute("UPDATE subscriptions SET plan = 'starter' WHERE plan = 'business'")
-    # 'free' -> 'hobby' (if any exist)
     op.execute("UPDATE subscriptions SET plan = 'hobby' WHERE plan = 'free'")
+    op.execute("DROP TYPE plantier")
+    op.execute("CREATE TYPE plantier AS ENUM ('hobby', 'starter', 'pro', 'enterprise')")
+    op.execute("ALTER TABLE subscriptions ALTER COLUMN plan TYPE plantier USING plan::plantier")
 
 
 def downgrade() -> None:
-    # Migrate back to old tier names
+    # Revert to original enum: free, pro, business, enterprise
+    op.execute("ALTER TABLE subscriptions ALTER COLUMN plan TYPE text")
     op.execute("UPDATE subscriptions SET plan = 'business' WHERE plan = 'starter'")
     op.execute("UPDATE subscriptions SET plan = 'free' WHERE plan = 'hobby'")
-    # Note: PostgreSQL enum values cannot be removed, only added.
-    # Old values (free, business) still exist in the enum but are unused after upgrade.
+    op.execute("DROP TYPE plantier")
+    op.execute("CREATE TYPE plantier AS ENUM ('free', 'pro', 'business', 'enterprise')")
+    op.execute("ALTER TABLE subscriptions ALTER COLUMN plan TYPE plantier USING plan::plantier")

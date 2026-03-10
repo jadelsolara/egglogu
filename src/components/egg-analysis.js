@@ -185,7 +185,7 @@ class EggAnalysis extends HTMLElement {
       .btn-primary { background: var(--primary, #1A3C6E); color: #fff; border: none; }
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn:hover { opacity: 0.85; }
-      .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+      .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
       .kpi-card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
       .kpi-card.danger { border-left: 4px solid var(--danger, #dc3545); }
       .kpi-card.warning { border-left: 4px solid var(--warning, #ffc107); }
@@ -230,8 +230,10 @@ class EggAnalysis extends HTMLElement {
       .health-score.good { background: #e8f5e9; color: #2e7d32; }
       .health-score.warn { background: #fff9c4; color: #f57f17; }
       .health-score.bad { background: #ffebee; color: #c62828; }
-      @media (max-width: 600px) {
+      @media (max-width: 900px) {
         .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 600px) {
         .tabs { gap: 0; }
         .tab { padding: 8px 10px; font-size: 12px; }
       }

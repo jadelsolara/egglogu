@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- White egg containment -->
+  <path d="M256 68 C160 68, 82 160, 82 268 C82 385, 155 448, 256 448 C357 448, 430 385, 430 268 C430 160, 352 68, 256 68Z" fill="#FFFFFF"/>
+
+  <!-- WHEAT — bold, warm golden, fills the egg like the chicken does -->
+  <!-- Main stem — thick, organic -->
+  <path d="M256 425 C254 400, 255 200, 256 130" stroke="#8B6914" stroke-width="10" stroke-linecap="round" fill="none"/>
+
+  <!-- Grain kernels — smooth, fat, alternating sides -->
+  <!-- Bottom pair -->
+  <path d="M256 380 C240 375, 205 365, 200 350 C195 335, 210 330, 225 340 C240 350, 252 370, 256 380Z" fill="#F6AD3C"/>
+  <path d="M256 380 C272 375, 307 365, 312 350 C317 335, 302 330, 287 340 C272 350, 260 370, 256 380Z" fill="#F6AD3C"/>
+
+  <!-- Second pair -->
+  <path d="M256 340 C238 334, 198 322, 192 305 C186 288, 202 284, 218 295 C234 306, 252 328, 256 340Z" fill="#FBBF24"/>
+  <path d="M256 340 C274 334, 314 322, 320 305 C326 288, 310 284, 294 295 C278 306, 260 328, 256 340Z" fill="#FBBF24"/>
+
+  <!-- Third pair -->
+  <path d="M256 295 C240 290, 208 278, 203 264 C198 250, 212 246, 226 255 C240 264, 252 282, 256 295Z" fill="#F6AD3C"/>
+  <path d="M256 295 C272 290, 304 278, 309 264 C314 250, 300 246, 286 255 C272 264, 260 282, 256 295Z" fill="#F6AD3C"/>
+
+  <!-- Fourth pair -->
+  <path d="M256 255 C242 250, 218 240, 214 228 C210 216, 222 213, 234 220 C246 227, 253 244, 256 255Z" fill="#FBBF24"/>
+  <path d="M256 255 C270 250, 294 240, 298 228 C302 216, 290 213, 278 220 C266 227, 259 244, 256 255Z" fill="#FBBF24"/>
+
+  <!-- Fifth pair (smaller) -->
+  <path d="M256 218 C244 214, 228 206, 225 196 C222 186, 232 184, 242 190 C252 196, 254 210, 256 218Z" fill="#F6AD3C"/>
+  <path d="M256 218 C268 214, 284 206, 287 196 C290 186, 280 184, 270 190 C260 196, 258 210, 256 218Z" fill="#F6AD3C"/>
+
+  <!-- Top kernel (crown) -->
+  <path d="M256 180 C248 176, 240 164, 242 152 C244 140, 254 138, 256 148 C258 138, 268 140, 270 152 C272 164, 264 176, 256 180Z" fill="#FBBF24"/>
+
+  <!-- Awns — elegant lines from top -->
+  <path d="M256 148 C256 128, 256 108, 256 90" stroke="#D97706" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M252 152 C240 135, 225 115, 215 100" stroke="#D97706" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M260 152 C272 135, 287 115, 297 100" stroke="#D97706" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+  <!-- Base leaves — bold, organic curves -->
+  <path d="M256 425 C238 408, 198 405, 170 415 C158 420, 162 428, 175 425 C195 420, 235 418, 256 425Z" fill="#22C55E"/>
+  <path d="M256 425 C274 408, 314 405, 342 415 C354 420, 350 428, 337 425 C317 420, 277 418, 256 425Z" fill="#16A34A"/>
+</svg>

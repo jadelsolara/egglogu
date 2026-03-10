@@ -564,7 +564,7 @@ class EggFlocks extends HTMLElement {
 
       /* KPI grid */
       .kpi-grid {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        display: grid; grid-template-columns: repeat(4, 1fr);
         gap: 12px; margin-bottom: 16px;
       }
 
@@ -713,10 +713,12 @@ class EggFlocks extends HTMLElement {
       .dt-card-label { color: var(--text-light, #888); }
       .dt-card-actions { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
 
+      @media (max-width: 900px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
       @media (max-width: 768px) {
         .dt-table-desktop { display: none; }
         .dt-mobile-cards { display: block; }
-        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
         .lifecycle-detail { grid-template-columns: repeat(2, 1fr); }
         .lifecycle-stage { font-size: 9px; }
       }

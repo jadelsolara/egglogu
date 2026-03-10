@@ -197,10 +197,12 @@ async def create_pl_snapshot(
     margin_pct = (
         (gross_profit / data.total_revenue * 100) if data.total_revenue > 0 else 0.0
     )
-    cost_per_egg = (
-        (data.total_cost / data.eggs_produced) if data.eggs_produced else None
+    cost_per_unit = (
+        (data.total_cost / data.units_produced) if data.units_produced else None
     )
-    cost_per_dozen = (cost_per_egg * 12) if cost_per_egg else None
+    # Standard unit multiplier: dozen for eggs, 1 for kg/liters/tonnes
+    std_multiplier = 12 if (data.unit_of_measure or "units") == "units" else 1
+    cost_per_standard = (cost_per_unit * std_multiplier) if cost_per_unit else None
 
     obj = ProfitLossSnapshot(
         cost_center_id=center_id,
@@ -211,10 +213,11 @@ async def create_pl_snapshot(
         total_cost=data.total_cost,
         gross_profit=gross_profit,
         margin_pct=round(margin_pct, 2),
-        eggs_produced=data.eggs_produced,
-        eggs_sold=data.eggs_sold,
-        cost_per_egg=round(cost_per_egg, 4) if cost_per_egg else None,
-        cost_per_dozen=round(cost_per_dozen, 4) if cost_per_dozen else None,
+        units_produced=data.units_produced,
+        units_sold=data.units_sold,
+        cost_per_unit=round(cost_per_unit, 4) if cost_per_unit else None,
+        cost_per_standard_unit=round(cost_per_standard, 4) if cost_per_standard else None,
+        unit_of_measure=data.unit_of_measure,
         notes=data.notes,
     )
     db.add(obj)

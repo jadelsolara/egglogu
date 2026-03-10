@@ -1,4 +1,6 @@
+import math
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy import select
@@ -9,7 +11,9 @@ from src.core.cache import invalidate_prefix
 from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
+from src.models.farm import Farm
 from src.models.health import Medication, Outbreak, StressEvent, Vaccine
+from src.models.outbreak_alert import OutbreakAlert
 from src.schemas.health import (
     MedicationCreate,
     MedicationRead,
@@ -396,3 +400,101 @@ async def delete_stress_event(
     if not item:
         raise NotFoundError("Stress event not found")
     await db.delete(item)
+
+
+# --- Global Outbreak Alerts (geo-filtered by farm proximity) ---
+
+
+def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    """Haversine distance in km between two lat/lng points."""
+    R = 6371.0  # Earth radius km
+    dlat = math.radians(lat2 - lat1)
+    dlng = math.radians(lng2 - lng1)
+    a = (
+        math.sin(dlat / 2) ** 2
+        + math.cos(math.radians(lat1))
+        * math.cos(math.radians(lat2))
+        * math.sin(dlng / 2) ** 2
+    )
+    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+@router.get("/outbreak-alerts")
+async def get_outbreak_alerts_for_my_farms(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get active outbreak alerts that are within radius of the user's farms.
+
+    Uses Haversine formula to calculate distance between each alert epicenter
+    and each farm's coordinates. Only returns alerts where at least one farm
+    is inside the alert radius. Includes distance_km to closest farm.
+    """
+    # Get user's farms with coordinates
+    farms = (
+        await db.execute(
+            select(Farm).where(
+                Farm.organization_id == user.organization_id,
+                Farm.lat.is_not(None),
+                Farm.lng.is_not(None),
+            )
+        )
+    ).scalars().all()
+
+    if not farms:
+        return []
+
+    # Get all active, non-expired alerts
+    now = datetime.now(timezone.utc)
+    q = select(OutbreakAlert).where(
+        OutbreakAlert.is_active.is_(True),
+    )
+    alerts = (await db.execute(q)).scalars().all()
+
+    result = []
+    for alert in alerts:
+        # Skip expired
+        if alert.expires_at and alert.expires_at < now:
+            continue
+
+        # Find closest farm to this alert's epicenter
+        min_dist = float("inf")
+        for farm in farms:
+            dist = _haversine_km(
+                alert.epicenter_lat, alert.epicenter_lng,
+                farm.lat, farm.lng,
+            )
+            if dist < min_dist:
+                min_dist = dist
+
+        # Only include if closest farm is within the alert radius
+        if min_dist <= alert.radius_km:
+            alert_data = {
+                "id": str(alert.id),
+                "title": alert.title,
+                "disease": alert.disease,
+                "severity": alert.severity.value,
+                "transmission": alert.transmission.value,
+                "species_affected": alert.species_affected,
+                "epicenter_lat": alert.epicenter_lat,
+                "epicenter_lng": alert.epicenter_lng,
+                "radius_km": alert.radius_km,
+                "region_name": alert.region_name,
+                "detected_date": alert.detected_date.isoformat(),
+                "description": alert.description,
+                "contingency_protocol": alert.contingency_protocol,
+                "source_url": alert.source_url,
+                "confirmed_cases": alert.confirmed_cases,
+                "deaths_reported": alert.deaths_reported,
+                "spread_speed_km_day": alert.spread_speed_km_day,
+                "spread_direction": alert.spread_direction,
+                "distance_km": round(min_dist, 1),
+                "created_at": alert.created_at.isoformat(),
+            }
+            result.append(alert_data)
+
+    # Sort by distance (closest first), then by severity
+    severity_order = {"critical": 0, "high": 1, "moderate": 2, "low": 3}
+    result.sort(key=lambda a: (severity_order.get(a["severity"], 9), a["distance_km"]))
+
+    return result

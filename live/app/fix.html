@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>EGGlogU - Diagnostic</title>
+<style>
+body{font-family:system-ui;max-width:600px;margin:40px auto;padding:20px;background:#1a1a2e;color:#eee}
+.ok{color:#4caf50;font-weight:bold}.bad{color:#f44336;font-weight:bold}
+button{background:#ff8f00;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;cursor:pointer;margin:10px 0}
+button:hover{background:#e65100}
+pre{background:#111;padding:12px;border-radius:8px;overflow-x:auto;font-size:13px}
+h1{color:#ffb300}
+</style>
+</head><body>
+<h1>EGGlogU Diagnostic</h1>
+<div id="log"></div>
+<button id="fix">FORCE FIX - Clear all cache & SW</button>
+<button id="go" style="display:none;background:#4caf50">GO TO APP</button>
+<script>
+const log = document.getElementById('log');
+function add(msg, cls) {
+  log.innerHTML += '<p class="' + (cls||'') + '">' + msg + '</p>';
+}
+
+async function diagnose() {
+  add('Checking Service Workers...');
+  
+  if (!('serviceWorker' in navigator)) {
+    add('No SW support', 'bad');
+    return;
+  }
+  
+  const regs = await navigator.serviceWorker.getRegistrations();
+  if (regs.length === 0) {
+    add('No SW registered', 'ok');
+  } else {
+    for (const r of regs) {
+      add('SW scope: ' + r.scope, 'bad');
+      if (r.active) add('Active SW state: ' + r.active.state);
+      if (r.waiting) add('Waiting SW detected!', 'bad');
+    }
+  }
+  
+  add('Checking caches...');
+  const keys = await caches.keys();
+  if (keys.length === 0) {
+    add('No caches', 'ok');
+  } else {
+    for (const k of keys) {
+      add('Cache: ' + k, 'bad');
+    }
+  }
+  
+  add('Checking localStorage purge flag...');
+  const flag = localStorage.getItem('_eggl_purge_v13');
+  add('Purge v13 flag: ' + (flag || 'not set'));
+}
+
+document.getElementById('fix').onclick = async function() {
+  add('<hr>FIXING...');
+  
+  // Unregister ALL service workers
+  const regs = await navigator.serviceWorker.getRegistrations();
+  for (const r of regs) {
+    await r.unregister();
+    add('Unregistered SW: ' + r.scope, 'ok');
+  }
+  
+  // Delete ALL caches
+  const keys = await caches.keys();
+  for (const k of keys) {
+    await caches.delete(k);
+    add('Deleted cache: ' + k, 'ok');
+  }
+  
+  // Clear purge flags
+  localStorage.removeItem('_eggl_purge_v13');
+  
+  add('ALL CLEAR! Click the green button to go to the app.', 'ok');
+  document.getElementById('go').style.display = 'block';
+};
+
+document.getElementById('go').onclick = function() {
+  window.location.href = '/egglogu';
+};
+
+diagnose();
+</script>
+</body></html>

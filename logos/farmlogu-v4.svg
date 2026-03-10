@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- White egg containment -->
+  <path d="M256 68 C160 68, 82 160, 82 268 C82 385, 155 448, 256 448 C357 448, 430 385, 430 268 C430 160, 352 68, 256 68Z" fill="#FFFFFF"/>
+
+  <!-- Green rolling hills -->
+  <path d="M82 385 C120 355, 190 345, 256 355 C322 345, 392 355, 430 385 C430 410, 370 448, 256 448 C142 448, 82 410, 82 385Z" fill="#22C55E"/>
+  <path d="M82 392 C130 370, 180 362, 220 372 C250 378, 200 380, 160 395 C130 405, 100 412, 82 400Z" fill="#16A34A"/>
+
+  <!-- RED BARN — smooth, professional -->
+  <!-- Barn body -->
+  <path d="M168 240 L168 370 C168 375, 172 378, 178 378 L338 378 C344 378, 348 375, 348 370 L348 240 Z" fill="#DC2626"/>
+
+  <!-- Barn roof — smooth -->
+  <path d="M150 245 L258 165 L365 245 Z" fill="#B91C1C"/>
+  <path d="M150 245 L258 165 L365 245" fill="none" stroke="#991B1B" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- Silo — smooth cylinder -->
+  <path d="M355 205 C355 205, 345 205, 345 215 L345 372 C345 382, 355 385, 365 385 C375 385, 385 382, 385 372 L385 215 C385 205, 375 205, 375 205 Z" fill="#9CA3AF"/>
+  <ellipse cx="365" cy="205" rx="20" ry="7" fill="#6B7280"/>
+  <!-- Silo bands -->
+  <line x1="345" y1="250" x2="385" y2="250" stroke="#6B7280" stroke-width="2" opacity="0.5"/>
+  <line x1="345" y1="300" x2="385" y2="300" stroke="#6B7280" stroke-width="2" opacity="0.5"/>
+  <line x1="345" y1="350" x2="385" y2="350" stroke="#6B7280" stroke-width="2" opacity="0.5"/>
+
+  <!-- Barn door — arched -->
+  <path d="M228 378 L228 290 C228 268, 245 255, 258 255 C271 255, 288 268, 288 290 L288 378 Z" fill="#7F1D1D"/>
+
+  <!-- Hayloft window -->
+  <rect x="233" y="198" width="50" height="28" rx="4" fill="#FDE68A"/>
+  <line x1="233" y1="198" x2="283" y2="226" stroke="#B91C1C" stroke-width="2.5"/>
+  <line x1="283" y1="198" x2="233" y2="226" stroke="#B91C1C" stroke-width="2.5"/>
+
+  <!-- Weather vane -->
+  <line x1="258" y1="165" x2="258" y2="128" stroke="#6B7280" stroke-width="4" stroke-linecap="round"/>
+  <path d="M245 133 L258 126 L271 133" fill="none" stroke="#F6AD3C" stroke-width="3" stroke-linecap="round"/>
+  <!-- Rooster silhouette on vane -->
+  <path d="M258 128 C262 125, 268 122, 268 118 C268 114, 264 112, 262 115 C260 112, 256 114, 258 118" fill="#F6AD3C"/>
+
+  <!-- Sun -->
+  <circle cx="390" cy="115" r="22" fill="#FBBF24"/>
+  <line x1="390" y1="85" x2="390" y2="75" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <line x1="415" y1="95" x2="422" y2="88" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <line x1="420" y1="115" x2="428" y2="115" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <line x1="415" y1="135" x2="422" y2="142" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <line x1="365" y1="95" x2="358" y2="88" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Fence -->
+  <line x1="100" y1="375" x2="158" y2="370" stroke="#92700C" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="108" y1="358" x2="108" y2="388" stroke="#92700C" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="132" y1="355" x2="132" y2="385" stroke="#92700C" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="155" y1="353" x2="155" y2="383" stroke="#92700C" stroke-width="4.5" stroke-linecap="round"/>
+
+  <!-- DIGITAL TECH OVERLAY — circuit lines digitizing the farm -->
+  <!-- Connection lines -->
+  <path d="M108 155 L145 155 L165 195" stroke="#22D3EE" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M395 175 L370 175 L350 200" stroke="#22D3EE" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M105 410 L135 395 L168 390" stroke="#22D3EE" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <path d="M410 395 L380 395 L365 385" stroke="#22D3EE" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+
+  <!-- Scan lines (very subtle) -->
+  <line x1="95" y1="275" x2="420" y2="275" stroke="#22D3EE" stroke-width="1" opacity="0.2"/>
+  <line x1="95" y1="330" x2="420" y2="330" stroke="#22D3EE" stroke-width="1" opacity="0.18"/>
+
+  <!-- Data nodes -->
+  <circle cx="108" cy="155" r="4" fill="#22D3EE" opacity="0.65"/>
+  <circle cx="165" cy="195" r="3" fill="#22D3EE" opacity="0.55"/>
+  <circle cx="395" cy="175" r="4" fill="#22D3EE" opacity="0.65"/>
+  <circle cx="350" cy="200" r="3" fill="#22D3EE" opacity="0.55"/>
+  <circle cx="105" cy="410" r="4" fill="#22D3EE" opacity="0.55"/>
+  <circle cx="410" cy="395" r="4" fill="#22D3EE" opacity="0.55"/>
+
+  <!-- WiFi signal from barn -->
+  <path d="M258 118 C252 108, 248 100, 252 92" stroke="#22D3EE" stroke-width="2" fill="none" opacity="0.45" stroke-linecap="round"/>
+  <path d="M250 98 C244 90, 242 82, 246 76" stroke="#22D3EE" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round"/>
+  <path d="M266 98 C272 90, 274 82, 270 76" stroke="#22D3EE" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round"/>
+</svg>

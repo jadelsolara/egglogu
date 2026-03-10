@@ -20,17 +20,19 @@ class Settings(BaseSettings):
     STRIPE_SECRET_KEY: str = ""
     STRIPE_WEBHOOK_SECRET: str = ""
     # Monthly prices (create in Stripe Dashboard)
-    STRIPE_PRICE_HOBBY: str = ""  # $9/mo
-    STRIPE_PRICE_STARTER: str = ""  # $19/mo
-    STRIPE_PRICE_PRO: str = ""  # $49/mo
-    STRIPE_PRICE_ENTERPRISE: str = ""  # $99/mo
+    STRIPE_PRICE_HOBBY: str = ""  # FREE ($0/mo)
+    STRIPE_PRICE_STARTER: str = ""  # $49/mo
+    STRIPE_PRICE_PRO: str = ""  # $99/mo
+    STRIPE_PRICE_ENTERPRISE: str = ""  # $199/mo
     # Annual prices (create in Stripe Dashboard)
-    STRIPE_PRICE_HOBBY_ANNUAL: str = ""  # $90/yr
-    STRIPE_PRICE_STARTER_ANNUAL: str = ""  # $190/yr
-    STRIPE_PRICE_PRO_ANNUAL: str = ""  # $490/yr
-    STRIPE_PRICE_ENTERPRISE_ANNUAL: str = ""  # $990/yr
+    STRIPE_PRICE_HOBBY_ANNUAL: str = ""  # FREE ($0/yr)
+    STRIPE_PRICE_STARTER_ANNUAL: str = ""  # $490/yr
+    STRIPE_PRICE_PRO_ANNUAL: str = ""  # $990/yr
+    STRIPE_PRICE_ENTERPRISE_ANNUAL: str = ""  # $1990/yr
     # Launch promo: one-time $75 for 3 months Enterprise
     STRIPE_PRICE_LAUNCH75: str = ""  # One-time price created in Stripe Dashboard
+    # Promo: recurring $75/mo for Enterprise access
+    STRIPE_PRICE_PROMO75: str = ""  # Recurring $75/mo price created in Stripe Dashboard
     # Email
     RESEND_API_KEY: str = ""
     GOOGLE_CLIENT_ID: str = ""

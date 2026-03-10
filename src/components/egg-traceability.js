@@ -176,6 +176,9 @@ class EggTraceability extends HTMLElement {
   _styles() {
     return `<style>
       :host { display: block; }
+      .empty-state { text-align: center; padding: 40px; color: var(--text-light, #757575); }
+      .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+      .empty-state p { margin: 0 0 16px; }
       .page-header {
         display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 16px; flex-wrap: wrap; gap: 8px;

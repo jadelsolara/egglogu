@@ -86,6 +86,9 @@ class EggProduction extends HTMLElement {
       h += emptyState('\uD83E\uDD5A', t('no_data'), t('prod_add'));
       this.shadowRoot.innerHTML = h;
       this._bindHeaderActions();
+      // Bind empty state button
+      const emptyBtn = this.shadowRoot.querySelector('.empty-state .btn');
+      if (emptyBtn) emptyBtn.addEventListener('click', () => this._showProdForm(null));
       return;
     }
 
@@ -172,6 +175,9 @@ class EggProduction extends HTMLElement {
   _styles() {
     return `<style>
       :host { display: block; }
+      .empty-state { text-align: center; padding: 40px; color: var(--text-light, #757575); }
+      .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+      .empty-state p { margin: 0 0 16px; }
       .page-header {
         display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 16px; flex-wrap: wrap; gap: 8px;

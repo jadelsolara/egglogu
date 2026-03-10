@@ -798,7 +798,7 @@ class EggSoporte extends HTMLElement {
 
       /* KPI grid */
       .kpi-grid {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        display: grid; grid-template-columns: repeat(4, 1fr);
         gap: 12px; margin-bottom: 16px;
       }
 
@@ -809,6 +809,9 @@ class EggSoporte extends HTMLElement {
         content: '\u25B6'; margin-right: 8px; font-size: .7em; transition: transform .2s; display: inline-block;
       }
       details[open] summary::before { transform: rotate(90deg); }
+      @media (max-width: 900px) {
+        .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
     </style>`;
   }
 }

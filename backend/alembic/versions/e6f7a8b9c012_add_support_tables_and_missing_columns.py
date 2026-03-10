@@ -35,9 +35,9 @@ def upgrade() -> None:
     op.add_column('users', sa.Column('utm_campaign', sa.String(length=200), nullable=True))
 
     # ── Support enums ──
-    op.execute("DO $$ BEGIN CREATE TYPE ticketstatus AS ENUM ('open','in_progress','waiting_user','resolved','closed'); EXCEPTION WHEN duplicate_object THEN null; END $$")
-    op.execute("DO $$ BEGIN CREATE TYPE ticketpriority AS ENUM ('low','medium','high','critical'); EXCEPTION WHEN duplicate_object THEN null; END $$")
     op.execute("DO $$ BEGIN CREATE TYPE ticketcategory AS ENUM ('produccion','sanidad','alimento','iot','billing','bug','sync','feature_request','acceso','general'); EXCEPTION WHEN duplicate_object THEN null; END $$")
+    op.execute("DO $$ BEGIN CREATE TYPE ticketpriority AS ENUM ('low','medium','high','critical'); EXCEPTION WHEN duplicate_object THEN null; END $$")
+    op.execute("DO $$ BEGIN CREATE TYPE ticketstatus AS ENUM ('open','in_progress','waiting_user','resolved','closed'); EXCEPTION WHEN duplicate_object THEN null; END $$")
 
     # ── FAQ Articles (must be created before support_tickets due to FK) ──
     op.create_table('faq_articles',

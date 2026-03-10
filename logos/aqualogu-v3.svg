@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- White egg containment -->
+  <path d="M256 68 C160 68, 82 160, 82 268 C82 385, 155 448, 256 448 C357 448, 430 385, 430 268 C430 160, 352 68, 256 68Z" fill="#FFFFFF"/>
+
+  <!-- FISH — profile facing left, smooth flowing curves -->
+  <!-- Main body — sleek, hydrodynamic -->
+  <path d="M100 275 C100 220, 155 165, 260 165 C365 165, 395 220, 395 275 C395 330, 365 385, 260 385 C155 385, 100 330, 100 275Z" fill="#0AADCF"/>
+
+  <!-- Belly — lighter, smooth -->
+  <path d="M120 290 C120 265, 170 245, 260 248 C350 251, 380 270, 380 295 C380 330, 350 370, 260 372 C170 374, 120 340, 120 310Z" fill="#5DD9F0"/>
+
+  <!-- Tail fin — elegant, flowing -->
+  <path d="M385 275 C395 275, 410 245, 435 225 C440 222, 442 228, 440 235 L425 275 L440 315 C442 322, 440 328, 435 325 C410 305, 395 275, 385 275Z" fill="#0891B2"/>
+
+  <!-- Dorsal fin — smooth arch -->
+  <path d="M200 170 C215 140, 240 120, 280 125 C310 128, 320 148, 310 168" fill="#0891B2"/>
+
+  <!-- Pectoral fin -->
+  <path d="M185 295 C175 310, 158 335, 160 345 C162 350, 168 348, 175 340 C185 328, 195 310, 195 300Z" fill="#0891B2"/>
+
+  <!-- Ventral fin -->
+  <path d="M280 375 C275 390, 268 405, 272 410 C276 414, 282 410, 288 400 C295 388, 292 378, 288 372Z" fill="#0891B2"/>
+
+  <!-- Scale texture hints — subtle arcs -->
+  <path d="M200 250 C220 245, 240 248, 250 255" fill="none" stroke="#09A0C0" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+  <path d="M230 270 C250 265, 270 268, 285 275" fill="none" stroke="#09A0C0" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+  <path d="M250 290 C270 285, 295 288, 310 295" fill="none" stroke="#09A0C0" stroke-width="1.5" opacity="0.3" stroke-linecap="round"/>
+
+  <!-- Gill line — subtle -->
+  <path d="M195 225 C188 260, 190 300, 200 330" fill="none" stroke="#0891B2" stroke-width="3" opacity="0.45" stroke-linecap="round"/>
+
+  <!-- Eye — SAME style as EGGlogU chicken -->
+  <circle cx="150" cy="258" r="26" fill="#FFFFFF"/>
+  <circle cx="143" cy="263" r="16" fill="#2D3748"/>
+  <circle cx="137" cy="256" r="6" fill="#FFFFFF"/>
+
+  <!-- Mouth — friendly -->
+  <path d="M105 282 C100 275, 98 268, 102 262" stroke="#087A94" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- Bubbles — accent element (like the chicken's comb) -->
+  <circle cx="88" cy="218" r="12" fill="#A5F3FC" opacity="0.55"/>
+  <circle cx="108" cy="185" r="8" fill="#A5F3FC" opacity="0.45"/>
+  <circle cx="85" cy="165" r="6" fill="#A5F3FC" opacity="0.35"/>
+  <circle cx="100" cy="145" r="4" fill="#A5F3FC" opacity="0.25"/>
+</svg>

@@ -20,6 +20,14 @@ logger = logging.getLogger("egglogu.deps")
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
+# ── SUPERUSER: the ONLY superadmin, invisible, no limits, free forever ──
+SUPERUSER_EMAIL = "jadelsolara@pm.me"
+
+
+def is_superuser(user: User) -> bool:
+    """True only for THE superuser (jadelsolara@pm.me)."""
+    return user.email == SUPERUSER_EMAIL
+
 
 def is_superadmin(user: User) -> bool:
     return user.role == Role.superadmin
@@ -55,12 +63,20 @@ async def get_current_user(
         raise UnauthorizedError()
 
     # ── SUPERUSER HARDCODE ──────────────────────────────────
-    # jadelsolara@pm.me is ALWAYS superadmin with enterprise, free forever
-    SUPERUSER_EMAIL = "jadelsolara@pm.me"
-    if user.email == SUPERUSER_EMAIL and user.role != Role.superadmin:
-        user.role = Role.superadmin
+    # jadelsolara@pm.me = ONLY superadmin. Invisible. No limits. Free forever.
+    # Nobody else can EVER be superadmin.
+    if user.email == SUPERUSER_EMAIL:
+        if user.role != Role.superadmin:
+            user.role = Role.superadmin
+            await db.flush()
+            logger.info("Auto-promoted %s to superadmin", SUPERUSER_EMAIL)
+    elif user.role == Role.superadmin:
+        # BLOCK: nobody else can be superadmin — force downgrade to admin
+        user.role = Role.admin
         await db.flush()
-        logger.info("Auto-promoted %s to superadmin", SUPERUSER_EMAIL)
+        logger.warning(
+            "BLOCKED unauthorized superadmin %s — downgraded to admin", user.email
+        )
 
     # Set audit context for hash-chain audit trail
     from src.core.audit import audit_user_id as _audit_uid, audit_org_id as _audit_oid

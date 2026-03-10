@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- White egg containment — matching EGGlogU exactly -->
+  <path d="M256 68 C160 68, 82 160, 82 268 C82 385, 155 448, 256 448 C357 448, 430 385, 430 268 C430 160, 352 68, 256 68Z" fill="#FFFFFF"/>
+
+  <!-- COW — profile facing left, smooth bezier curves -->
+  <!-- Main body — smooth rounded shape -->
+  <path d="M190 310 C190 280, 220 255, 280 255 C340 255, 380 280, 385 315 C390 350, 370 395, 310 405 C250 415, 190 390, 190 360 Z" fill="#F8F8F8"/>
+
+  <!-- Head — smooth profile shape, not just a circle -->
+  <path d="M120 240 C120 195, 155 170, 200 170 C245 170, 270 195, 270 230 C270 265, 255 295, 220 305 C185 315, 140 300, 125 275 C118 262, 118 252, 120 240Z" fill="#F8F8F8"/>
+
+  <!-- Holstein patch on head — flowing shape -->
+  <path d="M175 175 C200 168, 250 178, 258 205 C265 232, 245 255, 220 258 C195 261, 178 240, 180 220 C175 200, 165 182, 175 175Z" fill="#2D3748"/>
+
+  <!-- Holstein patch on forehead -->
+  <path d="M195 172 C210 162, 240 165, 248 180 C256 195, 245 210, 230 212 C215 214, 195 200, 195 185Z" fill="#2D3748"/>
+
+  <!-- Holstein patch on body — large, organic -->
+  <path d="M280 275 C310 268, 365 280, 370 310 C375 340, 350 370, 320 375 C290 380, 268 360, 265 335 C262 310, 270 282, 280 275Z" fill="#2D3748"/>
+
+  <!-- Holstein patch on body lower -->
+  <path d="M220 350 C240 342, 270 348, 275 368 C280 388, 260 400, 240 398 C220 396, 210 378, 215 362Z" fill="#2D3748"/>
+
+  <!-- Horns — smooth curved -->
+  <path d="M218 172 C225 145, 242 130, 248 142" stroke="#F6AD3C" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M235 168 C240 148, 260 138, 262 150" stroke="#F6AD3C" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+  <!-- Ear — organic shape -->
+  <path d="M255 185 C268 172, 290 175, 292 190 C294 205, 278 210, 268 205 C258 200, 252 192, 255 185Z" fill="#4A5568"/>
+  <path d="M260 190 C268 182, 282 184, 283 193 C284 202, 274 205, 268 202 C262 199, 258 195, 260 190Z" fill="#F9A8D4"/>
+
+  <!-- Muzzle — warm, smooth -->
+  <path d="M95 260 C95 238, 115 222, 140 222 C165 222, 178 238, 178 258 C178 278, 165 295, 140 295 C115 295, 95 282, 95 260Z" fill="#F5C18C"/>
+
+  <!-- Nostrils — organic ovals -->
+  <ellipse cx="112" cy="258" rx="8" ry="10" fill="#D4956B"/>
+  <ellipse cx="135" cy="255" rx="7" ry="8" fill="#D4956B"/>
+
+  <!-- Eye — SAME style as EGGlogU chicken (this is key!) -->
+  <circle cx="175" cy="228" r="24" fill="#FFFFFF"/>
+  <circle cx="168" cy="233" r="15" fill="#2D3748"/>
+  <circle cx="162" cy="226" r="6" fill="#FFFFFF"/>
+
+  <!-- Mouth/smile -->
+  <path d="M108 282 Q125 295, 145 288" fill="none" stroke="#C4835A" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Bell on neck — like the chicken's wattle is an accent -->
+  <circle cx="175" cy="305" r="12" fill="#F6AD3C"/>
+  <circle cx="175" cy="310" r="4.5" fill="#D97706"/>
+  <!-- Bell strap hint -->
+  <path d="M160 298 Q175 292, 190 298" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Udder (subtle, it's a dairy cow after all) -->
+  <path d="M290 400 C290 408, 300 415, 310 415 C320 415, 330 408, 330 400" fill="#F9C4D0" stroke="#F0A0B5" stroke-width="1.5"/>
+
+  <!-- Legs — simple but clean -->
+  <rect x="225" y="395" width="16" height="35" rx="6" fill="#F8F8F8"/>
+  <rect x="255" y="398" width="16" height="32" rx="6" fill="#F8F8F8"/>
+  <rect x="335" y="392" width="16" height="35" rx="6" fill="#2D3748"/>
+  <rect x="355" y="395" width="16" height="32" rx="6" fill="#F8F8F8"/>
+
+  <!-- Hooves -->
+  <path d="M223 428 C223 434, 228 437, 233 437 C238 437, 243 434, 243 428" fill="#6B7280"/>
+  <path d="M253 428 C253 434, 258 437, 263 437 C268 437, 273 434, 273 428" fill="#6B7280"/>
+  <path d="M333 425 C333 431, 338 434, 343 434 C348 434, 353 431, 353 425" fill="#6B7280"/>
+  <path d="M353 425 C353 431, 358 434, 363 434 C368 434, 373 431, 373 425" fill="#6B7280"/>
+
+  <!-- Tail — flowing curve -->
+  <path d="M385 300 C400 278, 398 255, 385 260" stroke="#2D3748" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M383 258 C378 248, 390 242, 395 250" fill="#2D3748"/>
+</svg>

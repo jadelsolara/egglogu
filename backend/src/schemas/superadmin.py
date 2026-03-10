@@ -331,3 +331,70 @@ class CRMReportResponse(BaseModel):
     active_discounts: int = 0
     retention_events_30d: int = 0
     credit_notes_total_cents: int = 0
+
+
+# ── Outbreak Alerts (geo-targeted) ──────────────────────────────
+
+
+class OutbreakAlertCreate(BaseModel):
+    title: str = Field(..., min_length=1, max_length=300)
+    disease: str = Field(..., min_length=1, max_length=200)
+    severity: str = Field(default="moderate", pattern="^(low|moderate|high|critical)$")
+    transmission: str = Field(default="unknown", pattern="^(airborne|contact|vector|waterborne|fomite|unknown)$")
+    species_affected: str = Field(default="poultry", max_length=300)
+    epicenter_lat: float = Field(..., ge=-90, le=90)
+    epicenter_lng: float = Field(..., ge=-180, le=180)
+    radius_km: float = Field(default=100.0, gt=0, le=20000)
+    region_name: str = Field(..., min_length=1, max_length=200)
+    detected_date: date
+    expires_at: Optional[datetime] = None
+    description: Optional[str] = None
+    contingency_protocol: Optional[str] = None
+    source_url: Optional[str] = None
+    confirmed_cases: int = Field(default=0, ge=0)
+    deaths_reported: int = Field(default=0, ge=0)
+    spread_speed_km_day: Optional[float] = Field(default=None, ge=0)
+    spread_direction: Optional[str] = Field(default=None, max_length=50)
+
+
+class OutbreakAlertRead(BaseModel):
+    id: uuid.UUID
+    title: str
+    disease: str
+    severity: str
+    transmission: str
+    species_affected: str
+    epicenter_lat: float
+    epicenter_lng: float
+    radius_km: float
+    region_name: str
+    detected_date: date
+    expires_at: Optional[datetime] = None
+    description: Optional[str] = None
+    contingency_protocol: Optional[str] = None
+    source_url: Optional[str] = None
+    confirmed_cases: int = 0
+    deaths_reported: int = 0
+    spread_speed_km_day: Optional[float] = None
+    spread_direction: Optional[str] = None
+    is_active: bool = True
+    resolved_at: Optional[datetime] = None
+    created_by_id: Optional[uuid.UUID] = None
+    created_at: datetime
+    distance_km: Optional[float] = None  # calculated for querying user's farms
+
+    model_config = {"from_attributes": True}
+
+
+class OutbreakAlertUpdate(BaseModel):
+    title: Optional[str] = None
+    severity: Optional[str] = None
+    radius_km: Optional[float] = Field(default=None, gt=0, le=20000)
+    description: Optional[str] = None
+    contingency_protocol: Optional[str] = None
+    confirmed_cases: Optional[int] = Field(default=None, ge=0)
+    deaths_reported: Optional[int] = Field(default=None, ge=0)
+    spread_speed_km_day: Optional[float] = Field(default=None, ge=0)
+    spread_direction: Optional[str] = None
+    is_active: Optional[bool] = None
+    expires_at: Optional[datetime] = None

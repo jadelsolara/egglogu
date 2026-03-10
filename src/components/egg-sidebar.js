@@ -4,6 +4,8 @@
 import { Bus } from '../core/bus.js';
 import { t, getLang, switchLang, LANG_NAMES } from '../core/i18n.js';
 import { Store } from '../core/store.js';
+import { getCurrentUser, isSuperuserEmail, SUPERUSER_EMAIL } from '../core/permissions.js';
+import { apiService } from '../core/api.js';
 
 const NAV_STRUCTURE = [
   { type: 'link', section: 'dashboard', icon: '\uD83D\uDCCA', key: 'nav_dashboard' },
@@ -33,6 +35,7 @@ const NAV_STRUCTURE = [
     { section: 'automatizacion', icon: '\u26A1', key: 'nav_automation' },
   ]},
   { type: 'group', key: 'grp_system', grp: 'system', links: [
+    { section: 'comunidad', icon: '\uD83D\uDCAC', key: 'nav_community' },
     { section: 'soporte', icon: '\uD83C\uDFA7', key: 'nav_support' },
     { section: 'admin', icon: '\uD83D\uDC51', key: 'nav_admin' },
     { section: 'config', icon: '\u2699\uFE0F', key: 'nav_config' },
@@ -62,7 +65,8 @@ class EggSidebar extends HTMLElement {
     this._bindEvents();
     this._unsubs.push(
       Bus.on('nav:changed', ({ section }) => this._setActive(section)),
-      Bus.on('lang:changed', () => this._render())
+      Bus.on('lang:changed', () => this._render()),
+      Bus.on('auth:ready', () => this._render())
     );
   }
 
@@ -118,14 +122,34 @@ class EggSidebar extends HTMLElement {
 
   _renderNav() {
     let html = '';
+    const user = getCurrentUser();
+    const D = Store.get();
+    let isSuperadmin = (user && user.role === 'superadmin') ||
+      isSuperuserEmail(user && user.email) ||
+      isSuperuserEmail(D.settings.ownerEmail) ||
+      isSuperuserEmail(D.settings.email) ||
+      (D.users || []).some(u => isSuperuserEmail(u.email));
+    // JWT fallback: decode token directly if user email not resolved yet
+    if (!isSuperadmin) {
+      try {
+        const tk = apiService.getToken && apiService.getToken();
+        if (tk) {
+          const p = JSON.parse(atob(tk.split('.')[1]));
+          if (p.email && p.email.toLowerCase() === SUPERUSER_EMAIL) isSuperadmin = true;
+        }
+      } catch (_) { /* ignore */ }
+    }
+    console.debug('[Sidebar] user:', JSON.stringify(user), 'isSuperadmin:', isSuperadmin);
     for (const item of NAV_STRUCTURE) {
       if (item.type === 'link') {
         html += `<a data-section="${item.section}" class="${item.section === this._currentSection ? 'active' : ''}" role="menuitem">
           <i>${item.icon}</i><span>${t(item.key)}</span></a>`;
       } else {
-        const hidden = item.hidden ? ' style="display:none"' : '';
-        html += `<div class="nav-group-label grp-open"${hidden}>${t(item.key)}</div>`;
-        html += `<div class="nav-group-links grp-open" data-grp="${item.grp}"${hidden}>`;
+        // Show superadmin group only for superadmin users
+        if (item.hidden && !isSuperadmin) continue;
+        const autoOpen = item.grp === 'superadmin' ? ' grp-open' : '';
+        html += `<div class="nav-group-label${autoOpen}">${t(item.key)}</div>`;
+        html += `<div class="nav-group-links${autoOpen}" data-grp="${item.grp}">`;
         for (const link of item.links) {
           html += `<a data-section="${link.section}" class="${link.section === this._currentSection ? 'active' : ''}" role="menuitem">
             <i>${link.icon}</i><span>${t(link.key)}</span></a>`;
@@ -207,7 +231,7 @@ class EggSidebar extends HTMLElement {
     return `
 :host { display: block; }
 .sidebar {
-  width: 240px; background: #0E2240; color: #fff;
+  width: 240px; background: var(--sidebar-bg, #0E2240); background-image: linear-gradient(180deg, transparent 0%, rgba(255,255,255,.04) 60%, rgba(255,255,255,.08) 100%); color: #fff;
   display: flex; flex-direction: column;
   position: fixed; height: 100vh; z-index: 100;
   transition: transform .3s;
@@ -227,27 +251,35 @@ nav {
 nav::-webkit-scrollbar { width: 4px; }
 nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 4px; }
 nav a {
-  display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-  color: rgba(255,255,255,.8); text-decoration: none; transition: all .2s;
-  cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; gap: 10px; padding: 9px 16px 9px 20px;
+  color: rgba(255,255,255,.75); text-decoration: none; transition: all .2s ease;
+  cursor: pointer; font-size: 13px; border-radius: 0 20px 20px 0; margin-right: 12px;
+  font-weight: 400; letter-spacing: .2px;
 }
-nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
 nav a.active {
-  background: rgba(255,255,255,.2); color: #fff;
-  font-weight: 600; border-left: 3px solid #FF8F00;
+  background: linear-gradient(90deg, rgba(255,143,0,.18) 0%, rgba(255,143,0,.06) 100%);
+  color: #fff; font-weight: 600; border-left: 3px solid #FF8F00;
+  margin-left: -1px;
 }
-nav a i { font-style: normal; font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+nav a i { font-style: normal; font-size: 17px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 8px; background: rgba(255,255,255,.06); transition: background .2s; }
+nav a:hover i { background: rgba(255,255,255,.1); }
+nav a.active i { background: rgba(255,143,0,.2); }
 .nav-group-label {
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
-  color: rgba(255,255,255,.4); padding: 16px 20px 6px; cursor: pointer;
-  user-select: none; transition: color .2s;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px;
+  color: rgba(255,255,255,.35); padding: 18px 20px 8px; cursor: pointer;
+  user-select: none; transition: color .2s; display: flex; align-items: center; gap: 8px;
+}
+.nav-group-label::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.08); margin-left: 4px;
 }
 .nav-group-label:hover { color: rgba(255,255,255,.6); }
 .nav-group-label::before {
-  content: '\\25B6'; font-size: 8px; margin-right: 6px; display: inline-block;
-  transition: transform .2s;
+  content: ''; width: 6px; height: 6px; border-right: 1.5px solid rgba(255,255,255,.5);
+  border-bottom: 1.5px solid rgba(255,255,255,.5); display: inline-block;
+  transition: transform .25s ease; transform: rotate(-45deg); flex-shrink: 0;
 }
-.nav-group-label.grp-open::before { transform: rotate(90deg); }
+.nav-group-label.grp-open::before { transform: rotate(45deg); }
 .nav-group-links { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
 .nav-group-links.grp-open { max-height: 600px; }
 .mode-toggles { padding: 8px 12px; display: flex; gap: 6px; }
@@ -259,6 +291,7 @@ nav a i { font-style: normal; font-size: 18px; width: 24px; text-align: center; 
 }
 .mode-btn:hover { background: rgba(255,255,255,.2); }
 .mode-btn.active { background: #FF8F00; border-color: #FF8F00; font-weight: 600; }
+.campo-hide { display: none !important; }
 .lang-collapse { border-top: 1px solid rgba(255,255,255,.15); padding: 0 16px; }
 .lang-collapse-btn {
   width: 100%; padding: 10px 0; background: none; border: none;

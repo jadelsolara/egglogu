@@ -6,7 +6,7 @@
 // This ensures users ALWAYS get the latest version.
 // ============================================================
 
-const CACHE_NAME = 'egglogu-v2';
+const CACHE_NAME = 'egglogu-v3';
 
 // CDN assets — versioned URLs, safe to cache long-term
 const CDN_ASSETS = [

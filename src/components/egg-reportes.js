@@ -693,7 +693,7 @@ function baseStyle() {
     .form-control:focus { outline: none; border-color: var(--primary, #1A3C6E); box-shadow: 0 0 0 3px rgba(26,60,110,.12); }
     .card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 16px; }
     .card h3, .card h4 { margin: 0 0 12px; color: var(--primary-dark, #0E2240); }
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
     .kpi-card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); position: relative; }
     .kpi-card.danger { border-left: 4px solid var(--danger, #dc3545); }
     .kpi-card.warning { border-left: 4px solid var(--warning, #ffc107); }
@@ -716,8 +716,10 @@ function baseStyle() {
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light, #888); }
     .empty-state .empty-icon { font-size: 48px; margin-bottom: 8px; }
     .empty-state .empty-msg { font-size: 14px; }
+    @media (max-width: 900px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 600px) {
-      .kpi-grid { grid-template-columns: 1fr 1fr; }
       .toolbar { flex-direction: column; align-items: stretch; }
       .toolbar-actions { margin-left: 0; justify-content: flex-end; }
     }

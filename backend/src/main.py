@@ -13,10 +13,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 import src.models  # noqa: F401, E402
-from src.api.versioning import APIVersionMiddleware
 from src.config import settings
 
 # ── Sentry Error Tracking ────────────────────────────────────────
@@ -65,6 +64,7 @@ from src.api import (
     cost_centers,
     superadmin,
     superadmin_crm,
+    superadmin_intelligence,
     reports,
     workflows,
     webhooks,
@@ -72,6 +72,9 @@ from src.api import (
     plugins,
     animal_welfare,
     community,
+    accounting,
+    trace_events,
+    farmlogu,
     websocket as ws_routes,
 )
 
@@ -121,135 +124,191 @@ _metrics = {
 }
 
 
-# ── Request ID + Logging Middleware ─────────────────────────────────
-class RequestLoggingMiddleware(BaseHTTPMiddleware):
-    """Assigns a request_id, logs method/path/status/duration for every request."""
+# ── Pure ASGI Middleware ──────────────────────────────────────────────
+# CRITICAL: All middleware use pure ASGI protocol (not BaseHTTPMiddleware).
+# BaseHTTPMiddleware runs call_next() in a separate asyncio task, which
+# creates task boundary issues with asyncpg connections (causes
+# "cannot use Connection.transaction() in a manually started transaction").
+# Pure ASGI middleware runs in the SAME task as the request handler,
+# eliminating the asyncpg transaction conflict entirely.
+# ─────────────────────────────────────────────────────────────────────
 
-    async def dispatch(self, request: Request, call_next) -> Response:
-        request_id = request.headers.get("X-Request-ID", str(_uuid.uuid4())[:8])
-        request.state.request_id = request_id
 
-        start = time.perf_counter()
-        response: Response = await call_next(request)
-        duration_ms = round((time.perf_counter() - start) * 1000)
+class RequestLoggingMiddleware:
+    """Pure ASGI: assigns request_id, logs method/path/status/duration."""
 
-        # Collect metrics
-        _metrics["request_count"] += 1
-        _metrics["latencies"].append(duration_ms)
-        _metrics["status_codes"][response.status_code] += 1
-        if response.status_code >= 500:
-            _metrics["error_count"] += 1
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
 
-        logger.info(
-            "%s %s → %d (%dms)",
-            request.method,
-            request.url.path,
-            response.status_code,
-            duration_ms,
-            extra={"request_id": request_id},
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] not in ("http", "websocket"):
+            await self.app(scope, receive, send)
+            return
+
+        headers = dict(scope.get("headers", []))
+        request_id = (
+            headers.get(b"x-request-id", b"").decode()
+            or str(_uuid.uuid4())[:8]
         )
-        response.headers["X-Request-ID"] = request_id
-        return response
+        scope.setdefault("state", {})["request_id"] = request_id
+
+        method = scope.get("method", "WS")
+        path = scope.get("path", "/")
+        start = time.perf_counter()
+        status_code = 500  # default if send is never called
+
+        async def send_wrapper(message):
+            nonlocal status_code
+            if message["type"] == "http.response.start":
+                status_code = message["status"]
+                # Inject X-Request-ID header
+                raw_headers = list(message.get("headers", []))
+                raw_headers.append((b"x-request-id", request_id.encode()))
+                message = {**message, "headers": raw_headers}
+            await send(message)
+
+        try:
+            await self.app(scope, receive, send_wrapper)
+        finally:
+            duration_ms = round((time.perf_counter() - start) * 1000)
+            _metrics["request_count"] += 1
+            _metrics["latencies"].append(duration_ms)
+            _metrics["status_codes"][status_code] += 1
+            if status_code >= 500:
+                _metrics["error_count"] += 1
+            logger.info(
+                "%s %s → %d (%dms)",
+                method, path, status_code, duration_ms,
+                extra={"request_id": request_id},
+            )
 
 
-# ── Audit Context Middleware ────────────────────────────────────────
-class AuditContextMiddleware(BaseHTTPMiddleware):
-    """Injects audit context (IP, user-agent) into ContextVars for audit trail."""
+class AuditContextMiddleware:
+    """Pure ASGI: injects audit context (IP, user-agent) into ContextVars."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] not in ("http", "websocket"):
+            await self.app(scope, receive, send)
+            return
+
         from src.core.audit import audit_ip, audit_user_agent
 
-        client_ip = request.client.host if request.client else None
-        ua = request.headers.get("user-agent", "")[:500]
+        headers = dict(scope.get("headers", []))
+        client = scope.get("client")
+        client_ip = client[0] if client else None
+        ua = headers.get(b"user-agent", b"").decode()[:500]
 
         token_ip = audit_ip.set(client_ip)
         token_ua = audit_user_agent.set(ua)
         try:
-            return await call_next(request)
+            await self.app(scope, receive, send)
         finally:
             audit_ip.reset(token_ip)
             audit_user_agent.reset(token_ua)
 
 
-# ── Security Headers Middleware ──────────────────────────────────────
-class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    """Injects security headers (CSP, HSTS, X-Frame, etc.) into every response."""
+class SecurityHeadersMiddleware:
+    """Pure ASGI: injects security headers (CSP, HSTS, X-Frame, etc.)."""
 
-    async def dispatch(self, request: Request, call_next) -> Response:
-        response: Response = await call_next(request)
+    CSP = (
+        "default-src 'self'; "
+        "script-src 'self'; "
+        "style-src 'self'; "
+        "img-src 'self' data: https:; "
+        "font-src 'self'; "
+        "connect-src 'self' https://api.stripe.com https://egglogu.com https://*.sentry.io; worker-src 'self' blob:; "
+        "frame-ancestors 'none'; "
+        "form-action 'self'; "
+        "base-uri 'self'; "
+        "object-src 'none'"
+    )
 
-        # Content-Security-Policy — strict, no unsafe-inline
-        # 'self' for scripts/styles/images; data: for inline images (favicons);
-        # connect-src allows API calls to self + Stripe + Sentry.
-        csp_directives = (
-            "default-src 'self'; "
-            "script-src 'self'; "
-            "style-src 'self'; "
-            "img-src 'self' data: https:; "
-            "font-src 'self'; "
-            "connect-src 'self' https://api.stripe.com https://egglogu.com https://*.sentry.io; worker-src 'self' blob:; "
-            "frame-ancestors 'none'; "
-            "form-action 'self'; "
-            "base-uri 'self'; "
-            "object-src 'none'"
-        )
-        response.headers["Content-Security-Policy"] = csp_directives
+    SECURITY_HEADERS: list[tuple[bytes, bytes]] = [
+        (b"content-security-policy", CSP.encode()),
+        (b"x-content-type-options", b"nosniff"),
+        (b"x-frame-options", b"DENY"),
+        (b"referrer-policy", b"strict-origin-when-cross-origin"),
+        (b"permissions-policy", b"camera=(), microphone=(), geolocation=(), payment=(self)"),
+    ]
 
-        # Prevent MIME-type sniffing
-        response.headers["X-Content-Type-Options"] = "nosniff"
-
-        # Deny framing (clickjacking protection)
-        response.headers["X-Frame-Options"] = "DENY"
-
-        # Only send origin as referrer to external sites
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-
-        # HSTS — 1 year, include subdomains (only when serving over HTTPS)
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+        self._extra_headers = list(self.SECURITY_HEADERS)
         if settings.FRONTEND_URL.startswith("https"):
-            response.headers["Strict-Transport-Security"] = (
-                "max-age=31536000; includeSubDomains"
+            self._extra_headers.append(
+                (b"strict-transport-security", b"max-age=31536000; includeSubDomains")
             )
 
-        # Disable browser features the app does not need
-        response.headers["Permissions-Policy"] = (
-            "camera=(), microphone=(), geolocation=(), payment=(self)"
-        )
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
 
-        return response
+        async def send_wrapper(message):
+            if message["type"] == "http.response.start":
+                raw_headers = list(message.get("headers", []))
+                raw_headers.extend(self._extra_headers)
+                message = {**message, "headers": raw_headers}
+            await send(message)
+
+        await self.app(scope, receive, send_wrapper)
 
 
-# ── Global Rate-Limit Middleware ─────────────────────────────────────
-class GlobalRateLimitMiddleware(BaseHTTPMiddleware):
-    """Blanket 120-req/min per IP.  Endpoint-specific limits remain in routes."""
+class GlobalRateLimitMiddleware:
+    """Pure ASGI: blanket 120-req/min per IP. Uses CF-Connecting-IP for real client IP."""
 
     MAX_REQUESTS = 120
     WINDOW_SECONDS = 60
+    EXEMPT_PATHS = {b"/health", b"/healthcheck", b"/api/healthcheck"}
 
-    EXEMPT_PATHS = {"/health", "/healthcheck", "/api/healthcheck"}
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
 
-    async def dispatch(self, request: Request, call_next) -> Response:
-        if request.url.path in self.EXEMPT_PATHS:
-            return await call_next(request)
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
 
-        from src.core.rate_limit import check_rate_limit  # deferred import
+        path = scope.get("path", "/").encode()
+        if path in self.EXEMPT_PATHS:
+            await self.app(scope, receive, send)
+            return
 
-        forwarded = request.headers.get("x-forwarded-for")
-        if forwarded:
-            client_ip = forwarded.split(",")[0].strip()
+        from src.core.rate_limit import check_rate_limit
+
+        headers = dict(scope.get("headers", []))
+        # Priority: CF-Connecting-IP (Cloudflare real IP) > X-Forwarded-For > X-Real-IP > client
+        cf_ip = headers.get(b"cf-connecting-ip", b"").decode().strip()
+        if cf_ip:
+            client_ip = cf_ip
         else:
-            client_ip = request.headers.get(
-                "x-real-ip", request.client.host if request.client else "unknown"
-            )
+            forwarded = headers.get(b"x-forwarded-for", b"").decode()
+            if forwarded:
+                client_ip = forwarded.split(",")[0].strip()
+            else:
+                real_ip = headers.get(b"x-real-ip", b"").decode().strip()
+                if real_ip:
+                    client_ip = real_ip
+                else:
+                    client = scope.get("client")
+                    client_ip = client[0] if client else "unknown"
+
         allowed = await check_rate_limit(
             f"global:{client_ip}", self.MAX_REQUESTS, self.WINDOW_SECONDS
         )
         if not allowed:
-            return Response(
+            response = Response(
                 content='{"detail":"Too many requests. Slow down."}',
                 status_code=429,
                 media_type="application/json",
             )
-        return await call_next(request)
+            await response(scope, receive, send)
+            return
+
+        await self.app(scope, receive, send)
 
 
 @asynccontextmanager
@@ -287,7 +346,11 @@ app = FastAPI(
     redoc_url="/redoc" if settings.FRONTEND_URL != "https://egglogu.com" else None,
 )
 
-# Middleware order matters: outermost runs first.
+# ── Pure ASGI Middleware Stack ──────────────────────────────────────
+# All middleware are pure ASGI (not BaseHTTPMiddleware) to prevent
+# asyncpg task boundary conflicts. Order: outermost runs first.
+from src.api.versioning import APIVersionMiddleware
+
 # 1) Request ID + structured logging (outermost — captures everything)
 app.add_middleware(RequestLoggingMiddleware)
 
@@ -297,10 +360,10 @@ app.add_middleware(APIVersionMiddleware)
 # 3) Audit context (IP, user-agent) for hash-chain audit trail
 app.add_middleware(AuditContextMiddleware)
 
-# 3) Security headers on every response
+# 4) Security headers on every response
 app.add_middleware(SecurityHeadersMiddleware)
 
-# 4) Global rate limit (before CORS so abusive IPs are cut early)
+# 5) Global rate limit (before CORS so abusive IPs are cut early)
 app.add_middleware(GlobalRateLimitMiddleware)
 
 # 5) GZip compression for responses > 500 bytes
@@ -347,6 +410,7 @@ app.include_router(compliance.router, prefix=prefix)
 app.include_router(cost_centers.router, prefix=prefix)
 app.include_router(superadmin.router, prefix=prefix)
 app.include_router(superadmin_crm.router, prefix=prefix)
+app.include_router(superadmin_intelligence.router, prefix=prefix)
 app.include_router(reports.router, prefix=prefix)
 app.include_router(workflows.router, prefix=prefix)
 app.include_router(webhooks.router, prefix=prefix)
@@ -354,6 +418,9 @@ app.include_router(api_keys.router, prefix=prefix)
 app.include_router(plugins.router, prefix=prefix)
 app.include_router(animal_welfare.router, prefix=prefix)
 app.include_router(community.router, prefix=prefix)
+app.include_router(accounting.router, prefix=prefix)
+app.include_router(trace_events.router, prefix=prefix)
+app.include_router(farmlogu.router, prefix=prefix)
 
 # Public routes (no /api/v1 prefix)
 app.include_router(trace_public.router)

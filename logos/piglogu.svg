@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: rounded square -->
+  <rect width="512" height="512" rx="90" fill="#4A1942"/>
+
+  <!-- Ham/pork chop shape (white, containment shape like the egg) -->
+  <ellipse cx="256" cy="270" rx="180" ry="190" fill="#FFFFFF"/>
+
+  <!-- Pig body/face -->
+  <!-- Ears -->
+  <ellipse cx="185" cy="175" rx="42" ry="52" fill="#F472B6" transform="rotate(-20,185,175)"/>
+  <ellipse cx="185" cy="175" rx="28" ry="36" fill="#EC4899" transform="rotate(-20,185,175)"/>
+  <ellipse cx="327" cy="175" rx="42" ry="52" fill="#F472B6" transform="rotate(20,327,175)"/>
+  <ellipse cx="327" cy="175" rx="28" ry="36" fill="#EC4899" transform="rotate(20,327,175)"/>
+
+  <!-- Head -->
+  <ellipse cx="256" cy="270" rx="120" ry="115" fill="#F9A8D4"/>
+
+  <!-- Snout -->
+  <ellipse cx="256" cy="310" rx="62" ry="44" fill="#F472B6"/>
+
+  <!-- Nostrils -->
+  <ellipse cx="238" cy="312" rx="12" ry="14" fill="#DB2777"/>
+  <ellipse cx="274" cy="312" rx="12" ry="14" fill="#DB2777"/>
+
+  <!-- Eyes — same style as EGGlogU chicken -->
+  <!-- Left eye -->
+  <circle cx="210" cy="245" r="28" fill="#FFFFFF"/>
+  <circle cx="215" cy="248" r="16" fill="#1F2937"/>
+  <circle cx="220" cy="242" r="6" fill="#FFFFFF"/>
+
+  <!-- Right eye -->
+  <circle cx="302" cy="245" r="28" fill="#FFFFFF"/>
+  <circle cx="307" cy="248" r="16" fill="#1F2937"/>
+  <circle cx="312" cy="242" r="6" fill="#FFFFFF"/>
+
+  <!-- Cheeks -->
+  <ellipse cx="178" cy="285" rx="22" ry="16" fill="#F472B6" opacity="0.5"/>
+  <ellipse cx="334" cy="285" rx="22" ry="16" fill="#F472B6" opacity="0.5"/>
+
+  <!-- Mouth — slight smile -->
+  <path d="M238 345 Q256 358, 274 345" fill="none" stroke="#DB2777" stroke-width="4" stroke-linecap="round"/>
+</svg>

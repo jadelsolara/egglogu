@@ -162,6 +162,9 @@ export const apiService = {
   async updateAdminFaq(id, data) { return this.request('PUT', `/support/admin/faq/${id}`, data); },
   async deleteAdminFaq(id) { return this.request('DELETE', `/support/admin/faq/${id}`); },
 
+  // Outbreak alerts (geo-filtered by farm proximity)
+  async getOutbreakAlerts() { return this.request('GET', '/health/outbreak-alerts'); },
+
   // Flush offline queue
   async flushQueue() {
     if (!this._syncQueue.length || !this.isLoggedIn()) return;

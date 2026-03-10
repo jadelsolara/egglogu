@@ -11,6 +11,7 @@ Manual `.where(organization_id == ...)` filters are kept as defense-in-depth.
 from typing import Sequence, Union
 
 from alembic import op
+from sqlalchemy import text
 
 revision: str = "l3a4b5c6d789"
 down_revision: Union[str, None] = "k2f3a4b5c678"
@@ -73,17 +74,22 @@ RLS_TABLES = [
 ]
 
 
-def upgrade() -> None:
-    for table in RLS_TABLES:
-        # Enable RLS on the table
-        op.execute(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY")
+def _table_has_org_id(conn, table_name: str) -> bool:
+    """Check if a table exists AND has organization_id column."""
+    result = conn.execute(text(
+        "SELECT 1 FROM information_schema.columns "
+        "WHERE table_schema = 'public' AND table_name = :t "
+        "AND column_name = 'organization_id'"
+    ), {"t": table_name})
+    return result.fetchone() is not None
 
-        # Create policy: rows are only visible/modifiable if org matches session var.
-        # USING clause applies to SELECT, UPDATE, DELETE.
-        # WITH CHECK applies to INSERT, UPDATE.
-        # When app.current_org is empty string (not set), the bypass allows
-        # superadmin/migration access by matching nothing — which is safe because
-        # superadmin queries use explicit filters.
+
+def upgrade() -> None:
+    conn = op.get_bind()
+    existing = [t for t in RLS_TABLES if _table_has_org_id(conn, t)]
+
+    for table in existing:
+        op.execute(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY")
         op.execute(f"""
             CREATE POLICY tenant_isolation_{table} ON {table}
             USING (
@@ -94,13 +100,15 @@ def upgrade() -> None:
             )
         """)
 
-    # Force RLS for the table owner too (required when app connects as table owner)
-    for table in RLS_TABLES:
+    for table in existing:
         op.execute(f"ALTER TABLE {table} FORCE ROW LEVEL SECURITY")
 
 
 def downgrade() -> None:
-    for table in RLS_TABLES:
+    conn = op.get_bind()
+    existing = [t for t in RLS_TABLES if _table_has_org_id(conn, t)]
+
+    for table in existing:
         op.execute(f"ALTER TABLE {table} NO FORCE ROW LEVEL SECURITY")
         op.execute(f"DROP POLICY IF EXISTS tenant_isolation_{table} ON {table}")
         op.execute(f"ALTER TABLE {table} DISABLE ROW LEVEL SECURITY")

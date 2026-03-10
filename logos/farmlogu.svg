@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: rounded square -->
+  <rect width="512" height="512" rx="90" fill="#1A3A20"/>
+
+  <!-- Shield/barn shape (white, like the egg in EGGlogU) -->
+  <path d="M256 68 C156 68, 88 140, 88 230 L88 350 C88 410, 140 444, 256 444 C372 444, 424 410, 424 350 L424 230 C424 140, 356 68, 256 68Z" fill="#FFFFFF"/>
+
+  <!-- Barn roof -->
+  <path d="M140 230 L256 148 L372 230" fill="none" stroke="#2D6A3F" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Barn body -->
+  <rect x="168" y="230" width="176" height="140" rx="8" fill="#2D6A3F"/>
+
+  <!-- Barn door -->
+  <path d="M232 370 L232 290 A24 24 0 0 1 280 290 L280 370" fill="#1A3A20"/>
+
+  <!-- Windows -->
+  <rect x="185" y="252" width="32" height="28" rx="4" fill="#A7F3D0"/>
+  <rect x="295" y="252" width="32" height="28" rx="4" fill="#A7F3D0"/>
+
+  <!-- Sprout on top of barn -->
+  <path d="M256 148 L256 110" stroke="#22C55E" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="244" cy="100" rx="18" ry="14" fill="#22C55E" transform="rotate(-30,244,100)"/>
+  <ellipse cx="268" cy="100" rx="18" ry="14" fill="#16A34A" transform="rotate(30,268,100)"/>
+
+  <!-- Small star/sparkle -->
+  <circle cx="370" cy="130" r="6" fill="#F59E0B"/>
+  <circle cx="150" cy="160" r="4" fill="#F59E0B"/>
+</svg>

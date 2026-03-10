@@ -859,7 +859,7 @@ class EggEnvironment extends HTMLElement {
       .tab { padding: 10px 18px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-light, #888); border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; }
       .tab.active { color: var(--primary, #1A3C6E); border-bottom-color: var(--primary, #1A3C6E); }
       .tab:hover { color: var(--primary, #1A3C6E); }
-      .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+      .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
       .kpi-card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); position: relative; }
       .kpi-card.danger { border-left: 4px solid var(--danger, #dc3545); }
       .kpi-card.warning { border-left: 4px solid var(--warning, #ffc107); }
@@ -913,8 +913,10 @@ class EggEnvironment extends HTMLElement {
       .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
       .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light, #888); }
       .empty-state .empty-icon { font-size: 48px; margin-bottom: 8px; }
-      @media (max-width: 600px) {
+      @media (max-width: 900px) {
         .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 600px) {
         .form-row { grid-template-columns: 1fr; }
         .stat-row { flex-direction: column; align-items: flex-start; }
       }

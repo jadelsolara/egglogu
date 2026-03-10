@@ -37,10 +37,10 @@ TIER_PRICE_MAP = {
 
 # Base prices for display calculations
 TIER_BASE_PRICES = {
-    "hobby": {"month": 9, "year": 90},
-    "starter": {"month": 19, "year": 190},
-    "pro": {"month": 49, "year": 490},
-    "enterprise": {"month": 99, "year": 990},
+    "hobby": {"month": 0, "year": 0},
+    "starter": {"month": 49, "year": 490},
+    "pro": {"month": 99, "year": 990},
+    "enterprise": {"month": 199, "year": 1990},
 }
 
 
@@ -168,6 +168,34 @@ async def create_launch_checkout_session(
         "success_url": success_url,
         "cancel_url": cancel_url,
         "metadata": {"org_id": org_id, "plan": "launch75"},
+        "payment_method_types": ["card"],
+    }
+    if customer_id:
+        params["customer"] = customer_id
+    else:
+        params["customer_creation"] = "always"
+
+    session = stripe.checkout.Session.create(**params)
+    return session.url
+
+
+async def create_promo75_checkout_session(
+    org_id: str,
+    success_url: str,
+    cancel_url: str,
+    customer_id: str | None = None,
+) -> str:
+    """Create a recurring $75/mo subscription checkout for the Enterprise promo."""
+    price_id = settings.STRIPE_PRICE_PROMO75
+    if not price_id:
+        raise ValueError("STRIPE_PRICE_PROMO75 not configured")
+
+    params: dict = {
+        "mode": "subscription",
+        "line_items": [{"price": price_id, "quantity": 1}],
+        "success_url": success_url,
+        "cancel_url": cancel_url,
+        "metadata": {"org_id": org_id, "plan": "promo75", "interval": "month"},
         "payment_method_types": ["card"],
     }
     if customer_id:

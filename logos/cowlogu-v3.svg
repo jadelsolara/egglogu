@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- Milk bottle shape — slightly cream tinted so Holstein cow pops -->
+  <path d="M215 90 C205 90, 195 100, 195 115 L195 140 C140 162, 95 218, 95 295 C95 392, 162 445, 256 445 C350 445, 417 392, 417 295 C417 218, 372 162, 317 140 L317 115 C317 100, 307 90, 297 90 Z" fill="#EEF6FF"/>
+
+  <!-- Bottle cap -->
+  <rect x="205" y="86" width="102" height="16" rx="5" fill="#D1D5DB"/>
+
+  <!-- Cow — PROFILE facing left -->
+  <!-- Head (profile) — the main element -->
+  <circle cx="205" cy="270" r="100" fill="#FAFAFA"/>
+
+  <!-- BIG black patches (Holstein, very visible) -->
+  <ellipse cx="245" cy="235" rx="58" ry="45" fill="#1F2937" transform="rotate(-10,245,235)"/>
+  <ellipse cx="170" cy="300" rx="30" ry="38" fill="#1F2937" transform="rotate(10,170,300)"/>
+
+  <!-- Body visible behind/below head -->
+  <ellipse cx="310" cy="340" rx="90" ry="70" fill="#FAFAFA"/>
+  <ellipse cx="330" cy="325" rx="50" ry="40" fill="#1F2937" transform="rotate(15,330,325)"/>
+  <ellipse cx="280" cy="370" rx="35" ry="25" fill="#1F2937" transform="rotate(-10,280,370)"/>
+
+  <!-- Horn -->
+  <path d="M245 175 C258 140, 278 135, 272 158" stroke="#F59E0B" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- Ear -->
+  <ellipse cx="280" cy="205" rx="30" ry="16" fill="#374151" transform="rotate(20,280,205)"/>
+  <ellipse cx="278" cy="207" rx="18" ry="10" fill="#F9A8D4" transform="rotate(20,278,207)"/>
+
+  <!-- Snout/muzzle (big, characterful) -->
+  <ellipse cx="120" cy="305" rx="48" ry="38" fill="#FCDCB4"/>
+
+  <!-- Nostrils -->
+  <ellipse cx="102" cy="300" rx="9" ry="11" fill="#D4956B"/>
+  <ellipse cx="122" cy="298" rx="7" ry="9" fill="#D4956B"/>
+
+  <!-- Eye — SAME style as EGGlogU chicken -->
+  <circle cx="185" cy="260" r="28" fill="#FFFFFF"/>
+  <circle cx="178" cy="264" r="16" fill="#1F2937"/>
+  <circle cx="172" cy="257" r="6" fill="#FFFFFF"/>
+
+  <!-- Mouth smile -->
+  <path d="M105 328 Q122 340, 140 332" fill="none" stroke="#C4835A" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Bell -->
+  <circle cx="175" cy="365" r="14" fill="#F59E0B"/>
+  <circle cx="175" cy="370" r="5" fill="#D97706"/>
+</svg>

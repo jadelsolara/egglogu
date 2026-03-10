@@ -17,6 +17,14 @@ from src.models.biosecurity import (  # noqa: F401
     BiosecurityProtocol,
 )
 from src.models.traceability import TraceabilityBatch  # noqa: F401
+from src.models.trace_events import (  # noqa: F401
+    TraceLocation,
+    TraceEvent,
+    TraceEventItem,
+    BatchLineage,
+    TraceRecall,
+    RecallBatch,
+)
 from src.models.planning import ProductionPlan  # noqa: F401
 from src.models.subscription import Subscription  # noqa: F401
 from src.models.support import (  # noqa: F401
@@ -63,6 +71,14 @@ from src.models.webhook import Webhook, WebhookDelivery  # noqa: F401
 from src.models.api_key import APIKey  # noqa: F401
 from src.models.plugin import Plugin, PluginInstall  # noqa: F401
 from src.models.animal_welfare import WelfareAssessment  # noqa: F401
+from src.models.outbreak_alert import OutbreakAlert, OutbreakSeverity, TransmissionType  # noqa: F401
+from src.models.accounting import (  # noqa: F401
+    Account,
+    FiscalPeriod,
+    JournalEntry,
+    JournalEntryLine,
+    AccountBalance,
+)
 from src.models.community import (  # noqa: F401
     ForumCategory,
     ForumThread,

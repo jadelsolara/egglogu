@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: rounded square -->
+  <rect width="512" height="512" rx="90" fill="#3B2F0A"/>
+
+  <!-- Leaf/seed shape (white, containment like the egg) -->
+  <path d="M256 68 C150 68, 80 170, 80 280 C80 390, 160 448, 256 448 C352 448, 432 390, 432 280 C432 170, 362 68, 256 68Z" fill="#FFFFFF"/>
+
+  <!-- Wheat stalk — main stem -->
+  <line x1="256" y1="400" x2="256" y2="140" stroke="#78600D" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Wheat grains — paired on each side, going up -->
+  <!-- Bottom pair -->
+  <ellipse cx="224" cy="340" rx="28" ry="14" fill="#F59E0B" transform="rotate(-35,224,340)"/>
+  <ellipse cx="288" cy="340" rx="28" ry="14" fill="#F59E0B" transform="rotate(35,288,340)"/>
+
+  <!-- Mid-low pair -->
+  <ellipse cx="220" cy="300" rx="26" ry="13" fill="#FBBF24" transform="rotate(-35,220,300)"/>
+  <ellipse cx="292" cy="300" rx="26" ry="13" fill="#FBBF24" transform="rotate(35,292,300)"/>
+
+  <!-- Mid pair -->
+  <ellipse cx="225" cy="260" rx="24" ry="12" fill="#F59E0B" transform="rotate(-35,225,260)"/>
+  <ellipse cx="287" cy="260" rx="24" ry="12" fill="#F59E0B" transform="rotate(35,287,260)"/>
+
+  <!-- Mid-high pair -->
+  <ellipse cx="230" cy="222" rx="22" ry="11" fill="#FBBF24" transform="rotate(-30,230,222)"/>
+  <ellipse cx="282" cy="222" rx="22" ry="11" fill="#FBBF24" transform="rotate(30,282,222)"/>
+
+  <!-- Top pair -->
+  <ellipse cx="238" cy="188" rx="18" ry="10" fill="#F59E0B" transform="rotate(-25,238,188)"/>
+  <ellipse cx="274" cy="188" rx="18" ry="10" fill="#F59E0B" transform="rotate(25,274,188)"/>
+
+  <!-- Crown grain -->
+  <ellipse cx="256" cy="155" rx="14" ry="22" fill="#FBBF24" transform="rotate(0,256,155)"/>
+
+  <!-- Awns (whiskers on top) -->
+  <line x1="256" y1="135" x2="256" y2="105" stroke="#D97706" stroke-width="3" stroke-linecap="round"/>
+  <line x1="250" y1="140" x2="232" y2="110" stroke="#D97706" stroke-width="3" stroke-linecap="round"/>
+  <line x1="262" y1="140" x2="280" y2="110" stroke="#D97706" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Small leaves at base -->
+  <path d="M256 400 C230 380, 190 385, 180 400" fill="#22C55E" stroke="none"/>
+  <path d="M256 400 C282 380, 322 385, 332 400" fill="#16A34A" stroke="none"/>
+
+  <!-- Tiny sun -->
+  <circle cx="370" cy="120" r="18" fill="#FDE68A"/>
+  <circle cx="370" cy="120" r="12" fill="#FBBF24"/>
+</svg>

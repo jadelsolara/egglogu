@@ -9878,7 +9878,28 @@ if(_skipLink){
 }
 })();
 
-// ============ SERVICE WORKER ============
+// ============ SERVICE WORKER — AUTO-UPDATE ============
 if('serviceWorker' in navigator){
-navigator.serviceWorker.register('sw.js').catch(e=>console.error('SW registration failed',e));
+navigator.serviceWorker.register('sw.js').then(reg=>{
+// Check for updates every 60 seconds
+setInterval(()=>reg.update(),60000);
+// When a new SW is found and installed, auto-reload so the client gets the update
+reg.addEventListener('updatefound',()=>{
+const newSW=reg.installing;
+if(!newSW)return;
+newSW.addEventListener('statechange',()=>{
+if(newSW.state==='installed'&&navigator.serviceWorker.controller){
+// New version available — reload to apply
+newSW.postMessage('skipWaiting');
+}
+});
+});
+}).catch(e=>console.error('SW registration failed',e));
+// When the new SW takes over, reload the page automatically
+let _swRefreshing=false;
+navigator.serviceWorker.addEventListener('controllerchange',()=>{
+if(_swRefreshing)return;
+_swRefreshing=true;
+window.location.reload();
+});
 }

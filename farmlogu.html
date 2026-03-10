@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FarmLogU — The Agricultural ERP Platform</title>
+<meta name="description" content="One platform, every farm. Poultry, swine, cattle, crops & aquaculture — enterprise-grade ERP built for agriculture. Traceability, accounting, compliance. Start free.">
+<meta name="theme-color" content="#0B1D0E">
+<link rel="icon" href="favicon.png" type="image/png">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://farmlogu.com/">
+<meta property="og:title" content="FarmLogU — The Agricultural ERP Platform">
+<meta property="og:description" content="One platform, every farm. Enterprise-grade ERP for poultry, swine, cattle, crops & aquaculture.">
+<meta property="og:image" content="https://farmlogu.com/og-farmlogu.webp">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FarmLogU — The Agricultural ERP Platform">
+<meta name="twitter:description" content="One platform, every farm. Enterprise ERP for agriculture.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   FARMLOGU LANDING — DESIGN SYSTEM / FRAMEWORK
+   Reusable CSS framework for all LogU landing pages.
+   Variables at :root control the entire theme.
+   ═══════════════════════════════════════════════════════ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Brand — override these per vertical */
+  --primary:#22C55E;--primary-dark:#16A34A;--primary-glow:rgba(34,197,94,.15);
+  --accent:#F59E0B;--accent-dark:#D97706;
+  --bg-deep:#0B1D0E;--bg-mid:#112516;--bg-light:#1A3A20;
+  --text:#FFFFFF;--text-muted:rgba(255,255,255,.6);--text-subtle:rgba(255,255,255,.4);
+  /* Shared */
+  --white:#FFFFFF;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-400:#9ca3af;--gray-800:#1f2937;
+  --radius:12px;--radius-lg:20px;--radius-xl:28px;
+  --shadow:0 4px 24px rgba(0,0,0,.15);--shadow-lg:0 20px 60px rgba(0,0,0,.3);
+  --font:'Inter',system-ui,-apple-system,sans-serif;
+  --max-w:1200px;
+}
+
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);color:var(--text);line-height:1.6;overflow-x:hidden;background:var(--bg-deep)}
+a{color:inherit;text-decoration:none}
+img,svg{max-width:100%;display:block}
+
+/* ── Utility ── */
+.container{max-width:var(--max-w);margin:0 auto;padding:0 1.5rem}
+.text-center{text-align:center}
+.text-muted{color:var(--text-muted)}
+.text-subtle{color:var(--text-subtle)}
+.text-primary{color:var(--primary)}
+.text-accent{color:var(--accent)}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}.mb-3{margin-bottom:1.5rem}.mb-4{margin-bottom:2rem}
+.gap-1{gap:.5rem}.gap-2{gap:1rem}.gap-3{gap:1.5rem}.gap-4{gap:2rem}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.6rem;border-radius:10px;font-weight:600;font-size:.95rem;border:none;cursor:pointer;transition:all .25s;font-family:var(--font);text-decoration:none}
+.btn-primary{background:var(--primary);color:var(--bg-deep)}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 30px var(--primary-glow)}
+.btn-accent{background:var(--accent);color:var(--bg-deep)}
+.btn-accent:hover{background:var(--accent-dark);transform:translateY(-2px)}
+.btn-outline{border:2px solid var(--primary);color:var(--primary);background:transparent}
+.btn-outline:hover{background:var(--primary-glow)}
+.btn-white{background:var(--white);color:var(--bg-deep)}
+.btn-white:hover{background:var(--gray-100);transform:translateY(-2px)}
+.btn-ghost{border:2px solid rgba(255,255,255,.2);color:var(--white);background:transparent}
+.btn-ghost:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.05)}
+.btn-lg{padding:.95rem 2.4rem;font-size:1.1rem;border-radius:12px}
+.btn-sm{padding:.5rem 1.2rem;font-size:.85rem}
+.btn-group{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,29,14,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06);padding:.75rem 0;transition:box-shadow .3s}
+.nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,.4)}
+.nav-inner{max-width:var(--max-w);margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:.65rem;font-weight:800;font-size:1.3rem;letter-spacing:-.02em}
+.nav-brand .logo-icon{width:38px;height:38px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{font-size:.9rem;color:var(--text-muted);font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--primary)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:.5rem}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:.3s}
+
+/* ── HERO ── */
+.hero{padding:9rem 1.5rem 6rem;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(34,197,94,.08) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(245,158,11,.05) 0%,transparent 50%)}
+.hero-content{max-width:900px;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:.4rem 1.2rem;border-radius:50px;font-size:.85rem;color:var(--text-muted);margin-bottom:1.5rem}
+.hero-badge .badge-dot{width:8px;height:8px;background:var(--primary);border-radius:50%;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;letter-spacing:-.03em}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero .subtitle{font-size:1.25rem;color:var(--text-muted);max-width:650px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-stats{display:flex;justify-content:center;gap:3rem;margin-top:3rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:2rem;font-weight:800;color:var(--primary)}
+.hero-stat .label{font-size:.8rem;color:var(--text-subtle);text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem}
+
+/* ── SECTIONS ── */
+section{padding:6rem 1.5rem}
+.section-header{text-align:center;max-width:700px;margin:0 auto 4rem}
+.section-header .overline{font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;color:var(--primary);font-weight:700;margin-bottom:.75rem}
+.section-header h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:1rem;letter-spacing:-.02em}
+.section-header p{color:var(--text-muted);font-size:1.1rem;line-height:1.7}
+.section-alt{background:var(--bg-mid)}
+.section-dark{background:var(--bg-deep)}
+
+/* ── VERTICAL CARDS ── */
+.verticals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;max-width:var(--max-w);margin:0 auto}
+.v-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);padding:2rem;transition:all .3s;position:relative;overflow:hidden}
+.v-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.v-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-accent,var(--primary));opacity:0;transition:opacity .3s}
+.v-card:hover::before{opacity:1}
+.v-card-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1.25rem}
+.v-card h3{font-size:1.3rem;font-weight:700;margin-bottom:.5rem}
+.v-card .v-tagline{color:var(--text-muted);font-size:.95rem;margin-bottom:1.25rem;line-height:1.6}
+.v-card .v-features{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+.v-card .v-features li{font-size:.8rem;padding:.3rem .7rem;border-radius:6px;background:rgba(255,255,255,.05);color:var(--text-muted)}
+.v-card .v-status{position:absolute;top:1.25rem;right:1.25rem;font-size:.7rem;padding:.25rem .6rem;border-radius:50px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.status-live{background:rgba(34,197,94,.15);color:#22C55E}
+.status-coming{background:rgba(245,158,11,.12);color:#F59E0B}
+.status-planned{background:rgba(255,255,255,.08);color:var(--text-subtle)}
+
+/* ── Egg card accent ── */
+.v-card.egg{--card-accent:#F59E0B}
+.v-card.egg .v-card-icon{background:rgba(245,158,11,.12)}
+/* Pig */
+.v-card.pig{--card-accent:#EC4899}
+.v-card.pig .v-card-icon{background:rgba(236,72,153,.12)}
+/* Cow */
+.v-card.cow{--card-accent:#3B82F6}
+.v-card.cow .v-card-icon{background:rgba(59,130,246,.12)}
+/* Crop */
+.v-card.crop{--card-accent:#22C55E}
+.v-card.crop .v-card-icon{background:rgba(34,197,94,.12)}
+/* Aqua */
+.v-card.aqua{--card-accent:#06B6D4}
+.v-card.aqua .v-card-icon{background:rgba(6,182,212,.12)}
+/* Multi */
+.v-card.multi{--card-accent:#A855F7}
+.v-card.multi .v-card-icon{background:rgba(168,85,247,.12)}
+
+/* ── CORE MODULES ── */
+.core-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;max-width:var(--max-w);margin:0 auto}
+.core-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:1.5rem;transition:all .3s}
+.core-card:hover{border-color:var(--primary);background:rgba(34,197,94,.03)}
+.core-card .core-icon{font-size:1.5rem;margin-bottom:.75rem}
+.core-card h4{font-size:1rem;font-weight:700;margin-bottom:.4rem}
+.core-card p{font-size:.85rem;color:var(--text-muted);line-height:1.5}
+
+/* ── COMPARISON TABLE ── */
+.compare-table{width:100%;max-width:900px;margin:0 auto;border-collapse:collapse}
+.compare-table th,.compare-table td{padding:1rem 1.25rem;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+.compare-table th{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-subtle);font-weight:600}
+.compare-table td:first-child{font-weight:600;color:var(--white)}
+.compare-table td{font-size:.9rem;color:var(--text-muted)}
+.compare-table .check{color:var(--primary);font-weight:700;font-size:1.1rem}
+.compare-table .cross{color:rgba(255,255,255,.15);font-size:1.1rem}
+.compare-table .highlight-col{background:rgba(34,197,94,.04)}
+.compare-table thead th.highlight-col{color:var(--primary)}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── ARCHITECTURE DIAGRAM ── */
+.arch-visual{max-width:900px;margin:0 auto;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-xl);padding:3rem;position:relative}
+.arch-layer{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1rem 0;flex-wrap:wrap}
+.arch-layer+.arch-layer{border-top:1px dashed rgba(255,255,255,.08);margin-top:1rem;padding-top:1.5rem}
+.arch-label{position:absolute;left:-1rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-subtle);writing-mode:vertical-lr;transform:rotate(180deg)}
+.arch-block{padding:.6rem 1.2rem;border-radius:8px;font-size:.8rem;font-weight:600;text-align:center;min-width:100px}
+.arch-block.vert{border:2px solid;background:rgba(255,255,255,.03)}
+.arch-block.core{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--primary)}
+.arch-block.infra{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text-muted)}
+.arch-connector{color:var(--text-subtle);font-size:1.2rem}
+.layer-label{width:100%;text-align:center;font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-subtle);margin-bottom:.75rem;font-weight:600}
+
+/* ── NUMBERS SECTION ── */
+.numbers-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;max-width:var(--max-w);margin:0 auto}
+.number-card{text-align:center;padding:2rem 1rem}
+.number-card .big{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.number-card .desc{font-size:.9rem;color:var(--text-muted);margin-top:.75rem}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:var(--max-w);margin:0 auto}
+.price-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);padding:2.5rem 2rem;text-align:center;transition:all .3s}
+.price-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-4px)}
+.price-card.featured{border-color:var(--primary);background:rgba(34,197,94,.04);position:relative}
+.price-card.featured::before{content:'POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--primary);color:var(--bg-deep);font-size:.7rem;font-weight:700;padding:.3rem 1rem;border-radius:50px;letter-spacing:.05em}
+.price-card .tier{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.price-card .price{font-size:3rem;font-weight:900;margin:.5rem 0}
+.price-card .price span{font-size:1rem;font-weight:400;color:var(--text-muted)}
+.price-card .price-desc{font-size:.85rem;color:var(--text-muted);margin-bottom:1.5rem}
+.price-card ul{list-style:none;text-align:left;margin-bottom:2rem}
+.price-card li{font-size:.85rem;color:var(--text-muted);padding:.4rem 0;padding-left:1.5rem;position:relative}
+.price-card li::before{content:'';position:absolute;left:0;top:.7rem;width:8px;height:8px;border-radius:50%;background:var(--primary)}
+
+/* ── CTA BANNER ── */
+.cta-banner{padding:6rem 1.5rem;text-align:center;background:linear-gradient(135deg,var(--bg-light) 0%,var(--bg-deep) 100%);position:relative;overflow:hidden}
+.cta-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,var(--primary-glow),transparent 70%)}
+.cta-banner h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:1rem;position:relative;z-index:1}
+.cta-banner p{font-size:1.1rem;color:var(--text-muted);max-width:550px;margin:0 auto 2rem;position:relative;z-index:1}
+.cta-banner .btn-group{position:relative;z-index:1}
+
+/* ── FOOTER ── */
+.footer{padding:4rem 1.5rem 2rem;border-top:1px solid rgba(255,255,255,.06)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;max-width:var(--max-w);margin:0 auto}
+.footer-brand .footer-logo{font-size:1.3rem;font-weight:800;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.footer-brand p{font-size:.85rem;color:var(--text-subtle);line-height:1.6;max-width:300px}
+.footer-col h5{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-subtle);margin-bottom:1rem;font-weight:600}
+.footer-col a{display:block;font-size:.9rem;color:var(--text-muted);padding:.3rem 0;transition:color .2s}
+.footer-col a:hover{color:var(--primary)}
+.footer-bottom{max-width:var(--max-w);margin:3rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:.8rem;color:var(--text-subtle)}
+.footer-bottom .legal{display:flex;gap:1.5rem}
+.footer-bottom .legal a{font-size:.8rem;color:var(--text-subtle);transition:color .2s}
+.footer-bottom .legal a:hover{color:var(--text-muted)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg-deep);flex-direction:column;justify-content:center;gap:2rem;padding:2rem}
+  .nav-links.open{display:flex}
+  .hamburger{display:block}
+  .hero h1{font-size:2.2rem}
+  .hero .subtitle{font-size:1rem}
+  .hero-stats{gap:1.5rem}
+  .verticals-grid{grid-template-columns:1fr}
+  .core-grid{grid-template-columns:1fr}
+  .compare-table{font-size:.8rem}
+  .compare-table th,.compare-table td{padding:.6rem .5rem}
+  .pricing-grid{grid-template-columns:1fr;max-width:400px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .arch-visual{padding:1.5rem}
+  .arch-block{min-width:80px;font-size:.7rem;padding:.5rem .8rem}
+  .numbers-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  .footer-grid{grid-template-columns:1fr}
+  .numbers-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <span class="logo-icon">🌱</span> FarmLogU
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#verticals">Products</a>
+      <a href="#platform">Platform</a>
+      <a href="#compare">Compare</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://egglogu.com" class="btn btn-outline btn-sm" target="_blank">🥚 Try EGGlogU Free</a>
+    </div>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span> Now live — EGGlogU is our first vertical
+    </div>
+    <h1>One Platform.<br><span class="highlight">Every Farm.</span></h1>
+    <p class="subtitle">Enterprise-grade ERP built for agriculture. Poultry, swine, cattle, crops & aquaculture — each vertical works independently, FarmLogU shows the big picture.</p>
+    <div class="btn-group">
+      <a href="https://egglogu.com" class="btn btn-primary btn-lg">Start Free with EGGlogU</a>
+      <a href="#verticals" class="btn btn-ghost btn-lg">Explore All Verticals</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">6</div>
+        <div class="label">Verticals</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">380+</div>
+        <div class="label">API Endpoints</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">14</div>
+        <div class="label">Languages</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">EPCIS 2.0</div>
+        <div class="label">Traceability</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ VERTICALS ═══════════════════════════ -->
+<section class="section-alt" id="verticals">
+  <div class="section-header">
+    <div class="overline">Product Verticals</div>
+    <h2>Specialized for Each Industry,<br>Unified Under One Roof</h2>
+    <p>Each LogU product is a full-featured ERP tailored for its vertical. Run them independently or connect them under FarmLogU for a consolidated multi-operation view.</p>
+  </div>
+
+  <div class="verticals-grid">
+    <!-- EGGlogU -->
+    <div class="v-card egg">
+      <span class="v-status status-live">Live</span>
+      <div class="v-card-icon"><img src="icons/icon-512.png" alt="EGGlogU" style="width:48px;height:48px;border-radius:10px"></div>
+      <h3>EGGlogU</h3>
+      <p class="v-tagline">Complete poultry & egg production management. Flocks, daily production, grading, health protocols, feed tracking, and egg-to-shelf traceability.</p>
+      <ul class="v-features">
+        <li>Flock Management</li>
+        <li>Egg Grading</li>
+        <li>Breed Curves</li>
+        <li>Feed Conversion</li>
+        <li>Biosecurity</li>
+        <li>Animal Welfare</li>
+        <li>Vaccination</li>
+        <li>IoT Sensors</li>
+      </ul>
+    </div>
+
+    <!-- PigLogu -->
+    <div class="v-card pig">
+      <span class="v-status status-coming">2026 Q3</span>
+      <div class="v-card-icon">🐷</div>
+      <h3>PigLogu</h3>
+      <p class="v-tagline">Swine production from farrowing to market. Herd tracking, growth curves, slaughter lot management, and carcass quality monitoring.</p>
+      <ul class="v-features">
+        <li>Herd Management</li>
+        <li>Growth Curves</li>
+        <li>Slaughter Lots</li>
+        <li>Feed Conversion</li>
+        <li>Biosecurity</li>
+        <li>Animal Welfare</li>
+        <li>Vaccination</li>
+        <li>Farrowing</li>
+      </ul>
+    </div>
+
+    <!-- CowLogu -->
+    <div class="v-card cow">
+      <span class="v-status status-coming">2026 Q4</span>
+      <div class="v-card-icon">🐄</div>
+      <h3>CowLogu</h3>
+      <p class="v-tagline">Dairy & beef cattle management. Milking sessions, milk quality analysis, herd health, reproduction cycles, and full supply chain traceability.</p>
+      <ul class="v-features">
+        <li>Herd Management</li>
+        <li>Milking Sessions</li>
+        <li>Milk Quality</li>
+        <li>Growth Curves</li>
+        <li>Reproduction</li>
+        <li>Animal Welfare</li>
+        <li>Vaccination</li>
+        <li>Pasture Rotation</li>
+      </ul>
+    </div>
+
+    <!-- CropLogu -->
+    <div class="v-card crop">
+      <span class="v-status status-coming">2027 Q1</span>
+      <div class="v-card-icon">🌾</div>
+      <h3>CropLogu</h3>
+      <p class="v-tagline">Row crops, orchards & vegetable production. Field management, harvest tracking, soil analysis, irrigation scheduling, and post-harvest quality.</p>
+      <ul class="v-features">
+        <li>Field Management</li>
+        <li>Harvest Lots</li>
+        <li>Soil Analysis</li>
+        <li>Irrigation</li>
+        <li>Pest Scouting</li>
+        <li>Weather Integration</li>
+        <li>Yield Mapping</li>
+        <li>Crop Planning</li>
+      </ul>
+    </div>
+
+    <!-- AquaLogu -->
+    <div class="v-card aqua">
+      <span class="v-status status-planned">Planned</span>
+      <div class="v-card-icon">🐟</div>
+      <h3>AquaLogu</h3>
+      <p class="v-tagline">Aquaculture management for fish farms and shrimp ponds. Pond monitoring, feed optimization, water quality, and harvest management.</p>
+      <ul class="v-features">
+        <li>Pond Management</li>
+        <li>Water Quality</li>
+        <li>Feed Optimization</li>
+        <li>Growth Tracking</li>
+        <li>Harvest Lots</li>
+        <li>Disease Control</li>
+        <li>Stocking Density</li>
+        <li>Aeration</li>
+      </ul>
+    </div>
+
+    <!-- FarmLogU Consolidated -->
+    <div class="v-card multi">
+      <span class="v-status status-live">Core</span>
+      <div class="v-card-icon">📊</div>
+      <h3>FarmLogU Hub</h3>
+      <p class="v-tagline">The consolidated command center. Multi-vertical dashboard, cross-organization financial reporting, unified traceability, and holding-level analytics.</p>
+      <ul class="v-features">
+        <li>Consolidated P&L</li>
+        <li>Cross-Org View</li>
+        <li>Multi-Vertical KPIs</li>
+        <li>Holding Management</li>
+        <li>Unified Audit Trail</li>
+        <li>API Aggregation</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ CORE PLATFORM ═══════════════════════════ -->
+<section id="platform">
+  <div class="section-header">
+    <div class="overline">Core Platform</div>
+    <h2>Enterprise Modules That<br>Power Every Vertical</h2>
+    <p>These aren't add-ons. They're the shared foundation — the same engine whether you're tracking eggs, cattle, or crops.</p>
+  </div>
+
+  <div class="core-grid">
+    <div class="core-card">
+      <div class="core-icon">📒</div>
+      <h4>Double-Entry Accounting</h4>
+      <p>Real general ledger. Chart of accounts, journal entries, balance sheet, income statement. CORE + vertical COA pattern.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">🔗</div>
+      <h4>EPCIS 2.0 Traceability</h4>
+      <p>GS1 standard event-based tracing. GTIN, GLN, SSCC identifiers. Forward & backward chain. FSMA 204 + EU 178/2002 compliant.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">🔐</div>
+      <h4>Hash-Chain Audit Trail</h4>
+      <p>SHA-256 linked events. Tamper-evident. Every action recorded with IP, user, timestamp. Immutable for regulatory compliance.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">🚨</div>
+      <h4>Recall Management</h4>
+      <p>Mock drills & real recalls. Auto-identifies affected batches via forward trace. Client notification tracking. FSMA-ready.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">💰</div>
+      <h4>Cost Centers & P&L</h4>
+      <p>Cost allocation by farm, herd, field. FIFO/weighted-average costing. Margin analysis per production unit.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">📦</div>
+      <h4>Inventory & Warehouse</h4>
+      <p>Multi-location stock. Temperature-controlled zones. Stock movements, transfers, packaging materials. Batch-level tracking.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">🤝</div>
+      <h4>Client & Sales</h4>
+      <p>Client management, invoicing, receivables, CRM notes, discount rules, credit notes, retention campaigns.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">📊</div>
+      <h4>Analytics & KPIs</h4>
+      <p>Predictive analytics, custom KPI dashboards, trend detection, anomaly alerts, materialized views for instant queries.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">⚙️</div>
+      <h4>Workflows & Automation</h4>
+      <p>Rule-based workflow engine. Trigger on events, conditions, schedules. Webhook integrations, API keys, plugin system.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">🛒</div>
+      <h4>Purchase Orders</h4>
+      <p>Supplier management, multi-line POs, approval workflows, receiving & invoice matching, spend analytics.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">✅</div>
+      <h4>Compliance & Certs</h4>
+      <p>Certification tracking, inspection schedules, Salmonella testing, regulatory document management.</p>
+    </div>
+    <div class="core-card">
+      <div class="core-icon">💬</div>
+      <h4>Community & Support</h4>
+      <p>Built-in forum, AI support assistant, ticket system, knowledge base. Users help users — and we learn from it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ ARCHITECTURE ═══════════════════════════ -->
+<section class="section-alt">
+  <div class="section-header">
+    <div class="overline">Architecture</div>
+    <h2>Built Like the Big ERPs,<br>Priced Like a Startup</h2>
+    <p>Multi-tenant, API-first, offline-capable. Each vertical plugs into shared core services. No vendor lock-in.</p>
+  </div>
+
+  <div class="arch-visual">
+    <!-- Layer 1: Verticals -->
+    <div class="layer-label">Vertical Products</div>
+    <div class="arch-layer">
+      <div class="arch-block vert" style="border-color:#F59E0B;color:#F59E0B">🥚 EGGlogU</div>
+      <div class="arch-block vert" style="border-color:#EC4899;color:#EC4899">🐷 PigLogu</div>
+      <div class="arch-block vert" style="border-color:#3B82F6;color:#3B82F6">🐄 CowLogu</div>
+      <div class="arch-block vert" style="border-color:#22C55E;color:#22C55E">🌾 CropLogu</div>
+      <div class="arch-block vert" style="border-color:#06B6D4;color:#06B6D4">🐟 AquaLogu</div>
+    </div>
+
+    <!-- Layer 2: Core Services -->
+    <div class="layer-label">Shared Core Services</div>
+    <div class="arch-layer">
+      <div class="arch-block core">Accounting</div>
+      <div class="arch-block core">Traceability</div>
+      <div class="arch-block core">Audit Trail</div>
+      <div class="arch-block core">Inventory</div>
+      <div class="arch-block core">Analytics</div>
+      <div class="arch-block core">CRM</div>
+    </div>
+
+    <!-- Layer 3: Infrastructure -->
+    <div class="layer-label">Infrastructure</div>
+    <div class="arch-layer">
+      <div class="arch-block infra">PostgreSQL 16</div>
+      <div class="arch-block infra">Redis 7</div>
+      <div class="arch-block infra">FastAPI</div>
+      <div class="arch-block infra">Docker</div>
+      <div class="arch-block infra">Alembic</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ NUMBERS ═══════════════════════════ -->
+<section>
+  <div class="section-header">
+    <div class="overline">By The Numbers</div>
+    <h2>Built for Scale, from Day One</h2>
+  </div>
+
+  <div class="numbers-grid">
+    <div class="number-card">
+      <div class="big">380+</div>
+      <div class="desc">API Endpoints — more than most enterprise ERPs</div>
+    </div>
+    <div class="number-card">
+      <div class="big">38</div>
+      <div class="desc">Data Models covering every farm operation</div>
+    </div>
+    <div class="number-card">
+      <div class="big">22</div>
+      <div class="desc">Database Migrations — battle-tested schema</div>
+    </div>
+    <div class="number-card">
+      <div class="big">14</div>
+      <div class="desc">Languages — Spanish, English, Portuguese, French, German, Italian, Japanese, Chinese & more</div>
+    </div>
+    <div class="number-card">
+      <div class="big">6</div>
+      <div class="desc">Industry Verticals — eggs, pigs, cattle, crops, aquaculture, multi-farm</div>
+    </div>
+    <div class="number-card">
+      <div class="big">4</div>
+      <div class="desc">Compliance Standards — EPCIS 2.0, FSMA 204, EU 178/2002, ISO 22005</div>
+    </div>
+    <div class="number-card">
+      <div class="big">$0</div>
+      <div class="desc">To start — free tier forever, no credit card required</div>
+    </div>
+    <div class="number-card">
+      <div class="big">100%</div>
+      <div class="desc">Offline-capable — works without internet, syncs when connected</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ COMPARISON ═══════════════════════════ -->
+<section class="section-alt" id="compare">
+  <div class="section-header">
+    <div class="overline">How We Compare</div>
+    <h2>FarmLogU vs. Enterprise ERPs</h2>
+    <p>The features of SAP, Oracle, and Dynamics — without the consultants, the 18-month implementations, or the six-figure bills.</p>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th class="highlight-col">FarmLogU</th>
+        <th>SAP S/4</th>
+        <th>Oracle NetSuite</th>
+        <th>Dynamics 365</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Agriculture-specific modules</td>
+        <td class="highlight-col"><span class="check">✓</span> Native</td>
+        <td>Add-on</td>
+        <td><span class="cross">✗</span></td>
+        <td>Add-on</td>
+      </tr>
+      <tr>
+        <td>Double-entry accounting</td>
+        <td class="highlight-col"><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+      </tr>
+      <tr>
+        <td>EPCIS 2.0 traceability</td>
+        <td class="highlight-col"><span class="check">✓</span> Native</td>
+        <td>Partner</td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Hash-chain audit (tamper-evident)</td>
+        <td class="highlight-col"><span class="check">✓</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Offline-first / works without internet</td>
+        <td class="highlight-col"><span class="check">✓</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Recall management (FSMA 204)</td>
+        <td class="highlight-col"><span class="check">✓</span></td>
+        <td>Module</td>
+        <td><span class="cross">✗</span></td>
+        <td>Add-on</td>
+      </tr>
+      <tr>
+        <td>Multi-vertical (eggs+pigs+cattle+crops)</td>
+        <td class="highlight-col"><span class="check">✓</span> Native</td>
+        <td>Custom</td>
+        <td><span class="cross">✗</span></td>
+        <td>Custom</td>
+      </tr>
+      <tr>
+        <td>Built-in community forum</td>
+        <td class="highlight-col"><span class="check">✓</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Time to go live</td>
+        <td class="highlight-col"><strong>5 minutes</strong></td>
+        <td>6-18 months</td>
+        <td>3-6 months</td>
+        <td>3-12 months</td>
+      </tr>
+      <tr>
+        <td>Starting price</td>
+        <td class="highlight-col"><strong>$0/month</strong></td>
+        <td>~$100K+/year</td>
+        <td>$999+/month</td>
+        <td>$70+/user/mo</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ═══════════════════════════ PRICING ═══════════════════════════ -->
+<section id="pricing">
+  <div class="section-header">
+    <div class="overline">Simple Pricing</div>
+    <h2>Pay for What You Use</h2>
+    <p>Each vertical is priced independently. Run one or run all. No hidden fees, no per-user costs, no consultants.</p>
+  </div>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="tier">Hobbyist</div>
+      <div class="price">$0<span>/month</span></div>
+      <div class="price-desc">1 vertical, 1 farm, forever</div>
+      <ul>
+        <li>1 farm, 2 production units</li>
+        <li>Core modules (production, health, feed)</li>
+        <li>Basic traceability</li>
+        <li>Offline-first</li>
+        <li>Community forum access</li>
+      </ul>
+      <a href="https://egglogu.com" class="btn btn-outline" style="width:100%">Start Free</a>
+    </div>
+
+    <div class="price-card featured">
+      <div class="tier">Professional</div>
+      <div class="price">$99<span>/month</span></div>
+      <div class="price-desc">per vertical, unlimited farms</div>
+      <ul>
+        <li>Unlimited farms & units</li>
+        <li>Full accounting (GL, P&L, balance sheet)</li>
+        <li>EPCIS 2.0 traceability</li>
+        <li>Recall management</li>
+        <li>Cost centers & margin analysis</li>
+        <li>Webhooks & API access</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="https://egglogu.com" class="btn btn-primary" style="width:100%">Start 30-Day Trial</a>
+    </div>
+
+    <div class="price-card">
+      <div class="tier">Enterprise</div>
+      <div class="price">$199<span>/month</span></div>
+      <div class="price-desc">per vertical, multi-org holding</div>
+      <ul>
+        <li>Everything in Professional</li>
+        <li>FarmLogU Hub (consolidated view)</li>
+        <li>Multi-organization management</li>
+        <li>Custom workflows & plugins</li>
+        <li>SSO (SAML/OIDC)</li>
+        <li>Dedicated account manager</li>
+        <li>99.9% SLA</li>
+      </ul>
+      <a href="mailto:enterprise@farmlogu.com" class="btn btn-ghost" style="width:100%">Contact Sales</a>
+    </div>
+  </div>
+
+  <p class="text-center text-subtle mt-4" style="font-size:.85rem">Multi-vertical discount: 20% off each additional vertical. Annual billing saves 20%.</p>
+</section>
+
+<!-- ═══════════════════════════ CTA ═══════════════════════════ -->
+<section class="cta-banner">
+  <h2>Start with Eggs.<br>Grow into <span class="text-primary">Everything</span>.</h2>
+  <p>EGGlogU is live today. As your operation grows, FarmLogU grows with you — same platform, same data, zero migration.</p>
+  <div class="btn-group">
+    <a href="https://egglogu.com" class="btn btn-primary btn-lg">Get Started Free</a>
+    <a href="mailto:hello@farmlogu.com" class="btn btn-ghost btn-lg">Talk to Us</a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">🌱 FarmLogU</div>
+      <p>The agricultural ERP platform. Enterprise-grade management for every farm, every vertical, every scale.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Products</h5>
+      <a href="https://egglogu.com">🥚 EGGlogU</a>
+      <a href="#">🐷 PigLogu</a>
+      <a href="#">🐄 CowLogu</a>
+      <a href="#">🌾 CropLogu</a>
+      <a href="#">🐟 AquaLogu</a>
+    </div>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <a href="#platform">Core Modules</a>
+      <a href="#compare">Comparison</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">API Documentation</a>
+      <a href="#">Status Page</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="#">About</a>
+      <a href="#">Blog</a>
+      <a href="#">Careers</a>
+      <a href="mailto:hello@farmlogu.com">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 FarmLogU SpA. All rights reserved.</p>
+    <div class="legal">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Security</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════ JS ═══════════════════════════ -->
+<script>
+// Nav scroll effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('navLinks').classList.remove('open');
+    }
+  });
+});
+
+// Intersection Observer for fade-in animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.v-card, .core-card, .price-card, .number-card, .arch-visual').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

@@ -23,21 +23,28 @@ from src.models.base import TimestampMixin, TenantMixin
 class CostCenterType(str, enum.Enum):
     farm = "farm"
     flock = "flock"
+    herd = "herd"              # PigLogu / CowLogu
+    field = "field"            # CropLogu
     warehouse = "warehouse"
     transport = "transport"
+    processing = "processing"  # Slaughter, packing plant, etc.
     admin = "admin"
     custom = "custom"
 
 
 class AllocationMethod(str, enum.Enum):
-    direct = "direct"  # 100% to one center
-    proportional_birds = "proportional_birds"  # Split by hen count
-    proportional_production = "proportional_production"  # Split by egg output
-    equal_split = "equal_split"  # Split equally
-    manual = "manual"  # User-defined %
+    direct = "direct"                            # 100% to one center
+    proportional_units = "proportional_units"    # Split by unit count (hens, pigs, cows, hectares)
+    proportional_production = "proportional_production"  # Split by output
+    proportional_revenue = "proportional_revenue"  # Split by revenue
+    equal_split = "equal_split"                  # Split equally
+    manual = "manual"                            # User-defined %
+    # Legacy alias — DB may still have this value from existing EGGlogU data
+    proportional_birds = "proportional_birds"
 
 
 class CostCategory(str, enum.Enum):
+    # ── Shared across all verticals ──
     feed = "feed"
     medication = "medication"
     labor = "labor"
@@ -47,10 +54,24 @@ class CostCategory(str, enum.Enum):
     transport = "transport"
     maintenance = "maintenance"
     depreciation = "depreciation"
-    pullet_amortization = "pullet_amortization"
     insurance = "insurance"
     veterinary = "veterinary"
     cleaning = "cleaning"
+    # ── Poultry-specific ──
+    pullet_amortization = "pullet_amortization"
+    # ── Swine-specific ──
+    piglet_purchase = "piglet_purchase"
+    slaughter = "slaughter"
+    # ── Cattle-specific ──
+    calf_purchase = "calf_purchase"
+    milking_supplies = "milking_supplies"
+    # ── Crops-specific ──
+    seed = "seed"
+    fertilizer = "fertilizer"
+    pesticide = "pesticide"
+    irrigation = "irrigation"
+    land_lease = "land_lease"
+    # ── Catch-all ──
     other = "other"
 
 
@@ -125,8 +146,18 @@ class ProfitLossSnapshot(TimestampMixin, TenantMixin, Base):
     # Breakdown by category (JSON for flexibility)
     cost_breakdown: Mapped[Optional[dict]] = mapped_column(JSON, default=None)
     revenue_breakdown: Mapped[Optional[dict]] = mapped_column(JSON, default=None)
-    eggs_produced: Mapped[Optional[int]] = mapped_column(Integer, default=None)
-    eggs_sold: Mapped[Optional[int]] = mapped_column(Integer, default=None)
-    cost_per_egg: Mapped[Optional[float]] = mapped_column(Float, default=None)
-    cost_per_dozen: Mapped[Optional[float]] = mapped_column(Float, default=None)
+    # ── Generic production metrics (work for any vertical) ──
+    units_produced: Mapped[Optional[int]] = mapped_column(
+        "eggs_produced", Integer, default=None  # keep DB column for backward compat
+    )
+    units_sold: Mapped[Optional[int]] = mapped_column(
+        "eggs_sold", Integer, default=None
+    )
+    cost_per_unit: Mapped[Optional[float]] = mapped_column(
+        "cost_per_egg", Float, default=None
+    )
+    cost_per_standard_unit: Mapped[Optional[float]] = mapped_column(
+        "cost_per_dozen", Float, default=None  # dozen for eggs, kg for meat, liter for milk
+    )
+    unit_of_measure: Mapped[Optional[str]] = mapped_column(String(20), default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)

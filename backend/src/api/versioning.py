@@ -9,8 +9,8 @@ Supports:
 
 import logging
 
-from fastapi import APIRouter, Request, Response
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import APIRouter
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 logger = logging.getLogger("egglogu.versioning")
 
@@ -33,17 +33,7 @@ CURRENT_VERSION = "v1"
 
 
 def create_versioned_router(version: str = "v1", **kwargs) -> APIRouter:
-    """Create an APIRouter with version prefix and metadata.
-
-    Usage:
-        v1_router = create_versioned_router("v1")
-        v1_router.include_router(farms.router)
-        app.include_router(v1_router, prefix="/api/v1")
-
-        v2_router = create_versioned_router("v2")
-        v2_router.include_router(farms_v2.router)
-        app.include_router(v2_router, prefix="/api/v2")
-    """
+    """Create an APIRouter with version prefix and metadata."""
     return APIRouter(
         tags=[f"API {version}"],
         responses={
@@ -53,20 +43,29 @@ def create_versioned_router(version: str = "v1", **kwargs) -> APIRouter:
     )
 
 
-# ─── Deprecation Middleware ──────────────────────────────────────────
+# ─── Deprecation Middleware (Pure ASGI) ──────────────────────────────
 
 
-class APIVersionMiddleware(BaseHTTPMiddleware):
-    """Adds API versioning headers to responses.
+class APIVersionMiddleware:
+    """Pure ASGI: adds API versioning headers to responses.
 
     - Detects version from path (/api/v1/, /api/v2/) or API-Version header
     - Adds deprecation/sunset headers for deprecated versions
     - Adds X-API-Version header to all responses
     """
 
-    async def dispatch(self, request: Request, call_next) -> Response:
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        path = scope.get("path", "/")
+        headers = dict(scope.get("headers", []))
+
         # Detect version from path
-        path = request.url.path
         version = None
         for v in VERSIONS:
             if f"/api/{v}/" in path or path.endswith(f"/api/{v}"):
@@ -75,37 +74,38 @@ class APIVersionMiddleware(BaseHTTPMiddleware):
 
         # Fallback to header
         if not version:
-            version = request.headers.get("API-Version", "").lower()
+            version = headers.get(b"api-version", b"").decode().lower()
             if version not in VERSIONS:
                 version = CURRENT_VERSION
 
-        response: Response = await call_next(request)
-
-        # Always include current version in response
-        response.headers["X-API-Version"] = version
-
-        # Add deprecation/sunset headers for deprecated versions
+        # Build extra headers for this version
+        extra_headers: list[tuple[bytes, bytes]] = [
+            (b"x-api-version", version.encode()),
+        ]
         version_info = VERSIONS.get(version, {})
         if version_info.get("status") == "deprecated":
-            response.headers["Deprecation"] = "true"
+            extra_headers.append((b"deprecation", b"true"))
             sunset = version_info.get("sunset")
             if sunset:
-                response.headers["Sunset"] = sunset
-            response.headers["Link"] = (
-                f'</api/{CURRENT_VERSION}/>; rel="successor-version"'
+                extra_headers.append((b"sunset", sunset.encode()))
+            extra_headers.append(
+                (b"link", f'</api/{CURRENT_VERSION}/>; rel="successor-version"'.encode())
             )
-            logger.debug("Deprecated API %s used: %s %s", version, request.method, path)
+            method = scope.get("method", "?")
+            logger.debug("Deprecated API %s used: %s %s", version, method, path)
 
-        return response
+        async def send_wrapper(message):
+            if message["type"] == "http.response.start":
+                raw_headers = list(message.get("headers", []))
+                raw_headers.extend(extra_headers)
+                message = {**message, "headers": raw_headers}
+            await send(message)
+
+        await self.app(scope, receive, send_wrapper)
 
 
 def deprecate_version(version: str, sunset_date: str) -> None:
-    """Mark an API version as deprecated with a sunset date.
-
-    Args:
-        version: Version string (e.g., "v1")
-        sunset_date: ISO date string (e.g., "2027-06-01")
-    """
+    """Mark an API version as deprecated with a sunset date."""
     if version in VERSIONS:
         VERSIONS[version]["status"] = "deprecated"
         VERSIONS[version]["sunset"] = sunset_date

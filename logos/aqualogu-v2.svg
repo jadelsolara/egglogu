@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background: same dark blue as EGGlogU -->
+  <rect width="512" height="512" rx="90" fill="#2C3E50"/>
+
+  <!-- Water drop containment (white, like the egg) -->
+  <path d="M256 72 C228 72, 96 210, 96 315 C96 405, 168 448, 256 448 C344 448, 416 405, 416 315 C416 210, 284 72, 256 72Z" fill="#FFFFFF"/>
+
+  <!-- Fish — PROFILE facing left, like the chicken -->
+  <!-- Body -->
+  <ellipse cx="250" cy="300" rx="130" ry="75" fill="#06B6D4"/>
+
+  <!-- Tail fin -->
+  <path d="M375 300 L430 245 L430 355 Z" fill="#0891B2"/>
+
+  <!-- Dorsal fin -->
+  <path d="M220 225 L265 175 L310 225" fill="#0891B2"/>
+
+  <!-- Belly (lighter area) -->
+  <ellipse cx="240" cy="325" rx="100" ry="38" fill="#67E8F9"/>
+
+  <!-- Pectoral fin -->
+  <path d="M200 310 L160 350 L205 345" fill="#0891B2"/>
+
+  <!-- Ventral fin -->
+  <path d="M280 370 L270 400 L300 380" fill="#0891B2"/>
+
+  <!-- Eye — SAME style as EGGlogU chicken -->
+  <circle cx="170" cy="280" r="28" fill="#FFFFFF"/>
+  <circle cx="163" cy="284" r="16" fill="#1F2937"/>
+  <circle cx="157" cy="277" r="6" fill="#FFFFFF"/>
+
+  <!-- Mouth -->
+  <path d="M125 302 Q118 298, 120 290" stroke="#0E7490" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+  <!-- Gill line -->
+  <path d="M205 265 Q200 300, 208 330" fill="none" stroke="#0891B2" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- Bubbles (like the chicken's comb is an accent, bubbles are the accent here) -->
+  <circle cx="110" cy="245" r="10" fill="#A5F3FC" opacity="0.6"/>
+  <circle cx="128" cy="215" r="7" fill="#A5F3FC" opacity="0.5"/>
+  <circle cx="105" cy="195" r="5" fill="#A5F3FC" opacity="0.4"/>
+</svg>

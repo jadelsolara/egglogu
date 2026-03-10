@@ -50,7 +50,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_subscriptions_organization_id'), 'subscriptions', ['organization_id'])
 
-    # ── Biosecurity: risk_level, pest_type, protocol_frequency enums ──
+    # ── Biosecurity enums ──
     op.execute("DO $$ BEGIN CREATE TYPE risklevel AS ENUM ('green','yellow','red'); EXCEPTION WHEN duplicate_object THEN null; END $$")
     op.execute("DO $$ BEGIN CREATE TYPE pesttype AS ENUM ('rodent','fly','wild_bird','other'); EXCEPTION WHEN duplicate_object THEN null; END $$")
     op.execute("DO $$ BEGIN CREATE TYPE protocolfrequency AS ENUM ('daily','weekly','monthly'); EXCEPTION WHEN duplicate_object THEN null; END $$")

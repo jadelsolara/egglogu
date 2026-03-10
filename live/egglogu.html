@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script>
 // Force cache purge v13 — removes old SW and cached files so updates apply instantly
-(function(){var k='_eggl_purge_v3';if(!localStorage.getItem(k)&&'serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister()})});caches.keys().then(function(c){c.forEach(function(n){caches.delete(n)})});localStorage.setItem(k,'1');setTimeout(function(){location.reload(true)},500)}})();
+(function(){var k='_eggl_purge_v21';if(!localStorage.getItem(k)&&'serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister()})});caches.keys().then(function(c){c.forEach(function(n){caches.delete(n)})});localStorage.setItem(k,'1');setTimeout(function(){location.reload(true)},500)}})();
 </script>
 <title>EGGlogU 360 — Gestión Avícola Inteligente</title>
 <link rel="manifest" href="manifest.json">
@@ -28,46 +28,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .app{display:flex;min-height:100vh}
-.sidebar{width:var(--sidebar-width);background:linear-gradient(180deg,var(--sidebar-bg) 0%,#091729 100%);color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;transition:transform .3s;box-shadow:2px 0 20px rgba(0,0,0,.2)}
-.sidebar-logo{padding:20px 16px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
-img.logo-icon{width:40px;height:48px;border-radius:50%;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.25);object-fit:cover}
-.sidebar-logo .logo-text{display:flex;flex-direction:column;line-height:1.15;min-width:0}
-.sidebar-logo .logo-title{font-size:17px;font-weight:800;letter-spacing:1px;color:rgba(255,255,255,.95)}
-.sidebar-logo .logo-title span{color:#FFB300}
-.sidebar-logo .logo-sub{font-size:9.5px;font-weight:500;opacity:.45;letter-spacing:1px;margin-top:2px;text-transform:uppercase}
-.sidebar nav{flex:1;padding:6px 0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
-.sidebar nav::-webkit-scrollbar{width:3px}.sidebar nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px}
-.sidebar nav a{display:flex;align-items:center;gap:10px;padding:8px 16px 8px 18px;color:rgba(255,255,255,.55);text-decoration:none;transition:all .15s ease;cursor:pointer;font-size:13px;font-weight:500;border-left:3px solid transparent;margin:0}
-.sidebar nav a:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.9);border-left-color:rgba(255,255,255,.12)}
-.sidebar nav a.active{background:rgba(255,143,0,.08);color:#FFB300;font-weight:600;border-left-color:#FF8F00}
-.nav-group-label{padding:14px 18px 4px;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.28);margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;transition:color .15s}
-.nav-group-label:hover{color:rgba(255,255,255,.5)}
-.nav-group-label.grp-open{color:rgba(255,255,255,.35)}
-.nav-group-label::after{content:'\25B8';font-size:8px;transition:transform .2s;opacity:.6}
-.nav-group-label.grp-open::after{transform:rotate(90deg)}
-.nav-group-links{max-height:0;overflow:hidden;transition:max-height .3s ease}
-.nav-group-links.grp-open{max-height:500px}
-.sidebar nav a i{font-style:normal;font-size:15px;width:22px;text-align:center;opacity:.8}
-.sidebar nav a.active i{opacity:1}
-.mode-toggles{padding:8px 10px;display:flex;gap:5px;border-top:1px solid rgba(255,255,255,.06)}
-.mode-btn{flex:1;padding:7px 0;border-radius:6px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:rgba(255,255,255,.5);cursor:pointer;font-size:11px;font-weight:500;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:4px}
-.mode-btn:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.8)}
-.mode-btn.active{background:linear-gradient(135deg,rgba(255,143,0,.15),rgba(255,179,0,.08));border-color:rgba(255,143,0,.35);color:#FFB300;font-weight:600}
-.lang-collapse{border-top:1px solid rgba(255,255,255,.06);padding:0 12px}
-.lang-collapse-btn{width:100%;padding:7px 2px;background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:space-between;transition:color .15s}
-.lang-collapse-btn:hover{color:rgba(255,255,255,.7)}
-.lang-collapse-btn::after{content:'▾';transition:transform .2s}
-.lang-collapse.open .lang-collapse-btn::after{transform:rotate(180deg)}
-.lang-grid{max-height:0;overflow:hidden;transition:max-height .3s ease}
-.lang-collapse.open .lang-grid{max-height:280px}
-.lang-grid-inner{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;padding:4px 0 10px}
-.lang-grid button{padding:3px 8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.55);border-radius:4px;cursor:pointer;font-size:10px;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:3px}
-.lang-grid button:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.85)}
-.lang-grid button.active{background:rgba(255,143,0,.12);color:#FFB300;font-weight:600;border-color:rgba(255,143,0,.3)}
-[dir="rtl"] .sidebar{right:0;left:auto}[dir="rtl"] .main-content{margin-right:240px;margin-left:0}[dir="rtl"] .hamburger{right:auto;left:12px}[dir="rtl"] .lang-grid-inner{direction:ltr}[dir="rtl"] input,[dir="rtl"] select,[dir="rtl"] textarea{text-align:right}[dir="rtl"] .card,[dir="rtl"] .form-group{text-align:right}
-.hamburger{display:none;position:fixed;top:10px;left:10px;z-index:101;background:var(--primary);color:#fff;border:none;padding:8px 12px;border-radius:var(--radius);font-size:20px;cursor:pointer}
-.main-content{margin-left:var(--sidebar-width);flex:1;padding:28px 40px;min-height:100vh;max-width:calc(100vw - var(--sidebar-width))}
-.section{display:none}.section.active{display:block}
+[dir="rtl"] input,[dir="rtl"] select,[dir="rtl"] textarea{text-align:right}[dir="rtl"] .card,[dir="rtl"] .form-group{text-align:right}
 .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
 .page-header h2{font-size:26px;color:var(--primary-dark);font-weight:700}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-bottom:28px}
@@ -172,7 +133,6 @@ button:focus-visible,.btn:focus-visible,a:focus-visible,.tab:focus-visible,selec
 .snapshot-up{background:#E8F5E9;color:#2E7D32}.snapshot-down{background:#FFEBEE;color:#C62828}.snapshot-same{background:#F5F5F5;color:#757575}
 /* === TABLET (768px - 1024px) === */
 @media(max-width:1024px){
-.main-content{padding:20px 20px}
 .kpi-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
 .page-header h2{font-size:20px}
 .form-row-3{grid-template-columns:1fr 1fr}
@@ -181,8 +141,6 @@ button:focus-visible,.btn:focus-visible,a:focus-visible,.tab:focus-visible,selec
 }
 /* === MOBILE (< 768px) === */
 @media(max-width:768px){
-.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.hamburger{display:block}
-.main-content{margin-left:0;padding:60px 12px 20px;overflow-x:hidden}
 .kpi-grid{grid-template-columns:1fr 1fr;gap:10px}
 .kpi-card{padding:14px}
 .kpi-card .kpi-label{font-size:11px}
@@ -204,9 +162,7 @@ table{font-size:13px}
 @media(max-width:480px){
 .kpi-grid{grid-template-columns:1fr}
 .kpi-card .kpi-value{font-size:22px}
-.main-content{padding:56px 8px 16px}
 .page-header h2{font-size:16px}
-.hamburger{top:8px;left:8px;padding:6px 10px;font-size:18px}
 .modal{max-width:100vw;margin:0;border-radius:0;min-height:100vh}
 .modal-header{border-radius:0}
 .btn{width:100%;text-align:center}
@@ -510,106 +466,9 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
 </div>
 </div>
 </div>
+<!-- ERP App Mount Point — <egg-app> gets injected here by mountApp() -->
 <div class="app" id="app-container">
 <a href="#main-content" class="skip-link" id="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;padding:12px 24px;background:var(--primary);color:#fff;font-weight:600;text-decoration:none;border-radius:0 0 8px 0">Skip to content</a>
-<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main Navigation">
-<div class="sidebar-logo" aria-label="EGGlogU 360"><img class="logo-icon" src="icons/icon-192.png" alt="EGGlogU" width="44" height="44"><div class="logo-text"><span class="logo-title">EGGlogU <span>360</span></span><span class="logo-sub" data-t="sidebar_subtitle">Gestión Avícola Inteligente</span></div></div>
-<nav id="main-nav" role="menubar" aria-label="Modules">
- <a data-section="dashboard" class="active"><i>📊</i><span data-t="nav_dashboard">Dashboard</span></a>
- <div class="nav-group-label" data-t="grp_production">Producción</div>
- <div class="nav-group-links" data-grp="production">
- <a data-section="lotes"><i>🐔</i><span data-t="nav_flocks">Lotes</span></a>
- <a data-section="produccion"><i>🥚</i><span data-t="nav_production">Producción</span></a>
- <a data-section="alimento"><i>🌾</i><span data-t="nav_feed">Alimento</span></a>
- <a data-section="ambiente"><i>🌡️</i><span data-t="nav_environment">Ambiente</span></a>
- </div>
- <div class="nav-group-label" data-t="grp_health">Salud</div>
- <div class="nav-group-links" data-grp="health">
- <a data-section="sanidad"><i>💉</i><span data-t="nav_health">Sanidad</span></a>
- <a data-section="bioseguridad"><i>🛡️</i><span data-t="nav_biosecurity">Bioseguridad</span></a>
- <a data-section="bienestar"><i>🐾</i><span data-t="nav_welfare">Bienestar</span></a>
- </div>
- <div class="nav-group-label" data-t="grp_commercial">Comercial</div>
- <div class="nav-group-links" data-grp="commercial">
- <a data-section="clientes"><i>👥</i><span data-t="nav_clients">Clientes</span></a>
- <a data-section="inventario"><i>📦</i><span data-t="nav_inventory">Inventario</span></a>
- <a data-section="finanzas"><i>💰</i><span data-t="nav_finances">Finanzas</span></a>
- </div>
- <div class="nav-group-label" data-t="grp_management">Gestión</div>
- <div class="nav-group-links" data-grp="management">
- <a data-section="analisis"><i>📈</i><span data-t="nav_analysis">Análisis</span></a>
- <a data-section="operaciones"><i>📋</i><span data-t="nav_operations">Operaciones</span></a>
- <a data-section="trazabilidad"><i>🔗</i><span data-t="nav_traceability">Trazabilidad</span></a>
- <a data-section="planificacion"><i>📅</i><span data-t="nav_planning">Planificación</span></a>
- <a data-section="carencias"><i>🔍</i><span data-t="nav_census">Carencias</span></a>
- <a data-section="reportes"><i>📊</i><span data-t="nav_reports">Reportes</span></a>
- <a data-section="automatizacion"><i>⚡</i><span data-t="nav_automation">Automatización</span></a>
- </div>
- <div class="nav-group-label" data-t="grp_system">Sistema</div>
- <div class="nav-group-links" data-grp="system">
- <a data-section="soporte"><i>🎧</i><span data-t="nav_support">Soporte</span></a>
- <a data-section="admin"><i>👑</i><span data-t="nav_admin">Admin</span></a>
- <a data-section="config"><i>⚙️</i><span data-t="nav_config">Config</span></a>
- </div>
- <div id="nav-superadmin-group" style="display:none">
- <div class="nav-group-label" data-t="grp_superadmin">Superadmin</div>
- <div class="nav-group-links" data-grp="superadmin">
- <a data-section="superadmin"><i>🔑</i><span data-t="nav_superadmin">Superadmin</span></a>
- </div>
- </div>
- </nav>
-<div class="mode-toggles">
-<button data-action="toggleCampoMode" id="btn-campo" class="mode-btn" aria-label="Toggle Campo Mode">🌾 <span data-t="nav_campo_mode">Modo Campo</span></button>
-<button data-action="toggleVetMode" id="btn-vet" class="mode-btn" aria-label="Toggle Vet Mode">🩺 <span data-t="nav_vet_mode">Modo Vet</span></button>
-</div>
-<div class="lang-collapse" id="langToggle">
-<button class="lang-collapse-btn" data-action="toggleLangCollapse">🌐 <span id="langCurrent">Español</span></button>
-<div class="lang-grid"><div class="lang-grid-inner">
-<button data-lang="es" id="btn-es" class="active">🇨🇱 ES</button>
-<button data-lang="en" id="btn-en">🇺🇸 EN</button>
-<button data-lang="pt" id="btn-pt">🇧🇷 PT</button>
-<button data-lang="fr" id="btn-fr">🇫🇷 FR</button>
-<button data-lang="de" id="btn-de">🇩🇪 DE</button>
-<button data-lang="it" id="btn-it">🇮🇹 IT</button>
-<button data-lang="ja" id="btn-ja">🇯🇵 JA</button>
-<button data-lang="zh" id="btn-zh">🇨🇳 ZH</button>
-<button data-lang="ru" id="btn-ru">🇷🇺 RU</button>
-<button data-lang="id" id="btn-id">🇮🇩 ID</button>
-<button data-lang="ar" id="btn-ar">🇸🇦 AR</button>
-<button data-lang="ko" id="btn-ko">🇰🇷 KO</button>
-<button data-lang="th" id="btn-th">🇹🇭 TH</button>
-<button data-lang="vi" id="btn-vi">🇻🇳 VI</button>
-</div></div>
-</div>
-<div style="padding:6px 10px 10px;margin-top:auto">
-<button data-action="doLogout" class="mode-btn" style="width:100%;background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06);color:rgba(255,255,255,.35);font-size:11px" aria-label="Logout">&#x1F6AA; <span data-t="logout">Cerrar sesión</span></button>
-</div>
-</aside>
-<main class="main-content" id="main-content" role="main" aria-label="Content">
-<button class="hamburger" data-action="toggleSidebar" aria-label="Toggle menu">☰</button>
-<div id="sec-dashboard" class="section active" role="region" aria-label="Dashboard"></div>
-<div id="sec-lotes" class="section" role="region" aria-label="Flocks"></div>
-<div id="sec-produccion" class="section" role="region" aria-label="Production"></div>
-<div id="sec-sanidad" class="section" role="region" aria-label="Health"></div>
-<div id="sec-alimento" class="section" role="region" aria-label="Feed"></div>
-<div id="sec-clientes" class="section" role="region" aria-label="Clients"></div>
-<div id="sec-inventario" class="section" role="region" aria-label="Inventory"></div>
-<div id="sec-finanzas" class="section" role="region" aria-label="Finance"></div>
-<div id="sec-analisis" class="section" role="region" aria-label="Analytics"></div>
-<div id="sec-operaciones" class="section" role="region" aria-label="Operations"></div>
-<div id="sec-bioseguridad" class="section" role="region" aria-label="Biosecurity"></div>
-<div id="sec-bienestar" class="section" role="region" aria-label="Animal Welfare"></div>
-<div id="sec-trazabilidad" class="section" role="region" aria-label="Traceability"></div>
-<div id="sec-planificacion" class="section" role="region" aria-label="Planning"></div>
-<div id="sec-ambiente" class="section" role="region" aria-label="Environment"></div>
-<div id="sec-carencias" class="section" role="region" aria-label="Deficiency Census"></div>
-<div id="sec-reportes" class="section" role="region" aria-label="Reports"></div>
-<div id="sec-automatizacion" class="section" role="region" aria-label="Automation"></div>
-<div id="sec-soporte" class="section" role="region" aria-label="Support"></div>
-<div id="sec-admin" class="section" role="region" aria-label="Administration"></div>
-<div id="sec-config" class="section" role="region" aria-label="Settings"></div>
-<div id="sec-superadmin" class="section" role="region" aria-label="Superadmin"></div>
-</main>
 </div>
 <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
 <div class="modal">
@@ -618,6 +477,6 @@ body.dark-mode .confirm-box{background:#2D2D2D;color:#E0E0E0}
 </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-<script type="module" src="dist/egglogu-app.2b19e31a.js"></script>
+<script type="module" src="dist/egglogu-app.f1affa41.js"></script>
 </body>
 </html>
