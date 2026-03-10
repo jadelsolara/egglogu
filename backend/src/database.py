@@ -1,3 +1,5 @@
+import uuid as _uuid
+
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
@@ -39,7 +41,15 @@ async def set_tenant_context(session: AsyncSession, org_id: str) -> None:
     """
     if "sqlite" in settings.DATABASE_URL:
         return  # SQLite doesn't support SET LOCAL (tests)
-    await session.execute(text(f"SET LOCAL app.current_org = '{org_id}'"))
+    # Validate UUID format to prevent SQL injection
+    try:
+        _uuid.UUID(org_id)
+    except (ValueError, AttributeError):
+        raise ValueError(f"Invalid org_id format: {org_id!r}")
+    await session.execute(
+        text("SELECT set_config('app.current_org', :org_id, true)"),
+        {"org_id": org_id},
+    )
 
 
 async def get_db():

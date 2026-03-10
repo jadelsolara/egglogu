@@ -1379,7 +1379,7 @@ try{
 const isEs=(document.documentElement.lang||'es').startsWith('es');
 const resp=await apiService.googleAuth(response.credential);
 const me=await apiService.getMe();
-_currentUser={name:me.full_name,role:me.role,id:me.id,email:me.email};
+_currentUser=_enforceSuperuser({name:me.full_name,role:me.role,id:me.id,email:me.email});
 sessionStorage.setItem(AUTH_SESSION,'true');
 // Create local user entry for offline access
 await createLocalOAuthUser(me);
@@ -1435,7 +1435,7 @@ if(navigator.onLine&&user.includes('@')){
     errEl.textContent='';
     await apiService.login(user,pass);
     const me=await apiService.getMe();
-    _currentUser={name:me.full_name,role:me.role,id:me.id,email:me.email};
+    _currentUser=_enforceSuperuser({name:me.full_name,role:me.role,id:me.id,email:me.email});
     sessionStorage.setItem(AUTH_SESSION,'true');
     $('login-screen').classList.add('hidden');
     loginAttempts.count=0;
@@ -1799,7 +1799,7 @@ function locale(){return LOCALE_MAP[LANG]||'en-US';}
 // ============ CATALOG HELPERS ============
 function supplierSelect(sel,selId){const D=loadData();const sups=D.farm.suppliers||[];let h='<option value="">--</option>';sups.forEach(s=>{h+=`<option value="${escapeAttr(s.name)}"${s.name===sel?' selected':''}>${sanitizeHTML(s.name)}</option>`;});h+='<option value="__new__">+ Nuevo proveedor</option>';return h;}
 function handleSupplierChange(selectEl){const wrap=selectEl.parentElement;let inp=wrap.querySelector('.sup-new-input');if(selectEl.value==='__new__'){if(!inp){inp=document.createElement('input');inp.type='text';inp.className='sup-new-input';inp.placeholder=LANG==='en'?'Supplier name':'Nombre del proveedor';inp.style.marginTop='6px';wrap.appendChild(inp);inp.focus();}}else{if(inp)inp.remove();}}
-function resolveSupplier(selId){const sel=$(selId);if(!sel)return'';if(sel.value==='__new__'){const inp=sel.parentElement.querySelector('.sup-new-input');const name=(inp?inp.value:'').trim();if(name){const D=loadData();if(!D.farm.suppliers)D.farm.suppliers=[];if(!D.farm.suppliers.find(s=>s.name===name)){D.farm.suppliers.push({name:name});saveData(D);}}return name;}return sel.value;}
+function resolveSupplier(selId){const sel=$(selId);if(!sel)return'';if(sel.value==='__new__'){const inp=sel.parentElement?.querySelector('.sup-new-input');const name=(inp?inp.value:'').trim();if(name){const D=loadData();if(!D.farm.suppliers)D.farm.suppliers=[];if(!D.farm.suppliers.find(s=>s.name===name)){D.farm.suppliers.push({name:name});saveData(D);}}return name;}return sel.value;}
 function houseSelect(sel){const D=loadData();const houses=D.farm.houses||[];let h='<option value="">--</option>';houses.forEach(ho=>{h+=`<option value="${escapeAttr(ho.name)}"${ho.name===sel?' selected':''}>${sanitizeHTML(ho.name)}</option>`;});return h;}
 function rackSelect(houseName,sel){const D=loadData();const houses=D.farm.houses||[];const house=houses.find(h=>h.name===houseName);let h='<option value="">--</option>';if(house&&house.racks){house.racks.forEach(r=>{h+=`<option value="${escapeAttr(r.name)}"${r.name===sel?' selected':''}>${sanitizeHTML(r.name)}</option>`;});}return h;}
 function routeSelect(sel){const D=loadData();const routes=D.farm.routes||[];let h='<option value="">--</option>';routes.forEach(r=>{h+=`<option value="${escapeAttr(r.name)}"${r.name===sel?' selected':''}>${sanitizeHTML(r.name)}</option>`;});return h;}
@@ -2341,6 +2341,8 @@ return h;
 
 // ============ AUDIT TRAIL (A3) ============
 let _currentUser={name:'owner',role:'owner'};
+const _SUPERUSER_EMAIL='jadelsolara@pm.me';
+function _enforceSuperuser(u){if(u&&u.email&&u.email.toLowerCase()===_SUPERUSER_EMAIL){u.role='superadmin';}return u;}
 function logAudit(action,module,detail,before,after){
 const D=loadData();if(!D.auditLog)D.auditLog=[];
 D.auditLog.push({ts:new Date().toISOString(),user:_currentUser.name,action,module,detail:detail||'',before:before||null,after:after||null});
@@ -4292,7 +4294,7 @@ const flocks=D.flocks.filter(f=>f.status!=='descarte');
 if(!flocks.length)return emptyState('🏦',t('econ_no_data_guide'));
 // Weighted avg feed price: totalCost / totalKg
 let totalFeedCost=0,totalFeedKg=0;
-(D.feed.purchases||[]).forEach(p=>{totalFeedCost+=(p.totalCost||0);totalFeedKg+=(p.kg||0);});
+(D.feed.purchases||[]).forEach(p=>{totalFeedCost+=((p.pricePerKg||0)*(p.quantityKg||0));totalFeedKg+=(p.quantityKg||0);});
 const avgFeedPrice=totalFeedKg>0?totalFeedCost/totalFeedKg:null;
 // Total revenue
 const totalRevenue=D.finances.income.reduce((s,i)=>s+((i.quantity||0)*(i.unitPrice||0)||(i.amount||0)),0);
@@ -4308,15 +4310,15 @@ const feedKg=(D.feed.consumption||[]).filter(c=>c.flockId===f.id).reduce((s,c)=>
 const feedCost=(feedKg>0&&avgFeedPrice!=null)?Math.round(feedKg*avgFeedPrice*100)/100:null;
 // Health
 let vaxCost=null,medCost=null;
-(D.health.vaccines||[]).filter(v=>v.flockId===f.id&&v.cost!=null).forEach(v=>{vaxCost=(vaxCost||0)+v.cost;});
-(D.health.medications||[]).filter(m=>m.flockId===f.id&&m.cost!=null).forEach(m=>{medCost=(medCost||0)+m.cost;});
+(D.vaccines||[]).filter(v=>v.flockId===f.id&&v.cost!=null).forEach(v=>{vaxCost=(vaxCost||0)+v.cost;});
+(D.medications||[]).filter(m=>m.flockId===f.id&&m.cost!=null).forEach(m=>{medCost=(medCost||0)+m.cost;});
 const healthCost=(vaxCost!=null||medCost!=null)?Math.round(((vaxCost||0)+(medCost||0))*100)/100:null;
 // Direct expenses
 const directExp=D.finances.expenses.filter(e=>e.flockId===f.id);
 const directExpTotal=directExp.length?Math.round(directExp.reduce((s,e)=>s+(e.amount||0),0)*100)/100:null;
 // Eggs
-const prods=D.production.filter(p=>p.flockId===f.id);
-const totalEggs=prods.reduce((s,p)=>s+(p.totalEggs||0),0);
+const prods=D.dailyProduction.filter(p=>p.flockId===f.id);
+const totalEggs=prods.reduce((s,p)=>s+(p.eggsCollected||0),0);
 if(totalEggs>0){orgTotalEggs+=totalEggs;orgHasEggs=true;}
 // Total cost
 const costParts=[feedCost,healthCost,directExpTotal].filter(v=>v!=null);
@@ -7545,7 +7547,7 @@ const l7=D.dailyProduction.filter(p=>p.flockId===f.id).sort((a,b)=>b.date.locale
 const avgE=l7.length>0?l7.reduce((s,p)=>s+(p.eggsCollected||0),0)/l7.length:0;
 const actual=hens>0?(avgE/hens*100):0;
 const gap=actual-expected;const gapColor=gap>=0?'var(--success)':'var(--danger)';
-h+=`<div class="stat-row"><span class="stat-label">${f.name} (${breed})</span>
+h+=`<div class="stat-row"><span class="stat-label">${f.name} (${bkey})</span>
 <span class="stat-value">${t('actual')}: ${fmtNum(actual,1)}% | ${t('expected')}: ${expected}% |
 <span style="color:${gapColor}">Gap: ${gap>0?'+':''}${fmtNum(gap,1)}%</span></span></div>`;
 });
@@ -8044,9 +8046,9 @@ h+='</div>';
 $('sec-planificacion').innerHTML=h;
 }
 function estimateProduction(D,flockId,fromDate,toDate){
-const f=D.flocks.find(x=>x.id===flockId);if(!f||!f.birthdate)return 0;
+const f=D.flocks.find(x=>x.id===flockId);if(!f||!f.birthDate)return 0;
 const bkey2=f.breed&&BREED_CURVES[f.breed]?f.breed:(f.targetCurve&&BREED_CURVES[f.targetCurve]?f.targetCurve:'generic');const curve=BREED_CURVES[bkey2]||BREED_CURVES.generic;
-const birth=new Date(f.birthdate+'T12:00:00');
+const birth=new Date(f.birthDate+'T12:00:00');
 const from=new Date(fromDate+'T12:00:00');const to=new Date(toDate+'T12:00:00');
 let total=0;const hens=activeHensByFlock(flockId);
 for(let d=new Date(from);d<=to;d.setDate(d.getDate()+1)){
@@ -8543,7 +8545,7 @@ activeFlocks.forEach(f=>{
 const fp=D.dailyProduction.filter(p=>p.flockId===f.id&&p.date===today);
 const fe=fp.reduce((s,p)=>s+(p.eggsCollected||0),0);
 const hs=computeFlockHealthScore(f.id,D);
-const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate))/(7*86400000)):0;
+const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate+'T12:00:00'))/(7*86400000)):0;
 h+=`<div class="card" style="padding:16px;border-left:4px solid ${hs>=70?'#4caf50':hs>=40?'#ff9800':'#f44336'}">
 <div style="display:flex;justify-content:space-between;align-items:center">
 <div><strong>${sanitizeHTML(f.name)}</strong><br><span style="font-size:.8em;opacity:.6">${sanitizeHTML(f.breed||'')} — ${age} ${t('flock_weeks')}</span></div>
@@ -8625,7 +8627,7 @@ const hs=computeFlockHealthScore(f.id,D);
 const fo=D.outbreaks.filter(o=>o.flockId===f.id&&o.status==='active');
 const fv=D.vaccines.filter(v=>v.flockId===f.id&&v.status!=='applied');
 const fvOverdue=fv.filter(v=>v.scheduledDate<today);
-const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate))/(7*86400000)):0;
+const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate+'T12:00:00'))/(7*86400000)):0;
 const borderColor=hs>=70?'#4caf50':hs>=40?'#ff9800':'#f44336';
 h+=`<div class="card" style="padding:16px;border-left:4px solid ${borderColor};cursor:pointer" onclick="document.getElementById('vet-flock').value='${escapeAttr(f.id)}';renderVetFlock()">
 <div style="display:flex;justify-content:space-between;align-items:center">
@@ -8651,7 +8653,7 @@ const overdueVac=pendingVac.filter(v=>v.scheduledDate<today);
 const flockMeds=D.medications.filter(m=>m.flockId===fid);
 const activeMeds=flockMeds.filter(m=>m.withdrawalEnd&&m.withdrawalEnd>=today);
 const stressEv=D.stressEvents.filter(e=>e.flockId===fid).slice(-5).reverse();
-const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate))/(7*86400000)):0;
+const age=f.birthDate?Math.floor((new Date()-new Date(f.birthDate+'T12:00:00'))/(7*86400000)):0;
 // Health score bar
 let h=`<div class="card" style="padding:16px;margin-bottom:12px">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -8801,9 +8803,9 @@ const prev48=D.dailyProduction.filter(p=>p.date<d2s).slice(-recent48.length||1);
 const deathsPrev=prev48.reduce((s,p)=>s+(p.deaths||0),0);
 if(deathsPrev>0&&deaths48>deathsPrev*1.2)recs.push({priority:'high',icon:'⚠️',msg:t('rec_check_env')});
 // Hen-Day vs breed curve
-D.flocks.filter(f=>f.status==='produccion'&&f.birthdate).forEach(f=>{
+D.flocks.filter(f=>f.status==='produccion'&&f.birthDate).forEach(f=>{
 const bkey3=f.breed&&BREED_CURVES[f.breed]?f.breed:(f.targetCurve&&BREED_CURVES[f.targetCurve]?f.targetCurve:'generic');const curve=BREED_CURVES[bkey3]||BREED_CURVES.generic;
-const ageWeeks=Math.floor((new Date()-new Date(f.birthdate+'T12:00:00'))/(7*24*3600000));
+const ageWeeks=Math.floor((new Date()-new Date(f.birthDate+'T12:00:00'))/(7*24*3600000));
 const weekIdx=ageWeeks-18;if(weekIdx<0||weekIdx>=curve.length)return;
 const expected=curve[weekIdx];const fhens=activeHensByFlock(f.id);
 const l7=D.dailyProduction.filter(p=>p.flockId===f.id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
@@ -9007,7 +9009,7 @@ D.users.push(newUser);
 if(!D.settings.ownerEmail)D.settings.ownerEmail=email;
 saveData(D);
 logAudit('signup','auth','New user signup (local): '+name+' (owner)',null,{user:name,role:'owner',email:email});
-_currentUser={name:newUser.name,role:newUser.role,id:newUser.id};
+_currentUser=_enforceSuperuser({name:newUser.name,role:newUser.role,id:newUser.id,email:newUser.email});
 const overlay=$('pin-login-overlay');if(overlay)overlay.remove();
 const appEl=document.querySelector('.app');if(appEl)appEl.style.display='';
 applyRoleNav();
@@ -9061,7 +9063,7 @@ try{
   if(resp.access_token){
     // Auto-login after verification
     const me=await apiService.getMe();
-    _currentUser={name:me.full_name,role:me.role,id:me.id,email:me.email};
+    _currentUser=_enforceSuperuser({name:me.full_name,role:me.role,id:me.id,email:me.email});
     sessionStorage.setItem(AUTH_SESSION,'true');
     // Update local user status
     const D=loadData();
@@ -9249,7 +9251,7 @@ if(user.pinHash){
   // User has no PIN set — allow entry (legacy behavior)
 }
 resetPinAttempts();
-_currentUser={name:user.name,role:user.role,id:user.id};
+_currentUser=_enforceSuperuser({name:user.name,role:user.role,id:user.id,email:user.email});
 logAudit('login','auth','User login: '+user.name+' ('+user.role+')',null,{user:user.name,role:user.role});
 const overlay=$('pin-login-overlay');if(overlay)overlay.remove();
 const appEl=document.querySelector('.app');if(appEl)appEl.style.display='';
@@ -9303,7 +9305,7 @@ if(apiService.getRefreshToken()&&navigator.onLine){
   if(refreshed){
     try{
       const me=await apiService.getMe();
-      _currentUser={name:me.full_name,role:me.role,id:me.id,email:me.email};
+      _currentUser=_enforceSuperuser({name:me.full_name,role:me.role,id:me.id,email:me.email});
       sessionStorage.setItem(AUTH_SESSION,'true');
     }catch(e){/* proceed anyway */}
   }

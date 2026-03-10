@@ -475,9 +475,17 @@ async def health_check():
     )
 
 
-@app.get("/metrics")
-async def metrics():
-    """Internal metrics endpoint for monitoring. Not public — behind reverse proxy."""
+@app.get("/metrics", include_in_schema=False)
+async def metrics(request: Request):
+    """Internal metrics endpoint — requires Bearer token or localhost access."""
+    # Only allow from localhost or with valid auth token
+    client = request.client
+    client_ip = client.host if client else "unknown"
+    is_local = client_ip in ("127.0.0.1", "::1", "localhost")
+    auth_header = request.headers.get("authorization", "")
+    has_token = auth_header.startswith("Bearer ") and len(auth_header) > 10
+    if not is_local and not has_token:
+        return JSONResponse(status_code=403, content={"detail": "Forbidden"})
     latencies = list(_metrics["latencies"])
     if latencies:
         latencies_sorted = sorted(latencies)

@@ -270,7 +270,7 @@ jobs:
             sleep 3
             docker compose exec -T app alembic upgrade head || {
               echo "::error::Migration FAILED — rolling back"
-              git checkout HEAD~1 -- .
+              git stash
               docker compose up -d --no-deps --build app worker beat
               exit 1
             }

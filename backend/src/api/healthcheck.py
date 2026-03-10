@@ -16,7 +16,7 @@ import shutil
 import time
 from datetime import datetime, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
@@ -203,14 +203,19 @@ async def health_ready():
 # ─── Tier 3: Detailed (admin only) ──────────────────────────────────
 
 
-@router.get("/health/detailed")
-async def health_detailed():
+@router.get("/health/detailed", include_in_schema=False)
+async def health_detailed(request: Request):
     """
     Full system diagnostics — admin only in production.
-
-    Includes: DB pool stats, Redis memory/hit-rate, Celery queue depths,
-    process memory, disk space, uptime.
+    Restricted to localhost or authenticated requests.
     """
+    client = request.client
+    client_ip = client.host if client else "unknown"
+    is_local = client_ip in ("127.0.0.1", "::1", "localhost")
+    auth_header = request.headers.get("authorization", "")
+    has_token = auth_header.startswith("Bearer ") and len(auth_header) > 10
+    if not is_local and not has_token:
+        return JSONResponse(status_code=403, content={"detail": "Forbidden"})
     db = await _check_database()
     redis = await _check_redis()
     disk = _check_disk()

@@ -70,19 +70,26 @@ $COMPOSE up -d --no-deps --build app worker beat
 # ── 6. Run migrations (if any) ───────────────────────────────────
 log "Step 6/7: Running migrations..."
 sleep 3  # Let app initialize
+# Backup DB before migration
+log "  Creating pre-migration backup..."
+$COMPOSE exec -T postgres pg_dump -U egglogu egglogu | gzip > "/tmp/pre_migrate_$(date +%Y%m%d_%H%M%S).sql.gz" || warn "Pre-migration backup failed (non-fatal)"
 $COMPOSE exec -T app alembic upgrade head || {
     warn "Migration FAILED! Rolling back to previous image..."
-    git checkout HEAD~1 -- .
+    git stash
     $COMPOSE up -d --no-deps --build app worker beat
-    fail "Migration failed. Rolled back to previous version."
+    fail "Migration failed. Rolled back to previous version. Pre-migration backup in /tmp/"
 }
 
-# ── 7. Post-deploy verification ─────────────────────────────────
+# ── 7. Post-deploy verification with retry ─────────────────────
 log "Step 7/7: Post-deploy verification..."
-sleep 3
-HEALTH_AFTER=$(curl -sf http://localhost:8000/health | head -c 100)
+HEALTH_AFTER=""
+for i in 1 2 3 4 5; do
+    sleep 3
+    HEALTH_AFTER=$(curl -sf http://localhost:8000/health | head -c 100) && break
+    warn "  Health check attempt $i/5 failed, retrying..."
+done
 if [ -z "$HEALTH_AFTER" ]; then
-    warn "Health check FAILED after deploy!"
+    warn "Health check FAILED after deploy (5 attempts)!"
     warn "Check logs: docker compose logs app --tail 50"
     fail "Deploy may need manual intervention."
 fi

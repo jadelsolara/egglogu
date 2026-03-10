@@ -8,6 +8,8 @@ const CDN_ASSETS = [
 ];
 const LOCAL_ASSETS = [
   './egglogu.html',
+  './egglogu.js',
+  './dist/egglogu-app.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
@@ -29,6 +31,11 @@ self.addEventListener('activate', event => {
       );
     }).then(() => self.clients.claim())
   );
+});
+
+// Handle skipWaiting message from client
+self.addEventListener('message', event => {
+  if (event.data === 'skipWaiting') self.skipWaiting();
 });
 
 self.addEventListener('fetch', event => {

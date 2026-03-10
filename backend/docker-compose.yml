@@ -240,7 +240,7 @@ services:
 
   worker:
     build: .
-    command: celery -A src.worker worker --loglevel=info --concurrency=4 -Q celery,email,reports,webhooks
+    command: celery -A src.worker worker --loglevel=info --concurrency=4 -Q celery,email,reports,webhooks,analytics
     env_file:
       - .env
     depends_on:

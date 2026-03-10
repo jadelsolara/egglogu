@@ -298,7 +298,8 @@ async def login(
             "Esta cuenta usa Google Sign-In. Usa el botón 'Continuar con Google'."
         )
 
-    if not verify_password(data.password, user.hashed_password):
+    pwd_ok = verify_password(data.password, user.hashed_password)
+    if not pwd_ok:
         count = await record_failed_login(data.email)
         await log_login_attempt(
             db, data.email, LoginResult.bad_creds, ip, ua, user_id=user.id
@@ -311,6 +312,12 @@ async def login(
         raise UnauthorizedError(
             "Account locked due to too many failed attempts. Try again in 30 minutes."
         )
+
+    # Upgrade old bcrypt hash to new SHA-256 prehash format
+    if getattr(pwd_ok, "needs_rehash", False):
+        user.hashed_password = hash_password(data.password)
+        db.add(user)
+        await db.flush()
 
     if not user.is_active:
         await log_login_attempt(

@@ -1,14 +1,4 @@
-// ============================================================
-// EGGlogU Service Worker v2.0 — Network-First, Offline Support
-// ============================================================
-// Strategy: ALWAYS fetch from network first.
-// Cache is ONLY used when offline (no connection).
-// This ensures users ALWAYS get the latest version.
-// ============================================================
-
-const CACHE_NAME = 'egglogu-v3';
-
-// CDN assets — versioned URLs, safe to cache long-term
+const CACHE_NAME = 'egglogu-v6';
 const CDN_ASSETS = [
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.7',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -16,22 +6,30 @@ const CDN_ASSETS = [
   'https://unpkg.com/mqtt@5.14.1/dist/mqtt.min.js',
   'https://unpkg.com/simple-statistics@7.8.8/dist/simple-statistics.min.js'
 ];
+const LOCAL_ASSETS = [
+  './egglogu.html',
+  './egglogu.js',
+  './dist/egglogu-app.js',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
+];
 
-// Install: cache CDN assets for offline, activate immediately
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(CDN_ASSETS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll([...LOCAL_ASSETS, ...CDN_ASSETS]);
+    }).then(() => self.skipWaiting())
   );
 });
 
-// Activate: purge ALL old caches, take control immediately
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      );
+    }).then(() => self.clients.claim())
   );
 });
 
@@ -40,46 +38,48 @@ self.addEventListener('message', event => {
   if (event.data === 'skipWaiting') self.skipWaiting();
 });
 
-// Fetch: network-first for everything
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Never intercept API calls, auth, or external services
-  if (url.hostname !== self.location.hostname &&
-      !CDN_ASSETS.some(a => event.request.url.includes(new URL(a).hostname))) {
+  // API calls — don't intercept, let the browser and app handle them directly
+  if (url.hostname.includes('api.egglogu') || url.hostname.includes('railway.app') ||
+      url.hostname.includes('openweathermap.org') || url.hostname.includes('mqtt') ||
+      url.hostname.includes('accounts.google.com') || url.hostname.includes('googleapis.com')) {
     return;
   }
 
-  // CDN assets: cache-first (they're versioned, immutable)
-  if (CDN_ASSETS.some(a => event.request.url.includes(new URL(a).hostname))) {
+  // Cache-first for CDN assets
+  if (CDN_ASSETS.some(a => event.request.url.includes(a.replace('https://', '')))) {
     event.respondWith(
-      caches.match(event.request).then(cached =>
-        cached || fetch(event.request).then(resp => {
-          const clone = resp.clone();
-          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-          return resp;
-        })
-      )
+      caches.match(event.request).then(cached => {
+        return cached || fetch(event.request).then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        });
+      })
     );
     return;
   }
 
-  // Local assets: NETWORK-FIRST — always get latest, cache for offline
+  // Cache-first with background update for local assets
+  if (url.origin === self.location.origin) {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        const fetchPromise = fetch(event.request).then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        }).catch(() => cached);
+
+        return cached || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // Default: network with cache fallback
   event.respondWith(
-    fetch(event.request).then(resp => {
-      // Only cache successful GET responses
-      if (resp.ok && event.request.method === 'GET') {
-        const clone = resp.clone();
-        caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-      }
-      return resp;
-    }).catch(() =>
-      // Offline: try cache, then offline page
-      caches.match(event.request).then(cached =>
-        cached || (event.request.mode === 'navigate'
-          ? caches.match('./offline.html')
-          : new Response('', { status: 503 }))
-      )
-    )
+    fetch(event.request).catch(() => caches.match(event.request))
   );
 });

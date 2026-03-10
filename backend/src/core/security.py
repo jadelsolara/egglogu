@@ -1,3 +1,4 @@
+import hashlib
 import re
 import secrets
 import uuid
@@ -28,12 +29,35 @@ def validate_password(password: str) -> None:
         raise WeakPasswordError("Password must contain at least one digit")
 
 
+def _prehash(plain: str) -> bytes:
+    """Pre-hash with SHA-256 to avoid bcrypt's 72-byte truncation."""
+    return hashlib.sha256(plain.encode("utf-8")).hexdigest().encode("utf-8")
+
+
 def hash_password(plain: str) -> str:
-    return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    return bcrypt.hashpw(_prehash(plain), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    """Verify password with backward compatibility for pre-prehash hashes.
+
+    Tries SHA-256 prehash first (new format), falls back to raw bcrypt (old format).
+    Returns a tuple-like bool — caller can check `needs_rehash` attr to upgrade hash.
+    """
+    hashed_bytes = hashed.encode("utf-8")
+    # Try new format (SHA-256 prehash) first
+    if bcrypt.checkpw(_prehash(plain), hashed_bytes):
+        return True
+    # Fallback: old format (raw password, no prehash)
+    try:
+        if bcrypt.checkpw(plain.encode("utf-8"), hashed_bytes):
+            # Mark that this hash should be upgraded on next save
+            result = True
+            result = type("VerifyResult", (int,), {"needs_rehash": True})(result)
+            return result
+    except Exception:
+        pass
+    return False
 
 
 def create_access_token(

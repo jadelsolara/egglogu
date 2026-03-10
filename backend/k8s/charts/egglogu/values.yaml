@@ -51,7 +51,7 @@ ingress:
   tls:
     - hosts:
         - api.egglogu.com
-      tlsCert: egglogu-tls
+      secretName: egglogu-tls
 
 resources:
   requests:
