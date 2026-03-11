@@ -425,17 +425,53 @@ class EggFeed extends HTMLElement {
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn-danger { background: var(--danger, #dc3545); color: #fff; border: none; }
       .btn-sm { padding: 4px 10px; font-size: 12px; }
-      .btn-group { display: flex; gap: 6px; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
       .card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 16px; }
       .table-wrap { overflow-x: auto; }
       table { width: 100%; border-collapse: collapse; font-size: 13px; }
       th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border, #eee); }
       th { background: var(--bg-secondary, #f5f5f5); font-weight: 600; }
+
+      /* DataTable extras */
+      .dt-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+      .dt-toolbar-right { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+      .dt-search-input { padding: 6px 12px; border: 1px solid var(--border, #e0e0e0); border-radius: var(--radius, 8px); font-size: 13px; min-width: 180px; background: var(--bg, #fff); color: var(--text, #212121); }
+      .dt-filter-select, .dt-filter-input, .dt-filter-date, .dt-filter-num { width: 100%; padding: 4px 6px; border: 1px solid var(--border, #e0e0e0); border-radius: 6px; font-size: 12px; box-sizing: border-box; background: var(--bg, #fff); color: var(--text, #212121); }
+      .dt-filter-row td { padding: 4px 6px; }
+      .dt-card-wrap { position: relative; }
+      .dt-table-desktop { display: block; }
+      .dt-mobile-cards { display: none; }
+      .dt-row-selected { background: var(--primary-fill, rgba(74,124,89,.08)); }
+      .dt-bulk-bar { display: flex; align-items: center; justify-content: space-between; background: var(--primary-fill, rgba(74,124,89,.08)); padding: 8px 12px; border-radius: var(--radius, 8px); margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+      .dt-bulk-count { font-weight: 600; font-size: 13px; }
+      .dt-bulk-actions { display: flex; gap: 6px; }
+      .dt-pagination { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; flex-wrap: wrap; gap: 8px; font-size: 13px; }
+      .dt-page-buttons { display: flex; gap: 4px; }
+      .dt-page-size { padding: 4px 8px; border: 1px solid var(--border, #e0e0e0); border-radius: 6px; font-size: 12px; background: var(--bg, #fff); }
+      .dt-footer-info { font-size: 13px; color: var(--text-light, #757575); padding: 8px 0; }
+      .dt-sortable { cursor: pointer; user-select: none; }
+      .dt-sorted { color: var(--primary, #4a7c59); }
+      .dt-col-picker-wrap { position: relative; }
+      .dt-column-picker { position: absolute; right: 0; top: 100%; background: var(--bg, #fff); border: 1px solid var(--border, #e0e0e0); border-radius: 8px; padding: 8px; z-index: 100; min-width: 180px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+      .dt-col-option { display: block; padding: 4px 8px; font-size: 13px; cursor: pointer; }
+      .dt-card { background: var(--bg, #fff); border-radius: 8px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+      .dt-card-selected { background: var(--primary-fill, rgba(74,124,89,.08)); }
+      .dt-card-title { font-weight: 700; margin-bottom: 6px; }
+      .dt-card-field { display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0; }
+      .dt-card-label { color: var(--text-light, #757575); }
+      .dt-card-actions { margin-top: 8px; display: flex; gap: 6px; }
+      .dt-card-check { margin-bottom: 6px; }
+      .dt-th-check, .dt-td-check { width: 36px; text-align: center; }
+
       @media (max-width: 900px) {
         .kpi-grid { grid-template-columns: repeat(2, 1fr); }
       }
       @media (max-width: 600px) {
         .tabs { overflow-x: auto; }
+      }
+      @media (max-width: 768px) {
+        .dt-table-desktop { display: none; }
+        .dt-mobile-cards { display: block; }
       }
     </style>`;
   }

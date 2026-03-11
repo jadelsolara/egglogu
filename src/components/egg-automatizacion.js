@@ -568,7 +568,7 @@ class EggAutomatizacion extends HTMLElement {
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn-danger { background: var(--danger, #C62828); color: #fff; border: none; }
       .btn-sm { padding: 4px 10px; font-size: 12px; }
-      .btn-group { display: flex; gap: 6px; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
 
       /* Alert info banner */
       .alert-info {

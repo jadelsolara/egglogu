@@ -195,7 +195,7 @@ class EggProduction extends HTMLElement {
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn-danger { background: var(--danger, #C62828); color: #fff; border: none; }
       .btn-sm { padding: 4px 10px; font-size: 12px; }
-      .btn-group { display: flex; gap: 6px; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
 
       /* Badges */
       .badge {
@@ -465,7 +465,9 @@ class EggProduction extends HTMLElement {
 
   // ─────────────── SAVE ───────────────
   _saveProd(id) {
-    clearFieldErrors();
+    const mb = getModalBody();
+    if (!mb) return;
+    clearFieldErrors(mb);
 
     const o = {
       date: modalVal('p-date'),
@@ -493,7 +495,7 @@ class EggProduction extends HTMLElement {
       'p-eggs': { value: modalVal('p-eggs'), rules: { required: true, numeric: true, min: 0 } }
     });
     if (!v.valid) {
-      Object.entries(v.errors).forEach(([k, e]) => showFieldError(k, e[0]));
+      Object.entries(v.errors).forEach(([k, e]) => showFieldError(mb, k, e[0]));
       return;
     }
 
@@ -501,13 +503,14 @@ class EggProduction extends HTMLElement {
 
     // Extra validations: eggs vs flock size 110%, deaths vs remaining
     const flock = D.flocks.find(f => f.id === o.flockId);
-    if (flock && flock.currentCount) {
-      if (o.eggsCollected > flock.currentCount * 1.1) {
-        showFieldError('p-eggs', t('prod_eggs') + ' > ' + Math.round(flock.currentCount * 1.1) + ' (110% ' + t('prod_flock') + ')');
+    if (flock && (flock.count || flock.currentCount)) {
+      const hens = flock.count || flock.currentCount;
+      if (o.eggsCollected > hens * 1.1) {
+        showFieldError(mb, 'p-eggs', t('prod_eggs') + ' > ' + Math.round(hens * 1.1) + ' (110% ' + t('prod_flock') + ')');
         return;
       }
-      if (o.deaths > flock.currentCount) {
-        showFieldError('p-deaths', t('prod_deaths') + ' > ' + flock.currentCount + ' (' + t('prod_flock') + ')');
+      if (o.deaths > hens) {
+        showFieldError(mb, 'p-deaths', t('prod_deaths') + ' > ' + hens + ' (' + t('prod_flock') + ')');
         return;
       }
     }
@@ -516,7 +519,7 @@ class EggProduction extends HTMLElement {
     if (!this._vengWarningsShown) {
       const vr = VENG.gate.production(o, D);
       if (!vr.ok) {
-        vr.errors.forEach(e => { if (e.field) showFieldError(e.field, e.msg); });
+        vr.errors.forEach(e => { if (e.field) showFieldError(mb, e.field, e.msg); });
         showVengPanel(vr.errors, vr.warnings);
         return;
       }

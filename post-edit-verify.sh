@@ -40,7 +40,7 @@ echo ""
 CHANGES=0
 PROBLEMS=0
 
-for f in egglogu.html egglogu.js; do
+for f in egglogu.html; do
   if [ ! -f "${CHECKPOINT_PATH}/${f}" ]; then
     continue
   fi
@@ -102,7 +102,7 @@ done
 # Verificar sync con live/
 echo -e "${CYAN}--- Verificación sync live/ ---${NC}"
 SYNC_OK=true
-for f in egglogu.html egglogu.js; do
+for f in egglogu.html; do
   if [ -f "live/$f" ]; then
     if ! diff -q "$f" "live/$f" > /dev/null 2>&1; then
       echo -e "  ${RED}DESYNC:${NC} $f != live/$f"

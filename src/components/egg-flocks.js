@@ -193,7 +193,7 @@ class EggFlocks extends HTMLElement {
             render: r => healthBadge(r._hs)
           }
         ],
-        actions: r => `<div class="btn-group">
+        actions: r => `<div class="btn-group" style="flex-wrap:nowrap;gap:4px">
           <button class="btn btn-secondary btn-sm" data-action="edit-flock" data-id="${escapeAttr(r.id)}">${t('edit')}</button>
           <button class="btn btn-sm" style="background:var(--accent,#FF8F00);color:#fff" data-action="view-roadmap" data-id="${escapeAttr(r.id)}">${t('flock_roadmap')}</button>
           <button class="btn btn-danger btn-sm" data-action="delete-flock" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
@@ -295,7 +295,7 @@ class EggFlocks extends HTMLElement {
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>${t('flock_count')}</label><input type="number" id="f-count" value="${f ? f.count : ''}"></div>
+        <div class="form-group"><label>${t('flock_count')}</label><input type="number" id="f-count" value="${f ? f.count : ''}" data-autocalc="count"></div>
         <div class="form-group"><label>${t('flock_status')}</label>
           <select id="f-status">
             <option value="cria"${f && f.status === 'cria' ? ' selected' : ''}>${t('flock_status_cria')}</option>
@@ -313,18 +313,25 @@ class EggFlocks extends HTMLElement {
         <div class="form-group"><label>${t('flock_supplier')}</label>
           <select id="f-supplier" data-change="supplier-change">${supplierSelect(f ? f.supplier : '')}</select>
         </div>
-        <div class="form-group"><label>${t('flock_cost')}</label><input type="number" id="f-cost" value="${f ? f.cost : ''}"></div>
+        <div class="form-group"><label>${t('flock_cost')}</label><input type="number" id="f-cost" value="${f ? f.cost : ''}" data-autocalc="cost"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>${t('flock_purchase_cost')}</label>
-          <input type="number" step="0.01" min="0" id="f-pcost" value="${f && f.purchaseCostPerBird != null ? f.purchaseCostPerBird : ''}">
+        <div class="form-group"><label>${t('flock_purchase_cost')} <small style="color:var(--text-light);font-weight:400">(${t('auto_calculated') || 'auto'})</small></label>
+          <input type="number" step="0.01" min="0" id="f-pcost" value="${f && f.purchaseCostPerBird != null ? f.purchaseCostPerBird : ''}" readonly style="background:var(--card-bg,#f0f4f8);cursor:default">
         </div>
         <div class="form-group"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>${t('flock_curve_adjust') || 'Curve Adjust'} (0.5-1.5)</label>
+        <div class="form-group">
+          <label>${t('flock_curve_adjust') || 'Curve Adjust'} (0.5-1.5)
+            <button type="button" class="info-toggle" data-action="toggle-curve-help" title="Info" style="background:none;border:1px solid var(--border,#ccc);border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;margin-left:6px;color:var(--primary,#1565C0);vertical-align:middle;line-height:1;padding:0">\u24D8</button>
+          </label>
           <input type="number" id="f-curve" value="${f && f.curveAdjust != null ? f.curveAdjust : 1.0}" min="0.5" max="1.5" step="0.05">
           <small style="color:var(--text-light);display:block;margin-top:4px">${t('flock_curve_tip') || '1.0=standard, 0.85=tropical, 1.1=temperate'}</small>
+          <div id="curve-help-panel" style="display:none;background:var(--card-bg,#e8f0fe);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:13px;line-height:1.5;border-left:3px solid var(--primary,#1565C0)">
+            <strong>${t('flock_curve_help_title') || 'Curve Adjust'}</strong><br>
+            ${t('flock_curve_help') || 'The curve adjust factor modifies the standard production curve of the selected breed. A value of 1.0 means standard production. Values below 1.0 (e.g. 0.85) model reduced production (tropical climates, stress). Values above 1.0 (e.g. 1.1) model higher production (optimal conditions, temperate climates). This affects production projections and planning.'}
+          </div>
         </div>
       </div>
       <div class="form-group"><label>${t('flock_notes')}</label><textarea id="f-notes">${f ? escapeAttr(f.notes || '') : ''}</textarea></div>
@@ -338,12 +345,34 @@ class EggFlocks extends HTMLElement {
       body
     });
 
-    // Trigger initial breed info update after modal renders
+    // Trigger initial breed info update + wire auto-calc + info toggle after modal renders
     setTimeout(() => {
       const mb = getModalBody();
       if (mb) {
         const sel = mb.querySelector('#f-breed');
         if (sel) this._onBreedSelect(sel.value);
+
+        // Auto-calculate cost per bird
+        const autoCalc = () => {
+          const count = parseInt(mb.querySelector('#f-count')?.value) || 0;
+          const total = parseFloat(mb.querySelector('#f-cost')?.value) || 0;
+          const pcost = mb.querySelector('#f-pcost');
+          if (pcost) {
+            pcost.value = (count > 0 && total > 0) ? Math.round(total / count * 100) / 100 : '';
+          }
+        };
+        mb.querySelectorAll('[data-autocalc]').forEach(el => el.addEventListener('input', autoCalc));
+        autoCalc(); // Run on open for edit mode
+
+        // Curve help toggle
+        const helpBtn = mb.querySelector('[data-action="toggle-curve-help"]');
+        const helpPanel = mb.querySelector('#curve-help-panel');
+        if (helpBtn && helpPanel) {
+          helpBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            helpPanel.style.display = helpPanel.style.display === 'none' ? 'block' : 'none';
+          });
+        }
       }
     }, 60);
   }
@@ -396,7 +425,7 @@ class EggFlocks extends HTMLElement {
       purchaseDate: modalVal('f-purchase'),
       supplier: supplierEl ? resolveSupplier(supplierEl) : '',
       cost: parseFloat(modalVal('f-cost')) || 0,
-      purchaseCostPerBird: modalVal('f-pcost') ? parseFloat(modalVal('f-pcost')) : null,
+      purchaseCostPerBird: (parseInt(modalVal('f-count')) > 0 && parseFloat(modalVal('f-cost')) > 0) ? Math.round(parseFloat(modalVal('f-cost')) / parseInt(modalVal('f-count')) * 100) / 100 : null,
       notes: modalVal('f-notes')
     };
 
@@ -607,7 +636,7 @@ class EggFlocks extends HTMLElement {
       .btn-danger { background: var(--danger, #C62828); color: #fff; border: none; }
       .btn-danger:hover { filter: brightness(1.1); }
       .btn-sm { padding: 4px 10px; font-size: 12px; }
-      .btn-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
       .btn:hover { opacity: 0.9; }
 
       /* Badges */

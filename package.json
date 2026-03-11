@@ -5,9 +5,7 @@
     "test": "npx playwright test",
     "test:ui": "npx playwright test --ui",
     "dev": "vite",
-    "build": "npm run minify:js",
-    "build:modular": "vite build",
-    "minify:js": "npx terser egglogu.js -o dist/egglogu.min.js -c -m --source-map \"url='egglogu.min.js.map'\" && npx terser egglogu-reports.js -o dist/egglogu-reports.min.js -c -m && npx terser egglogu-datatable.js -o dist/egglogu-datatable.min.js -c -m && npx terser egglogu-workflows.js -o dist/egglogu-workflows.min.js -c -m"
+    "build": "vite build"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",

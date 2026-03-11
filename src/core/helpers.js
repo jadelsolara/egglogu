@@ -160,16 +160,27 @@ export function feedTypeSelect(sel, flockId) {
 }
 
 // ============ FORM HELPERS ============
-export function showFieldError(root, fieldId, msg) {
+export function showFieldError(rootOrId, fieldIdOrMsg, msg) {
+  // Support both (root, fieldId, msg) and legacy (fieldId, msg)
+  let root, fieldId, message;
+  if (msg !== undefined) {
+    root = rootOrId; fieldId = fieldIdOrMsg; message = msg;
+  } else {
+    root = document.querySelector('egg-modal')?.shadowRoot?.querySelector('.modal-body');
+    fieldId = rootOrId; message = fieldIdOrMsg;
+  }
+  if (!root) return;
   const el = root.querySelector('#' + fieldId);
   if (!el) return;
   el.classList.add('field-error');
   let errEl = el.parentElement?.querySelector('.field-error-msg');
   if (!errEl) { errEl = document.createElement('div'); errEl.className = 'field-error-msg'; el.parentElement?.appendChild(errEl); }
-  errEl.textContent = msg;
+  errEl.textContent = message;
 }
 
 export function clearFieldErrors(root) {
+  if (!root) root = document.querySelector('egg-modal')?.shadowRoot?.querySelector('.modal-body');
+  if (!root) return;
   root.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
   root.querySelectorAll('.field-error-msg').forEach(el => el.remove());
 }

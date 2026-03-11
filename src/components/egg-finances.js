@@ -109,7 +109,7 @@ class EggFinances extends HTMLElement {
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn-danger { background: var(--danger, #dc3545); color: #fff; border: none; }
       .btn:hover { opacity: 0.85; }
-      .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
       .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
       .badge-success { background: #e8f5e9; color: #2e7d32; }
       .badge-warning { background: #fff8e1; color: #e65100; }

@@ -123,7 +123,7 @@ class EggDashboard extends HTMLElement {
       :host { display: block; }
       .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
       .page-header h2 { margin: 0; color: var(--primary-dark, #0E2240); }
-      .btn-group { display: flex; gap: 8px; align-items: center; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
       .btn { padding: 8px 16px; border: 1px solid var(--border, #e0e0e0); border-radius: var(--radius, 8px); background: var(--bg, #fff); cursor: pointer; font-size: 14px; }
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn-primary { background: var(--primary, #1A3C6E); color: #fff; border: none; }
@@ -727,7 +727,11 @@ class EggDashboard extends HTMLElement {
   }
 
   async _fetchWeather(D) {
-    if (D.farm.lat === null || D.farm.lng === null) return;
+    // Auto-GPS: if no location set, try to auto-detect
+    if (D.farm.lat === null || D.farm.lng === null) {
+      this._autoGeolocate();
+      return;
+    }
     const cached = (D.weatherCache || []).find(w => Date.now() - w.ts < 1800000);
     if (cached) { this._renderWeatherWidget(cached); return; }
     try {
@@ -736,12 +740,20 @@ class EggDashboard extends HTMLElement {
         const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${encodeURIComponent(D.farm.lat)}&lon=${encodeURIComponent(D.farm.lng)}&appid=${encodeURIComponent(D.farm.owmApiKey)}&units=metric`);
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const d = await r.json(); if (d.cod && d.cod !== 200) return;
-        w = { ts: Date.now(), temp: d.main.temp, humidity: d.main.humidity, wind: d.wind.speed, desc: d.weather[0].description, icon: d.weather[0].icon, feelsLike: d.main.feels_like };
+        w = { ts: Date.now(), temp: d.main.temp, humidity: d.main.humidity, wind: d.wind.speed, desc: d.weather[0].description, icon: d.weather[0].icon, feelsLike: d.main.feels_like, forecast: null };
       } else {
-        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(D.farm.lat)}&longitude=${encodeURIComponent(D.farm.lng)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto`);
+        // Open-Meteo: current + 7-day forecast (FREE, no API key)
+        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(D.farm.lat)}&longitude=${encodeURIComponent(D.farm.lng)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code,apparent_temperature&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&timezone=auto&forecast_days=7`);
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const d = await r.json();
-        w = { ts: Date.now(), temp: d.current.temperature_2m, humidity: d.current.relative_humidity_2m, wind: d.current.wind_speed_10m, desc: wmoDesc(d.current.weather_code), icon: wmoIcon(d.current.weather_code), feelsLike: null };
+        const forecast = d.daily ? d.daily.time.map((dt, i) => ({
+          date: dt,
+          max: d.daily.temperature_2m_max[i],
+          min: d.daily.temperature_2m_min[i],
+          code: d.daily.weather_code[i],
+          rain: d.daily.precipitation_sum[i]
+        })) : [];
+        w = { ts: Date.now(), temp: d.current.temperature_2m, humidity: d.current.relative_humidity_2m, wind: d.current.wind_speed_10m, desc: wmoDesc(d.current.weather_code), icon: wmoIcon(d.current.weather_code), feelsLike: d.current.apparent_temperature, forecast };
       }
       if (!D.weatherCache) D.weatherCache = [];
       D.weatherCache.push(w);
@@ -759,6 +771,34 @@ class EggDashboard extends HTMLElement {
     } catch (e) {
       const el = this.shadowRoot.querySelector('#weather-widget');
       if (el) el.innerHTML = `<div style="padding:8px;color:var(--text-light);font-size:13px">${sanitizeHTML(t('error_network'))}</div>`;
+    }
+  }
+
+  _autoGeolocate() {
+    if (!navigator.geolocation) return;
+    const el = this.shadowRoot.querySelector('#weather-widget');
+    if (!el) return;
+    el.innerHTML = `<div class="weather-widget" style="text-align:center;padding:16px">
+      <p style="color:var(--text-light);font-size:13px">\uD83D\uDCCD ${t('weather_auto_detect') || 'Detectando ubicación para clima automático...'}</p>
+      <button class="btn btn-primary btn-sm" id="weather-allow-gps">\uD83D\uDCF1 ${t('geo_use_gps') || 'Usar GPS'}</button>
+      <a data-action="go-config" style="display:block;margin-top:8px;color:var(--primary);cursor:pointer;font-size:12px">${t('geo_set_location') || 'Configurar manualmente'}</a>
+    </div>`;
+    const btn = el.querySelector('#weather-allow-gps');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        btn.disabled = true;
+        btn.textContent = '...';
+        navigator.geolocation.getCurrentPosition(pos => {
+          const D = Store.get();
+          D.farm.lat = parseFloat(pos.coords.latitude.toFixed(6));
+          D.farm.lng = parseFloat(pos.coords.longitude.toFixed(6));
+          Store.save(D);
+          Bus.emit('toast', { msg: '\u2705 ' + (t('geo_saved') || 'Ubicación guardada') });
+          this._fetchWeather(D);
+        }, () => {
+          el.innerHTML = `<div style="padding:8px;color:var(--text-light);font-size:13px">${t('geo_denied') || 'GPS no disponible.'} <a data-action="go-config" style="color:var(--primary);cursor:pointer">${t('geo_set_location')}</a></div>`;
+        }, { timeout: 10000 });
+      });
     }
   }
 

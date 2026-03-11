@@ -100,7 +100,6 @@ if [ -d "live" ]; then
   echo ""
   echo "Sincronizando a live/..."
   cp egglogu.html live/egglogu.html 2>/dev/null && echo -e "  ${GREEN}live/egglogu.html${NC}" || true
-  cp egglogu.js live/egglogu.js 2>/dev/null && echo -e "  ${GREEN}live/egglogu.js${NC}" || true
 fi
 
 echo ""

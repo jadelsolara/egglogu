@@ -39,9 +39,8 @@ case "$1" in
 # SESSION SCOPE: ERP
 # Solo se permiten cambios a archivos ERP
 egglogu.html
-egglogu.js
 live/egglogu.html
-live/egglogu.js
+src/
 checksums-erp.sha256
 auto-csp-hash.sh
 EOF

@@ -471,7 +471,7 @@ class EggSuperadmin extends HTMLElement {
       .btn-warning { background: var(--warning, #ffc107); color: #000; border: none; }
       .btn-info { background: var(--info, #17a2b8); color: #fff; border: none; }
       .btn:hover { opacity: 0.85; }
-      .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
       .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
       .badge-success { background: #e8f5e9; color: #2e7d32; }
       .badge-warning { background: #fff8e1; color: #e65100; }

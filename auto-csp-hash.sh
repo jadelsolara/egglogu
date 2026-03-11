@@ -80,7 +80,7 @@ fi
 
 # Actualizar checksums si cambiaron
 if [ -f "checksums-erp.sha256" ]; then
-  sha256sum egglogu.html egglogu.js > checksums-erp.sha256 2>/dev/null
+  sha256sum egglogu.html > checksums-erp.sha256 2>/dev/null
   git add checksums-erp.sha256 2>/dev/null || true
   echo "  checksums-erp.sha256 actualizado"
 fi

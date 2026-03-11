@@ -1,7 +1,7 @@
 #!/bin/bash
 # checkpoint-erp.sh — Anti-Fuckup Protocol: Checkpoint antes de modificar ERP
 # Crea backup timestamped de archivos ERP ANTES de cualquier edición.
-# OBLIGATORIO correrlo antes de tocar egglogu.html o egglogu.js.
+# OBLIGATORIO correrlo antes de tocar egglogu.html o src/.
 
 set -e
 cd "$(dirname "$0")"
@@ -16,7 +16,7 @@ CHECKPOINT_DIR=".erp-checkpoints"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 CHECKPOINT_NAME="${CHECKPOINT_DIR}/${TIMESTAMP}"
 
-ERP_FILES=("egglogu.html" "egglogu.js")
+ERP_FILES=("egglogu.html")
 
 echo ""
 echo -e "${CYAN}╔═══════════════════════════════════════════════╗${NC}"

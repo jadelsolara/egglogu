@@ -36,47 +36,48 @@ class EggModal extends HTMLElement {
         .overlay {
           position: fixed; top: 0; left: 0; width: 100%; height: 100%;
           background: rgba(0,0,0,.5); display: flex; align-items: flex-start;
-          justify-content: center; padding-top: 5vh; z-index: 5000;
+          justify-content: center; padding-top: 2vh; z-index: 5000;
           opacity: 0; pointer-events: none; transition: opacity .2s;
           overflow-y: auto;
         }
         .overlay.open { opacity: 1; pointer-events: auto; }
         .modal {
           background: var(--card, #fff); border-radius: 12px;
-          max-width: 800px; width: 95%; max-height: 90vh;
+          max-width: 800px; width: 95%; max-height: 96vh;
           box-shadow: 0 20px 60px rgba(0,0,0,.3);
           display: flex; flex-direction: column;
+          margin-bottom: 2vh;
         }
         .modal-header {
           display: flex; align-items: center; justify-content: space-between;
-          padding: 16px 20px; border-bottom: 1px solid var(--border, #E0E0E0);
+          padding: 12px 20px; border-bottom: 1px solid var(--border, #E0E0E0);
         }
-        .modal-title { font-size: 18px; font-weight: 700; color: var(--text, #212121); margin: 0; }
+        .modal-title { font-size: 17px; font-weight: 700; color: var(--text, #212121); margin: 0; }
         .close-btn {
           background: none; border: none; font-size: 24px; cursor: pointer;
           color: var(--text-light, #757575); padding: 4px 8px; line-height: 1;
         }
         .close-btn:hover { color: var(--text, #212121); }
         .modal-body {
-          padding: 20px; overflow-y: auto; flex: 1;
+          padding: 16px 20px; overflow-y: auto; flex: 1;
         }
-        .modal-body .form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .modal-body .form-row { display: flex; gap: 12px; margin-bottom: 8px; }
         .modal-body .form-row > .form-group { flex: 1; }
-        .modal-body .form-row-3 { display: flex; gap: 12px; margin-bottom: 12px; }
+        .modal-body .form-row-3 { display: flex; gap: 12px; margin-bottom: 8px; }
         .modal-body .form-row-3 > .form-group { flex: 1; }
-        .modal-body .form-group { margin-bottom: 12px; }
-        .modal-body .form-group label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px; color: var(--text, #212121); }
+        .modal-body .form-group { margin-bottom: 8px; }
+        .modal-body .form-group label { display: block; font-weight: 600; margin-bottom: 2px; font-size: 13px; color: var(--text, #212121); }
         .modal-body input, .modal-body select, .modal-body textarea {
-          width: 100%; padding: 8px 12px; border: 1px solid var(--border, #E0E0E0);
+          width: 100%; padding: 6px 10px; border: 1px solid var(--border, #E0E0E0);
           border-radius: 8px; font-size: 14px; background: var(--card, #fff);
           color: var(--text, #212121); box-sizing: border-box;
         }
-        .modal-body textarea { min-height: 60px; resize: vertical; }
+        .modal-body textarea { min-height: 44px; resize: vertical; }
         .modal-body input:focus, .modal-body select:focus, .modal-body textarea:focus {
           outline: none; border-color: var(--primary, #4a7c59); box-shadow: 0 0 0 2px rgba(74,124,89,.2);
         }
         .modal-body .modal-footer {
-          display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; padding-top: 12px;
+          display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; padding-top: 10px;
           border-top: 1px solid var(--border, #E0E0E0);
         }
         .modal-body .btn {
