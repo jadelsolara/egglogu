@@ -10,6 +10,9 @@ import { sanitizeHTML, escapeAttr, todayStr } from '../core/utils.js';
 import { getCurrentUser } from '../core/permissions.js';
 import { getModalBody, modalVal, modalQuery } from './egg-modal.js';
 import { showConfirm } from './egg-confirm.js';
+import { mixCRM } from './egg-superadmin-crm.js';
+import { mixIntelligence } from './egg-superadmin-intel.js';
+import { mixOutbreaks } from './egg-superadmin-outbreaks.js';
 
 // ── i18n labels (ES / EN only; getLang picks one) ────────────
 const LABELS = {
@@ -1026,38 +1029,9 @@ class EggSuperadmin extends HTMLElement {
     } catch (err) { Bus.emit('toast', { msg: 'Error: ' + err.message, type: 'error' }); }
   }
 
-  // ── CRM ────────────────────────────────────────────────────
+  // ── CRM — see egg-superadmin-crm.js (mixin)
 
-  async _renderCRM(lbl) {
-    let h = '';
-
-    // Sub-nav
-    const views = [
-      { id: 'list',      label: lbl.crm_orgs,      icon: '\uD83C\uDFE2' },
-      { id: 'report',    label: lbl.crm_report,     icon: '\uD83D\uDCCA' },
-      { id: 'retention', label: lbl.crm_retention,  icon: '\uD83D\uDD04' }
-    ];
-    h += '<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">';
-    views.forEach(v => {
-      h += `<button class="btn ${this._crmView === v.id ? 'btn-primary' : 'btn-secondary'} btn-sm" data-action="crm-view" data-view="${v.id}">${v.icon} ${v.label}</button>`;
-    });
-    if (this._crmView === '360' && this._crmOrgName) {
-      h += `<span class="badge badge-info" style="align-self:center;font-size:0.85rem">360 ${sanitizeHTML(this._crmOrgName)}</span>`;
-    }
-    h += '</div>';
-
-    if (this._crmView === '360' && this._crmOrgId) h += await this._crmRender360(lbl);
-    else if (this._crmView === 'report')            h += await this._crmRenderReport(lbl);
-    else if (this._crmView === 'retention')          h += await this._crmRenderRetention(lbl);
-    else                                             h += await this._crmRenderOrgList(lbl);
-
-    return h;
-  }
-
-  async _crmRenderOrgList(lbl) {
-    const data = await _saFetch('/crm/report');
-    const orgs = await _saFetch('/organizations');
-    let h = `<div class="card"><h3>\uD83C\uDFE2 ${lbl.crm_orgs}</h3>`;
+  _PLACEHOLDER_CRM_START_
     if (!orgs || !orgs.length) { h += `<p style="color:var(--text-light)">${lbl.no_data}</p></div>`; return h; }
 
     // KPI row
