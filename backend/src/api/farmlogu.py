@@ -9,21 +9,18 @@ to enable/disable per organization.
 """
 
 import uuid
-from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_db
-from src.models.auth import Organization, User
-from src.models.finance import Income, Expense
-from src.models.farm import Farm
+from src.models.auth import User
 from src.api.deps import get_current_user
 from src.core.verticals import (
-    Vertical, Feature, get_vertical, has_feature, all_verticals, VERTICALS,
+    Vertical, get_vertical, all_verticals,
 )
+from src.services.farmlogu_service import FarmLogUService
 
 router = APIRouter(prefix="/farmlogu", tags=["farmlogu"])
 
@@ -68,7 +65,7 @@ class ConsolidatedView(BaseModel):
 
 @router.get("/verticals", response_model=list[VerticalInfo])
 async def list_verticals():
-    """Return all available verticals and their features."""
+    """Retorna todas las verticales disponibles y sus features."""
     result = []
     for v in all_verticals():
         result.append(VerticalInfo(
@@ -86,7 +83,7 @@ async def list_verticals():
 
 @router.get("/verticals/{code}", response_model=VerticalInfo)
 async def get_vertical_info(code: str):
-    """Get configuration for a specific vertical."""
+    """Obtiene la configuración de una vertical específica."""
     try:
         v = get_vertical(Vertical(code))
     except (ValueError, KeyError):
@@ -109,18 +106,12 @@ async def check_feature(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Check if a feature is available for the current user's organization vertical."""
-    org = await db.get(Organization, user.organization_id)
-    if not org:
+    """Verifica si una feature está disponible para la vertical de la organización."""
+    svc = FarmLogUService(db, user.organization_id, user.id)
+    result = await svc.check_feature(feature)
+    if result is None:
         raise HTTPException(404, "Organization not found")
-    try:
-        feat = Feature(feature)
-        vert = Vertical(org.vertical)
-    except ValueError:
-        return {"feature": feature, "enabled": False, "reason": "unknown_feature"}
-
-    enabled = has_feature(vert, feat)
-    return {"feature": feature, "enabled": enabled, "vertical": org.vertical}
+    return result
 
 
 @router.get("/consolidated", response_model=ConsolidatedView)
@@ -128,101 +119,17 @@ async def consolidated_view(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """
-    Consolidated financial view across all organizations in a holding.
+    """Vista financiera consolidada de todas las organizaciones del holding.
 
-    If the user's org is a holding (has child_orgs), shows all children.
-    If the user's org belongs to a holding, shows all siblings.
-    Otherwise, shows just the user's own org.
+    Si la org del usuario es un holding (tiene child_orgs), muestra todas
+    las hijas. Si pertenece a un holding, muestra todas las hermanas.
+    De lo contrario, muestra solo la org del usuario.
     """
-    org = await db.get(Organization, user.organization_id)
-    if not org:
+    svc = FarmLogUService(db, user.organization_id, user.id)
+    result = await svc.get_consolidated_view()
+    if result is None:
         raise HTTPException(404, "Organization not found")
-
-    # Determine which orgs to aggregate
-    if org.holding_id:
-        # User's org belongs to a holding — get all sibling orgs
-        holding = await db.get(Organization, org.holding_id)
-        holding_name = holding.name if holding else org.name
-        stmt = select(Organization).where(Organization.holding_id == org.holding_id)
-    else:
-        # Check if this org IS a holding (has children)
-        child_check = await db.execute(
-            select(Organization.id).where(Organization.holding_id == org.id).limit(1)
-        )
-        if child_check.scalar_one_or_none():
-            holding_name = org.name
-            stmt = select(Organization).where(Organization.holding_id == org.id)
-        else:
-            # Standalone org — just show itself
-            holding_name = org.name
-            stmt = select(Organization).where(Organization.id == org.id)
-
-    result = await db.execute(stmt)
-    orgs = result.scalars().all()
-
-    summaries = []
-    total_rev = 0.0
-    total_exp = 0.0
-
-    for o in orgs:
-        # Farm count
-        farm_count_r = await db.execute(
-            select(func.count(Farm.id)).where(Farm.organization_id == o.id)
-        )
-        farm_count = farm_count_r.scalar() or 0
-
-        # Revenue
-        rev_r = await db.execute(
-            select(func.coalesce(func.sum(Income.amount), 0.0)).where(
-                Income.organization_id == o.id
-            )
-        )
-        rev = float(rev_r.scalar())
-
-        # Expenses
-        exp_r = await db.execute(
-            select(func.coalesce(func.sum(Expense.amount), 0.0)).where(
-                Expense.organization_id == o.id
-            )
-        )
-        exp = float(exp_r.scalar())
-
-        # Vertical info
-        try:
-            vc = get_vertical(Vertical(o.vertical))
-            v_name = vc.name
-            v_icon = vc.icon
-        except (ValueError, KeyError):
-            v_name = o.vertical
-            v_icon = ""
-
-        summaries.append(OrgSummary(
-            id=o.id,
-            name=o.name,
-            slug=o.slug,
-            vertical=o.vertical,
-            vertical_name=v_name,
-            vertical_icon=v_icon,
-            tier=o.tier,
-            farm_count=farm_count,
-            total_revenue=rev,
-            total_expenses=exp,
-            net_income=rev - exp,
-        ))
-        total_rev += rev
-        total_exp += exp
-
-    active_verticals = list({s.vertical for s in summaries})
-
-    return ConsolidatedView(
-        holding_name=holding_name,
-        organizations=summaries,
-        total_revenue=total_rev,
-        total_expenses=total_exp,
-        net_income=total_rev - total_exp,
-        verticals_active=active_verticals,
-    )
+    return result
 
 
 @router.get("/org/vertical")
@@ -230,27 +137,9 @@ async def get_org_vertical(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Get the current organization's vertical and its full config."""
-    org = await db.get(Organization, user.organization_id)
-    if not org:
+    """Obtiene la vertical de la organización actual y su configuración completa."""
+    svc = FarmLogUService(db, user.organization_id, user.id)
+    result = await svc.get_org_vertical()
+    if result is None:
         raise HTTPException(404, "Organization not found")
-    try:
-        v = get_vertical(Vertical(org.vertical))
-    except (ValueError, KeyError):
-        return {"vertical": org.vertical, "config": None}
-
-    return {
-        "vertical": org.vertical,
-        "config": {
-            "name": v.name,
-            "product_name": v.product_name,
-            "unit_name": v.unit_name,
-            "unit_name_plural": v.unit_name_plural,
-            "primary_unit_of_measure": v.primary_unit_of_measure,
-            "icon": v.icon,
-            "features": [f.value for f in v.features],
-            "cost_categories": list(v.cost_categories),
-            "kpi_metrics": list(v.kpi_metrics),
-            "product_categories": list(v.product_categories),
-        },
-    }
+    return result

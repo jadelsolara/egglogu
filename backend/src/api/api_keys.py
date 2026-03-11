@@ -1,21 +1,17 @@
 """API Key management endpoints — create, list, revoke keys for external access."""
 
-import hashlib
-import secrets
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_db, get_current_user
 from src.models.api_key import APIKey
+from src.services.api_keys_service import APIKeyService
 
 router = APIRouter(prefix="/api-keys", tags=["api-keys"])
-
-KEY_PREFIX_LENGTH = 8  # Visible prefix for identification
 
 
 # ─── Schemas ─────────────────────────────────────────────────────────
@@ -42,7 +38,7 @@ class APIKeyResponse(BaseModel):
 
 
 class APIKeyCreatedResponse(APIKeyResponse):
-    """Returned only on creation — includes the full key (shown once)."""
+    """Solo se retorna al crear — incluye la llave completa (se muestra una vez)."""
 
     full_key: str
 
@@ -56,32 +52,14 @@ async def create_api_key(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Create a new API key. The full key is returned ONCE — store it securely."""
-    # Generate key: egglogu_<prefix>_<random>
-    raw_key = f"egglogu_{secrets.token_hex(4)}_{secrets.token_hex(24)}"
-    prefix = raw_key[:KEY_PREFIX_LENGTH]
-    key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
-
-    expires_at = None
-    if body.expires_in_days:
-        from datetime import timedelta
-
-        expires_at = datetime.now(timezone.utc) + timedelta(days=body.expires_in_days)
-
-    api_key = APIKey(
+    """Crea una nueva API key. La llave completa se retorna UNA sola vez."""
+    svc = APIKeyService(db, user.organization_id, user.id)
+    api_key, raw_key = await svc.create_key(
         name=body.name,
-        key_prefix=prefix,
-        key_hash=key_hash,
         scopes=body.scopes,
         description=body.description,
-        expires_at=expires_at,
-        organization_id=user.organization_id,
-        created_by=user.id,
+        expires_in_days=body.expires_in_days,
     )
-    db.add(api_key)
-    await db.commit()
-    await db.refresh(api_key)
-
     return APIKeyCreatedResponse(
         id=api_key.id,
         name=api_key.name,
@@ -104,29 +82,14 @@ async def list_api_keys(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
 ):
-    """List all API keys for the organization (keys are masked)."""
-    offset = (page - 1) * size
-    result = await db.execute(
-        select(APIKey)
-        .where(APIKey.organization_id == user.organization_id)
-        .order_by(APIKey.created_at.desc())
-        .offset(offset)
-        .limit(size)
-    )
-    keys = result.scalars().all()
-
-    count_result = await db.execute(
-        select(func.count(APIKey.id)).where(
-            APIKey.organization_id == user.organization_id
-        )
-    )
-    total = count_result.scalar()
-
+    """Lista todas las API keys de la organización (enmascaradas)."""
+    svc = APIKeyService(db, user.organization_id, user.id)
+    result = await svc.list_keys(page=page, size=size)
     return {
-        "items": [_to_response(k).model_dump() for k in keys],
-        "total": total,
-        "page": page,
-        "size": size,
+        "items": [_to_response(k).model_dump() for k in result["items"]],
+        "total": result["total"],
+        "page": result["page"],
+        "size": result["size"],
     }
 
 
@@ -136,18 +99,9 @@ async def revoke_api_key(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Revoke (deactivate) an API key."""
-    result = await db.execute(
-        select(APIKey).where(
-            APIKey.id == key_id, APIKey.organization_id == user.organization_id
-        )
-    )
-    api_key = result.scalar_one_or_none()
-    if not api_key:
-        raise HTTPException(status_code=404, detail="API key not found")
-
-    api_key.is_active = False
-    await db.commit()
+    """Revoca (desactiva) una API key."""
+    svc = APIKeyService(db, user.organization_id, user.id)
+    await svc.revoke_key(key_id)
 
 
 @router.post("/{key_id}/regenerate", status_code=201)
@@ -156,24 +110,9 @@ async def regenerate_api_key(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Regenerate an API key — old key is immediately invalidated."""
-    result = await db.execute(
-        select(APIKey).where(
-            APIKey.id == key_id, APIKey.organization_id == user.organization_id
-        )
-    )
-    api_key = result.scalar_one_or_none()
-    if not api_key:
-        raise HTTPException(status_code=404, detail="API key not found")
-
-    raw_key = f"egglogu_{secrets.token_hex(4)}_{secrets.token_hex(24)}"
-    api_key.key_prefix = raw_key[:KEY_PREFIX_LENGTH]
-    api_key.key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
-    api_key.is_active = True
-    api_key.total_requests = 0
-
-    await db.commit()
-
+    """Regenera una API key — la anterior queda invalidada de inmediato."""
+    svc = APIKeyService(db, user.organization_id, user.id)
+    api_key, raw_key = await svc.regenerate_key(key_id)
     return APIKeyCreatedResponse(
         id=api_key.id,
         name=api_key.name,

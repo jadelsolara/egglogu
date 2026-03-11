@@ -1,16 +1,15 @@
 """Webhook management API — CRUD + delivery logs."""
 
-import secrets
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_db, get_current_user
-from src.models.webhook import Webhook, WebhookDelivery
+from src.models.webhook import Webhook
+from src.services.webhook_service import WebhookService
 
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
@@ -67,19 +66,14 @@ async def create_webhook(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Create a new outbound webhook."""
-    webhook = Webhook(
+    """Crea un nuevo webhook saliente."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    webhook = await svc.create_webhook(
         name=body.name,
         url=body.url,
         events=body.events,
         description=body.description,
-        secret=secrets.token_hex(32),
-        organization_id=user.organization_id,
-        created_by=user.id,
     )
-    db.add(webhook)
-    await db.commit()
-    await db.refresh(webhook)
     return _to_response(webhook)
 
 
@@ -90,29 +84,14 @@ async def list_webhooks(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
 ):
-    """List all webhooks for the organization."""
-    offset = (page - 1) * size
-    result = await db.execute(
-        select(Webhook)
-        .where(Webhook.organization_id == user.organization_id)
-        .order_by(Webhook.created_at.desc())
-        .offset(offset)
-        .limit(size)
-    )
-    webhooks = result.scalars().all()
-
-    count_result = await db.execute(
-        select(func.count(Webhook.id)).where(
-            Webhook.organization_id == user.organization_id
-        )
-    )
-    total = count_result.scalar()
-
+    """Lista todos los webhooks de la organización."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    result = await svc.list_webhooks(page=page, size=size)
     return {
-        "items": [_to_response(w) for w in webhooks],
-        "total": total,
-        "page": page,
-        "size": size,
+        "items": [_to_response(w) for w in result["items"]],
+        "total": result["total"],
+        "page": result["page"],
+        "size": result["size"],
     }
 
 
@@ -122,8 +101,9 @@ async def get_webhook(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Get webhook details."""
-    webhook = await _get_webhook_or_404(db, webhook_id, user.organization_id)
+    """Obtiene los detalles de un webhook."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    webhook = await svc.get_webhook(webhook_id)
     return _to_response(webhook)
 
 
@@ -134,22 +114,16 @@ async def update_webhook(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Update webhook configuration."""
-    webhook = await _get_webhook_or_404(db, webhook_id, user.organization_id)
-
-    if body.name is not None:
-        webhook.name = body.name
-    if body.url is not None:
-        webhook.url = body.url
-    if body.events is not None:
-        webhook.events = body.events
-    if body.is_active is not None:
-        webhook.is_active = body.is_active
-    if body.description is not None:
-        webhook.description = body.description
-
-    await db.commit()
-    await db.refresh(webhook)
+    """Actualiza la configuración de un webhook."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    webhook = await svc.update_webhook(
+        webhook_id,
+        name=body.name,
+        url=body.url,
+        events=body.events,
+        is_active=body.is_active,
+        description=body.description,
+    )
     return _to_response(webhook)
 
 
@@ -159,10 +133,9 @@ async def delete_webhook(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Delete a webhook and all its delivery logs."""
-    webhook = await _get_webhook_or_404(db, webhook_id, user.organization_id)
-    await db.delete(webhook)
-    await db.commit()
+    """Elimina un webhook y todos sus registros de entrega."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    await svc.delete_webhook(webhook_id)
 
 
 @router.post("/{webhook_id}/rotate-secret")
@@ -171,11 +144,10 @@ async def rotate_webhook_secret(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Rotate the webhook signing secret."""
-    webhook = await _get_webhook_or_404(db, webhook_id, user.organization_id)
-    webhook.secret = secrets.token_hex(32)
-    await db.commit()
-    return {"secret": webhook.secret}
+    """Rota el secreto de firma del webhook."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    new_secret = await svc.rotate_secret(webhook_id)
+    return {"secret": new_secret}
 
 
 @router.post("/{webhook_id}/test")
@@ -184,8 +156,9 @@ async def test_webhook(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Send a test event to the webhook."""
-    webhook = await _get_webhook_or_404(db, webhook_id, user.organization_id)
+    """Envía un evento de prueba al webhook."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    webhook = await svc.get_webhook_for_test(webhook_id)
 
     from src.tasks.webhooks import deliver_webhook
 
@@ -208,26 +181,9 @@ async def list_deliveries(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
 ):
-    """List delivery attempts for a webhook."""
-    await _get_webhook_or_404(db, webhook_id, user.organization_id)
-
-    offset = (page - 1) * size
-    result = await db.execute(
-        select(WebhookDelivery)
-        .where(WebhookDelivery.webhook_id == webhook_id)
-        .order_by(WebhookDelivery.created_at.desc())
-        .offset(offset)
-        .limit(size)
-    )
-    deliveries = result.scalars().all()
-
-    count_result = await db.execute(
-        select(func.count(WebhookDelivery.id)).where(
-            WebhookDelivery.webhook_id == webhook_id
-        )
-    )
-    total = count_result.scalar()
-
+    """Lista los intentos de entrega de un webhook."""
+    svc = WebhookService(db, user.organization_id, user.id)
+    result = await svc.list_deliveries(webhook_id, page=page, size=size)
     return {
         "items": [
             WebhookDeliveryResponse(
@@ -240,29 +196,15 @@ async def list_deliveries(
                 error=d.error,
                 created_at=d.created_at,
             ).model_dump()
-            for d in deliveries
+            for d in result["items"]
         ],
-        "total": total,
-        "page": page,
-        "size": size,
+        "total": result["total"],
+        "page": result["page"],
+        "size": result["size"],
     }
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────
-
-
-async def _get_webhook_or_404(
-    db: AsyncSession, webhook_id: uuid.UUID, org_id
-) -> Webhook:
-    result = await db.execute(
-        select(Webhook).where(
-            Webhook.id == webhook_id, Webhook.organization_id == org_id
-        )
-    )
-    webhook = result.scalar_one_or_none()
-    if not webhook:
-        raise HTTPException(status_code=404, detail="Webhook not found")
-    return webhook
 
 
 def _to_response(w: Webhook) -> dict:

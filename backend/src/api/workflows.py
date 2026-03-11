@@ -1,21 +1,18 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
-from src.core.exceptions import NotFoundError, ForbiddenError
-from src.core.plans import get_plan_limits
 from src.database import get_db
 from src.models.auth import User
-from src.models.workflow import WorkflowRule, WorkflowExecution
 from src.schemas.workflow import (
     WorkflowRuleCreate,
     WorkflowRuleRead,
     WorkflowRuleUpdate,
     WorkflowExecutionRead,
 )
+from src.services.workflows_service import WorkflowsService
 
 router = APIRouter(prefix="/workflows", tags=["workflows"])
 
@@ -92,21 +89,6 @@ WORKFLOW_PRESETS = [
 ]
 
 
-async def _check_rule_limit(user: User, current_count: int, db) -> None:
-    """Validate plan-level workflow rule limit."""
-    from src.api.deps import get_subscription, _resolve_plan
-
-    sub = await get_subscription(user.organization_id, db)
-    plan = await _resolve_plan(sub, db)
-    limits = get_plan_limits(plan)
-    wf_cfg = limits.get("workflows", {})
-    max_rules = wf_cfg.get("max_rules")
-    if max_rules is not None and current_count >= max_rules:
-        raise ForbiddenError(
-            f"Limit reached: max {max_rules} workflow rules. Upgrade your plan."
-        )
-
-
 # ── GET /workflows/presets ──
 @router.get("/presets")
 async def list_presets(
@@ -124,18 +106,9 @@ async def list_rules(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = (
-        select(WorkflowRule)
-        .where(
-            WorkflowRule.organization_id == user.organization_id,
-            WorkflowRule.farm_id == farm_id,
-        )
-        .order_by(WorkflowRule.created_at.desc())
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    """Lista reglas de workflow para una granja."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.list_rules(farm_id, page=page, size=size)
 
 
 # ── POST /workflows/rules ──
@@ -149,22 +122,9 @@ async def create_rule(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    # Check limit
-    count_stmt = select(func.count()).where(
-        WorkflowRule.organization_id == user.organization_id,
-        WorkflowRule.farm_id == data.farm_id,
-    )
-    count = (await db.execute(count_stmt)).scalar() or 0
-    await _check_rule_limit(user, count, db)
-
-    obj = WorkflowRule(
-        **data.model_dump(),
-        organization_id=user.organization_id,
-        created_by=user.id,
-    )
-    db.add(obj)
-    await db.flush()
-    return obj
+    """Crea una nueva regla de workflow."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.create_rule(data)
 
 
 # ── GET /workflows/rules/{rule_id} ──
@@ -174,15 +134,9 @@ async def get_rule(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(WorkflowRule).where(
-        WorkflowRule.id == rule_id,
-        WorkflowRule.organization_id == user.organization_id,
-    )
-    result = await db.execute(stmt)
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Workflow rule not found")
-    return obj
+    """Obtiene una regla de workflow por ID."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.get_rule(rule_id)
 
 
 # ── PUT /workflows/rules/{rule_id} ──
@@ -193,19 +147,9 @@ async def update_rule(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(WorkflowRule).where(
-        WorkflowRule.id == rule_id,
-        WorkflowRule.organization_id == user.organization_id,
-    )
-    result = await db.execute(stmt)
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Workflow rule not found")
-
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    """Actualiza una regla de workflow existente."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.update_rule(rule_id, data)
 
 
 # ── DELETE /workflows/rules/{rule_id} ──
@@ -215,16 +159,9 @@ async def delete_rule(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(WorkflowRule).where(
-        WorkflowRule.id == rule_id,
-        WorkflowRule.organization_id == user.organization_id,
-    )
-    result = await db.execute(stmt)
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Workflow rule not found")
-    await db.delete(obj)
-    await db.flush()
+    """Elimina una regla de workflow."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    await svc.delete_rule(rule_id)
 
 
 # ── POST /workflows/rules/{rule_id}/toggle ──
@@ -234,17 +171,9 @@ async def toggle_rule(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(WorkflowRule).where(
-        WorkflowRule.id == rule_id,
-        WorkflowRule.organization_id == user.organization_id,
-    )
-    result = await db.execute(stmt)
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Workflow rule not found")
-    obj.is_active = not obj.is_active
-    await db.flush()
-    return obj
+    """Alterna el estado activo/inactivo de una regla."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.toggle_rule(rule_id)
 
 
 # ── POST /workflows/rules/{rule_id}/test ──
@@ -254,23 +183,9 @@ async def test_rule(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(WorkflowRule).where(
-        WorkflowRule.id == rule_id,
-        WorkflowRule.organization_id == user.organization_id,
-    )
-    result = await db.execute(stmt)
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Workflow rule not found")
-
-    from src.core.workflow_evaluator import evaluate_rule
-
-    test_result = await evaluate_rule(db, obj, dry_run=True)
-    return {
-        "rule_id": str(rule_id),
-        "would_trigger": test_result["matched"],
-        "details": test_result,
-    }
+    """Ejecuta una regla en modo dry-run (prueba sin acciones reales)."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.test_rule(rule_id)
 
 
 # ── POST /workflows/evaluate (bulk evaluate all active rules) ──
@@ -280,27 +195,9 @@ async def evaluate_all(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(WorkflowRule).where(
-        WorkflowRule.organization_id == user.organization_id,
-        WorkflowRule.farm_id == farm_id,
-        WorkflowRule.is_active == True,  # noqa: E712
-    )
-    result = await db.execute(stmt)
-    rules = result.scalars().all()
-
-    from src.core.workflow_evaluator import evaluate_rule
-
-    results = []
-    for rule in rules:
-        eval_result = await evaluate_rule(db, rule, dry_run=False)
-        results.append(
-            {
-                "rule_id": str(rule.id),
-                "name": rule.name,
-                "triggered": eval_result["matched"],
-            }
-        )
-    return {"evaluated": len(results), "results": results}
+    """Evalúa todas las reglas activas de una granja."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.evaluate_all(farm_id)
 
 
 # ── GET /workflows/executions ──
@@ -313,17 +210,6 @@ async def list_executions(
     user: User = Depends(require_feature("workflows")),
     db: AsyncSession = Depends(get_db),
 ):
-    stmt = (
-        select(WorkflowExecution)
-        .where(
-            WorkflowExecution.organization_id == user.organization_id,
-            WorkflowExecution.farm_id == farm_id,
-        )
-        .order_by(WorkflowExecution.created_at.desc())
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    if rule_id:
-        stmt = stmt.where(WorkflowExecution.rule_id == rule_id)
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    """Lista ejecuciones de workflow para una granja."""
+    svc = WorkflowsService(db, user.organization_id, user.id)
+    return await svc.list_executions(farm_id, rule_id=rule_id, page=page, size=size)

@@ -1,19 +1,17 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
-from src.models.planning import ProductionPlan
 from src.schemas.planning import (
     ProductionPlanCreate,
     ProductionPlanRead,
     ProductionPlanUpdate,
 )
+from src.services.planning_service import PlanningService
 
 router = APIRouter(prefix="/planning", tags=["planning"])
 
@@ -25,15 +23,8 @@ async def list_plans(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("planning")),
 ):
-    stmt = (
-        select(ProductionPlan)
-        .where(ProductionPlan.organization_id == user.organization_id)
-        .order_by(ProductionPlan.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = PlanningService(db, user.organization_id, user.id)
+    return await svc.list_plans(page=page, size=size)
 
 
 @router.get("/plans/{plan_id}", response_model=ProductionPlanRead)
@@ -42,16 +33,8 @@ async def get_plan(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("planning")),
 ):
-    result = await db.execute(
-        select(ProductionPlan).where(
-            ProductionPlan.id == plan_id,
-            ProductionPlan.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Production plan not found")
-    return obj
+    svc = PlanningService(db, user.organization_id, user.id)
+    return await svc.get_plan(plan_id)
 
 
 @router.post(
@@ -62,10 +45,8 @@ async def create_plan(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("planning")),
 ):
-    obj = ProductionPlan(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = PlanningService(db, user.organization_id, user.id)
+    return await svc.create_plan(data)
 
 
 @router.put("/plans/{plan_id}", response_model=ProductionPlanRead)
@@ -75,19 +56,8 @@ async def update_plan(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("planning")),
 ):
-    result = await db.execute(
-        select(ProductionPlan).where(
-            ProductionPlan.id == plan_id,
-            ProductionPlan.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Production plan not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    svc = PlanningService(db, user.organization_id, user.id)
+    return await svc.update_plan(plan_id, data)
 
 
 @router.delete("/plans/{plan_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -96,13 +66,5 @@ async def delete_plan(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("planning")),
 ):
-    result = await db.execute(
-        select(ProductionPlan).where(
-            ProductionPlan.id == plan_id,
-            ProductionPlan.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Production plan not found")
-    await db.delete(obj)
+    svc = PlanningService(db, user.organization_id, user.id)
+    await svc.delete_plan(plan_id)

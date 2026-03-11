@@ -3,14 +3,14 @@
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_db, get_current_user, require_role
 from src.core.plugins import VALID_HOOKS
 from src.models.plugin import Plugin, PluginInstall
+from src.services.plugins_service import PluginsService
 
 router = APIRouter(prefix="/plugins", tags=["plugins"])
 
@@ -57,7 +57,7 @@ class PluginInstallUpdate(BaseModel):
 
 
 class PluginCreate(BaseModel):
-    """Admin-only: register a new plugin in the marketplace."""
+    """Admin-only: registrar un nuevo plugin en el marketplace."""
 
     slug: str
     name: str
@@ -81,29 +81,14 @@ async def list_marketplace(
     size: int = Query(20, ge=1, le=100),
     search: str | None = None,
 ):
-    """List all public plugins available for installation."""
-    query = select(Plugin).where(Plugin.is_public.is_(True))
-    if search:
-        query = query.where(
-            Plugin.name.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
-        )
-    query = query.order_by(Plugin.name).offset((page - 1) * size).limit(size)
-
-    result = await db.execute(query)
-    plugins = result.scalars().all()
-
-    count_q = select(func.count(Plugin.id)).where(Plugin.is_public.is_(True))
-    if search:
-        count_q = count_q.where(
-            Plugin.name.ilike(f"%{search}%") | Plugin.description.ilike(f"%{search}%")
-        )
-    total = (await db.execute(count_q)).scalar()
-
+    """Lista plugins públicos disponibles para instalación."""
+    svc = PluginsService(db, user.organization_id, user.id)
+    result = await svc.list_marketplace(page=page, size=size, search=search)
     return {
-        "items": [_plugin_to_response(p) for p in plugins],
-        "total": total,
-        "page": page,
-        "size": size,
+        "items": [_plugin_to_response(p) for p in result["items"]],
+        "total": result["total"],
+        "page": result["page"],
+        "size": result["size"],
     }
 
 
@@ -117,30 +102,17 @@ async def list_installed(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
 ):
-    """List all plugins installed for the organization."""
-    offset = (page - 1) * size
-    result = await db.execute(
-        select(PluginInstall, Plugin)
-        .join(Plugin, PluginInstall.plugin_id == Plugin.id)
-        .where(PluginInstall.organization_id == user.organization_id)
-        .order_by(PluginInstall.created_at.desc())
-        .offset(offset)
-        .limit(size)
-    )
-    rows = result.all()
-
-    count_result = await db.execute(
-        select(func.count(PluginInstall.id)).where(
-            PluginInstall.organization_id == user.organization_id
-        )
-    )
-    total = count_result.scalar()
-
+    """Lista plugins instalados para la organización."""
+    svc = PluginsService(db, user.organization_id, user.id)
+    result = await svc.list_installed(page=page, size=size)
     return {
-        "items": [_install_to_response(install, plugin) for install, plugin in rows],
-        "total": total,
-        "page": page,
-        "size": size,
+        "items": [
+            _install_to_response(install, plugin)
+            for install, plugin in result["rows"]
+        ],
+        "total": result["total"],
+        "page": result["page"],
+        "size": result["size"],
     }
 
 
@@ -150,31 +122,9 @@ async def install_plugin(
     db: AsyncSession = Depends(get_db),
     user=Depends(require_role("admin", "owner")),
 ):
-    """Install a plugin for the organization."""
-    # Verify plugin exists
-    plugin = await _get_plugin_or_404(db, body.plugin_id)
-
-    # Check not already installed
-    existing = await db.execute(
-        select(PluginInstall).where(
-            PluginInstall.plugin_id == body.plugin_id,
-            PluginInstall.organization_id == user.organization_id,
-        )
-    )
-    if existing.scalar_one_or_none():
-        raise HTTPException(status_code=409, detail="Plugin already installed")
-
-    install = PluginInstall(
-        plugin_id=body.plugin_id,
-        organization_id=user.organization_id,
-        installed_by=user.id,
-        config=body.config,
-        is_active=True,
-    )
-    db.add(install)
-    await db.commit()
-    await db.refresh(install)
-
+    """Instala un plugin para la organización."""
+    svc = PluginsService(db, user.organization_id, user.id)
+    install, plugin = await svc.install_plugin(body.plugin_id, body.config)
     return _install_to_response(install, plugin)
 
 
@@ -184,8 +134,9 @@ async def get_install(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    """Get details of an installed plugin."""
-    install, plugin = await _get_install_or_404(db, install_id, user.organization_id)
+    """Obtiene detalle de un plugin instalado."""
+    svc = PluginsService(db, user.organization_id, user.id)
+    install, plugin = await svc.get_install(install_id)
     return _install_to_response(install, plugin)
 
 
@@ -196,16 +147,11 @@ async def update_install(
     db: AsyncSession = Depends(get_db),
     user=Depends(require_role("admin", "owner")),
 ):
-    """Update plugin config or toggle active/inactive."""
-    install, plugin = await _get_install_or_404(db, install_id, user.organization_id)
-
-    if body.is_active is not None:
-        install.is_active = body.is_active
-    if body.config is not None:
-        install.config = body.config
-
-    await db.commit()
-    await db.refresh(install)
+    """Actualiza configuración o estado activo/inactivo de un plugin."""
+    svc = PluginsService(db, user.organization_id, user.id)
+    install, plugin = await svc.update_install(
+        install_id, is_active=body.is_active, config=body.config
+    )
     return _install_to_response(install, plugin)
 
 
@@ -215,10 +161,9 @@ async def uninstall_plugin(
     db: AsyncSession = Depends(get_db),
     user=Depends(require_role("admin", "owner")),
 ):
-    """Uninstall a plugin from the organization."""
-    install, _ = await _get_install_or_404(db, install_id, user.organization_id)
-    await db.delete(install)
-    await db.commit()
+    """Desinstala un plugin de la organización."""
+    svc = PluginsService(db, user.organization_id, user.id)
+    await svc.uninstall_plugin(install_id)
 
 
 # ─── Admin: Plugin Registry ─────────────────────────────────────────
@@ -230,23 +175,9 @@ async def register_plugin(
     db: AsyncSession = Depends(get_db),
     user=Depends(require_role("superadmin")),
 ):
-    """Superadmin: register a new plugin in the system."""
-    # Validate hooks
-    invalid = set(body.hooks) - VALID_HOOKS
-    if invalid:
-        raise HTTPException(
-            status_code=422,
-            detail=f"Invalid hooks: {', '.join(invalid)}. Valid: {', '.join(sorted(VALID_HOOKS))}",
-        )
-
-    # Check slug uniqueness
-    existing = await db.execute(select(Plugin).where(Plugin.slug == body.slug))
-    if existing.scalar_one_or_none():
-        raise HTTPException(
-            status_code=409, detail=f"Plugin slug '{body.slug}' already exists"
-        )
-
-    plugin = Plugin(
+    """Superadmin: registra un nuevo plugin en el sistema."""
+    svc = PluginsService(db, user.organization_id, user.id)
+    plugin = await svc.register_plugin(
         slug=body.slug,
         name=body.name,
         version=body.version,
@@ -257,44 +188,16 @@ async def register_plugin(
         config_schema=body.config_schema,
         is_public=body.is_public,
     )
-    db.add(plugin)
-    await db.commit()
-    await db.refresh(plugin)
     return _plugin_to_response(plugin)
 
 
 @router.get("/registry/hooks")
 async def list_valid_hooks(user=Depends(get_current_user)):
-    """List all valid hook points for plugin development."""
+    """Lista todos los hook points válidos para desarrollo de plugins."""
     return {"hooks": sorted(VALID_HOOKS)}
 
 
-# ─── Helpers ─────────────────────────────────────────────────────────
-
-
-async def _get_plugin_or_404(db: AsyncSession, plugin_id: uuid.UUID) -> Plugin:
-    result = await db.execute(select(Plugin).where(Plugin.id == plugin_id))
-    plugin = result.scalar_one_or_none()
-    if not plugin:
-        raise HTTPException(status_code=404, detail="Plugin not found")
-    return plugin
-
-
-async def _get_install_or_404(
-    db: AsyncSession, install_id: uuid.UUID, org_id
-) -> tuple[PluginInstall, Plugin]:
-    result = await db.execute(
-        select(PluginInstall, Plugin)
-        .join(Plugin, PluginInstall.plugin_id == Plugin.id)
-        .where(
-            PluginInstall.id == install_id,
-            PluginInstall.organization_id == org_id,
-        )
-    )
-    row = result.one_or_none()
-    if not row:
-        raise HTTPException(status_code=404, detail="Plugin install not found")
-    return row[0], row[1]
+# ─── Response helpers ────────────────────────────────────────────────
 
 
 def _plugin_to_response(p: Plugin) -> dict:

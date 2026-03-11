@@ -1,18 +1,11 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
-from src.models.compliance import (
-    ComplianceCertification,
-    ComplianceInspection,
-    SalmonellaTest,
-)
 from src.schemas.compliance import (
     CertificationCreate,
     CertificationUpdate,
@@ -24,6 +17,7 @@ from src.schemas.compliance import (
     SalmonellaTestUpdate,
     SalmonellaTestRead,
 )
+from src.services.compliance_service import ComplianceService
 
 router = APIRouter(prefix="/compliance", tags=["compliance"])
 
@@ -36,14 +30,9 @@ async def list_certifications(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = (
-        select(ComplianceCertification)
-        .where(ComplianceCertification.organization_id == user.organization_id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    """Lista certificaciones de la organización."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.list_certifications(page=page, size=size)
 
 
 @router.post(
@@ -56,12 +45,9 @@ async def create_certification(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = ComplianceCertification(
-        **data.model_dump(), organization_id=user.organization_id
-    )
-    db.add(obj)
-    await db.flush()
-    return obj
+    """Crea una nueva certificación."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.create_certification(data)
 
 
 @router.put("/certifications/{cert_id}", response_model=CertificationRead)
@@ -71,19 +57,9 @@ async def update_certification(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(ComplianceCertification).where(
-            ComplianceCertification.id == cert_id,
-            ComplianceCertification.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Certification not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    """Actualiza una certificación existente."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.update_certification(cert_id, data)
 
 
 # ── Inspections ──
@@ -94,15 +70,9 @@ async def list_inspections(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = (
-        select(ComplianceInspection)
-        .where(ComplianceInspection.organization_id == user.organization_id)
-        .order_by(ComplianceInspection.scheduled_date.desc())
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    """Lista inspecciones de la organización."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.list_inspections(page=page, size=size)
 
 
 @router.post(
@@ -113,12 +83,9 @@ async def create_inspection(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = ComplianceInspection(
-        **data.model_dump(), organization_id=user.organization_id
-    )
-    db.add(obj)
-    await db.flush()
-    return obj
+    """Crea una nueva inspección."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.create_inspection(data)
 
 
 @router.put("/inspections/{insp_id}", response_model=InspectionRead)
@@ -128,19 +95,9 @@ async def update_inspection(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(ComplianceInspection).where(
-            ComplianceInspection.id == insp_id,
-            ComplianceInspection.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Inspection not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    """Actualiza una inspección existente."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.update_inspection(insp_id, data)
 
 
 # ── Salmonella Tests ──
@@ -151,15 +108,9 @@ async def list_salmonella_tests(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("health")),
 ):
-    stmt = (
-        select(SalmonellaTest)
-        .where(SalmonellaTest.organization_id == user.organization_id)
-        .order_by(SalmonellaTest.sample_date.desc())
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    """Lista tests de salmonella de la organización."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.list_salmonella_tests(page=page, size=size)
 
 
 @router.post(
@@ -172,10 +123,9 @@ async def create_salmonella_test(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("health")),
 ):
-    obj = SalmonellaTest(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    """Crea un nuevo test de salmonella."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.create_salmonella_test(data)
 
 
 @router.put("/salmonella/{test_id}", response_model=SalmonellaTestRead)
@@ -185,16 +135,6 @@ async def update_salmonella_test(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("health")),
 ):
-    result = await db.execute(
-        select(SalmonellaTest).where(
-            SalmonellaTest.id == test_id,
-            SalmonellaTest.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Salmonella test not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    """Actualiza un test de salmonella existente."""
+    svc = ComplianceService(db, user.organization_id, user.id)
+    return await svc.update_salmonella_test(test_id, data)
