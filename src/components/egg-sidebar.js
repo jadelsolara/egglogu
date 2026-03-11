@@ -129,12 +129,19 @@ class EggSidebar extends HTMLElement {
       isSuperuserEmail(D.settings.ownerEmail) ||
       isSuperuserEmail(D.settings.email) ||
       (D.users || []).some(u => isSuperuserEmail(u.email));
-    // JWT fallback: decode token directly if user email not resolved yet
+    // Direct localStorage fallback — bypasses module timing issues
     if (!isSuperadmin) {
       try {
-        const tk = apiService.getToken && apiService.getToken();
-        if (tk) {
-          const p = JSON.parse(atob(tk.split('.')[1]));
+        const saved = JSON.parse(localStorage.getItem('egglogu_current_user'));
+        if (saved && saved.email && saved.email.toLowerCase() === SUPERUSER_EMAIL) isSuperadmin = true;
+      } catch (_) { /* ignore */ }
+    }
+    // JWT token fallback — reads directly from localStorage
+    if (!isSuperadmin) {
+      try {
+        const tokens = JSON.parse(localStorage.getItem('egglogu_tokens'));
+        if (tokens && tokens.access) {
+          const p = JSON.parse(atob(tokens.access.split('.')[1]));
           if (p.email && p.email.toLowerCase() === SUPERUSER_EMAIL) isSuperadmin = true;
         }
       } catch (_) { /* ignore */ }
