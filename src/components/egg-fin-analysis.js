@@ -62,7 +62,7 @@ function _currentMonth() {
 
 // ─── Category labels ────────────────────────────────────────
 
-const EXPENSE_CATEGORIES = ['feed', 'vaccines', 'transport', 'labor', 'infrastructure', 'bird_purchase', 'other'];
+const EXPENSE_CATEGORIES = ['feed', 'vaccines', 'transport', 'labor', 'infrastructure', 'bird_purchase', 'utilities', 'packaging', 'insurance', 'marketing', 'equipment', 'other'];
 
 function _catLabel(cat) {
   return t('fin_cat_' + cat) || t(cat) || cat.charAt(0).toUpperCase() + cat.slice(1).replace(/_/g, ' ');

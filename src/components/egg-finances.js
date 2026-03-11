@@ -75,17 +75,20 @@ class EggFinances extends HTMLElement {
 
     // Tabs
     h += `<div class="tabs">
-      <div class="tab${this._currentTab === 'income' ? ' active' : ''}" data-action="tab-income">\u{1F4C8} ${t('fin_income')}</div>
-      <div class="tab${this._currentTab === 'expenses' ? ' active' : ''}" data-action="tab-expenses">\u{1F4C9} ${t('fin_expenses')}</div>
-      <div class="tab${this._currentTab === 'payables' ? ' active' : ''}" data-action="tab-payables">\u{1F4CB} ${t('fin_payables')}</div>
-      <div class="tab${this._currentTab === 'receivables' ? ' active' : ''}" data-action="tab-receivables">\u{1F4CB} ${t('fin_receivables')}</div>
-      <div class="tab${this._currentTab === 'cashflow' ? ' active' : ''}" data-action="tab-cashflow">\u{1F4B0} ${t('fin_cashflow') || 'Cash Flow'}</div>
-      <div class="tab${this._currentTab === 'budget' ? ' active' : ''}" data-action="tab-budget">\u{1F4CB} ${t('fin_budget') || 'Budget'}</div>
-      <div class="tab${this._currentTab === 'aging' ? ' active' : ''}" data-action="tab-aging">\u{23F3} ${t('fin_aging') || 'Aging'}</div>
-      <div class="tab${this._currentTab === 'pnl' ? ' active' : ''}" data-action="tab-pnl">\u{1F4CA} ${t('fin_pnl') || 'P&L'}</div>
-      <div class="tab${this._currentTab === 'balance' ? ' active' : ''}" data-action="tab-balance">\u{1F3E6} ${t('bal_title') || 'Balance Sheet'}</div>
-      <div class="tab${this._currentTab === 'eerr' ? ' active' : ''}" data-action="tab-eerr">\u{1F4D1} ${t('eerr_title') || 'Income Statement'}</div>
-      <div class="tab${this._currentTab === 'summary' ? ' active' : ''}" data-action="tab-summary">\u{1F4CA} ${t('fin_summary')}</div>
+      <div class="tab${this._currentTab === 'income' ? ' active' : ''}" data-action="tab-income">${t('fin_income')}</div>
+      <div class="tab${this._currentTab === 'expenses' ? ' active' : ''}" data-action="tab-expenses">${t('fin_expenses')}</div>
+      <div class="tab${this._currentTab === 'payables' ? ' active' : ''}" data-action="tab-payables">${t('fin_payables')}</div>
+      <div class="tab${this._currentTab === 'receivables' ? ' active' : ''}" data-action="tab-receivables">${t('fin_receivables')}</div>
+      <div class="tab-divider"></div>
+      <div class="tab${this._currentTab === 'cashflow' ? ' active' : ''}" data-action="tab-cashflow">${t('fin_cashflow') || 'Cash Flow'}</div>
+      <div class="tab${this._currentTab === 'budget' ? ' active' : ''}" data-action="tab-budget">${t('fin_budget') || 'Budget'}</div>
+      <div class="tab${this._currentTab === 'aging' ? ' active' : ''}" data-action="tab-aging">${t('fin_aging') || 'Aging'}</div>
+      <div class="tab-divider"></div>
+      <div class="tab${this._currentTab === 'pnl' ? ' active' : ''}" data-action="tab-pnl">${t('fin_pnl') || 'P&L'}</div>
+      <div class="tab${this._currentTab === 'balance' ? ' active' : ''}" data-action="tab-balance">${t('bal_title') || 'Balance'}</div>
+      <div class="tab${this._currentTab === 'eerr' ? ' active' : ''}" data-action="tab-eerr">${t('eerr_title') || 'EERR'}</div>
+      <div class="tab-divider"></div>
+      <div class="tab${this._currentTab === 'summary' ? ' active' : ''}" data-action="tab-summary">${t('fin_summary')}</div>
     </div>`;
 
     // Content
@@ -123,10 +126,11 @@ class EggFinances extends HTMLElement {
       .kpi-sub { font-size: 12px; color: var(--text-light, #888); margin-top: 4px; }
       .kpi-info-btn { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border, #ccc); background: var(--bg, #fff); font-size: 11px; cursor: pointer; color: var(--text-light, #888); }
       .kpi-tooltip { position: absolute; top: 36px; right: 8px; background: var(--text, #333); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; z-index: 10; max-width: 250px; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
-      .tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border, #e0e0e0); overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .tab { padding: 10px 20px; cursor: pointer; font-weight: 600; color: var(--text-light, #888); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; user-select: none; }
+      .tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border, #e0e0e0); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+      .tab { padding: 8px 14px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--text-light, #888); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; user-select: none; white-space: nowrap; }
       .tab:hover { color: var(--primary, #1A3C6E); }
       .tab.active { color: var(--primary, #1A3C6E); border-bottom-color: var(--primary, #1A3C6E); }
+      .tab-divider { width: 1px; background: var(--border, #e0e0e0); margin: 6px 4px; flex-shrink: 0; }
       .btn { padding: 8px 16px; border: 1px solid var(--border, #e0e0e0); border-radius: var(--radius, 8px); background: var(--bg, #fff); cursor: pointer; font-size: 14px; font-weight: 500; }
       .btn-sm { padding: 4px 10px; font-size: 12px; }
       .btn-primary { background: var(--primary, #1A3C6E); color: #fff; border: none; }

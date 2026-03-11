@@ -147,10 +147,13 @@ export function renderPnL(D, period) {
   });
 
   const revenueTypes = [
-    { key: 'egg_sales', label: t('pnl_egg_sales') || 'Egg Sales' },
-    { key: 'bird_sales', label: t('pnl_bird_sales') || 'Bird Sales' },
-    { key: 'manure_sales', label: t('pnl_manure_sales') || 'Manure Sales' },
-    { key: 'other', label: t('pnl_other_income') || 'Other Income' }
+    { key: 'eggs', label: t('fin_type_eggs') || 'Egg Sales' },
+    { key: 'birds', label: t('fin_type_birds') || 'Bird Sales' },
+    { key: 'manure', label: t('fin_type_manure') || 'Manure Sales' },
+    { key: 'processed', label: t('fin_type_processed') || 'Processed Products' },
+    { key: 'byproducts', label: t('fin_type_byproducts') || 'Byproducts' },
+    { key: 'services', label: t('fin_type_services') || 'Services' },
+    { key: 'other', label: t('fin_type_other') || 'Other Income' }
   ];
 
   let totalRevenue = 0;
@@ -181,8 +184,8 @@ export function renderPnL(D, period) {
   });
 
   const cogsCats = [
-    { key: 'feed', label: t('pnl_feed') || 'Feed' },
-    { key: 'bird_purchase', label: t('pnl_bird_purchases') || 'Bird Purchases' }
+    { key: 'feed', label: t('fin_cat_feed') || 'Feed' },
+    { key: 'bird_purchase', label: t('fin_cat_bird_purchase') || 'Bird Purchases' }
   ];
 
   let totalCOGS = 0;
@@ -205,11 +208,16 @@ export function renderPnL(D, period) {
   h += _sectionHeader(t('operating_expenses') || 'Operating Expenses');
 
   const opexCats = [
-    { key: 'vaccines', label: t('pnl_vaccines') || 'Vaccines & Medicine' },
-    { key: 'labor', label: t('pnl_labor') || 'Labor' },
-    { key: 'transport', label: t('pnl_transport') || 'Transport' },
-    { key: 'infrastructure', label: t('pnl_infrastructure') || 'Infrastructure / Maintenance' },
-    { key: 'other', label: t('pnl_other_expenses') || 'Other' }
+    { key: 'vaccines', label: t('fin_cat_vaccines') || 'Vaccines & Medicine' },
+    { key: 'labor', label: t('fin_cat_labor') || 'Labor' },
+    { key: 'transport', label: t('fin_cat_transport') || 'Transport' },
+    { key: 'infrastructure', label: t('fin_cat_infrastructure') || 'Infrastructure' },
+    { key: 'utilities', label: t('fin_cat_utilities') || 'Utilities' },
+    { key: 'packaging', label: t('fin_cat_packaging') || 'Packaging' },
+    { key: 'insurance', label: t('fin_cat_insurance') || 'Insurance' },
+    { key: 'marketing', label: t('fin_cat_marketing') || 'Marketing' },
+    { key: 'equipment', label: t('fin_cat_equipment') || 'Equipment' },
+    { key: 'other', label: t('fin_cat_other') || 'Other' }
   ];
 
   let totalOpEx = 0;
@@ -303,7 +311,7 @@ export function renderBalanceSheet(D, period) {
 
   // Egg inventory value
   let avgEggPrice = 0;
-  const eggIncome = activeOnly(fin.income).filter(i => (i.type || '') === 'egg_sales' && (i.unitPrice || 0) > 0);
+  const eggIncome = activeOnly(fin.income).filter(i => (i.type || '') === 'eggs' && (i.unitPrice || 0) > 0);
   if (eggIncome.length > 0) {
     let sum = 0;
     eggIncome.forEach(i => { sum += (i.unitPrice || 0); });
@@ -483,10 +491,13 @@ export function renderEERR(D, period) {
   h += _sectionHeader(t('eerr_operating_income') || 'Operating Income');
 
   const operatingIncomeTypes = [
-    { key: 'egg_sales', label: t('eerr_egg_sales') || 'Egg Sales' },
-    { key: 'bird_sales', label: t('eerr_bird_sales') || 'Bird Sales' },
-    { key: 'manure_sales', label: t('eerr_manure_sales') || 'Manure Sales' },
-    { key: 'other', label: t('eerr_other_operating') || 'Other Operating Income' }
+    { key: 'eggs', label: t('fin_type_eggs') || 'Egg Sales' },
+    { key: 'birds', label: t('fin_type_birds') || 'Bird Sales' },
+    { key: 'manure', label: t('fin_type_manure') || 'Manure Sales' },
+    { key: 'processed', label: t('fin_type_processed') || 'Processed Products' },
+    { key: 'byproducts', label: t('fin_type_byproducts') || 'Byproducts' },
+    { key: 'services', label: t('fin_type_services') || 'Services' },
+    { key: 'other', label: t('fin_type_other') || 'Other Operating Income' }
   ];
 
   let subtotalIncome = 0;
@@ -511,8 +522,8 @@ export function renderEERR(D, period) {
   h += _sectionHeader('(-) ' + (t('eerr_cost_of_sales') || 'Cost of Sales'));
 
   const cogsCats = [
-    { key: 'feed', label: t('eerr_feed') || 'Feed' },
-    { key: 'bird_purchase', label: t('eerr_bird_purchase') || 'Bird Purchases' }
+    { key: 'feed', label: t('fin_cat_feed') || 'Feed' },
+    { key: 'bird_purchase', label: t('fin_cat_bird_purchase') || 'Bird Purchases' }
   ];
 
   let subtotalCOGS = 0;
@@ -539,9 +550,9 @@ export function renderEERR(D, period) {
     + sanitizeHTML(t('eerr_production_expenses') || 'Production Expenses') + '</div>';
 
   const prodCats = [
-    { key: 'vaccines', label: t('eerr_vaccines') || 'Vaccines & Medicine' },
-    { key: 'labor', label: t('eerr_labor') || 'Labor' },
-    { key: 'utilities', label: t('eerr_utilities') || 'Utilities / Services' }
+    { key: 'vaccines', label: t('fin_cat_vaccines') || 'Vaccines & Medicine' },
+    { key: 'labor', label: t('fin_cat_labor') || 'Labor' },
+    { key: 'utilities', label: t('fin_cat_utilities') || 'Utilities' }
   ];
 
   let subtotalProd = 0;
@@ -556,9 +567,13 @@ export function renderEERR(D, period) {
     + sanitizeHTML(t('eerr_admin_expenses') || 'Administrative Expenses') + '</div>';
 
   const adminCats = [
-    { key: 'transport', label: t('eerr_transport') || 'Transport' },
-    { key: 'infrastructure', label: t('eerr_infrastructure') || 'Infrastructure / Maintenance' },
-    { key: 'other', label: t('eerr_other_expenses') || 'Other Expenses' }
+    { key: 'transport', label: t('fin_cat_transport') || 'Transport' },
+    { key: 'infrastructure', label: t('fin_cat_infrastructure') || 'Infrastructure' },
+    { key: 'packaging', label: t('fin_cat_packaging') || 'Packaging' },
+    { key: 'insurance', label: t('fin_cat_insurance') || 'Insurance' },
+    { key: 'marketing', label: t('fin_cat_marketing') || 'Marketing' },
+    { key: 'equipment', label: t('fin_cat_equipment') || 'Equipment' },
+    { key: 'other', label: t('fin_cat_other') || 'Other Expenses' }
   ];
 
   let subtotalAdmin = 0;
