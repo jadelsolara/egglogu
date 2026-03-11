@@ -33,7 +33,11 @@ class EggClients extends HTMLElement {
     this.render();
     this._unsubs.push(
       Bus.on('modal:action', (e) => this._onModalAction(e)),
-      Bus.on('modal:change', (e) => this._onModalChange(e))
+      Bus.on('modal:change', (e) => this._onModalChange(e)),
+      Bus.on('data:changed', () => {
+        clearTimeout(this._refreshTimer);
+        this._refreshTimer = setTimeout(() => this.render(), 300);
+      })
     );
   }
 

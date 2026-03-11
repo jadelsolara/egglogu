@@ -258,7 +258,7 @@ async function loadFromServer() {
       D.settings.plan.billing_interval = billing.billing_interval || 'month';
       if (billing.current_period_end) D.settings.plan.nextBilling = billing.current_period_end;
     }
-    Store.save(D);
+    Store.save(D, 'sync');
     scheduleAutoBackup();
     _saveSyncSnapshot(D);
   } catch (e) {
@@ -301,7 +301,7 @@ async function syncToServer() {
     _lastSyncTime = resp && resp.server_now ? resp.server_now : new Date().toISOString();
     safeSetItem('egglogu_last_sync', _lastSyncTime);
     _saveSyncSnapshot(D);
-    Store.save(D);
+    Store.save(D, 'sync');
   } catch (e) {
     console.warn('[Sync] Failed, will retry:', e.message);
   } finally { _isSyncing = false; }
@@ -1197,7 +1197,7 @@ async function bootAuth() {
       }
     }
     applyRoleNav();
-    loadFromServer();
+    await loadFromServer();
     return true;
   }
 

@@ -37,6 +37,15 @@ class EggDashboard extends HTMLElement {
 
   connectedCallback() {
     this.render();
+    this._unsubSync = Bus.on('data:changed', () => {
+      clearTimeout(this._refreshTimer);
+      this._refreshTimer = setTimeout(() => this.render(), 300);
+    });
+  }
+
+  disconnectedCallback() {
+    if (this._unsubSync) this._unsubSync();
+    clearTimeout(this._refreshTimer);
   }
 
   render() {

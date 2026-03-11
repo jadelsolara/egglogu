@@ -46,6 +46,10 @@ class EggFinances extends HTMLElement {
       Bus.on('modal:closed', () => {
         this._vengWarningsShown = false;
         this._editId = null;
+      }),
+      Bus.on('data:changed', () => {
+        clearTimeout(this._refreshTimer);
+        this._refreshTimer = setTimeout(() => this.render(), 300);
       })
     );
   }

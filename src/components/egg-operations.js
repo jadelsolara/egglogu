@@ -40,6 +40,14 @@ class EggOperations extends HTMLElement {
         this._editId = null;
       })
     );
+
+    // Re-render on sync/data changes
+    this._unsubs.push(
+      Bus.on('data:changed', () => {
+        clearTimeout(this._refreshTimer);
+        this._refreshTimer = setTimeout(() => this.render(), 300);
+      })
+    );
   }
 
   disconnectedCallback() {

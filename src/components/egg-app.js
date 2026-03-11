@@ -99,7 +99,7 @@ class EggApp extends HTMLElement {
 
     // Listen for navigation events
     Bus.on('nav:request', (data) => this.navigate(data?.section || data));
-    Bus.on('store:changed', () => scheduleAutoBackup());
+    Bus.on('data:sync-needed', () => scheduleAutoBackup());
     Bus.on('lang:changed', () => this._refreshCurrent());
 
     // Initialize

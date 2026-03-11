@@ -126,8 +126,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
   // authResult === 'pin' or false: app mounts when auth:ready fires
 
-  // Schedule sync on store changes
-  Bus.on('store:changed', () => {
+  // Schedule sync on data changes
+  Bus.on('data:sync-needed', () => {
     scheduleAutoBackup();
     syncToServer();
   });

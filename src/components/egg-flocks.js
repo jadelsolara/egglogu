@@ -73,6 +73,12 @@ class EggFlocks extends HTMLElement {
   connectedCallback() {
     this.render();
     this._setupBusListeners();
+    this._unsubs.push(
+      Bus.on('data:changed', () => {
+        clearTimeout(this._refreshTimer);
+        this._refreshTimer = setTimeout(() => this.render(), 300);
+      })
+    );
   }
 
   disconnectedCallback() {

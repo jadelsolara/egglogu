@@ -26,7 +26,11 @@ class EggInventory extends HTMLElement {
   connectedCallback() {
     this.render();
     this._unsubs.push(
-      Bus.on('modal:action', (ev) => this._onModalAction(ev))
+      Bus.on('modal:action', (ev) => this._onModalAction(ev)),
+      Bus.on('data:changed', () => {
+        clearTimeout(this._refreshTimer);
+        this._refreshTimer = setTimeout(() => this.render(), 300);
+      })
     );
   }
 

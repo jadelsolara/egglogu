@@ -39,6 +39,14 @@ class EggProduction extends HTMLElement {
     this.render();
     DataTable.handleEvent(this.shadowRoot, () => this.render());
 
+    // Re-render on sync/data changes
+    this._unsubs.push(
+      Bus.on('data:changed', () => {
+        clearTimeout(this._refreshTimer);
+        this._refreshTimer = setTimeout(() => this.render(), 300);
+      })
+    );
+
     // Listen for modal save actions
     this._unsubs.push(
       Bus.on('modal:action', (ev) => {
