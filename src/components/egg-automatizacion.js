@@ -224,7 +224,7 @@ const Actions = {
     const priority = action.priority || 'medium';
     D._workflowAlerts.push({
       type: priority === 'critical' || priority === 'high' ? 'danger' : 'warning',
-      icon: '\u26A1', msg, ruleId: rule.id, ts: new Date().toISOString()
+      icon: '', msg, ruleId: rule.id, ts: new Date().toISOString()
     });
   },
 
@@ -493,7 +493,7 @@ class EggAutomatizacion extends HTMLElement {
           }
         ],
         actions: r => `<div class="btn-group">
-          <button class="btn btn-secondary btn-sm" data-action="test-rule" data-id="${escapeAttr(r.id)}" title="${t('wf_test')}">\uD83E\uDDEA</button>
+          <button class="btn btn-secondary btn-sm" data-action="test-rule" data-id="${escapeAttr(r.id)}" title="${t('wf_test')}">${t('wf_test') || 'Test'}</button>
           <button class="btn btn-secondary btn-sm" data-action="edit-rule" data-id="${escapeAttr(r.id)}">${t('edit')}</button>
           <button class="btn btn-danger btn-sm" data-action="delete-rule" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
         </div>`,
@@ -805,7 +805,7 @@ class EggAutomatizacion extends HTMLElement {
 
     const isEdit = !!rule;
     const r = rule || {
-      id: genId(), name: '', icon: '\u26A1', enabled: true,
+      id: genId(), name: '', icon: '', enabled: true,
       condition: { type: 'deaths_spike', comparator: 'gt', threshold: 5 },
       actions: [{ type: 'notify', priority: 'medium', messageKey: 'wf_triggered' }],
       cooldown: DEFAULT_COOLDOWN
@@ -952,7 +952,7 @@ class EggAutomatizacion extends HTMLElement {
     } else {
       D.workflowRules.push({
         id: editId || genId(),
-        name, icon: '\u26A1', enabled: true,
+        name, icon: '', enabled: true,
         condition: { type: condType, comparator: condComp, threshold: condThreshold },
         actions,
         cooldown: cooldownHours * 3600000,

@@ -203,10 +203,10 @@ class EggAdmin extends HTMLElement {
           : u.status === 'inactive' || u.status === 'expired' || u.status === 'deactivated'
           ? `<button class="btn btn-sm" style="background:#4caf50;color:#fff;font-size:0.72rem;padding:3px 8px" data-action="reactivate-user" data-id="${escapeAttr(u.id)}">${lbl.activate}</button>`
           : u.status === 'pending'
-          ? `<button class="btn btn-sm" style="background:#ff9800;color:#fff;font-size:0.72rem;padding:3px 8px" data-action="resend-activation" data-id="${escapeAttr(u.id)}">\uD83D\uDCE7</button>` : '';
+          ? `<button class="btn btn-sm" style="background:#ff9800;color:#fff;font-size:0.72rem;padding:3px 8px" data-action="resend-activation" data-id="${escapeAttr(u.id)}">${t('resend') || 'Resend'}</button>` : '';
         const deleteBtn = u.status !== 'active' && !isOwnerSelf
           ? `<button class="btn btn-sm" style="background:#b71c1c;color:#fff;font-size:0.72rem;padding:3px 8px;margin-left:4px" data-action="remove-user" data-id="${escapeAttr(u.id)}" data-name="${escapeAttr(u.name)}">${lbl.delete_user}</button>` : '';
-        const editBtn = `<button class="btn btn-sm" style="background:var(--primary);color:#fff;font-size:0.72rem;padding:3px 8px;margin-left:4px" data-action="edit-user" data-id="${escapeAttr(u.id)}">\u270F</button>`;
+        const editBtn = `<button class="btn btn-sm" style="background:var(--primary);color:#fff;font-size:0.72rem;padding:3px 8px;margin-left:4px" data-action="edit-user" data-id="${escapeAttr(u.id)}">${t('edit') || 'Edit'}</button>`;
         h += `<tr>
         <td><strong>${sanitizeHTML(u.name || '\u2014')}</strong>${u.isExtra ? '<span style="font-size:0.65rem;background:var(--warning);color:#000;padding:1px 5px;border-radius:8px;margin-left:4px">EXTRA</span>' : ''}</td>
         <td>${sanitizeHTML(u.email || u.workerId || '\u2014')}</td>

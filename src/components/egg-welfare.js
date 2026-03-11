@@ -390,7 +390,7 @@ class EggWelfare extends HTMLElement {
       h += `<div class="principle-block${isOpen ? ' open' : ''}" style="--p-color:${c.main};--p-bg:${c.bg}">
         <div class="principle-header" data-principle="${principle.id}">
           <div class="ph-left">
-            <span class="principle-icon-wrap" style="background:${c.bg}">${principle.icon}</span>
+            <span class="principle-icon-wrap" style="background:${c.bg}"></span>
             <div class="ph-text">
               <span class="principle-name">${t(principle.key) || principle.id}</span>
               <span class="principle-meta">${criteria.length} ${t('wel_criteria') || 'criteria'} · ${measureCount} ${t('wel_measures') || 'measures'}</span>
@@ -496,7 +496,7 @@ class EggWelfare extends HTMLElement {
             <span class="hc-badge" style="background:${cls.color}">${cls.icon} ${t('wel_cat_' + cls.cat) || cls.cat}</span>
             <span class="hc-date">${fmtDate(a.date)}</span>
           </div>
-          <button class="btn-icon" data-action="delete-assessment" data-id="${a.id}" title="${t('delete') || 'Delete'}">🗑️</button>
+          <button class="btn-icon" data-action="delete-assessment" data-id="${a.id}" title="${t('delete') || 'Delete'}">${t('delete') || 'Delete'}</button>
         </div>
         <div class="hc-flock">${a.flockName || '—'} ${a.assessor ? '— ' + a.assessor : ''}</div>
         <div class="hc-scores-grid">`;
@@ -561,7 +561,7 @@ class EggWelfare extends HTMLElement {
       const criteria = WQ_CRITERIA[principle.id] || [];
       const c = PRINCIPLE_COLORS[principle.id];
       h += `<div class="guide-principle-card" style="border-top:4px solid ${c.main}">
-        <h5><span class="gp-icon" style="background:${c.bg};color:${c.main}">${principle.icon}</span> ${t(principle.key) || principle.id}</h5>
+        <h5><span class="gp-icon" style="background:${c.bg};color:${c.main}"></span> ${t(principle.key) || principle.id}</h5>
         <ul>`;
       for (const cr of criteria) {
         h += `<li><strong>${t(cr.key) || cr.id}</strong><br><small>${cr.measures.map(mId => t(WQ_MEASURES[mId]?.key) || mId).join(', ')}</small></li>`;

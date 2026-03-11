@@ -42,6 +42,7 @@ class EggFinances extends HTMLElement {
     this._pnlPeriod = 'thisMonth';
     this._balancePeriod = 'ytd';
     this._eerrPeriod = 'thisMonth';
+    this._togglingPaid = false;
   }
 
   connectedCallback() {
@@ -55,7 +56,7 @@ class EggFinances extends HTMLElement {
       }),
       Bus.on('data:changed', () => {
         clearTimeout(this._refreshTimer);
-        this._refreshTimer = setTimeout(() => this.render(), 300);
+        this._refreshTimer = setTimeout(() => this.render(), 600);
       })
     );
   }
@@ -649,29 +650,26 @@ class EggFinances extends HTMLElement {
       const id = btn.dataset.id || '';
 
       switch (action) {
-        // Tabs
+        // Tabs — debounced to prevent freeze on rapid switching
         case 'tab-income':
-          this._currentTab = 'income'; this.render(); break;
         case 'tab-expenses':
-          this._currentTab = 'expenses'; this.render(); break;
         case 'tab-payables':
-          this._currentTab = 'payables'; this.render(); break;
         case 'tab-receivables':
-          this._currentTab = 'receivables'; this.render(); break;
         case 'tab-cashflow':
-          this._currentTab = 'cashflow'; this.render(); break;
         case 'tab-budget':
-          this._currentTab = 'budget'; this.render(); break;
         case 'tab-aging':
-          this._currentTab = 'aging'; this.render(); break;
         case 'tab-pnl':
-          this._currentTab = 'pnl'; this.render(); break;
         case 'tab-balance':
-          this._currentTab = 'balance'; this.render(); break;
         case 'tab-eerr':
-          this._currentTab = 'eerr'; this.render(); break;
-        case 'tab-summary':
-          this._currentTab = 'summary'; this.render(); break;
+        case 'tab-summary': {
+          const tab = action.replace('tab-', '');
+          if (this._currentTab !== tab) {
+            this._currentTab = tab;
+            clearTimeout(this._tabTimer);
+            this._tabTimer = setTimeout(() => this.render(), 50);
+          }
+          break;
+        }
 
         // P&L period selector
         case 'pnl-period':
@@ -729,7 +727,7 @@ class EggFinances extends HTMLElement {
     // Handle receivable paid checkbox toggle via change event
     root.addEventListener('change', (e) => {
       const el = e.target.closest('[data-action="toggle-paid"]');
-      if (el) {
+      if (el && !this._togglingPaid) {
         this._toggleReceivablePaid(el.dataset.id, el.checked);
       }
     });
@@ -1133,6 +1131,8 @@ class EggFinances extends HTMLElement {
   }
 
   _toggleReceivablePaid(id, paid) {
+    if (this._togglingPaid) return;
+    this._togglingPaid = true;
     const D = Store.get();
     const r = D.finances.receivables.find(x => x.id === id);
     if (r) {
@@ -1140,6 +1140,7 @@ class EggFinances extends HTMLElement {
       Store.save(D);
       this.render();
     }
+    setTimeout(() => { this._togglingPaid = false; }, 100);
   }
 
   async _deleteReceivable(id) {

@@ -99,8 +99,8 @@ class EggInvLocations extends HTMLElement {
             </div>
             <div class="loc-actions">
               <button class="btn btn-sm btn-secondary" data-action="move-stock" data-loc="${escapeAttr(loc.id)}">${t('inv_move') || 'Mover'}</button>
-              <button class="btn btn-sm btn-secondary" data-action="edit-location" data-loc="${escapeAttr(loc.id)}">\u270F\uFE0F</button>
-              <button class="btn btn-sm btn-danger" data-action="delete-location" data-loc="${escapeAttr(loc.id)}">\uD83D\uDDD1\uFE0F</button>
+              <button class="btn btn-sm btn-secondary" data-action="edit-location" data-loc="${escapeAttr(loc.id)}">${t('edit') || 'Edit'}</button>
+              <button class="btn btn-sm btn-danger" data-action="delete-location" data-loc="${escapeAttr(loc.id)}">${t('delete') || 'Delete'}</button>
             </div>
           </div>
           ${loc.description ? `<p class="loc-desc">${sanitizeHTML(loc.description)}</p>` : ''}
