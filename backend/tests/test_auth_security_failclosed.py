@@ -20,8 +20,18 @@ from src.core.auth_security import (
 
 @pytest.fixture
 def redis_unavailable():
-    """Simulate Redis being completely unavailable (returns None)."""
-    with patch("src.core.auth_security._get_redis", new_callable=AsyncMock, return_value=None):
+    """Simulate Redis being completely unavailable (returns None).
+    Also override DATABASE_URL to non-sqlite so fail-closed path is taken.
+    """
+    with (
+        patch(
+            "src.core.auth_security._get_redis",
+            new_callable=AsyncMock,
+            return_value=None,
+        ),
+        patch("src.core.auth_security.settings") as mock_settings,
+    ):
+        mock_settings.DATABASE_URL = "postgresql+asyncpg://test:test@localhost/test"
         yield
 
 
@@ -34,7 +44,11 @@ def redis_error():
     mock_redis.get.side_effect = ConnectionError("Redis connection lost")
     mock_redis.ttl.side_effect = ConnectionError("Redis connection lost")
     mock_redis.setex.side_effect = ConnectionError("Redis connection lost")
-    with patch("src.core.auth_security._get_redis", new_callable=AsyncMock, return_value=mock_redis):
+    with patch(
+        "src.core.auth_security._get_redis",
+        new_callable=AsyncMock,
+        return_value=mock_redis,
+    ):
         yield
 
 

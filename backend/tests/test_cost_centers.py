@@ -87,7 +87,7 @@ async def test_create_pl_snapshot(client: AsyncClient, authenticated_user):
     data = resp.json()
     assert data["gross_profit"] == 13000.00
     assert data["margin_pct"] == 28.89
-    assert data["cost_per_dozen"] is not None
+    assert data["cost_per_standard_unit"] is not None
 
 
 async def test_cost_center_overview(client: AsyncClient, authenticated_user):

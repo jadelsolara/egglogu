@@ -79,6 +79,7 @@ class BaseService:
         for key, value in data.model_dump(exclude_unset=True).items():
             setattr(obj, key, value)
         await self.db.flush()
+        await self.db.refresh(obj)
         return obj
 
     async def _delete(
