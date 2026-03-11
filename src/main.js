@@ -22,6 +22,8 @@ import './components/egg-feed.js';
 import './components/egg-clients.js';
 import './components/egg-sanidad.js';
 import './components/egg-inventory.js';
+import './components/egg-inv-locations.js';
+import './components/egg-inv-reservations.js';
 import './components/egg-carencias.js';
 import './components/egg-operations.js';
 import './components/egg-traceability.js';

@@ -4,7 +4,8 @@
 
 import { Store, Bus, t, sanitizeHTML, escapeAttr, fmtNum, fmtDate, todayStr, genId, validateForm, emptyState, DataTable, CATALOGS, VACCINE_SCHEDULE, flockSelect, catalogSelect, statusBadge, showFieldError, clearFieldErrors, logAudit, generateVaccineCalendar } from '../core/index.js';
 import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showConfirm, showVoidDialog } from './egg-confirm.js';
+import { voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 
 class EggSanidad extends HTMLElement {
   constructor() {
@@ -121,7 +122,7 @@ class EggSanidad extends HTMLElement {
 
   _renderVaccinesTab(D) {
     const today = todayStr();
-    const vacs = (D.vaccines || []).map(v => {
+    const vacs = activeOnly(D.vaccines).map(v => {
       const eff = v.status === 'applied' ? 'applied' : v.scheduledDate < today ? 'overdue' : 'pending';
       return { ...v, effectiveStatus: eff };
     });
@@ -169,11 +170,12 @@ class EggSanidad extends HTMLElement {
       bulkActions: [{
         label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
         action: ids => {
-          showConfirm(t('confirm_delete')).then(ok => {
-            if (!ok) return;
+          showVoidDialog(t('confirm_delete')).then(reason => {
+            if (!reason) return;
             const D2 = Store.get();
-            ids.forEach(id => { D2.vaccines = D2.vaccines.filter(v => v.id !== id); });
-            Store.save(D2, 'bulk-delete-vaccines');
+            voidRecords(D2.vaccines, ids, reason);
+            logAudit('void', 'sanidad', 'Bulk void vaccines: ' + reason, ids.join(','), null);
+            Store.save(D2, 'bulk-void-vaccines');
             this.render();
           });
         }
@@ -301,10 +303,12 @@ class EggSanidad extends HTMLElement {
   }
 
   async _deleteVaccine(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.vaccines = D.vaccines.filter(v => v.id !== id);
-    Store.save(D, 'delete-vaccine');
+    voidRecord(D.vaccines, id, reason);
+    logAudit('void', 'sanidad', 'Void vaccine: ' + reason, id, null);
+    Store.save(D, 'void-vaccine');
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
@@ -313,7 +317,7 @@ class EggSanidad extends HTMLElement {
 
   _renderMedicationsTab(D) {
     const today = todayStr();
-    const meds = (D.medications || []).map(m => {
+    const meds = activeOnly(D.medications).map(m => {
       const inWD = m.withdrawalEnd && m.withdrawalEnd >= today;
       return { ...m, wdStatus: inWD ? 'withdrawal' : 'ok' };
     });
@@ -360,11 +364,12 @@ class EggSanidad extends HTMLElement {
       bulkActions: [{
         label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
         action: ids => {
-          showConfirm(t('confirm_delete')).then(ok => {
-            if (!ok) return;
+          showVoidDialog(t('confirm_delete')).then(reason => {
+            if (!reason) return;
             const D2 = Store.get();
-            D2.medications = D2.medications.filter(m => !ids.includes(m.id));
-            Store.save(D2, 'bulk-delete-medications');
+            voidRecords(D2.medications, ids, reason);
+            logAudit('void', 'sanidad', 'Bulk void medications: ' + reason, ids.join(','), null);
+            Store.save(D2, 'bulk-void-medications');
             this.render();
           });
         }
@@ -458,10 +463,12 @@ class EggSanidad extends HTMLElement {
   }
 
   async _deleteMed(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.medications = D.medications.filter(m => m.id !== id);
-    Store.save(D, 'delete-medication');
+    voidRecord(D.medications, id, reason);
+    logAudit('void', 'sanidad', 'Void medication: ' + reason, id, null);
+    Store.save(D, 'void-medication');
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
@@ -471,7 +478,7 @@ class EggSanidad extends HTMLElement {
   _renderOutbreaksTab(D) {
     return DataTable.create({
       id: 'outbreaks',
-      data: D.outbreaks || [],
+      data: activeOnly(D.outbreaks),
       onRefresh: () => this.render(),
       emptyIcon: '\uD83E\uDDA0',
       emptyText: t('no_data'),
@@ -515,11 +522,12 @@ class EggSanidad extends HTMLElement {
       bulkActions: [{
         label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
         action: ids => {
-          showConfirm(t('confirm_delete')).then(ok => {
-            if (!ok) return;
+          showVoidDialog(t('confirm_delete')).then(reason => {
+            if (!reason) return;
             const D2 = Store.get();
-            D2.outbreaks = D2.outbreaks.filter(o => !ids.includes(o.id));
-            Store.save(D2, 'bulk-delete-outbreaks');
+            voidRecords(D2.outbreaks, ids, reason);
+            logAudit('void', 'sanidad', 'Bulk void outbreaks: ' + reason, ids.join(','), null);
+            Store.save(D2, 'bulk-void-outbreaks');
             this.render();
           });
         }
@@ -601,10 +609,12 @@ class EggSanidad extends HTMLElement {
   }
 
   async _deleteOutbreak(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.outbreaks = D.outbreaks.filter(o => o.id !== id);
-    Store.save(D, 'delete-outbreak');
+    voidRecord(D.outbreaks, id, reason);
+    logAudit('void', 'sanidad', 'Void outbreak: ' + reason, id, null);
+    Store.save(D, 'void-outbreak');
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
@@ -617,12 +627,13 @@ class EggSanidad extends HTMLElement {
       <button class="btn btn-primary btn-sm" data-action="show-stress-form">${t('add')}</button>
     </div>`;
 
-    if (!(D.stressEvents || []).length) {
+    const activeStress = activeOnly(D.stressEvents);
+    if (!activeStress.length) {
       return h + emptyState('\u26A1', t('no_data'));
     }
 
     h += '<div class="card"><div class="stress-timeline">';
-    const events = [...D.stressEvents].sort((a, b) => b.date.localeCompare(a.date));
+    const events = [...activeStress].sort((a, b) => b.date.localeCompare(a.date));
 
     events.forEach(ev => {
       const sColor = ['', '#4CAF50', '#FFC107', '#FF9800', '#F44336', '#9C27B0'][ev.severity] || '#999';
@@ -713,10 +724,12 @@ class EggSanidad extends HTMLElement {
   }
 
   async _deleteStress(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.stressEvents = D.stressEvents.filter(e => e.id !== id);
-    Store.save(D, 'delete-stress');
+    voidRecord(D.stressEvents, id, reason);
+    logAudit('void', 'sanidad', 'Void stress event: ' + reason, id, null);
+    Store.save(D, 'void-stress');
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }

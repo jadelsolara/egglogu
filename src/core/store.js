@@ -12,7 +12,7 @@ const DEFAULT_DATA = {
   farm: { name: 'Mi Granja', location: '', capacity: 500, currency: '$', lat: null, lng: null, owmApiKey: '', mqttBroker: '', mqttUser: '', mqttPass: '', mqttTopicPrefix: 'egglogu/', houses: [], routes: [], suppliers: [] },
   flocks: [], dailyProduction: [], vaccines: [], medications: [], outbreaks: [],
   feed: { purchases: [], consumption: [] }, clients: [], clientClaims: [], orders: [],
-  finances: { income: [], expenses: [], receivables: [] },
+  finances: { income: [], expenses: [], receivables: [], payables: [] },
   inventory: [], storageLocations: [], reservations: [],
   environment: [], checklist: [], logbook: [], personnel: [],
   kpiSnapshots: [], weatherCache: [], stressEvents: [], iotReadings: [], predictions: [],

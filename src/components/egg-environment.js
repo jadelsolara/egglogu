@@ -6,10 +6,11 @@ import {
   Store, Bus, t, sanitizeHTML, escapeAttr, fmtNum, fmtDate, todayStr, genId,
   validateForm, emptyState, DataTable, kpi, flockSelect, catalogSelect,
   showFieldError, clearFieldErrors, CATALOGS, BREED_CURVES,
-  activeHens, activeHensByFlock, flockAge, tc
+  activeHens, activeHensByFlock, flockAge, tc, logAudit
 } from '../core/index.js';
+import { voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 import { modalVal, getModalBody } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showConfirm, showVoidDialog } from './egg-confirm.js';
 
 // ─── Theme helpers (mirrors monolith) ───
 const THEMES = {
@@ -118,7 +119,7 @@ class EggEnvironment extends HTMLElement {
 
   // ──────────────────────── Event delegation ────────────────────────
   _bindEvents() {
-    this.shadowRoot.addEventListener('click', (e) => {
+    this.shadowRoot.addEventListener('click', async (e) => {
       // Tab switching
       const tab = e.target.closest('[data-tab]');
       if (tab) {
@@ -147,9 +148,11 @@ class EggEnvironment extends HTMLElement {
           break;
         case 'bulk-delete-env': {
           const ids = JSON.parse(btn.dataset.ids || '[]');
-          if (!confirm(t('confirm_delete'))) return;
+          const r = await showVoidDialog(t('confirm_delete'));
+          if (!r) return;
           const Db = Store.get();
-          Db.environment = Db.environment.filter(e => !ids.includes(e.id));
+          voidRecords(Db.environment, ids, r);
+          ids.forEach(id => logAudit('void', 'environment', 'Bulk void environment: ' + r, id, null));
           Store.set(Db);
           this.render();
           break;
@@ -282,9 +285,11 @@ class EggEnvironment extends HTMLElement {
   }
 
   async _deleteEnv(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.environment = D.environment.filter(e => e.id !== id);
+    voidRecord(D.environment, id, reason);
+    logAudit('void', 'environment', 'Void environment record: ' + reason, id, null);
     Store.set(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
@@ -428,7 +433,7 @@ class EggEnvironment extends HTMLElement {
       return { ...e, _thi: thi };
     });
     h += DataTable.create({
-      id: 'envHistory', data: envData, emptyIcon: '\uD83D\uDCCA', emptyText: t('no_data'),
+      id: 'envHistory', data: activeOnly(envData), emptyIcon: '\uD83D\uDCCA', emptyText: t('no_data'),
       columns: [
         { key: 'date', label: t('date'), type: 'date', sortable: true, filterable: true, filterType: 'date-range' },
         { key: 'temperature', label: t('env_temp'), type: 'number', sortable: true, render: r => (r.temperature || '-') + '\u00B0C' },
@@ -443,10 +448,12 @@ class EggEnvironment extends HTMLElement {
         <button class="btn btn-danger btn-sm" data-action="delete-env" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
       </div>`,
       bulkActions: [
-        { label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true, action: ids => {
-          if (!confirm(t('confirm_delete'))) return;
+        { label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true, action: async ids => {
+          const reason = await showVoidDialog(t('confirm_delete'));
+          if (!reason) return;
           const Db = Store.get();
-          Db.environment = Db.environment.filter(e => !ids.includes(e.id));
+          voidRecords(Db.environment, ids, reason);
+          ids.forEach(id => logAudit('void', 'environment', 'Bulk void environment: ' + reason, id, null));
           Store.set(Db);
           this.render();
         }}
@@ -574,9 +581,11 @@ class EggEnvironment extends HTMLElement {
   }
 
   async _deleteStress(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.stressEvents = D.stressEvents.filter(e => e.id !== id);
+    voidRecord(D.stressEvents, id, reason);
+    logAudit('void', 'environment', 'Void stress event: ' + reason, id, null);
     Store.set(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();

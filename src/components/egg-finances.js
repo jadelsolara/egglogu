@@ -5,8 +5,9 @@
 // toggleReceivablePaid(), onExpenseCatChange(), exportFinCSV()
 
 import { Store, Bus, t, sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId, validateForm, emptyState, DataTable, CATALOGS, VENG, currency, kpi, clientSelect, flockSelect, catalogSelect, showFieldError, clearFieldErrors, logAudit } from '../core/index.js';
+import { voidRecord, voidRecords, activeOnly, createReversalEntry } from '../core/utils.js';
 import { getModalBody, modalVal, modalQuery } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showVoidDialog } from './egg-confirm.js';
 
 // ─── Local helper: VENG validation panel inside modal ───
 function showVengPanel(errors, warnings) {
@@ -71,6 +72,7 @@ class EggFinances extends HTMLElement {
     h += `<div class="tabs">
       <div class="tab${this._currentTab === 'income' ? ' active' : ''}" data-action="tab-income">\u{1F4C8} ${t('fin_income')}</div>
       <div class="tab${this._currentTab === 'expenses' ? ' active' : ''}" data-action="tab-expenses">\u{1F4C9} ${t('fin_expenses')}</div>
+      <div class="tab${this._currentTab === 'payables' ? ' active' : ''}" data-action="tab-payables">\u{1F4CB} ${t('fin_payables')}</div>
       <div class="tab${this._currentTab === 'receivables' ? ' active' : ''}" data-action="tab-receivables">\u{1F4CB} ${t('fin_receivables')}</div>
       <div class="tab${this._currentTab === 'summary' ? ' active' : ''}" data-action="tab-summary">\u{1F4CA} ${t('fin_summary')}</div>
     </div>`;
@@ -78,6 +80,7 @@ class EggFinances extends HTMLElement {
     // Content
     if (this._currentTab === 'income') h += this._renderIncome(D);
     else if (this._currentTab === 'expenses') h += this._renderExpenses(D);
+    else if (this._currentTab === 'payables') h += this._renderPayables(D);
     else if (this._currentTab === 'receivables') h += this._renderReceivables(D);
     else h += this._renderSummary(D);
 
@@ -183,14 +186,15 @@ class EggFinances extends HTMLElement {
 
   // ── Income Tab ──────────────────────────────────────────────
   _renderIncome(D) {
-    const tot = D.finances.income.reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
+    const incomeActive = activeOnly(D.finances.income);
+    const tot = incomeActive.reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
     return DataTable.create({
       id: 'fin-income',
-      data: D.finances.income,
+      data: incomeActive,
       emptyIcon: '\u{1F4C8}',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_income')}</h3><button class="btn btn-primary btn-sm" data-action="add-income">${t('fin_add_income')}</button></div>`,
-      kpiHtml: D.finances.income.length ? `<div class="kpi-grid">${kpi(t('fin_total_income'), fmtMoney(tot))}</div>` : '',
+      kpiHtml: incomeActive.length ? `<div class="kpi-grid">${kpi(t('fin_total_income'), fmtMoney(tot))}</div>` : '',
       columns: [
         { key: 'date', label: t('date'), type: 'date', sortable: true, filterable: true, filterType: 'date-range' },
         {
@@ -224,14 +228,15 @@ class EggFinances extends HTMLElement {
 
   // ── Expenses Tab ────────────────────────────────────────────
   _renderExpenses(D) {
-    const tot = D.finances.expenses.reduce((s, e) => s + (e.amount || 0), 0);
+    const expensesActive = activeOnly(D.finances.expenses);
+    const tot = expensesActive.reduce((s, e) => s + (e.amount || 0), 0);
     return DataTable.create({
       id: 'fin-expenses',
-      data: D.finances.expenses,
+      data: expensesActive,
       emptyIcon: '\u{1F4C9}',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_expenses')}</h3><button class="btn btn-primary btn-sm" data-action="add-expense">${t('fin_add_expense')}</button></div>`,
-      kpiHtml: D.finances.expenses.length ? `<div class="kpi-grid">${kpi(t('fin_total_expenses'), fmtMoney(tot), '', 'danger')}</div>` : '',
+      kpiHtml: expensesActive.length ? `<div class="kpi-grid">${kpi(t('fin_total_expenses'), fmtMoney(tot), '', 'danger')}</div>` : '',
       columns: [
         { key: 'date', label: t('date'), type: 'date', sortable: true, filterable: true, filterType: 'date-range' },
         {
@@ -263,15 +268,16 @@ class EggFinances extends HTMLElement {
 
   // ── Receivables Tab ─────────────────────────────────────────
   _renderReceivables(D) {
-    if (!D.finances.receivables.length) {
+    const receivablesActive = activeOnly(D.finances.receivables);
+    if (!receivablesActive.length) {
       let h = `<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_receivables')}</h3><button class="btn btn-primary btn-sm" data-action="add-receivable">${t('fin_add_receivable')}</button></div>`;
       return h + emptyState('\u{1F4CB}', t('no_data'));
     }
-    const pending = D.finances.receivables.filter(r => !r.paid);
+    const pending = receivablesActive.filter(r => !r.paid);
     const tot = pending.reduce((s, r) => s + (r.amount || 0), 0);
     return DataTable.create({
       id: 'receivables',
-      data: D.finances.receivables,
+      data: receivablesActive,
       emptyIcon: '\u{1F4CB}',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px"><h3>${t('fin_receivables')}</h3><button class="btn btn-primary btn-sm" data-action="add-receivable">${t('fin_add_receivable')}</button></div>`,
@@ -304,11 +310,136 @@ class EggFinances extends HTMLElement {
     });
   }
 
+  // ── Payables Tab (Gastos por Pagar / Nómina) ───────────────
+  _renderPayables(D) {
+    if (!D.finances.payables) D.finances.payables = [];
+    const payablesActive = activeOnly(D.finances.payables);
+    const pending = payablesActive.filter(p => !p.paid);
+    const tot = pending.reduce((s, p) => s + (p.amount || 0), 0);
+    const curMonth = todayStr().substring(0, 7);
+
+    let h = `<div class="page-header" style="margin-bottom:12px">
+      <h3>${t('fin_payables')}</h3>
+      <button class="btn btn-primary btn-sm" data-action="generate-payroll">${t('fin_payable_generate')}</button>
+    </div>`;
+
+    if (payablesActive.length) {
+      h += `<div class="kpi-grid">
+        ${kpi(t('fin_payable_total'), fmtMoney(tot), pending.length + ' ' + (t('fin_payable_pending') || 'pending').toLowerCase(), 'warning')}
+      </div>`;
+    }
+
+    if (!payablesActive.length) {
+      return h + emptyState('\u{1F4CB}', t('no_data'));
+    }
+
+    h += '<div class="table-wrap"><table><thead><tr>';
+    h += `<th>${t('fin_payable_month')}</th><th>${t('fin_payable_employee')}</th><th>${t('ops_per_role') || 'Role'}</th><th>${t('fin_amount')}</th><th>${t('fin_payable_status')}</th><th>${t('actions') || 'Actions'}</th>`;
+    h += '</tr></thead><tbody>';
+    payablesActive.sort((a, b) => (b.month || '').localeCompare(a.month || '')).forEach(p => {
+      const isPaid = !!p.paid;
+      const statusBadge = isPaid
+        ? `<span class="badge badge-success">${t('fin_payable_paid_status')}</span>`
+        : `<span class="badge badge-warning">${t('fin_payable_pending')}</span>`;
+      h += `<tr${isPaid ? ' style="opacity:.6"' : ''}>
+        <td>${sanitizeHTML(p.month || '-')}</td>
+        <td><strong>${sanitizeHTML(p.employeeName || '-')}</strong></td>
+        <td>${sanitizeHTML(p.role || '-')}</td>
+        <td>${fmtMoney(p.amount)}</td>
+        <td>${statusBadge}</td>
+        <td><div class="btn-group">
+          ${!isPaid ? `<button class="btn btn-primary btn-sm" data-action="pay-payable" data-id="${escapeAttr(p.id)}">${t('fin_payable_pay')}</button>` : ''}
+          <button class="btn btn-danger btn-sm" data-action="delete-payable" data-id="${escapeAttr(p.id)}">${t('delete')}</button>
+        </div></td>
+      </tr>`;
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+
+  _generatePayroll() {
+    const D = Store.get();
+    if (!D.finances.payables) D.finances.payables = [];
+    const curMonth = todayStr().substring(0, 7);
+
+    // Check if already generated for this month
+    const existing = activeOnly(D.finances.payables).filter(p => p.month === curMonth);
+    if (existing.length > 0) {
+      Bus.emit('toast', { msg: t('fin_payable_already'), type: 'warning' });
+      return;
+    }
+
+    // Get active personnel with salary > 0
+    const activePersonnel = activeOnly(D.personnel || []).filter(p => p.active && p.salary > 0);
+    if (!activePersonnel.length) {
+      Bus.emit('toast', { msg: t('no_data'), type: 'warning' });
+      return;
+    }
+
+    activePersonnel.forEach(emp => {
+      D.finances.payables.push({
+        id: genId(),
+        month: curMonth,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        role: emp.role,
+        amount: emp.salary,
+        paid: false,
+        createdAt: new Date().toISOString()
+      });
+    });
+
+    logAudit('create', 'finances', 'Generate payroll ' + curMonth + ': ' + activePersonnel.length + ' employees', null, null);
+    Store.save(D);
+    Bus.emit('toast', { msg: t('fin_payable_generated') + ': ' + activePersonnel.length });
+    this.render();
+  }
+
+  _payPayable(id) {
+    const D = Store.get();
+    if (!D.finances.payables) return;
+    const p = D.finances.payables.find(x => x.id === id);
+    if (!p || p.paid) return;
+
+    // Mark as paid
+    p.paid = true;
+    p.paidDate = todayStr();
+
+    // Create expense entry
+    if (!D.finances.expenses) D.finances.expenses = [];
+    D.finances.expenses.push({
+      id: genId(),
+      date: todayStr(),
+      category: 'labor',
+      description: (t('fin_cat_payroll') || 'Payroll') + ': ' + (p.employeeName || '') + ' (' + (p.month || '') + ')',
+      amount: p.amount || 0,
+      notes: p.role || '',
+      payableId: id
+    });
+
+    logAudit('update', 'finances', 'Pay payable: ' + p.employeeName + ' ' + p.month, id, null);
+    Store.save(D);
+    Bus.emit('toast', { msg: t('fin_payable_paid_ok') });
+    this.render();
+  }
+
+  async _deletePayable(id) {
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
+    const D = Store.get();
+    if (!D.finances.payables) return;
+    voidRecord(D.finances.payables, id, reason);
+    logAudit('void', 'finances', 'Void payable: ' + reason, id, null);
+    Store.save(D);
+    Bus.emit('toast', { msg: t('cfg_saved') });
+    this.render();
+  }
+
   // ── Summary Tab ─────────────────────────────────────────────
   _renderSummary(D) {
     const mo = todayStr().substring(0, 7);
-    const mInc = D.finances.income.filter(i => i.date && i.date.startsWith(mo)).reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
-    const mExp = D.finances.expenses.filter(e => e.date && e.date.startsWith(mo)).reduce((s, e) => s + (e.amount || 0), 0);
+    const mInc = activeOnly(D.finances.income).filter(i => i.date && i.date.startsWith(mo)).reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
+    const mExp = activeOnly(D.finances.expenses).filter(e => e.date && e.date.startsWith(mo)).reduce((s, e) => s + (e.amount || 0), 0);
     const grossProfit = mInc - mExp;
 
     // Tax & Depreciation
@@ -461,10 +592,20 @@ class EggFinances extends HTMLElement {
           this._currentTab = 'income'; this.render(); break;
         case 'tab-expenses':
           this._currentTab = 'expenses'; this.render(); break;
+        case 'tab-payables':
+          this._currentTab = 'payables'; this.render(); break;
         case 'tab-receivables':
           this._currentTab = 'receivables'; this.render(); break;
         case 'tab-summary':
           this._currentTab = 'summary'; this.render(); break;
+
+        // Payables
+        case 'generate-payroll':
+          this._generatePayroll(); break;
+        case 'pay-payable':
+          this._payPayable(id); break;
+        case 'delete-payable':
+          this._deletePayable(id); break;
 
         // Income
         case 'add-income':
@@ -641,24 +782,24 @@ class EggFinances extends HTMLElement {
   }
 
   async _deleteIncome(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    const old = D.finances.income.find(i => i.id === id);
-    logAudit('delete', 'income', 'Delete income', old, null);
-    D.finances.income = D.finances.income.filter(i => i.id !== id);
+    createReversalEntry(D.finances.income, id, reason);
+    voidRecord(D.finances.income, id, reason);
+    logAudit('void', 'income', 'Void income: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 
-  _bulkDeleteIncome(ids) {
-    if (!confirm(t('confirm_delete'))) return;
+  async _bulkDeleteIncome(ids) {
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    ids.forEach(id => {
-      const old = D.finances.income.find(i => i.id === id);
-      if (old) logAudit('delete', 'income', 'Bulk delete', old, null);
-      D.finances.income = D.finances.income.filter(i => i.id !== id);
-    });
+    ids.forEach(id => createReversalEntry(D.finances.income, id, reason));
+    voidRecords(D.finances.income, ids, reason);
+    logAudit('void', 'income', 'Bulk void income: ' + reason, ids, null);
     Store.save(D);
     this.render();
   }
@@ -766,24 +907,24 @@ class EggFinances extends HTMLElement {
   }
 
   async _deleteExpense(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    const old = D.finances.expenses.find(e => e.id === id);
-    logAudit('delete', 'expenses', 'Delete expense', old, null);
-    D.finances.expenses = D.finances.expenses.filter(e => e.id !== id);
+    createReversalEntry(D.finances.expenses, id, reason);
+    voidRecord(D.finances.expenses, id, reason);
+    logAudit('void', 'expenses', 'Void expense: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 
-  _bulkDeleteExpenses(ids) {
-    if (!confirm(t('confirm_delete'))) return;
+  async _bulkDeleteExpenses(ids) {
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    ids.forEach(id => {
-      const old = D.finances.expenses.find(e => e.id === id);
-      if (old) logAudit('delete', 'expense', 'Bulk delete', old, null);
-      D.finances.expenses = D.finances.expenses.filter(e => e.id !== id);
-    });
+    ids.forEach(id => createReversalEntry(D.finances.expenses, id, reason));
+    voidRecords(D.finances.expenses, ids, reason);
+    logAudit('void', 'expenses', 'Bulk void expenses: ' + reason, ids, null);
     Store.save(D);
     this.render();
   }
@@ -866,18 +1007,22 @@ class EggFinances extends HTMLElement {
   }
 
   async _deleteReceivable(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.finances.receivables = D.finances.receivables.filter(r => r.id !== id);
+    voidRecord(D.finances.receivables, id, reason);
+    logAudit('void', 'receivables', 'Void receivable: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 
-  _bulkDeleteReceivables(ids) {
-    if (!confirm(t('confirm_delete'))) return;
+  async _bulkDeleteReceivables(ids) {
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.finances.receivables = D.finances.receivables.filter(r => !ids.includes(r.id));
+    voidRecords(D.finances.receivables, ids, reason);
+    logAudit('void', 'receivables', 'Bulk void receivables: ' + reason, ids, null);
     Store.save(D);
     this.render();
   }
@@ -887,11 +1032,11 @@ class EggFinances extends HTMLElement {
     const D = Store.get();
     const esc = s => String(s || '').replace(/"/g, '""');
     let csv = t('fin_type') + ',' + t('date') + ',' + t('fin_category') + ',' + t('fin_description') + ',' + t('fin_qty') + ',' + t('fin_unit_price') + ',' + t('fin_amount') + '\n';
-    D.finances.income.forEach(i => {
+    activeOnly(D.finances.income).forEach(i => {
       const a = (i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0);
       csv += `"${esc(t('csv_income'))}","${i.date}","${esc(i.type)}","${esc(i.notes)}",${i.quantity || 0},${i.unitPrice || 0},${a}\n`;
     });
-    D.finances.expenses.forEach(e => {
+    activeOnly(D.finances.expenses).forEach(e => {
       csv += `"${esc(t('csv_expense'))}","${e.date}","${esc(e.category)}","${esc(e.description)}",,,${e.amount || 0}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });

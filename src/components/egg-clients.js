@@ -6,11 +6,11 @@
 import { Store } from '../core/store.js';
 import { Bus } from '../core/bus.js';
 import { t } from '../core/i18n.js';
-import { sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId, validateForm, emptyState } from '../core/utils.js';
+import { sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId, validateForm, emptyState, voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 import { DataTable } from '../core/datatable.js';
 import { kpi, statusBadge, clientSelect, routeSelect, flockSelect, showFieldError, clearFieldErrors, logAudit, currency } from '../core/helpers.js';
 import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showConfirm, showVoidDialog } from './egg-confirm.js';
 
 const CAT_ICONS = { quality: '\uD83D\uDD0D', delivery: '\uD83D\uDE9A', quantity: '\uD83D\uDCE6', price: '\uD83D\uDCB0', packaging: '\uD83D\uDCE6', other: '\u2753' };
 const CLAIM_CATS = ['quality', 'delivery', 'quantity', 'price', 'packaging', 'other'];
@@ -48,8 +48,8 @@ class EggClients extends HTMLElement {
 
   render() {
     const D = Store.get();
-    const claims = D.clientClaims || [];
-    const orders = D.orders || [];
+    const claims = activeOnly(D.clientClaims || []);
+    const orders = activeOnly(D.orders || []);
     const totalClaims = claims.length;
     const openCl = claims.filter(c => c.status !== 'resolved').length;
     const resolved = claims.filter(c => c.status === 'resolved').length;
@@ -66,7 +66,7 @@ class EggClients extends HTMLElement {
 
     // KPI Grid
     h += '<div class="kpi-grid">';
-    h += kpi(t('cli_total'), fmtNum(D.clients.length), '', '', t('info_cli_total'));
+    h += kpi(t('cli_total'), fmtNum(activeOnly(D.clients).length), '', '', t('info_cli_total'));
     h += kpi(t('clm_title'), fmtNum(totalClaims), t('total'), '', t('info_clm_total'));
     h += kpi(t('clm_status_open'), fmtNum(openCl), '', openCl > 0 ? 'warning' : '');
     h += kpi(t('ord_active'), fmtNum(activeOrders), '', activeOrders > 0 ? 'accent' : '');
@@ -192,10 +192,11 @@ class EggClients extends HTMLElement {
   // ── Client List Tab ─────────────────────────────────────────
 
   _renderClientList(D) {
-    const routes = [...new Set(D.clients.map(c => c.route).filter(Boolean))];
+    const clients = activeOnly(D.clients);
+    const routes = [...new Set(clients.map(c => c.route).filter(Boolean))];
     return DataTable.create({
       id: 'clients',
-      data: D.clients,
+      data: clients,
       emptyIcon: '\uD83D\uDC65',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-client">${t('cli_add')}</button></div>`,
@@ -229,7 +230,7 @@ class EggClients extends HTMLElement {
   // ── Claims Tab ──────────────────────────────────────────────
 
   _renderClaimsList(D) {
-    const claims = D.clientClaims || [];
+    const claims = activeOnly(D.clientClaims || []);
     let h = `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-claim">${t('clm_new')}</button></div>`;
 
     if (!claims.length) {
@@ -489,38 +490,34 @@ class EggClients extends HTMLElement {
   }
 
   async _deleteClient(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
 
     const D = Store.get();
-    const hasRecords = D.finances.income.some(i => i.clientId === id) ||
-      D.finances.receivables.some(r => r.clientId === id) ||
-      (D.traceability.batches || []).some(b => b.clientId === id);
+    voidRecord(D.clients, id, reason);
 
-    if (hasRecords) {
-      if (!await showConfirm(t('confirm_delete_cascade') || 'This client has associated financial records and/or batches. Deleting will remove those references. Continue?')) return;
-    }
-
-    D.clients = D.clients.filter(c => c.id !== id);
+    // Cascade: clear references from financial records and batches
     D.finances.income.filter(i => i.clientId === id).forEach(i => { i.clientId = ''; });
     D.finances.receivables.filter(r => r.clientId === id).forEach(r => { r.clientId = ''; });
     (D.traceability.batches || []).filter(b => b.clientId === id).forEach(b => { b.clientId = ''; });
 
-    logAudit('delete', 'clients', 'Deleted client', { id }, null);
+    logAudit('void', 'clients', 'Void client: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 
   async _bulkDeleteClients(ids) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
     ids.forEach(id => {
       D.finances.income.filter(i => i.clientId === id).forEach(i => { i.clientId = ''; });
       D.finances.receivables.filter(r => r.clientId === id).forEach(r => { r.clientId = ''; });
       (D.traceability.batches || []).filter(b => b.clientId === id).forEach(b => { b.clientId = ''; });
     });
-    D.clients = D.clients.filter(c => !ids.includes(c.id));
-    logAudit('delete', 'clients', 'Bulk deleted ' + ids.length + ' clients', { ids }, null);
+    voidRecords(D.clients, ids, reason);
+    logAudit('void', 'clients', 'Bulk void ' + ids.length + ' clients: ' + reason, { ids }, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     DataTable.reset('clients');
@@ -530,7 +527,7 @@ class EggClients extends HTMLElement {
   // ── Orders Tab ─────────────────────────────────────────────
 
   _renderOrdersList(D) {
-    const orders = D.orders || [];
+    const orders = activeOnly(D.orders || []);
     let h = `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-order">${t('ord_new')}</button></div>`;
 
     if (!orders.length) {
@@ -914,10 +911,11 @@ class EggClients extends HTMLElement {
   }
 
   async _deleteOrder(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.orders = (D.orders || []).filter(o => o.id !== id);
-    logAudit('delete', 'orders', 'Deleted order', { id }, null);
+    voidRecord(D.orders || [], id, reason);
+    logAudit('void', 'orders', 'Void order: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
@@ -1259,10 +1257,11 @@ class EggClients extends HTMLElement {
   }
 
   async _deleteClaim(id) {
-    if (!await showConfirm(t('clm_confirm_delete'))) return;
+    const reason = await showVoidDialog(t('clm_confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.clientClaims = (D.clientClaims || []).filter(c => c.id !== id);
-    logAudit('delete', 'clientClaims', 'Deleted claim', { id }, null);
+    voidRecord(D.clientClaims || [], id, reason);
+    logAudit('void', 'clientClaims', 'Void claim: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();

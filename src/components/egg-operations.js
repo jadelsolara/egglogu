@@ -4,8 +4,9 @@
 // showLogForm(), saveLog(), deleteLog(), showPersonnelForm(), savePersonnel(), deletePersonnel()
 
 import { Store, Bus, t, sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId, validateForm, emptyState, DataTable, CATALOGS, kpi, catalogSelect, showFieldError, clearFieldErrors, logAudit } from '../core/index.js';
+import { voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showConfirm, showVoidDialog } from './egg-confirm.js';
 
 const LOG_CATEGORIES = ['general', 'health', 'production', 'maintenance', 'observation'];
 
@@ -398,10 +399,12 @@ class EggOperations extends HTMLElement {
     }
   }
 
-  _deleteCheck(id) {
+  async _deleteCheck(id) {
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.checklist = D.checklist.filter(c => c.id !== id);
-    logAudit('delete', 'operations', 'Delete checklist item', { id }, null);
+    voidRecord(D.checklist, id, reason);
+    logAudit('void', 'operations', 'Void checklist item: ' + reason, { id }, null);
     Store.save(D);
     this.render();
   }
@@ -526,11 +529,11 @@ class EggOperations extends HTMLElement {
   }
 
   async _deleteLog(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    const old = D.logbook.find(l => l.id === id);
-    logAudit('delete', 'operations', 'Delete logbook entry', old, null);
-    D.logbook = D.logbook.filter(l => l.id !== id);
+    voidRecord(D.logbook, id, reason);
+    logAudit('void', 'operations', 'Void logbook entry: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
@@ -553,7 +556,7 @@ class EggOperations extends HTMLElement {
 
     return DataTable.create({
       id: 'personnel',
-      data: D.personnel,
+      data: activeOnly(D.personnel),
       emptyIcon: '\uD83D\uDC77',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px">
@@ -695,24 +698,22 @@ class EggOperations extends HTMLElement {
   }
 
   async _deletePersonnel(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    const old = D.personnel.find(p => p.id === id);
-    logAudit('delete', 'operations', 'Delete personnel', old, null);
-    D.personnel = D.personnel.filter(p => p.id !== id);
+    voidRecord(D.personnel, id, reason);
+    logAudit('void', 'operations', 'Void personnel: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 
   async _bulkDeletePersonnel(ids) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    ids.forEach(id => {
-      const old = D.personnel.find(p => p.id === id);
-      if (old) logAudit('delete', 'operations', 'Bulk delete personnel', old, null);
-    });
-    D.personnel = D.personnel.filter(p => !ids.includes(p.id));
+    voidRecords(D.personnel, ids, reason);
+    ids.forEach(id => logAudit('void', 'operations', 'Bulk void personnel: ' + reason, id, null));
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     DataTable.reset('personnel');

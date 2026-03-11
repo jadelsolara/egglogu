@@ -92,6 +92,7 @@ class EggApp extends HTMLElement {
       </div>
       <egg-toast></egg-toast>
       <egg-confirm></egg-confirm>
+      <egg-void-dialog></egg-void-dialog>
       <egg-modal></egg-modal>
     `;
 

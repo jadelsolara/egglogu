@@ -10,7 +10,8 @@ import {
   showFieldError, clearFieldErrors, logAudit, generateVaccineCalendar, catalogSelect
 } from '../core/index.js';
 import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showConfirm, showVoidDialog } from './egg-confirm.js';
+import { voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 
 // ─── LIFECYCLE constant ───
 const LIFECYCLE = [
@@ -137,10 +138,10 @@ class EggFlocks extends HTMLElement {
     h += `<div class="page-header"><h2>${t('flock_title')}</h2>
       <button class="btn btn-primary" data-action="add-flock">${t('flock_add')}</button></div>`;
 
-    if (!D.flocks.length) {
+    if (!activeOnly(D.flocks).length) {
       h += emptyState('\uD83D\uDC14', t('no_data'), t('flock_add'), '');
     } else {
-      const flocksEnriched = D.flocks.map(f => {
+      const flocksEnriched = activeOnly(D.flocks).map(f => {
         const age = flockAge(f);
         const cur = activeHensByFlock(f.id);
         const hs = healthScore(f.id);
@@ -207,19 +208,19 @@ class EggFlocks extends HTMLElement {
         bulkActions: [{
           label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
           action: ids => {
-            showConfirm(t('confirm_delete')).then(yes => {
-              if (!yes) return;
+            showVoidDialog(t('confirm_delete')).then(reason => {
+              if (!reason) return;
               const D2 = Store.get();
-              D2.flocks = D2.flocks.filter(f => !ids.includes(f.id));
-              // Cascade delete related data for each flock
               ids.forEach(fid => {
-                D2.dailyProduction = D2.dailyProduction.filter(p => p.flockId !== fid);
-                D2.vaccines = D2.vaccines.filter(v => v.flockId !== fid);
-                D2.medications = D2.medications.filter(m => m.flockId !== fid);
-                D2.outbreaks = D2.outbreaks.filter(o => o.flockId !== fid);
-                D2.feed.consumption = D2.feed.consumption.filter(c => c.flockId !== fid);
-                D2.traceability.batches = D2.traceability.batches.filter(b => b.flockId !== fid);
-                D2.productionPlans = (D2.productionPlans || []).filter(p => p.flockId !== fid);
+                voidRecord(D2.flocks, fid, reason);
+                // Cascade void related records
+                D2.dailyProduction.filter(p => p.flockId === fid && p.status !== 'voided').forEach(p => voidRecord(D2.dailyProduction, p.id, reason + ' (cascade)'));
+                D2.vaccines.filter(v => v.flockId === fid && v.status !== 'voided').forEach(v => voidRecord(D2.vaccines, v.id, reason + ' (cascade)'));
+                D2.medications.filter(m => m.flockId === fid && m.status !== 'voided').forEach(m => voidRecord(D2.medications, m.id, reason + ' (cascade)'));
+                D2.outbreaks.filter(o => o.flockId === fid && o.status !== 'voided').forEach(o => voidRecord(D2.outbreaks, o.id, reason + ' (cascade)'));
+                D2.feed.consumption.filter(c => c.flockId === fid && c.status !== 'voided').forEach(c => voidRecord(D2.feed.consumption, c.id, reason + ' (cascade)'));
+                D2.traceability.batches.filter(b => b.flockId === fid && b.status !== 'voided').forEach(b => voidRecord(D2.traceability.batches, b.id, reason + ' (cascade)'));
+                (D2.productionPlans || []).filter(p => p.flockId === fid && p.status !== 'voided').forEach(p => voidRecord(D2.productionPlans || [], p.id, reason + ' (cascade)'));
               });
               Store.save(D2);
               this.render();
@@ -504,22 +505,25 @@ class EggFlocks extends HTMLElement {
   // ─── deleteFlock (cascade) ───
 
   async _deleteFlock(id) {
-    const confirmed = await showConfirm(t('confirm_delete'));
-    if (!confirmed) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
 
     const D = Store.get();
     const old = D.flocks.find(f => f.id === id);
 
-    D.flocks = D.flocks.filter(f => f.id !== id);
-    D.dailyProduction = D.dailyProduction.filter(p => p.flockId !== id);
-    D.vaccines = D.vaccines.filter(v => v.flockId !== id);
-    D.medications = D.medications.filter(m => m.flockId !== id);
-    D.outbreaks = D.outbreaks.filter(o => o.flockId !== id);
-    D.feed.consumption = D.feed.consumption.filter(c => c.flockId !== id);
-    D.traceability.batches = D.traceability.batches.filter(b => b.flockId !== id);
-    D.productionPlans = (D.productionPlans || []).filter(p => p.flockId !== id);
+    // Void the flock record
+    voidRecord(D.flocks, id, reason);
 
-    logAudit('delete', 'flocks', 'Delete flock: ' + (old ? old.name : id), old, null);
+    // Cascade void related records
+    D.dailyProduction.filter(p => p.flockId === id && p.status !== 'voided').forEach(p => voidRecord(D.dailyProduction, p.id, reason + ' (cascade: flock voided)'));
+    D.vaccines.filter(v => v.flockId === id && v.status !== 'voided').forEach(v => voidRecord(D.vaccines, v.id, reason + ' (cascade: flock voided)'));
+    D.medications.filter(m => m.flockId === id && m.status !== 'voided').forEach(m => voidRecord(D.medications, m.id, reason + ' (cascade: flock voided)'));
+    D.outbreaks.filter(o => o.flockId === id && o.status !== 'voided').forEach(o => voidRecord(D.outbreaks, o.id, reason + ' (cascade: flock voided)'));
+    D.feed.consumption.filter(c => c.flockId === id && c.status !== 'voided').forEach(c => voidRecord(D.feed.consumption, c.id, reason + ' (cascade: flock voided)'));
+    D.traceability.batches.filter(b => b.flockId === id && b.status !== 'voided').forEach(b => voidRecord(D.traceability.batches, b.id, reason + ' (cascade: flock voided)'));
+    (D.productionPlans || []).filter(p => p.flockId === id && p.status !== 'voided').forEach(p => voidRecord(D.productionPlans || [], p.id, reason + ' (cascade: flock voided)'));
+
+    logAudit('void', 'flocks', 'Void flock: ' + (old ? old.name : id), old, { reason });
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();

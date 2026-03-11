@@ -1,6 +1,7 @@
 // <egg-inventory> — Egg Inventory Web Component
 // Enhanced: adjustment modal, stock charts, flock analysis,
 // storage locations (warehouse/rack), reservations for clients
+// Sub-components: <egg-inv-locations>, <egg-inv-reservations>
 
 import {
   Store, Bus, t, sanitizeHTML, escapeAttr, fmtNum, fmtDate,
@@ -45,9 +46,6 @@ class EggInventory extends HTMLElement {
   _onModalAction(ev) {
     switch (ev.action) {
       case 'save-inv-adjustment': this._saveAdjustment(); break;
-      case 'save-location': this._saveLocation(); break;
-      case 'save-reservation': this._saveReservation(); break;
-      case 'save-move-stock': this._saveMoveStock(); break;
     }
   }
 
@@ -74,8 +72,8 @@ class EggInventory extends HTMLElement {
     </div>`;
 
     if (this._tab === 'stock') h += this._renderStockTab(D);
-    else if (this._tab === 'locations') h += this._renderLocationsTab(D);
-    else if (this._tab === 'reservations') h += this._renderReservationsTab(D);
+    else if (this._tab === 'locations') h += '<egg-inv-locations></egg-inv-locations>';
+    else if (this._tab === 'reservations') h += '<egg-inv-reservations></egg-inv-reservations>';
 
     this.shadowRoot.innerHTML = h;
     this._bindEvents();
@@ -84,356 +82,95 @@ class EggInventory extends HTMLElement {
   // ═══════════════ STOCK TAB ═══════════════
   _renderStockTab(D) {
     let h = '';
+
+    // Compute inventory totals
     const sorted = [...D.inventory].sort((a, b) => a.date.localeCompare(b.date));
-    const totIn = sorted.reduce((s, r) => s + (r.qtyIn || 0), 0);
-    const totOut = sorted.reduce((s, r) => s + (r.qtyOut || 0), 0);
-    const balance = totIn - totOut;
-    const adjustments = sorted.filter(r => r.source === 'adjustment');
-    const totAdj = adjustments.reduce((s, r) => s + (r.qtyIn || 0) - (r.qtyOut || 0), 0);
-
-    // Reserved qty
-    const reservedQty = (D.reservations || [])
-      .filter(r => r.status === 'active')
-      .reduce((s, r) => s + (r.qty || 0), 0);
-    const available = balance - reservedQty;
-
-    // Per egg-type balances
+    let totalIn = 0, totalOut = 0;
     const byType = {};
-    sorted.forEach(r => {
-      const tp = r.eggType || 'M';
-      if (!byType[tp]) byType[tp] = { in: 0, out: 0, adj: 0 };
-      byType[tp].in += (r.qtyIn || 0);
-      byType[tp].out += (r.qtyOut || 0);
-      if (r.source === 'adjustment') byType[tp].adj += (r.qtyIn || 0) - (r.qtyOut || 0);
-    });
-
-    // Per flock balances
     const byFlock = {};
+    const bySource = {};
     sorted.forEach(r => {
-      const fid = r.flockId || '_none';
-      if (!byFlock[fid]) byFlock[fid] = { in: 0, out: 0 };
-      byFlock[fid].in += (r.qtyIn || 0);
-      byFlock[fid].out += (r.qtyOut || 0);
+      totalIn += r.qtyIn || 0;
+      totalOut += r.qtyOut || 0;
+      const tp = r.eggType || 'M';
+      if (!byType[tp]) byType[tp] = { in: 0, out: 0 };
+      byType[tp].in += r.qtyIn || 0;
+      byType[tp].out += r.qtyOut || 0;
+      const fk = r.flockId || '';
+      if (fk) {
+        if (!byFlock[fk]) byFlock[fk] = { in: 0, out: 0 };
+        byFlock[fk].in += r.qtyIn || 0;
+        byFlock[fk].out += r.qtyOut || 0;
+      }
+      const src = r.source || 'production';
+      if (!bySource[src]) bySource[src] = { in: 0, out: 0 };
+      bySource[src].in += r.qtyIn || 0;
+      bySource[src].out += r.qtyOut || 0;
     });
 
-    // Per-location balances
-    const byLoc = {};
-    sorted.forEach(r => {
-      const lid = r.locationId || '_none';
-      if (!byLoc[lid]) byLoc[lid] = { in: 0, out: 0 };
-      byLoc[lid].in += (r.qtyIn || 0);
-      byLoc[lid].out += (r.qtyOut || 0);
-    });
+    const totalStock = totalIn - totalOut;
+    const totalReserved = (D.reservations || []).filter(r => r.status === 'active').reduce((s, r) => s + (r.qty || 0), 0);
+    const totalAvailable = totalStock - totalReserved;
+    const locs = D.storageLocations || [];
+    const locCount = locs.length;
+    const totalCapacity = locs.reduce((s, l) => s + (l.capacity || 0), 0);
+    const pctCapacity = totalCapacity > 0 ? (totalStock / totalCapacity * 100).toFixed(0) : '--';
 
-    // KPI cards (6: in, out, adjustments, balance, reserved, available)
+    // KPIs
     h += '<div class="kpi-grid">';
-    h += kpi(t('inv_total_in') || 'Total In', fmtNum(totIn), '', '', t('info_inv_in'));
-    h += kpi(t('inv_total_out') || 'Total Out', fmtNum(totOut), '', '', t('info_inv_out'));
-    h += kpi(
-      t('inv_adjustment') || 'Ajustes',
-      (totAdj >= 0 ? '+' : '') + fmtNum(totAdj), '',
-      totAdj < 0 ? 'danger' : ''
-    );
-    h += kpi(
-      t('inv_balance') || 'Balance', fmtNum(balance), '',
-      balance < 0 ? 'danger' : balance < 100 ? 'warning' : ''
-    );
-    h += kpi(
-      t('inv_reserved') || 'Reservado', fmtNum(reservedQty), '',
-      reservedQty > 0 ? 'warning' : ''
-    );
-    h += kpi(
-      t('inv_available') || 'Disponible', fmtNum(available), '',
-      available < 0 ? 'danger' : available < 50 ? 'warning' : ''
-    );
+    h += kpi(t('inv_total_stock') || 'Stock Total', fmtNum(totalStock), '', totalStock < 0 ? 'danger' : '');
+    h += kpi(t('inv_total_in') || 'Entradas', fmtNum(totalIn));
+    h += kpi(t('inv_total_out') || 'Salidas', fmtNum(totalOut));
+    h += kpi(t('inv_reserved') || 'Reservado', fmtNum(totalReserved), '', totalReserved > 0 ? 'warning' : '');
+    h += kpi(t('inv_available') || 'Disponible', fmtNum(totalAvailable), '', totalAvailable < 0 ? 'danger' : '');
+    h += kpi(t('inv_capacity_used') || 'Capacidad', pctCapacity + '%', locCount + ' ' + (t('inv_locations') || 'ubicaciones'));
     h += '</div>';
 
-    // Stock level chart by egg type
-    const typeKeys = EGG_TYPES.filter(tp => byType[tp]);
-    if (typeKeys.length) {
-      const maxBal = Math.max(...typeKeys.map(tp => Math.abs((byType[tp].in || 0) - (byType[tp].out || 0))), 1);
-      h += '<div class="card"><h3>\uD83D\uDCCA ' + (t('inv_stock_levels') || 'Niveles de Stock') + '</h3>';
-      h += '<div class="stock-chart">';
-      typeKeys.forEach(tp => {
-        const b = byType[tp];
-        const bal = b.in - b.out;
-        const pct = Math.min(Math.abs(bal) / maxBal * 100, 100);
-        const color = bal < 0 ? 'var(--danger, #C62828)' : bal < 50 ? 'var(--warning, #e65100)' : 'var(--success, #2E7D32)';
-        h += `<div class="stock-row">
-          <span class="stock-label">${tp}</span>
-          <div class="stock-bar-bg"><div class="stock-bar" style="width:${pct}%;background:${color}"></div></div>
-          <span class="stock-val" style="color:${color}">${fmtNum(bal)}</span>
-        </div>`;
-      });
-      h += '</div></div>';
-    }
-
-    // Stock by location card
-    const locs = D.storageLocations || [];
-    const locEntries = Object.entries(byLoc).filter(([k]) => k !== '_none');
-    if (locs.length && locEntries.length) {
-      const maxLocBal = Math.max(...locEntries.map(([, b]) => Math.abs(b.in - b.out)), 1);
-      h += '<div class="card"><h3>\uD83C\uDFED ' + (t('inv_stock_by_location') || 'Stock por Ubicación') + '</h3>';
-      h += '<div class="stock-chart">';
-      locEntries.forEach(([lid, b]) => {
-        const loc = locs.find(l => l.id === lid);
-        const bal = b.in - b.out;
-        const pct = Math.min(Math.abs(bal) / maxLocBal * 100, 100);
-        const cap = loc?.capacity || 0;
-        const pctCap = cap > 0 ? (bal / cap * 100).toFixed(0) : '';
-        const color = cap > 0 && bal >= cap ? 'var(--danger)' : bal < 0 ? 'var(--danger)' : 'var(--primary, #1565C0)';
-        h += `<div class="stock-row">
-          <span class="stock-label">${loc ? sanitizeHTML(loc.name) : lid}</span>
-          <div class="stock-bar-bg"><div class="stock-bar" style="width:${pct}%;background:${color}"></div></div>
-          <span class="stock-val" style="color:${color}">${fmtNum(bal)}${pctCap ? ' (' + pctCap + '%)' : ''}</span>
-        </div>`;
-      });
-      h += '</div></div>';
-    }
-
-    // Charts row: By Type + By Flock
+    // Charts row: stock by type + stock by flock
     h += '<div class="charts-row">';
-    if (typeKeys.length) {
-      h += '<div class="card chart-half"><h3>' + (t('inv_by_type') || 'Por Tipo de Huevo') + '</h3><div class="table-wrap"><table><thead><tr>';
-      h += `<th>${t('fin_egg_type') || 'Type'}</th><th>${t('inv_total_in') || 'In'}</th><th>${t('inv_total_out') || 'Out'}</th><th>${t('inv_adjustment') || 'Adj.'}</th><th>${t('inv_balance') || 'Balance'}</th>`;
-      h += '</tr></thead><tbody>';
-      EGG_TYPES.forEach(tp => {
-        if (!byType[tp]) return;
-        const b = byType[tp];
-        const bal = b.in - b.out;
-        h += `<tr><td><strong>${tp}</strong></td><td style="color:var(--success)">${fmtNum(b.in)}</td><td style="color:var(--danger)">${fmtNum(b.out)}</td>
-        <td>${b.adj !== 0 ? ((b.adj > 0 ? '+' : '') + fmtNum(b.adj)) : '-'}</td>
-        <td style="font-weight:700;color:${bal < 0 ? 'var(--danger)' : 'var(--success)'}">${fmtNum(bal)}</td></tr>`;
-      });
-      h += '</tbody></table></div></div>';
-    }
-    const flockEntries = Object.entries(byFlock).filter(([k]) => k !== '_none');
+
+    // By type
+    h += '<div class="card chart-half"><h3>' + (t('inv_by_type') || 'Stock por Tipo') + '</h3>';
+    const maxType = Math.max(1, ...Object.values(byType).map(v => v.in - v.out));
+    h += '<div class="stock-chart">';
+    EGG_TYPES.forEach(tp => {
+      const net = (byType[tp]?.in || 0) - (byType[tp]?.out || 0);
+      const pct = Math.max(0, net / maxType * 100);
+      const color = net < 0 ? 'var(--danger)' : 'var(--primary)';
+      h += `<div class="stock-row">
+        <span class="stock-label">${tp}</span>
+        <div class="stock-bar-bg"><div class="stock-bar" style="width:${pct}%;background:${color}"></div></div>
+        <span class="stock-val">${fmtNum(net)}</span>
+      </div>`;
+    });
+    h += '</div></div>';
+
+    // By flock
+    h += '<div class="card chart-half"><h3>' + (t('inv_by_flock') || 'Stock por Lote') + '</h3>';
+    const flockEntries = Object.entries(byFlock).map(([fId, v]) => {
+      const flock = D.flocks.find(f => f.id === fId);
+      return { name: flock ? flock.name : fId, net: v.in - v.out };
+    }).sort((a, b) => b.net - a.net);
+    const maxFlock = Math.max(1, ...flockEntries.map(e => Math.abs(e.net)));
     if (flockEntries.length) {
-      flockEntries.sort((a, b) => b[1].out - a[1].out);
-      h += '<div class="card chart-half"><h3>\uD83D\uDC14 ' + (t('inv_by_flock') || 'Por Lote') + '</h3><div class="table-wrap"><table><thead><tr>';
-      h += `<th>${t('prod_flock') || 'Lote'}</th><th>${t('inv_total_in') || 'Entrada'}</th><th>${t('inv_total_out') || 'Salida'}</th><th>${t('inv_balance') || 'Balance'}</th>`;
-      h += '</tr></thead><tbody>';
-      flockEntries.forEach(([fid, b]) => {
-        const fl = D.flocks.find(x => x.id === fid);
-        const bal = b.in - b.out;
-        h += `<tr><td><strong>${fl ? sanitizeHTML(fl.name) : fid}</strong></td>
-        <td style="color:var(--success)">${fmtNum(b.in)}</td>
-        <td style="color:var(--danger)">${fmtNum(b.out)}</td>
-        <td style="font-weight:700;color:${bal < 0 ? 'var(--danger)' : 'var(--success)'}">${fmtNum(bal)}</td></tr>`;
-      });
-      h += '</tbody></table></div></div>';
-    }
-    h += '</div>';
-
-    // Top sold flocks bar chart
-    if (flockEntries.length > 1) {
-      const maxOut = Math.max(...flockEntries.map(([, b]) => b.out), 1);
-      h += '<div class="card"><h3>\uD83C\uDFC6 ' + (t('inv_top_sold') || 'Lotes con Mayor Salida') + '</h3><div class="stock-chart">';
-      flockEntries.slice(0, 10).forEach(([fid, b]) => {
-        const fl = D.flocks.find(x => x.id === fid);
-        const pct = Math.min(b.out / maxOut * 100, 100);
+      h += '<div class="stock-chart">';
+      flockEntries.forEach(e => {
+        const pct = Math.max(0, Math.abs(e.net) / maxFlock * 100);
+        const color = e.net < 0 ? 'var(--danger)' : 'var(--success)';
         h += `<div class="stock-row">
-          <span class="stock-label">${fl ? sanitizeHTML(fl.name) : fid}</span>
-          <div class="stock-bar-bg"><div class="stock-bar" style="width:${pct}%;background:var(--primary, #1565C0)"></div></div>
-          <span class="stock-val">${fmtNum(b.out)}</span>
-        </div>`;
-      });
-      h += '</div></div>';
-    }
-
-    // Most sold egg types bar chart
-    const typesSorted = EGG_TYPES.filter(tp => byType[tp] && byType[tp].out > 0)
-      .sort((a, b) => byType[b].out - byType[a].out);
-    if (typesSorted.length > 1) {
-      const maxTypeOut = Math.max(...typesSorted.map(tp => byType[tp].out), 1);
-      h += '<div class="card"><h3>\uD83E\uDD5A ' + (t('inv_top_types') || 'Tipos Más Vendidos') + '</h3><div class="stock-chart">';
-      typesSorted.forEach(tp => {
-        const b = byType[tp];
-        const pct = Math.min(b.out / maxTypeOut * 100, 100);
-        h += `<div class="stock-row">
-          <span class="stock-label">${tp}</span>
-          <div class="stock-bar-bg"><div class="stock-bar" style="width:${pct}%;background:var(--accent, #FF8F00)"></div></div>
-          <span class="stock-val">${fmtNum(b.out)}</span>
-        </div>`;
-      });
-      h += '</div></div>';
-    }
-
-    // Filter bar
-    h += `<div class="filter-bar">
-      <select data-filter="flockId">
-        <option value="">${t('all') || 'All'} — ${t('prod_flock') || 'Lote'}</option>
-        ${D.flocks.map(f => '<option value="' + escapeAttr(f.id) + '"' + (this._filters.flockId === f.id ? ' selected' : '') + '>' + sanitizeHTML(f.name) + '</option>').join('')}
-      </select>
-      <select data-filter="eggType">
-        <option value="">${t('all') || 'All'} — ${t('fin_egg_type') || 'Tipo'}</option>
-        ${EGG_TYPES.map(tp => '<option value="' + tp + '"' + (this._filters.eggType === tp ? ' selected' : '') + '>' + tp + '</option>').join('')}
-      </select>
-      <select data-filter="source">
-        <option value="">${t('all') || 'All'} — ${t('source') || 'Origen'}</option>
-        <option value="production"${this._filters.source === 'production' ? ' selected' : ''}>${t('production') || 'Producción'}</option>
-        <option value="adjustment"${this._filters.source === 'adjustment' ? ' selected' : ''}>${t('inv_adjustment') || 'Ajuste'}</option>
-        <option value="sale"${this._filters.source === 'sale' ? ' selected' : ''}>${t('fin_sales') || 'Venta'}</option>
-      </select>
-      <select data-filter="locationId">
-        <option value="">${t('all') || 'All'} — ${t('inv_location') || 'Ubicación'}</option>
-        ${(D.storageLocations || []).map(l => '<option value="' + escapeAttr(l.id) + '"' + (this._filters.locationId === l.id ? ' selected' : '') + '>' + sanitizeHTML(l.name) + '</option>').join('')}
-      </select>
-      <input type="date" data-filter="from" value="${escapeAttr(this._filters.from)}">
-      <input type="date" data-filter="to" value="${escapeAttr(this._filters.to)}">
-    </div>`;
-
-    // Filtered table
-    h += '<div id="inv-table">' + this._renderTable(D) + '</div>';
-    return h;
-  }
-
-  // ═══════════════ LOCATIONS TAB ═══════════════
-  _renderLocationsTab(D) {
-    const locs = D.storageLocations || [];
-    let h = '';
-
-    h += `<div class="card"><div class="card-header-row">
-      <h3>\uD83C\uDFED ${t('inv_locations') || 'Ubicaciones de Almacenamiento'}</h3>
-      <button class="btn btn-primary btn-sm" data-action="add-location">\u2795 ${t('inv_add_location') || 'Nueva Ubicación'}</button>
-    </div>`;
-
-    if (!locs.length) {
-      h += `<div class="empty-state"><p>${t('inv_no_locations') || 'No hay ubicaciones configuradas. Agrega galpones, racks o bodegas para organizar tu inventario.'}</p></div>`;
-    } else {
-      // Compute stock per location
-      const sorted = [...D.inventory].sort((a, b) => a.date.localeCompare(b.date));
-      const locStock = {};
-      sorted.forEach(r => {
-        const lid = r.locationId || '';
-        if (!lid) return;
-        if (!locStock[lid]) locStock[lid] = { total: 0, byType: {} };
-        locStock[lid].total += (r.qtyIn || 0) - (r.qtyOut || 0);
-        const tp = r.eggType || 'M';
-        if (!locStock[lid].byType[tp]) locStock[lid].byType[tp] = 0;
-        locStock[lid].byType[tp] += (r.qtyIn || 0) - (r.qtyOut || 0);
-      });
-
-      // Reserved per location
-      const locReserved = {};
-      (D.reservations || []).filter(r => r.status === 'active' && r.locationId)
-        .forEach(r => { locReserved[r.locationId] = (locReserved[r.locationId] || 0) + (r.qty || 0); });
-
-      h += '<div class="loc-grid">';
-      locs.forEach(loc => {
-        const stock = locStock[loc.id]?.total || 0;
-        const reserved = locReserved[loc.id] || 0;
-        const avail = stock - reserved;
-        const cap = loc.capacity || 0;
-        const pctUsed = cap > 0 ? Math.min(stock / cap * 100, 100) : 0;
-        const barColor = pctUsed > 90 ? 'var(--danger)' : pctUsed > 70 ? 'var(--warning)' : 'var(--success)';
-        const typeBreakdown = locStock[loc.id]?.byType || {};
-        const typeStr = Object.entries(typeBreakdown).filter(([,v]) => v > 0).map(([k,v]) => `${k}: ${fmtNum(v)}`).join(' · ');
-
-        h += `<div class="loc-card">
-          <div class="loc-header">
-            <div>
-              <span class="loc-zone-badge">${sanitizeHTML(loc.zone || '')}</span>
-              <strong>${sanitizeHTML(loc.name)}</strong>
-            </div>
-            <div class="loc-actions">
-              <button class="btn btn-sm btn-secondary" data-action="move-stock" data-loc="${escapeAttr(loc.id)}">\u21C4 ${t('inv_move') || 'Mover'}</button>
-              <button class="btn btn-sm btn-secondary" data-action="edit-location" data-loc="${escapeAttr(loc.id)}">\u270F\uFE0F</button>
-              <button class="btn btn-sm btn-danger" data-action="delete-location" data-loc="${escapeAttr(loc.id)}">\uD83D\uDDD1\uFE0F</button>
-            </div>
-          </div>
-          ${loc.description ? `<p class="loc-desc">${sanitizeHTML(loc.description)}</p>` : ''}
-          <div class="loc-stats">
-            <div class="loc-stat"><span class="loc-stat-label">${t('inv_stock') || 'Stock'}</span><span class="loc-stat-val">${fmtNum(stock)}</span></div>
-            <div class="loc-stat"><span class="loc-stat-label">${t('inv_reserved') || 'Reservado'}</span><span class="loc-stat-val" style="color:var(--warning)">${fmtNum(reserved)}</span></div>
-            <div class="loc-stat"><span class="loc-stat-label">${t('inv_available') || 'Disponible'}</span><span class="loc-stat-val" style="color:${avail < 0 ? 'var(--danger)' : 'var(--success)'}">${fmtNum(avail)}</span></div>
-            ${cap > 0 ? `<div class="loc-stat"><span class="loc-stat-label">${t('cfg_capacity') || 'Capacidad'}</span><span class="loc-stat-val">${fmtNum(cap)}</span></div>` : ''}
-          </div>
-          ${cap > 0 ? `<div class="loc-bar-bg"><div class="loc-bar" style="width:${pctUsed}%;background:${barColor}"></div></div><span class="loc-pct">${pctUsed.toFixed(0)}% ${t('inv_used') || 'usado'}</span>` : ''}
-          ${typeStr ? `<p class="loc-types">${typeStr}</p>` : ''}
+          <span class="stock-label" title="${sanitizeHTML(e.name)}">${sanitizeHTML(e.name)}</span>
+          <div class="stock-bar-bg"><div class="stock-bar" style="width:${pct}%;background:${color}"></div></div>
+          <span class="stock-val">${fmtNum(e.net)}</span>
         </div>`;
       });
       h += '</div>';
-    }
-    h += '</div>';
-    return h;
-  }
-
-  // ═══════════════ RESERVATIONS TAB ═══════════════
-  _renderReservationsTab(D) {
-    const reservations = D.reservations || [];
-    const active = reservations.filter(r => r.status === 'active');
-    const fulfilled = reservations.filter(r => r.status === 'fulfilled');
-    const cancelled = reservations.filter(r => r.status === 'cancelled');
-
-    let h = '';
-
-    // KPIs
-    const totalReserved = active.reduce((s, r) => s + (r.qty || 0), 0);
-    h += '<div class="kpi-grid kpi-grid-4">';
-    h += kpi(t('inv_active_reservations') || 'Reservas Activas', fmtNum(active.length), '', active.length > 0 ? 'warning' : '');
-    h += kpi(t('inv_reserved_units') || 'Unidades Reservadas', fmtNum(totalReserved), '', totalReserved > 0 ? 'warning' : '');
-    h += kpi(t('inv_fulfilled') || 'Cumplidas', fmtNum(fulfilled.length));
-    h += kpi(t('inv_cancelled') || 'Canceladas', fmtNum(cancelled.length));
-    h += '</div>';
-
-    // Active reservations
-    h += `<div class="card"><div class="card-header-row">
-      <h3>\uD83D\uDD12 ${t('inv_active_reservations') || 'Reservas Activas'}</h3>
-      <button class="btn btn-primary btn-sm" data-action="add-reservation">\u2795 ${t('inv_reserve') || 'Reservar'}</button>
-    </div>`;
-
-    if (!active.length) {
-      h += `<div class="empty-state"><p>${t('inv_no_reservations') || 'No hay reservas activas.'}</p></div>`;
     } else {
-      h += '<div class="table-wrap"><table><thead><tr>';
-      h += `<th>${t('date')}</th><th>${t('cli_name') || 'Cliente'}</th><th>${t('fin_egg_type') || 'Tipo'}</th>`;
-      h += `<th>${t('qty') || 'Cantidad'}</th><th>${t('inv_location') || 'Ubicación'}</th><th>${t('inv_due_date') || 'Fecha Entrega'}</th><th>${t('actions') || 'Acciones'}</th>`;
-      h += '</tr></thead><tbody>';
-      active.sort((a, b) => (a.dueDate || '').localeCompare(b.dueDate || '')).forEach(r => {
-        const client = D.clients.find(c => c.id === r.clientId);
-        const loc = (D.storageLocations || []).find(l => l.id === r.locationId);
-        const isOverdue = r.dueDate && r.dueDate < todayStr();
-        h += `<tr${isOverdue ? ' style="background:rgba(198,40,40,.06)"' : ''}>
-          <td>${fmtDate(r.date)}</td>
-          <td><strong>${client ? sanitizeHTML(client.name) : '-'}</strong></td>
-          <td>${r.eggType || '-'}</td>
-          <td style="font-weight:700">${fmtNum(r.qty)}</td>
-          <td>${loc ? sanitizeHTML(loc.name) : '-'}</td>
-          <td${isOverdue ? ' style="color:var(--danger);font-weight:700"' : ''}>${r.dueDate ? fmtDate(r.dueDate) : '-'}${isOverdue ? ' \u26A0\uFE0F' : ''}</td>
-          <td>
-            <button class="btn btn-sm btn-primary" data-action="fulfill-reservation" data-id="${escapeAttr(r.id)}">\u2705 ${t('inv_fulfill') || 'Cumplir'}</button>
-            <button class="btn btn-sm btn-danger" data-action="cancel-reservation" data-id="${escapeAttr(r.id)}">\u274C</button>
-          </td>
-        </tr>`;
-      });
-      h += '</tbody></table></div>';
+      h += `<div class="empty-state"><p>${t('inv_no_flock_data') || 'Sin datos por lote'}</p></div>`;
     }
-    h += '</div>';
+    h += '</div></div>';
 
-    // History (fulfilled + cancelled)
-    const history = [...fulfilled, ...cancelled].sort((a, b) => (b.resolvedDate || b.date).localeCompare(a.resolvedDate || a.date));
-    if (history.length) {
-      h += `<div class="card"><h3>\uD83D\uDCCB ${t('history') || 'Historial'}</h3>`;
-      h += '<div class="table-wrap"><table><thead><tr>';
-      h += `<th>${t('date')}</th><th>${t('cli_name') || 'Cliente'}</th><th>${t('fin_egg_type') || 'Tipo'}</th>`;
-      h += `<th>${t('qty') || 'Cantidad'}</th><th>${t('status') || 'Estado'}</th><th>${t('inv_resolved') || 'Resuelta'}</th>`;
-      h += '</tr></thead><tbody>';
-      history.slice(0, 50).forEach(r => {
-        const client = D.clients.find(c => c.id === r.clientId);
-        const sFulfilled = r.status === 'fulfilled';
-        h += `<tr>
-          <td>${fmtDate(r.date)}</td>
-          <td>${client ? sanitizeHTML(client.name) : '-'}</td>
-          <td>${r.eggType || '-'}</td>
-          <td>${fmtNum(r.qty)}</td>
-          <td><span class="source-badge ${r.status}">${sFulfilled ? '\u2705 ' + (t('inv_fulfilled') || 'Cumplida') : '\u274C ' + (t('inv_cancelled') || 'Cancelada')}</span></td>
-          <td>${r.resolvedDate ? fmtDate(r.resolvedDate) : '-'}</td>
-        </tr>`;
-      });
-      h += '</tbody></table></div></div>';
-    }
-
+    // Filtered table
+    h += '<div id="inv-table">' + this._renderTable(D) + '</div>';
     return h;
   }
 
@@ -443,52 +180,76 @@ class EggInventory extends HTMLElement {
     const f = this._filters;
     if (f.flockId) recs = recs.filter(r => r.flockId === f.flockId);
     if (f.eggType) recs = recs.filter(r => r.eggType === f.eggType);
-    if (f.source) recs = recs.filter(r => r.source === f.source);
-    if (f.locationId) recs = recs.filter(r => r.locationId === f.locationId);
     if (f.from) recs = recs.filter(r => r.date >= f.from);
     if (f.to) recs = recs.filter(r => r.date <= f.to);
+    if (f.source) recs = recs.filter(r => r.source === f.source);
+    if (f.locationId) recs = recs.filter(r => r.locationId === f.locationId);
 
-    const pg = paginate(recs, this._page, PAGE_SIZE);
     const locs = D.storageLocations || [];
+    const { items, totalPages, page } = paginate(recs, this._page, PAGE_SIZE);
 
-    let h = '<div class="card"><h3>\uD83D\uDCCB ' + (t('inv_records') || 'Registros') + ' (' + fmtNum(recs.length) + ')</h3><div class="table-wrap"><table><thead><tr>';
-    h += `<th>${t('date')}</th><th>${t('prod_flock') || 'Flock'}</th><th>${t('fin_egg_type') || 'Type'}</th>`;
-    h += `<th>${t('inv_total_in') || 'In'}</th><th>${t('inv_total_out') || 'Out'}</th><th>${t('inv_location') || 'Ubicación'}</th><th>${t('source') || 'Source'}</th><th>${t('inv_adjust_notes') || 'Notes'}</th>`;
-    h += '</tr></thead><tbody>';
+    let h = '';
+    // Filter bar
+    h += `<div class="filter-bar">
+      <select data-filter="flockId">
+        <option value="">${t('all_flocks') || 'Todos los lotes'}</option>
+        ${D.flocks.map(fk => '<option value="' + escapeAttr(fk.id) + '"' + (f.flockId === fk.id ? ' selected' : '') + '>' + sanitizeHTML(fk.name) + '</option>').join('')}
+      </select>
+      <select data-filter="eggType">
+        <option value="">${t('all') || 'Todos'}</option>
+        ${EGG_TYPES.map(tp => '<option value="' + tp + '"' + (f.eggType === tp ? ' selected' : '') + '>' + tp + '</option>').join('')}
+      </select>
+      <select data-filter="source">
+        <option value="">${t('all_sources') || 'Todas'}</option>
+        <option value="production"${f.source === 'production' ? ' selected' : ''}>${t('inv_source_production') || 'Producción'}</option>
+        <option value="sale"${f.source === 'sale' ? ' selected' : ''}>${t('inv_source_sale') || 'Venta'}</option>
+        <option value="adjustment"${f.source === 'adjustment' ? ' selected' : ''}>${t('inv_source_adjustment') || 'Ajuste'}</option>
+        <option value="transfer"${f.source === 'transfer' ? ' selected' : ''}>${t('inv_source_transfer') || 'Transferencia'}</option>
+        <option value="reservation"${f.source === 'reservation' ? ' selected' : ''}>${t('inv_source_reservation') || 'Reserva'}</option>
+      </select>
+      ${locs.length ? `<select data-filter="locationId">
+        <option value="">${t('all_locations') || 'Todas las ubicaciones'}</option>
+        ${locs.map(l => '<option value="' + escapeAttr(l.id) + '"' + (f.locationId === l.id ? ' selected' : '') + '>' + sanitizeHTML(l.name) + '</option>').join('')}
+      </select>` : ''}
+      <input type="date" data-filter="from" value="${escapeAttr(f.from)}" title="${t('from') || 'Desde'}">
+      <input type="date" data-filter="to" value="${escapeAttr(f.to)}" title="${t('to') || 'Hasta'}">
+    </div>`;
 
-    if (!pg.items.length) {
-      h += `<tr><td colspan="8" style="text-align:center;color:var(--text-light)">${t('no_data')}</td></tr>`;
+    if (!items.length) {
+      h += `<div class="empty-state"><p>${t('inv_no_records') || 'No hay registros de inventario.'}</p></div>`;
+      return h;
     }
 
-    pg.items.forEach(r => {
-      const fl = D.flocks.find(x => x.id === r.flockId);
+    h += '<div class="table-wrap"><table><thead><tr>';
+    h += `<th>${t('date')}</th><th>${t('prod_flock') || 'Lote'}</th><th>${t('fin_egg_type') || 'Tipo'}</th>`;
+    h += `<th>${t('inv_in') || 'Entrada'}</th><th>${t('inv_out') || 'Salida'}</th>`;
+    h += `<th>${t('inv_source') || 'Origen'}</th>`;
+    if (locs.length) h += `<th>${t('inv_location') || 'Ubicación'}</th>`;
+    h += `<th>${t('inv_adjust_notes') || 'Notas'}</th></tr></thead><tbody>`;
+
+    items.forEach(r => {
+      const flock = D.flocks.find(f => f.id === r.flockId);
       const loc = locs.find(l => l.id === r.locationId);
-      const isAdj = r.source === 'adjustment';
-      const srcLabel = isAdj ? '\u2696\uFE0F ' + (t('inv_adjustment') || 'Ajuste')
-        : r.source === 'sale' ? '\uD83D\uDCB0 ' + (t('fin_sales') || 'Venta')
-        : '\uD83E\uDD5A ' + (t('production') || 'Producción');
-      const reason = r.reason ? (' — ' + this._reasonLabel(r.reason)) : '';
-      const notes = r.notes ? sanitizeHTML(r.notes) : '';
-      h += `<tr${isAdj ? ' style="background:rgba(255,152,0,.06)"' : ''}>
+      h += `<tr>
         <td>${fmtDate(r.date)}</td>
-        <td>${fl ? sanitizeHTML(fl.name) : '-'}</td>
+        <td>${flock ? sanitizeHTML(flock.name) : '-'}</td>
         <td>${r.eggType || '-'}</td>
-        <td style="color:var(--success)">${r.qtyIn ? '+' + fmtNum(r.qtyIn) : '-'}</td>
-        <td style="color:var(--danger)">${r.qtyOut ? '-' + fmtNum(r.qtyOut) : '-'}</td>
-        <td>${loc ? sanitizeHTML(loc.name) : '-'}</td>
-        <td><span class="source-badge ${r.source || 'production'}">${srcLabel}</span></td>
-        <td style="font-size:12px;color:var(--text-light)">${reason}${reason && notes ? ' ' : ''}${notes}</td>
+        <td style="color:var(--success);font-weight:${r.qtyIn ? '700' : '400'}">${r.qtyIn ? '+' + fmtNum(r.qtyIn) : '-'}</td>
+        <td style="color:var(--danger);font-weight:${r.qtyOut ? '700' : '400'}">${r.qtyOut ? '-' + fmtNum(r.qtyOut) : '-'}</td>
+        <td><span class="source-badge ${r.source || 'production'}">${this._reasonLabel(r.source || 'production')}</span></td>
+        ${locs.length ? `<td>${loc ? sanitizeHTML(loc.name) : '-'}</td>` : ''}
+        <td>${r.notes ? sanitizeHTML(r.notes) : ''}</td>
       </tr>`;
     });
+    h += '</tbody></table></div>';
 
-    h += '</tbody></table></div></div>';
-
-    if (pg.totalPages > 1) {
+    // Pagination
+    if (totalPages > 1) {
       h += '<div class="dt-pagination">';
-      h += `<span>${t('page') || 'Page'} ${pg.page} / ${pg.totalPages}</span>`;
+      h += `<span>${t('page') || 'Página'} ${page} / ${totalPages}</span>`;
       h += '<div class="dt-page-buttons">';
-      if (pg.page > 1) h += `<button class="btn btn-sm btn-secondary" data-page="${pg.page - 1}">&laquo; ${t('prev') || 'Prev'}</button>`;
-      if (pg.page < pg.totalPages) h += `<button class="btn btn-sm btn-secondary" data-page="${pg.page + 1}">${t('next') || 'Next'} &raquo;</button>`;
+      if (page > 1) h += `<button class="btn btn-sm" data-page="${page - 1}">\u25C0</button>`;
+      if (page < totalPages) h += `<button class="btn btn-sm" data-page="${page + 1}">\u25B6</button>`;
       h += '</div></div>';
     }
 
@@ -497,312 +258,17 @@ class EggInventory extends HTMLElement {
 
   _reasonLabel(reason) {
     const map = {
+      production: t('inv_source_production') || 'Producción',
+      sale: t('inv_source_sale') || 'Venta',
+      adjustment: t('inv_source_adjustment') || 'Ajuste',
+      transfer: t('inv_source_transfer') || 'Transferencia',
+      reservation: t('inv_source_reservation') || 'Reserva',
       breakage: t('inv_adjust_reason_breakage') || 'Rotura',
       count: t('inv_adjust_reason_count') || 'Error de conteo',
       expired: t('inv_adjust_reason_expired') || 'Vencidos',
       other: t('inv_adjust_reason_other') || 'Otro'
     };
     return map[reason] || reason;
-  }
-
-  // ─────────────── LOCATION FORM ───────────────
-  _showLocationForm(locId) {
-    const D = Store.get();
-    const loc = locId ? (D.storageLocations || []).find(l => l.id === locId) : null;
-    const title = '\uD83C\uDFED ' + (loc ? (t('inv_edit_location') || 'Editar Ubicación') : (t('inv_add_location') || 'Nueva Ubicación'));
-    const body = `
-      <input type="hidden" id="loc-id" value="${loc ? escapeAttr(loc.id) : ''}">
-      <div class="form-row">
-        <div class="form-group">
-          <label>${t('inv_loc_name') || 'Nombre'} *</label>
-          <input type="text" id="loc-name" value="${loc ? escapeAttr(loc.name) : ''}" placeholder="${t('inv_loc_name_ph') || 'Ej: Galpón A - Rack 3'}">
-        </div>
-        <div class="form-group">
-          <label>${t('inv_loc_zone') || 'Zona'}</label>
-          <select id="loc-zone">
-            <option value="warehouse"${loc?.zone === 'warehouse' ? ' selected' : ''}>${t('inv_zone_warehouse') || 'Bodega'}</option>
-            <option value="house"${loc?.zone === 'house' ? ' selected' : ''}>${t('inv_zone_house') || 'Galpón'}</option>
-            <option value="rack"${loc?.zone === 'rack' ? ' selected' : ''}>${t('inv_zone_rack') || 'Rack'}</option>
-            <option value="cooler"${loc?.zone === 'cooler' ? ' selected' : ''}>${t('inv_zone_cooler') || 'Cámara Fría'}</option>
-            <option value="dispatch"${loc?.zone === 'dispatch' ? ' selected' : ''}>${t('inv_zone_dispatch') || 'Despacho'}</option>
-            <option value="other"${loc?.zone === 'other' ? ' selected' : ''}>${t('inv_adjust_reason_other') || 'Otro'}</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>${t('inv_loc_capacity') || 'Capacidad (unidades)'}</label>
-          <input type="number" id="loc-capacity" min="0" step="1" value="${loc?.capacity || ''}" placeholder="0 = ${t('inv_unlimited') || 'sin límite'}">
-        </div>
-        <div class="form-group">
-          <label>${t('inv_loc_code') || 'Código'}</label>
-          <input type="text" id="loc-code" value="${loc?.code || ''}" placeholder="${t('inv_loc_code_ph') || 'Ej: GA-R3'}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>${t('description') || 'Descripción'}</label>
-        <textarea id="loc-desc" rows="2" placeholder="${t('optional') || 'Opcional'}">${loc?.description || ''}</textarea>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-action="cancel">${t('cancel')}</button>
-        <button class="btn btn-primary" data-action="save-location">${t('save')}</button>
-      </div>`;
-    Bus.emit('modal:open', { title, body });
-  }
-
-  _saveLocation() {
-    clearFieldErrors();
-    const id = modalVal('loc-id');
-    const name = (modalVal('loc-name') || '').trim();
-    const zone = modalVal('loc-zone') || 'warehouse';
-    const capacity = parseInt(modalVal('loc-capacity'), 10) || 0;
-    const code = (modalVal('loc-code') || '').trim();
-    const description = (modalVal('loc-desc') || '').trim();
-
-    const v = validateForm({
-      'loc-name': { value: name, rules: { required: true } }
-    });
-    if (!v.valid) {
-      Object.entries(v.errors).forEach(([k, e]) => showFieldError(k, e[0]));
-      return;
-    }
-
-    const D = Store.get();
-    if (!D.storageLocations) D.storageLocations = [];
-
-    if (id) {
-      const loc = D.storageLocations.find(l => l.id === id);
-      if (loc) {
-        Object.assign(loc, { name, zone, capacity, code, description });
-        logAudit('update', 'storageLocation', `Updated location: ${name}`, id, loc);
-      }
-    } else {
-      const loc = { id: genId(), name, zone, capacity, code, description, createdDate: todayStr() };
-      D.storageLocations.push(loc);
-      logAudit('create', 'storageLocation', `Created location: ${name}`, loc.id, loc);
-    }
-
-    Store.save(D);
-    Bus.emit('modal:close');
-    Bus.emit('toast', { msg: t('cfg_saved') || 'Guardado' });
-    this.render();
-  }
-
-  _deleteLocation(locId) {
-    const D = Store.get();
-    const idx = (D.storageLocations || []).findIndex(l => l.id === locId);
-    if (idx < 0) return;
-    const loc = D.storageLocations[idx];
-    // Check if location has stock
-    const stock = D.inventory.filter(r => r.locationId === locId).reduce((s, r) => s + (r.qtyIn || 0) - (r.qtyOut || 0), 0);
-    if (stock > 0) {
-      Bus.emit('toast', { msg: (t('inv_loc_has_stock') || 'No se puede eliminar: la ubicación tiene stock.'), error: true });
-      return;
-    }
-    D.storageLocations.splice(idx, 1);
-    logAudit('delete', 'storageLocation', `Deleted location: ${loc.name}`, locId);
-    Store.save(D);
-    Bus.emit('toast', { msg: t('deleted') || 'Eliminado' });
-    this.render();
-  }
-
-  // ─────────────── MOVE STOCK FORM ───────────────
-  _showMoveStockForm(fromLocId) {
-    const D = Store.get();
-    const locs = D.storageLocations || [];
-    const fromLoc = locs.find(l => l.id === fromLocId);
-    const otherLocs = locs.filter(l => l.id !== fromLocId);
-    if (!otherLocs.length) {
-      Bus.emit('toast', { msg: t('inv_need_more_locations') || 'Necesitas al menos 2 ubicaciones para mover stock.', error: true });
-      return;
-    }
-    const title = '\u21C4 ' + (t('inv_move_stock') || 'Mover Stock');
-    const body = `
-      <p style="color:var(--text-light);font-size:13px;margin-bottom:12px">${t('inv_move_from') || 'Desde'}: <strong>${fromLoc ? sanitizeHTML(fromLoc.name) : '-'}</strong></p>
-      <input type="hidden" id="move-from" value="${escapeAttr(fromLocId)}">
-      <div class="form-row">
-        <div class="form-group">
-          <label>${t('inv_move_to') || 'Hacia'} *</label>
-          <select id="move-to">
-            ${otherLocs.map(l => '<option value="' + escapeAttr(l.id) + '">' + sanitizeHTML(l.name) + '</option>').join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label>${t('fin_egg_type') || 'Tipo de Huevo'}</label>
-          <select id="move-type">
-            ${EGG_TYPES.map(tp => '<option value="' + tp + '">' + tp + '</option>').join('')}
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>${t('qty') || 'Cantidad'} *</label>
-        <input type="number" id="move-qty" min="1" step="1" placeholder="0">
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-action="cancel">${t('cancel')}</button>
-        <button class="btn btn-primary" data-action="save-move-stock">${t('save')}</button>
-      </div>`;
-    Bus.emit('modal:open', { title, body });
-  }
-
-  _saveMoveStock() {
-    clearFieldErrors();
-    const fromId = modalVal('move-from');
-    const toId = modalVal('move-to');
-    const eggType = modalVal('move-type');
-    const qty = parseInt(modalVal('move-qty'), 10) || 0;
-
-    const v = validateForm({
-      'move-to': { value: toId, rules: { required: true } },
-      'move-qty': { value: modalVal('move-qty'), rules: { required: true, numeric: true, min: 1 } }
-    });
-    if (!v.valid) {
-      Object.entries(v.errors).forEach(([k, e]) => showFieldError(k, e[0]));
-      return;
-    }
-
-    const D = Store.get();
-    const date = todayStr();
-
-    // Out from source location
-    D.inventory.push({
-      id: genId(), date, flockId: '', eggType, qtyIn: 0, qtyOut: qty,
-      source: 'transfer', locationId: fromId, notes: 'Transfer out → ' + toId
-    });
-    // In to target location
-    D.inventory.push({
-      id: genId(), date, flockId: '', eggType, qtyIn: qty, qtyOut: 0,
-      source: 'transfer', locationId: toId, notes: 'Transfer in ← ' + fromId
-    });
-
-    logAudit('transfer', 'inventory', `Moved ${qty} ${eggType} from ${fromId} to ${toId}`);
-    Store.save(D);
-    Bus.emit('modal:close');
-    Bus.emit('toast', { msg: t('inv_moved') || 'Stock movido' });
-    this.render();
-  }
-
-  // ─────────────── RESERVATION FORM ───────────────
-  _showReservationForm() {
-    const D = Store.get();
-    const locs = D.storageLocations || [];
-    const title = '\uD83D\uDD12 ' + (t('inv_reserve') || 'Reservar Stock');
-    const body = `
-      <div class="form-row">
-        <div class="form-group">
-          <label>${t('cli_name') || 'Cliente'} *</label>
-          <select id="res-client">
-            <option value="">-- ${t('select') || 'Seleccionar'} --</option>
-            ${D.clients.map(c => '<option value="' + escapeAttr(c.id) + '">' + sanitizeHTML(c.name) + '</option>').join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label>${t('date')}</label>
-          <input type="date" id="res-date" value="${todayStr()}">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>${t('fin_egg_type') || 'Tipo de Huevo'}</label>
-          <select id="res-type">
-            <option value="">-- ${t('all') || 'Cualquiera'} --</option>
-            ${EGG_TYPES.map(tp => '<option value="' + tp + '">' + tp + '</option>').join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label>${t('qty') || 'Cantidad'} *</label>
-          <input type="number" id="res-qty" min="1" step="1" placeholder="0">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>${t('inv_location') || 'Ubicación'}</label>
-          <select id="res-location">
-            <option value="">-- ${t('inv_any_location') || 'Cualquier ubicación'} --</option>
-            ${locs.map(l => '<option value="' + escapeAttr(l.id) + '">' + sanitizeHTML(l.name) + '</option>').join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label>${t('inv_due_date') || 'Fecha Entrega'}</label>
-          <input type="date" id="res-due">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>${t('inv_adjust_notes') || 'Notas'}</label>
-        <textarea id="res-notes" rows="2" placeholder="${t('optional') || 'Opcional'}"></textarea>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-action="cancel">${t('cancel')}</button>
-        <button class="btn btn-primary" data-action="save-reservation">${t('save')}</button>
-      </div>`;
-    Bus.emit('modal:open', { title, body });
-  }
-
-  _saveReservation() {
-    clearFieldErrors();
-    const clientId = modalVal('res-client');
-    const date = modalVal('res-date') || todayStr();
-    const eggType = modalVal('res-type') || '';
-    const qty = parseInt(modalVal('res-qty'), 10) || 0;
-    const locationId = modalVal('res-location') || '';
-    const dueDate = modalVal('res-due') || '';
-    const notes = (modalVal('res-notes') || '').trim();
-
-    const v = validateForm({
-      'res-client': { value: clientId, rules: { required: true } },
-      'res-qty': { value: modalVal('res-qty'), rules: { required: true, numeric: true, min: 1 } }
-    });
-    if (!v.valid) {
-      Object.entries(v.errors).forEach(([k, e]) => showFieldError(k, e[0]));
-      return;
-    }
-
-    const D = Store.get();
-    if (!D.reservations) D.reservations = [];
-
-    const reservation = {
-      id: genId(), date, clientId, eggType, qty,
-      locationId, dueDate, notes, status: 'active',
-      resolvedDate: ''
-    };
-    D.reservations.push(reservation);
-    logAudit('create', 'reservation', `Reserved ${qty} eggs for client ${clientId}`, reservation.id, reservation);
-    Store.save(D);
-    Bus.emit('modal:close');
-    Bus.emit('toast', { msg: t('inv_reserved_saved') || 'Reserva creada' });
-    this.render();
-  }
-
-  _fulfillReservation(resId) {
-    const D = Store.get();
-    const res = (D.reservations || []).find(r => r.id === resId);
-    if (!res) return;
-    res.status = 'fulfilled';
-    res.resolvedDate = todayStr();
-
-    // Create outgoing inventory record for the fulfilled reservation
-    D.inventory.push({
-      id: genId(), date: todayStr(), flockId: '', eggType: res.eggType || '',
-      qtyIn: 0, qtyOut: res.qty, source: 'reservation',
-      locationId: res.locationId || '', notes: 'Reservation fulfilled: ' + (res.notes || resId)
-    });
-
-    logAudit('fulfill', 'reservation', `Fulfilled reservation of ${res.qty} eggs`, resId);
-    Store.save(D);
-    Bus.emit('toast', { msg: t('inv_fulfilled') || 'Reserva cumplida' });
-    this.render();
-  }
-
-  _cancelReservation(resId) {
-    const D = Store.get();
-    const res = (D.reservations || []).find(r => r.id === resId);
-    if (!res) return;
-    res.status = 'cancelled';
-    res.resolvedDate = todayStr();
-    logAudit('cancel', 'reservation', `Cancelled reservation of ${res.qty} eggs`, resId);
-    Store.save(D);
-    Bus.emit('toast', { msg: t('inv_cancelled') || 'Reserva cancelada' });
-    this.render();
   }
 
   // ─────────────── ADJUSTMENT FORM ───────────────
@@ -928,13 +394,8 @@ class EggInventory extends HTMLElement {
         const action = btn.dataset.action;
         switch (action) {
           case 'add-adjustment': this._showAdjustmentForm(); return;
-          case 'add-location': this._showLocationForm(); return;
-          case 'edit-location': this._showLocationForm(btn.dataset.loc); return;
-          case 'delete-location': this._deleteLocation(btn.dataset.loc); return;
-          case 'move-stock': this._showMoveStockForm(btn.dataset.loc); return;
-          case 'add-reservation': this._showReservationForm(); return;
-          case 'fulfill-reservation': this._fulfillReservation(btn.dataset.id); return;
-          case 'cancel-reservation': this._cancelReservation(btn.dataset.id); return;
+          case 'add-location': Bus.emit('nav:inv-location-add'); return;
+          case 'add-reservation': Bus.emit('nav:inv-reservation-add'); return;
         }
       }
       // Tabs
@@ -1048,34 +509,6 @@ class EggInventory extends HTMLElement {
       .source-badge.sale { background: rgba(21,101,192,.1); color: #1565C0; }
       .source-badge.transfer { background: rgba(156,39,176,.1); color: #7B1FA2; }
       .source-badge.reservation { background: rgba(255,87,34,.1); color: #D84315; }
-      .source-badge.fulfilled { background: rgba(46,125,50,.1); color: #2E7D32; }
-      .source-badge.cancelled { background: rgba(198,40,40,.1); color: #C62828; }
-
-      /* Location grid */
-      .loc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-      .loc-card {
-        background: var(--bg, #fff); border-radius: var(--radius, 8px);
-        padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.1);
-        border-left: 4px solid var(--primary, #1565C0);
-      }
-      .loc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
-      .loc-header strong { font-size: 15px; color: var(--text, #212121); }
-      .loc-actions { display: flex; gap: 4px; flex-shrink: 0; }
-      .loc-zone-badge {
-        display: inline-block; padding: 1px 6px; border-radius: 4px;
-        font-size: 10px; font-weight: 700; text-transform: uppercase;
-        background: var(--primary-fill, rgba(21,101,192,.1)); color: var(--primary, #1565C0);
-        margin-right: 6px; vertical-align: middle;
-      }
-      .loc-desc { font-size: 12px; color: var(--text-light); margin: 0 0 8px; }
-      .loc-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
-      .loc-stat { display: flex; flex-direction: column; }
-      .loc-stat-label { font-size: 11px; color: var(--text-light); }
-      .loc-stat-val { font-size: 18px; font-weight: 700; color: var(--text); }
-      .loc-bar-bg { height: 8px; background: var(--bg-secondary, #eee); border-radius: 4px; overflow: hidden; margin-bottom: 4px; }
-      .loc-bar { height: 100%; border-radius: 4px; transition: width .3s; }
-      .loc-pct { font-size: 11px; color: var(--text-light); }
-      .loc-types { font-size: 12px; color: var(--text-light); margin: 6px 0 0; }
 
       /* Empty state */
       .empty-state { text-align: center; padding: 24px; color: var(--text-light); }
@@ -1108,7 +541,6 @@ class EggInventory extends HTMLElement {
         .charts-row { grid-template-columns: 1fr; }
         .filter-bar { flex-direction: column; }
         .filter-bar select, .filter-bar input { width: 100%; }
-        .loc-grid { grid-template-columns: 1fr; }
         .tabs { overflow-x: auto; }
       }
       @media (max-width: 600px) {

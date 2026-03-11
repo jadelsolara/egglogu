@@ -7,12 +7,12 @@
 import { Store } from '../core/store.js';
 import { Bus } from '../core/bus.js';
 import { t } from '../core/i18n.js';
-import { sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId, validateForm, emptyState } from '../core/utils.js';
+import { sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId, validateForm, emptyState, voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 import { DataTable } from '../core/datatable.js';
 import { VENG } from '../core/veng.js';
 import { kpi, flockSelect, supplierSelect, handleSupplierChange, resolveSupplier, feedTypeSelect, showFieldError, clearFieldErrors, logAudit } from '../core/helpers.js';
 import { modalVal, getModalBody } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showConfirm, showVoidDialog } from './egg-confirm.js';
 
 /* ── Auto-sync feed purchase → finance expense ────────── */
 function _syncFeedExpense(D, purchaseId, purchase) {
@@ -134,7 +134,7 @@ class EggFeed extends HTMLElement {
   _renderPurchases(D) {
     return DataTable.create({
       id: 'feedPurchases',
-      data: D.feed.purchases,
+      data: activeOnly(D.feed.purchases),
       onRefresh: () => this.render(),
       emptyIcon: '\uD83D\uDCE6',
       emptyText: t('no_data'),
@@ -157,12 +157,16 @@ class EggFeed extends HTMLElement {
       bulkActions: [{
         label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
         action: async (ids) => {
-          if (!await showConfirm(t('confirm_delete'))) return;
+          const reason = await showVoidDialog(t('confirm_delete'));
+          if (!reason) return;
           const D = Store.get();
-          D.feed.purchases = D.feed.purchases.filter(p => !ids.includes(p.id));
-          // Auto-remove linked finance expenses
+          voidRecords(D.feed.purchases, ids, reason);
+          // Also void linked finance expenses
           if (D.finances && D.finances.expenses) {
-            D.finances.expenses = D.finances.expenses.filter(e => !ids.includes(e.feedPurchaseId));
+            ids.forEach(pid => {
+              const linked = D.finances.expenses.find(e => e.feedPurchaseId === pid);
+              if (linked) voidRecord(D.finances.expenses, linked.id, reason);
+            });
           }
           Store.save(D);
           this.render();
@@ -175,7 +179,7 @@ class EggFeed extends HTMLElement {
   _renderConsumption(D) {
     return DataTable.create({
       id: 'feedConsumption',
-      data: D.feed.consumption,
+      data: activeOnly(D.feed.consumption),
       onRefresh: () => this.render(),
       emptyIcon: '\uD83C\uDF7D\uFE0F',
       emptyText: t('no_data'),
@@ -194,9 +198,10 @@ class EggFeed extends HTMLElement {
       bulkActions: [{
         label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
         action: async (ids) => {
-          if (!await showConfirm(t('confirm_delete'))) return;
+          const reason = await showVoidDialog(t('confirm_delete'));
+          if (!reason) return;
           const D = Store.get();
-          D.feed.consumption = D.feed.consumption.filter(c => !ids.includes(c.id));
+          voidRecords(D.feed.consumption, ids, reason);
           Store.save(D);
           this.render();
         }
@@ -337,16 +342,18 @@ class EggFeed extends HTMLElement {
     this.render();
   }
 
-  /* ── Delete Purchase ─────────────────────────────────── */
+  /* ── Void Purchase (ERP — never delete) ──────────────── */
   async _deleteFeedPurchase(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.feed.purchases = D.feed.purchases.filter(p => p.id !== id);
-    // ── Auto-remove linked finance expense ──
+    voidRecord(D.feed.purchases, id, reason);
+    // ── Also void linked finance expense ──
     if (D.finances && D.finances.expenses) {
-      D.finances.expenses = D.finances.expenses.filter(e => e.feedPurchaseId !== id);
+      const linked = D.finances.expenses.find(e => e.feedPurchaseId === id);
+      if (linked) voidRecord(D.finances.expenses, linked.id, reason);
     }
-    logAudit('delete', 'feed', 'Delete purchase', id, null);
+    logAudit('void', 'feed', 'Void purchase: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
@@ -425,12 +432,13 @@ class EggFeed extends HTMLElement {
     this.render();
   }
 
-  /* ── Delete Consumption ──────────────────────────────── */
+  /* ── Void Consumption (ERP — never delete) ───────────── */
   async _deleteFeedCons(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    D.feed.consumption = D.feed.consumption.filter(c => c.id !== id);
-    logAudit('delete', 'feed', 'Delete consumption', id, null);
+    voidRecord(D.feed.consumption, id, reason);
+    logAudit('void', 'feed', 'Void consumption: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();

@@ -4,7 +4,8 @@
 import { Store, Bus, t, sanitizeHTML, escapeAttr, fmtNum, fmtDate, todayStr, genId, validateForm, emptyState, DataTable, CATALOGS, VENG, flockSelect, catalogSelect, statusBadge, showFieldError, clearFieldErrors, logAudit } from '../core/index.js';
 import { COMMERCIAL_BREEDS } from '../core/catalogs.js';
 import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
-import { showConfirm } from './egg-confirm.js';
+import { showConfirm, showVoidDialog } from './egg-confirm.js';
+import { voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 
 // ─── Local helper: VENG validation panel inside modal ───
 function showVengPanel(errors, warnings) {
@@ -102,7 +103,7 @@ class EggProduction extends HTMLElement {
 
     h += DataTable.create({
       id: 'production',
-      data: D.dailyProduction,
+      data: activeOnly(D.dailyProduction),
       emptyIcon: '\uD83E\uDD5A',
       emptyText: t('no_data'),
       columns: [
@@ -595,27 +596,25 @@ class EggProduction extends HTMLElement {
     this.render();
   }
 
-  // ─────────────── DELETE ───────────────
+  // ─────────────── VOID (soft-delete) ───────────────
   async _deleteProd(id) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    const old = D.dailyProduction.find(p => p.id === id);
-    logAudit('delete', 'production', 'Delete production', old, null);
-    D.dailyProduction = D.dailyProduction.filter(p => p.id !== id);
+    voidRecord(D.dailyProduction, id, reason);
+    logAudit('void', 'production', 'Void production: ' + reason, id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 
-  // ─────────────── BULK DELETE ───────────────
+  // ─────────────── BULK VOID (soft-delete) ───────────────
   async _bulkDelete(ids) {
-    if (!await showConfirm(t('confirm_delete'))) return;
+    const reason = await showVoidDialog(t('confirm_delete'));
+    if (!reason) return;
     const D = Store.get();
-    ids.forEach(id => {
-      const old = D.dailyProduction.find(p => p.id === id);
-      if (old) logAudit('delete', 'production', 'Bulk delete', old, null);
-      D.dailyProduction = D.dailyProduction.filter(p => p.id !== id);
-    });
+    voidRecords(D.dailyProduction, ids, reason);
+    ids.forEach(id => logAudit('void', 'production', 'Bulk void: ' + reason, id, null));
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
     DataTable.reset('production');
