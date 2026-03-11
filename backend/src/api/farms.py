@@ -1,15 +1,14 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.farm import Farm
 from src.schemas.farm import FarmCreate, FarmRead, FarmReadPublic, FarmUpdate
+from src.services.tenant_service import TenantService
 
 router = APIRouter(prefix="/farms", tags=["farms"])
 
@@ -22,8 +21,7 @@ async def list_farms(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(Farm)
-        .where(Farm.organization_id == user.organization_id)
+        TenantService.scoped_query(Farm, user.organization_id)
         .order_by(Farm.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -38,15 +36,9 @@ async def get_farm(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Farm).where(
-            Farm.id == farm_id, Farm.organization_id == user.organization_id
-        )
+    return await TenantService.get_one(
+        db, Farm, farm_id, user.organization_id, error_msg="Farm not found"
     )
-    farm = result.scalar_one_or_none()
-    if not farm:
-        raise NotFoundError("Farm not found")
-    return farm
 
 
 @router.post("/", response_model=FarmRead, status_code=status.HTTP_201_CREATED)
@@ -68,17 +60,10 @@ async def update_farm(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Farm).where(
-            Farm.id == farm_id, Farm.organization_id == user.organization_id
-        )
+    farm = await TenantService.update_fields(
+        db, Farm, farm_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Farm not found",
     )
-    farm = result.scalar_one_or_none()
-    if not farm:
-        raise NotFoundError("Farm not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(farm, key, value)
-    await db.flush()
     await db.refresh(farm)
     return farm
 
@@ -89,12 +74,7 @@ async def delete_farm(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Farm).where(
-            Farm.id == farm_id, Farm.organization_id == user.organization_id
-        )
+    farm = await TenantService.get_one(
+        db, Farm, farm_id, user.organization_id, error_msg="Farm not found"
     )
-    farm = result.scalar_one_or_none()
-    if not farm:
-        raise NotFoundError("Farm not found")
     await db.delete(farm)

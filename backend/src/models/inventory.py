@@ -7,7 +7,7 @@ from sqlalchemy import String, Float, Integer, Date, Enum, ForeignKey, Text, Boo
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
-from src.models.base import TimestampMixin, TenantMixin
+from src.models.base import TimestampMixin, SoftDeleteMixin, TenantMixin
 
 
 class StockMovementType(str, enum.Enum):
@@ -28,7 +28,7 @@ class PackagingType(str, enum.Enum):
     pallet = "pallet"
 
 
-class WarehouseLocation(TimestampMixin, TenantMixin, Base):
+class WarehouseLocation(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
     __tablename__ = "warehouse_locations"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -95,7 +95,7 @@ class StockMovement(TimestampMixin, TenantMixin, Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
 
-class PackagingMaterial(TimestampMixin, TenantMixin, Base):
+class PackagingMaterial(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
     __tablename__ = "packaging_materials"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

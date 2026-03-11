@@ -2,7 +2,7 @@ import uuid
 from datetime import date, time, datetime
 from typing import Optional
 
-from sqlalchemy import String, Float, Date, Time, DateTime, Text, JSON
+from sqlalchemy import Index, String, Float, Date, Time, DateTime, Text, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
@@ -13,7 +13,7 @@ class EnvironmentReading(TimestampMixin, TenantMixin, Base):
     __tablename__ = "environment_readings"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    date: Mapped[date] = mapped_column(Date)
+    date: Mapped[date] = mapped_column(Date, index=True)
     time: Mapped[Optional[time]] = mapped_column(Time, default=None)
     temp_c: Mapped[Optional[float]] = mapped_column(Float, default=None)
     humidity_pct: Mapped[Optional[float]] = mapped_column(Float, default=None)
@@ -23,22 +23,30 @@ class EnvironmentReading(TimestampMixin, TenantMixin, Base):
     heat_stress_idx: Mapped[Optional[float]] = mapped_column(Float, default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
+    __table_args__ = (
+        Index("ix_env_reading_org_date", "organization_id", "date"),
+    )
+
 
 class IoTReading(TimestampMixin, TenantMixin, Base):
     __tablename__ = "iot_readings"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    sensor_type: Mapped[str] = mapped_column(String(100))
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    sensor_type: Mapped[str] = mapped_column(String(100), index=True)
     value: Mapped[float] = mapped_column(Float)
     unit: Mapped[str] = mapped_column(String(50))
+
+    __table_args__ = (
+        Index("ix_iot_org_sensor_ts", "organization_id", "sensor_type", "timestamp"),
+    )
 
 
 class WeatherCache(TimestampMixin, TenantMixin, Base):
     __tablename__ = "weather_cache"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
     temp_c: Mapped[Optional[float]] = mapped_column(Float, default=None)
     humidity: Mapped[Optional[float]] = mapped_column(Float, default=None)
     wind_speed: Mapped[Optional[float]] = mapped_column(Float, default=None)

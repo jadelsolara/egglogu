@@ -53,7 +53,8 @@ async def get_economics(
     # Global weighted avg feed price: SUM(total_cost) / SUM(kg)
     feed_price_result = await db.execute(
         select(func.sum(FeedPurchase.total_cost), func.sum(FeedPurchase.kg)).where(
-            FeedPurchase.organization_id == org_id
+            FeedPurchase.organization_id == org_id,
+            FeedPurchase.deleted_at.is_(None),
         )
     )
     row = feed_price_result.one()

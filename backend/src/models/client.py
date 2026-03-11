@@ -5,10 +5,10 @@ from sqlalchemy import String, Float, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
-from src.models.base import TimestampMixin, TenantMixin
+from src.models.base import TimestampMixin, SoftDeleteMixin, TenantMixin
 
 
-class Client(TimestampMixin, TenantMixin, Base):
+class Client(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
     __tablename__ = "clients"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

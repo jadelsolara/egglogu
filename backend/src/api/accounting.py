@@ -58,62 +58,14 @@ from src.schemas.accounting import (
     TrialBalanceRow,
 )
 
+from src.services.accounting_service import AccountingService
+
 router = APIRouter(prefix="/gl", tags=["accounting"])
 
+# ── Helpers (delegated to AccountingService) ─────────────────────────────
 
-# ── Helpers ──────────────────────────────────────────────────────────────
-
-async def _next_entry_number(db: AsyncSession, org_id: uuid.UUID) -> str:
-    """Generate sequential entry number: JE-000001, JE-000002, ..."""
-    result = await db.execute(
-        select(func.count(JournalEntry.id)).where(
-            JournalEntry.organization_id == org_id
-        )
-    )
-    count = result.scalar() or 0
-    return f"JE-{count + 1:06d}"
-
-
-async def _update_account_balances(
-    db: AsyncSession, entry: JournalEntry, org_id: uuid.UUID
-):
-    """Update materialized AccountBalance rows when an entry is posted."""
-    if not entry.period_id:
-        return
-
-    for line in entry.lines:
-        result = await db.execute(
-            select(AccountBalance).where(
-                AccountBalance.organization_id == org_id,
-                AccountBalance.account_id == line.account_id,
-                AccountBalance.period_id == entry.period_id,
-            )
-        )
-        balance = result.scalar_one_or_none()
-
-        if not balance:
-            balance = AccountBalance(
-                organization_id=org_id,
-                account_id=line.account_id,
-                period_id=entry.period_id,
-                debit_total=Decimal("0.00"),
-                credit_total=Decimal("0.00"),
-                balance=Decimal("0.00"),
-            )
-            db.add(balance)
-
-        balance.debit_total += line.debit
-        balance.credit_total += line.credit
-
-        # Get normal balance side to compute signed balance
-        acct_result = await db.execute(
-            select(Account.normal_balance).where(Account.id == line.account_id)
-        )
-        normal = acct_result.scalar_one()
-        if normal == NormalBalance.DEBIT:
-            balance.balance = balance.debit_total - balance.credit_total
-        else:
-            balance.balance = balance.credit_total - balance.debit_total
+_next_entry_number = AccountingService.next_entry_number
+_update_account_balances = AccountingService.update_account_balances
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -383,31 +335,10 @@ async def post_journal_entry(
     entry = result.scalar_one_or_none()
     if not entry:
         raise NotFoundError("Journal entry not found")
-    if entry.status != JournalEntryStatus.DRAFT:
-        raise HTTPException(status_code=400, detail="Only draft entries can be posted")
 
-    # Validate period is open
-    if entry.period_id:
-        period_result = await db.execute(
-            select(FiscalPeriod).where(FiscalPeriod.id == entry.period_id)
-        )
-        period = period_result.scalar_one_or_none()
-        if period and period.status != PeriodStatus.OPEN:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Cannot post to {period.status.value} period"
-            )
-
-    entry.status = JournalEntryStatus.POSTED
-    entry.posted_at = datetime.utcnow()
-    entry.posted_by = user.id
-
-    # Update materialized balances
-    await _update_account_balances(db, entry, user.organization_id)
-
-    await db.flush()
-    await invalidate_prefix(f"gl:{user.organization_id}")
-    return entry
+    return await AccountingService.post_entry(
+        db, entry, user.id, user.organization_id
+    )
 
 
 @router.post("/journal-entries/{entry_id}/reverse", response_model=JournalEntryRead)
@@ -429,62 +360,10 @@ async def reverse_journal_entry(
     original = result.scalar_one_or_none()
     if not original:
         raise NotFoundError("Journal entry not found")
-    if original.status != JournalEntryStatus.POSTED:
-        raise HTTPException(status_code=400, detail="Only posted entries can be reversed")
 
-    # Create reversal entry
-    rev_number = await _next_entry_number(db, user.organization_id)
-    description = body.description or f"Reversal of {original.entry_number}"
-
-    reversal = JournalEntry(
-        organization_id=user.organization_id,
-        entry_number=rev_number,
-        date=date.today(),
-        description=description,
-        memo=f"Auto-reversal of {original.entry_number}",
-        source=original.source,
-        source_id=original.source_id,
-        period_id=original.period_id,
-        total_debit=original.total_credit,  # flipped
-        total_credit=original.total_debit,  # flipped
-        status=JournalEntryStatus.POSTED,
-        posted_at=datetime.utcnow(),
-        posted_by=user.id,
+    return await AccountingService.reverse_entry(
+        db, original, user.id, user.organization_id, body.description
     )
-    db.add(reversal)
-    await db.flush()
-
-    # Create reversed lines (debit ↔ credit)
-    for orig_line in original.lines:
-        rev_line = JournalEntryLine(
-            organization_id=user.organization_id,
-            journal_entry_id=reversal.id,
-            account_id=orig_line.account_id,
-            description=f"Rev: {orig_line.description or ''}",
-            debit=orig_line.credit,  # flipped
-            credit=orig_line.debit,  # flipped
-            cost_center_id=orig_line.cost_center_id,
-        )
-        db.add(rev_line)
-
-    # Mark original as reversed
-    original.status = JournalEntryStatus.REVERSED
-    original.reversed_by_id = reversal.id
-
-    # Update balances for reversal
-    await db.flush()
-    # Re-load reversal with lines for balance update
-    rev_result = await db.execute(
-        select(JournalEntry)
-        .options(selectinload(JournalEntry.lines))
-        .where(JournalEntry.id == reversal.id)
-    )
-    reversal = rev_result.scalar_one()
-    await _update_account_balances(db, reversal, user.organization_id)
-
-    await db.flush()
-    await invalidate_prefix(f"gl:{user.organization_id}")
-    return reversal
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -786,71 +665,11 @@ async def get_income_statement(
 # SEED DEFAULT CHART OF ACCOUNTS
 # ══════════════════════════════════════════════════════════════════════════
 
-# ── Core Chart of Accounts (shared across all verticals) ─────────────────
-# Vertical-specific accounts are added by VERTICAL_COA extensions below.
-
-CORE_COA = [
-    # Assets (1xxx)
-    ("1000", "Cash", AccountType.ASSET, AccountSubType.CASH, NormalBalance.DEBIT),
-    ("1010", "Bank Account", AccountType.ASSET, AccountSubType.CASH, NormalBalance.DEBIT),
-    ("1100", "Accounts Receivable", AccountType.ASSET, AccountSubType.ACCOUNTS_RECEIVABLE, NormalBalance.DEBIT),
-    ("1200", "Product Inventory", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-    ("1210", "Feed & Supplies Inventory", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-    ("1220", "Packaging Materials", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-    ("1300", "Prepaid Expenses", AccountType.ASSET, AccountSubType.PREPAID, NormalBalance.DEBIT),
-    ("1500", "Biological Assets (IAS 41)", AccountType.ASSET, AccountSubType.BIOLOGICAL_ASSET, NormalBalance.DEBIT),
-    ("1600", "Buildings & Equipment", AccountType.ASSET, AccountSubType.FIXED_ASSET, NormalBalance.DEBIT),
-    ("1610", "Vehicles", AccountType.ASSET, AccountSubType.FIXED_ASSET, NormalBalance.DEBIT),
-    ("1650", "Accumulated Depreciation", AccountType.ASSET, AccountSubType.ACCUMULATED_DEPRECIATION, NormalBalance.CREDIT),
-    # Liabilities (2xxx)
-    ("2000", "Accounts Payable", AccountType.LIABILITY, AccountSubType.ACCOUNTS_PAYABLE, NormalBalance.CREDIT),
-    ("2100", "Taxes Payable", AccountType.LIABILITY, AccountSubType.TAX_PAYABLE, NormalBalance.CREDIT),
-    ("2200", "Short-term Loans", AccountType.LIABILITY, AccountSubType.CURRENT_LIABILITY, NormalBalance.CREDIT),
-    ("2500", "Long-term Debt", AccountType.LIABILITY, AccountSubType.LONG_TERM_LIABILITY, NormalBalance.CREDIT),
-    # Equity (3xxx)
-    ("3000", "Owner's Capital", AccountType.EQUITY, AccountSubType.OWNERS_EQUITY, NormalBalance.CREDIT),
-    ("3100", "Retained Earnings", AccountType.EQUITY, AccountSubType.RETAINED_EARNINGS, NormalBalance.CREDIT),
-    # Revenue (4xxx) — generic
-    ("4000", "Product Sales", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-    ("4900", "Other Revenue", AccountType.REVENUE, AccountSubType.OTHER_REVENUE, NormalBalance.CREDIT),
-    # COGS (5xxx) — generic
-    ("5000", "Cost of Goods Sold", AccountType.EXPENSE, AccountSubType.COGS, NormalBalance.DEBIT),
-    ("5100", "Cost of Goods Sold — Feed/Supplies", AccountType.EXPENSE, AccountSubType.COGS, NormalBalance.DEBIT),
-    # Operating Expenses (6xxx) — generic
-    ("6000", "Feed & Nutrition", AccountType.EXPENSE, AccountSubType.FEED_EXPENSE, NormalBalance.DEBIT),
-    ("6100", "Veterinary & Health", AccountType.EXPENSE, AccountSubType.HEALTH_EXPENSE, NormalBalance.DEBIT),
-    ("6200", "Labor & Payroll", AccountType.EXPENSE, AccountSubType.LABOR_EXPENSE, NormalBalance.DEBIT),
-    ("6300", "Utilities (Electric, Water, Gas)", AccountType.EXPENSE, AccountSubType.UTILITY_EXPENSE, NormalBalance.DEBIT),
-    ("6400", "Depreciation Expense", AccountType.EXPENSE, AccountSubType.DEPRECIATION_EXPENSE, NormalBalance.DEBIT),
-    ("6500", "Packaging & Supplies", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-    ("6600", "Transport & Delivery", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-    ("6700", "Insurance", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-    ("6800", "Maintenance & Repairs", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-    ("6900", "Other Operating Expenses", AccountType.EXPENSE, AccountSubType.OTHER_EXPENSE, NormalBalance.DEBIT),
-]
-
-# ── Vertical-specific account extensions ─────────────────────────────────
-# Each vertical adds its own accounts (unique codes, no conflicts with core).
-# Registered via register_vertical_coa() or automatically by vertical module.
-
-VERTICAL_COA: dict[str, list[tuple]] = {
-    "egglogu": [
-        ("4010", "Egg Sales — Table", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-        ("4020", "Spent Hen Sales", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-        ("4030", "Manure / Fertilizer Sales", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-        ("1201", "Egg Inventory — Graded", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-        ("5010", "COGS — Eggs", AccountType.EXPENSE, AccountSubType.COGS, NormalBalance.DEBIT),
-    ],
-    # Future verticals register here:
-    # "piglogu": [ ("4010", "Pork Sales", ...), ... ],
-    # "cowlogu": [ ("4010", "Milk Sales", ...), ("4020", "Beef Sales", ...), ... ],
-    # "croplogu": [ ("4010", "Crop Sales", ...), ... ],
-}
-
-
-def get_full_coa(vertical: str = "egglogu") -> list[tuple]:
-    """Return CORE_COA + vertical-specific accounts."""
-    return CORE_COA + VERTICAL_COA.get(vertical, [])
+# ── COA seed data (canonical source: AccountingService) ──────────────────
+# Kept as aliases for backward-compatibility with imports/tests.
+CORE_COA = AccountingService.CORE_COA
+VERTICAL_COA = AccountingService.VERTICAL_COA
+get_full_coa = AccountingService.get_full_coa
 
 
 @router.post("/seed-coa", response_model=list[AccountRead], status_code=status.HTTP_201_CREATED)
@@ -861,32 +680,4 @@ async def seed_chart_of_accounts(
 ):
     """Seed the Chart of Accounts for the organization.
     Core accounts + vertical-specific accounts. Skips existing codes."""
-    org_id = user.organization_id
-    full_coa = get_full_coa(vertical)
-
-    # Check existing codes
-    existing = await db.execute(
-        select(Account.code).where(Account.organization_id == org_id)
-    )
-    existing_codes = {r for r in existing.scalars().all()}
-
-    created = []
-    for code, name, acct_type, sub_type, normal in full_coa:
-        if code in existing_codes:
-            continue
-        account = Account(
-            organization_id=org_id,
-            code=code,
-            name=name,
-            account_type=acct_type,
-            sub_type=sub_type,
-            normal_balance=normal,
-            is_system=True,
-            is_active=True,
-        )
-        db.add(account)
-        created.append(account)
-
-    await db.flush()
-    await invalidate_prefix(f"gl:{org_id}")
-    return created
+    return await AccountingService.seed_coa(db, user.organization_id, vertical)

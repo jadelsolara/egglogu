@@ -6,10 +6,10 @@ from sqlalchemy import String, Float, Date, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
-from src.models.base import TimestampMixin, TenantMixin
+from src.models.base import TimestampMixin, SoftDeleteMixin, TenantMixin
 
 
-class FeedPurchase(TimestampMixin, TenantMixin, Base):
+class FeedPurchase(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
     __tablename__ = "feed_purchases"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

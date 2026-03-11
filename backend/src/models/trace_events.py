@@ -228,7 +228,7 @@ class TraceEvent(TimestampMixin, TenantMixin, Base):
     )
 
 
-class TraceEventItem(TimestampMixin, Base):
+class TraceEventItem(TimestampMixin, TenantMixin, Base):
     """Individual batch/item referenced in an event.
 
     An event can reference multiple batches (e.g., aggregation packs
@@ -365,7 +365,7 @@ class TraceRecall(TimestampMixin, TenantMixin, Base):
     )
 
 
-class RecallBatch(TimestampMixin, Base):
+class RecallBatch(TimestampMixin, TenantMixin, Base):
     """Batches affected by a recall."""
     __tablename__ = "recall_batches"
 

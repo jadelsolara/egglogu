@@ -149,11 +149,14 @@ async def sync_data(
                 import uuid as _sync_uuid
 
                 id_uuids = [_sync_uuid.UUID(rid) for rid in updates_by_id.keys()]
+                fetch_filters = [
+                    model_cls.id.in_(id_uuids),
+                    model_cls.organization_id == user.organization_id,
+                ]
+                if hasattr(model_cls, "deleted_at"):
+                    fetch_filters.append(model_cls.deleted_at.is_(None))
                 result_existing = await db.execute(
-                    select(model_cls).where(
-                        model_cls.id.in_(id_uuids),
-                        model_cls.organization_id == user.organization_id,
-                    )
+                    select(model_cls).where(*fetch_filters)
                 )
                 existing_map = {
                     str(obj.id): obj for obj in result_existing.scalars().all()
@@ -210,12 +213,15 @@ async def sync_data(
             model_cls, "organization_id"
         ):
             return entity_key, []
+        filters = [
+            model_cls.organization_id == user.organization_id,
+            model_cls.updated_at > since,
+        ]
+        if hasattr(model_cls, "deleted_at"):
+            filters.append(model_cls.deleted_at.is_(None))
         stmt = (
             select(model_cls)
-            .where(
-                model_cls.organization_id == user.organization_id,
-                model_cls.updated_at > since,
-            )
+            .where(*filters)
             .order_by(model_cls.updated_at)
             .limit(500)
         )

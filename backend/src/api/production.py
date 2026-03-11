@@ -1,12 +1,10 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
 from src.core.cache import invalidate_prefix
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.production import DailyProduction
@@ -15,6 +13,7 @@ from src.schemas.production import (
     DailyProductionRead,
     DailyProductionUpdate,
 )
+from src.services.tenant_service import TenantService
 
 router = APIRouter(prefix="/production", tags=["production"])
 
@@ -27,8 +26,7 @@ async def list_production(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(DailyProduction)
-        .where(DailyProduction.organization_id == user.organization_id)
+        TenantService.scoped_query(DailyProduction, user.organization_id)
         .order_by(DailyProduction.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -43,16 +41,10 @@ async def get_production(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(DailyProduction).where(
-            DailyProduction.id == record_id,
-            DailyProduction.organization_id == user.organization_id,
-        )
+    return await TenantService.get_one(
+        db, DailyProduction, record_id, user.organization_id,
+        error_msg="Production record not found",
     )
-    record = result.scalar_one_or_none()
-    if not record:
-        raise NotFoundError("Production record not found")
-    return record
 
 
 @router.post(
@@ -77,18 +69,10 @@ async def update_production(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(DailyProduction).where(
-            DailyProduction.id == record_id,
-            DailyProduction.organization_id == user.organization_id,
-        )
+    record = await TenantService.update_fields(
+        db, DailyProduction, record_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Production record not found",
     )
-    record = result.scalar_one_or_none()
-    if not record:
-        raise NotFoundError("Production record not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(record, key, value)
-    await db.flush()
     await invalidate_prefix(f"economics:{user.organization_id}")
     return record
 
@@ -99,14 +83,9 @@ async def delete_production(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(DailyProduction).where(
-            DailyProduction.id == record_id,
-            DailyProduction.organization_id == user.organization_id,
-        )
+    record = await TenantService.get_one(
+        db, DailyProduction, record_id, user.organization_id,
+        error_msg="Production record not found",
     )
-    record = result.scalar_one_or_none()
-    if not record:
-        raise NotFoundError("Production record not found")
     await db.delete(record)
     await invalidate_prefix(f"economics:{user.organization_id}")

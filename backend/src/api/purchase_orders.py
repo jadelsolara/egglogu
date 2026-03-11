@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.api.deps import require_feature
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.purchase_order import (
@@ -22,6 +21,7 @@ from src.schemas.purchase_order import (
     PurchaseOrderUpdate,
     PurchaseOrderRead,
 )
+from src.services.tenant_service import TenantService
 
 router = APIRouter(prefix="/procurement", tags=["procurement"])
 
@@ -41,8 +41,7 @@ async def list_suppliers(
     user: User = Depends(require_feature("finance")),
 ):
     stmt = (
-        select(Supplier)
-        .where(Supplier.organization_id == user.organization_id)
+        TenantService.scoped_query(Supplier, user.organization_id)
         .offset((page - 1) * size)
         .limit(size)
     )
@@ -71,19 +70,10 @@ async def update_supplier(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("finance")),
 ):
-    result = await db.execute(
-        select(Supplier).where(
-            Supplier.id == supplier_id,
-            Supplier.organization_id == user.organization_id,
-        )
+    return await TenantService.update_fields(
+        db, Supplier, supplier_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Supplier not found",
     )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Supplier not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
 
 
 # ── Purchase Orders ──
@@ -96,9 +86,8 @@ async def list_orders(
     user: User = Depends(require_feature("finance")),
 ):
     stmt = (
-        select(PurchaseOrder)
+        TenantService.scoped_query(PurchaseOrder, user.organization_id)
         .options(selectinload(PurchaseOrder.items))
-        .where(PurchaseOrder.organization_id == user.organization_id)
         .order_by(PurchaseOrder.order_date.desc())
     )
     if status_filter:
@@ -138,6 +127,7 @@ async def create_order(
     for item_data in data.items:
         item = PurchaseOrderItem(
             purchase_order_id=po.id,
+            organization_id=user.organization_id,
             description=item_data.description,
             quantity=item_data.quantity,
             unit=item_data.unit,
@@ -164,17 +154,10 @@ async def update_order(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("finance")),
 ):
-    result = await db.execute(
-        select(PurchaseOrder)
-        .options(selectinload(PurchaseOrder.items))
-        .where(
-            PurchaseOrder.id == order_id,
-            PurchaseOrder.organization_id == user.organization_id,
-        )
+    obj = await TenantService.get_one(
+        db, PurchaseOrder, order_id, user.organization_id,
+        error_msg="Purchase order not found",
     )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Purchase order not found")
     for key, value in data.model_dump(exclude_unset=True).items():
         setattr(obj, key, value)
     await db.flush()

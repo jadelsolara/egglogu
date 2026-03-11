@@ -57,6 +57,7 @@ from src.database import get_db
 from src.models.auth import Organization, Role, User
 from src.models.security import LoginResult, UserTOTP
 from src.models.subscription import PlanTier, Subscription, SubscriptionStatus
+from src.services.auth_service import AuthService
 from src.schemas.auth import (
     AppleAuthRequest,
     ChangePasswordRequest,
@@ -89,87 +90,14 @@ from src.schemas.security import (
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-# ── Helpers ──────────────────────────────────────────────────────
+# ── Helpers (delegated to AuthService) ───────────────────────────
 
-
-def _slugify(name: str) -> str:
-    slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-    return slug or "org"
-
-
-async def _unique_slug(name: str, db) -> str:
-    """Generate a unique org slug, appending a short suffix on collision."""
-    from src.models.auth import Organization as Org
-
-    base = _slugify(name)
-    slug = base
-    for i in range(1, 100):
-        exists = await db.execute(select(Org).where(Org.slug == slug))
-        if not exists.scalar_one_or_none():
-            return slug
-        slug = f"{base}-{i}"
-    # Fallback: append random hex
-    import secrets as _sec
-    return f"{base}-{_sec.token_hex(4)}"
-
-
-def _client_ip(request: Request) -> str:
-    """Extract real client IP — Cloudflare first, then standard proxy headers."""
-    # Cloudflare always sets this to the true client IP
-    cf_ip = request.headers.get("cf-connecting-ip")
-    if cf_ip:
-        return cf_ip.strip()
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    real_ip = request.headers.get("x-real-ip")
-    if real_ip:
-        return real_ip.strip()
-    return request.client.host if request.client else "unknown"
-
-
-def _user_agent(request: Request) -> str:
-    return request.headers.get("user-agent", "")
-
-
-async def _build_tokens_with_session(
-    user: User, request: Request, db: AsyncSession
-) -> dict:
-    """Create access + refresh tokens and register a session."""
-    refresh_token, refresh_jti = create_refresh_token(user.id)
-    access_token = create_access_token(user.id, user.organization_id, user.role.value)
-    await create_session(
-        db=db,
-        user_id=user.id,
-        jti=refresh_jti,
-        ip_address=_client_ip(request),
-        user_agent=_user_agent(request),
-    )
-    return {"access_token": access_token, "refresh_token": refresh_token}
-
-
-async def _post_login_checks(user: User, request: Request, db: AsyncSession) -> None:
-    """Run post-login security checks: known device, impossible travel, alerts."""
-    ip = _client_ip(request)
-    ua = _user_agent(request)
-
-    # Check known device + send alert if new
-    is_known, device = await check_known_device(db, user.id, ip, ua)
-    if not is_known:
-        await send_new_login_alert(
-            user.email, user.full_name, ip, device.device_name or "Unknown"
-        )
-
-    # Impossible travel detection (log warning, don't block)
-    travel = await check_impossible_travel(db, user.id, user.geo_lat, user.geo_lng)
-    if travel.get("impossible"):
-        import logging
-
-        logging.getLogger("egglogu.auth_security").warning(
-            "Impossible travel detected for user %s: %s",
-            user.id,
-            travel["details"],
-        )
+_slugify = AuthService.slugify
+_unique_slug = AuthService.unique_slug
+_client_ip = AuthService.client_ip
+_user_agent = AuthService.user_agent
+_build_tokens_with_session = AuthService.build_tokens_with_session
+_post_login_checks = AuthService.post_login_checks
 
 
 # ── Public Config ────────────────────────────────────────────────
@@ -202,44 +130,20 @@ async def register(
         raise RateLimitError("Too many registrations. Try again in 1 hour.")
 
     try:
-        validate_password(data.password)
+        await AuthService.validate_new_password(data.password)
     except WeakPasswordError as e:
         raise ConflictError(str(e))
-
-    # HIBP breach check
-    breach_count = await check_pwned(data.password)
-    if breach_count > 0:
-        raise ConflictError(
-            f"This credential has appeared in {breach_count} data breaches. "
-            "Please choose a different one."
-        )
 
     existing = await db.execute(select(User).where(User.email == data.email))
     if existing.scalar_one_or_none():
         raise ConflictError("Email already registered")
 
-    slug = await _unique_slug(data.organization_name, db)
-    org = Organization(name=data.organization_name, slug=slug)
-    db.add(org)
-    await db.flush()
-
-    sub = Subscription(
-        organization_id=org.id,
-        plan=PlanTier.enterprise,
-        status=SubscriptionStatus.active,
-        is_trial=True,
-        trial_end=datetime.now(timezone.utc) + timedelta(days=30),
-    )
-    db.add(sub)
-
-    verification_token = generate_token()
-    user = User(
+    await AuthService.register_org_and_user(
         email=data.email,
-        hashed_password=hash_password(data.password),
+        password=data.password,
         full_name=data.full_name,
-        role=Role.owner,
-        organization_id=org.id,
-        verification_token=verification_token,
+        organization_name=data.organization_name,
+        db=db,
         utm_source=data.utm_source,
         utm_medium=data.utm_medium,
         utm_campaign=data.utm_campaign,
@@ -250,15 +154,6 @@ async def register(
         geo_lat=getattr(data, "geo_lat", None),
         geo_lng=getattr(data, "geo_lng", None),
     )
-    db.add(user)
-    await db.flush()
-
-    # Emails are best-effort — registration must succeed even if email fails
-    try:
-        await send_verification_email(data.email, verification_token)
-        await send_welcome(data.email, data.full_name)
-    except Exception as e:
-        logger.error("Post-registration email failed for %s: %s", data.email, e)
 
     return MessageResponse(message="Account created. Check your email to verify.")
 
@@ -735,58 +630,15 @@ async def google_auth(
     if not email or not sub:
         raise UnauthorizedError("Invalid Google token payload")
 
-    result = await db.execute(select(User).where(User.oauth_sub == sub))
-    user = result.scalar_one_or_none()
-
-    if not user:
-        result = await db.execute(select(User).where(User.email == email))
-        user = result.scalar_one_or_none()
-
-    if user:
-        if not user.oauth_provider:
-            user.oauth_provider = "google"
-            user.oauth_sub = sub
-        if not user.email_verified:
-            user.email_verified = True
-            user.verification_token = None
-        if not user.is_active:
-            await log_login_attempt(
-                db,
-                email,
-                LoginResult.disabled,
-                ip,
-                ua,
-                user_id=user.id,
-                method="google",
-            )
-            raise UnauthorizedError("Account is disabled")
-    else:
-        org_name = data.organization_name or name or email.split("@")[0]
-        org = Organization(name=org_name, slug=_slugify(org_name))
-        db.add(org)
-        await db.flush()
-
-        sub_obj = Subscription(
-            organization_id=org.id,
-            plan=PlanTier.enterprise,
-            status=SubscriptionStatus.active,
-            is_trial=True,
-            trial_end=datetime.now(timezone.utc) + timedelta(days=30),
+    user = await AuthService.oauth_find_or_create(
+        email=email, name=name, oauth_sub=sub, provider="google",
+        organization_name=data.organization_name, db=db,
+    )
+    if not user.is_active:
+        await log_login_attempt(
+            db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="google",
         )
-        db.add(sub_obj)
-
-        user = User(
-            email=email,
-            hashed_password=None,
-            full_name=name or email.split("@")[0],
-            role=Role.owner,
-            organization_id=org.id,
-            email_verified=True,
-            oauth_provider="google",
-            oauth_sub=sub,
-        )
-        db.add(user)
-        await db.flush()
+        raise UnauthorizedError("Account is disabled")
 
     await log_login_attempt(
         db, email, LoginResult.success, ip, ua, user_id=user.id, method="google"
@@ -849,51 +701,15 @@ async def apple_auth(
 
     name = data.full_name or email.split("@")[0]
 
-    result = await db.execute(select(User).where(User.oauth_sub == sub))
-    user = result.scalar_one_or_none()
-    if not user:
-        result = await db.execute(select(User).where(User.email == email))
-        user = result.scalar_one_or_none()
-
-    if user:
-        if not user.oauth_provider:
-            user.oauth_provider = "apple"
-            user.oauth_sub = sub
-        if not user.email_verified:
-            user.email_verified = True
-            user.verification_token = None
-        if not user.is_active:
-            await log_login_attempt(
-                db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="apple"
-            )
-            raise UnauthorizedError("Account is disabled")
-    else:
-        org_name = data.organization_name or name
-        org = Organization(name=org_name, slug=_slugify(org_name))
-        db.add(org)
-        await db.flush()
-
-        sub_obj = Subscription(
-            organization_id=org.id,
-            plan=PlanTier.enterprise,
-            status=SubscriptionStatus.active,
-            is_trial=True,
-            trial_end=datetime.now(timezone.utc) + timedelta(days=30),
+    user = await AuthService.oauth_find_or_create(
+        email=email, name=name, oauth_sub=sub, provider="apple",
+        organization_name=data.organization_name, db=db,
+    )
+    if not user.is_active:
+        await log_login_attempt(
+            db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="apple",
         )
-        db.add(sub_obj)
-
-        user = User(
-            email=email,
-            hashed_password=None,
-            full_name=name,
-            role=Role.owner,
-            organization_id=org.id,
-            email_verified=True,
-            oauth_provider="apple",
-            oauth_sub=sub,
-        )
-        db.add(user)
-        await db.flush()
+        raise UnauthorizedError("Account is disabled")
 
     await log_login_attempt(
         db, email, LoginResult.success, ip, ua, user_id=user.id, method="apple"
@@ -944,57 +760,15 @@ async def microsoft_auth(
     if not email or not sub:
         raise UnauthorizedError("Invalid Microsoft profile — missing email")
 
-    result = await db.execute(select(User).where(User.oauth_sub == sub))
-    user = result.scalar_one_or_none()
-    if not user:
-        result = await db.execute(select(User).where(User.email == email))
-        user = result.scalar_one_or_none()
-
-    if user:
-        if not user.oauth_provider:
-            user.oauth_provider = "microsoft"
-            user.oauth_sub = sub
-        if not user.email_verified:
-            user.email_verified = True
-            user.verification_token = None
-        if not user.is_active:
-            await log_login_attempt(
-                db,
-                email,
-                LoginResult.disabled,
-                ip,
-                ua,
-                user_id=user.id,
-                method="microsoft",
-            )
-            raise UnauthorizedError("Account is disabled")
-    else:
-        org_name = data.organization_name or name or email.split("@")[0]
-        org = Organization(name=org_name, slug=_slugify(org_name))
-        db.add(org)
-        await db.flush()
-
-        sub_obj = Subscription(
-            organization_id=org.id,
-            plan=PlanTier.enterprise,
-            status=SubscriptionStatus.active,
-            is_trial=True,
-            trial_end=datetime.now(timezone.utc) + timedelta(days=30),
+    user = await AuthService.oauth_find_or_create(
+        email=email, name=name, oauth_sub=sub, provider="microsoft",
+        organization_name=data.organization_name, db=db,
+    )
+    if not user.is_active:
+        await log_login_attempt(
+            db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="microsoft",
         )
-        db.add(sub_obj)
-
-        user = User(
-            email=email,
-            hashed_password=None,
-            full_name=name or email.split("@")[0],
-            role=Role.owner,
-            organization_id=org.id,
-            email_verified=True,
-            oauth_provider="microsoft",
-            oauth_sub=sub,
-        )
-        db.add(user)
-        await db.flush()
+        raise UnauthorizedError("Account is disabled")
 
     await log_login_attempt(
         db, email, LoginResult.success, ip, ua, user_id=user.id, method="microsoft"

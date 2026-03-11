@@ -1,11 +1,9 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.operations import ChecklistItem, LogbookEntry, Personnel
@@ -20,6 +18,7 @@ from src.schemas.operations import (
     PersonnelRead,
     PersonnelUpdate,
 )
+from src.services.tenant_service import TenantService
 
 router = APIRouter(tags=["operations"])
 
@@ -34,8 +33,7 @@ async def list_checklist(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(ChecklistItem)
-        .where(ChecklistItem.organization_id == user.organization_id)
+        TenantService.scoped_query(ChecklistItem, user.organization_id)
         .order_by(ChecklistItem.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -50,16 +48,10 @@ async def get_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(ChecklistItem).where(
-            ChecklistItem.id == item_id,
-            ChecklistItem.organization_id == user.organization_id,
-        )
+    return await TenantService.get_one(
+        db, ChecklistItem, item_id, user.organization_id,
+        error_msg="Checklist item not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Checklist item not found")
-    return item
 
 
 @router.post(
@@ -83,19 +75,10 @@ async def update_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(ChecklistItem).where(
-            ChecklistItem.id == item_id,
-            ChecklistItem.organization_id == user.organization_id,
-        )
+    return await TenantService.update_fields(
+        db, ChecklistItem, item_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Checklist item not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Checklist item not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
 
 
 @router.delete("/checklist/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -104,16 +87,10 @@ async def delete_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(ChecklistItem).where(
-            ChecklistItem.id == item_id,
-            ChecklistItem.organization_id == user.organization_id,
-        )
+    await TenantService.soft_delete(
+        db, ChecklistItem, item_id, user.organization_id,
+        error_msg="Checklist item not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Checklist item not found")
-    await db.delete(item)
 
 
 # --- Logbook ---
@@ -127,8 +104,7 @@ async def list_logbook(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(LogbookEntry)
-        .where(LogbookEntry.organization_id == user.organization_id)
+        TenantService.scoped_query(LogbookEntry, user.organization_id)
         .order_by(LogbookEntry.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -143,16 +119,10 @@ async def get_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(LogbookEntry).where(
-            LogbookEntry.id == item_id,
-            LogbookEntry.organization_id == user.organization_id,
-        )
+    return await TenantService.get_one(
+        db, LogbookEntry, item_id, user.organization_id,
+        error_msg="Logbook entry not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Logbook entry not found")
-    return item
 
 
 @router.post(
@@ -176,19 +146,10 @@ async def update_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(LogbookEntry).where(
-            LogbookEntry.id == item_id,
-            LogbookEntry.organization_id == user.organization_id,
-        )
+    return await TenantService.update_fields(
+        db, LogbookEntry, item_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Logbook entry not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Logbook entry not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
 
 
 @router.delete("/logbook/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -197,15 +158,10 @@ async def delete_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(LogbookEntry).where(
-            LogbookEntry.id == item_id,
-            LogbookEntry.organization_id == user.organization_id,
-        )
+    item = await TenantService.get_one(
+        db, LogbookEntry, item_id, user.organization_id,
+        error_msg="Logbook entry not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Logbook entry not found")
     await db.delete(item)
 
 
@@ -220,8 +176,7 @@ async def list_personnel(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(Personnel)
-        .where(Personnel.organization_id == user.organization_id)
+        TenantService.scoped_query(Personnel, user.organization_id)
         .order_by(Personnel.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -236,15 +191,10 @@ async def get_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Personnel).where(
-            Personnel.id == item_id, Personnel.organization_id == user.organization_id
-        )
+    return await TenantService.get_one(
+        db, Personnel, item_id, user.organization_id,
+        error_msg="Personnel not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Personnel not found")
-    return item
 
 
 @router.post(
@@ -268,18 +218,10 @@ async def update_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Personnel).where(
-            Personnel.id == item_id, Personnel.organization_id == user.organization_id
-        )
+    return await TenantService.update_fields(
+        db, Personnel, item_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Personnel not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Personnel not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
 
 
 @router.delete("/personnel/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -288,12 +230,7 @@ async def delete_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Personnel).where(
-            Personnel.id == item_id, Personnel.organization_id == user.organization_id
-        )
+    await TenantService.soft_delete(
+        db, Personnel, item_id, user.organization_id,
+        error_msg="Personnel not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Personnel not found")
-    await db.delete(item)

@@ -7,7 +7,7 @@ from sqlalchemy import String, Float, Integer, Date, Enum, ForeignKey, Text, Boo
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base
-from src.models.base import TimestampMixin, TenantMixin
+from src.models.base import TimestampMixin, SoftDeleteMixin, TenantMixin
 
 
 class POStatus(str, enum.Enum):
@@ -30,7 +30,7 @@ class POCategory(str, enum.Enum):
     other = "other"
 
 
-class Supplier(TimestampMixin, TenantMixin, Base):
+class Supplier(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
     __tablename__ = "suppliers"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -80,7 +80,7 @@ class PurchaseOrder(TimestampMixin, TenantMixin, Base):
     )
 
 
-class PurchaseOrderItem(TimestampMixin, Base):
+class PurchaseOrderItem(TimestampMixin, TenantMixin, Base):
     __tablename__ = "purchase_order_items"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

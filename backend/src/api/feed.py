@@ -1,12 +1,10 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
 from src.core.cache import invalidate_prefix
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.feed import FeedConsumption, FeedPurchase
@@ -18,6 +16,7 @@ from src.schemas.feed import (
     FeedPurchaseRead,
     FeedPurchaseUpdate,
 )
+from src.services.tenant_service import TenantService
 
 router = APIRouter(prefix="/feed", tags=["feed"])
 
@@ -32,8 +31,7 @@ async def list_purchases(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(FeedPurchase)
-        .where(FeedPurchase.organization_id == user.organization_id)
+        TenantService.scoped_query(FeedPurchase, user.organization_id)
         .order_by(FeedPurchase.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -48,16 +46,10 @@ async def get_purchase(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(FeedPurchase).where(
-            FeedPurchase.id == item_id,
-            FeedPurchase.organization_id == user.organization_id,
-        )
+    return await TenantService.get_one(
+        db, FeedPurchase, item_id, user.organization_id,
+        error_msg="Feed purchase not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Feed purchase not found")
-    return item
 
 
 @router.post(
@@ -82,18 +74,10 @@ async def update_purchase(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(FeedPurchase).where(
-            FeedPurchase.id == item_id,
-            FeedPurchase.organization_id == user.organization_id,
-        )
+    item = await TenantService.update_fields(
+        db, FeedPurchase, item_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Feed purchase not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Feed purchase not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
     await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
@@ -104,16 +88,10 @@ async def delete_purchase(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(FeedPurchase).where(
-            FeedPurchase.id == item_id,
-            FeedPurchase.organization_id == user.organization_id,
-        )
+    await TenantService.soft_delete(
+        db, FeedPurchase, item_id, user.organization_id,
+        error_msg="Feed purchase not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Feed purchase not found")
-    await db.delete(item)
     await invalidate_prefix(f"economics:{user.organization_id}")
 
 
@@ -128,8 +106,7 @@ async def list_consumption(
     user: User = Depends(get_current_user),
 ):
     stmt = (
-        select(FeedConsumption)
-        .where(FeedConsumption.organization_id == user.organization_id)
+        TenantService.scoped_query(FeedConsumption, user.organization_id)
         .order_by(FeedConsumption.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -144,16 +121,10 @@ async def get_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(FeedConsumption).where(
-            FeedConsumption.id == item_id,
-            FeedConsumption.organization_id == user.organization_id,
-        )
+    return await TenantService.get_one(
+        db, FeedConsumption, item_id, user.organization_id,
+        error_msg="Feed consumption not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Feed consumption not found")
-    return item
 
 
 @router.post(
@@ -180,18 +151,10 @@ async def update_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(FeedConsumption).where(
-            FeedConsumption.id == item_id,
-            FeedConsumption.organization_id == user.organization_id,
-        )
+    item = await TenantService.update_fields(
+        db, FeedConsumption, item_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Feed consumption not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Feed consumption not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
     await invalidate_prefix(f"economics:{user.organization_id}")
     return item
 
@@ -202,14 +165,9 @@ async def delete_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(FeedConsumption).where(
-            FeedConsumption.id == item_id,
-            FeedConsumption.organization_id == user.organization_id,
-        )
+    item = await TenantService.get_one(
+        db, FeedConsumption, item_id, user.organization_id,
+        error_msg="Feed consumption not found",
     )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Feed consumption not found")
     await db.delete(item)
     await invalidate_prefix(f"economics:{user.organization_id}")

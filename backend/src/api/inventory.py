@@ -5,7 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
 from src.models.inventory import (
@@ -27,6 +26,7 @@ from src.schemas.inventory import (
     PackagingMaterialUpdate,
     PackagingMaterialRead,
 )
+from src.services.tenant_service import TenantService
 
 router = APIRouter(prefix="/inventory", tags=["inventory"])
 
@@ -40,8 +40,7 @@ async def list_locations(
     user: User = Depends(require_feature("inventory")),
 ):
     stmt = (
-        select(WarehouseLocation)
-        .where(WarehouseLocation.organization_id == user.organization_id)
+        TenantService.scoped_query(WarehouseLocation, user.organization_id)
         .order_by(WarehouseLocation.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -73,19 +72,10 @@ async def update_location(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    result = await db.execute(
-        select(WarehouseLocation).where(
-            WarehouseLocation.id == location_id,
-            WarehouseLocation.organization_id == user.organization_id,
-        )
+    return await TenantService.update_fields(
+        db, WarehouseLocation, location_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Location not found",
     )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Location not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
 
 
 # ── Egg Stock ──
@@ -97,8 +87,7 @@ async def list_stock(
     user: User = Depends(require_feature("inventory")),
 ):
     stmt = (
-        select(EggStock)
-        .where(EggStock.organization_id == user.organization_id)
+        TenantService.scoped_query(EggStock, user.organization_id)
         .order_by(EggStock.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -126,19 +115,10 @@ async def update_stock(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    result = await db.execute(
-        select(EggStock).where(
-            EggStock.id == stock_id,
-            EggStock.organization_id == user.organization_id,
-        )
+    return await TenantService.update_fields(
+        db, EggStock, stock_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Stock item not found",
     )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Stock item not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
 
 
 # ── Stock Movements ──
@@ -150,8 +130,7 @@ async def list_movements(
     user: User = Depends(require_feature("inventory")),
 ):
     stmt = (
-        select(StockMovement)
-        .where(StockMovement.organization_id == user.organization_id)
+        TenantService.scoped_query(StockMovement, user.organization_id)
         .order_by(StockMovement.date.desc())
         .offset((page - 1) * size)
         .limit(size)
@@ -194,8 +173,7 @@ async def list_packaging(
     user: User = Depends(require_feature("inventory")),
 ):
     stmt = (
-        select(PackagingMaterial)
-        .where(PackagingMaterial.organization_id == user.organization_id)
+        TenantService.scoped_query(PackagingMaterial, user.organization_id)
         .order_by(PackagingMaterial.id)
         .offset((page - 1) * size)
         .limit(size)
@@ -227,16 +205,7 @@ async def update_packaging(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    result = await db.execute(
-        select(PackagingMaterial).where(
-            PackagingMaterial.id == item_id,
-            PackagingMaterial.organization_id == user.organization_id,
-        )
+    return await TenantService.update_fields(
+        db, PackagingMaterial, item_id, user.organization_id,
+        data.model_dump(exclude_unset=True), error_msg="Packaging material not found",
     )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Packaging material not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj

@@ -6,10 +6,10 @@ from sqlalchemy import String, Float, Date, Boolean, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
-from src.models.base import TimestampMixin, TenantMixin
+from src.models.base import TimestampMixin, SoftDeleteMixin, TenantMixin
 
 
-class ChecklistItem(TimestampMixin, TenantMixin, Base):
+class ChecklistItem(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
     __tablename__ = "checklist_items"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -21,11 +21,11 @@ class LogbookEntry(TimestampMixin, TenantMixin, Base):
     __tablename__ = "logbook_entries"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    date: Mapped[date] = mapped_column(Date)
+    date: Mapped[date] = mapped_column(Date, index=True)
     text: Mapped[str] = mapped_column(Text)
 
 
-class Personnel(TimestampMixin, TenantMixin, Base):
+class Personnel(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
     __tablename__ = "personnel"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)

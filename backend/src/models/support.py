@@ -196,7 +196,7 @@ class SupportTicket(TimestampMixin, TenantMixin, Base):
     )
 
 
-class TicketMessage(TimestampMixin, Base):
+class TicketMessage(TimestampMixin, TenantMixin, Base):
     __tablename__ = "ticket_messages"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -211,7 +211,7 @@ class TicketMessage(TimestampMixin, Base):
     is_internal: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
-class SupportRating(TimestampMixin, Base):
+class SupportRating(TimestampMixin, TenantMixin, Base):
     __tablename__ = "support_ratings"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -229,7 +229,7 @@ class FAQArticle(TimestampMixin, Base):
     __tablename__ = "faq_articles"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    category: Mapped[TicketCategory] = mapped_column(default=TicketCategory.general)
+    category: Mapped[TicketCategory] = mapped_column(default=TicketCategory.general, index=True)
     title_es: Mapped[str] = mapped_column(String(300))
     title_en: Mapped[str] = mapped_column(String(300))
     content_es: Mapped[str] = mapped_column(Text)
@@ -237,7 +237,7 @@ class FAQArticle(TimestampMixin, Base):
     keywords: Mapped[str] = mapped_column(Text, default="")  # comma-separated
     helpful_yes: Mapped[int] = mapped_column(Integer, default=0)
     helpful_no: Mapped[int] = mapped_column(Integer, default=0)
-    is_published: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
 
@@ -249,7 +249,7 @@ class AutoResponse(TimestampMixin, Base):
     trigger_keywords: Mapped[str] = mapped_column(Text, default="")  # comma-separated
     response_es: Mapped[str] = mapped_column(Text)
     response_en: Mapped[str] = mapped_column(Text)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
 

@@ -44,7 +44,7 @@ class Webhook(Base, TimestampMixin, TenantMixin):
     )
 
 
-class WebhookDelivery(Base):
+class WebhookDelivery(TimestampMixin, TenantMixin, Base):
     """Log of individual webhook delivery attempts."""
 
     __tablename__ = "webhook_deliveries"
@@ -58,11 +58,8 @@ class WebhookDelivery(Base):
     response_status: Mapped[Optional[int]] = mapped_column(Integer, default=None)
     response_body: Mapped[Optional[str]] = mapped_column(Text, default=None)
     latency_ms: Mapped[Optional[int]] = mapped_column(Integer, default=None)
-    success: Mapped[bool] = mapped_column(Boolean, default=False)
+    success: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     attempt: Mapped[int] = mapped_column(Integer, default=1)
     error: Mapped[Optional[str]] = mapped_column(Text, default=None)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), index=True
-    )
 
     webhook: Mapped["Webhook"] = relationship(back_populates="deliveries")

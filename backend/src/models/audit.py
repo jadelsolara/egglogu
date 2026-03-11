@@ -1,13 +1,19 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, String, func, JSON
+from sqlalchemy import DateTime, Index, String, func, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
 
 
 class AuditLog(Base):
+    """Append-only audit trail with hash-chain integrity.
+
+    Uses string-based user_id/organization_id by design — audit logs must
+    support system-level entries ("system", "platform") and survive even
+    if the referenced user/org is deleted.
+    """
     __tablename__ = "audit_logs"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -36,3 +42,7 @@ class AuditLog(Base):
     prev_hash: Mapped[str] = mapped_column(
         String(64), default="0" * 64
     )  # genesis = all zeros
+
+    __table_args__ = (
+        Index("ix_audit_org_timestamp", "organization_id", "timestamp"),
+    )
