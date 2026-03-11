@@ -77,6 +77,10 @@ export const apiService = {
       Bus.emit('auth:expired');
       throw new Error('session_expired');
     }
+    if (resp.status === 401 && !retry) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.detail || 'Invalid credentials');
+    }
     if (resp.status === 403) throw new Error('forbidden');
     if (resp.status === 404) throw new Error('not_found');
     if (resp.status === 429) { const err = await resp.json().catch(() => ({})); throw new Error(err.detail || 'Too many requests'); }
@@ -90,10 +94,10 @@ export const apiService = {
   async register(email, password, fullName, orgName, utmData) {
     const body = { email, password, full_name: fullName, organization_name: orgName };
     if (utmData) Object.assign(body, utmData);
-    return this.request('POST', '/auth/register', body);
+    return this.request('POST', '/auth/register', body, false);
   },
   async login(email, password) {
-    const resp = await this.request('POST', '/auth/login', { email, password });
+    const resp = await this.request('POST', '/auth/login', { email, password }, false);
     this.setTokens(resp.access_token, resp.refresh_token); return resp;
   },
   async verifyEmail(token) {
