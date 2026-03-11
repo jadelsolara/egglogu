@@ -2,9 +2,9 @@
   "aesthetic": "d231aa187a9fdb6b",
   "functional": "2a8bea19acd4a04b",
   "operational": "e04c9c0fe42306fa",
-  "html_structure": "233c6a0746dee903",
+  "html_structure": "035b9502f3818eed",
   "js_bundle": "dist/egglogu-app.2a8bea19.js",
-  "buildTime": "2026-03-11T18:29:56Z",
-  "buildNumber": 46,
-  "changedPillars": "FUNCIONAL,HTML-ESTRUCTURA"
+  "buildTime": "2026-03-11T20:02:18Z",
+  "buildNumber": 47,
+  "changedPillars": "HTML-ESTRUCTURA"
 }
