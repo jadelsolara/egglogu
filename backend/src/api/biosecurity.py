@@ -1,19 +1,11 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
-from src.models.biosecurity import (
-    BiosecurityProtocol,
-    BiosecurityVisitor,
-    BiosecurityZone,
-    PestSighting,
-)
 from src.schemas.biosecurity import (
     BiosecurityProtocolCreate,
     BiosecurityProtocolRead,
@@ -28,6 +20,7 @@ from src.schemas.biosecurity import (
     PestSightingRead,
     PestSightingUpdate,
 )
+from src.services.biosecurity_service import BiosecurityService
 
 router = APIRouter(prefix="/biosecurity", tags=["biosecurity"])
 
@@ -42,15 +35,8 @@ async def list_visitors(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = (
-        select(BiosecurityVisitor)
-        .where(BiosecurityVisitor.organization_id == user.organization_id)
-        .order_by(BiosecurityVisitor.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.list_visitors(page=page, size=size)
 
 
 @router.post(
@@ -63,10 +49,8 @@ async def create_visitor(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = BiosecurityVisitor(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.create_visitor(data)
 
 
 @router.put("/visitors/{item_id}", response_model=BiosecurityVisitorRead)
@@ -76,19 +60,8 @@ async def update_visitor(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityVisitor).where(
-            BiosecurityVisitor.id == item_id,
-            BiosecurityVisitor.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Visitor not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.update_visitor(item_id, data)
 
 
 @router.delete("/visitors/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -97,16 +70,8 @@ async def delete_visitor(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityVisitor).where(
-            BiosecurityVisitor.id == item_id,
-            BiosecurityVisitor.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Visitor not found")
-    await db.delete(obj)
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    await svc.delete_visitor(item_id)
 
 
 # ── Zones ──
@@ -119,15 +84,8 @@ async def list_zones(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = (
-        select(BiosecurityZone)
-        .where(BiosecurityZone.organization_id == user.organization_id)
-        .order_by(BiosecurityZone.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.list_zones(page=page, size=size)
 
 
 @router.post(
@@ -138,10 +96,8 @@ async def create_zone(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = BiosecurityZone(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.create_zone(data)
 
 
 @router.put("/zones/{item_id}", response_model=BiosecurityZoneRead)
@@ -151,19 +107,8 @@ async def update_zone(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityZone).where(
-            BiosecurityZone.id == item_id,
-            BiosecurityZone.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Zone not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.update_zone(item_id, data)
 
 
 @router.delete("/zones/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -172,16 +117,8 @@ async def delete_zone(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityZone).where(
-            BiosecurityZone.id == item_id,
-            BiosecurityZone.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Zone not found")
-    await db.delete(obj)
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    await svc.delete_zone(item_id)
 
 
 # ── Pest Sightings ──
@@ -194,15 +131,8 @@ async def list_pests(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = (
-        select(PestSighting)
-        .where(PestSighting.organization_id == user.organization_id)
-        .order_by(PestSighting.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.list_pests(page=page, size=size)
 
 
 @router.post(
@@ -213,10 +143,8 @@ async def create_pest(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = PestSighting(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.create_pest(data)
 
 
 @router.put("/pests/{item_id}", response_model=PestSightingRead)
@@ -226,19 +154,8 @@ async def update_pest(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(PestSighting).where(
-            PestSighting.id == item_id,
-            PestSighting.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Pest sighting not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.update_pest(item_id, data)
 
 
 @router.delete("/pests/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -247,16 +164,8 @@ async def delete_pest(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(PestSighting).where(
-            PestSighting.id == item_id,
-            PestSighting.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Pest sighting not found")
-    await db.delete(obj)
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    await svc.delete_pest(item_id)
 
 
 # ── Protocols ──
@@ -269,15 +178,8 @@ async def list_protocols(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    stmt = (
-        select(BiosecurityProtocol)
-        .where(BiosecurityProtocol.organization_id == user.organization_id)
-        .order_by(BiosecurityProtocol.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.list_protocols(page=page, size=size)
 
 
 @router.post(
@@ -290,10 +192,8 @@ async def create_protocol(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    obj = BiosecurityProtocol(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.create_protocol(data)
 
 
 @router.put("/protocols/{item_id}", response_model=BiosecurityProtocolRead)
@@ -303,19 +203,8 @@ async def update_protocol(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityProtocol).where(
-            BiosecurityProtocol.id == item_id,
-            BiosecurityProtocol.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Protocol not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(obj, key, value)
-    await db.flush()
-    return obj
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    return await svc.update_protocol(item_id, data)
 
 
 @router.delete("/protocols/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -324,13 +213,5 @@ async def delete_protocol(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("biosecurity")),
 ):
-    result = await db.execute(
-        select(BiosecurityProtocol).where(
-            BiosecurityProtocol.id == item_id,
-            BiosecurityProtocol.organization_id == user.organization_id,
-        )
-    )
-    obj = result.scalar_one_or_none()
-    if not obj:
-        raise NotFoundError("Protocol not found")
-    await db.delete(obj)
+    svc = BiosecurityService(db, user.organization_id, user.id)
+    await svc.delete_protocol(item_id)

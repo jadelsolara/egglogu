@@ -6,9 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.api.deps import get_current_user
 from src.database import get_db
 from src.models.auth import User
-from src.models.farm import Farm
 from src.schemas.farm import FarmCreate, FarmRead, FarmReadPublic, FarmUpdate
-from src.services.tenant_service import TenantService
+from src.services.farm_service import FarmService
 
 router = APIRouter(prefix="/farms", tags=["farms"])
 
@@ -20,14 +19,8 @@ async def list_farms(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        TenantService.scoped_query(Farm, user.organization_id)
-        .order_by(Farm.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = FarmService(db, user.organization_id, user.id)
+    return await svc.list_farms(page=page, size=size)
 
 
 @router.get("/{farm_id}", response_model=FarmReadPublic)
@@ -36,9 +29,8 @@ async def get_farm(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.get_one(
-        db, Farm, farm_id, user.organization_id, error_msg="Farm not found"
-    )
+    svc = FarmService(db, user.organization_id, user.id)
+    return await svc.get_farm(farm_id)
 
 
 @router.post("/", response_model=FarmRead, status_code=status.HTTP_201_CREATED)
@@ -47,10 +39,8 @@ async def create_farm(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    farm = Farm(**data.model_dump(), organization_id=user.organization_id)
-    db.add(farm)
-    await db.flush()
-    return farm
+    svc = FarmService(db, user.organization_id, user.id)
+    return await svc.create_farm(data)
 
 
 @router.put("/{farm_id}", response_model=FarmRead)
@@ -60,12 +50,8 @@ async def update_farm(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    farm = await TenantService.update_fields(
-        db, Farm, farm_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Farm not found",
-    )
-    await db.refresh(farm)
-    return farm
+    svc = FarmService(db, user.organization_id, user.id)
+    return await svc.update_farm(farm_id, data)
 
 
 @router.delete("/{farm_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -74,7 +60,5 @@ async def delete_farm(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    farm = await TenantService.get_one(
-        db, Farm, farm_id, user.organization_id, error_msg="Farm not found"
-    )
-    await db.delete(farm)
+    svc = FarmService(db, user.organization_id, user.id)
+    await svc.delete_farm(farm_id)

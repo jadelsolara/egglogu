@@ -6,9 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.api.deps import get_current_user
 from src.database import get_db
 from src.models.auth import User
-from src.models.client import Client
 from src.schemas.client import ClientCreate, ClientRead, ClientUpdate
-from src.services.tenant_service import TenantService
+from src.services.client_service import ClientService
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
@@ -20,14 +19,8 @@ async def list_clients(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        TenantService.scoped_query(Client, user.organization_id)
-        .order_by(Client.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = ClientService(db, user.organization_id, user.id)
+    return await svc.list_clients(page=page, size=size)
 
 
 @router.get("/{client_id}", response_model=ClientRead)
@@ -36,9 +29,8 @@ async def get_client(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.get_one(
-        db, Client, client_id, user.organization_id, error_msg="Client not found"
-    )
+    svc = ClientService(db, user.organization_id, user.id)
+    return await svc.get_client(client_id)
 
 
 @router.post("/", response_model=ClientRead, status_code=status.HTTP_201_CREATED)
@@ -47,10 +39,8 @@ async def create_client(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = Client(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = ClientService(db, user.organization_id, user.id)
+    return await svc.create_client(data)
 
 
 @router.put("/{client_id}", response_model=ClientRead)
@@ -60,10 +50,8 @@ async def update_client(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.update_fields(
-        db, Client, client_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Client not found",
-    )
+    svc = ClientService(db, user.organization_id, user.id)
+    return await svc.update_client(client_id, data)
 
 
 @router.delete("/{client_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -72,6 +60,5 @@ async def delete_client(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    await TenantService.soft_delete(
-        db, Client, client_id, user.organization_id, error_msg="Client not found"
-    )
+    svc = ClientService(db, user.organization_id, user.id)
+    await svc.delete_client(client_id)

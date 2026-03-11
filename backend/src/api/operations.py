@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.api.deps import get_current_user
 from src.database import get_db
 from src.models.auth import User
-from src.models.operations import ChecklistItem, LogbookEntry, Personnel
 from src.schemas.operations import (
     ChecklistItemCreate,
     ChecklistItemRead,
@@ -18,7 +17,7 @@ from src.schemas.operations import (
     PersonnelRead,
     PersonnelUpdate,
 )
-from src.services.tenant_service import TenantService
+from src.services.operations_service import OperationsService
 
 router = APIRouter(tags=["operations"])
 
@@ -32,14 +31,8 @@ async def list_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        TenantService.scoped_query(ChecklistItem, user.organization_id)
-        .order_by(ChecklistItem.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.list_checklist(page=page, size=size)
 
 
 @router.get("/checklist/{item_id}", response_model=ChecklistItemRead)
@@ -48,10 +41,8 @@ async def get_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.get_one(
-        db, ChecklistItem, item_id, user.organization_id,
-        error_msg="Checklist item not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.get_checklist(item_id)
 
 
 @router.post(
@@ -62,10 +53,8 @@ async def create_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = ChecklistItem(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.create_checklist(data)
 
 
 @router.put("/checklist/{item_id}", response_model=ChecklistItemRead)
@@ -75,10 +64,8 @@ async def update_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.update_fields(
-        db, ChecklistItem, item_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Checklist item not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.update_checklist(item_id, data)
 
 
 @router.delete("/checklist/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -87,10 +74,8 @@ async def delete_checklist(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    await TenantService.soft_delete(
-        db, ChecklistItem, item_id, user.organization_id,
-        error_msg="Checklist item not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    await svc.delete_checklist(item_id)
 
 
 # --- Logbook ---
@@ -103,14 +88,8 @@ async def list_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        TenantService.scoped_query(LogbookEntry, user.organization_id)
-        .order_by(LogbookEntry.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.list_logbook(page=page, size=size)
 
 
 @router.get("/logbook/{item_id}", response_model=LogbookEntryRead)
@@ -119,10 +98,8 @@ async def get_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.get_one(
-        db, LogbookEntry, item_id, user.organization_id,
-        error_msg="Logbook entry not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.get_logbook(item_id)
 
 
 @router.post(
@@ -133,10 +110,8 @@ async def create_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = LogbookEntry(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.create_logbook(data)
 
 
 @router.put("/logbook/{item_id}", response_model=LogbookEntryRead)
@@ -146,10 +121,8 @@ async def update_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.update_fields(
-        db, LogbookEntry, item_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Logbook entry not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.update_logbook(item_id, data)
 
 
 @router.delete("/logbook/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -158,11 +131,8 @@ async def delete_logbook(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = await TenantService.get_one(
-        db, LogbookEntry, item_id, user.organization_id,
-        error_msg="Logbook entry not found",
-    )
-    await db.delete(item)
+    svc = OperationsService(db, user.organization_id, user.id)
+    await svc.delete_logbook(item_id)
 
 
 # --- Personnel ---
@@ -175,14 +145,8 @@ async def list_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        TenantService.scoped_query(Personnel, user.organization_id)
-        .order_by(Personnel.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.list_personnel(page=page, size=size)
 
 
 @router.get("/personnel/{item_id}", response_model=PersonnelRead)
@@ -191,10 +155,8 @@ async def get_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.get_one(
-        db, Personnel, item_id, user.organization_id,
-        error_msg="Personnel not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.get_personnel(item_id)
 
 
 @router.post(
@@ -205,10 +167,8 @@ async def create_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = Personnel(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.create_personnel(data)
 
 
 @router.put("/personnel/{item_id}", response_model=PersonnelRead)
@@ -218,10 +178,8 @@ async def update_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.update_fields(
-        db, Personnel, item_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Personnel not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    return await svc.update_personnel(item_id, data)
 
 
 @router.delete("/personnel/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -230,7 +188,5 @@ async def delete_personnel(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    await TenantService.soft_delete(
-        db, Personnel, item_id, user.organization_id,
-        error_msg="Personnel not found",
-    )
+    svc = OperationsService(db, user.organization_id, user.id)
+    await svc.delete_personnel(item_id)

@@ -4,10 +4,8 @@ from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
-from src.core.cache import invalidate_prefix
 from src.database import get_db
 from src.models.auth import User
-from src.models.feed import FeedConsumption, FeedPurchase
 from src.schemas.feed import (
     FeedConsumptionCreate,
     FeedConsumptionRead,
@@ -16,7 +14,7 @@ from src.schemas.feed import (
     FeedPurchaseRead,
     FeedPurchaseUpdate,
 )
-from src.services.tenant_service import TenantService
+from src.services.feed_service import FeedService
 
 router = APIRouter(prefix="/feed", tags=["feed"])
 
@@ -30,14 +28,8 @@ async def list_purchases(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        TenantService.scoped_query(FeedPurchase, user.organization_id)
-        .order_by(FeedPurchase.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.list_purchases(page=page, size=size)
 
 
 @router.get("/purchases/{item_id}", response_model=FeedPurchaseRead)
@@ -46,10 +38,8 @@ async def get_purchase(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.get_one(
-        db, FeedPurchase, item_id, user.organization_id,
-        error_msg="Feed purchase not found",
-    )
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.get_purchase(item_id)
 
 
 @router.post(
@@ -60,11 +50,8 @@ async def create_purchase(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = FeedPurchase(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.create_purchase(data)
 
 
 @router.put("/purchases/{item_id}", response_model=FeedPurchaseRead)
@@ -74,12 +61,8 @@ async def update_purchase(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = await TenantService.update_fields(
-        db, FeedPurchase, item_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Feed purchase not found",
-    )
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.update_purchase(item_id, data)
 
 
 @router.delete("/purchases/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -88,11 +71,8 @@ async def delete_purchase(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    await TenantService.soft_delete(
-        db, FeedPurchase, item_id, user.organization_id,
-        error_msg="Feed purchase not found",
-    )
-    await invalidate_prefix(f"economics:{user.organization_id}")
+    svc = FeedService(db, user.organization_id, user.id)
+    await svc.delete_purchase(item_id)
 
 
 # --- Consumption ---
@@ -105,14 +85,8 @@ async def list_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        TenantService.scoped_query(FeedConsumption, user.organization_id)
-        .order_by(FeedConsumption.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.list_consumption(page=page, size=size)
 
 
 @router.get("/consumption/{item_id}", response_model=FeedConsumptionRead)
@@ -121,10 +95,8 @@ async def get_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return await TenantService.get_one(
-        db, FeedConsumption, item_id, user.organization_id,
-        error_msg="Feed consumption not found",
-    )
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.get_consumption(item_id)
 
 
 @router.post(
@@ -137,11 +109,8 @@ async def create_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = FeedConsumption(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.create_consumption(data)
 
 
 @router.put("/consumption/{item_id}", response_model=FeedConsumptionRead)
@@ -151,12 +120,8 @@ async def update_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = await TenantService.update_fields(
-        db, FeedConsumption, item_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Feed consumption not found",
-    )
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = FeedService(db, user.organization_id, user.id)
+    return await svc.update_consumption(item_id, data)
 
 
 @router.delete("/consumption/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -165,9 +130,5 @@ async def delete_consumption(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = await TenantService.get_one(
-        db, FeedConsumption, item_id, user.organization_id,
-        error_msg="Feed consumption not found",
-    )
-    await db.delete(item)
-    await invalidate_prefix(f"economics:{user.organization_id}")
+    svc = FeedService(db, user.organization_id, user.id)
+    await svc.delete_consumption(item_id)

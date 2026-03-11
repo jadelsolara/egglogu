@@ -361,11 +361,13 @@ def check_f2(report: LevelReport):
         fix_hint="Create service files: 1 per domain",
     ))
 
-    # 2.3 Services follow BaseService pattern
+    # 2.3 Services follow BaseService pattern (own __init__ or inherits BaseService)
     base_pattern_count = 0
     for f in service_files:
         content = f.read_text()
-        if "def __init__" in content and ("db" in content or "session" in content):
+        has_init = "def __init__" in content and ("db" in content or "session" in content)
+        inherits_base = "BaseService" in content and "class " in content
+        if has_init or inherits_base:
             base_pattern_count += 1
     report.checks.append(Check(
         name="services_base_pattern",

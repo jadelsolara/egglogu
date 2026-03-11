@@ -1,19 +1,11 @@
-import math
 import uuid
-from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
-from src.core.cache import invalidate_prefix
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
-from src.models.farm import Farm
-from src.models.health import Medication, Outbreak, StressEvent, Vaccine
-from src.models.outbreak_alert import OutbreakAlert
 from src.schemas.health import (
     MedicationCreate,
     MedicationRead,
@@ -28,6 +20,7 @@ from src.schemas.health import (
     VaccineRead,
     VaccineUpdate,
 )
+from src.services.health_service import HealthService
 
 router = APIRouter(tags=["health"])
 
@@ -41,15 +34,8 @@ async def list_vaccines(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        select(Vaccine)
-        .where(Vaccine.organization_id == user.organization_id)
-        .order_by(Vaccine.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.list_vaccines(page=page, size=size)
 
 
 @router.get("/vaccines/{item_id}", response_model=VaccineRead)
@@ -58,15 +44,8 @@ async def get_vaccine(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Vaccine).where(
-            Vaccine.id == item_id, Vaccine.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Vaccine not found")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.get_vaccine(item_id)
 
 
 @router.post(
@@ -77,11 +56,8 @@ async def create_vaccine(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = Vaccine(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.create_vaccine(data)
 
 
 @router.put("/vaccines/{item_id}", response_model=VaccineRead)
@@ -91,19 +67,8 @@ async def update_vaccine(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Vaccine).where(
-            Vaccine.id == item_id, Vaccine.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Vaccine not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.update_vaccine(item_id, data)
 
 
 @router.delete("/vaccines/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -112,16 +77,8 @@ async def delete_vaccine(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Vaccine).where(
-            Vaccine.id == item_id, Vaccine.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Vaccine not found")
-    await db.delete(item)
-    await invalidate_prefix(f"economics:{user.organization_id}")
+    svc = HealthService(db, user.organization_id, user.id)
+    await svc.delete_vaccine(item_id)
 
 
 # --- Medications ---
@@ -134,15 +91,8 @@ async def list_medications(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        select(Medication)
-        .where(Medication.organization_id == user.organization_id)
-        .order_by(Medication.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.list_medications(page=page, size=size)
 
 
 @router.get("/medications/{item_id}", response_model=MedicationRead)
@@ -151,15 +101,8 @@ async def get_medication(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Medication).where(
-            Medication.id == item_id, Medication.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Medication not found")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.get_medication(item_id)
 
 
 @router.post(
@@ -170,11 +113,8 @@ async def create_medication(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = Medication(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.create_medication(data)
 
 
 @router.put("/medications/{item_id}", response_model=MedicationRead)
@@ -184,19 +124,8 @@ async def update_medication(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Medication).where(
-            Medication.id == item_id, Medication.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Medication not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    await invalidate_prefix(f"economics:{user.organization_id}")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.update_medication(item_id, data)
 
 
 @router.delete("/medications/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -205,16 +134,8 @@ async def delete_medication(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Medication).where(
-            Medication.id == item_id, Medication.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Medication not found")
-    await db.delete(item)
-    await invalidate_prefix(f"economics:{user.organization_id}")
+    svc = HealthService(db, user.organization_id, user.id)
+    await svc.delete_medication(item_id)
 
 
 # --- Outbreaks ---
@@ -227,15 +148,8 @@ async def list_outbreaks(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        select(Outbreak)
-        .where(Outbreak.organization_id == user.organization_id)
-        .order_by(Outbreak.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.list_outbreaks(page=page, size=size)
 
 
 @router.get("/outbreaks/{item_id}", response_model=OutbreakRead)
@@ -244,15 +158,8 @@ async def get_outbreak(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Outbreak).where(
-            Outbreak.id == item_id, Outbreak.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Outbreak not found")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.get_outbreak(item_id)
 
 
 @router.post(
@@ -263,10 +170,8 @@ async def create_outbreak(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = Outbreak(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.create_outbreak(data)
 
 
 @router.put("/outbreaks/{item_id}", response_model=OutbreakRead)
@@ -276,18 +181,8 @@ async def update_outbreak(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Outbreak).where(
-            Outbreak.id == item_id, Outbreak.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Outbreak not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.update_outbreak(item_id, data)
 
 
 @router.delete("/outbreaks/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -296,15 +191,8 @@ async def delete_outbreak(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(Outbreak).where(
-            Outbreak.id == item_id, Outbreak.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Outbreak not found")
-    await db.delete(item)
+    svc = HealthService(db, user.organization_id, user.id)
+    await svc.delete_outbreak(item_id)
 
 
 # --- Stress Events ---
@@ -317,15 +205,8 @@ async def list_stress_events(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        select(StressEvent)
-        .where(StressEvent.organization_id == user.organization_id)
-        .order_by(StressEvent.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.list_stress_events(page=page, size=size)
 
 
 @router.get("/stress-events/{item_id}", response_model=StressEventRead)
@@ -334,16 +215,8 @@ async def get_stress_event(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(StressEvent).where(
-            StressEvent.id == item_id,
-            StressEvent.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Stress event not found")
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.get_stress_event(item_id)
 
 
 @router.post(
@@ -356,10 +229,8 @@ async def create_stress_event(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = StressEvent(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.create_stress_event(data)
 
 
 @router.put("/stress-events/{item_id}", response_model=StressEventRead)
@@ -369,19 +240,8 @@ async def update_stress_event(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(StressEvent).where(
-            StressEvent.id == item_id,
-            StressEvent.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Stress event not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.update_stress_event(item_id, data)
 
 
 @router.delete("/stress-events/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -390,33 +250,11 @@ async def delete_stress_event(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(StressEvent).where(
-            StressEvent.id == item_id,
-            StressEvent.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Stress event not found")
-    await db.delete(item)
+    svc = HealthService(db, user.organization_id, user.id)
+    await svc.delete_stress_event(item_id)
 
 
 # --- Global Outbreak Alerts (geo-filtered by farm proximity) ---
-
-
-def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
-    """Haversine distance in km between two lat/lng points."""
-    R = 6371.0  # Earth radius km
-    dlat = math.radians(lat2 - lat1)
-    dlng = math.radians(lng2 - lng1)
-    a = (
-        math.sin(dlat / 2) ** 2
-        + math.cos(math.radians(lat1))
-        * math.cos(math.radians(lat2))
-        * math.sin(dlng / 2) ** 2
-    )
-    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
 @router.get("/outbreak-alerts")
@@ -424,77 +262,5 @@ async def get_outbreak_alerts_for_my_farms(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Get active outbreak alerts that are within radius of the user's farms.
-
-    Uses Haversine formula to calculate distance between each alert epicenter
-    and each farm's coordinates. Only returns alerts where at least one farm
-    is inside the alert radius. Includes distance_km to closest farm.
-    """
-    # Get user's farms with coordinates
-    farms = (
-        await db.execute(
-            select(Farm).where(
-                Farm.organization_id == user.organization_id,
-                Farm.lat.is_not(None),
-                Farm.lng.is_not(None),
-            )
-        )
-    ).scalars().all()
-
-    if not farms:
-        return []
-
-    # Get all active, non-expired alerts
-    now = datetime.now(timezone.utc)
-    q = select(OutbreakAlert).where(
-        OutbreakAlert.is_active.is_(True),
-    )
-    alerts = (await db.execute(q)).scalars().all()
-
-    result = []
-    for alert in alerts:
-        # Skip expired
-        if alert.expires_at and alert.expires_at < now:
-            continue
-
-        # Find closest farm to this alert's epicenter
-        min_dist = float("inf")
-        for farm in farms:
-            dist = _haversine_km(
-                alert.epicenter_lat, alert.epicenter_lng,
-                farm.lat, farm.lng,
-            )
-            if dist < min_dist:
-                min_dist = dist
-
-        # Only include if closest farm is within the alert radius
-        if min_dist <= alert.radius_km:
-            alert_data = {
-                "id": str(alert.id),
-                "title": alert.title,
-                "disease": alert.disease,
-                "severity": alert.severity.value,
-                "transmission": alert.transmission.value,
-                "species_affected": alert.species_affected,
-                "epicenter_lat": alert.epicenter_lat,
-                "epicenter_lng": alert.epicenter_lng,
-                "radius_km": alert.radius_km,
-                "region_name": alert.region_name,
-                "detected_date": alert.detected_date.isoformat(),
-                "description": alert.description,
-                "contingency_protocol": alert.contingency_protocol,
-                "source_url": alert.source_url,
-                "confirmed_cases": alert.confirmed_cases,
-                "deaths_reported": alert.deaths_reported,
-                "spread_speed_km_day": alert.spread_speed_km_day,
-                "spread_direction": alert.spread_direction,
-                "distance_km": round(min_dist, 1),
-                "created_at": alert.created_at.isoformat(),
-            }
-            result.append(alert_data)
-
-    # Sort by distance (closest first), then by severity
-    severity_order = {"critical": 0, "high": 1, "moderate": 2, "low": 3}
-    result.sort(key=lambda a: (severity_order.get(a["severity"], 9), a["distance_km"]))
-
-    return result
+    svc = HealthService(db, user.organization_id, user.id)
+    return await svc.get_outbreak_alerts()

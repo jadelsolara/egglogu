@@ -1,32 +1,25 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_feature
 from src.database import get_db
 from src.models.auth import User
-from src.models.inventory import (
-    WarehouseLocation,
-    EggStock,
-    StockMovement,
-    PackagingMaterial,
-)
 from src.schemas.inventory import (
-    WarehouseLocationCreate,
-    WarehouseLocationUpdate,
-    WarehouseLocationRead,
     EggStockCreate,
-    EggStockUpdate,
     EggStockRead,
+    EggStockUpdate,
+    PackagingMaterialCreate,
+    PackagingMaterialRead,
+    PackagingMaterialUpdate,
     StockMovementCreate,
     StockMovementRead,
-    PackagingMaterialCreate,
-    PackagingMaterialUpdate,
-    PackagingMaterialRead,
+    WarehouseLocationCreate,
+    WarehouseLocationRead,
+    WarehouseLocationUpdate,
 )
-from src.services.tenant_service import TenantService
+from src.services.inventory_service import InventoryService
 
 router = APIRouter(prefix="/inventory", tags=["inventory"])
 
@@ -39,14 +32,8 @@ async def list_locations(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    stmt = (
-        TenantService.scoped_query(WarehouseLocation, user.organization_id)
-        .order_by(WarehouseLocation.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.list_locations(page=page, size=size)
 
 
 @router.post(
@@ -59,10 +46,8 @@ async def create_location(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    obj = WarehouseLocation(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.create_location(data)
 
 
 @router.put("/locations/{location_id}", response_model=WarehouseLocationRead)
@@ -72,10 +57,8 @@ async def update_location(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    return await TenantService.update_fields(
-        db, WarehouseLocation, location_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Location not found",
-    )
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.update_location(location_id, data)
 
 
 # ── Egg Stock ──
@@ -86,14 +69,8 @@ async def list_stock(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    stmt = (
-        TenantService.scoped_query(EggStock, user.organization_id)
-        .order_by(EggStock.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.list_stock(page=page, size=size)
 
 
 @router.post("/stock", response_model=EggStockRead, status_code=status.HTTP_201_CREATED)
@@ -102,10 +79,8 @@ async def create_stock(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    obj = EggStock(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.create_stock(data)
 
 
 @router.put("/stock/{stock_id}", response_model=EggStockRead)
@@ -115,10 +90,8 @@ async def update_stock(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    return await TenantService.update_fields(
-        db, EggStock, stock_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Stock item not found",
-    )
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.update_stock(stock_id, data)
 
 
 # ── Stock Movements ──
@@ -129,14 +102,8 @@ async def list_movements(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    stmt = (
-        TenantService.scoped_query(StockMovement, user.organization_id)
-        .order_by(StockMovement.date.desc())
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.list_movements(page=page, size=size)
 
 
 @router.post(
@@ -147,21 +114,8 @@ async def create_movement(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    obj = StockMovement(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    # Auto-update stock quantity based on movement
-    if data.stock_id:
-        stock_result = await db.execute(
-            select(EggStock).where(EggStock.id == data.stock_id)
-        )
-        stock = stock_result.scalar_one_or_none()
-        if stock:
-            if data.movement_type in ("production_in", "return_in"):
-                stock.quantity += data.quantity
-            elif data.movement_type in ("sale_out", "breakage"):
-                stock.quantity = max(0, stock.quantity - data.quantity)
-    await db.flush()
-    return obj
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.create_movement(data)
 
 
 # ── Packaging Materials ──
@@ -172,14 +126,8 @@ async def list_packaging(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    stmt = (
-        TenantService.scoped_query(PackagingMaterial, user.organization_id)
-        .order_by(PackagingMaterial.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.list_packaging(page=page, size=size)
 
 
 @router.post(
@@ -192,10 +140,8 @@ async def create_packaging(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    obj = PackagingMaterial(**data.model_dump(), organization_id=user.organization_id)
-    db.add(obj)
-    await db.flush()
-    return obj
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.create_packaging(data)
 
 
 @router.put("/packaging/{item_id}", response_model=PackagingMaterialRead)
@@ -205,7 +151,5 @@ async def update_packaging(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(require_feature("inventory")),
 ):
-    return await TenantService.update_fields(
-        db, PackagingMaterial, item_id, user.organization_id,
-        data.model_dump(exclude_unset=True), error_msg="Packaging material not found",
-    )
+    svc = InventoryService(db, user.organization_id, user.id)
+    return await svc.update_packaging(item_id, data)

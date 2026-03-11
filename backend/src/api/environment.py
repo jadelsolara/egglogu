@@ -1,14 +1,11 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import get_current_user
-from src.core.exceptions import NotFoundError
 from src.database import get_db
 from src.models.auth import User
-from src.models.environment import EnvironmentReading, IoTReading, WeatherCache
 from src.schemas.environment import (
     EnvironmentReadingCreate,
     EnvironmentReadingRead,
@@ -20,6 +17,7 @@ from src.schemas.environment import (
     WeatherCacheRead,
     WeatherCacheUpdate,
 )
+from src.services.environment_service import EnvironmentService
 
 router = APIRouter(tags=["environment"])
 
@@ -33,15 +31,8 @@ async def list_environment(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        select(EnvironmentReading)
-        .where(EnvironmentReading.organization_id == user.organization_id)
-        .order_by(EnvironmentReading.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.list_environment(page=page, size=size)
 
 
 @router.get("/environment/{item_id}", response_model=EnvironmentReadingRead)
@@ -50,16 +41,8 @@ async def get_environment(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(EnvironmentReading).where(
-            EnvironmentReading.id == item_id,
-            EnvironmentReading.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Environment reading not found")
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.get_environment(item_id)
 
 
 @router.post(
@@ -72,10 +55,8 @@ async def create_environment(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = EnvironmentReading(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.create_environment(data)
 
 
 @router.put("/environment/{item_id}", response_model=EnvironmentReadingRead)
@@ -85,19 +66,8 @@ async def update_environment(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(EnvironmentReading).where(
-            EnvironmentReading.id == item_id,
-            EnvironmentReading.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Environment reading not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.update_environment(item_id, data)
 
 
 @router.delete("/environment/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -106,16 +76,8 @@ async def delete_environment(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(EnvironmentReading).where(
-            EnvironmentReading.id == item_id,
-            EnvironmentReading.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Environment reading not found")
-    await db.delete(item)
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    await svc.delete_environment(item_id)
 
 
 # --- IoT Readings ---
@@ -128,15 +90,8 @@ async def list_iot(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        select(IoTReading)
-        .where(IoTReading.organization_id == user.organization_id)
-        .order_by(IoTReading.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.list_iot(page=page, size=size)
 
 
 @router.get("/iot-readings/{item_id}", response_model=IoTReadingRead)
@@ -145,15 +100,8 @@ async def get_iot(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(IoTReading).where(
-            IoTReading.id == item_id, IoTReading.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("IoT reading not found")
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.get_iot(item_id)
 
 
 @router.post(
@@ -164,10 +112,8 @@ async def create_iot(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = IoTReading(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.create_iot(data)
 
 
 @router.put("/iot-readings/{item_id}", response_model=IoTReadingRead)
@@ -177,18 +123,8 @@ async def update_iot(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(IoTReading).where(
-            IoTReading.id == item_id, IoTReading.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("IoT reading not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.update_iot(item_id, data)
 
 
 @router.delete("/iot-readings/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -197,15 +133,8 @@ async def delete_iot(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(IoTReading).where(
-            IoTReading.id == item_id, IoTReading.organization_id == user.organization_id
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("IoT reading not found")
-    await db.delete(item)
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    await svc.delete_iot(item_id)
 
 
 # --- Weather ---
@@ -218,15 +147,8 @@ async def list_weather(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    stmt = (
-        select(WeatherCache)
-        .where(WeatherCache.organization_id == user.organization_id)
-        .order_by(WeatherCache.id)
-        .offset((page - 1) * size)
-        .limit(size)
-    )
-    result = await db.execute(stmt)
-    return result.scalars().all()
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.list_weather(page=page, size=size)
 
 
 @router.get("/weather/{item_id}", response_model=WeatherCacheRead)
@@ -235,16 +157,8 @@ async def get_weather(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(WeatherCache).where(
-            WeatherCache.id == item_id,
-            WeatherCache.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Weather cache not found")
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.get_weather(item_id)
 
 
 @router.post(
@@ -255,10 +169,8 @@ async def create_weather(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    item = WeatherCache(**data.model_dump(), organization_id=user.organization_id)
-    db.add(item)
-    await db.flush()
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.create_weather(data)
 
 
 @router.put("/weather/{item_id}", response_model=WeatherCacheRead)
@@ -268,19 +180,8 @@ async def update_weather(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(WeatherCache).where(
-            WeatherCache.id == item_id,
-            WeatherCache.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Weather cache not found")
-    for key, value in data.model_dump(exclude_unset=True).items():
-        setattr(item, key, value)
-    await db.flush()
-    return item
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    return await svc.update_weather(item_id, data)
 
 
 @router.delete("/weather/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -289,13 +190,5 @@ async def delete_weather(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
-        select(WeatherCache).where(
-            WeatherCache.id == item_id,
-            WeatherCache.organization_id == user.organization_id,
-        )
-    )
-    item = result.scalar_one_or_none()
-    if not item:
-        raise NotFoundError("Weather cache not found")
-    await db.delete(item)
+    svc = EnvironmentService(db, user.organization_id, user.id)
+    await svc.delete_weather(item_id)
