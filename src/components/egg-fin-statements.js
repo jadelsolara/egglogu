@@ -53,11 +53,11 @@ function _dateStr(d) {
 
 function _periodLabel(period) {
   const labels = {
-    'thisMonth': t('this_month') || 'This Month',
-    'lastMonth': t('last_month') || 'Last Month',
-    'thisQuarter': t('this_quarter') || 'This Quarter',
-    'ytd': t('ytd') || 'Year to Date',
-    'all': t('all_time') || 'All Time'
+    'thisMonth': t('fin_period_this_month') || 'This Month',
+    'lastMonth': t('fin_period_last_month') || 'Last Month',
+    'thisQuarter': t('fin_period_quarter') || 'This Quarter',
+    'ytd': t('fin_period_ytd') || 'Year to Date',
+    'all': t('fin_period_all') || 'All Time'
   };
   return labels[period] || period;
 }
