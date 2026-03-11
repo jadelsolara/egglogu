@@ -363,7 +363,7 @@ export function startWorkflowEvaluation() {
     if (results.length) {
       Store.save(D);
       results.forEach(r => {
-        Bus.emit('toast', { msg: 'r.ruleName + ': ' + r.detail });
+        Bus.emit('toast', { msg: r.ruleName + ': ' + r.detail });
       });
     }
   }, 300000); // Every 5 minutes

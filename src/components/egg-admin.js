@@ -524,7 +524,7 @@ class EggAdmin extends HTMLElement {
     <div class="modal-footer"><button class="btn btn-secondary" onclick="this.getRootNode().host._closeModalViaHost()">${lbl.cancel}</button>
     <button class="btn btn-primary" onclick="this.getRootNode().host._verifyOwnerForActivation()">${lbl.verify_send || 'Verify and Send Confirmation'}</button></div>`;
 
-    Bus.emit('modal:open', { title: '(lbl.security_check || 'Security Verification'), body });
+    Bus.emit('modal:open', { title: lbl.security_check || 'Security Verification', body });
   }
 
   async _verifyOwnerForActivation() {
@@ -611,7 +611,7 @@ class EggAdmin extends HTMLElement {
 
     logAudit('activation_direct', 'users', 'Worker activated directly: ' + userObj.name + ' (' + userObj.workerId + ')', null, { user: userObj.name, workerId: userObj.workerId, isExtra, confirmedBy: currentUser.name });
     Store.save(D);
-    Bus.emit('toast', { msg: 'userObj.name + ' (' + userObj.workerId + ') ' + (lbl.activated_msg || 'activated') });
+    Bus.emit('toast', { msg: userObj.name + ' (' + userObj.workerId + ') ' + (lbl.activated_msg || 'activated') });
     this._pendingActivation = null;
     this.render();
   }
@@ -676,7 +676,7 @@ class EggAdmin extends HTMLElement {
     <p style="font-size:11px;color:var(--text-light);text-align:center">${lbl.expires_24h || 'This link expires in 24 hours.'}</p>
     <div class="modal-footer"><button class="btn btn-secondary" onclick="this.getRootNode().host._closeModalViaHost();this.getRootNode().host.render()">${lbl.close_later || 'Close (confirm later)'}</button></div>`;
 
-    Bus.emit('modal:open', { title: '(lbl.confirm_sent || 'Confirmation Sent'), body });
+    Bus.emit('modal:open', { title: lbl.confirm_sent || 'Confirmation Sent', body });
     this._pendingActivation = null;
   }
 
@@ -722,7 +722,7 @@ class EggAdmin extends HTMLElement {
       { status: 'pending' }, { status: 'active', activatedAt: user.activatedAt, confirmedBy: user.confirmedBy });
     Store.save(D);
     Bus.emit('modal:close');
-    Bus.emit('toast', { msg: 'user.name + ' ' + (lbl.activated_msg || 'activated') });
+    Bus.emit('toast', { msg: user.name + ' ' + (lbl.activated_msg || 'activated') });
     this.render();
   }
 
@@ -749,7 +749,7 @@ class EggAdmin extends HTMLElement {
     <div class="modal-footer"><button class="btn btn-secondary" onclick="this.getRootNode().host._closeModalViaHost()">${lbl.cancel}</button>
     <button class="btn btn-danger" onclick="this.getRootNode().host._executeDeactivation('${escapeAttr(id)}')">${lbl.deactivate}</button></div>`;
 
-    Bus.emit('modal:open', { title: '(lbl.confirm_deactivation || 'Confirm Deactivation'), body });
+    Bus.emit('modal:open', { title: lbl.confirm_deactivation || 'Confirm Deactivation', body });
   }
 
   async _executeDeactivation(id) {

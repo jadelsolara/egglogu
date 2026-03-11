@@ -801,7 +801,7 @@ class EggDashboard extends HTMLElement {
           D.farm.lat = parseFloat(pos.coords.latitude.toFixed(6));
           D.farm.lng = parseFloat(pos.coords.longitude.toFixed(6));
           Store.save(D);
-          Bus.emit('toast', { msg: '(t('geo_saved') || 'Ubicación guardada') });
+          Bus.emit('toast', { msg: t('geo_saved') || 'Ubicación guardada' });
           this._fetchWeather(D);
         }, () => {
           el.innerHTML = `<div style="padding:8px;color:var(--text-light);font-size:13px">${t('geo_denied') || 'GPS no disponible.'} <a data-action="go-config" style="color:var(--primary);cursor:pointer">${t('geo_set_location')}</a></div>`;

@@ -183,9 +183,9 @@ class EggEnvironment extends HTMLElement {
       const hOk = latest.humidity >= 40 && latest.humidity <= 70;
       const lOk = latest.lightHours >= 14 && latest.lightHours <= 16;
       h += `<div class="card"><h3>${t('env_latest_reading')} (${fmtDate(latest.date)})</h3><div class="kpi-grid">`;
-      h += `<div class="kpi-card ${tOk ? '' : 'danger'}"><div class="kpi-label">${t('env_temp')}</div><div class="kpi-value">${latest.temperature || '-'}\u00B0C</div><div class="kpi-sub">${tOk ? '\u2713 ' + t('env_ok') : ''!' + ' + t('env_out_of_range')}</div></div>`;
-      h += `<div class="kpi-card ${hOk ? '' : 'warning'}"><div class="kpi-label">${t('env_humidity')}</div><div class="kpi-value">${latest.humidity || '-'}%</div><div class="kpi-sub">${hOk ? '\u2713 ' + t('env_ok') : ''!' + ' + t('env_out_of_range')}</div></div>`;
-      h += `<div class="kpi-card ${lOk ? '' : 'warning'}"><div class="kpi-label">${t('env_light')}</div><div class="kpi-value">${latest.lightHours || '-'} hrs</div><div class="kpi-sub">${lOk ? '\u2713 ' + t('env_ok') : ''!' + ' + t('env_out_of_range')}</div></div>`;
+      h += `<div class="kpi-card ${tOk ? '' : 'danger'}"><div class="kpi-label">${t('env_temp')}</div><div class="kpi-value">${latest.temperature || '-'}\u00B0C</div><div class="kpi-sub">${tOk ? '\u2713 ' + t('env_ok') : '\u2717 ' + t('env_out_of_range')}</div></div>`;
+      h += `<div class="kpi-card ${hOk ? '' : 'warning'}"><div class="kpi-label">${t('env_humidity')}</div><div class="kpi-value">${latest.humidity || '-'}%</div><div class="kpi-sub">${hOk ? '\u2713 ' + t('env_ok') : '\u2717 ' + t('env_out_of_range')}</div></div>`;
+      h += `<div class="kpi-card ${lOk ? '' : 'warning'}"><div class="kpi-label">${t('env_light')}</div><div class="kpi-value">${latest.lightHours || '-'} hrs</div><div class="kpi-sub">${lOk ? '\u2713 ' + t('env_ok') : '\u2717 ' + t('env_out_of_range')}</div></div>`;
       if (latest.temperature && latest.humidity) {
         const thi = calcTHI(latest.temperature, latest.humidity);
         h += `<div class="kpi-card ${thi > 28 ? 'danger' : thi > 25 ? 'warning' : ''}"><div class="kpi-label">${t('env_thi')}</div><div class="kpi-value">${thi.toFixed(1)}</div><div class="kpi-sub">${thi > 28 ? t('weather_heat_alert') : 'OK'}</div></div>`;
