@@ -12,7 +12,7 @@ import { DataTable } from '../core/datatable.js';
 import { computeKpiSnapshot, snapshotDelta } from '../core/kpi.js';
 
 /* ── Constants ─────────────────────────────────────────────── */
-const TEMPLATES = ['production', 'financial', 'health', 'feed', 'kpi'];
+const TEMPLATES = ['production', 'financial', 'health', 'feed', 'kpi', 'flock', 'stats'];
 
 const PERIODS = [
   { key: '7d', days: 7 },
@@ -534,6 +534,188 @@ const ReportTemplates = {
       csvRows: filtered.map(s => [s.date, s.henDay, s.fcr, s.mortality, s.netIncome || 0, s.eggsToday || 0, s.activeHens || 0]) };
   },
 
+  /* ── 6. Flock Analysis (Production, Consumption, ROI per flock) ── */
+  flock(D, range) {
+    const prod = D.dailyProduction.filter(p => p.date >= range.start && p.date <= range.end);
+    const feedCons = D.feed.consumption.filter(c => c.date >= range.start && c.date <= range.end);
+    const feedPurch = D.feed.purchases.filter(p => p.date >= range.start && p.date <= range.end);
+    const invRecs = D.inventory.filter(r => r.date >= range.start && r.date <= range.end);
+    const expenses = D.finances.expenses.filter(e => e.date >= range.start && e.date <= range.end);
+    const income = D.finances.income.filter(i => i.date >= range.start && i.date <= range.end);
+    const days = _daysBetween(range.start, range.end);
+
+    // Build per-flock data
+    const fData = {};
+    D.flocks.forEach(f => {
+      fData[f.id] = { name: f.name, eggs: 0, deaths: 0, culled: 0, feedKg: 0, feedCost: 0,
+        hens: f.quantity || f.initialQuantity || 0, invIn: 0, invOut: 0, expenses: 0, income: 0,
+        purchaseCost: f.purchaseCost || 0, broken: 0 };
+    });
+
+    prod.forEach(p => {
+      if (!fData[p.flockId]) return;
+      fData[p.flockId].eggs += (p.eggsCollected || 0);
+      fData[p.flockId].deaths += (p.deaths || 0);
+      fData[p.flockId].culled += (p.culled || 0);
+      fData[p.flockId].broken += (p.brokenEggs || p.broken || 0);
+    });
+
+    feedCons.forEach(c => {
+      if (!fData[c.flockId]) return;
+      fData[c.flockId].feedKg += (c.quantityKg || 0);
+    });
+
+    feedPurch.forEach(p => {
+      if (p.flockId && fData[p.flockId]) {
+        fData[p.flockId].feedCost += (p.cost || 0);
+      }
+    });
+
+    invRecs.forEach(r => {
+      if (!fData[r.flockId]) return;
+      fData[r.flockId].invIn += (r.qtyIn || 0);
+      fData[r.flockId].invOut += (r.qtyOut || 0);
+    });
+
+    expenses.forEach(e => {
+      if (e.flockId && fData[e.flockId]) fData[e.flockId].expenses += (e.amount || 0);
+    });
+
+    income.forEach(i => {
+      if (i.flockId && fData[i.flockId]) fData[i.flockId].income += (i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0);
+    });
+
+    // Sort flocks by eggs descending
+    const sorted = Object.entries(fData).sort((a, b) => b[1].eggs - a[1].eggs);
+    const maxEggs = Math.max(...sorted.map(([, d]) => d.eggs), 1);
+
+    let h = `<div class="rpt-section">
+      <h3>\uD83D\uDC14 ${t('rpt_flock_analysis') || 'Análisis por Lote'}</h3>
+      <p class="rpt-subtitle">${fmtDate(range.start)} \u2014 ${fmtDate(range.end)} (${days} ${t('flock_days') || 'días'})</p>`;
+
+    if (!sorted.length) {
+      h += emptyState('', t('no_data'));
+      h += '</div>';
+      return { html: h, charts: {}, data: {}, csvRows: [] };
+    }
+
+    // ── Bar chart: Production per flock ──
+    h += `<div class="card"><h4>\uD83E\uDD5A ${t('rpt_flock_production') || 'Producción por Lote'}</h4>
+      <div style="display:flex;flex-direction:column;gap:8px">`;
+    sorted.forEach(([, d]) => {
+      const pct = Math.min(d.eggs / maxEggs * 100, 100);
+      h += `<div style="display:flex;align-items:center;gap:8px">
+        <span style="width:100px;font-size:13px;font-weight:600;text-align:right;flex-shrink:0">${sanitizeHTML(d.name)}</span>
+        <div style="flex:1;height:22px;background:var(--bg-secondary,#f0f0f0);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:var(--primary,#1565C0);border-radius:4px"></div>
+        </div>
+        <span style="width:70px;font-size:13px;font-weight:700">${fmtNum(d.eggs)}</span>
+      </div>`;
+    });
+    h += '</div></div>';
+
+    // ── Bar chart: Consumption per flock ──
+    const maxFeed = Math.max(...sorted.map(([, d]) => d.feedKg), 1);
+    h += `<div class="card"><h4>\uD83C\uDF3E ${t('rpt_flock_consumption') || 'Consumo por Lote'}</h4>
+      <div style="display:flex;flex-direction:column;gap:8px">`;
+    sorted.forEach(([, d]) => {
+      const pct = Math.min(d.feedKg / maxFeed * 100, 100);
+      h += `<div style="display:flex;align-items:center;gap:8px">
+        <span style="width:100px;font-size:13px;font-weight:600;text-align:right;flex-shrink:0">${sanitizeHTML(d.name)}</span>
+        <div style="flex:1;height:22px;background:var(--bg-secondary,#f0f0f0);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:#FF8F00;border-radius:4px"></div>
+        </div>
+        <span style="width:70px;font-size:13px;font-weight:700">${fmtNum(d.feedKg, 1)} kg</span>
+      </div>`;
+    });
+    h += '</div></div>';
+
+    // ── Detailed comparison table ──
+    h += `<div class="card"><h4>\uD83D\uDCCA ${t('rpt_flock_comparison') || 'Comparativa de Lotes'}</h4>
+      <div class="table-wrap"><table><thead><tr>
+        <th>${t('prod_flock') || 'Lote'}</th>
+        <th>${t('kpi_active_hens') || 'Gallinas'}</th>
+        <th>${t('prod_eggs') || 'Huevos'}</th>
+        <th>${t('kpi_henday') || 'Hen-Day %'}</th>
+        <th>${t('feed_consumption') || 'Consumo'}</th>
+        <th>${t('kpi_fcr') || 'FCR'}</th>
+        <th>${t('kpi_mortality') || 'Mort. %'}</th>
+        <th>${t('rpt_broken') || 'Rotos'}</th>
+        <th>${t('inv_total_out') || 'Salida Inv.'}</th>
+        <th>${t('fin_income') || 'Ingresos'}</th>
+        <th>${t('fin_expenses') || 'Gastos'}</th>
+        <th>ROI</th>
+      </tr></thead><tbody>`;
+
+    const csvRows = [[t('prod_flock'), t('kpi_active_hens'), t('prod_eggs'), 'Hen-Day %', t('feed_consumption') + ' (kg)',
+      'FCR', t('kpi_mortality') + ' %', t('rpt_broken'), t('inv_total_out'), t('fin_income'), t('fin_expenses'), 'ROI %']];
+
+    sorted.forEach(([, d]) => {
+      const hens = d.hens - d.deaths - d.culled;
+      const avgEggs = days > 0 ? d.eggs / days : 0;
+      const henDay = hens > 0 ? (avgEggs / hens * 100) : 0;
+      const eggKg = d.eggs * 0.06; // ~60g per egg avg
+      const fcr = eggKg > 0 ? d.feedKg / eggKg : 0;
+      const totalHens = d.hens || 1;
+      const mortRate = totalHens > 0 ? ((d.deaths + d.culled) / totalHens * 100) : 0;
+      const totalCost = d.feedCost + d.expenses + d.purchaseCost;
+      const roi = totalCost > 0 ? ((d.income - totalCost) / totalCost * 100) : 0;
+
+      const hdCls = henDay < 50 ? 'color:var(--danger)' : henDay < 70 ? 'color:var(--warning)' : 'color:var(--success)';
+      const fcrCls = fcr > 3 ? 'color:var(--danger)' : fcr > 2.5 ? 'color:var(--warning)' : fcr > 0 ? 'color:var(--success)' : '';
+      const mortCls = mortRate > 5 ? 'color:var(--danger)' : mortRate > 2 ? 'color:var(--warning)' : '';
+      const roiCls = roi < 0 ? 'color:var(--danger)' : roi > 20 ? 'color:var(--success)' : '';
+
+      h += `<tr>
+        <td><strong>${sanitizeHTML(d.name)}</strong></td>
+        <td>${fmtNum(hens)}</td>
+        <td>${fmtNum(d.eggs)}</td>
+        <td style="${hdCls};font-weight:700">${fmtNum(henDay, 1)}%</td>
+        <td>${fmtNum(d.feedKg, 1)} kg</td>
+        <td style="${fcrCls};font-weight:700">${fcr > 0 ? fmtNum(fcr, 2) : '-'}</td>
+        <td style="${mortCls}">${fmtNum(mortRate, 1)}%</td>
+        <td>${fmtNum(d.broken)}</td>
+        <td>${fmtNum(d.invOut)}</td>
+        <td style="color:var(--success)">${fmtMoney(d.income)}</td>
+        <td style="color:var(--danger)">${fmtMoney(totalCost)}</td>
+        <td style="${roiCls};font-weight:700">${fmtNum(roi, 1)}%</td>
+      </tr>`;
+
+      csvRows.push([d.name, hens, d.eggs, henDay.toFixed(1), d.feedKg.toFixed(1), fcr.toFixed(2),
+        mortRate.toFixed(1), d.broken, d.invOut, d.income, totalCost, roi.toFixed(1)]);
+    });
+
+    h += '</tbody></table></div></div>';
+
+    // ── ROI ranking bar chart ──
+    const roiData = sorted.map(([, d]) => {
+      const totalCost = d.feedCost + d.expenses + d.purchaseCost;
+      const roi = totalCost > 0 ? ((d.income - totalCost) / totalCost * 100) : 0;
+      return { name: d.name, roi };
+    }).sort((a, b) => b.roi - a.roi);
+    const maxRoi = Math.max(...roiData.map(d => Math.abs(d.roi)), 1);
+
+    h += `<div class="card"><h4>\uD83D\uDCB0 ROI ${t('rpt_by_flock') || 'por Lote'}</h4>
+      <div style="display:flex;flex-direction:column;gap:8px">`;
+    roiData.forEach(d => {
+      const pct = Math.min(Math.abs(d.roi) / maxRoi * 100, 100);
+      const color = d.roi < 0 ? 'var(--danger,#C62828)' : d.roi < 10 ? 'var(--warning,#e65100)' : 'var(--success,#2E7D32)';
+      h += `<div style="display:flex;align-items:center;gap:8px">
+        <span style="width:100px;font-size:13px;font-weight:600;text-align:right;flex-shrink:0">${sanitizeHTML(d.name)}</span>
+        <div style="flex:1;height:22px;background:var(--bg-secondary,#f0f0f0);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${color};border-radius:4px"></div>
+        </div>
+        <span style="width:70px;font-size:13px;font-weight:700;color:${color}">${d.roi >= 0 ? '+' : ''}${fmtNum(d.roi, 1)}%</span>
+      </div>`;
+    });
+    h += '</div></div>';
+
+    h += '</div>';
+
+    return { html: h, charts: {}, data: { flocks: sorted.length },
+      csvRows };
+  },
+
   /* ── CSV Builders ──────────────────────────────────────── */
   _prodCSV(prod, D) {
     const header = [t('date'), t('prod_flock'), t('prod_eggs'), t('kpi_deaths'), t('rpt_culled'), 'S', 'M', 'L', 'XL', 'Jumbo', t('rpt_broken'), t('rpt_dirty')];
@@ -561,6 +743,36 @@ const ReportTemplates = {
     purchases.forEach(p => { rows.push([t('feed_purchases'), p.date, p.type || '-', p.quantityKg || 0, p.cost || 0]); });
     consumption.forEach(c => { const f = D.flocks.find(x => x.id === c.flockId); rows.push([t('feed_consumption'), c.date, c.type || '-', c.quantityKg || 0, f ? f.name : '-']); });
     return [header, ...rows];
+  },
+
+  stats(D) {
+    const stats = [
+      [t('nav_flocks'), D.flocks.length], [t('nav_production'), D.dailyProduction.length],
+      [t('san_vaccines'), D.vaccines.length], [t('med_title'), D.medications.length],
+      [t('out_title'), D.outbreaks.length], [t('feed_purchases'), D.feed.purchases.length],
+      [t('feed_consumption'), D.feed.consumption.length], [t('nav_clients'), D.clients.length],
+      [t('fin_income'), D.finances.income.length], [t('fin_expenses'), D.finances.expenses.length],
+      [t('nav_environment'), D.environment.length], [t('ops_logbook'), D.logbook.length],
+      [t('ops_personnel'), D.personnel.length], [t('snapshots'), D.kpiSnapshots.length],
+      [t('nav_inventory'), D.inventory.length], [t('cfg_audit'), D.auditLog.length],
+      [t('cfg_users'), D.users.length], [t('ord_tab'), (D.orders || []).length],
+      [t('inv_reservations'), (D.reservations || []).length],
+      [t('inv_locations'), (D.storageLocations || []).length]
+    ];
+    const totalRecords = stats.reduce((s, [, v]) => s + v, 0);
+    let h = `<div class="rpt-section"><h3>\uD83D\uDCCA ${t('data_stats')}</h3>
+      <div class="card"><div style="text-align:center;margin-bottom:16px"><span style="font-size:36px;font-weight:800;color:var(--primary,#1A3C6E)">${fmtNum(totalRecords)}</span><br><span style="font-size:13px;color:var(--text-light,#888)">${t('cfg_total_records')}</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">`;
+    stats.forEach(([label, v]) => {
+      const pct = totalRecords > 0 ? (v / totalRecords * 100) : 0;
+      h += `<div style="display:flex;justify-content:space-between;padding:8px 12px;background:var(--bg-secondary,#f5f5f5);border-radius:6px">
+        <span style="font-size:13px;color:var(--text-light,#888)">${label}</span>
+        <span style="font-weight:700;font-size:14px">${fmtNum(v)}</span>
+      </div>`;
+    });
+    h += '</div></div></div>';
+    const csvRows = [[t('rpt_module'), t('total')], ...stats];
+    return { html: h, charts: {}, data: { totalRecords }, csvRows };
   }
 };
 
@@ -688,7 +900,7 @@ function baseStyle() {
     .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
     .btn-primary { background: var(--primary, #1A3C6E); color: #fff; border: none; }
     .btn-sm { padding: 6px 12px; font-size: 13px; }
-    .btn-group { display: flex; gap: 8px; align-items: center; }
+    .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
     .form-control { padding: 8px 12px; border: 1px solid var(--border, #ddd); border-radius: var(--radius, 8px); font-size: 14px; background: var(--bg, #fff); color: var(--text, #333); }
     .form-control:focus { outline: none; border-color: var(--primary, #1A3C6E); box-shadow: 0 0 0 3px rgba(26,60,110,.12); }
     .card { background: var(--bg, #fff); border-radius: var(--radius, 8px); padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 16px; }
@@ -727,6 +939,40 @@ function baseStyle() {
       .toolbar, .btn { display: none !important; }
       .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
     }
+      /* DataTable extras */
+      .dt-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+      .dt-toolbar-right { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+      .dt-search-input { padding: 6px 12px; border: 1px solid var(--border, #e0e0e0); border-radius: var(--radius, 8px); font-size: 13px; min-width: 180px; background: var(--bg, #fff); color: var(--text, #212121); }
+      .dt-filter-select, .dt-filter-input, .dt-filter-date, .dt-filter-num { width: 100%; padding: 4px 6px; border: 1px solid var(--border, #e0e0e0); border-radius: 6px; font-size: 12px; box-sizing: border-box; background: var(--bg, #fff); color: var(--text, #212121); }
+      .dt-filter-row td { padding: 4px 6px; }
+      .dt-card-wrap { position: relative; }
+      .dt-table-desktop { display: block; }
+      .dt-mobile-cards { display: none; }
+      .dt-row-selected { background: var(--primary-fill, rgba(74,124,89,.08)); }
+      .dt-bulk-bar { display: flex; align-items: center; justify-content: space-between; background: var(--primary-fill, rgba(74,124,89,.08)); padding: 8px 12px; border-radius: var(--radius, 8px); margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+      .dt-bulk-count { font-weight: 600; font-size: 13px; }
+      .dt-bulk-actions { display: flex; gap: 6px; }
+      .dt-pagination { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; flex-wrap: wrap; gap: 8px; font-size: 13px; }
+      .dt-page-buttons { display: flex; gap: 4px; }
+      .dt-page-size { padding: 4px 8px; border: 1px solid var(--border, #e0e0e0); border-radius: 6px; font-size: 12px; background: var(--bg, #fff); }
+      .dt-footer-info { font-size: 13px; color: var(--text-light, #757575); padding: 8px 0; }
+      .dt-sortable { cursor: pointer; user-select: none; }
+      .dt-sorted { color: var(--primary, #4a7c59); }
+      .dt-col-picker-wrap { position: relative; }
+      .dt-column-picker { position: absolute; right: 0; top: 100%; background: var(--bg, #fff); border: 1px solid var(--border, #e0e0e0); border-radius: 8px; padding: 8px; z-index: 100; min-width: 180px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+      .dt-col-option { display: block; padding: 4px 8px; font-size: 13px; cursor: pointer; }
+      .dt-card { background: var(--bg, #fff); border-radius: 8px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+      .dt-card-selected { background: var(--primary-fill, rgba(74,124,89,.08)); }
+      .dt-card-title { font-weight: 700; margin-bottom: 6px; }
+      .dt-card-field { display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0; }
+      .dt-card-label { color: var(--text-light, #757575); }
+      .dt-card-actions { margin-top: 8px; display: flex; gap: 6px; }
+      .dt-card-check { margin-bottom: 6px; }
+      .dt-th-check, .dt-td-check { width: 36px; text-align: center; }
+      @media (max-width: 768px) {
+        .dt-table-desktop { display: none; }
+        .dt-mobile-cards { display: block; }
+      }
   </style>`;
 }
 

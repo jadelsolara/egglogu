@@ -145,7 +145,6 @@ class EggSidebar extends HTMLElement {
         html += `<a data-section="${item.section}" class="${item.section === this._currentSection ? 'active' : ''}" role="menuitem">
           <i>${item.icon}</i><span>${t(item.key)}</span></a>`;
       } else {
-        // Show superadmin group only for superadmin users
         if (item.hidden && !isSuperadmin) continue;
         const autoOpen = item.grp === 'superadmin' ? ' grp-open' : '';
         html += `<div class="nav-group-label${autoOpen}">${t(item.key)}</div>`;

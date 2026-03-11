@@ -11,9 +11,9 @@ const EVICTION_ORDER = ['egglogu_sync_snapshot', 'egglogu_bugs', 'egglogu_sugges
 const DEFAULT_DATA = {
   farm: { name: 'Mi Granja', location: '', capacity: 500, currency: '$', lat: null, lng: null, owmApiKey: '', mqttBroker: '', mqttUser: '', mqttPass: '', mqttTopicPrefix: 'egglogu/', houses: [], routes: [], suppliers: [] },
   flocks: [], dailyProduction: [], vaccines: [], medications: [], outbreaks: [],
-  feed: { purchases: [], consumption: [] }, clients: [], clientClaims: [],
+  feed: { purchases: [], consumption: [] }, clients: [], clientClaims: [], orders: [],
   finances: { income: [], expenses: [], receivables: [] },
-  inventory: [],
+  inventory: [], storageLocations: [], reservations: [],
   environment: [], checklist: [], logbook: [], personnel: [],
   kpiSnapshots: [], weatherCache: [], stressEvents: [], iotReadings: [], predictions: [],
   biosecurity: { visitors: [], zones: [], pestSightings: [], protocols: [] },
@@ -90,8 +90,11 @@ function migrateData(D) {
   if (!D.traceability.batches) D.traceability.batches = [];
   if (!D.productionPlans) D.productionPlans = [];
   if (!D.inventory) D.inventory = [];
+  if (!D.storageLocations) D.storageLocations = [];
+  if (!D.reservations) D.reservations = [];
   if (!D.auditLog) D.auditLog = [];
   if (!D.clientClaims) D.clientClaims = [];
+  if (!D.orders) D.orders = [];
   if (!D.users) D.users = [];
   // Settings defaults
   if (D.settings.taxRate === undefined) D.settings.taxRate = 0;

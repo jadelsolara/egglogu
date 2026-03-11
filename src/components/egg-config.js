@@ -173,7 +173,7 @@ class EggConfig extends HTMLElement {
       .btn-secondary { background: var(--bg-secondary, #f5f5f5); }
       .btn-danger { background: var(--danger, #dc3545); color: #fff; border: none; }
       .btn:hover { opacity: 0.85; }
-      .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+      .btn-group { display: flex; gap: 4px; align-items: center; flex-wrap: nowrap; white-space: nowrap; }
       .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
       .badge-primary { background: #e3f2fd; color: #1565c0; }
       .badge-success { background: #e8f5e9; color: #2e7d32; }
@@ -200,6 +200,40 @@ class EggConfig extends HTMLElement {
       .modal-footer { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
       @media (max-width: 768px) {
         .form-row, .form-row-3 { grid-template-columns: 1fr; }
+      }
+      /* DataTable extras */
+      .dt-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+      .dt-toolbar-right { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+      .dt-search-input { padding: 6px 12px; border: 1px solid var(--border, #e0e0e0); border-radius: var(--radius, 8px); font-size: 13px; min-width: 180px; background: var(--bg, #fff); color: var(--text, #212121); }
+      .dt-filter-select, .dt-filter-input, .dt-filter-date, .dt-filter-num { width: 100%; padding: 4px 6px; border: 1px solid var(--border, #e0e0e0); border-radius: 6px; font-size: 12px; box-sizing: border-box; background: var(--bg, #fff); color: var(--text, #212121); }
+      .dt-filter-row td { padding: 4px 6px; }
+      .dt-card-wrap { position: relative; }
+      .dt-table-desktop { display: block; }
+      .dt-mobile-cards { display: none; }
+      .dt-row-selected { background: var(--primary-fill, rgba(74,124,89,.08)); }
+      .dt-bulk-bar { display: flex; align-items: center; justify-content: space-between; background: var(--primary-fill, rgba(74,124,89,.08)); padding: 8px 12px; border-radius: var(--radius, 8px); margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+      .dt-bulk-count { font-weight: 600; font-size: 13px; }
+      .dt-bulk-actions { display: flex; gap: 6px; }
+      .dt-pagination { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; flex-wrap: wrap; gap: 8px; font-size: 13px; }
+      .dt-page-buttons { display: flex; gap: 4px; }
+      .dt-page-size { padding: 4px 8px; border: 1px solid var(--border, #e0e0e0); border-radius: 6px; font-size: 12px; background: var(--bg, #fff); }
+      .dt-footer-info { font-size: 13px; color: var(--text-light, #757575); padding: 8px 0; }
+      .dt-sortable { cursor: pointer; user-select: none; }
+      .dt-sorted { color: var(--primary, #4a7c59); }
+      .dt-col-picker-wrap { position: relative; }
+      .dt-column-picker { position: absolute; right: 0; top: 100%; background: var(--bg, #fff); border: 1px solid var(--border, #e0e0e0); border-radius: 8px; padding: 8px; z-index: 100; min-width: 180px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+      .dt-col-option { display: block; padding: 4px 8px; font-size: 13px; cursor: pointer; }
+      .dt-card { background: var(--bg, #fff); border-radius: 8px; padding: 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+      .dt-card-selected { background: var(--primary-fill, rgba(74,124,89,.08)); }
+      .dt-card-title { font-weight: 700; margin-bottom: 6px; }
+      .dt-card-field { display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0; }
+      .dt-card-label { color: var(--text-light, #757575); }
+      .dt-card-actions { margin-top: 8px; display: flex; gap: 6px; }
+      .dt-card-check { margin-bottom: 6px; }
+      .dt-th-check, .dt-td-check { width: 36px; text-align: center; }
+      @media (max-width: 768px) {
+        .dt-table-desktop { display: none; }
+        .dt-mobile-cards { display: block; }
       }
     </style>`;
   }
@@ -266,9 +300,6 @@ class EggConfig extends HTMLElement {
 
     // Audit log
     h += this._renderAuditCard();
-
-    // Stats
-    h += this._renderStatsCard(D);
 
     this.shadowRoot.innerHTML = h;
 
@@ -584,11 +615,23 @@ ${u.status === 'inactive' || u.status === 'expired' ? '<button class="btn btn-pr
      DATA MANAGEMENT
      ================================================================ */
   _renderDataCard() {
-    return `<div class="card"><h3>${t('cfg_data')}</h3><div class="btn-group">
-<button class="btn btn-secondary" data-action="export-data">${t('cfg_export')}</button>
-<button class="btn btn-secondary" data-action="import-trigger">${t('cfg_import')}</button>
+    const D = this._load();
+    const totalRecords = (D.flocks||[]).length + (D.dailyProduction||[]).length + (D.vaccines||[]).length
+      + (D.medications||[]).length + (D.outbreaks||[]).length + (D.feed?.purchases||[]).length
+      + (D.feed?.consumption||[]).length + (D.clients||[]).length + (D.finances?.income||[]).length
+      + (D.finances?.expenses||[]).length + (D.inventory||[]).length + (D.environment||[]).length
+      + (D.checklist||[]).length + (D.logbook||[]).length + (D.personnel||[]).length
+      + (D.biosecurity?.visitors||[]).length + (D.traceability?.batches||[]).length
+      + (D.productionPlans||[]).length + (D.auditLog||[]).length;
+    return `<div class="card"><h3>${t('cfg_data')}</h3>
+<p style="color:var(--text-light);font-size:13px;margin-bottom:12px">${t('cfg_data_desc') || 'Export all records to a file or import from a previous backup. Use this to migrate data between accounts or devices.'}</p>
+<p style="font-size:13px;margin-bottom:12px"><strong>${t('cfg_total_records') || 'Total records'}:</strong> ${totalRecords.toLocaleString()}</p>
+<div class="btn-group" style="flex-wrap:wrap;gap:8px">
+<button class="btn btn-secondary" data-action="export-data">⬇ ${t('cfg_export')}</button>
+<button class="btn btn-secondary" data-action="import-trigger">⬆ ${t('cfg_import')}</button>
 <input type="file" id="cfg-import-file" accept=".json" style="display:none">
-<button class="btn btn-danger" data-action="reset-data">${t('cfg_reset')}</button></div></div>`;
+<button class="btn btn-danger" data-action="reset-data">${t('cfg_reset')}</button></div>
+<div id="import-preview" style="display:none;margin-top:16px;padding:12px;background:var(--bg-alt,#f8f9fa);border-radius:var(--radius);border:1px solid var(--border)"></div></div>`;
   }
 
   /* ================================================================
@@ -601,28 +644,7 @@ ${u.status === 'inactive' || u.status === 'expired' ? '<button class="btn btn-pr
 <div id="audit-log-table"></div></div>`;
   }
 
-  /* ================================================================
-     STATS
-     ================================================================ */
-  _renderStatsCard(D) {
-    const stats = [
-      [t('nav_flocks'), D.flocks.length], [t('nav_production'), D.dailyProduction.length],
-      [t('san_vaccines'), D.vaccines.length], [t('med_title'), D.medications.length],
-      [t('out_title'), D.outbreaks.length], [t('feed_purchases'), D.feed.purchases.length],
-      [t('feed_consumption'), D.feed.consumption.length], [t('nav_clients'), D.clients.length],
-      [t('fin_income'), D.finances.income.length], [t('fin_expenses'), D.finances.expenses.length],
-      [t('nav_environment'), D.environment.length], [t('ops_logbook'), D.logbook.length],
-      [t('ops_personnel'), D.personnel.length], [t('snapshots'), D.kpiSnapshots.length],
-      [t('nav_inventory'), D.inventory.length], [t('cfg_audit'), D.auditLog.length],
-      [t('cfg_users'), D.users.length]
-    ];
-    let h = '<div class="card"><h3>' + t('data_stats') + '</h3>';
-    stats.forEach(([label, v]) => {
-      h += `<div class="stat-row"><span class="stat-label">${label}</span><span class="stat-value">${v}</span></div>`;
-    });
-    h += '</div>';
-    return h;
-  }
+  /* Stats card moved to Reports module (egg-reportes.js) */
 
   /* ================================================================
      EVENT BINDING
@@ -1550,11 +1572,41 @@ ${costLine}</div>
      ================================================================ */
   _exportData() {
     const D = this._load();
-    const blob = new Blob([JSON.stringify(D, null, 2)], { type: 'application/json' });
+    const exportPayload = {
+      _meta: {
+        app: 'EGGlogU',
+        version: '2.0',
+        exportDate: new Date().toISOString(),
+        farmName: D.farm?.name || '',
+        records: {
+          flocks: (D.flocks||[]).length,
+          production: (D.dailyProduction||[]).length,
+          vaccines: (D.vaccines||[]).length,
+          medications: (D.medications||[]).length,
+          outbreaks: (D.outbreaks||[]).length,
+          feedPurchases: (D.feed?.purchases||[]).length,
+          feedConsumption: (D.feed?.consumption||[]).length,
+          clients: (D.clients||[]).length,
+          income: (D.finances?.income||[]).length,
+          expenses: (D.finances?.expenses||[]).length,
+          inventory: (D.inventory||[]).length,
+          environment: (D.environment||[]).length,
+          logbook: (D.logbook||[]).length,
+          personnel: (D.personnel||[]).length,
+          biosecurityVisitors: (D.biosecurity?.visitors||[]).length,
+          batches: (D.traceability?.batches||[]).length,
+          plans: (D.productionPlans||[]).length,
+          auditLog: (D.auditLog||[]).length
+        }
+      },
+      data: D
+    };
+    const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'egglogu_backup_' + todayStr() + '.json';
     a.click();
+    logAudit('export', 'data', null, 'Full data export');
     this._toast(t('cfg_exported'));
   }
 
@@ -1564,14 +1616,133 @@ ${costLine}</div>
     const reader = new FileReader();
     reader.onload = (ev) => {
       try {
-        const d = JSON.parse(ev.target.result);
-        this._save(d);
-        this._toast(t('cfg_imported'));
-        this.render();
+        const raw = JSON.parse(ev.target.result);
+        // Support both new format (with _meta) and legacy (plain data)
+        const importedData = raw._meta ? raw.data : raw;
+        const meta = raw._meta || null;
+        this._showImportPreview(importedData, meta, file.name);
       } catch (err) { this._toast((t('error_unexpected') || 'Error') + ': ' + sanitizeHTML(err.message), true); }
     };
     reader.readAsText(file);
     e.target.value = '';
+  }
+
+  _showImportPreview(importedData, meta, fileName) {
+    const preview = this._q('import-preview');
+    if (!preview) return;
+    const D = this._load();
+    // Count records in imported data
+    const arrKeys = ['flocks','dailyProduction','vaccines','medications','outbreaks','clients','inventory',
+      'environment','checklist','logbook','personnel','productionPlans','auditLog','kpiSnapshots',
+      'weatherCache','stressEvents','iotReadings','predictions','clientClaims','orders',
+      'storageLocations','reservations'];
+    const nestedKeys = {feed:['purchases','consumption'], finances:['income','expenses','receivables'],
+      biosecurity:['visitors','zones','pestSightings','protocols'], traceability:['batches']};
+
+    let importCount = 0, currentCount = 0;
+    arrKeys.forEach(k => { importCount += (importedData[k]||[]).length; currentCount += (D[k]||[]).length; });
+    Object.entries(nestedKeys).forEach(([parent, children]) => {
+      children.forEach(c => {
+        importCount += (importedData[parent]?.[c]||[]).length;
+        currentCount += (D[parent]?.[c]||[]).length;
+      });
+    });
+
+    const farmName = meta?.farmName || importedData.farm?.name || '?';
+    const exportDate = meta?.exportDate ? new Date(meta.exportDate).toLocaleDateString() : '?';
+
+    let h = `<h4 style="margin:0 0 8px">📦 ${t('cfg_import_preview') || 'Import Preview'}</h4>`;
+    h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_file') || 'File'}:</strong> ${sanitizeHTML(fileName)}</p>`;
+    h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_farm') || 'Farm'}:</strong> ${sanitizeHTML(farmName)}</p>`;
+    h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_export_date') || 'Export date'}:</strong> ${exportDate}</p>`;
+    h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_import_records') || 'Records in file'}:</strong> ${importCount.toLocaleString()}</p>`;
+    h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_current_records') || 'Current records'}:</strong> ${currentCount.toLocaleString()}</p>`;
+    h += `<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">`;
+    h += `<button class="btn btn-primary" data-action="import-merge">🔀 ${t('cfg_import_merge') || 'Merge (keep both)'}</button>`;
+    h += `<button class="btn btn-secondary" data-action="import-replace">♻️ ${t('cfg_import_replace') || 'Replace all'}</button>`;
+    h += `<button class="btn btn-secondary" data-action="import-cancel">${t('cancel') || 'Cancel'}</button>`;
+    h += `</div>`;
+    h += `<p style="font-size:11px;color:var(--text-light);margin-top:8px">${t('cfg_merge_hint') || 'Merge adds imported records to your current data without duplicates. Replace overwrites everything.'}</p>`;
+
+    preview.innerHTML = h;
+    preview.style.display = 'block';
+
+    // Store imported data for the action buttons
+    this._pendingImport = importedData;
+
+    preview.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        if (action === 'import-merge') this._doImportMerge();
+        else if (action === 'import-replace') this._doImportReplace();
+        else if (action === 'import-cancel') { preview.style.display = 'none'; this._pendingImport = null; }
+      });
+    });
+  }
+
+  _doImportReplace() {
+    if (!this._pendingImport) return;
+    this._save(this._pendingImport);
+    logAudit('import', 'data', null, 'Full data replace');
+    this._toast(t('cfg_imported'));
+    this._pendingImport = null;
+    this.render();
+  }
+
+  async _doImportMerge() {
+    if (!this._pendingImport) return;
+    const imp = this._pendingImport;
+    const D = this._load();
+
+    // Merge farm config — keep current, but fill missing fields from import
+    if (imp.farm) {
+      for (const [k, v] of Object.entries(imp.farm)) {
+        if (!D.farm[k] && v) D.farm[k] = v;
+      }
+    }
+
+    // Merge array collections — deduplicate by id
+    const arrKeys = ['flocks','dailyProduction','vaccines','medications','outbreaks','clients','inventory',
+      'environment','checklist','logbook','personnel','productionPlans','auditLog','kpiSnapshots',
+      'clientClaims','users','pendingActivations'];
+    arrKeys.forEach(k => {
+      if (!Array.isArray(imp[k]) || !imp[k].length) return;
+      if (!Array.isArray(D[k])) D[k] = [];
+      const existingIds = new Set(D[k].map(r => r.id).filter(Boolean));
+      imp[k].forEach(r => {
+        if (r.id && existingIds.has(r.id)) return; // skip duplicate
+        D[k].push(r);
+      });
+    });
+
+    // Merge nested objects (feed, finances, biosecurity, traceability)
+    const nestedKeys = {
+      feed: ['purchases', 'consumption'],
+      finances: ['income', 'expenses', 'receivables'],
+      biosecurity: ['visitors', 'zones', 'pestSightings', 'protocols'],
+      traceability: ['batches']
+    };
+    Object.entries(nestedKeys).forEach(([parent, children]) => {
+      if (!imp[parent]) return;
+      if (!D[parent]) D[parent] = {};
+      children.forEach(c => {
+        if (!Array.isArray(imp[parent][c]) || !imp[parent][c].length) return;
+        if (!Array.isArray(D[parent][c])) D[parent][c] = [];
+        const existingIds = new Set(D[parent][c].map(r => r.id).filter(Boolean));
+        imp[parent][c].forEach(r => {
+          if (r.id && existingIds.has(r.id)) return;
+          D[parent][c].push(r);
+        });
+      });
+    });
+
+    // Keep current settings (don't overwrite plan, preferences, etc.)
+
+    this._save(D);
+    logAudit('import', 'data', null, 'Merged data import');
+    this._toast(t('cfg_import_merged') || 'Data merged successfully');
+    this._pendingImport = null;
+    this.render();
   }
 
   async _resetData() {
