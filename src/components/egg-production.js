@@ -92,7 +92,7 @@ class EggProduction extends HTMLElement {
     h += `<div class="page-header"><h2>${t('prod_title')}</h2><button class="btn btn-primary" data-action="add-prod">${t('prod_add')}</button></div>`;
 
     if (!D.dailyProduction.length) {
-      h += emptyState('\uD83E\uDD5A', t('no_data'), t('prod_add'));
+      h += emptyState('', t('no_data'), t('prod_add'));
       this.shadowRoot.innerHTML = h;
       this._bindHeaderActions();
       // Bind empty state button
@@ -104,7 +104,7 @@ class EggProduction extends HTMLElement {
     h += DataTable.create({
       id: 'production',
       data: activeOnly(D.dailyProduction),
-      emptyIcon: '\uD83E\uDD5A',
+      emptyIcon: '',
       emptyText: t('no_data'),
       columns: [
         {
@@ -170,7 +170,7 @@ class EggProduction extends HTMLElement {
       </div>`,
       bulkActions: [
         {
-          label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+          label: t('delete'), danger: true,
           action: ids => this._bulkDelete(ids)
         }
       ]

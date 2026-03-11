@@ -253,11 +253,11 @@ class EggCommunity extends HTMLElement {
       <style>${this._styles()}</style>
       <div class="community-root">
         <div class="comm-header">
-          <h1>💬 ${lbl.title}</h1>
+          <h1>${lbl.title}</h1>
           <div class="comm-tabs">
-            <button class="comm-tab ${this._tab === 'forum' ? 'active' : ''}" data-tab="forum">📋 ${lbl.tab_forum}</button>
-            <button class="comm-tab ${this._tab === 'chat' ? 'active' : ''}" data-tab="chat">💬 ${lbl.tab_chat}</button>
-            <button class="comm-tab ${this._tab === 'stats' ? 'active' : ''}" data-tab="stats">📊 ${lbl.tab_stats}</button>
+            <button class="comm-tab ${this._tab === 'forum' ? 'active' : ''}" data-tab="forum">${lbl.tab_forum}</button>
+            <button class="comm-tab ${this._tab === 'chat' ? 'active' : ''}" data-tab="chat">${lbl.tab_chat}</button>
+            <button class="comm-tab ${this._tab === 'stats' ? 'active' : ''}" data-tab="stats">${lbl.tab_stats}</button>
           </div>
         </div>
         <div class="comm-content" data-ref="content">
@@ -282,14 +282,13 @@ class EggCommunity extends HTMLElement {
         <aside class="forum-sidebar">
           <h3>${lbl.categories}</h3>
           <ul class="cat-list">
-            <li class="cat-item ${!this._selectedCategory ? 'active' : ''}" data-action="cat-select" data-id="">
-              📁 ${lbl.all_categories}
+            <li class="cat-item ${!this._selectedCategory ? 'active' : ''}" data-action="cat-select" data-id="">${lbl.all_categories}
             </li>
             ${this._categories.map(c => `
               <li class="cat-item ${this._selectedCategory === c.id ? 'active' : ''} ${c.locked ? 'locked' : ''}"
                   data-action="cat-select" data-id="${c.id}">
-                ${c.icon || '📂'} ${c.name}
-                ${c.locked ? `<span class="lock-badge">🔒</span>` : ''}
+                ${c.icon || ''} ${c.name}
+                ${c.locked ? `<span class="lock-badge"></span>` : ''}
               </li>
             `).join('')}
           </ul>
@@ -298,22 +297,22 @@ class EggCommunity extends HTMLElement {
           <div class="forum-toolbar">
             <input type="text" class="comm-input" placeholder="${lbl.search_placeholder}"
                    value="${this._search}" data-ref="thread-search">
-            <button class="comm-btn comm-btn-primary" data-action="new-thread">➕ ${lbl.new_thread}</button>
+            <button class="comm-btn comm-btn-primary" data-action="new-thread">${lbl.new_thread}</button>
           </div>
           ${this._showNewThread ? this._renderNewThreadForm(lbl) : ''}
           <div class="thread-list">
             ${this._threads.length ? this._threads.map(th => `
               <div class="thread-card" data-action="open-thread" data-id="${th.id}">
                 <div class="thread-meta-left">
-                  ${th.is_pinned ? `<span class="badge badge-pin">📌 ${lbl.pinned}</span>` : ''}
-                  ${th.is_locked ? `<span class="badge badge-lock">🔒</span>` : ''}
+                  ${th.is_pinned ? `<span class="badge badge-pin">${lbl.pinned}</span>` : ''}
+                  ${th.is_locked ? `<span class="badge badge-lock"></span>` : ''}
                   <h3 class="thread-title">${sanitizeHTML(th.title)}</h3>
                   <span class="thread-author">${lbl.by} <strong>${th.author_name || 'Anonymous'}</strong> · ${_timeAgo(th.created_at, lbl)}</span>
                   ${th.ai_tags ? `<div class="thread-tags">${th.ai_tags.split(',').map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
                 </div>
                 <div class="thread-stats">
-                  <span>💬 ${th.reply_count} ${lbl.replies}</span>
-                  <span>👁️ ${th.view_count} ${lbl.views}</span>
+                  <span>${th.reply_count} ${lbl.replies}</span>
+                  <span>${th.view_count} ${lbl.views}</span>
                 </div>
               </div>
             `).join('') : `<div class="empty-state">${lbl.empty_threads}</div>`}
@@ -334,13 +333,13 @@ class EggCommunity extends HTMLElement {
     return `
       <div class="new-thread-form">
         <select data-ref="nt-category" class="comm-select">
-          ${unlocked.map(c => `<option value="${c.id}" ${this._selectedCategory === c.id ? 'selected' : ''}>${c.icon || '📂'} ${c.name}</option>`).join('')}
+          ${unlocked.map(c => `<option value="${c.id}" ${this._selectedCategory === c.id ? 'selected' : ''}>${c.icon || ''} ${c.name}</option>`).join('')}
         </select>
         <input type="text" class="comm-input" placeholder="${lbl.thread_title}" data-ref="nt-title" maxlength="300">
         <textarea class="comm-textarea" placeholder="${lbl.thread_content}" data-ref="nt-content" rows="5" maxlength="10000"></textarea>
         <div class="form-actions">
-          <button class="comm-btn comm-btn-primary" data-action="submit-thread">✅ ${lbl.create}</button>
-          <button class="comm-btn" data-action="cancel-thread">❌ ${lbl.cancel}</button>
+          <button class="comm-btn comm-btn-primary" data-action="submit-thread">${lbl.create}</button>
+          <button class="comm-btn" data-action="cancel-thread">${lbl.cancel}</button>
         </div>
       </div>`;
   }
@@ -352,7 +351,7 @@ class EggCommunity extends HTMLElement {
         <button class="comm-btn" data-action="back-to-list" style="margin-bottom:12px;">← ${lbl.back}</button>
         <div class="thread-header">
           <h2>${sanitizeHTML(th.title)}</h2>
-          <span class="thread-author">${lbl.by} <strong>${th.author_name || 'Anonymous'}</strong> · ${_timeAgo(th.created_at, lbl)} · 👁️ ${th.view_count} ${lbl.views}</span>
+          <span class="thread-author">${lbl.by} <strong>${th.author_name || 'Anonymous'}</strong> · ${_timeAgo(th.created_at, lbl)} · ${th.view_count} ${lbl.views}</span>
           ${th.ai_tags ? `<div class="thread-tags">${th.ai_tags.split(',').map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
         </div>
         <div class="posts-list">
@@ -361,21 +360,21 @@ class EggCommunity extends HTMLElement {
               <div class="post-header">
                 <strong>${p.author_name || 'Anonymous'}</strong>
                 <span class="post-time">${_timeAgo(p.created_at, lbl)}</span>
-                ${p.is_solution ? `<span class="badge badge-solution">✅ ${lbl.solution}</span>` : ''}
-                ${p.moderation_status === 'flagged' ? `<span class="badge badge-flagged">⚠️ ${lbl.moderated}</span>` : ''}
+                ${p.is_solution ? `<span class="badge badge-solution">${lbl.solution}</span>` : ''}
+                ${p.moderation_status === 'flagged' ? `<span class="badge badge-flagged">${lbl.moderated}</span>` : ''}
               </div>
               ${this._editingPost === p.id ? `
                 <textarea class="comm-textarea" data-ref="edit-content" rows="4">${sanitizeHTML(p.content)}</textarea>
                 <div class="form-actions">
-                  <button class="comm-btn comm-btn-primary" data-action="save-edit" data-id="${p.id}">💾 ${lbl.save}</button>
-                  <button class="comm-btn" data-action="cancel-edit">❌ ${lbl.cancel}</button>
+                  <button class="comm-btn comm-btn-primary" data-action="save-edit" data-id="${p.id}">${lbl.save}</button>
+                  <button class="comm-btn" data-action="cancel-edit">${lbl.cancel}</button>
                 </div>
               ` : `
                 <div class="post-body">${sanitizeHTML(p.content)}</div>
               `}
               <div class="post-actions">
-                <button class="comm-btn-sm" data-action="like-post" data-id="${p.id}">❤️ ${p.likes_count}</button>
-                ${p.author_id === (getCurrentUser()?.id || '') ? `<button class="comm-btn-sm" data-action="edit-post" data-id="${p.id}">✏️ ${lbl.edit}</button>` : ''}
+                <button class="comm-btn-sm" data-action="like-post" data-id="${p.id}">${p.likes_count}</button>
+                ${p.author_id === (getCurrentUser()?.id || '') ? `<button class="comm-btn-sm" data-action="edit-post" data-id="${p.id}">${lbl.edit}</button>` : ''}
               </div>
             </div>
           `).join('') || `<div class="empty-state">${lbl.empty_posts}</div>`}
@@ -383,7 +382,7 @@ class EggCommunity extends HTMLElement {
         ${!th.is_locked ? `
           <div class="reply-box">
             <textarea class="comm-textarea" data-ref="reply-content" placeholder="${lbl.reply_placeholder}" rows="3" maxlength="10000"></textarea>
-            <button class="comm-btn comm-btn-primary" data-action="submit-reply">📤 ${lbl.send}</button>
+            <button class="comm-btn comm-btn-primary" data-action="submit-reply">${lbl.send}</button>
           </div>
         ` : ''}
       </div>`;
@@ -399,10 +398,10 @@ class EggCommunity extends HTMLElement {
         <div class="room-grid">
           ${this._chatRooms.map(r => `
             <div class="room-card ${r.locked ? 'locked' : ''}" data-action="open-room" data-id="${r.id}" data-slug="${r.slug}">
-              <span class="room-icon">${r.icon || '💬'}</span>
+              <span class="room-icon">${r.icon || ''}</span>
               <h4>${r.name}</h4>
               <p class="room-desc">${r.description || ''}</p>
-              ${r.locked ? `<span class="lock-overlay">🔒 ${lbl.chat_locked}</span>` : ''}
+              ${r.locked ? `<span class="lock-overlay">${lbl.chat_locked}</span>` : ''}
             </div>
           `).join('') || `<div class="empty-state">${lbl.loading}</div>`}
         </div>
@@ -415,12 +414,12 @@ class EggCommunity extends HTMLElement {
       <div class="chatroom-layout">
         <div class="chatroom-header">
           <button class="comm-btn" data-action="back-to-rooms">← ${lbl.back}</button>
-          <h3>${room.icon || '💬'} ${room.name}</h3>
+          <h3>${room.icon || ''} ${room.name}</h3>
         </div>
         <div class="chatroom-messages" data-ref="chat-scroll">
           ${this._chatMessages.length ? this._chatMessages.map(m => `
             <div class="chat-msg ${m.is_ai ? 'chat-ai' : ''} ${m.author_id === (getCurrentUser()?.id || '') ? 'chat-own' : ''}">
-              <span class="chat-author">${m.is_ai ? '🤖 AI' : (m.author_name || 'Anonymous')}</span>
+              <span class="chat-author">${m.is_ai ? 'AI' : (m.author_name || 'Anonymous')}</span>
               <span class="chat-text">${sanitizeHTML(m.content)}</span>
               <span class="chat-time">${_timeAgo(m.created_at, lbl)}</span>
             </div>
@@ -428,7 +427,7 @@ class EggCommunity extends HTMLElement {
         </div>
         <div class="chatroom-input">
           <input type="text" class="comm-input" data-ref="chat-input" placeholder="${lbl.chat_placeholder}" maxlength="2000">
-          <button class="comm-btn comm-btn-primary" data-action="send-chat">📤 ${lbl.chat_send}</button>
+          <button class="comm-btn comm-btn-primary" data-action="send-chat">${lbl.chat_send}</button>
         </div>
       </div>`;
   }

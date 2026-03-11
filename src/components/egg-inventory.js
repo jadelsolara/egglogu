@@ -56,19 +56,19 @@ class EggInventory extends HTMLElement {
 
     // Header with action buttons
     h += `<div class="page-header">
-      <h2>\uD83D\uDCE6 ${t('nav_inventory') || 'Inventario'}</h2>
+      <h2>${t('nav_inventory') || 'Inventario'}</h2>
       <div class="header-actions">
-        <button class="btn btn-secondary" data-action="add-location">\uD83D\uDCCD ${t('inv_add_location') || 'Nueva Ubicación'}</button>
-        <button class="btn btn-secondary" data-action="add-reservation">\uD83D\uDD12 ${t('inv_reserve') || 'Reservar'}</button>
-        <button class="btn btn-primary" data-action="add-adjustment">\u2696\uFE0F ${t('inv_adjustment') || 'Ajuste'}</button>
+        <button class="btn btn-secondary" data-action="add-location">${t('inv_add_location') || 'Nueva Ubicación'}</button>
+        <button class="btn btn-secondary" data-action="add-reservation">${t('inv_reserve') || 'Reservar'}</button>
+        <button class="btn btn-primary" data-action="add-adjustment">${t('inv_adjustment') || 'Ajuste'}</button>
       </div>
     </div>`;
 
     // Tabs
     h += `<div class="tabs">
-      <div class="tab${this._tab === 'stock' ? ' active' : ''}" data-tab="stock">\uD83D\uDCE6 ${t('inv_stock') || 'Stock'}</div>
-      <div class="tab${this._tab === 'locations' ? ' active' : ''}" data-tab="locations">\uD83C\uDFED ${t('inv_locations') || 'Ubicaciones'}</div>
-      <div class="tab${this._tab === 'reservations' ? ' active' : ''}" data-tab="reservations">\uD83D\uDD12 ${t('inv_reservations') || 'Reservas'}</div>
+      <div class="tab${this._tab === 'stock' ? ' active' : ''}" data-tab="stock">${t('inv_stock') || 'Stock'}</div>
+      <div class="tab${this._tab === 'locations' ? ' active' : ''}" data-tab="locations">${t('inv_locations') || 'Ubicaciones'}</div>
+      <div class="tab${this._tab === 'reservations' ? ' active' : ''}" data-tab="reservations">${t('inv_reservations') || 'Reservas'}</div>
     </div>`;
 
     if (this._tab === 'stock') h += this._renderStockTab(D);
@@ -275,7 +275,7 @@ class EggInventory extends HTMLElement {
   _showAdjustmentForm() {
     const D = Store.get();
     const locs = D.storageLocations || [];
-    const title = '\u2696\uFE0F ' + (t('inv_adjustment') || 'Ajuste de Inventario');
+    const title = (t('inv_adjustment') || 'Ajuste de Inventario');
     const body = `
       <div class="form-row">
         <div class="form-group">

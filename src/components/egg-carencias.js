@@ -5,11 +5,11 @@
 import { Store, Bus, t, sanitizeHTML, todayStr, kpi, VENG, logAudit } from '../core/index.js';
 
 const CAT_META = {
-  sanitary:    { icon: '\uD83D\uDC89', label: 'Sanitaria',    color: '#c62828' },
-  nutritional: { icon: '\uD83C\uDF3E', label: 'Nutricional',  color: '#e65100' },
-  financial:   { icon: '\uD83D\uDCB0', label: 'Financiera',   color: '#1565c0' },
-  operational: { icon: '\uD83D\uDCCB', label: 'Operacional',  color: '#6a1b9a' },
-  data:        { icon: '\uD83D\uDD12', label: 'Datos',         color: '#00695c' }
+  sanitary:    { label: 'Sanitaria',    color: '#c62828' },
+  nutritional: { label: 'Nutricional',  color: '#e65100' },
+  financial:   { label: 'Financiera',   color: '#1565c0' },
+  operational: { label: 'Operacional',  color: '#6a1b9a' },
+  data:        { label: 'Datos',         color: '#00695c' }
 };
 
 class EggCarencias extends HTMLElement {
@@ -47,7 +47,7 @@ class EggCarencias extends HTMLElement {
     let h = this._css();
 
     // Page header
-    h += `<h2>\uD83D\uDD0D ${sanitizeHTML(t('nav_census'))} \u2014 VENG Census</h2>`;
+    h += `<h2>${sanitizeHTML(t('nav_census'))} \u2014 VENG Census</h2>`;
 
     // Overall score gauge
     const oc = c.overall >= 80 ? 'var(--success, #2E7D32)' : c.overall >= 60 ? 'var(--warning, #F57F17)' : 'var(--danger, #C62828)';
@@ -88,7 +88,7 @@ class EggCarencias extends HTMLElement {
         h += `<tr>`;
         h += `<td><span class="sev-badge-sm ${sevClass}">${sanitizeHTML(f.sev.toUpperCase())}</span></td>`;
         h += `<td class="code-cell">${sanitizeHTML(f.code)}</td>`;
-        h += `<td>${sanitizeHTML(f.msg)}<br><small class="rec-text">\u2192 ${sanitizeHTML(f.rec)}</small></td>`;
+        h += `<td>${sanitizeHTML(f.msg)}<br><small class="rec-text">${sanitizeHTML(f.rec)}</small></td>`;
         h += `<td class="metric-cell">${f.metric} ${sanitizeHTML(f.unit)}</td>`;
         h += `<td class="bench-cell">${f.bench} ${sanitizeHTML(f.unit)}</td>`;
         h += `</tr>`;
@@ -99,13 +99,13 @@ class EggCarencias extends HTMLElement {
 
     // Benchmarking context
     h += `<div class="card card-primary-fill">`;
-    h += `<h3>\uD83D\uDCCA Benchmark Context</h3>`;
+    h += `<h3>Benchmark Context</h3>`;
     h += `<p class="context-text">Benchmarks are based on international poultry standards: mortality &lt;1.5%/month, FCR &lt;2.2, feed 100-140g/hen/day, margin &gt;10%, XVAL score &gt;90. `;
     h += `Scores are calculated per category: each critical finding deducts 20 points, warning 10, info 3, from a base of 100.</p></div>`;
 
     // Anonymized export
     h += `<div class="card">`;
-    h += `<h3>\uD83D\uDCE4 Anonymized Deficiency Report</h3>`;
+    h += `<h3>Anonymized Deficiency Report</h3>`;
     h += `<p class="context-text">Export an anonymized summary of deficiency patterns. Contains NO farm names, client data, or financial figures \u2014 only deficiency codes, category scores, and farm size classification.</p>`;
     h += `<div class="btn-row">`;
     h += `<button class="btn btn-primary" data-action="export-census-anon">Export Anonymized Report (.json)</button>`;

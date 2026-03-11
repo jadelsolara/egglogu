@@ -283,16 +283,16 @@ class EggAnalysis extends HTMLElement {
 
     // Tabs
     const tabs = [
-      { key: 'comparison',   icon: '\uD83D\uDD04', label: t('ana_comparison') },
-      { key: 'seasonality',  icon: '\uD83D\uDCC5', label: t('ana_seasonality') },
-      { key: 'profitability', icon: '\uD83D\uDCB0', label: t('ana_profitability') },
-      { key: 'kpi_evo',      icon: '\uD83D\uDCCA', label: t('ana_kpi_evolution') },
-      { key: 'predictions',  icon: '\uD83E\uDD16', label: t('pred_title') },
-      { key: 'economics',    icon: '\uD83C\uDFE6', label: t('ana_economics') }
+      { key: 'comparison', label: t('ana_comparison') },
+      { key: 'seasonality', label: t('ana_seasonality') },
+      { key: 'profitability', label: t('ana_profitability') },
+      { key: 'kpi_evo', label: t('ana_kpi_evolution') },
+      { key: 'predictions', label: t('pred_title') },
+      { key: 'economics', label: t('ana_economics') }
     ];
     h += '<div class="tabs">';
     tabs.forEach(tb => {
-      h += `<div class="tab${this._currentTab === tb.key ? ' active' : ''}" data-tab="${tb.key}">${tb.icon} ${tb.label}</div>`;
+      h += `<div class="tab${this._currentTab === tb.key ? ' active' : ''}" data-tab="${tb.key}">${tb.label}</div>`;
     });
     h += '</div>';
 
@@ -348,7 +348,7 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: Comparison              */
   /* ──────────────────────────────────── */
   _renderComparison(D) {
-    if (!D.flocks.length) return emptyState('\uD83D\uDD04', t('no_data'));
+    if (!D.flocks.length) return emptyState('', t('no_data'));
 
     const stats = D.flocks.map(f => {
       const cur = activeHensByFlock(f.id);
@@ -415,7 +415,7 @@ class EggAnalysis extends HTMLElement {
       months[m].days.add(p.date);
     });
 
-    if (!Object.keys(months).length) return emptyState('\uD83D\uDCC5', t('no_data'));
+    if (!Object.keys(months).length) return emptyState('', t('no_data'));
 
     const mNames = Array.from({ length: 12 }, (_, i) => new Date(2024, i, 1).toLocaleDateString(locale(), { month: 'short' }));
 
@@ -456,7 +456,7 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: Profitability           */
   /* ──────────────────────────────────── */
   _renderProfitability(D) {
-    if (!D.flocks.length) return emptyState('\uD83D\uDCB0', t('no_data'));
+    if (!D.flocks.length) return emptyState('', t('no_data'));
 
     let h = `<div class="card"><h3>${t('ana_profitability')} / ${t('per_flock')}</h3><div class="table-wrap"><table><thead><tr>`;
     h += `<th>${t('flock_name')}</th><th>${t('prod_eggs')}</th><th>${t('fin_income')}</th><th>${t('fin_expenses')}</th><th>${t('fin_net')}</th><th>${t('fin_cost_per_egg')}</th></tr></thead><tbody>`;
@@ -537,7 +537,7 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: KPI Evolution           */
   /* ──────────────────────────────────── */
   _renderKpiEvo(D) {
-    if (!D.kpiSnapshots.length) return emptyState('\uD83D\uDCCA', t('ana_no_snapshots'));
+    if (!D.kpiSnapshots.length) return emptyState('', t('ana_no_snapshots'));
 
     let h = `<div class="card"><h3>${t('ana_kpi_evolution')}</h3><div class="chart-container"><canvas id="chart-kpi-evo"></canvas></div></div>`;
     h += '<div class="card"><div class="table-wrap"><table><thead><tr>';
@@ -577,7 +577,7 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: Predictions             */
   /* ──────────────────────────────────── */
   _renderPredictions(D) {
-    if (!D.dailyProduction.length) return emptyState('\uD83E\uDD16', t('no_data'));
+    if (!D.dailyProduction.length) return emptyState('', t('no_data'));
     let h = '';
 
     const sorted = [...D.dailyProduction].sort((a, b) => a.date.localeCompare(b.date));
@@ -588,7 +588,7 @@ class EggAnalysis extends HTMLElement {
     const obColor = outbreak.classification === 1 ? 'red' : outbreak.probability > 0.4 ? 'yellow' : 'green';
     const obLabel = obColor === 'red' ? t('pred_outbreak_high') : obColor === 'yellow' ? t('pred_outbreak_medium') : t('pred_outbreak_low');
 
-    h += `<div class="card"><h3>\uD83D\uDD34 ${t('pred_outbreak_risk')}</h3>
+    h += `<div class="card"><h3>${t('pred_outbreak_risk')}</h3>
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
         <div class="traffic-light">
           <div class="traffic-dot red${obColor === 'red' ? ' active' : ''}"></div>
@@ -620,7 +620,7 @@ class EggAnalysis extends HTMLElement {
 
     // === Multi-step Forecast (ensemble) ===
     if (last30.length >= 7 && typeof ss !== 'undefined') {
-      h += `<div class="card"><h3>\uD83D\uDCC8 ${t('pred_forecast')}</h3>
+      h += `<div class="card"><h3>${t('pred_forecast')}</h3>
         <div style="margin-bottom:8px">
           <button class="btn btn-sm${this._forecastDays === 7 ? ' btn-primary' : ' btn-secondary'}" data-forecast-days="7">7d</button>
           <button class="btn btn-sm${this._forecastDays === 14 ? ' btn-primary' : ' btn-secondary'}" data-forecast-days="14">14d</button>
@@ -642,7 +642,7 @@ class EggAnalysis extends HTMLElement {
           <th>${t('date')}</th><th>${t('prod_eggs')}</th><th>Z-score</th></tr></thead><tbody>`;
         anomalies.forEach(p => {
           const z = std > 0 ? ((p.eggsCollected - mean) / std) : 0;
-          h += `<tr><td>${fmtDate(p.date)}</td><td>${p.eggsCollected} <span class="anomaly-icon">\u26A0</span></td>
+          h += `<tr><td>${fmtDate(p.date)}</td><td>${p.eggsCollected} <span class="anomaly-icon">!</span></td>
             <td style="color:var(--danger, #dc3545)">${z.toFixed(2)}</td></tr>`;
         });
         h += '</tbody></table></div></div>';
@@ -713,7 +713,7 @@ class EggAnalysis extends HTMLElement {
   /* ──────────────────────────────────── */
   _renderEconomics(D) {
     const flocks = D.flocks.filter(f => f.status !== 'descarte');
-    if (!flocks.length) return emptyState('\uD83C\uDFE6', t('econ_no_data_guide'));
+    if (!flocks.length) return emptyState('', t('econ_no_data_guide'));
 
     // Weighted avg feed price
     let totalFeedCost = 0, totalFeedKg = 0;
@@ -782,7 +782,7 @@ class EggAnalysis extends HTMLElement {
 
     // Check if any flock has data
     const anyData = flockData.some(fd => fd.hasFeed || fd.hasHealth || fd.hasDirect || fd.hasPurchase || fd.hasEggs);
-    if (!anyData) return emptyState('\uD83C\uDFE6', t('econ_no_data_guide'));
+    if (!anyData) return emptyState('', t('econ_no_data_guide'));
 
     // Determine visible columns
     const anyPurchase = flockData.some(fd => fd.hasPurchase);
@@ -798,17 +798,17 @@ class EggAnalysis extends HTMLElement {
     const netResult = (totalRevenue > 0 && orgHasCosts) ? Math.round((totalRevenue - orgTotalCosts) * 100) / 100 : null;
 
     h += `<div class="card"><h3>${t('econ_org_summary')}</h3><div class="kpi-grid">`;
-    if (orgHasEggs) h += `<div class="kpi-card"><span class="kpi-value">${fmtNum(orgTotalEggs)}</span><span class="kpi-label">\uD83E\uDD5A ${t('prod_eggs')}</span></div>`;
-    if (weightedCPE != null) h += `<div class="kpi-card"><span class="kpi-value">${fmtMoney(weightedCPE)}</span><span class="kpi-label">\uD83D\uDCCA ${t('econ_cost_per_egg')}</span></div>`;
-    if (orgTotalInvestment > 0) h += `<div class="kpi-card"><span class="kpi-value">${fmtMoney(orgTotalInvestment)}</span><span class="kpi-label">\uD83D\uDC14 ${t('econ_total_investment')}</span></div>`;
-    if (orgHasCosts) h += `<div class="kpi-card"><span class="kpi-value">${fmtMoney(orgTotalCosts)}</span><span class="kpi-label">\uD83D\uDCC9 ${t('econ_total_costs')}</span></div>`;
-    if (totalRevenue > 0) h += `<div class="kpi-card"><span class="kpi-value" style="color:var(--success, #2e7d32)">${fmtMoney(totalRevenue)}</span><span class="kpi-label">\uD83D\uDCB5 ${t('fin_income')}</span></div>`;
-    if (netResult != null) h += `<div class="kpi-card"><span class="kpi-value" style="color:${netResult >= 0 ? 'var(--success, #2e7d32)' : 'var(--danger, #dc3545)'}">${fmtMoney(netResult)}</span><span class="kpi-label">\uD83D\uDCC8 ${t('econ_net_result')}</span></div>`;
+    if (orgHasEggs) h += `<div class="kpi-card"><span class="kpi-value">${fmtNum(orgTotalEggs)}</span><span class="kpi-label">${t('prod_eggs')}</span></div>`;
+    if (weightedCPE != null) h += `<div class="kpi-card"><span class="kpi-value">${fmtMoney(weightedCPE)}</span><span class="kpi-label">${t('econ_cost_per_egg')}</span></div>`;
+    if (orgTotalInvestment > 0) h += `<div class="kpi-card"><span class="kpi-value">${fmtMoney(orgTotalInvestment)}</span><span class="kpi-label">${t('econ_total_investment')}</span></div>`;
+    if (orgHasCosts) h += `<div class="kpi-card"><span class="kpi-value">${fmtMoney(orgTotalCosts)}</span><span class="kpi-label">${t('econ_total_costs')}</span></div>`;
+    if (totalRevenue > 0) h += `<div class="kpi-card"><span class="kpi-value" style="color:var(--success, #2e7d32)">${fmtMoney(totalRevenue)}</span><span class="kpi-label">${t('fin_income')}</span></div>`;
+    if (netResult != null) h += `<div class="kpi-card"><span class="kpi-value" style="color:${netResult >= 0 ? 'var(--success, #2e7d32)' : 'var(--danger, #dc3545)'}">${fmtMoney(netResult)}</span><span class="kpi-label">${t('econ_net_result')}</span></div>`;
     h += '</div></div>';
 
     // Per-flock table
     h += `<div class="card"><h3>${t('econ_cost_breakdown')}</h3><div class="table-wrap"><table><thead><tr>`;
-    h += `<th>${t('flock_name')}</th><th>\uD83D\uDC14</th><th>\uD83E\uDD5A</th><th>${t('econ_days_active')}</th>`;
+    h += `<th>${t('flock_name')}</th><th>Count</th><th>Count</th><th>${t('econ_days_active')}</th>`;
     if (anyFeed) h += `<th>${t('econ_feed_cost')}</th>`;
     if (anyHealth) h += `<th>${t('econ_health_cost')}</th>`;
     if (anyDirect) h += `<th>${t('econ_direct_expenses')}</th>`;
@@ -873,7 +873,7 @@ class EggAnalysis extends HTMLElement {
         if (!fd.hasFeed) missing.push(t('econ_feed_cost'));
         if (!fd.hasHealth) missing.push(t('econ_health_cost'));
         if (!fd.hasEggs) missing.push(t('prod_eggs'));
-        if (missing.length) h += `<div style="margin:4px 0">\u26A0\uFE0F <strong>${sanitizeHTML(fd.f.name)}</strong>: ${missing.join(', ')}</div>`;
+        if (missing.length) h += `<div style="margin:4px 0"><strong>${sanitizeHTML(fd.f.name)}</strong>: ${missing.join(', ')}</div>`;
       });
       h += '</div></div>';
     }

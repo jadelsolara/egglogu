@@ -23,9 +23,9 @@ export function mixCRM(Klass, lblFn) {
   P._renderCRM = async function(lbl) {
     let h = '';
     const views = [
-      { id: 'list',      label: lbl.crm_orgs,      icon: '\uD83C\uDFE2' },
-      { id: 'report',    label: lbl.crm_report,     icon: '\uD83D\uDCCA' },
-      { id: 'retention', label: lbl.crm_retention,  icon: '\uD83D\uDD04' }
+      { id: 'list',      label: lbl.crm_orgs,},
+      { id: 'report',    label: lbl.crm_report,},
+      { id: 'retention', label: lbl.crm_retention,}
     ];
     h += '<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">';
     views.forEach(v => {
@@ -47,7 +47,7 @@ export function mixCRM(Klass, lblFn) {
   P._crmRenderOrgList = async function(lbl) {
     const data = await _saFetch('/crm/report');
     const orgs = await _saFetch('/organizations');
-    let h = `<div class="card"><h3>\uD83C\uDFE2 ${lbl.crm_orgs}</h3>`;
+    let h = `<div class="card"><h3>${lbl.crm_orgs}</h3>`;
     if (!orgs || !orgs.length) { h += `<p style="color:var(--text-light)">${lbl.no_data}</p></div>`; return h; }
 
     h += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px">
@@ -98,7 +98,7 @@ export function mixCRM(Klass, lblFn) {
   P._crmRender360 = async function(lbl) {
     const data = await apiService.request('GET', '/superadmin/organizations/' + this._crmOrgId + '/crm-360');
     const orgId = this._crmOrgId;
-    let h = `<button class="btn btn-secondary btn-sm" data-action="crm-back" style="margin-bottom:12px">\u2190 ${lbl.crm_back}</button>`;
+    let h = `<button class="btn btn-secondary btn-sm" data-action="crm-back" style="margin-bottom:12px">${lbl.crm_back}</button>`;
 
     const hs = data.health || {};
     const org = data.organization || {};
@@ -112,7 +112,7 @@ export function mixCRM(Klass, lblFn) {
 
     const sub = data.subscription || {};
     if (sub.plan || sub.status) {
-      h += `<div class="card" style="margin-bottom:14px"><h3>\uD83D\uDCB3 ${lbl.crm_subscription}</h3>
+      h += `<div class="card" style="margin-bottom:14px"><h3>${lbl.crm_subscription}</h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
         <div class="kpi-card"><div class="kpi-label">${lbl.plan}</div><div class="kpi-value" style="font-size:0.95rem">${(sub.plan || '-').toUpperCase()}</div></div>
         <div class="kpi-card"><div class="kpi-label">${lbl.status}</div><div class="kpi-value" style="font-size:0.95rem">${sanitizeHTML(sub.status || '-')}</div></div>
@@ -121,15 +121,15 @@ export function mixCRM(Klass, lblFn) {
     }
 
     h += `<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="btn btn-primary btn-sm" data-action="crm-show-discount" data-id="${escapeAttr(orgId)}">\uD83C\uDFF7\uFE0F ${lbl.crm_apply_discount}</button>
-      <button class="btn btn-warning btn-sm" data-action="crm-show-refund" data-id="${escapeAttr(orgId)}">\uD83D\uDCB8 ${lbl.crm_issue_refund}</button>
-      <button class="btn btn-info btn-sm" data-action="crm-show-credit" data-id="${escapeAttr(orgId)}">\uD83D\uDCDD ${lbl.crm_issue_credit}</button>
-      <button class="btn btn-secondary btn-sm" data-action="crm-show-plan" data-id="${escapeAttr(orgId)}">\uD83D\uDD04 ${lbl.crm_change_plan}</button>
-      <button class="btn btn-secondary btn-sm" data-action="crm-export" data-id="${escapeAttr(orgId)}" data-fmt="csv">\uD83D\uDCE5 CSV</button>
-      <button class="btn btn-secondary btn-sm" data-action="crm-export" data-id="${escapeAttr(orgId)}" data-fmt="json">\uD83D\uDCE5 JSON</button>
+      <button class="btn btn-primary btn-sm" data-action="crm-show-discount" data-id="${escapeAttr(orgId)}">${lbl.crm_apply_discount}</button>
+      <button class="btn btn-warning btn-sm" data-action="crm-show-refund" data-id="${escapeAttr(orgId)}">${lbl.crm_issue_refund}</button>
+      <button class="btn btn-info btn-sm" data-action="crm-show-credit" data-id="${escapeAttr(orgId)}">${lbl.crm_issue_credit}</button>
+      <button class="btn btn-secondary btn-sm" data-action="crm-show-plan" data-id="${escapeAttr(orgId)}">${lbl.crm_change_plan}</button>
+      <button class="btn btn-secondary btn-sm" data-action="crm-export" data-id="${escapeAttr(orgId)}" data-fmt="csv">CSV</button>
+      <button class="btn btn-secondary btn-sm" data-action="crm-export" data-id="${escapeAttr(orgId)}" data-fmt="json">JSON</button>
     </div>`;
 
-    h += `<div class="card" style="margin-bottom:14px"><h3>\uD83D\uDCDD ${lbl.crm_notes}</h3>`;
+    h += `<div class="card" style="margin-bottom:14px"><h3>${lbl.crm_notes}</h3>`;
     h += `<div style="display:flex;gap:8px;margin-bottom:12px">
       <input type="text" class="crm-note-input" placeholder="${lbl.crm_add_note}..." style="flex:1">
       <select class="crm-note-type"><option value="general">General</option><option value="billing">Billing</option><option value="support">Support</option><option value="retention">Retention</option></select>
@@ -140,7 +140,7 @@ export function mixCRM(Klass, lblFn) {
       notes.forEach(n => {
         h += `<div style="padding:10px;border-left:3px solid ${n.is_pinned ? 'var(--warning)' : 'var(--border)'};margin-bottom:8px;background:var(--bg-card,#fafafa);border-radius:0 6px 6px 0">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="font-weight:600;font-size:0.85rem">${sanitizeHTML(n.note_type || 'general')}${n.is_pinned ? ' \uD83D\uDCCC' : ''}</span>
+            <span style="font-weight:600;font-size:0.85rem">${sanitizeHTML(n.note_type || 'general')}${n.is_pinned ? ' [pinned]' : ''}</span>
             <div style="display:flex;gap:4px;align-items:center">
               <span style="font-size:0.7rem;color:var(--text-light)">${n.created_at ? n.created_at.substring(0, 10) : ''}</span>
               <button class="btn btn-secondary btn-sm" style="padding:2px 6px;font-size:0.7rem" data-action="crm-toggle-pin" data-org-id="${escapeAttr(orgId)}" data-id="${escapeAttr(n.id)}" data-pin="${!n.is_pinned}">${n.is_pinned ? 'Unpin' : 'Pin'}</button>
@@ -151,7 +151,7 @@ export function mixCRM(Klass, lblFn) {
     }
     h += '</div>';
 
-    h += `<div class="card" style="margin-bottom:14px"><h3>\uD83C\uDFF7\uFE0F ${lbl.crm_discounts}</h3>`;
+    h += `<div class="card" style="margin-bottom:14px"><h3>${lbl.crm_discounts}</h3>`;
     const discounts = data.discounts || [];
     if (!discounts.length) { h += `<p style="color:var(--text-light)">${lbl.no_data}</p>`; }
     else {
@@ -165,7 +165,7 @@ export function mixCRM(Klass, lblFn) {
     }
     h += '</div>';
 
-    h += `<div class="card" style="margin-bottom:14px"><h3>\uD83D\uDCCB ${lbl.crm_credit_notes}</h3>`;
+    h += `<div class="card" style="margin-bottom:14px"><h3>${lbl.crm_credit_notes}</h3>`;
     const credits = data.credit_notes || [];
     if (!credits.length) { h += `<p style="color:var(--text-light)">${lbl.no_data}</p>`; }
     else {
@@ -180,12 +180,12 @@ export function mixCRM(Klass, lblFn) {
     h += '</div>';
 
     h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">';
-    h += `<div class="card"><h3>\uD83D\uDC65 ${lbl.users} (${(data.users || []).length})</h3>`;
+    h += `<div class="card"><h3>${lbl.users} (${(data.users || []).length})</h3>`;
     (data.users || []).forEach(u => {
       h += `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.85rem"><strong>${sanitizeHTML(u.full_name || u.email)}</strong> · <span class="badge badge-secondary">${sanitizeHTML(u.role || '-')}</span></div>`;
     });
     h += '</div>';
-    h += `<div class="card"><h3>\uD83C\uDFE0 ${lbl.farms} (${(data.farms || []).length})</h3>`;
+    h += `<div class="card"><h3>${lbl.farms} (${(data.farms || []).length})</h3>`;
     (data.farms || []).forEach(f => {
       h += `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:0.85rem"><strong>${sanitizeHTML(f.name || '-')}</strong> · ${sanitizeHTML(f.location || '')}</div>`;
     });
@@ -202,7 +202,7 @@ export function mixCRM(Klass, lblFn) {
 
   P._crmRenderReport = async function(lbl) {
     const data = await _saFetch('/crm/report');
-    let h = `<div class="card"><h3>\uD83D\uDCCA ${lbl.crm_report}</h3>
+    let h = `<div class="card"><h3>${lbl.crm_report}</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px">
       <div class="kpi-card"><div class="kpi-label">${lbl.total_orgs}</div><div class="kpi-value">${data.total_orgs || 0}</div></div>
       <div class="kpi-card"><div class="kpi-label">${lbl.active_users}</div><div class="kpi-value" style="color:var(--success)">${data.active_orgs || 0}</div></div>
@@ -238,7 +238,7 @@ export function mixCRM(Klass, lblFn) {
     const rules = await apiService.request('GET', '/superadmin/retention-rules');
     const events = await apiService.request('GET', '/superadmin/retention-events?limit=20');
 
-    h += `<div class="card" style="margin-bottom:14px"><h3>\uD83D\uDCCB ${lbl.crm_rules}</h3>
+    h += `<div class="card" style="margin-bottom:14px"><h3>${lbl.crm_rules}</h3>
       <div style="margin-bottom:12px">
         <button class="btn btn-primary btn-sm" data-action="crm-show-rule">${lbl.crm_add_note} Rule</button>
         <button class="btn btn-warning btn-sm" data-action="crm-evaluate">${lbl.crm_evaluate}</button>
@@ -256,7 +256,7 @@ export function mixCRM(Klass, lblFn) {
     }
     h += '</div>';
 
-    h += `<div class="card"><h3>\uD83D\uDCDC ${lbl.crm_events}</h3>`;
+    h += `<div class="card"><h3>${lbl.crm_events}</h3>`;
     const evtList = events.items || events || [];
     if (!evtList.length) { h += `<p style="color:var(--text-light)">${lbl.no_data}</p>`; }
     else {
@@ -279,7 +279,7 @@ export function mixCRM(Klass, lblFn) {
     const modal = document.createElement('div');
     modal.className = 'sa-modal-overlay';
     modal.innerHTML = `<div class="sa-modal-content">
-      <h3>\uD83C\uDFF7\uFE0F ${lbl.apply_discount}</h3>
+      <h3>${lbl.apply_discount}</h3>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div><label>${lbl.pct_off}</label><input type="number" class="crm-d-pct" min="1" max="100"></div>
         <div><label>${lbl.dur_months}</label><input type="number" class="crm-d-dur" min="1" max="36" value="1"></div>
@@ -315,7 +315,7 @@ export function mixCRM(Klass, lblFn) {
     const modal = document.createElement('div');
     modal.className = 'sa-modal-overlay';
     modal.innerHTML = `<div class="sa-modal-content">
-      <h3>\uD83D\uDCB8 ${lbl.issue_refund}</h3>
+      <h3>${lbl.issue_refund}</h3>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div><label>${lbl.pid}</label><input type="text" class="crm-r-pid" placeholder="pi_..."></div>
         <div><label>${lbl.amt_cents}</label><input type="number" class="crm-r-amt" min="1" placeholder="Leave empty for full refund"></div>
@@ -353,7 +353,7 @@ export function mixCRM(Klass, lblFn) {
     const modal = document.createElement('div');
     modal.className = 'sa-modal-overlay';
     modal.innerHTML = `<div class="sa-modal-content">
-      <h3>\uD83D\uDCDD ${lbl.issue_credit}</h3>
+      <h3>${lbl.issue_credit}</h3>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div><label>${lbl.amt_cents_req}</label><input type="number" class="crm-c-amt" min="1"></div>
         <div><label>${lbl.currency}</label><input type="text" class="crm-c-cur" value="usd" maxlength="3"></div>
@@ -389,7 +389,7 @@ export function mixCRM(Klass, lblFn) {
     const modal = document.createElement('div');
     modal.className = 'sa-modal-overlay';
     modal.innerHTML = `<div class="sa-modal-content">
-      <h3>\uD83D\uDD04 ${lbl.change_plan}</h3>
+      <h3>${lbl.change_plan}</h3>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div><label>${lbl.new_plan}</label><select class="crm-p-plan"><option value="hobby">Hobby ($9)</option><option value="starter">Starter ($19)</option><option value="pro">Pro ($49)</option><option value="enterprise">Enterprise ($99)</option></select></div>
         <div><label>${lbl.interval}</label><select class="crm-p-int"><option value="month">${lbl.month}</option><option value="year">${lbl.year}</option></select></div>
@@ -478,7 +478,7 @@ export function mixCRM(Klass, lblFn) {
     const modal = document.createElement('div');
     modal.className = 'sa-modal-overlay';
     modal.innerHTML = `<div class="sa-modal-content">
-      <h3>\uD83D\uDCCB New Retention Rule</h3>
+      <h3>New Retention Rule</h3>
       <div style="display:flex;flex-direction:column;gap:12px">
         <div><label>Name</label><input type="text" class="crm-rule-name"></div>
         <div><label>Trigger</label><select class="crm-rule-trigger"><option value="churn_risk">Churn Risk</option><option value="payment_failed">Payment Failed</option><option value="low_usage">Low Usage</option><option value="downgrade_request">Downgrade Request</option><option value="trial_expiring">Trial Expiring</option></select></div>

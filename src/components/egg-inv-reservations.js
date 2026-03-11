@@ -68,8 +68,8 @@ class EggInvReservations extends HTMLElement {
 
     // Active reservations
     h += `<div class="card"><div class="card-header-row">
-      <h3>\uD83D\uDD12 ${t('inv_active_reservations') || 'Reservas Activas'}</h3>
-      <button class="btn btn-primary btn-sm" data-action="add-reservation">\u2795 ${t('inv_reserve') || 'Reservar'}</button>
+      <h3>${t('inv_active_reservations') || 'Reservas Activas'}</h3>
+      <button class="btn btn-primary btn-sm" data-action="add-reservation">${t('inv_reserve') || 'Reservar'}</button>
     </div>`;
 
     if (!active.length) {
@@ -89,9 +89,9 @@ class EggInvReservations extends HTMLElement {
           <td>${r.eggType || '-'}</td>
           <td style="font-weight:700">${fmtNum(r.qty)}</td>
           <td>${loc ? sanitizeHTML(loc.name) : '-'}</td>
-          <td${isOverdue ? ' style="color:var(--danger);font-weight:700"' : ''}>${r.dueDate ? fmtDate(r.dueDate) : '-'}${isOverdue ? ' \u26A0\uFE0F' : ''}</td>
+          <td${isOverdue ? ' style="color:var(--danger);font-weight:700"' : ''}>${r.dueDate ? fmtDate(r.dueDate) : '-'}${isOverdue ? ' (!)' : ''}</td>
           <td>
-            <button class="btn btn-sm btn-primary" data-action="fulfill-reservation" data-id="${escapeAttr(r.id)}">\u2705 ${t('inv_fulfill') || 'Cumplir'}</button>
+            <button class="btn btn-sm btn-primary" data-action="fulfill-reservation" data-id="${escapeAttr(r.id)}">${t('inv_fulfill') || 'Cumplir'}</button>
             <button class="btn btn-sm btn-danger" data-action="cancel-reservation" data-id="${escapeAttr(r.id)}">\u274C</button>
           </td>
         </tr>`;
@@ -103,7 +103,7 @@ class EggInvReservations extends HTMLElement {
     // History (fulfilled + cancelled)
     const history = [...fulfilled, ...cancelled].sort((a, b) => (b.resolvedDate || b.date).localeCompare(a.resolvedDate || a.date));
     if (history.length) {
-      h += `<div class="card"><h3>\uD83D\uDCCB ${t('history') || 'Historial'}</h3>`;
+      h += `<div class="card"><h3>${t('history') || 'Historial'}</h3>`;
       h += '<div class="table-wrap"><table><thead><tr>';
       h += `<th>${t('date')}</th><th>${t('cli_name') || 'Cliente'}</th><th>${t('fin_egg_type') || 'Tipo'}</th>`;
       h += `<th>${t('qty') || 'Cantidad'}</th><th>${t('status') || 'Estado'}</th><th>${t('inv_resolved') || 'Resuelta'}</th>`;
@@ -116,7 +116,7 @@ class EggInvReservations extends HTMLElement {
           <td>${client ? sanitizeHTML(client.name) : '-'}</td>
           <td>${r.eggType || '-'}</td>
           <td>${fmtNum(r.qty)}</td>
-          <td><span class="source-badge ${r.status}">${sFulfilled ? '\u2705 ' + (t('inv_fulfilled') || 'Cumplida') : '\u274C ' + (t('inv_cancelled') || 'Cancelada')}</span></td>
+          <td><span class="source-badge ${r.status}">${sFulfilled ? '' + (t('inv_fulfilled') || 'Cumplida') : '' + (t('inv_cancelled') || 'Cancelada')}</span></td>
           <td>${r.resolvedDate ? fmtDate(r.resolvedDate) : '-'}</td>
         </tr>`;
       });
@@ -130,7 +130,7 @@ class EggInvReservations extends HTMLElement {
   _showReservationForm() {
     const D = Store.get();
     const locs = D.storageLocations || [];
-    const title = '\uD83D\uDD12 ' + (t('inv_reserve') || 'Reservar Stock');
+    const title = (t('inv_reserve') || 'Reservar Stock');
     const body = `
       <div class="form-row">
         <div class="form-group">

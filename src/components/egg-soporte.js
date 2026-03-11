@@ -91,7 +91,7 @@ class EggSoporte extends HTMLElement {
     const isAdmin = (D.settings.role === 'owner' || D.settings.role === 'manager');
 
     let h = this._css();
-    h += `<div class="page-header"><h2>\uD83C\uDFA7 ${L.faq_title}</h2></div>`;
+    h += `<div class="page-header"><h2>${L.faq_title}</h2></div>`;
 
     // Tabs
     h += `<div class="tabs">`;
@@ -211,7 +211,7 @@ class EggSoporte extends HTMLElement {
     </div>`;
 
     if (this._faq.length === 0) {
-      h += `<div class="empty-state"><div class="empty-icon">\uD83D\uDCD6</div><p>${L.faq_empty}</p></div>`;
+      h += `<div class="empty-state"><div class="empty-icon"></div><p>${L.faq_empty}</p></div>`;
     } else {
       const lang = getLang();
       const isEs = lang.startsWith('es');
@@ -227,9 +227,9 @@ class EggSoporte extends HTMLElement {
             <div style="margin-top:12px;line-height:1.7;white-space:pre-line">${sanitizeHTML(content)}</div>
             <div style="margin-top:12px;padding-top:8px;border-top:1px solid var(--border,#E0E0E0);display:flex;align-items:center;gap:12px;font-size:.85em;color:var(--text-muted,#757575)">
               <span>${L.faq_helpful}</span>
-              <button class="btn btn-secondary btn-sm" data-action="faq-vote-yes" data-id="${escapeAttr(faq.id)}">\uD83D\uDC4D ${L.faq_yes}</button>
-              <button class="btn btn-secondary btn-sm" data-action="faq-vote-no" data-id="${escapeAttr(faq.id)}">\uD83D\uDC4E ${L.faq_no}</button>
-              <span style="opacity:.5">${faq.helpful_yes || 0} \uD83D\uDC4D / ${faq.helpful_no || 0} \uD83D\uDC4E</span>
+              <button class="btn btn-secondary btn-sm" data-action="faq-vote-yes" data-id="${escapeAttr(faq.id)}">${L.faq_yes}</button>
+              <button class="btn btn-secondary btn-sm" data-action="faq-vote-no" data-id="${escapeAttr(faq.id)}">${L.faq_no}</button>
+              <span style="opacity:.5">${faq.helpful_yes || 0} + / ${faq.helpful_no || 0} -</span>
             </div>
           </div>
         </details>`;
@@ -263,7 +263,7 @@ class EggSoporte extends HTMLElement {
         </div>
         <div style="display:flex;gap:12px;align-items:center">
           <button class="btn btn-primary" data-action="submit-ticket" style="padding:10px 24px">${L.ticket_send}</button>
-          ${offline ? `<span style="color:var(--warning,#F57F17);font-size:.85em">\uD83D\uDCF4 ${L.ticket_offline}</span>` : ''}
+          ${offline ? `<span style="color:var(--warning,#F57F17);font-size:.85em">${L.ticket_offline}</span>` : ''}
         </div>
       </div>
     </div>`;
@@ -271,7 +271,7 @@ class EggSoporte extends HTMLElement {
     // Offline queue indicator
     if (this._offlineQueue.length > 0) {
       h += `<div class="card" style="padding:12px;margin-top:12px;background:var(--warning-fill,#FFF8E1)">
-        <strong>\uD83D\uDCF4 ${this._offlineQueue.length} ${L.pending_offline}</strong>
+        <strong>${this._offlineQueue.length} ${L.pending_offline}</strong>
         ${navigator.onLine ? `<button class="btn btn-secondary" data-action="sync-offline" style="margin-left:12px;padding:4px 12px">${L.sync_now}</button>` : ''}
       </div>`;
     }
@@ -282,7 +282,7 @@ class EggSoporte extends HTMLElement {
 
   _renderMyTicketsTab(L) {
     if (this._tickets.length === 0) {
-      return `<div class="empty-state"><div class="empty-icon">\uD83C\uDFAB</div><p>${L.ticket_empty}</p></div>`;
+      return `<div class="empty-state"><div class="empty-icon"></div><p>${L.ticket_empty}</p></div>`;
     }
 
     // If viewing a ticket detail
@@ -352,7 +352,7 @@ class EggSoporte extends HTMLElement {
         const border = msg.is_admin ? 'border-left:3px solid var(--primary,#4a7c59)' : '';
         h += `<div style="align-self:${align};max-width:80%;background:${bg};padding:12px 16px;border-radius:12px;${border}">
           <div style="white-space:pre-line;line-height:1.5">${sanitizeHTML(msg.message)}</div>
-          <div style="font-size:.75em;color:var(--text-muted,#757575);margin-top:4px;text-align:right">${msg.is_admin ? '\uD83C\uDFA7 ' + L.support_label : L.you_label} \u2014 ${new Date(msg.created_at).toLocaleString()}</div>
+          <div style="font-size:.75em;color:var(--text-muted,#757575);margin-top:4px;text-align:right">${msg.is_admin ? L.support_label : L.you_label} \u2014 ${new Date(msg.created_at).toLocaleString()}</div>
         </div>`;
       });
       h += `</div>`;
@@ -450,7 +450,7 @@ class EggSoporte extends HTMLElement {
 
     // Tickets table
     if (this._adminTickets.length === 0) {
-      h += `<div class="empty-state"><div class="empty-icon">\uD83D\uDCED</div><p>${L.ticket_empty}</p></div>`;
+      h += `<div class="empty-state"><div class="empty-icon"></div><p>${L.ticket_empty}</p></div>`;
     } else {
       h += `<div class="table-wrap"><table><thead><tr>
         <th>#</th><th>${L.ticket_subject}</th><th>${L.ticket_category}</th>
@@ -464,7 +464,7 @@ class EggSoporte extends HTMLElement {
           <td style="font-family:monospace;font-size:.85em">${sanitizeHTML(tk.ticket_number)}</td>
           <td style="font-weight:600">${sanitizeHTML(tk.subject)}</td>
           <td><span style="font-size:.8em">${L['cat_' + tk.category] || tk.category}</span></td>
-          <td><span style="color:${priColor};font-weight:600;font-size:.85em">${L['pri_' + tk.priority] || tk.priority}${slaWarn ? ' \u26A0\uFE0F' : ''}</span></td>
+          <td><span style="color:${priColor};font-weight:600;font-size:.85em">${L['pri_' + tk.priority] || tk.priority}${slaWarn ? ' (!)' : ''}</span></td>
           <td><span style="background:${stColor}15;color:${stColor};padding:2px 8px;border-radius:6px;font-size:.8em;font-weight:600">${L['st_' + tk.status] || tk.status}</span></td>
           <td style="font-size:.85em">${new Date(tk.created_at).toLocaleDateString()}</td>
           <td><button class="btn btn-secondary btn-sm" data-action="admin-open" data-id="${escapeAttr(tk.id)}">${L.ticket_reply}</button></td>
@@ -500,7 +500,7 @@ class EggSoporte extends HTMLElement {
         else f.helpful_no = (f.helpful_no || 0) + 1;
       }
       this.render();
-      Bus.emit('toast', { msg: helpful ? '\uD83D\uDC4D' : '\uD83D\uDC4E', type: 'info' });
+      Bus.emit('toast', { msg: helpful ? '+1' : '-1', type: 'info' });
     } catch (e) { Bus.emit('toast', { msg: 'Error: ' + e.message, type: 'error' }); }
   }
 

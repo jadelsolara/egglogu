@@ -1651,15 +1651,15 @@ ${costLine}</div>
     const farmName = meta?.farmName || importedData.farm?.name || '?';
     const exportDate = meta?.exportDate ? new Date(meta.exportDate).toLocaleDateString() : '?';
 
-    let h = `<h4 style="margin:0 0 8px">📦 ${t('cfg_import_preview') || 'Import Preview'}</h4>`;
+    let h = `<h4 style="margin:0 0 8px">${t('cfg_import_preview') || 'Import Preview'}</h4>`;
     h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_file') || 'File'}:</strong> ${sanitizeHTML(fileName)}</p>`;
     h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_farm') || 'Farm'}:</strong> ${sanitizeHTML(farmName)}</p>`;
     h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_export_date') || 'Export date'}:</strong> ${exportDate}</p>`;
     h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_import_records') || 'Records in file'}:</strong> ${importCount.toLocaleString()}</p>`;
     h += `<p style="font-size:13px;margin:4px 0"><strong>${t('cfg_current_records') || 'Current records'}:</strong> ${currentCount.toLocaleString()}</p>`;
     h += `<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">`;
-    h += `<button class="btn btn-primary" data-action="import-merge">🔀 ${t('cfg_import_merge') || 'Merge (keep both)'}</button>`;
-    h += `<button class="btn btn-secondary" data-action="import-replace">♻️ ${t('cfg_import_replace') || 'Replace all'}</button>`;
+    h += `<button class="btn btn-primary" data-action="import-merge">${t('cfg_import_merge') || 'Merge (keep both)'}</button>`;
+    h += `<button class="btn btn-secondary" data-action="import-replace">${t('cfg_import_replace') || 'Replace all'}</button>`;
     h += `<button class="btn btn-secondary" data-action="import-cancel">${t('cancel') || 'Cancel'}</button>`;
     h += `</div>`;
     h += `<p style="font-size:11px;color:var(--text-light);margin-top:8px">${t('cfg_merge_hint') || 'Merge adds imported records to your current data without duplicates. Replace overwrites everything.'}</p>`;

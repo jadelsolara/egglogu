@@ -594,7 +594,7 @@ class EggFinances extends HTMLElement {
     // MATHV: Math Verification
     const mv = VENG.mathv(D);
     h += '<div class="card" style="border-left:4px solid ' + (mv.pct === 100 ? 'var(--success)' : 'var(--danger)') + '">';
-    h += '<h3>\u{1F512} Math Verification \u2014 ' + (mv.pct === 100 ? '\u2713 All Passed' : '\u26A0 ' + mv.checks.filter(c => !c.ok).length + ' Failed') + '</h3>';
+    h += '<h3>\u{1F512} Math Verification \u2014 ' + (mv.pct === 100 ? '\u2713 All Passed' : ''!' + ' + mv.checks.filter(c => !c.ok).length + ' Failed') + '</h3>';
     h += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0">';
     mv.checks.forEach(c => {
       h += '<div class="' + (c.ok ? 'dm-badge-success' : 'dm-badge-critical') + '">' + (c.ok ? '\u2713' : '\u2717') + ' ' + sanitizeHTML(c.name) + '</div>';

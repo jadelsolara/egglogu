@@ -573,7 +573,7 @@ const ReportTemplates = {
     const maxEggs = Math.max(...sorted.map(([, d]) => d.eggs), 1);
 
     let h = `<div class="rpt-section">
-      <h3>\uD83D\uDC14 ${t('rpt_flock_analysis') || 'Análisis por Lote'}</h3>
+      <h3>${t('rpt_flock_analysis') || 'Análisis por Lote'}</h3>
       <p class="rpt-subtitle">${fmtDate(range.start)} \u2014 ${fmtDate(range.end)} (${days} ${t('flock_days') || 'días'})</p>`;
 
     if (!sorted.length) {
@@ -583,7 +583,7 @@ const ReportTemplates = {
     }
 
     // ── Bar chart: Production per flock ──
-    h += `<div class="card"><h4>\uD83E\uDD5A ${t('rpt_flock_production') || 'Producción por Lote'}</h4>
+    h += `<div class="card"><h4>${t('rpt_flock_production') || 'Producción por Lote'}</h4>
       <div style="display:flex;flex-direction:column;gap:8px">`;
     sorted.forEach(([, d]) => {
       const pct = Math.min(d.eggs / maxEggs * 100, 100);
@@ -599,7 +599,7 @@ const ReportTemplates = {
 
     // ── Bar chart: Consumption per flock ──
     const maxFeed = Math.max(...sorted.map(([, d]) => d.feedKg), 1);
-    h += `<div class="card"><h4>\uD83C\uDF3E ${t('rpt_flock_consumption') || 'Consumo por Lote'}</h4>
+    h += `<div class="card"><h4>${t('rpt_flock_consumption') || 'Consumo por Lote'}</h4>
       <div style="display:flex;flex-direction:column;gap:8px">`;
     sorted.forEach(([, d]) => {
       const pct = Math.min(d.feedKg / maxFeed * 100, 100);
@@ -614,7 +614,7 @@ const ReportTemplates = {
     h += '</div></div>';
 
     // ── Detailed comparison table ──
-    h += `<div class="card"><h4>\uD83D\uDCCA ${t('rpt_flock_comparison') || 'Comparativa de Lotes'}</h4>
+    h += `<div class="card"><h4>${t('rpt_flock_comparison') || 'Comparativa de Lotes'}</h4>
       <div class="table-wrap"><table><thead><tr>
         <th>${t('prod_flock') || 'Lote'}</th>
         <th>${t('kpi_active_hens') || 'Gallinas'}</th>
@@ -678,7 +678,7 @@ const ReportTemplates = {
     }).sort((a, b) => b.roi - a.roi);
     const maxRoi = Math.max(...roiData.map(d => Math.abs(d.roi)), 1);
 
-    h += `<div class="card"><h4>\uD83D\uDCB0 ROI ${t('rpt_by_flock') || 'por Lote'}</h4>
+    h += `<div class="card"><h4>ROI ${t('rpt_by_flock') || 'por Lote'}</h4>
       <div style="display:flex;flex-direction:column;gap:8px">`;
     roiData.forEach(d => {
       const pct = Math.min(Math.abs(d.roi) / maxRoi * 100, 100);
@@ -743,7 +743,7 @@ const ReportTemplates = {
       [t('inv_locations'), (D.storageLocations || []).length]
     ];
     const totalRecords = stats.reduce((s, [, v]) => s + v, 0);
-    let h = `<div class="rpt-section"><h3>\uD83D\uDCCA ${t('data_stats')}</h3>
+    let h = `<div class="rpt-section"><h3>${t('data_stats')}</h3>
       <div class="card"><div style="text-align:center;margin-bottom:16px"><span style="font-size:36px;font-weight:800;color:var(--primary,#1A3C6E)">${fmtNum(totalRecords)}</span><br><span style="font-size:13px;color:var(--text-light,#888)">${t('cfg_total_records')}</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">`;
     stats.forEach(([label, v]) => {

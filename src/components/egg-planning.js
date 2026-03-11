@@ -95,7 +95,7 @@ class EggPlanning extends HTMLElement {
       <button class="btn btn-primary" data-action="add-plan">${t('plan_add')}</button></div>`;
 
     if (!plans.length) {
-      h += emptyState('\uD83D\uDCC5', t('no_data'));
+      h += emptyState('', t('no_data'));
       this.shadowRoot.innerHTML = h;
       this._bindActions();
       return;

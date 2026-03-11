@@ -15,14 +15,14 @@ import { voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 
 // ─── LIFECYCLE constant ───
 const LIFECYCLE = [
-  { stage: 'pollito', key: 'lc_pollito', weekStart: 0, weekEnd: 4, color: '#FFF9C4', icon: '\uD83D\uDC23', feed: 'lc_feed_starter', temp: '32-35\u00B0C', prod: '-', milestones: 'lc_mile_1' },
-  { stage: 'cria', key: 'lc_cria', weekStart: 4, weekEnd: 8, color: '#FFECB3', icon: '\uD83D\uDC24', feed: 'lc_feed_grower', temp: '28-32\u00B0C', prod: '-', milestones: 'lc_mile_2' },
-  { stage: 'recria', key: 'lc_recria', weekStart: 8, weekEnd: 18, color: '#C8E6C9', icon: '\uD83D\uDC14', feed: 'lc_feed_developer', temp: '22-28\u00B0C', prod: '-', milestones: 'lc_mile_3' },
-  { stage: 'pre_postura', key: 'lc_prepostura', weekStart: 18, weekEnd: 20, color: '#B3E5FC', icon: '\uD83D\uDC14', feed: 'lc_feed_prelay', temp: '20-24\u00B0C', prod: 'lc_prod_first', milestones: 'lc_mile_4' },
-  { stage: 'postura_pico', key: 'lc_pico', weekStart: 20, weekEnd: 42, color: '#A5D6A7', icon: '\uD83E\uDD5A', feed: 'lc_feed_layer', temp: '18-24\u00B0C', prod: '90-95%', milestones: 'lc_mile_5' },
-  { stage: 'postura_media', key: 'lc_media', weekStart: 42, weekEnd: 62, color: '#FFCC80', icon: '\uD83E\uDD5A', feed: 'lc_feed_layer', temp: '18-24\u00B0C', prod: '80-90%', milestones: 'lc_mile_6' },
-  { stage: 'postura_baja', key: 'lc_baja', weekStart: 62, weekEnd: 80, color: '#FFAB91', icon: '\uD83E\uDD5A', feed: 'lc_feed_lowlay', temp: '18-24\u00B0C', prod: '<80%', milestones: 'lc_mile_7' },
-  { stage: 'descarte', key: 'lc_descarte', weekStart: 80, weekEnd: 999, color: '#BDBDBD', icon: '\uD83D\uDCE6', feed: '-', temp: '-', prod: '-', milestones: 'lc_mile_8' }
+  { stage: 'pollito', key: 'lc_pollito', weekStart: 0, weekEnd: 4, color: '#FFF9C4', feed: 'lc_feed_starter', temp: '32-35\u00B0C', prod: '-', milestones: 'lc_mile_1' },
+  { stage: 'cria', key: 'lc_cria', weekStart: 4, weekEnd: 8, color: '#FFECB3', feed: 'lc_feed_grower', temp: '28-32\u00B0C', prod: '-', milestones: 'lc_mile_2' },
+  { stage: 'recria', key: 'lc_recria', weekStart: 8, weekEnd: 18, color: '#C8E6C9', feed: 'lc_feed_developer', temp: '22-28\u00B0C', prod: '-', milestones: 'lc_mile_3' },
+  { stage: 'pre_postura', key: 'lc_prepostura', weekStart: 18, weekEnd: 20, color: '#B3E5FC', feed: 'lc_feed_prelay', temp: '20-24\u00B0C', prod: 'lc_prod_first', milestones: 'lc_mile_4' },
+  { stage: 'postura_pico', key: 'lc_pico', weekStart: 20, weekEnd: 42, color: '#A5D6A7', feed: 'lc_feed_layer', temp: '18-24\u00B0C', prod: '90-95%', milestones: 'lc_mile_5' },
+  { stage: 'postura_media', key: 'lc_media', weekStart: 42, weekEnd: 62, color: '#FFCC80', feed: 'lc_feed_layer', temp: '18-24\u00B0C', prod: '80-90%', milestones: 'lc_mile_6' },
+  { stage: 'postura_baja', key: 'lc_baja', weekStart: 62, weekEnd: 80, color: '#FFAB91', feed: 'lc_feed_lowlay', temp: '18-24\u00B0C', prod: '<80%', milestones: 'lc_mile_7' },
+  { stage: 'descarte', key: 'lc_descarte', weekStart: 80, weekEnd: 999, color: '#BDBDBD', feed: '-', temp: '-', prod: '-', milestones: 'lc_mile_8' }
 ];
 
 /** Resolve lifecycle stage from LIFECYCLE constant using flock age */
@@ -139,7 +139,7 @@ class EggFlocks extends HTMLElement {
       <button class="btn btn-primary" data-action="add-flock">${t('flock_add')}</button></div>`;
 
     if (!activeOnly(D.flocks).length) {
-      h += emptyState('\uD83D\uDC14', t('no_data'), t('flock_add'), '');
+      h += emptyState('', t('no_data'), t('flock_add'), '');
     } else {
       const flocksEnriched = activeOnly(D.flocks).map(f => {
         const age = flockAge(f);
@@ -153,7 +153,7 @@ class EggFlocks extends HTMLElement {
       h += DataTable.create({
         id: 'flocks',
         data: flocksEnriched,
-        emptyIcon: '\uD83D\uDC14',
+        emptyIcon: '',
         emptyText: t('no_data'),
         columns: [
           {
@@ -206,7 +206,7 @@ class EggFlocks extends HTMLElement {
           <button class="btn btn-danger btn-sm" data-action="delete-flock" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
         </div>`,
         bulkActions: [{
-          label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+          label: t('delete'), danger: true,
           action: ids => {
             showVoidDialog(t('confirm_delete')).then(reason => {
               if (!reason) return;
@@ -391,7 +391,7 @@ class EggFlocks extends HTMLElement {
     let infoHtml = '';
     let eggColor = '';
     if (b && b.type !== '-') {
-      infoHtml = `<strong>${sanitizeHTML(b.name)}</strong> \u2014 ${sanitizeHTML(String(b.eggsYear))} huevos/a\u00F1o \u00B7 Peso: ${sanitizeHTML(String(b.eggWeight))} \u00B7 FCR: ${sanitizeHTML(String(b.fcr))}<br><span style="color:var(--text-secondary,#666)">${sanitizeHTML(b.notes)}</span>`;
+      infoHtml = `<strong>${sanitizeHTML(b.name)}</strong>${sanitizeHTML(String(b.eggsYear))} huevos/a\u00F1o \u00B7 Peso: ${sanitizeHTML(String(b.eggWeight))} \u00B7 FCR: ${sanitizeHTML(String(b.fcr))}<br><span style="color:var(--text-secondary,#666)">${sanitizeHTML(b.notes)}</span>`;
       eggColor = b.eggColor;
     }
 

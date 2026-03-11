@@ -55,8 +55,8 @@ class EggInvLocations extends HTMLElement {
     let h = '';
 
     h += `<div class="card"><div class="card-header-row">
-      <h3>\uD83C\uDFED ${t('inv_locations') || 'Ubicaciones de Almacenamiento'}</h3>
-      <button class="btn btn-primary btn-sm" data-action="add-location">\u2795 ${t('inv_add_location') || 'Nueva Ubicación'}</button>
+      <h3>${t('inv_locations') || 'Ubicaciones de Almacenamiento'}</h3>
+      <button class="btn btn-primary btn-sm" data-action="add-location">${t('inv_add_location') || 'Nueva Ubicación'}</button>
     </div>`;
 
     if (!locs.length) {
@@ -98,7 +98,7 @@ class EggInvLocations extends HTMLElement {
               <strong>${sanitizeHTML(loc.name)}</strong>
             </div>
             <div class="loc-actions">
-              <button class="btn btn-sm btn-secondary" data-action="move-stock" data-loc="${escapeAttr(loc.id)}">\u21C4 ${t('inv_move') || 'Mover'}</button>
+              <button class="btn btn-sm btn-secondary" data-action="move-stock" data-loc="${escapeAttr(loc.id)}">${t('inv_move') || 'Mover'}</button>
               <button class="btn btn-sm btn-secondary" data-action="edit-location" data-loc="${escapeAttr(loc.id)}">\u270F\uFE0F</button>
               <button class="btn btn-sm btn-danger" data-action="delete-location" data-loc="${escapeAttr(loc.id)}">\uD83D\uDDD1\uFE0F</button>
             </div>
@@ -124,7 +124,7 @@ class EggInvLocations extends HTMLElement {
   _showLocationForm(locId) {
     const D = Store.get();
     const loc = locId ? (D.storageLocations || []).find(l => l.id === locId) : null;
-    const title = '\uD83C\uDFED ' + (loc ? (t('inv_edit_location') || 'Editar Ubicación') : (t('inv_add_location') || 'Nueva Ubicación'));
+    const title = (loc ? (t('inv_edit_location') || 'Editar Ubicación') : (t('inv_add_location') || 'Nueva Ubicación'));
     const body = `
       <input type="hidden" id="loc-id" value="${loc ? escapeAttr(loc.id) : ''}">
       <div class="form-row">

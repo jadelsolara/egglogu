@@ -67,9 +67,9 @@ class EggOperations extends HTMLElement {
 
     h += `<div class="page-header"><h2>${t('ops_title')}</h2></div>`;
     h += `<div class="tabs">
-      <div class="tab${this._currentTab === 'checklist' ? ' active' : ''}" data-tab="checklist">${sanitizeHTML('\u2705')} ${t('ops_checklist')}</div>
-      <div class="tab${this._currentTab === 'logbook' ? ' active' : ''}" data-tab="logbook">${sanitizeHTML('\uD83D\uDCD3')} ${t('ops_logbook')}</div>
-      <div class="tab${this._currentTab === 'personnel' ? ' active' : ''}" data-tab="personnel">${sanitizeHTML('\uD83D\uDC77')} ${t('ops_personnel')}</div>
+      <div class="tab${this._currentTab === 'checklist' ? ' active' : ''}" data-tab="checklist">${sanitizeHTML('\u2713')} ${t('ops_checklist')}</div>
+      <div class="tab${this._currentTab === 'logbook' ? ' active' : ''}" data-tab="logbook">${t('ops_logbook')}</div>
+      <div class="tab${this._currentTab === 'personnel' ? ' active' : ''}" data-tab="personnel">${t('ops_personnel')}</div>
     </div>`;
 
     if (this._currentTab === 'checklist') h += this._renderChecklist(D);
@@ -429,7 +429,7 @@ class EggOperations extends HTMLElement {
       <button class="btn btn-primary btn-sm" data-action="add-log">${t('ops_log_add')}</button>
     </div>`;
 
-    if (!D.logbook.length) return h + emptyState('\uD83D\uDCD3', t('no_data'));
+    if (!D.logbook.length) return h + emptyState('', t('no_data'));
 
     h += `<div class="filter-bar">
       <select data-filter="log-cat">
@@ -548,7 +548,7 @@ class EggOperations extends HTMLElement {
         <h3>${t('ops_personnel')}</h3>
         <button class="btn btn-primary btn-sm" data-action="add-personnel">${t('ops_per_add')}</button>
       </div>`;
-      return h + emptyState('\uD83D\uDC77', t('no_data'));
+      return h + emptyState('', t('no_data'));
     }
 
     const totalSalary = D.personnel.filter(p => p.active).reduce((s, p) => s + (p.salary || 0), 0);
@@ -557,7 +557,7 @@ class EggOperations extends HTMLElement {
     return DataTable.create({
       id: 'personnel',
       data: activeOnly(D.personnel),
-      emptyIcon: '\uD83D\uDC77',
+      emptyIcon: '',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px">
         <h3>${t('ops_personnel')}</h3>
@@ -602,7 +602,7 @@ class EggOperations extends HTMLElement {
       </div>`,
       bulkActions: [
         {
-          label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+          label: t('delete'), danger: true,
           action: ids => this._bulkDeletePersonnel(ids)
         }
       ]

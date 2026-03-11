@@ -115,8 +115,8 @@ class EggFeed extends HTMLElement {
 
     // Tabs
     h += '<div class="tabs">';
-    h += `<div class="tab${this._currentTab === 'purchases' ? ' active' : ''}" data-tab="purchases">\uD83D\uDCE6 ${t('feed_purchases')}</div>`;
-    h += `<div class="tab${this._currentTab === 'consumption' ? ' active' : ''}" data-tab="consumption">\uD83C\uDF7D\uFE0F ${t('feed_consumption')}</div>`;
+    h += `<div class="tab${this._currentTab === 'purchases' ? ' active' : ''}" data-tab="purchases">${t('feed_purchases')}</div>`;
+    h += `<div class="tab${this._currentTab === 'consumption' ? ' active' : ''}" data-tab="consumption">${t('feed_consumption')}</div>`;
     h += '</div>';
 
     // Tab content
@@ -136,7 +136,7 @@ class EggFeed extends HTMLElement {
       id: 'feedPurchases',
       data: activeOnly(D.feed.purchases),
       onRefresh: () => this.render(),
-      emptyIcon: '\uD83D\uDCE6',
+      emptyIcon: '',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px"><h3>${t('feed_purchases')}</h3><button class="btn btn-primary btn-sm" data-action="add-purchase">${t('feed_add_purchase')}</button></div>`,
       columns: [
@@ -155,7 +155,7 @@ class EggFeed extends HTMLElement {
       ],
       actions: r => `<div class="btn-group"><button class="btn btn-secondary btn-sm" data-action="edit-purchase" data-id="${escapeAttr(r.id)}">${t('edit')}</button><button class="btn btn-danger btn-sm" data-action="delete-purchase" data-id="${escapeAttr(r.id)}">${t('delete')}</button></div>`,
       bulkActions: [{
-        label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+        label: t('delete'), danger: true,
         action: async (ids) => {
           const reason = await showVoidDialog(t('confirm_delete'));
           if (!reason) return;
@@ -181,7 +181,7 @@ class EggFeed extends HTMLElement {
       id: 'feedConsumption',
       data: activeOnly(D.feed.consumption),
       onRefresh: () => this.render(),
-      emptyIcon: '\uD83C\uDF7D\uFE0F',
+      emptyIcon: '',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px"><h3>${t('feed_consumption')}</h3><button class="btn btn-primary btn-sm" data-action="add-consumption">${t('feed_add_consumption')}</button></div>`,
       columns: [
@@ -196,7 +196,7 @@ class EggFeed extends HTMLElement {
       ],
       actions: r => `<div class="btn-group"><button class="btn btn-secondary btn-sm" data-action="edit-consumption" data-id="${escapeAttr(r.id)}">${t('edit')}</button><button class="btn btn-danger btn-sm" data-action="delete-consumption" data-id="${escapeAttr(r.id)}">${t('delete')}</button></div>`,
       bulkActions: [{
-        label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+        label: t('delete'), danger: true,
         action: async (ids) => {
           const reason = await showVoidDialog(t('confirm_delete'));
           if (!reason) return;

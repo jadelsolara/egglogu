@@ -89,11 +89,11 @@ class EggEnvironment extends HTMLElement {
 
     // Tabs
     h += '<div class="tabs">';
-    h += this._tab('manual', '\uD83D\uDCDD ' + t('env_manual'));
-    h += this._tab('iot', '\uD83D\uDCE1 ' + t('iot_title'));
-    h += this._tab('history', '\uD83D\uDCCA ' + t('env_history'));
-    h += this._tab('stress', '\u26A1 ' + t('stress_title'));
-    h += this._tab('predictions', '\uD83E\uDD16 ' + (t('pred_title') || 'Predictions'));
+    h += this._tab('manual', t('env_manual'));
+    h += this._tab('iot', t('iot_title'));
+    h += this._tab('history', t('env_history'));
+    h += this._tab('stress', t('stress_title'));
+    h += this._tab('predictions', t('pred_title') || 'Predictions');
     h += '</div>';
 
     switch (this._currentTab) {
@@ -183,9 +183,9 @@ class EggEnvironment extends HTMLElement {
       const hOk = latest.humidity >= 40 && latest.humidity <= 70;
       const lOk = latest.lightHours >= 14 && latest.lightHours <= 16;
       h += `<div class="card"><h3>${t('env_latest_reading')} (${fmtDate(latest.date)})</h3><div class="kpi-grid">`;
-      h += `<div class="kpi-card ${tOk ? '' : 'danger'}"><div class="kpi-label">${t('env_temp')}</div><div class="kpi-value">${latest.temperature || '-'}\u00B0C</div><div class="kpi-sub">${tOk ? '\u2713 ' + t('env_ok') : '\u26A0 ' + t('env_out_of_range')}</div></div>`;
-      h += `<div class="kpi-card ${hOk ? '' : 'warning'}"><div class="kpi-label">${t('env_humidity')}</div><div class="kpi-value">${latest.humidity || '-'}%</div><div class="kpi-sub">${hOk ? '\u2713 ' + t('env_ok') : '\u26A0 ' + t('env_out_of_range')}</div></div>`;
-      h += `<div class="kpi-card ${lOk ? '' : 'warning'}"><div class="kpi-label">${t('env_light')}</div><div class="kpi-value">${latest.lightHours || '-'} hrs</div><div class="kpi-sub">${lOk ? '\u2713 ' + t('env_ok') : '\u26A0 ' + t('env_out_of_range')}</div></div>`;
+      h += `<div class="kpi-card ${tOk ? '' : 'danger'}"><div class="kpi-label">${t('env_temp')}</div><div class="kpi-value">${latest.temperature || '-'}\u00B0C</div><div class="kpi-sub">${tOk ? '\u2713 ' + t('env_ok') : ''!' + ' + t('env_out_of_range')}</div></div>`;
+      h += `<div class="kpi-card ${hOk ? '' : 'warning'}"><div class="kpi-label">${t('env_humidity')}</div><div class="kpi-value">${latest.humidity || '-'}%</div><div class="kpi-sub">${hOk ? '\u2713 ' + t('env_ok') : ''!' + ' + t('env_out_of_range')}</div></div>`;
+      h += `<div class="kpi-card ${lOk ? '' : 'warning'}"><div class="kpi-label">${t('env_light')}</div><div class="kpi-value">${latest.lightHours || '-'} hrs</div><div class="kpi-sub">${lOk ? '\u2713 ' + t('env_ok') : ''!' + ' + t('env_out_of_range')}</div></div>`;
       if (latest.temperature && latest.humidity) {
         const thi = calcTHI(latest.temperature, latest.humidity);
         h += `<div class="kpi-card ${thi > 28 ? 'danger' : thi > 25 ? 'warning' : ''}"><div class="kpi-label">${t('env_thi')}</div><div class="kpi-value">${thi.toFixed(1)}</div><div class="kpi-sub">${thi > 28 ? t('weather_heat_alert') : 'OK'}</div></div>`;
@@ -195,7 +195,7 @@ class EggEnvironment extends HTMLElement {
 
     // Recent table
     if (!sorted.length) {
-      h += emptyState('\uD83C\uDF21\uFE0F', t('no_data'), t('env_add'), null);
+      h += emptyState('', t('no_data'), t('env_add'), null);
     } else {
       h += '<div class="card"><div class="table-wrap"><table><thead><tr>';
       h += `<th>${t('date')}</th><th>${t('env_temp')}</th><th>${t('env_humidity')}</th><th>${t('env_light')}</th><th>${t('env_ammonia')}</th><th>THI</th><th>${t('notes')}</th><th>${t('actions')}</th>`;
@@ -424,7 +424,7 @@ class EggEnvironment extends HTMLElement {
   //  TAB 3 — HISTORY (Chart + DataTable)
   // ══════════════════════════════════════════════════════════════
   _renderHistory(D) {
-    if (!(D.environment || []).length) return emptyState('\uD83D\uDCCA', t('no_data'));
+    if (!(D.environment || []).length) return emptyState('', t('no_data'));
     let h = '<div class="card"><h3>' + t('env_history') + '</h3><div class="chart-container"><canvas id="chart-env"></canvas></div></div>';
 
     // DataTable
@@ -433,7 +433,7 @@ class EggEnvironment extends HTMLElement {
       return { ...e, _thi: thi };
     });
     h += DataTable.create({
-      id: 'envHistory', data: activeOnly(envData), emptyIcon: '\uD83D\uDCCA', emptyText: t('no_data'),
+      id: 'envHistory', data: activeOnly(envData), emptyIcon: '', emptyText: t('no_data'),
       columns: [
         { key: 'date', label: t('date'), type: 'date', sortable: true, filterable: true, filterType: 'date-range' },
         { key: 'temperature', label: t('env_temp'), type: 'number', sortable: true, render: r => (r.temperature || '-') + '\u00B0C' },
@@ -448,7 +448,7 @@ class EggEnvironment extends HTMLElement {
         <button class="btn btn-danger btn-sm" data-action="delete-env" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
       </div>`,
       bulkActions: [
-        { label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true, action: async ids => {
+        { label: t('delete'), danger: true, action: async ids => {
           const reason = await showVoidDialog(t('confirm_delete'));
           if (!reason) return;
           const Db = Store.get();
@@ -497,7 +497,7 @@ class EggEnvironment extends HTMLElement {
       <h3>${t('stress_title')}</h3>
       <button class="btn btn-primary btn-sm" data-action="show-stress-form">${t('add')}</button>
     </div>`;
-    if (!(D.stressEvents || []).length) return h + emptyState('\u26A1', t('no_data'));
+    if (!(D.stressEvents || []).length) return h + emptyState('', t('no_data'));
     h += '<div class="card"><div class="stress-timeline">';
     [...D.stressEvents].sort((a, b) => b.date.localeCompare(a.date)).forEach(ev => {
       const sColor = ['', '#4CAF50', '#FFC107', '#FF9800', '#F44336', '#9C27B0'][ev.severity] || '#999';
@@ -595,7 +595,7 @@ class EggEnvironment extends HTMLElement {
   //  TAB 5 — PREDICTIONS (outbreak risk, forecast, anomalies, breed benchmark)
   // ══════════════════════════════════════════════════════════════
   _renderPredictions(D) {
-    if (!(D.dailyProduction || []).length) return emptyState('\uD83E\uDD16', t('no_data'));
+    if (!(D.dailyProduction || []).length) return emptyState('', t('no_data'));
     let h = '';
     const sorted = [...D.dailyProduction].sort((a, b) => a.date.localeCompare(b.date));
     const last30 = sorted.slice(-30);
@@ -604,7 +604,7 @@ class EggEnvironment extends HTMLElement {
     const outbreak = this._computeOutbreakRisk(D);
     const obColor = outbreak.classification === 1 ? 'red' : outbreak.probability > 0.4 ? 'yellow' : 'green';
     const obLabel = obColor === 'red' ? t('pred_outbreak_high') : obColor === 'yellow' ? t('pred_outbreak_medium') : t('pred_outbreak_low');
-    h += `<div class="card"><h3>\uD83D\uDD34 ${t('pred_outbreak_risk')}</h3>
+    h += `<div class="card"><h3>${t('pred_outbreak_risk')}</h3>
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
         <div class="traffic-light">
           <div class="traffic-dot red${obColor === 'red' ? ' active' : ''}"></div>
@@ -626,14 +626,14 @@ class EggEnvironment extends HTMLElement {
     }
     if (outbreak.recommendations.length) {
       h += '<div style="margin-top:12px"><strong>' + t('rec_title') + ':</strong><ul style="margin:4px 0 0 16px">';
-      outbreak.recommendations.forEach(r => { h += `<li>${r.icon || ''} ${sanitizeHTML(r.msg || '')}</li>`; });
+      outbreak.recommendations.forEach(r => { h += `<li>${sanitizeHTML(r.msg || '')}</li>`; });
       h += '</ul></div>';
     }
     h += '</div>';
 
     // === Multi-step Forecast ===
     if (last30.length >= 7 && typeof ss !== 'undefined') {
-      h += `<div class="card"><h3>\uD83D\uDCC8 ${t('pred_forecast')}</h3>
+      h += `<div class="card"><h3>${t('pred_forecast')}</h3>
         <div style="margin-bottom:8px">
           <button class="btn btn-sm${this._forecastDays === 7 ? ' btn-primary' : ' btn-secondary'}" data-action="set-forecast-days" data-days="7">7d</button>
           <button class="btn btn-sm${this._forecastDays === 14 ? ' btn-primary' : ' btn-secondary'}" data-action="set-forecast-days" data-days="14">14d</button>
@@ -653,7 +653,7 @@ class EggEnvironment extends HTMLElement {
           <th>${t('date')}</th><th>${t('prod_eggs')}</th><th>Z-score</th></tr></thead><tbody>`;
         anomalies.forEach(p => {
           const z = std > 0 ? ((p.eggsCollected - mean) / std) : 0;
-          h += `<tr><td>${fmtDate(p.date)}</td><td>${p.eggsCollected} <span class="anomaly-icon">\u26A0</span></td>
+          h += `<tr><td>${fmtDate(p.date)}</td><td>${p.eggsCollected} <span class="anomaly-icon">!</span></td>
             <td style="color:var(--danger)">${z.toFixed(2)}</td></tr>`;
         });
         h += '</tbody></table></div></div>';
@@ -794,11 +794,11 @@ class EggEnvironment extends HTMLElement {
 
     // Recommendations
     const recommendations = [];
-    if (mortFactor > 0.5) recommendations.push({ priority: 'high', icon: '\uD83D\uDD2C', msg: t('rec_lab_samples') });
-    if (thiFactor > 0.5) recommendations.push({ priority: 'high', icon: '\uD83C\uDF21\uFE0F', msg: t('rec_ventilation') });
-    if (fcrFactor > 0.5) recommendations.push({ priority: 'medium', icon: '\uD83C\uDF3E', msg: t('rec_check_diet') });
-    if (prodFactor > 0.5) recommendations.push({ priority: 'medium', icon: '\uD83D\uDCC9', msg: t('rec_check_env') });
-    if (overdueVac > 0) recommendations.push({ priority: 'medium', icon: '\uD83D\uDC89', msg: (t('alert_vaccine_overdue') || 'Vaccine overdue') + ': ' + overdueVac });
+    if (mortFactor > 0.5) recommendations.push({ priority: 'high', msg: t('rec_lab_samples') });
+    if (thiFactor > 0.5) recommendations.push({ priority: 'high', msg: t('rec_ventilation') });
+    if (fcrFactor > 0.5) recommendations.push({ priority: 'medium', msg: t('rec_check_diet') });
+    if (prodFactor > 0.5) recommendations.push({ priority: 'medium', msg: t('rec_check_env') });
+    if (overdueVac > 0) recommendations.push({ priority: 'medium', msg: (t('alert_vaccine_overdue') || 'Vaccine overdue') + ': ' + overdueVac });
 
     return { probability, classification, factors, recommendations };
   }

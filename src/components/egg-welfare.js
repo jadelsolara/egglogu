@@ -121,7 +121,7 @@ const QBA_TERMS = [
 
 function classifyWelfare(principleScores) {
   const vals = Object.values(principleScores);
-  if (vals.some(v => v === null || v === undefined)) return { cat: 'incomplete', color: '#999', icon: '⚪' };
+  if (vals.some(v => v === null || v === undefined)) return { cat: 'incomplete', color: '#999', icon: '<span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#999"></span>' };
 
   const above80 = vals.filter(v => v > 80).length;
   const above55 = vals.filter(v => v > 55).length;
@@ -130,10 +130,10 @@ function classifyWelfare(principleScores) {
   const allAbove20 = vals.every(v => v > 20);
   const allAbove10 = vals.every(v => v > 10);
 
-  if (above80 >= 2 && allAbove55) return { cat: 'excellent', color: '#2e7d32', icon: '🟢' };
-  if (above55 >= 2 && allAbove20) return { cat: 'enhanced', color: '#1565c0', icon: '🔵' };
-  if (above20 >= 3 && allAbove10) return { cat: 'acceptable', color: '#f57f17', icon: '🟡' };
-  return { cat: 'not_classified', color: '#c62828', icon: '🔴' };
+  if (above80 >= 2 && allAbove55) return { cat: 'excellent', color: '#2e7d32', icon: '<span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2e7d32"></span>' };
+  if (above55 >= 2 && allAbove20) return { cat: 'enhanced', color: '#1565c0', icon: '<span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1565c0"></span>' };
+  if (above20 >= 3 && allAbove10) return { cat: 'acceptable', color: '#f57f17', icon: '<span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f57f17"></span>' };
+  return { cat: 'not_classified', color: '#c62828', icon: '<span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#c62828"></span>' };
 }
 
 // ─── COMPONENT ──────────────────────────────────────────────────
@@ -179,7 +179,7 @@ class EggWelfare extends HTMLElement {
 
     h += `<div class="page-header">
       <div class="header-content">
-        <h2>🐾 ${t('wel_title') || 'Animal Welfare Assessment'}</h2>
+        <h2>${t('wel_title') || 'Animal Welfare Assessment'}</h2>
         <p class="subtitle">${t('wel_subtitle') || 'Welfare Quality® Protocol v2.0 for Laying Hens'}</p>
       </div>
       <div class="header-badge">
@@ -190,16 +190,16 @@ class EggWelfare extends HTMLElement {
     // Tabs
     h += `<div class="tabs">
       <div class="tab${this._currentTab === 'overview' ? ' active' : ''}" data-tab="overview">
-        <span class="tab-icon">📊</span><span class="tab-label">${t('wel_overview') || 'Overview'}</span>
+        <span class="tab-label">${t('wel_overview') || 'Overview'}</span>
       </div>
       <div class="tab${this._currentTab === 'new' ? ' active' : ''}" data-tab="new">
-        <span class="tab-icon">➕</span><span class="tab-label">${t('wel_new_assess') || 'New Assessment'}</span>
+        <span class="tab-label">${t('wel_new_assess') || 'New Assessment'}</span>
       </div>
       <div class="tab${this._currentTab === 'history' ? ' active' : ''}" data-tab="history">
-        <span class="tab-icon">📋</span><span class="tab-label">${t('wel_history') || 'History'}</span>
+        <span class="tab-label">${t('wel_history') || 'History'}</span>
       </div>
       <div class="tab${this._currentTab === 'guide' ? ' active' : ''}" data-tab="guide">
-        <span class="tab-icon">📖</span><span class="tab-label">${t('wel_guide') || 'Protocol Guide'}</span>
+        <span class="tab-label">${t('wel_guide') || 'Protocol Guide'}</span>
       </div>
     </div>`;
 
@@ -225,7 +225,7 @@ class EggWelfare extends HTMLElement {
       h += `<div class="welcome-empty">
         <div class="welcome-visual">
           <div class="welcome-circle">
-            <span class="welcome-emoji">🐔</span>
+            <span class="welcome-emoji"></span>
           </div>
           <div class="welcome-rings"></div>
         </div>
@@ -235,12 +235,12 @@ class EggWelfare extends HTMLElement {
           ${WQ_PRINCIPLES.map(p => {
             const c = PRINCIPLE_COLORS[p.id];
             return `<div class="welcome-feature" style="border-left:3px solid ${c.main}">
-              <span class="wf-icon">${p.icon}</span>
+              <span class="wf-icon"></span>
               <div><strong>${t(p.key) || p.id}</strong><br><small>${(WQ_CRITERIA[p.id] || []).length} ${t('wel_criteria') || 'criteria'}</small></div>
             </div>`;
           }).join('')}
         </div>
-        <button class="btn btn-primary btn-lg" data-tab="new">➕ ${t('wel_start_assessment') || 'Start First Assessment'}</button>
+        <button class="btn btn-primary btn-lg" data-tab="new">${t('wel_start_assessment') || 'Start First Assessment'}</button>
       </div>`;
       return h;
     }
@@ -268,7 +268,7 @@ class EggWelfare extends HTMLElement {
           <div class="hero-meta">${latest.flockName || ''} ${latest.assessor ? '— ' + latest.assessor : ''}</div>
         </div>
       </div>
-      <button class="btn btn-outline-light btn-sm" data-tab="new">➕ ${t('wel_new_assess') || 'New Assessment'}</button>
+      <button class="btn btn-outline-light btn-sm" data-tab="new">${t('wel_new_assess') || 'New Assessment'}</button>
     </div>`;
 
     // Principle score cards with progress bars
@@ -281,7 +281,7 @@ class EggWelfare extends HTMLElement {
       const criteriaCount = (WQ_CRITERIA[p.id] || []).length;
       h += `<div class="principle-score-card">
         <div class="psc-header" style="background:${c.bg}">
-          <span class="psc-icon">${p.icon}</span>
+          <span class="psc-icon"></span>
           <span class="psc-name">${t(p.key) || p.id}</span>
           <span class="psc-value" style="color:${c.main}">${score != null ? pct : '—'}</span>
         </div>
@@ -301,11 +301,11 @@ class EggWelfare extends HTMLElement {
     // Charts row: Radar + Donut
     h += `<div class="charts-row">
       <div class="chart-card">
-        <h3>📈 ${t('wel_radar_title') || 'Welfare Profile'}</h3>
+        <h3>${t('wel_radar_title') || 'Welfare Profile'}</h3>
         <div class="chart-wrap"><canvas id="wf-radar" width="350" height="350"></canvas></div>
       </div>
       <div class="chart-card">
-        <h3>🎯 ${t('wel_overall_score') || 'Overall Score'}</h3>
+        <h3>${t('wel_overall_score') || 'Overall Score'}</h3>
         <div class="chart-wrap"><canvas id="wf-donut" width="250" height="250"></canvas></div>
         <div class="overall-label" id="wf-overall-label"></div>
       </div>
@@ -314,15 +314,15 @@ class EggWelfare extends HTMLElement {
     // Trend line chart (if >1 assessment)
     if (assessments.length > 1) {
       h += `<div class="chart-card full-width">
-        <h3>📉 ${t('wel_trend') || 'Assessment Trend'}</h3>
+        <h3>${t('wel_trend') || 'Assessment Trend'}</h3>
         <div class="chart-wrap-wide"><canvas id="wf-trend" width="700" height="280"></canvas></div>
       </div>`;
 
       h += `<details class="trend-details">
-        <summary>📋 ${t('wel_history_table') || 'History Table'}</summary>
+        <summary>${t('wel_history_table') || 'History Table'}</summary>
         <div class="trend-table"><table>
           <thead><tr><th>${t('date') || 'Date'}</th><th>${t('wel_flock') || 'Flock'}</th>`;
-      for (const p of WQ_PRINCIPLES) h += `<th>${p.icon} ${t(p.key) || p.id}</th>`;
+      for (const p of WQ_PRINCIPLES) h += `<th>${t(p.key) || p.id}</th>`;
       h += `<th>${t('wel_category') || 'Category'}</th></tr></thead><tbody>`;
       for (const a of assessments.slice(-10).reverse()) {
         const aps = a.principleScores || {};
@@ -348,28 +348,28 @@ class EggWelfare extends HTMLElement {
     const flocks = (D.flocks || []).filter(f => !f.deleted);
 
     h += `<div class="assess-header">
-      <h3>📝 ${t('wel_new_assessment_title') || 'New Welfare Assessment'}</h3>
+      <h3>${t('wel_new_assessment_title') || 'New Welfare Assessment'}</h3>
       <p>${t('wel_new_assessment_desc') || 'Fill in the assessment details and evaluate each principle below.'}</p>
     </div>`;
 
     h += `<div class="assess-form">
       <div class="form-row">
-        <label>📅 ${t('date') || 'Date'}</label>
+        <label>${t('date') || 'Date'}</label>
         <input type="date" id="wf-date" value="${todayStr()}">
       </div>
       <div class="form-row">
-        <label>🐔 ${t('wel_flock') || 'Flock'}</label>
+        <label>${t('wel_flock') || 'Flock'}</label>
         <select id="wf-flock">
           <option value="">${t('select') || '-- Select --'}</option>
           ${flocks.map(f => `<option value="${f.id}">${f.name || f.id}</option>`).join('')}
         </select>
       </div>
       <div class="form-row">
-        <label>👤 ${t('wel_assessor') || 'Assessor'}</label>
+        <label>${t('wel_assessor') || 'Assessor'}</label>
         <input type="text" id="wf-assessor" placeholder="${t('wel_assessor_name') || 'Name'}">
       </div>
       <div class="form-row">
-        <label>🏠 ${t('wel_housing_type') || 'Housing System'}</label>
+        <label>${t('wel_housing_type') || 'Housing System'}</label>
         <select id="wf-housing">
           <option value="cage">${t('wel_cage') || 'Cage'}</option>
           <option value="barn">${t('wel_barn') || 'Barn'}</option>
@@ -418,7 +418,7 @@ class EggWelfare extends HTMLElement {
     h += `</div>`;
 
     h += `<div class="form-actions">
-      <button class="btn btn-primary btn-lg" data-action="save-assessment">💾 ${t('save') || 'Save Assessment'}</button>
+      <button class="btn btn-primary btn-lg" data-action="save-assessment">${t('save') || 'Save Assessment'}</button>
     </div>`;
 
     return h;
@@ -431,16 +431,16 @@ class EggWelfare extends HTMLElement {
 
     if (m.type === 'score012') {
       input = `<div class="score-inputs">
-        <div class="score-col"><label class="score-label s0">0 ✅</label><input type="number" min="0" max="100" step="1" data-measure="${mId}" data-score="0" placeholder="%" class="score-input"></div>
-        <div class="score-col"><label class="score-label s1">1 ⚠️</label><input type="number" min="0" max="100" step="1" data-measure="${mId}" data-score="1" placeholder="%" class="score-input"></div>
-        <div class="score-col"><label class="score-label s2">2 ❌</label><input type="number" min="0" max="100" step="1" data-measure="${mId}" data-score="2" placeholder="%" class="score-input"></div>
+        <div class="score-col"><label class="score-label s0">0</label><input type="number" min="0" max="100" step="1" data-measure="${mId}" data-score="0" placeholder="%" class="score-input"></div>
+        <div class="score-col"><label class="score-label s1">1</label><input type="number" min="0" max="100" step="1" data-measure="${mId}" data-score="1" placeholder="%" class="score-input"></div>
+        <div class="score-col"><label class="score-label s2">2</label><input type="number" min="0" max="100" step="1" data-measure="${mId}" data-score="2" placeholder="%" class="score-input"></div>
       </div>`;
-      if (m.sample) input += `<span class="sample-note">🔬 ${t('wel_sample') || 'Sample'}: ${m.sample} ${t('wel_birds') || 'birds'}</span>`;
+      if (m.sample) input += `<span class="sample-note">${t('wel_sample') || 'Sample'}: ${m.sample} ${t('wel_birds') || 'birds'}</span>`;
     } else if (m.type === 'score02') {
       input = `<select data-measure="${mId}" class="measure-select">
         <option value="">—</option>
-        <option value="0">0 — ✅ ${t('wel_good') || 'Good'}</option>
-        <option value="2">2 — ❌ ${t('wel_poor') || 'Poor / Jeopardized'}</option>
+        <option value="0">0 — ${t('wel_good') || 'Good'}</option>
+        <option value="2">2 — ${t('wel_poor') || 'Poor / Jeopardized'}</option>
       </select>`;
     } else if (m.type === 'number') {
       input = `<div class="num-input-wrap">
@@ -479,10 +479,10 @@ class EggWelfare extends HTMLElement {
     const assessments = (D.welfare.assessments || []).slice().reverse();
     if (!assessments.length) {
       return `<div class="welcome-empty">
-        <div class="welcome-visual"><div class="welcome-circle"><span class="welcome-emoji">📋</span></div></div>
+        <div class="welcome-visual"><div class="welcome-circle"><span class="welcome-emoji"></span></div></div>
         <h3>${t('wel_no_history') || 'No assessment history'}</h3>
         <p>${t('wel_history_empty_desc') || 'Completed assessments will appear here with detailed scores and trends.'}</p>
-        <button class="btn btn-primary" data-tab="new">➕ ${t('wel_start_assessment') || 'Start First Assessment'}</button>
+        <button class="btn btn-primary" data-tab="new">${t('wel_start_assessment') || 'Start First Assessment'}</button>
       </div>`;
     }
 
@@ -506,7 +506,7 @@ class EggWelfare extends HTMLElement {
         const c = PRINCIPLE_COLORS[p.id];
         h += `<div class="hc-score-item">
           <div class="hc-score-header">
-            <span>${p.icon} ${t(p.key) || p.id}</span>
+            <span>${t(p.key) || p.id}</span>
             <span style="color:${c.main};font-weight:700">${s != null ? pct : '—'}</span>
           </div>
           <div class="hc-mini-bar"><div class="hc-mini-fill" style="width:${pct}%;background:${c.main}"></div></div>
@@ -527,34 +527,34 @@ class EggWelfare extends HTMLElement {
   _renderGuide() {
     let h = `<div class="guide">
       <div class="guide-hero">
-        <h3>📖 ${t('wel_guide_title') || 'Welfare Quality® Assessment Protocol v2.0'}</h3>
+        <h3>${t('wel_guide_title') || 'Welfare Quality® Assessment Protocol v2.0'}</h3>
         <p>${t('wel_guide_intro') || 'This module implements the Welfare Quality® Assessment Protocol for Laying Hens (v2.0, December 2019). The protocol assesses welfare through 4 principles, 12 criteria, and approximately 30 individual measures.'}</p>
       </div>
 
       <div class="guide-section">
-        <h4>🏆 ${t('wel_scoring_system') || 'Classification System'}</h4>
+        <h4>${t('wel_scoring_system') || 'Classification System'}</h4>
         <div class="class-grid">
           <div class="class-card" style="--cc-color:#2e7d32;--cc-bg:linear-gradient(135deg,#2e7d32,#43a047)">
-            <div class="cc-icon">🟢</div><div class="class-name">${t('wel_cat_excellent') || 'Excellent'}</div>
+            <div class="cc-icon"><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#2e7d32"></span></div><div class="class-name">${t('wel_cat_excellent') || 'Excellent'}</div>
             <div class="class-rule">${t('wel_rule_excellent') || '2+ principles > 80, ALL > 55'}</div>
           </div>
           <div class="class-card" style="--cc-color:#1565c0;--cc-bg:linear-gradient(135deg,#1565c0,#1e88e5)">
-            <div class="cc-icon">🔵</div><div class="class-name">${t('wel_cat_enhanced') || 'Enhanced'}</div>
+            <div class="cc-icon"><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1565c0"></span></div><div class="class-name">${t('wel_cat_enhanced') || 'Enhanced'}</div>
             <div class="class-rule">${t('wel_rule_enhanced') || '2+ principles > 55, ALL > 20'}</div>
           </div>
           <div class="class-card" style="--cc-color:#f57f17;--cc-bg:linear-gradient(135deg,#f57f17,#ffa000)">
-            <div class="cc-icon">🟡</div><div class="class-name">${t('wel_cat_acceptable') || 'Acceptable'}</div>
+            <div class="cc-icon"><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f57f17"></span></div><div class="class-name">${t('wel_cat_acceptable') || 'Acceptable'}</div>
             <div class="class-rule">${t('wel_rule_acceptable') || '3+ principles > 20, ALL > 10'}</div>
           </div>
           <div class="class-card" style="--cc-color:#c62828;--cc-bg:linear-gradient(135deg,#c62828,#e53935)">
-            <div class="cc-icon">🔴</div><div class="class-name">${t('wel_cat_not_classified') || 'Not Classified'}</div>
+            <div class="cc-icon"><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#c62828"></span></div><div class="class-name">${t('wel_cat_not_classified') || 'Not Classified'}</div>
             <div class="class-rule">${t('wel_rule_not_classified') || 'Below minimum thresholds'}</div>
           </div>
         </div>
       </div>
 
       <div class="guide-section">
-        <h4>🔬 ${t('wel_principles_criteria') || '4 Principles & 12 Criteria'}</h4>
+        <h4>${t('wel_principles_criteria') || '4 Principles & 12 Criteria'}</h4>
         <div class="guide-principles-grid">`;
 
     for (const principle of WQ_PRINCIPLES) {
@@ -572,21 +572,21 @@ class EggWelfare extends HTMLElement {
     h += `</div></div>
 
       <div class="guide-section">
-        <h4>📏 ${t('wel_measure_scales') || 'Scoring Scales'}</h4>
+        <h4>${t('wel_measure_scales') || 'Scoring Scales'}</h4>
         <div class="scales-grid">
-          <div class="scale-card s0"><div class="scale-num">0</div><div class="scale-text">✅ ${t('wel_score0_desc') || 'Good welfare — no or minimal issues'}</div></div>
-          <div class="scale-card s1"><div class="scale-num">1</div><div class="scale-text">⚠️ ${t('wel_score1_desc') || 'Moderate compromise — some issues found'}</div></div>
-          <div class="scale-card s2"><div class="scale-num">2</div><div class="scale-text">❌ ${t('wel_score2_desc') || 'Welfare jeopardized — serious issues'}</div></div>
+          <div class="scale-card s0"><div class="scale-num">0</div><div class="scale-text">${t('wel_score0_desc') || 'Good welfare — no or minimal issues'}</div></div>
+          <div class="scale-card s1"><div class="scale-num">1</div><div class="scale-text">${t('wel_score1_desc') || 'Moderate compromise — some issues found'}</div></div>
+          <div class="scale-card s2"><div class="scale-num">2</div><div class="scale-text">${t('wel_score2_desc') || 'Welfare jeopardized — serious issues'}</div></div>
         </div>
       </div>
 
       <div class="guide-info-grid">
         <div class="guide-info-card">
-          <h4>⏱️ ${t('wel_time_required') || 'Time Required'}</h4>
+          <h4>${t('wel_time_required') || 'Time Required'}</h4>
           <p>${t('wel_time_desc') || 'A full assessment takes approximately 6-7 hours. Clinical assessment of 100 birds: 180-240 min. Behavioural tests (QBA, NOT, ADT): ~95 min. Resource-based measures: ~50 min.'}</p>
         </div>
         <div class="guide-info-card">
-          <h4>🧠 ${t('wel_qba_title') || 'Qualitative Behaviour Assessment (QBA)'}</h4>
+          <h4>${t('wel_qba_title') || 'Qualitative Behaviour Assessment (QBA)'}</h4>
           <p>${t('wel_qba_desc') || 'Score 20 expressive qualities on a 0-125mm visual analogue scale (VAS). 10 positive and 10 negative terms.'}</p>
           <div class="qba-terms-grid">`;
     for (const term of QBA_TERMS) {

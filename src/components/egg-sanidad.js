@@ -69,10 +69,10 @@ class EggSanidad extends HTMLElement {
 
     h += `<div class="page-header"><h2>${t('san_title')}</h2></div>`;
     h += `<div class="tabs">
-      <div class="tab${this._currentTab === 'vaccines' ? ' active' : ''}" data-tab="vaccines">\uD83D\uDC89 ${t('san_vaccines')}</div>
-      <div class="tab${this._currentTab === 'medications' ? ' active' : ''}" data-tab="medications">\uD83D\uDC8A ${t('san_medications')}</div>
-      <div class="tab${this._currentTab === 'outbreaks' ? ' active' : ''}" data-tab="outbreaks">\uD83E\uDDA0 ${t('san_outbreaks')}</div>
-      <div class="tab${this._currentTab === 'stress' ? ' active' : ''}" data-tab="stress">\u26A1 ${t('stress_title')}</div>
+      <div class="tab${this._currentTab === 'vaccines' ? ' active' : ''}" data-tab="vaccines">${t('san_vaccines')}</div>
+      <div class="tab${this._currentTab === 'medications' ? ' active' : ''}" data-tab="medications">${t('san_medications')}</div>
+      <div class="tab${this._currentTab === 'outbreaks' ? ' active' : ''}" data-tab="outbreaks">${t('san_outbreaks')}</div>
+      <div class="tab${this._currentTab === 'stress' ? ' active' : ''}" data-tab="stress">${t('stress_title')}</div>
     </div>`;
 
     if (this._currentTab === 'vaccines') h += this._renderVaccinesTab(D);
@@ -156,7 +156,7 @@ class EggSanidad extends HTMLElement {
       id: 'vaccines',
       data: vacs,
       onRefresh: () => this.render(),
-      emptyIcon: '\uD83D\uDC89',
+      emptyIcon: '',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px">
         <h3>${t('vac_title')}</h3>
@@ -193,7 +193,7 @@ class EggSanidad extends HTMLElement {
         <button class="btn btn-danger btn-sm" data-action="delete-vaccine-inline" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
       </div>`,
       bulkActions: [{
-        label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+        label: t('delete'), danger: true,
         action: ids => {
           showVoidDialog(t('confirm_delete')).then(reason => {
             if (!reason) return;
@@ -359,7 +359,7 @@ class EggSanidad extends HTMLElement {
       id: 'medications',
       data: meds,
       onRefresh: () => this.render(),
-      emptyIcon: '\uD83D\uDC8A',
+      emptyIcon: '',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px">
         <h3>${t('med_title')}</h3>
@@ -395,7 +395,7 @@ class EggSanidad extends HTMLElement {
         <button class="btn btn-danger btn-sm" data-action="delete-med-inline" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
       </div>`,
       bulkActions: [{
-        label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+        label: t('delete'), danger: true,
         action: ids => {
           showVoidDialog(t('confirm_delete')).then(reason => {
             if (!reason) return;
@@ -521,7 +521,7 @@ class EggSanidad extends HTMLElement {
       id: 'outbreaks',
       data: activeOnly(D.outbreaks),
       onRefresh: () => this.render(),
-      emptyIcon: '\uD83E\uDDA0',
+      emptyIcon: '',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="margin-bottom:12px">
         <h3>${t('out_title')}</h3>
@@ -561,7 +561,7 @@ class EggSanidad extends HTMLElement {
         <button class="btn btn-danger btn-sm" data-action="delete-outbreak-inline" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
       </div>`,
       bulkActions: [{
-        label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+        label: t('delete'), danger: true,
         action: ids => {
           showVoidDialog(t('confirm_delete')).then(reason => {
             if (!reason) return;
@@ -670,7 +670,7 @@ class EggSanidad extends HTMLElement {
 
     const activeStress = activeOnly(D.stressEvents);
     if (!activeStress.length) {
-      return h + emptyState('\u26A1', t('no_data'));
+      return h + emptyState('', t('no_data'));
     }
 
     h += '<div class="card"><div class="stress-timeline">';

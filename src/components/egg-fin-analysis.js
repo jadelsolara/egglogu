@@ -197,7 +197,7 @@ export function renderCashFlow(D) {
   upcomingItems.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
   if (upcomingItems.length === 0) {
-    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('fin_no_upcoming_due')) + '</p></div>';
+    h += '<div class="empty-state"><div class="empty-icon"></div><p>' + sanitizeHTML(t('fin_no_upcoming_due')) + '</p></div>';
   } else {
     h += '<div class="table-wrap"><table>';
     h += '<thead><tr>';
@@ -253,7 +253,7 @@ export function renderBudget(D) {
   const monthBudgets = budgets.filter(b => _monthKey(b.month || b.date || '') === curMonth || b.month === curMonth);
 
   if (monthBudgets.length === 0) {
-    h += emptyState('\uD83D\uDCCA', t('fin_no_budget'), t('fin_set_budget'), "this.dispatchEvent(new CustomEvent('action',{detail:'set-budget',bubbles:true}))");
+    h += emptyState('', t('fin_no_budget'), t('fin_set_budget'), "this.dispatchEvent(new CustomEvent('action',{detail:'set-budget',bubbles:true}))");
     return h;
   }
 
@@ -390,7 +390,7 @@ export function renderAging(D) {
   h += '</div>';
 
   if (recItems.length === 0) {
-    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('fin_no_outstanding_receivables')) + '</p></div>';
+    h += '<div class="empty-state"><div class="empty-icon"></div><p>' + sanitizeHTML(t('fin_no_outstanding_receivables')) + '</p></div>';
   } else {
     // Sort by days overdue descending
     recItems.sort((a, b) => b.daysDiff - a.daysDiff);
@@ -443,7 +443,7 @@ export function renderAging(D) {
   h += '</div>';
 
   if (payItems.length === 0) {
-    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('fin_no_outstanding_payables')) + '</p></div>';
+    h += '<div class="empty-state"><div class="empty-icon"></div><p>' + sanitizeHTML(t('fin_no_outstanding_payables')) + '</p></div>';
   } else {
     payItems.sort((a, b) => b.daysDiff - a.daysDiff);
 

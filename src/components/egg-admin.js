@@ -131,10 +131,10 @@ class EggAdmin extends HTMLElement {
     let h = this._baseStyle();
 
     // Page header
-    h += `<div class="page-header"><h2>\uD83D\uDC51 ${lbl.title}</h2></div>`;
+    h += `<div class="page-header"><h2>${lbl.title}</h2></div>`;
 
     // Plan Overview Card
-    h += `<div class="card" style="margin-bottom:16px"><h3>\uD83D\uDCCB ${lbl.plan_overview}</h3>
+    h += `<div class="card" style="margin-bottom:16px"><h3>${lbl.plan_overview}</h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px">
     <div class="kpi-card"><div class="kpi-label">${lbl.current_plan}</div><div class="kpi-value" style="font-size:1.3rem;color:var(--primary)">${tierInfo.name.toUpperCase()}</div></div>
     <div class="kpi-card"><div class="kpi-label">${lbl.monthly_cost}</div><div class="kpi-value">$${tierInfo.baseCost}<small>/${cur}</small></div></div>
@@ -143,14 +143,14 @@ class EggAdmin extends HTMLElement {
     <div class="kpi-card"><div class="kpi-label">${lbl.extra_cost}</div><div class="kpi-value">$${tierInfo.extraUserCost}</div></div>
     <div class="kpi-card"><div class="kpi-label">${lbl.billing}</div><div class="kpi-value">${plan.billingCycle || 'monthly'}</div></div>
     </div>
-    <div style="margin-top:12px;text-align:right"><button class="btn btn-sm" data-action="upgrade-plan">\u2B06 ${lbl.upgrade_plan}</button></div>
+    <div style="margin-top:12px;text-align:right"><button class="btn btn-sm" data-action="upgrade-plan">${lbl.upgrade_plan}</button></div>
     </div>`;
 
     // KPI Row: Users + Activation + Churn + Revenue
     h += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:16px">`;
 
     // User KPIs
-    h += `<div class="card"><h3>\uD83D\uDC65 ${lbl.user_kpis}</h3>
+    h += `<div class="card"><h3>${lbl.user_kpis}</h3>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.total_users}</div><div class="kpi-value">${users.length}</div></div>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.active_users}</div><div class="kpi-value" style="color:#4caf50">${activeUsers.length}</div></div>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.inactive_users}</div><div class="kpi-value" style="color:#f44336">${inactiveUsers.length}</div></div>
@@ -158,21 +158,21 @@ class EggAdmin extends HTMLElement {
     </div>`;
 
     // Activation KPIs
-    h += `<div class="card"><h3>\uD83D\uDE80 ${lbl.activation_kpis}</h3>
+    h += `<div class="card"><h3>${lbl.activation_kpis}</h3>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.activation_rate}</div><div class="kpi-value">${activationRate}%</div></div>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.avg_time_activate}</div><div class="kpi-value">${avgActivationDays} ${lbl.days}</div></div>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.pending_activations}</div><div class="kpi-value" style="color:${pending.length ? '#ff9800' : '#4caf50'}">${pending.length}</div></div>
     </div>`;
 
     // Churn KPIs
-    h += `<div class="card"><h3>\uD83D\uDCC9 ${lbl.churn_kpis}</h3>
+    h += `<div class="card"><h3>${lbl.churn_kpis}</h3>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.monthly_churn}</div><div class="kpi-value" style="color:${churnRate > 10 ? '#f44336' : churnRate > 5 ? '#ff9800' : '#4caf50'}">${churnRate}%</div></div>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.retention}</div><div class="kpi-value" style="color:${retention >= 90 ? '#4caf50' : '#ff9800'}">${retention}%</div></div>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.deactivated_30d}</div><div class="kpi-value">${deactivated30d.length}</div></div>
     </div>`;
 
     // Revenue KPIs
-    h += `<div class="card"><h3>\uD83D\uDCB0 ${lbl.revenue_kpis}</h3>
+    h += `<div class="card"><h3>${lbl.revenue_kpis}</h3>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.base_revenue}</div><div class="kpi-value">$${baseRevenue.toFixed(2)}</div></div>
     <div class="kpi-card" style="margin:8px 0"><div class="kpi-label">${lbl.extra_user_revenue}</div><div class="kpi-value">$${extraRevenue.toFixed(2)} <small>(${extraUsers} extra)</small></div></div>
     <div class="kpi-card" style="margin:8px 0;border:2px solid var(--primary);border-radius:8px;padding:10px"><div class="kpi-label">${lbl.total_mrr}</div><div class="kpi-value" style="font-size:1.4rem;color:var(--primary)">$${totalMRR.toFixed(2)}</div></div>
@@ -182,8 +182,8 @@ class EggAdmin extends HTMLElement {
 
     // User Table with Add/Delete buttons
     h += `<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-    <h3 style="margin:0">\uD83D\uDCCA ${lbl.user_table}</h3>
-    <button class="btn btn-primary btn-sm" data-action="add-user" style="font-size:0.85rem">\u2795 ${lbl.add_user}</button>
+    <h3 style="margin:0">${lbl.user_table}</h3>
+    <button class="btn btn-primary btn-sm" data-action="add-user" style="font-size:0.85rem">${lbl.add_user}</button>
     </div>`;
 
     if (users.length === 0) {
@@ -211,7 +211,7 @@ class EggAdmin extends HTMLElement {
         <td><strong>${sanitizeHTML(u.name || '\u2014')}</strong>${u.isExtra ? '<span style="font-size:0.65rem;background:var(--warning);color:#000;padding:1px 5px;border-radius:8px;margin-left:4px">EXTRA</span>' : ''}</td>
         <td>${sanitizeHTML(u.email || u.workerId || '\u2014')}</td>
         <td><span style="text-transform:capitalize">${u.role || '\u2014'}</span></td>
-        <td><span style="color:${statusColor};font-weight:600">\u25CF ${statusText}</span></td>
+        <td><span style="color:${statusColor};font-weight:600">${statusText}</span></td>
         <td>${sinceStr}</td>
         <td style="white-space:nowrap">${toggleBtn}${editBtn}${deleteBtn}</td>
         </tr>`;
@@ -227,7 +227,7 @@ class EggAdmin extends HTMLElement {
     const totalExtraCharge = Math.round(extraUsersActive.length * tierInfo.extraUserCost * 100) / 100;
     const totalMonthlyCharge = Math.round((tierInfo.baseCost + totalExtraCharge) * 100) / 100;
 
-    h += `<div class="card" style="margin-bottom:16px"><h3>\uD83D\uDCB3 ${lbl.billing_title}</h3>
+    h += `<div class="card" style="margin-bottom:16px"><h3>${lbl.billing_title}</h3>
     <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:12px">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
     <div><div style="font-size:0.75rem;color:var(--text-muted)">${lbl.billing_next}</div><div style="font-weight:700;font-size:1.1rem">${nextBilling}</div></div>
@@ -253,7 +253,7 @@ class EggAdmin extends HTMLElement {
     ledger.sort((a, b) => b.date.localeCompare(a.date));
 
     if (ledger.length > 0) {
-      h += `<div style="margin-top:12px"><h4 style="font-size:0.9rem;margin-bottom:8px">\uD83D\uDCDC ${lbl.billing_ledger}</h4>
+      h += `<div style="margin-top:12px"><h4 style="font-size:0.9rem;margin-bottom:8px">${lbl.billing_ledger}</h4>
       <div style="overflow-x:auto;max-height:250px;overflow-y:auto"><table class="data-table" style="width:100%;font-size:0.85rem"><thead><tr>
       <th>${lbl.date || 'Fecha'}</th><th>${lbl.billing_type}</th><th>${lbl.billing_desc}</th><th style="text-align:right">${lbl.billing_amount}</th>
       </tr></thead><tbody>`;
@@ -265,11 +265,10 @@ class EggAdmin extends HTMLElement {
       });
       h += `</tbody></table></div></div>`;
     }
-    h += `<div style="margin-top:12px;padding:10px;background:rgba(76,175,80,.08);border-radius:var(--radius);font-size:0.8rem;color:var(--text-muted)">
-    \uD83E\uDD16 ${lbl.billing_auto_note}</div></div>`;
+    h += `<div style="margin-top:12px;padding:10px;background:rgba(76,175,80,.08);border-radius:var(--radius);font-size:0.8rem;color:var(--text-muted)">${lbl.billing_auto_note}</div></div>`;
 
     // Recent Audit Activity
-    h += `<div class="card"><h3>\uD83D\uDCDD ${lbl.audit_recent}</h3>`;
+    h += `<div class="card"><h3>${lbl.audit_recent}</h3>`;
     const recentAudit = audit.slice(-20).reverse();
     if (recentAudit.length === 0) {
       h += `<p style="color:var(--text-muted);text-align:center;padding:24px">${lbl.no_audit}</p>`;
@@ -399,7 +398,7 @@ class EggAdmin extends HTMLElement {
     const activeCount = D.users.filter(x => x.status === 'active').length;
     const isExtraUser = !id && activeCount >= plan.includedUsers;
     const billingNotice = isExtraUser ? `<div style="background:rgba(255,152,0,.1);border:1px solid var(--warning);border-radius:var(--radius);padding:10px;margin-bottom:12px;font-size:12px">
-    <strong>\u26A0 ${lbl.extra_user_notice || 'Extra user'}</strong> \u2014 ${lbl.proportional_charge || 'Proportional charge from activation date to end of billing cycle'} (${plan.billingCycle}).</div>` : '';
+    <strong>'!' + ${lbl.extra_user_notice || 'Extra user'}</strong>${lbl.proportional_charge || 'Proportional charge from activation date to end of billing cycle'} (${plan.billingCycle}).</div>` : '';
     const editRole = u ? u.role : 'worker';
 
     const body = `${billingNotice}
@@ -525,7 +524,7 @@ class EggAdmin extends HTMLElement {
     <div class="modal-footer"><button class="btn btn-secondary" onclick="this.getRootNode().host._closeModalViaHost()">${lbl.cancel}</button>
     <button class="btn btn-primary" onclick="this.getRootNode().host._verifyOwnerForActivation()">${lbl.verify_send || 'Verify and Send Confirmation'}</button></div>`;
 
-    Bus.emit('modal:open', { title: '\uD83D\uDD12 ' + (lbl.security_check || 'Security Verification'), body });
+    Bus.emit('modal:open', { title: '(lbl.security_check || 'Security Verification'), body });
   }
 
   async _verifyOwnerForActivation() {
@@ -612,7 +611,7 @@ class EggAdmin extends HTMLElement {
 
     logAudit('activation_direct', 'users', 'Worker activated directly: ' + userObj.name + ' (' + userObj.workerId + ')', null, { user: userObj.name, workerId: userObj.workerId, isExtra, confirmedBy: currentUser.name });
     Store.save(D);
-    Bus.emit('toast', { msg: '\u2705 ' + userObj.name + ' (' + userObj.workerId + ') ' + (lbl.activated_msg || 'activated') });
+    Bus.emit('toast', { msg: 'userObj.name + ' (' + userObj.workerId + ') ' + (lbl.activated_msg || 'activated') });
     this._pendingActivation = null;
     this.render();
   }
@@ -664,7 +663,7 @@ class EggAdmin extends HTMLElement {
     <div style="font-size:13px"><strong>Subject:</strong> ${lbl.confirm_email_subject || 'EGGlogU -- Confirm user activation'}</div>
     <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
     <div style="background:var(--card);border-radius:var(--radius);padding:12px;margin:8px 0">
-    <div><strong>${sanitizeHTML(newUser.name)}</strong> \u2014 ${newUser.role}</div>
+    <div><strong>${sanitizeHTML(newUser.name)}</strong>${newUser.role}</div>
     <div style="font-size:12px;color:var(--text-light)">${sanitizeHTML(newUser.email)}</div>
     ${costLine}
     </div>
@@ -672,13 +671,12 @@ class EggAdmin extends HTMLElement {
     <p style="font-size:12px;color:var(--text-light)">${lbl.confirmation_token || 'Token'}: <code style="font-size:11px">${token.substring(0, 8)}...</code></p>
     </div>
     <div style="text-align:center;margin-bottom:12px">
-    <button class="btn btn-primary" onclick="this.getRootNode().host._confirmUserActivation('${token}')" style="padding:10px 24px">
-    \u2705 ${lbl.confirm_activation || 'Confirm Activation'}</button>
+    <button class="btn btn-primary" onclick="this.getRootNode().host._confirmUserActivation('${token}')" style="padding:10px 24px">${lbl.confirm_activation || 'Confirm Activation'}</button>
     </div>
     <p style="font-size:11px;color:var(--text-light);text-align:center">${lbl.expires_24h || 'This link expires in 24 hours.'}</p>
     <div class="modal-footer"><button class="btn btn-secondary" onclick="this.getRootNode().host._closeModalViaHost();this.getRootNode().host.render()">${lbl.close_later || 'Close (confirm later)'}</button></div>`;
 
-    Bus.emit('modal:open', { title: '\uD83D\uDCE7 ' + (lbl.confirm_sent || 'Confirmation Sent'), body });
+    Bus.emit('modal:open', { title: '(lbl.confirm_sent || 'Confirmation Sent'), body });
     this._pendingActivation = null;
   }
 
@@ -724,7 +722,7 @@ class EggAdmin extends HTMLElement {
       { status: 'pending' }, { status: 'active', activatedAt: user.activatedAt, confirmedBy: user.confirmedBy });
     Store.save(D);
     Bus.emit('modal:close');
-    Bus.emit('toast', { msg: '\u2705 ' + user.name + ' ' + (lbl.activated_msg || 'activated') });
+    Bus.emit('toast', { msg: 'user.name + ' ' + (lbl.activated_msg || 'activated') });
     this.render();
   }
 
@@ -751,7 +749,7 @@ class EggAdmin extends HTMLElement {
     <div class="modal-footer"><button class="btn btn-secondary" onclick="this.getRootNode().host._closeModalViaHost()">${lbl.cancel}</button>
     <button class="btn btn-danger" onclick="this.getRootNode().host._executeDeactivation('${escapeAttr(id)}')">${lbl.deactivate}</button></div>`;
 
-    Bus.emit('modal:open', { title: '\uD83D\uDD12 ' + (lbl.confirm_deactivation || 'Confirm Deactivation'), body });
+    Bus.emit('modal:open', { title: '(lbl.confirm_deactivation || 'Confirm Deactivation'), body });
   }
 
   async _executeDeactivation(id) {
@@ -956,11 +954,11 @@ class EggAdmin extends HTMLElement {
 
       // Features
       body += `<div style="text-align:left;font-size:.8em;margin:12px 0;line-height:1.8">`;
-      body += `<div>\uD83C\uDFE0 ${tier.farms} ${lbl.farms || 'farms'}</div>`;
-      body += `<div>\uD83D\uDC14 ${tier.flocks} ${lbl.flocks || 'flocks'}</div>`;
-      body += `<div>\uD83D\uDC65 ${tier.users} ${lbl.users || 'users'}</div>`;
-      tier.feat.forEach(f => body += `<div style="color:var(--text-muted)">\u2713 ${f}</div>`);
-      body += `<div>\uD83C\uDFA7 ${tier.sla}</div>`;
+      body += `<div>${tier.farms} ${lbl.farms || 'farms'}</div>`;
+      body += `<div>${tier.flocks} ${lbl.flocks || 'flocks'}</div>`;
+      body += `<div>${tier.users} ${lbl.users || 'users'}</div>`;
+      tier.feat.forEach(f => body += `<div style="color:var(--text-muted)">${f}</div>`);
+      body += `<div>${tier.sla}</div>`;
       body += `</div>`;
 
       // CTA button

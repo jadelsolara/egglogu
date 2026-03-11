@@ -363,7 +363,7 @@ export function startWorkflowEvaluation() {
     if (results.length) {
       Store.save(D);
       results.forEach(r => {
-        Bus.emit('toast', { msg: '\u26A1 ' + r.ruleName + ': ' + r.detail });
+        Bus.emit('toast', { msg: 'r.ruleName + ': ' + r.detail });
       });
     }
   }, 300000); // Every 5 minutes
@@ -418,11 +418,11 @@ class EggAutomatizacion extends HTMLElement {
     let h = this._styles();
 
     h += `<div class="page-header">
-      <h2>\u26A1 ${t('wf_title')}</h2>
+      <h2>${t('wf_title')}</h2>
       <button class="btn btn-primary" data-action="create-rule">${t('wf_create_rule')}</button>
     </div>`;
 
-    h += `<div class="alert-info">\u2139\uFE0F ${t('wf_browser_note')}</div>`;
+    h += `<div class="alert-info">${t('wf_browser_note')}</div>`;
 
     // KPIs
     const activeRules = D.workflowRules.filter(r => r.enabled).length;
@@ -438,7 +438,7 @@ class EggAutomatizacion extends HTMLElement {
     Object.entries(PRESETS).forEach(([key, p]) => {
       const exists = D.workflowRules.some(r => r.condition.type === p.condition.type);
       h += `<button class="btn ${exists ? 'btn-secondary' : 'btn-primary'} btn-sm" data-action="add-preset" data-preset="${escapeAttr(key)}" ${exists ? 'disabled' : ''}>
-        ${p.icon} ${t(p.name)}${exists ? ' \u2713' : ''}
+        ${t(p.name)}${exists ? ' \u2713' : ''}
       </button>`;
     });
     h += '</div></div>';
@@ -448,13 +448,13 @@ class EggAutomatizacion extends HTMLElement {
       h += DataTable.create({
         id: 'workflowRules',
         data: D.workflowRules,
-        emptyIcon: '\u26A1',
+        emptyIcon: '',
         emptyText: t('no_data'),
         headerHtml: `<h3>${t('wf_rules')}</h3>`,
         columns: [
           {
             key: 'icon', label: '', type: 'text', width: '40px',
-            render: r => r.icon || '\u26A1'
+            render: r => ''
           },
           {
             key: 'name', label: t('name'), type: 'text', sortable: true, filterable: true,
@@ -498,12 +498,12 @@ class EggAutomatizacion extends HTMLElement {
           <button class="btn btn-danger btn-sm" data-action="delete-rule" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
         </div>`,
         bulkActions: [{
-          label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+          label: t('delete'), danger: true,
           action: ids => this._bulkDeleteRules(ids)
         }]
       });
     } else {
-      h += emptyState('\u26A1', t('wf_no_rules'), t('wf_create_rule'));
+      h += emptyState('', t('wf_no_rules'), t('wf_create_rule'));
     }
 
     // Execution log
@@ -512,7 +512,7 @@ class EggAutomatizacion extends HTMLElement {
       h += DataTable.create({
         id: 'workflowExec',
         data: recentExec,
-        emptyIcon: '\uD83D\uDCCB',
+        emptyIcon: '',
         emptyText: t('no_data'),
         headerHtml: `<h3>${t('wf_execution_log')}</h3>`,
         showExport: true,
@@ -792,7 +792,7 @@ class EggAutomatizacion extends HTMLElement {
     if (!rule) return;
     const result = WorkflowEngine.testRule(rule, D);
     const msg = result.triggered
-      ? '\u2705 ' + t('wf_would_trigger') + ': ' + result.detail
+      ? '' + t('wf_would_trigger') + ': ' + result.detail
       : '\u2139\uFE0F ' + t('wf_would_not_trigger') + ': ' + result.detail;
     Bus.emit('toast', { msg });
   }

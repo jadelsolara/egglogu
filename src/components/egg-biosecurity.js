@@ -54,10 +54,10 @@ class EggBiosecurity extends HTMLElement {
 
     // Tabs
     h += `<div class="tabs">
-      <div class="tab${this._currentTab === 'visitors' ? ' active' : ''}" data-tab="visitors">\uD83D\uDC64 ${t('bio_visitors')}</div>
-      <div class="tab${this._currentTab === 'zones' ? ' active' : ''}" data-tab="zones">\uD83C\uDFE0 ${t('bio_zones')}</div>
-      <div class="tab${this._currentTab === 'pests' ? ' active' : ''}" data-tab="pests">\uD83D\uDC00 ${t('bio_pests')}</div>
-      <div class="tab${this._currentTab === 'protocols' ? ' active' : ''}" data-tab="protocols">\uD83D\uDCCB ${t('bio_protocols')}</div>
+      <div class="tab${this._currentTab === 'visitors' ? ' active' : ''}" data-tab="visitors">${t('bio_visitors')}</div>
+      <div class="tab${this._currentTab === 'zones' ? ' active' : ''}" data-tab="zones">${t('bio_zones')}</div>
+      <div class="tab${this._currentTab === 'pests' ? ' active' : ''}" data-tab="pests">${t('bio_pests')}</div>
+      <div class="tab${this._currentTab === 'protocols' ? ' active' : ''}" data-tab="protocols">${t('bio_protocols')}</div>
     </div>`;
 
     if (this._currentTab === 'visitors') h += this._renderVisitorsTab(D);
@@ -151,23 +151,23 @@ class EggBiosecurity extends HTMLElement {
   _renderVisitorsTab(D) {
     const bio = D.biosecurity || { visitors: [] };
     if (!bio.visitors.length) {
-      return `<div class="card"><div class="page-header"><h3>\uD83D\uDC64 ${t('bio_visitors')}</h3><button class="btn btn-primary btn-sm" data-action="show-visitor-form">${t('bio_add_visitor')}</button></div>` + emptyState('\uD83D\uDC64', t('no_data')) + '</div>';
+      return `<div class="card"><div class="page-header"><h3>${t('bio_visitors')}</h3><button class="btn btn-primary btn-sm" data-action="show-visitor-form">${t('bio_add_visitor')}</button></div>` + emptyState('', t('no_data')) + '</div>';
     }
     const zones = [...new Set(bio.visitors.map(v => v.zone).filter(Boolean))];
     return DataTable.create({
       id: 'bioVisitors',
       data: bio.visitors,
       onRefresh: () => this.render(),
-      emptyIcon: '\uD83D\uDC64',
+      emptyIcon: '',
       emptyText: t('no_data'),
-      headerHtml: `<div class="page-header"><h3>\uD83D\uDC64 ${t('bio_visitors')}</h3><button class="btn btn-primary btn-sm" data-action="show-visitor-form">${t('bio_add_visitor')}</button></div>`,
+      headerHtml: `<div class="page-header"><h3>${t('bio_visitors')}</h3><button class="btn btn-primary btn-sm" data-action="show-visitor-form">${t('bio_add_visitor')}</button></div>`,
       columns: [
         { key: 'date', label: t('date'), type: 'date', sortable: true, filterable: true, filterType: 'date-range' },
         {
           key: 'name', label: t('bio_visitor_name'), type: 'text', sortable: true, filterable: true,
           render: r => {
             const crossRisk = r.fromFarmHealth && r.fromFarmHealth !== 'healthy';
-            return sanitizeHTML(r.name) + (crossRisk ? ' <span title="' + t('bio_cross_risk') + '" style="color:var(--danger)">\u26A0\uFE0F</span>' : '');
+            return sanitizeHTML(r.name) + (crossRisk ? ' <span title="' + t('bio_cross_risk') + '" style="color:var(--danger)">!</span>' : '');
           }
         },
         { key: 'company', label: t('bio_visitor_company'), type: 'text', sortable: true, render: r => sanitizeHTML(r.company || '-') },
@@ -180,9 +180,9 @@ class EggBiosecurity extends HTMLElement {
         { key: 'vehiclePlate', label: t('bio_visitor_plate'), type: 'text', sortable: true, render: r => sanitizeHTML(r.vehiclePlate || '-') },
         {
           key: 'disinfected', label: t('bio_visitor_disinfected'), type: 'text', sortable: true, filterable: true,
-          filterType: 'select', filterOptions: [{ value: 'true', label: '\u2705' }, { value: 'false', label: '\u274C' }],
+          filterType: 'select', filterOptions: [{ value: 'true', label: '\u2713' }, { value: 'false', label: '\u2717' }],
           getValue: r => String(!!r.disinfected),
-          render: r => r.disinfected ? '\u2705' : '\u274C'
+          render: r => r.disinfected ? '\u2713' : '\u2717'
         }
       ],
       actions: r => `<div class="btn-group">
@@ -190,7 +190,7 @@ class EggBiosecurity extends HTMLElement {
         <button class="btn btn-danger btn-sm" data-action="delete-visitor" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
       </div>`,
       bulkActions: [{
-        label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+        label: t('delete'), danger: true,
         action: ids => {
           showConfirm(t('confirm_delete')).then(ok => {
             if (!ok) return;
@@ -225,8 +225,8 @@ class EggBiosecurity extends HTMLElement {
       </div>
       <div class="form-row">
         <div class="form-group"><label>${t('bio_visitor_disinfected')}</label><select id="bv-disinf">
-          <option value="true"${v && v.disinfected ? ' selected' : ''}>\u2705</option>
-          <option value="false"${v && !v.disinfected ? ' selected' : ''}>\u274C</option>
+          <option value="true"${v && v.disinfected ? ' selected' : ''}>${t('yes') || 'Yes'}</option>
+          <option value="false"${v && !v.disinfected ? ' selected' : ''}>${t('no') || 'No'}</option>
         </select></div>
         <div class="form-group"><label>${t('bio_visitor_from_farm')}</label><select id="bv-farm">
           <option value="">--</option>
@@ -235,9 +235,9 @@ class EggBiosecurity extends HTMLElement {
         </select></div>
       </div>
       <div class="form-group"><label>${t('bio_visitor_from_health')}</label><select id="bv-health">
-        <option value="healthy"${v && v.fromFarmHealth === 'healthy' ? ' selected' : ''}>\u2705 Healthy</option>
-        <option value="outbreak"${v && v.fromFarmHealth === 'outbreak' ? ' selected' : ''}>\u26A0\uFE0F Outbreak</option>
-        <option value="unknown"${v && v.fromFarmHealth === 'unknown' ? ' selected' : ''}>\u2753 Unknown</option>
+        <option value="healthy"${v && v.fromFarmHealth === 'healthy' ? ' selected' : ''}>Healthy</option>
+        <option value="outbreak"${v && v.fromFarmHealth === 'outbreak' ? ' selected' : ''}>'!' + Outbreak</option>
+        <option value="unknown"${v && v.fromFarmHealth === 'unknown' ? ' selected' : ''}>Unknown</option>
       </select></div>
       <div class="form-group"><label>${t('notes')}</label><textarea id="bv-notes">${v ? escapeAttr(v.notes || '') : ''}</textarea></div>
       <div class="modal-footer">
@@ -302,10 +302,10 @@ class EggBiosecurity extends HTMLElement {
     const bio = D.biosecurity || { zones: [] };
     const today = todayStr();
 
-    let h = `<div class="card"><div class="page-header"><h3>\uD83C\uDFE0 ${t('bio_zones')}</h3>
+    let h = `<div class="card"><div class="page-header"><h3>${t('bio_zones')}</h3>
       <button class="btn btn-primary btn-sm" data-action="show-zone-form">${t('bio_add_zone')}</button></div>`;
 
-    if (!bio.zones.length) return h + emptyState('\uD83C\uDFE0', t('no_data')) + '</div>';
+    if (!bio.zones.length) return h + emptyState('', t('no_data')) + '</div>';
 
     h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">';
     bio.zones.forEach(z => {
@@ -407,25 +407,24 @@ class EggBiosecurity extends HTMLElement {
   _renderPestsTab(D) {
     const bio = D.biosecurity || { pestSightings: [] };
 
-    let h = `<div class="card"><div class="page-header"><h3>\uD83D\uDC00 ${t('bio_pests')}</h3>
+    let h = `<div class="card"><div class="page-header"><h3>${t('bio_pests')}</h3>
       <button class="btn btn-primary btn-sm" data-action="show-pest-form">${t('bio_add_pest')}</button></div>`;
 
-    if (!bio.pestSightings.length) return h + emptyState('\uD83D\uDC00', t('no_data')) + '</div>';
+    if (!bio.pestSightings.length) return h + emptyState('', t('no_data')) + '</div>';
 
     h += '<div class="stress-timeline" style="padding-left:20px">';
     const sorted = [...bio.pestSightings].sort((a, b) => b.date.localeCompare(a.date));
     sorted.forEach(p => {
       const sColor = ['', '#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#F44336'][p.severity] || '#999';
-      const typeIcon = { rodent: '\uD83D\uDC00', fly: '\uD83E\uDEB0', wild_bird: '\uD83D\uDC26', other: '\uD83D\uDC1B' }[p.type] || '\uD83D\uDC1B';
       h += `<div class="stress-event" style="border-left:4px solid ${sColor}">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
-          <strong>${fmtDate(p.date)} ${typeIcon} ${t('bio_pest_' + p.type) || p.type}</strong>
-          <span>${p.resolved ? '\u2705 ' + t('bio_pest_resolved') : '\u274C ' + t('active')}</span>
+          <strong>${fmtDate(p.date)} ${t('bio_pest_' + p.type) || p.type}</strong>
+          <span>${p.resolved ? '' + t('bio_pest_resolved') : '' + t('active')}</span>
         </div>
         <p style="margin:4px 0">${t('bio_pest_location')}: ${sanitizeHTML(p.location || '-')} | ${t('bio_pest_severity')}: ${'\u2B50'.repeat(p.severity || 1)}</p>
         ${p.action ? '<p style="font-size:12px;color:var(--text-light)">' + t('bio_pest_action') + ': ' + sanitizeHTML(p.action) + '</p>' : ''}
         <div class="btn-group" style="margin-top:4px">
-          ${!p.resolved ? '<button class="btn btn-primary btn-sm" data-action="resolve-pest" data-id="' + escapeAttr(p.id) + '">\u2705 ' + t('bio_pest_resolved') + '</button>' : ''}
+          ${!p.resolved ? '<button class="btn btn-primary btn-sm" data-action="resolve-pest" data-id="' + escapeAttr(p.id) + '">' + t('bio_pest_resolved') + '</button>' : ''}
           <button class="btn btn-secondary btn-sm" data-action="show-pest-form" data-id="${escapeAttr(p.id)}">${t('edit')}</button>
           <button class="btn btn-danger btn-sm" data-action="delete-pest" data-id="${escapeAttr(p.id)}">${t('delete')}</button>
         </div>
@@ -532,10 +531,10 @@ class EggBiosecurity extends HTMLElement {
     const bio = D.biosecurity || { protocols: [] };
     const today = todayStr();
 
-    let h = `<div class="card"><div class="page-header"><h3>\uD83D\uDCCB ${t('bio_protocols')}</h3>
+    let h = `<div class="card"><div class="page-header"><h3>${t('bio_protocols')}</h3>
       <button class="btn btn-primary btn-sm" data-action="show-protocol-form">${t('bio_add_protocol')}</button></div>`;
 
-    if (!bio.protocols.length) return h + emptyState('\uD83D\uDCCB', t('no_data')) + '</div>';
+    if (!bio.protocols.length) return h + emptyState('', t('no_data')) + '</div>';
 
     h += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">';
     bio.protocols.forEach(p => {
@@ -555,7 +554,7 @@ class EggBiosecurity extends HTMLElement {
         h += '</ul>';
       }
       h += `<div class="btn-group">
-          <button class="btn btn-primary btn-sm" data-action="complete-protocol" data-id="${escapeAttr(p.id)}">\u2705 ${t('bio_protocol_complete')}</button>
+          <button class="btn btn-primary btn-sm" data-action="complete-protocol" data-id="${escapeAttr(p.id)}">${t('bio_protocol_complete')}</button>
           <button class="btn btn-secondary btn-sm" data-action="show-protocol-form" data-id="${escapeAttr(p.id)}">${t('edit')}</button>
           <button class="btn btn-danger btn-sm" data-action="delete-protocol" data-id="${escapeAttr(p.id)}">${t('delete')}</button>
         </div>

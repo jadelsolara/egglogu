@@ -71,7 +71,7 @@ class EggDashboard extends HTMLElement {
     h += kpi(t('kpi_cost_egg'), fmtMoney(snap.costPerEgg), '' + (prevSnap ? snapshotDelta(-snap.costPerEgg, -prevSnap.costPerEgg) : ''), 'accent', t('kpi_info_cost_egg'));
     h += kpi(t('kpi_income_net'), fmtMoney(snap.netIncome), today.substring(0, 7) + (prevSnap ? snapshotDelta(snap.netIncome, prevSnap.netIncome) : ''), snap.netIncome < 0 ? 'danger' : 'secondary', t('kpi_info_income_net'));
     h += kpi(t('kpi_active_hens'), fmtNum(snap.activeHens), snap.totalFlocks + ' ' + (t('kpi_active_flocks') || '').toLowerCase(), '', t('kpi_info_active_hens'));
-    h += kpi(t('kpi_alerts'), alerts.length.toString(), alerts.length > 0 ? '\u26A0' : '\u2713', alerts.length > 0 ? 'warning' : '', t('kpi_info_alerts'));
+    h += kpi(t('kpi_alerts'), alerts.length.toString(), alerts.length > 0 ? '!' : '\u2713', alerts.length > 0 ? 'warning' : '', t('kpi_info_alerts'));
     h += '</div>';
 
     // ── 2-column: Farm Report | Alerts + Recs ──
@@ -89,8 +89,8 @@ class EggDashboard extends HTMLElement {
     }
     const recs = getRecommendations(D);
     if (recs.length) {
-      h += `<div class="rec-card"><h3>\uD83D\uDCA1 ${t('rec_title')}</h3>`;
-      recs.forEach(r => { h += `<div class="rec-item"><span class="rec-priority ${r.priority}">${r.priority.toUpperCase()}</span><span>${r.icon} ${r.msg}</span></div>`; });
+      h += `<div class="rec-card"><h3>${t('rec_title')}</h3>`;
+      recs.forEach(r => { h += `<div class="rec-item"><span class="rec-priority ${r.priority}">${r.priority.toUpperCase()}</span><span>${r.msg}</span></div>`; });
       h += '</div>';
     }
     // Weather inside right column
@@ -257,24 +257,24 @@ class EggDashboard extends HTMLElement {
     const toggleTxt = lang === 'en' ? 'Show details' : 'Ver detalle';
 
     let h = `<div class="farm-report">`;
-    h += `<h3>\uD83D\uDCCB ${sanitizeHTML(hTitle)}</h3>`;
+    h += `<h3>${sanitizeHTML(hTitle)}</h3>`;
     h += `<div class="report-date">${fmtDate(report.date)}</div>`;
 
     // Executive summary
     h += `<div class="report-summary ${report.summary.severity}">${sanitizeHTML(report.summary.text)}</div>`;
 
     // Health section
-    h += `<div class="report-section"><h4>\uD83E\uDE7A ${sanitizeHTML(hHealth)}</h4>`;
+    h += `<div class="report-section"><h4>${sanitizeHTML(hHealth)}</h4>`;
     report.health.forEach(l => { h += `<div class="report-line ${l.severity}">${sanitizeHTML(l.text)}</div>`; });
     h += '</div>';
 
     // Ops section
-    h += `<div class="report-section"><h4>\uD83C\uDF3E ${sanitizeHTML(hOps)}</h4>`;
+    h += `<div class="report-section"><h4>${sanitizeHTML(hOps)}</h4>`;
     report.ops.forEach(l => { h += `<div class="report-line ${l.severity}">${sanitizeHTML(l.text)}</div>`; });
     h += '</div>';
 
     // Finance section
-    h += `<div class="report-section"><h4>\uD83D\uDCB0 ${sanitizeHTML(hFin)}</h4>`;
+    h += `<div class="report-section"><h4>${sanitizeHTML(hFin)}</h4>`;
     report.fin.forEach(l => { h += `<div class="report-line ${l.severity}">${sanitizeHTML(l.text)}</div>`; });
     h += '</div>';
 
@@ -293,29 +293,29 @@ class EggDashboard extends HTMLElement {
       const sev = sanitizeHTML(a.severity || 'moderate');
       h += `<div class="outbreak-alert-card ${sev}">`;
       h += '<div class="outbreak-header">';
-      h += `<h4>\u26A0\uFE0F ${sanitizeHTML(a.title)}</h4>`;
+      h += `<h4>${sanitizeHTML(a.title)}</h4>`;
       h += `<span class="outbreak-badge ${sev}">${sev.toUpperCase()}</span>`;
       h += `<span class="outbreak-dist">${a.distance_km} km</span>`;
       h += '</div>';
 
       h += '<div class="outbreak-meta">';
-      h += `<span>\uD83E\uDDA0 ${sanitizeHTML(a.disease)}</span>`;
-      h += `<span>\uD83C\uDF0D ${sanitizeHTML(a.region_name)}</span>`;
-      h += `<span>\uD83D\uDCC5 ${sanitizeHTML(a.detected_date)}</span>`;
+      h += `<span>${sanitizeHTML(a.disease)}</span>`;
+      h += `<span>${sanitizeHTML(a.region_name)}</span>`;
+      h += `<span>${sanitizeHTML(a.detected_date)}</span>`;
       if (a.transmission && a.transmission !== 'unknown') {
         const txLabel = en ? 'Transmission' : 'Transmisión';
-        h += `<span>\uD83D\uDD2C ${txLabel}: ${sanitizeHTML(a.transmission)}</span>`;
+        h += `<span>${txLabel}: ${sanitizeHTML(a.transmission)}</span>`;
       }
       if (a.confirmed_cases > 0) {
         const casesLabel = en ? 'cases' : 'casos';
-        h += `<span>\uD83D\uDCCA ${a.confirmed_cases} ${casesLabel}</span>`;
+        h += `<span>${a.confirmed_cases} ${casesLabel}</span>`;
       }
       if (a.deaths_reported > 0) {
         const deathsLabel = en ? 'deaths' : 'muertes';
-        h += `<span>\u2620\uFE0F ${a.deaths_reported} ${deathsLabel}</span>`;
+        h += `<span>${a.deaths_reported} ${deathsLabel}</span>`;
       }
       if (a.spread_speed_km_day) {
-        h += `<span>\uD83D\uDCA8 ${a.spread_speed_km_day} km/${en ? 'day' : 'día'}${a.spread_direction ? ' ' + sanitizeHTML(a.spread_direction) : ''}</span>`;
+        h += `<span>${a.spread_speed_km_day} km/${en ? 'day' : 'día'}${a.spread_direction ? ' ' + sanitizeHTML(a.spread_direction) : ''}</span>`;
       }
       h += '</div>';
 
@@ -325,12 +325,12 @@ class EggDashboard extends HTMLElement {
 
       if (a.contingency_protocol) {
         const cpLabel = en ? 'Contingency Protocol' : 'Protocolo de Contingencia';
-        h += `<div class="outbreak-contingency"><strong>\uD83D\uDEE1\uFE0F ${cpLabel}:</strong><br>${sanitizeHTML(a.contingency_protocol)}</div>`;
+        h += `<div class="outbreak-contingency"><strong>${cpLabel}:</strong><br>${sanitizeHTML(a.contingency_protocol)}</div>`;
       }
 
       if (a.source_url) {
         const srcLabel = en ? 'Source' : 'Fuente';
-        h += `<div style="margin-top:6px;font-size:11px"><a href="${escapeAttr(a.source_url)}" target="_blank" rel="noopener" style="color:#1565c0">\uD83D\uDD17 ${srcLabel}</a></div>`;
+        h += `<div style="margin-top:6px;font-size:11px"><a href="${escapeAttr(a.source_url)}" target="_blank" rel="noopener" style="color:#1565c0">${srcLabel}</a></div>`;
       }
 
       h += '</div>';
@@ -344,35 +344,35 @@ class EggDashboard extends HTMLElement {
     if (!flocks.length) return '';
     const fOpts = flocks.map(f => `<option value="${escapeAttr(f.id)}">${sanitizeHTML(f.name)}</option>`).join('');
     const causeOpts = catalogSelect(CATALOGS.deathCauses, '');
-    let h = `<div style="margin-bottom:8px"><h3 style="color:var(--primary-dark);display:flex;align-items:center;gap:8px">\u26A1 ${t('qe_title')}</h3></div>`;
+    let h = `<div style="margin-bottom:8px"><h3 style="color:var(--primary-dark);display:flex;align-items:center;gap:8px">${t('qe_title')}</h3></div>`;
     h += '<div class="qe-grid">';
     // Eggs
-    h += `<div class="qe-card qe-eggs"><h4><span class="qe-icon">\uD83E\uDD5A</span>${t('qe_eggs_title')}</h4><div class="qe-fields">`;
+    h += `<div class="qe-card qe-eggs"><h4>${t('qe_eggs_title')}</h4><div class="qe-fields">`;
     h += `<div><label>${t('prod_flock')}</label><select id="qe-egg-flock">${fOpts}</select></div>`;
     h += `<div><label>${t('qe_eggs_count')}</label><input type="number" id="qe-egg-count" min="0" placeholder="0" inputmode="numeric"></div>`;
     h += `<button class="qe-submit" data-action="qe-eggs">${t('qe_save')}</button>`;
-    h += `<div class="qe-success" id="qe-egg-ok">\u2713 ${t('qe_saved')}</div></div></div>`;
+    h += `<div class="qe-success" id="qe-egg-ok">${t('qe_saved')}</div></div></div>`;
     // Feed
-    h += `<div class="qe-card qe-feed"><h4><span class="qe-icon">\uD83C\uDF3E</span>${t('qe_feed_title')}</h4><div class="qe-fields">`;
+    h += `<div class="qe-card qe-feed"><h4>${t('qe_feed_title')}</h4><div class="qe-fields">`;
     h += `<div><label>${t('prod_flock')}</label><select id="qe-feed-flock" data-action="qe-feed-flock-change">${fOpts}</select></div>`;
     h += `<div class="qe-row"><div><label>${t('qe_feed_kg')}</label><input type="number" id="qe-feed-kg" min="0" step="0.1" placeholder="0" inputmode="decimal"></div>`;
     h += `<div><label>${t('feed_type')}</label><select id="qe-feed-type">${feedTypeSelect('', flocks[0] ? flocks[0].id : '')}</select></div></div>`;
     h += `<button class="qe-submit" data-action="qe-feed">${t('qe_save')}</button>`;
-    h += `<div class="qe-success" id="qe-feed-ok">\u2713 ${t('qe_saved')}</div></div></div>`;
+    h += `<div class="qe-success" id="qe-feed-ok">${t('qe_saved')}</div></div></div>`;
     // Mortality
-    h += `<div class="qe-card qe-mort"><h4><span class="qe-icon">\uD83D\uDC80</span>${t('qe_mort_title')}</h4><div class="qe-fields">`;
+    h += `<div class="qe-card qe-mort"><h4>${t('qe_mort_title')}</h4><div class="qe-fields">`;
     h += `<div><label>${t('prod_flock')}</label><select id="qe-mort-flock">${fOpts}</select></div>`;
     h += `<div class="qe-row"><div><label>${t('qe_deaths')}</label><input type="number" id="qe-mort-count" min="0" placeholder="0" inputmode="numeric"></div>`;
     h += `<div><label>${t('qe_cause')}</label><select id="qe-mort-cause">${causeOpts}</select></div></div>`;
     h += `<button class="qe-submit" data-action="qe-mort">${t('qe_save')}</button>`;
-    h += `<div class="qe-success" id="qe-mort-ok">\u2713 ${t('qe_saved')}</div></div></div>`;
+    h += `<div class="qe-success" id="qe-mort-ok">${t('qe_saved')}</div></div></div>`;
     // Environment
-    h += `<div class="qe-card qe-env"><h4><span class="qe-icon">\uD83C\uDF21\uFE0F</span>${t('qe_env_title')}</h4><div class="qe-fields">`;
+    h += `<div class="qe-card qe-env"><h4>${t('qe_env_title')}</h4><div class="qe-fields">`;
     h += `<div class="qe-row"><div><label>${t('qe_temp')}</label><input type="number" id="qe-env-temp" step="0.1" placeholder="22" inputmode="decimal"></div>`;
     h += `<div><label>${t('qe_hum')}</label><input type="number" id="qe-env-hum" min="0" max="100" placeholder="55" inputmode="numeric"></div></div>`;
     h += `<div><label>${t('env_light')}</label><input type="number" id="qe-env-light" step="0.5" min="0" max="24" placeholder="14"></div>`;
     h += `<button class="qe-submit" data-action="qe-env">${t('qe_save')}</button>`;
-    h += `<div class="qe-success" id="qe-env-ok">\u2713 ${t('qe_saved')}</div></div></div>`;
+    h += `<div class="qe-success" id="qe-env-ok">${t('qe_saved')}</div></div></div>`;
     h += '</div>';
     return h;
   }
@@ -416,7 +416,7 @@ class EggDashboard extends HTMLElement {
   _renderIntegrityWidget(D) {
     const xv = VENG.xval(D); const mv = VENG.mathv(D); const cs = VENG.census(D);
     let h = `<div class="card" style="border-left:4px solid ${xv.score >= 90 ? 'var(--success)' : xv.score >= 70 ? 'var(--warning)' : 'var(--danger)'}">`;
-    h += `<h3>\uD83D\uDD12 Data Integrity \u2014 Zero Tolerance</h3><div class="kpi-grid">`;
+    h += `<h3>Data Integrity \u2014 Zero Tolerance</h3><div class="kpi-grid">`;
     h += kpi('Data Score', xv.score + '/100', 'XVAL cross-check', xv.score >= 90 ? '' : 'danger');
     h += kpi('Math Check', mv.pct + '%', mv.pass + '/' + mv.total + ' passed', mv.pct === 100 ? '' : 'danger');
     h += kpi('Farm Health', cs.overall + '/100', cs.critical + ' critical, ' + cs.warning + ' warnings', cs.overall >= 80 ? '' : 'danger');
@@ -429,11 +429,10 @@ class EggDashboard extends HTMLElement {
       h += ` <a data-action="go-carencias" style="font-size:12px;color:var(--primary);align-self:center;cursor:pointer">View all \u2192</a></div>`;
     }
     h += `</div><div class="card" style="border-left:4px solid ${cs.overall >= 80 ? 'var(--success)' : cs.overall >= 60 ? 'var(--warning)' : 'var(--danger)'}">`;
-    h += '<h3>\uD83D\uDD0D Deficiency Census</h3><div style="display:flex;gap:10px;flex-wrap:wrap">';
+    h += '<h3>Deficiency Census</h3><div style="display:flex;gap:10px;flex-wrap:wrap">';
     ['sanitary', 'nutritional', 'financial', 'operational', 'data'].forEach(cat => {
-      const icons = { sanitary: '\uD83D\uDC89', nutritional: '\uD83C\uDF3E', financial: '\uD83D\uDCB0', operational: '\uD83D\uDCCB', data: '\uD83D\uDD12' };
       const s = cs.scores[cat]; const sc = s >= 80 ? '#2e7d32' : s >= 60 ? '#e65100' : '#c62828';
-      h += `<div style="text-align:center;min-width:60px"><div style="font-size:20px;font-weight:700;color:${sc}">${s}</div><div style="font-size:11px;color:var(--text-light)">${icons[cat]} ${cat.charAt(0).toUpperCase() + cat.slice(1)}</div></div>`;
+      h += `<div style="text-align:center;min-width:60px"><div style="font-size:20px;font-weight:700;color:${sc}">${s}</div><div style="font-size:11px;color:var(--text-light)">${cat.charAt(0).toUpperCase() + cat.slice(1)}</div></div>`;
     });
     h += '</div></div>';
     if (xv.issues.length) {
@@ -450,7 +449,7 @@ class EggDashboard extends HTMLElement {
     if (mv.checks.some(c => !c.ok)) {
       h += '<details style="margin-top:8px"><summary style="color:var(--danger)">Math verification failures</summary><div style="margin-top:6px">';
       mv.checks.filter(c => !c.ok).forEach(c => {
-        h += `<div class="alert-card alert-danger" style="margin:4px 0">\u274C ${sanitizeHTML(c.name)}: ${sanitizeHTML(c.detail)}</div>`;
+        h += `<div class="alert-card alert-danger" style="margin:4px 0">${sanitizeHTML(c.name)}: ${sanitizeHTML(c.detail)}</div>`;
       });
       h += '</div></details>';
     }
@@ -461,7 +460,7 @@ class EggDashboard extends HTMLElement {
     const snap = computeKpiSnapshot();
     const alerts = getAlerts(D);
     let h = this._baseStyle();
-    h += `<div style="text-align:center;padding:20px 0"><h2>\uD83C\uDF3E ${t('nav_campo_mode')}</h2></div>`;
+    h += `<div style="text-align:center;padding:20px 0"><h2>${t('nav_campo_mode')}</h2></div>`;
     h += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin:0 auto">';
     h += `<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_today')}</div><div class="campo-kpi">${fmtNum(snap.eggsToday)}</div></div>`;
     h += `<div class="kpi-card" style="padding:24px;text-align:center"><div class="kpi-label">${t('kpi_henday')}</div><div class="campo-kpi">${fmtNum(snap.henDay, 1)}%</div></div>`;
@@ -480,13 +479,13 @@ class EggDashboard extends HTMLElement {
 
   _renderVet(D) {
     let h = this._baseStyle();
-    h += `<div style="text-align:center;padding:12px 0"><h2>\uD83E\uDE7A ${t('nav_vet_mode')}</h2></div>`;
+    h += `<div style="text-align:center;padding:12px 0"><h2>${t('nav_vet_mode')}</h2></div>`;
     h += `<div class="card"><label>${t('vet_select_farm')}</label><select id="vet-flock" data-action="vet-flock-change">${flockSelect('', true)}</select></div>`;
     h += '<div id="vet-content"></div>';
     h += `<div class="card" style="margin-top:16px"><h4>${t('actions')}</h4><div class="btn-group">
-    <button class="btn btn-primary" data-action="vet-visit">\u2705 ${t('vet_visit')}</button>
-    <button class="btn btn-secondary" data-action="vet-vaccines">\uD83D\uDC89 ${t('vet_vaccines')}</button>
-    <button class="btn btn-secondary" data-action="vet-pending">\u23F3 ${t('vet_pending')}</button></div></div>`;
+    <button class="btn btn-primary" data-action="vet-visit">${t('vet_visit')}</button>
+    <button class="btn btn-secondary" data-action="vet-vaccines">${t('vet_vaccines')}</button>
+    <button class="btn btn-secondary" data-action="vet-pending">${t('vet_pending')}</button></div></div>`;
     this.shadowRoot.innerHTML = h;
     this._bindEvents();
   }
@@ -636,7 +635,7 @@ class EggDashboard extends HTMLElement {
     const f = D.flocks.find(x => x.id === fid);
     const note = type === 'visit' ? t('vet_visit') : type === 'vaccines' ? t('vet_vaccines') : t('vet_pending');
     if (!D.logbook) D.logbook = [];
-    D.logbook.push({ id: genId(), date: todayStr(), entry: '\uD83E\uDE7A ' + note + (f ? ' - ' + sanitizeHTML(f.name) : ''), category: 'health' });
+    D.logbook.push({ id: genId(), date: todayStr(), entry: note + (f ? ' - ' + sanitizeHTML(f.name) : ''), category: 'health' });
     if (!D.biosecurity) D.biosecurity = { zones: [], visitors: [], pestSightings: [], protocols: [] };
     D.biosecurity.visitors.push({ id: genId(), date: todayStr(), name: 'Veterinario', company: '', purpose: note, zone: '', vehiclePlate: '', disinfected: true, fromFarmId: '', fromFarmHealth: 'healthy', notes: '' });
     Store.save(D);
@@ -657,19 +656,19 @@ class EggDashboard extends HTMLElement {
     const pendingVac = D.vaccines.filter(v => v.flockId === fid && v.status !== 'applied');
     let h = '<div class="kpi-grid">';
     h += kpi(t('flock_health'), hs + '/100', '', hs < 50 ? 'danger' : hs < 70 ? 'warning' : '');
-    h += kpi(t('out_title'), outbreaks.length.toString(), outbreaks.length ? t('out_active') : '\u2705', outbreaks.length ? 'danger' : '');
+    h += kpi(t('out_title'), outbreaks.length.toString(), outbreaks.length ? t('out_active') : '\u2713', outbreaks.length ? 'danger' : '');
     h += kpi(t('vac_title'), pendingVac.length.toString(), t('vac_pending'), '');
     h += '</div>';
     if (outbreaks.length) {
-      h += `<div class="card"><h4>\uD83E\uDDA0 ${t('out_title')}</h4>`;
+      h += `<div class="card"><h4>${t('out_title')}</h4>`;
       outbreaks.forEach(o => { h += `<div class="alert-card alert-danger">${sanitizeHTML(o.disease)} - ${fmtDate(o.startDate)} | ${sanitizeHTML(o.treatment || '-')}</div>`; });
       h += '</div>';
     }
     if (lastEnv) {
-      h += `<div class="card"><h4>\uD83C\uDF21\uFE0F ${t('env_title')}</h4><p>${t('env_temp')}: ${lastEnv.temperature || '-'}\u00B0C | ${t('env_humidity')}: ${lastEnv.humidity || '-'}%</p></div>`;
+      h += `<div class="card"><h4>${t('env_title')}</h4><p>${t('env_temp')}: ${lastEnv.temperature || '-'}\u00B0C | ${t('env_humidity')}: ${lastEnv.humidity || '-'}%</p></div>`;
     }
     if (pendingVac.length) {
-      h += `<div class="card"><h4>\uD83D\uDC89 ${t('vac_title')}</h4>`;
+      h += `<div class="card"><h4>${t('vac_title')}</h4>`;
       pendingVac.forEach(v => {
         h += `<div class="alert-card alert-${v.scheduledDate < todayStr() ? 'danger' : 'warning'}">${sanitizeHTML(v.vaccineName)} - ${fmtDate(v.scheduledDate)} (${v.scheduledDate < todayStr() ? t('vac_overdue') : t('vac_pending')})</div>`;
       });
@@ -788,8 +787,8 @@ class EggDashboard extends HTMLElement {
     const el = this.shadowRoot.querySelector('#weather-widget');
     if (!el) return;
     el.innerHTML = `<div class="weather-widget" style="text-align:center;padding:16px">
-      <p style="color:var(--text-light);font-size:13px">\uD83D\uDCCD ${t('weather_auto_detect') || 'Detectando ubicación para clima automático...'}</p>
-      <button class="btn btn-primary btn-sm" id="weather-allow-gps">\uD83D\uDCF1 ${t('geo_use_gps') || 'Usar GPS'}</button>
+      <p style="color:var(--text-light);font-size:13px">${t('weather_auto_detect') || 'Detectando ubicación para clima automático...'}</p>
+      <button class="btn btn-primary btn-sm" id="weather-allow-gps">${t('geo_use_gps') || 'Usar GPS'}</button>
       <a data-action="go-config" style="display:block;margin-top:8px;color:var(--primary);cursor:pointer;font-size:12px">${t('geo_set_location') || 'Configurar manualmente'}</a>
     </div>`;
     const btn = el.querySelector('#weather-allow-gps');
@@ -802,7 +801,7 @@ class EggDashboard extends HTMLElement {
           D.farm.lat = parseFloat(pos.coords.latitude.toFixed(6));
           D.farm.lng = parseFloat(pos.coords.longitude.toFixed(6));
           Store.save(D);
-          Bus.emit('toast', { msg: '\u2705 ' + (t('geo_saved') || 'Ubicación guardada') });
+          Bus.emit('toast', { msg: '(t('geo_saved') || 'Ubicación guardada') });
           this._fetchWeather(D);
         }, () => {
           el.innerHTML = `<div style="padding:8px;color:var(--text-light);font-size:13px">${t('geo_denied') || 'GPS no disponible.'} <a data-action="go-config" style="color:var(--primary);cursor:pointer">${t('geo_set_location')}</a></div>`;

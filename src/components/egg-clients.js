@@ -12,11 +12,11 @@ import { kpi, statusBadge, clientSelect, routeSelect, flockSelect, showFieldErro
 import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
 import { showConfirm, showVoidDialog } from './egg-confirm.js';
 
-const CAT_ICONS = { quality: '\uD83D\uDD0D', delivery: '\uD83D\uDE9A', quantity: '\uD83D\uDCE6', price: '\uD83D\uDCB0', packaging: '\uD83D\uDCE6', other: '\u2753' };
+const CAT_ICONS = { quality: '', delivery: '', quantity: '', price: '', packaging: '', other: '' };
 const CLAIM_CATS = ['quality', 'delivery', 'quantity', 'price', 'packaging', 'other'];
 const SEV_COLORS = ['', '#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#F44336'];
 const ORDER_STATUSES = ['draft', 'confirmed', 'preparing', 'dispatched', 'delivered', 'cancelled'];
-const ORDER_STATUS_ICONS = { draft: '\uD83D\uDCDD', confirmed: '\u2705', preparing: '\uD83D\uDCE6', dispatched: '\uD83D\uDE9A', delivered: '\u2714\uFE0F', cancelled: '\u274C' };
+const ORDER_STATUS_ICONS = { draft: '', confirmed: '', preparing: '', dispatched: '', delivered: '', cancelled: '' };
 const ORDER_STATUS_BADGES = { draft: 'secondary', confirmed: 'info', preparing: 'warning', dispatched: 'info', delivered: 'success', cancelled: 'danger' };
 const EGG_TYPES = ['S', 'M', 'L', 'XL', 'Jumbo'];
 
@@ -76,9 +76,9 @@ class EggClients extends HTMLElement {
 
     // Tabs
     h += `<div class="tabs">
-      <div class="tab${this._currentTab === 'list' ? ' active' : ''}" data-action="tab-list">\uD83D\uDC65 ${t('clm_tab_list')}</div>
-      <div class="tab${this._currentTab === 'orders' ? ' active' : ''}" data-action="tab-orders">\uD83D\uDCC4 ${t('ord_tab')}</div>
-      <div class="tab${this._currentTab === 'claims' ? ' active' : ''}" data-action="tab-claims">\uD83D\uDCCB ${t('clm_tab_claims')}</div>
+      <div class="tab${this._currentTab === 'list' ? ' active' : ''}" data-action="tab-list">${t('clm_tab_list')}</div>
+      <div class="tab${this._currentTab === 'orders' ? ' active' : ''}" data-action="tab-orders">${t('ord_tab')}</div>
+      <div class="tab${this._currentTab === 'claims' ? ' active' : ''}" data-action="tab-claims">${t('clm_tab_claims')}</div>
     </div>`;
 
     // Content
@@ -197,7 +197,7 @@ class EggClients extends HTMLElement {
     return DataTable.create({
       id: 'clients',
       data: clients,
-      emptyIcon: '\uD83D\uDC65',
+      emptyIcon: '',
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-client">${t('cli_add')}</button></div>`,
       columns: [
@@ -221,7 +221,7 @@ class EggClients extends HTMLElement {
         <button class="btn btn-danger btn-sm" data-action="delete-client" data-id="${escapeAttr(r.id)}">${t('delete')}</button>
       </div>`,
       bulkActions: [{
-        label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+        label: t('delete'), danger: true,
         action: ids => this._bulkDeleteClients(ids)
       }]
     });
@@ -234,7 +234,7 @@ class EggClients extends HTMLElement {
     let h = `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-claim">${t('clm_new')}</button></div>`;
 
     if (!claims.length) {
-      return h + `<div class="empty-state"><div class="empty-icon">\uD83D\uDCCB</div><p>${sanitizeHTML(t('clm_no_claims'))}</p><button class="btn btn-primary" data-action="add-claim">${sanitizeHTML(t('clm_new'))}</button></div>`;
+      return h + `<div class="empty-state"><div class="empty-icon"></div><p>${sanitizeHTML(t('clm_no_claims'))}</p><button class="btn btn-primary" data-action="add-claim">${sanitizeHTML(t('clm_new'))}</button></div>`;
     }
 
     h += '<div class="stress-timeline" style="padding-left:20px">';
@@ -243,7 +243,7 @@ class EggClients extends HTMLElement {
       const catIcon = CAT_ICONS[cl.category] || '\u2753';
       const client = D.clients.find(c => c.id === cl.clientId);
       const stLabel = t('clm_status_' + cl.status);
-      const stIcon = cl.status === 'resolved' ? '\u2705' : cl.status === 'in_progress' ? '\u23F3' : '\u274C';
+      const stIcon = cl.status === 'resolved' ? '\u2713' : cl.status === 'in_progress' ? '\u23F3' : '\u2717';
 
       h += `<div class="stress-event" style="border-left:4px solid ${sColor}">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
@@ -256,7 +256,7 @@ class EggClients extends HTMLElement {
         ${cl.satisfaction ? '<p style="font-size:12px">' + t('clm_satisfaction') + ': ' + '\u2B50'.repeat(cl.satisfaction) + '</p>' : ''}
         <div class="btn-group" style="margin-top:4px">
           ${cl.status === 'open' ? '<button class="btn btn-secondary btn-sm" data-action="progress-claim" data-id="' + escapeAttr(cl.id) + '">\u23F3 ' + t('clm_progress') + '</button>' : ''}
-          ${cl.status !== 'resolved' ? '<button class="btn btn-primary btn-sm" data-action="resolve-claim" data-id="' + escapeAttr(cl.id) + '">\u2705 ' + t('clm_resolve') + '</button>' : ''}
+          ${cl.status !== 'resolved' ? '<button class="btn btn-primary btn-sm" data-action="resolve-claim" data-id="' + escapeAttr(cl.id) + '">' + t('clm_resolve') + '</button>' : ''}
           <button class="btn btn-secondary btn-sm" data-action="edit-claim" data-id="${escapeAttr(cl.id)}">${t('edit')}</button>
           <button class="btn btn-danger btn-sm" data-action="delete-claim" data-id="${escapeAttr(cl.id)}">${t('clm_delete')}</button>
         </div>
@@ -531,7 +531,7 @@ class EggClients extends HTMLElement {
     let h = `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-order">${t('ord_new')}</button></div>`;
 
     if (!orders.length) {
-      return h + `<div class="empty-state"><div class="empty-icon">\uD83D\uDCC4</div><p>${sanitizeHTML(t('ord_no_orders'))}</p><button class="btn btn-primary" data-action="add-order">${sanitizeHTML(t('ord_new'))}</button></div>`;
+      return h + `<div class="empty-state"><div class="empty-icon"></div><p>${sanitizeHTML(t('ord_no_orders'))}</p><button class="btn btn-primary" data-action="add-order">${sanitizeHTML(t('ord_new'))}</button></div>`;
     }
 
     // Filter active vs history
@@ -556,8 +556,8 @@ class EggClients extends HTMLElement {
           <td><div class="btn-group">
             <button class="btn btn-secondary btn-sm" data-action="view-order" data-id="${escapeAttr(o.id)}">${t('ord_view')}</button>
             ${nextStatus ? `<button class="btn btn-primary btn-sm" data-action="advance-order" data-id="${escapeAttr(o.id)}">${ORDER_STATUS_ICONS[nextStatus] || ''} ${t('ord_st_' + nextStatus)}</button>` : ''}
-            ${['confirmed', 'preparing'].includes(o.status) ? `<button class="btn btn-warning btn-sm" data-action="reserve-order" data-id="${escapeAttr(o.id)}">📋 ${t('ord_reserve')}</button>` : ''}
-            <button class="btn btn-secondary btn-sm" data-action="print-order" data-id="${escapeAttr(o.id)}">🖨️ ${t('ord_print')}</button>
+            ${['confirmed', 'preparing'].includes(o.status) ? `<button class="btn btn-warning btn-sm" data-action="reserve-order" data-id="${escapeAttr(o.id)}">${t('ord_reserve')}</button>` : ''}
+            <button class="btn btn-secondary btn-sm" data-action="print-order" data-id="${escapeAttr(o.id)}">${t('ord_print')}</button>
             ${o.status === 'draft' ? `<button class="btn btn-secondary btn-sm" data-action="edit-order" data-id="${escapeAttr(o.id)}">${t('edit')}</button>` : ''}
             ${o.status !== 'cancelled' ? `<button class="btn btn-danger btn-sm" data-action="cancel-order" data-id="${escapeAttr(o.id)}">${t('cancel')}</button>` : ''}
           </div></td>
@@ -579,7 +579,7 @@ class EggClients extends HTMLElement {
           <td><span class="badge badge-${ORDER_STATUS_BADGES[o.status] || 'secondary'}">${ORDER_STATUS_ICONS[o.status] || ''} ${t('ord_st_' + o.status)}</span></td>
           <td><div class="btn-group">
             <button class="btn btn-secondary btn-sm" data-action="view-order" data-id="${escapeAttr(o.id)}">${t('ord_view')}</button>
-            <button class="btn btn-secondary btn-sm" data-action="print-order" data-id="${escapeAttr(o.id)}">🖨️</button>
+            <button class="btn btn-secondary btn-sm" data-action="print-order" data-id="${escapeAttr(o.id)}">${t('print') || 'Print'}</button>
             <button class="btn btn-danger btn-sm" data-action="delete-order" data-id="${escapeAttr(o.id)}">${t('delete')}</button>
           </div></td>
         </tr>`;
@@ -835,8 +835,8 @@ class EggClients extends HTMLElement {
       ${historyHtml}
       <div class="modal-footer">
         <button class="btn btn-secondary" data-action="cancel">${t('close')}</button>
-        ${['confirmed', 'preparing'].includes(o.status) ? `<button class="btn btn-warning" data-action="reserve-order-modal" data-id="${escapeAttr(o.id)}">📋 ${t('ord_reserve')}</button>` : ''}
-        <button class="btn btn-primary" data-action="print-order-modal" data-id="${escapeAttr(o.id)}">🖨️ ${t('ord_print')}</button>
+        ${['confirmed', 'preparing'].includes(o.status) ? `<button class="btn btn-warning" data-action="reserve-order-modal" data-id="${escapeAttr(o.id)}">${t('ord_reserve')}</button>` : ''}
+        <button class="btn btn-primary" data-action="print-order-modal" data-id="${escapeAttr(o.id)}">${t('ord_print')}</button>
       </div>`;
 
     Bus.emit('modal:open', { title: t('ord_view') + ' — ' + sanitizeHTML(o.orderNumber || o.id.substring(0, 8)), body });
@@ -1056,7 +1056,7 @@ class EggClients extends HTMLElement {
       </div>
 
       <div style="text-align:center;margin-top:16px">
-        <button onclick="window.print()" style="padding:8px 24px;font-size:14px;cursor:pointer;background:#0E2240;color:#fff;border:none;border-radius:6px">🖨️ ${t('ord_print')}</button>
+        <button onclick="window.print()" style="padding:8px 24px;font-size:14px;cursor:pointer;background:#0E2240;color:#fff;border:none;border-radius:6px">${t('ord_print')}</button>
       </div>
     </body></html>`;
 

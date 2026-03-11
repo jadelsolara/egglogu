@@ -76,7 +76,7 @@ class EggTraceability extends HTMLElement {
     </div></div></div>`;
 
     if (!batches.length) {
-      h += emptyState('\uD83D\uDCE6', t('no_data'));
+      h += emptyState('', t('no_data'));
       this.shadowRoot.innerHTML = h;
       this._bindActions();
       return;
@@ -96,7 +96,7 @@ class EggTraceability extends HTMLElement {
     return DataTable.create({
       id: 'batches',
       data: batches,
-      emptyIcon: '\uD83D\uDCE6',
+      emptyIcon: '',
       emptyText: t('no_data'),
       columns: [
         {
@@ -165,7 +165,7 @@ class EggTraceability extends HTMLElement {
       </div>`,
       bulkActions: [
         {
-          label: t('delete'), icon: '\uD83D\uDDD1\uFE0F', danger: true,
+          label: t('delete'), danger: true,
           action: ids => this._bulkDelete(ids)
         }
       ]
@@ -549,7 +549,7 @@ class EggTraceability extends HTMLElement {
 </div>`;
 
     Bus.emit('modal:open', {
-      title: '\uD83D\uDD0D ' + t('trace_origin'),
+      title: t('trace_origin'),
       body
     });
   }

@@ -338,29 +338,29 @@ function _lbl() {
 }
 
 const TABS = [
-  { id: 'sa-dashboard',    icon: '\uD83D\uDCCA', key: 'tab_dashboard'    },
-  { id: 'sa-inventory',    icon: '\uD83D\uDCE6', key: 'tab_inventory'    },
-  { id: 'sa-accounts',     icon: '\uD83C\uDFE2', key: 'tab_accounts'     },
-  { id: 'sa-tickets',      icon: '\uD83C\uDFAB', key: 'tab_tickets'      },
-  { id: 'sa-market',       icon: '\uD83D\uDCC8', key: 'tab_market'       },
-  { id: 'sa-crm',          icon: '\uD83D\uDCBC', key: 'tab_crm'          },
-  { id: 'sa-intel',         icon: '\uD83E\uDDE0', key: 'tab_intel'         },
-  { id: 'sa-outbreaks',    icon: '\u26A0\uFE0F', key: 'tab_outbreaks'    },
-  { id: 'sa-audit',        icon: '\uD83D\uDCDD', key: 'tab_audit'        },
-  { id: 'sa-flags',        icon: '\uD83D\uDEA9', key: 'tab_flags'        },
-  { id: 'sa-health',       icon: '\uD83D\uDC9A', key: 'tab_health'       },
-  { id: 'sa-emails',       icon: '\uD83D\uDCE7', key: 'tab_emails'       },
-  { id: 'sa-billing',      icon: '\uD83D\uDCB3', key: 'tab_billing'      },
-  { id: 'sa-onboarding',   icon: '\uD83D\uDEE4\uFE0F', key: 'tab_onboarding' },
-  { id: 'sa-announce',     icon: '\uD83D\uDCE2', key: 'tab_announce'     },
-  { id: 'sa-export',       icon: '\uD83D\uDCE5', key: 'tab_export'       },
-  { id: 'sa-ratelimit',    icon: '\uD83D\uDEA6', key: 'tab_ratelimit'    },
-  { id: 'sa-impersonate',  icon: '\uD83D\uDC41\uFE0F', key: 'tab_impersonate' },
-  { id: 'sa-nps',          icon: '\u2B50',       key: 'tab_nps'          },
-  { id: 'sa-verticals',    icon: '\uD83C\uDF31', key: 'tab_verticals'    },
-  { id: 'sa-partners',     icon: '\uD83E\uDD1D', key: 'tab_partners'     },
-  { id: 'sa-compliance',   icon: '\uD83D\uDEE1\uFE0F', key: 'tab_compliance' },
-  { id: 'sa-settings',     icon: '\u2699\uFE0F', key: 'tab_settings'     }
+  { id: 'sa-dashboard', key: 'tab_dashboard'    },
+  { id: 'sa-inventory', key: 'tab_inventory'    },
+  { id: 'sa-accounts', key: 'tab_accounts'     },
+  { id: 'sa-tickets', key: 'tab_tickets'      },
+  { id: 'sa-market', key: 'tab_market'       },
+  { id: 'sa-crm', key: 'tab_crm'          },
+  { id: 'sa-intel', key: 'tab_intel'         },
+  { id: 'sa-outbreaks', key: 'tab_outbreaks'    },
+  { id: 'sa-audit', key: 'tab_audit'        },
+  { id: 'sa-flags', key: 'tab_flags'        },
+  { id: 'sa-health', key: 'tab_health'       },
+  { id: 'sa-emails', key: 'tab_emails'       },
+  { id: 'sa-billing', key: 'tab_billing'      },
+  { id: 'sa-onboarding', key: 'tab_onboarding' },
+  { id: 'sa-announce', key: 'tab_announce'     },
+  { id: 'sa-export', key: 'tab_export'       },
+  { id: 'sa-ratelimit', key: 'tab_ratelimit'    },
+  { id: 'sa-impersonate', key: 'tab_impersonate' },
+  { id: 'sa-nps',       key: 'tab_nps'          },
+  { id: 'sa-verticals', key: 'tab_verticals'    },
+  { id: 'sa-partners', key: 'tab_partners'     },
+  { id: 'sa-compliance', key: 'tab_compliance' },
+  { id: 'sa-settings', key: 'tab_settings'     }
 ];
 
 // ── Helper: superadmin API fetch ─────────────────────────────
@@ -403,12 +403,12 @@ class EggSuperadmin extends HTMLElement {
     let h = this._baseStyle();
 
     // Header
-    h += `<div class="page-header"><h2>\uD83D\uDD11 ${lbl.title}</h2></div>`;
+    h += `<div class="page-header"><h2>${lbl.title}</h2></div>`;
 
     // Tab bar
     h += '<div class="tabs">';
     TABS.forEach(tb => {
-      h += `<button class="btn ${this._currentTab === tb.id ? 'btn-primary' : 'btn-secondary'} btn-sm" data-action="tab" data-tab="${tb.id}">${tb.icon} ${lbl[tb.key]}</button>`;
+      h += `<button class="btn ${this._currentTab === tb.id ? 'btn-primary' : 'btn-secondary'} btn-sm" data-action="tab" data-tab="${tb.id}">${lbl[tb.key]}</button>`;
     });
     h += '</div>';
 
@@ -823,7 +823,7 @@ class EggSuperadmin extends HTMLElement {
   async _renderInventory(lbl) {
     let h = '';
     const data = await _saFetch('/inventory/overview');
-    h += `<div class="card"><h3>\uD83D\uDCE6 ${lbl.tab_inventory}</h3>`;
+    h += `<div class="card"><h3>${lbl.tab_inventory}</h3>`;
     if (!data || !data.length) {
       h += `<p style="color:var(--text-light)">${lbl.no_data}</p>`;
     } else {
@@ -844,7 +844,7 @@ class EggSuperadmin extends HTMLElement {
     let h = '';
 
     // Churn KPIs
-    h += `<div class="card" style="margin-bottom:16px"><h3>\uD83D\uDCC9 ${lbl.churn_title}</h3>
+    h += `<div class="card" style="margin-bottom:16px"><h3>${lbl.churn_title}</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px">
       <div class="kpi-card"><div class="kpi-label">${lbl.monthly_churn}</div><div class="kpi-value" style="color:${churn.monthly_churn_rate > 5 ? 'var(--danger)' : 'var(--success)'}">${(churn.monthly_churn_rate || 0).toFixed(1)}%</div></div>
       <div class="kpi-card"><div class="kpi-label">${lbl.retention}</div><div class="kpi-value" style="color:${churn.retention_rate >= 90 ? 'var(--success)' : 'var(--warning)'}">${(churn.retention_rate || 0).toFixed(1)}%</div></div>
@@ -852,7 +852,7 @@ class EggSuperadmin extends HTMLElement {
       </div></div>`;
 
     // Orgs table
-    h += `<div class="card"><h3>\uD83C\uDFE2 ${lbl.tab_accounts}</h3>`;
+    h += `<div class="card"><h3>${lbl.tab_accounts}</h3>`;
     if (!orgs || !orgs.length) {
       h += `<p style="color:var(--text-light)">${lbl.no_data}</p>`;
     } else {
@@ -906,7 +906,7 @@ class EggSuperadmin extends HTMLElement {
   async _renderTickets(lbl) {
     const data = await _saFetch('/tickets?limit=50');
     const tickets = data.items || data || [];
-    let h = `<div class="card"><h3>\uD83C\uDFAB ${lbl.tab_tickets}</h3>`;
+    let h = `<div class="card"><h3>${lbl.tab_tickets}</h3>`;
     if (!tickets.length) {
       h += `<p style="color:var(--text-light)">${lbl.no_data}</p>`;
     } else {
@@ -966,9 +966,9 @@ class EggSuperadmin extends HTMLElement {
     if (summary && summary.length) {
       h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px">';
       summary.forEach(s => {
-        const trendIcon = { up: '\uD83D\uDCC8', down: '\uD83D\uDCC9', stable: '\u27A1\uFE0F' };
+        const trendIcon = { up: '\u2191', down: '\u2193', stable: '\u2192' };
         h += `<div class="kpi-card"><div class="kpi-label">${sanitizeHTML(s.region)}</div>
-          <div class="kpi-value" style="font-size:1.1rem">${trendIcon[s.avg_trend] || '\u27A1\uFE0F'} $${(s.avg_price || 0).toFixed(2)}</div>
+          <div class="kpi-value" style="font-size:1.1rem">${trendIcon[s.avg_trend] || '\u2192'} $${(s.avg_price || 0).toFixed(2)}</div>
           <div style="font-size:11px;color:var(--text-light)">${lbl.production}: ${(s.total_production || 0).toLocaleString()}</div></div>`;
       });
       h += '</div>';
@@ -976,7 +976,7 @@ class EggSuperadmin extends HTMLElement {
 
     // Add entry form
     const today = todayStr();
-    h += `<div class="card" style="margin-bottom:16px"><h3>\u2795 ${lbl.add_entry}</h3>
+    h += `<div class="card" style="margin-bottom:16px"><h3>${lbl.add_entry}</h3>
       <div class="sa-market-form" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px">
         <div><label>${lbl.date}</label><input type="date" data-field="report_date" value="${today}"></div>
         <div><label>${lbl.region}</label><input type="text" data-field="region" placeholder="LATAM, NA, EU..."></div>
@@ -992,17 +992,17 @@ class EggSuperadmin extends HTMLElement {
       </div></div>`;
 
     // Data table
-    h += `<div class="card"><h3>\uD83D\uDCC8 ${lbl.tab_market}</h3>`;
+    h += `<div class="card"><h3>${lbl.tab_market}</h3>`;
     if (!items.length) {
       h += `<p style="color:var(--text-light)">${lbl.no_data}</p>`;
     } else {
       h += `<div class="table-wrap"><table><thead><tr><th>${lbl.date}</th><th>${lbl.region}</th><th>${lbl.egg_type}</th><th>${lbl.price}</th><th>${lbl.production}</th><th>${lbl.demand}</th><th>${lbl.supply}</th><th>${lbl.trend}</th><th>${lbl.source}</th></tr></thead><tbody>`;
       items.forEach(mi => {
-        const trendIcon = { up: '\uD83D\uDCC8', down: '\uD83D\uDCC9', stable: '\u27A1\uFE0F' };
+        const trendIcon = { up: '\u2191', down: '\u2193', stable: '\u2192' };
         h += `<tr><td>${sanitizeHTML(mi.report_date || '-')}</td><td>${sanitizeHTML(mi.region || '-')}</td><td>${sanitizeHTML(mi.egg_type || '-')}</td>
           <td>$${(mi.avg_price_per_unit || 0).toFixed(2)}</td><td>${(mi.total_production_units || 0).toLocaleString()}</td>
           <td>${mi.demand_index || 0}</td><td>${mi.supply_index || 0}</td>
-          <td>${trendIcon[mi.price_trend] || '\u27A1\uFE0F'} ${sanitizeHTML(mi.price_trend || '-')}</td><td>${sanitizeHTML(mi.source || '-')}</td></tr>`;
+          <td>${trendIcon[mi.price_trend] || '\u2192'} ${sanitizeHTML(mi.price_trend || '-')}</td><td>${sanitizeHTML(mi.source || '-')}</td></tr>`;
       });
       h += '</tbody></table></div>';
     }
@@ -1048,8 +1048,8 @@ class EggSuperadmin extends HTMLElement {
         </select>
         <input type="date" data-ref="audit-from" style="padding:6px;border-radius:6px;border:1px solid #ccc;">
         <input type="date" data-ref="audit-to" style="padding:6px;border-radius:6px;border:1px solid #ccc;">
-        <button class="sa-btn" data-action="audit-filter">🔍 ${lbl.audit_filter}</button>
-        <button class="sa-btn sa-btn-outline" data-action="audit-export">📥 ${lbl.audit_export}</button>
+        <button class="sa-btn" data-action="audit-filter">${lbl.audit_filter}</button>
+        <button class="sa-btn sa-btn-outline" data-action="audit-export">${lbl.audit_export}</button>
       </div>
       <div data-ref="audit-table" style="color:#aaa;padding:24px;text-align:center;">${lbl.audit_empty}</div>
     </div>`;
@@ -1106,7 +1106,7 @@ class EggSuperadmin extends HTMLElement {
       </tr>`).join('');
       return `<div class="sa-section">
         <h2>${lbl.flags_title}</h2>
-        <button class="sa-btn" data-action="flag-create" style="margin-bottom:12px;">➕ ${lbl.flags_create}</button>
+        <button class="sa-btn" data-action="flag-create" style="margin-bottom:12px;">${lbl.flags_create}</button>
         <table class="sa-table" style="width:100%"><thead><tr>
           <th>${lbl.flags_key}</th><th>${lbl.flags_desc}</th><th>${lbl.flags_status}</th><th>${lbl.flags_scope}</th><th>${lbl.flags_actions}</th>
         </tr></thead><tbody>${rows || `<tr><td colspan="5" style="text-align:center;color:#aaa">${lbl.flags_empty}</td></tr>`}</tbody></table>
@@ -1159,7 +1159,7 @@ class EggSuperadmin extends HTMLElement {
   _renderSystemHealth(lbl) {
     return `<div class="sa-section">
       <h2>${lbl.health_title}</h2>
-      <button class="sa-btn" data-action="health-refresh" style="margin-bottom:12px;">🔄 ${lbl.health_refresh}</button>
+      <button class="sa-btn" data-action="health-refresh" style="margin-bottom:12px;">${lbl.health_refresh}</button>
       <div data-ref="health-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;">
         <div class="sa-card" style="text-align:center;padding:24px;color:#aaa;">${lbl.health_click_refresh}</div>
       </div>
@@ -1297,7 +1297,7 @@ class EggSuperadmin extends HTMLElement {
       </tr>`).join('');
       return `<div class="sa-section">
         <h2>${lbl.ann_title}</h2>
-        <button class="sa-btn" data-action="ann-create" style="margin-bottom:12px;">➕ ${lbl.ann_create}</button>
+        <button class="sa-btn" data-action="ann-create" style="margin-bottom:12px;">${lbl.ann_create}</button>
         <table class="sa-table" style="width:100%"><thead><tr>
           <th>${lbl.ann_title_col}</th><th>${lbl.ann_status}</th><th>${lbl.ann_target}</th><th>${lbl.ann_date}</th><th>${lbl.ann_actions}</th>
         </tr></thead><tbody>${rows || `<tr><td colspan="5" style="text-align:center;color:#aaa">${lbl.ann_empty}</td></tr>`}</tbody></table>
@@ -1339,7 +1339,7 @@ class EggSuperadmin extends HTMLElement {
             <select data-ref="fmt-${t}" style="margin:8px 0;padding:4px;border-radius:4px;border:1px solid #ccc;">
               <option value="csv">CSV</option><option value="json">JSON</option><option value="xlsx">XLSX</option>
             </select><br>
-            <button class="sa-btn-sm" data-action="export-download" data-table="${t}">📥 ${lbl.export_download}</button>
+            <button class="sa-btn-sm" data-action="export-download" data-table="${t}">${lbl.export_download}</button>
           </div>
         `).join('')}
       </div>
@@ -1400,10 +1400,10 @@ class EggSuperadmin extends HTMLElement {
   _renderImpersonate(lbl) {
     return `<div class="sa-section">
       <h2>${lbl.imp_title}</h2>
-      <p style="color:#ff9800;margin-bottom:12px;">⚠️ ${lbl.imp_warning}</p>
+      <p style="color:#ff9800;margin-bottom:12px;">${lbl.imp_warning}</p>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
         <input type="email" data-ref="imp-email" placeholder="${lbl.imp_email_placeholder}" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
-        <button class="sa-btn" data-action="imp-start">👁️ ${lbl.imp_start}</button>
+        <button class="sa-btn" data-action="imp-start">${lbl.imp_start}</button>
       </div>
       <div data-ref="imp-status" style="color:#aaa;text-align:center;padding:16px;">${lbl.imp_not_active}</div>
     </div>`;
@@ -1418,7 +1418,7 @@ class EggSuperadmin extends HTMLElement {
       Bus.emit('toast', { msg: this._lbl().imp_started });
       const st = this.shadowRoot.querySelector('[data-ref="imp-status"]');
       if (st) st.innerHTML = `<div style="background:#fff3e0;padding:12px;border-radius:8px;border:1px solid #ff9800;">
-        <strong>🔴 ${this._lbl().imp_active_as} ${email}</strong><br>
+        <strong>${this._lbl().imp_active_as} ${email}</strong><br>
         <small>Token: ${data.token?.slice(0,20)}...</small><br>
         <button class="sa-btn sa-btn-danger" data-action="imp-stop" style="margin-top:8px;">⏹️ ${this._lbl().imp_stop}</button>
       </div>`;
@@ -1451,7 +1451,7 @@ class EggSuperadmin extends HTMLElement {
       </tr>`).join('');
       return `<div class="sa-section">
         <h2>${lbl.nps_title}</h2>
-        <button class="sa-btn" data-action="nps-send-survey" style="margin-bottom:12px;">📨 ${lbl.nps_send_survey}</button>
+        <button class="sa-btn" data-action="nps-send-survey" style="margin-bottom:12px;">${lbl.nps_send_survey}</button>
         <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
           <div class="sa-stat-card"><strong style="font-size:2em;color:${nps >= 50 ? '#4caf50' : nps >= 0 ? '#ff9800' : '#f44336'}">${nps}</strong><br><small>NPS Score</small></div>
           <div class="sa-stat-card"><strong>${avg.toFixed(1)}</strong><br><small>${lbl.nps_avg}</small></div>
@@ -1522,7 +1522,7 @@ class EggSuperadmin extends HTMLElement {
       </tr>`).join('');
       return `<div class="sa-section">
         <h2>${lbl.part_title}</h2>
-        <button class="sa-btn" data-action="part-create" style="margin-bottom:12px;">➕ ${lbl.part_create}</button>
+        <button class="sa-btn" data-action="part-create" style="margin-bottom:12px;">${lbl.part_create}</button>
         <div style="display:flex;gap:16px;margin-bottom:12px;">
           <div class="sa-stat-card"><strong>${data.total || 0}</strong><br><small>${lbl.part_total}</small></div>
           <div class="sa-stat-card"><strong>$${((data.total_revenue || 0) / 100).toFixed(0)}</strong><br><small>${lbl.part_revenue}</small></div>
@@ -1563,7 +1563,7 @@ class EggSuperadmin extends HTMLElement {
       <h2>${lbl.comp_title}</h2>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px;">
         <div class="sa-card" style="padding:16px;">
-          <h4>🔒 ${lbl.comp_gdpr}</h4>
+          <h4>${lbl.comp_gdpr}</h4>
           <ul style="font-size:13px;color:#aaa;padding-left:16px;">
             <li>${lbl.comp_data_retention}</li>
             <li>${lbl.comp_consent_log}</li>
@@ -1571,7 +1571,7 @@ class EggSuperadmin extends HTMLElement {
           </ul>
         </div>
         <div class="sa-card" style="padding:16px;">
-          <h4>📋 ${lbl.comp_soc2}</h4>
+          <h4>${lbl.comp_soc2}</h4>
           <ul style="font-size:13px;color:#aaa;padding-left:16px;">
             <li>${lbl.comp_access_review}</li>
             <li>${lbl.comp_encryption}</li>
@@ -1579,7 +1579,7 @@ class EggSuperadmin extends HTMLElement {
           </ul>
         </div>
         <div class="sa-card" style="padding:16px;">
-          <h4>🌍 ${lbl.comp_local}</h4>
+          <h4>${lbl.comp_local}</h4>
           <ul style="font-size:13px;color:#aaa;padding-left:16px;">
             <li>${lbl.comp_chile_pdp}</li>
             <li>${lbl.comp_brazil_lgpd}</li>
@@ -1590,8 +1590,8 @@ class EggSuperadmin extends HTMLElement {
       <h3>${lbl.comp_dsar_title}</h3>
       <div style="display:flex;gap:8px;margin-bottom:12px;">
         <input type="email" data-ref="comp-email" placeholder="${lbl.comp_user_email}" style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
-        <button class="sa-btn" data-action="comp-dsar">📤 ${lbl.comp_dsar_btn}</button>
-        <button class="sa-btn sa-btn-outline" data-action="comp-export-user">📥 ${lbl.comp_export_user}</button>
+        <button class="sa-btn" data-action="comp-dsar">${lbl.comp_dsar_btn}</button>
+        <button class="sa-btn sa-btn-outline" data-action="comp-export-user">${lbl.comp_export_user}</button>
       </div>
       <div data-ref="comp-result" style="color:#aaa;text-align:center;padding:12px;"></div>
     </div>`;
@@ -1627,14 +1627,14 @@ class EggSuperadmin extends HTMLElement {
 
   _renderSettings(lbl) {
     const u = getCurrentUser() || {};
-    let h = `<div class="card" style="margin-bottom:16px"><h3>\uD83D\uDC64 ${lbl.account_info}</h3>
+    let h = `<div class="card" style="margin-bottom:16px"><h3>${lbl.account_info}</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
       <div class="kpi-card"><div class="kpi-label">Email</div><div class="kpi-value" style="font-size:0.95rem">${sanitizeHTML(u.email || '-')}</div></div>
       <div class="kpi-card"><div class="kpi-label">Nombre</div><div class="kpi-value" style="font-size:0.95rem">${sanitizeHTML(u.full_name || '-')}</div></div>
       <div class="kpi-card"><div class="kpi-label">Rol</div><div class="kpi-value" style="font-size:0.95rem;color:var(--primary)">SUPERADMIN</div></div>
       </div></div>`;
 
-    h += `<div class="card"><h3>\uD83D\uDD12 ${lbl.change_pw}</h3>
+    h += `<div class="card"><h3>${lbl.change_pw}</h3>
       <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:12px">${lbl.pw_rules}</p>
       <div class="sa-pw-form" style="max-width:400px;display:flex;flex-direction:column;gap:12px">
         <div><label>${lbl.current_pw}</label><input type="password" class="sa-pw-current" autocomplete="current-password"></div>
