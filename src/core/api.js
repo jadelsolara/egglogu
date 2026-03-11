@@ -58,7 +58,9 @@ export const apiService = {
   // Core HTTP
   async request(method, path, body, retry = true) {
     const token = this.getToken();
-    const opts = { method, headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _getCsrfToken() } };
+    const csrfToken = _getCsrfToken();
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (csrfToken) opts.headers['X-CSRF-Token'] = csrfToken;
     if (token) opts.headers['Authorization'] = 'Bearer ' + token;
     if (body && method !== 'GET') opts.body = JSON.stringify(body);
     let resp;

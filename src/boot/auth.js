@@ -587,6 +587,7 @@ async function doLogin() {
   if (isFirstRun(apiService)) {
     const { hash, salt } = await hashPassword(pass);
     safeSetItem(AUTH_KEY, JSON.stringify({ user, hash, salt }));
+    setCurrentUser({ name: user.split('@')[0], role: 'owner', email: user });
     sessionStorage.setItem(AUTH_SESSION, 'true');
     $('login-screen').classList.add('hidden');
     await initApp();
@@ -613,6 +614,7 @@ async function doLogin() {
   }
 
   if (match) {
+    setCurrentUser({ name: user.split('@')[0], role: 'owner', email: user });
     sessionStorage.setItem(AUTH_SESSION, 'true');
     $('login-screen').classList.add('hidden');
     resetLoginAttempts();
@@ -634,6 +636,14 @@ function doLogout() {
 
 function checkAuth() {
   if (isAuthenticated(apiService)) {
+    // Restore user context from server if we have tokens but no current user email
+    const cur = getCurrentUser();
+    if (apiService.isLoggedIn() && (!cur || !cur.email)) {
+      apiService.getMe().then(me => {
+        setCurrentUser({ name: me.full_name, role: me.role, id: me.id, email: me.email });
+        Bus.emit('auth:ready');
+      }).catch(() => {});
+    }
     $('login-screen').classList.add('hidden');
     return true;
   }
