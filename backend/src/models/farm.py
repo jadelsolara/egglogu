@@ -21,3 +21,4 @@ class Farm(TimestampMixin, TenantMixin, Base):
     mqtt_pass: Mapped[Optional[str]] = mapped_column(String(100), default=None)
 
     flocks: Mapped[list["Flock"]] = relationship(back_populates="farm")  # noqa: F821
+    batches: Mapped[list["TraceabilityBatch"]] = relationship(back_populates="farm")  # noqa: F821

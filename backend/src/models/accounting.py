@@ -169,6 +169,10 @@ class FiscalPeriod(TimestampMixin, TenantMixin, Base):
     )
     closed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, default=None)
 
+    # Relationships
+    journal_entries: Mapped[list["JournalEntry"]] = relationship(back_populates="period")
+    account_balances: Mapped[list["AccountBalance"]] = relationship(back_populates="period")
+
     __table_args__ = (
         UniqueConstraint("organization_id", "name", name="uq_period_org_name"),
         CheckConstraint("end_date >= start_date", name="ck_period_dates"),
@@ -214,7 +218,7 @@ class JournalEntry(TimestampMixin, TenantMixin, Base):
     lines: Mapped[list["JournalEntryLine"]] = relationship(
         back_populates="journal_entry", cascade="all, delete-orphan"
     )
-    period: Mapped[Optional["FiscalPeriod"]] = relationship()
+    period: Mapped[Optional["FiscalPeriod"]] = relationship(back_populates="journal_entries")
 
     __table_args__ = (
         UniqueConstraint(
@@ -289,7 +293,7 @@ class AccountBalance(TimestampMixin, TenantMixin, Base):
 
     # Relationships
     account: Mapped["Account"] = relationship(back_populates="balances")
-    period: Mapped["FiscalPeriod"] = relationship()
+    period: Mapped["FiscalPeriod"] = relationship(back_populates="account_balances")
 
     __table_args__ = (
         UniqueConstraint(

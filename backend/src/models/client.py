@@ -23,3 +23,4 @@ class Client(TimestampMixin, SoftDeleteMixin, TenantMixin, Base):
 
     incomes: Mapped[list["Income"]] = relationship(back_populates="client")  # noqa: F821
     receivables: Mapped[list["Receivable"]] = relationship(back_populates="client")  # noqa: F821
+    batches: Mapped[list["TraceabilityBatch"]] = relationship(back_populates="client")  # noqa: F821

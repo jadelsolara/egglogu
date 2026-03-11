@@ -115,8 +115,16 @@ class TraceabilityBatch(TimestampMixin, TenantMixin, Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
     # Relationships
-    farm = relationship("Farm", lazy="selectin")
-    client = relationship("Client", lazy="selectin")
+    farm = relationship("Farm", back_populates="batches", lazy="selectin")
+    client = relationship("Client", back_populates="batches", lazy="selectin")
+    events: Mapped[list["TraceEvent"]] = relationship(back_populates="batch")  # noqa: F821
+    event_items: Mapped[list["TraceEventItem"]] = relationship(back_populates="batch")  # noqa: F821
+    parent_lineages: Mapped[list["BatchLineage"]] = relationship(  # noqa: F821
+        back_populates="parent_batch", foreign_keys="[BatchLineage.parent_batch_id]"
+    )
+    child_lineages: Mapped[list["BatchLineage"]] = relationship(  # noqa: F821
+        back_populates="child_batch", foreign_keys="[BatchLineage.child_batch_id]"
+    )
 
     # ── Legacy compatibility ──
     # These properties keep existing EGGlogU frontend code working

@@ -123,6 +123,17 @@ class TraceLocation(TimestampMixin, TenantMixin, Base):
 
     is_active: Mapped[bool] = mapped_column(default=True)
 
+    # Relationships
+    events: Mapped[list["TraceEvent"]] = relationship(
+        back_populates="location", foreign_keys="[TraceEvent.location_id]"
+    )
+    source_events: Mapped[list["TraceEvent"]] = relationship(
+        back_populates="source_location", foreign_keys="[TraceEvent.source_location_id]"
+    )
+    destination_events: Mapped[list["TraceEvent"]] = relationship(
+        back_populates="destination_location", foreign_keys="[TraceEvent.destination_location_id]"
+    )
+
     __table_args__ = (
         Index("ix_trace_loc_gln", "gln"),
         Index("ix_trace_loc_org", "organization_id"),
@@ -213,10 +224,10 @@ class TraceEvent(TimestampMixin, TenantMixin, Base):
     prev_event_hash: Mapped[Optional[str]] = mapped_column(String(64), default=None)  # Chain to previous event
 
     # Relationships
-    location = relationship("TraceLocation", foreign_keys=[location_id], lazy="selectin")
-    source_location = relationship("TraceLocation", foreign_keys=[source_location_id], lazy="selectin")
-    destination_location = relationship("TraceLocation", foreign_keys=[destination_location_id], lazy="selectin")
-    batch = relationship("TraceabilityBatch", lazy="selectin")
+    location = relationship("TraceLocation", foreign_keys=[location_id], back_populates="events", lazy="selectin")
+    source_location = relationship("TraceLocation", foreign_keys=[source_location_id], back_populates="source_events", lazy="selectin")
+    destination_location = relationship("TraceLocation", foreign_keys=[destination_location_id], back_populates="destination_events", lazy="selectin")
+    batch = relationship("TraceabilityBatch", back_populates="events", lazy="selectin")
     items = relationship("TraceEventItem", back_populates="event", lazy="selectin")
 
     __table_args__ = (
@@ -249,7 +260,7 @@ class TraceEventItem(TimestampMixin, TenantMixin, Base):
     gtin: Mapped[Optional[str]] = mapped_column(String(14), default=None)  # GS1 GTIN
 
     event = relationship("TraceEvent", back_populates="items")
-    batch = relationship("TraceabilityBatch", lazy="selectin")
+    batch = relationship("TraceabilityBatch", back_populates="event_items", lazy="selectin")
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -285,8 +296,8 @@ class BatchLineage(TimestampMixin, Base):
     quantity_consumed: Mapped[Optional[float]] = mapped_column(Float, default=None)
     unit_of_measure: Mapped[Optional[str]] = mapped_column(String(20), default=None)
 
-    parent_batch = relationship("TraceabilityBatch", foreign_keys=[parent_batch_id], lazy="selectin")
-    child_batch = relationship("TraceabilityBatch", foreign_keys=[child_batch_id], lazy="selectin")
+    parent_batch = relationship("TraceabilityBatch", foreign_keys=[parent_batch_id], back_populates="parent_lineages", lazy="selectin")
+    child_batch = relationship("TraceabilityBatch", foreign_keys=[child_batch_id], back_populates="child_lineages", lazy="selectin")
 
     __table_args__ = (
         UniqueConstraint("parent_batch_id", "child_batch_id", name="uq_lineage_parent_child"),
