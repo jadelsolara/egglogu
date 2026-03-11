@@ -79,8 +79,8 @@ async def test_create_pl_snapshot(client: AsyncClient, authenticated_user):
             "period_end": "2026-02-28",
             "total_revenue": 45000.00,
             "total_cost": 32000.00,
-            "eggs_produced": 180000,
-            "eggs_sold": 175000,
+            "units_produced": 180000,
+            "units_sold": 175000,
         },
     )
     assert resp.status_code == 201
