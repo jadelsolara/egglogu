@@ -7,7 +7,6 @@ from src.services.base import BaseService
 
 
 class FlockService(BaseService):
-
     async def list_flocks(self, *, page: int = 1, size: int = 50) -> list:
         return await self._list(Flock, page=page, size=size)
 

@@ -4,7 +4,7 @@ import uuid
 
 from sqlalchemy import select, func
 
-from src.core.exceptions import NotFoundError, ForbiddenError
+from src.core.exceptions import ForbiddenError
 from src.core.plans import get_plan_limits
 from src.models.auth import User
 from src.models.report import ReportSchedule, ReportExecution

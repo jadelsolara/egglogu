@@ -19,6 +19,7 @@ from src.models.accounting import (
 
 # ── Chart of Accounts ────────────────────────────────────────────────────
 
+
 class AccountCreate(BaseModel):
     code: str = Field(min_length=1, max_length=20)
     name: str = Field(min_length=1, max_length=200)
@@ -59,6 +60,7 @@ class AccountRead(BaseModel):
 
 # ── Fiscal Period ────────────────────────────────────────────────────────
 
+
 class FiscalPeriodCreate(BaseModel):
     name: str = Field(min_length=1, max_length=50)
     start_date: date
@@ -91,6 +93,7 @@ class FiscalPeriodRead(BaseModel):
 
 
 # ── Journal Entry ────────────────────────────────────────────────────────
+
 
 class JournalEntryLineCreate(BaseModel):
     account_id: uuid.UUID
@@ -164,18 +167,22 @@ class JournalEntryRead(BaseModel):
 
 class JournalEntryPost(BaseModel):
     """Request body for posting a draft entry."""
+
     pass
 
 
 class JournalEntryReverse(BaseModel):
     """Request body for reversing a posted entry."""
+
     description: Optional[str] = Field(
-        default=None, max_length=500,
-        description="Override description for the reversal entry"
+        default=None,
+        max_length=500,
+        description="Override description for the reversal entry",
     )
 
 
 # ── Account Balance ──────────────────────────────────────────────────────
+
 
 class AccountBalanceRead(BaseModel):
     id: uuid.UUID
@@ -190,6 +197,7 @@ class AccountBalanceRead(BaseModel):
 
 
 # ── Financial Statements ─────────────────────────────────────────────────
+
 
 class TrialBalanceRow(BaseModel):
     account_id: uuid.UUID

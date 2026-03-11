@@ -4,7 +4,6 @@ import uuid
 
 from fastapi import HTTPException
 from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.plugins import VALID_HOOKS
 from src.models.plugin import Plugin, PluginInstall
@@ -93,9 +92,7 @@ class PluginsService(BaseService):
 
         return install, plugin
 
-    async def get_install(
-        self, install_id: uuid.UUID
-    ) -> tuple[PluginInstall, Plugin]:
+    async def get_install(self, install_id: uuid.UUID) -> tuple[PluginInstall, Plugin]:
         """Obtiene detalle de un plugin instalado."""
         return await self._get_install_or_404(install_id)
 
@@ -147,9 +144,7 @@ class PluginsService(BaseService):
             )
 
         # Verificar unicidad del slug
-        existing = await self.db.execute(
-            select(Plugin).where(Plugin.slug == slug)
-        )
+        existing = await self.db.execute(select(Plugin).where(Plugin.slug == slug))
         if existing.scalar_one_or_none():
             raise HTTPException(
                 status_code=409, detail=f"Plugin slug '{slug}' already exists"
@@ -174,9 +169,7 @@ class PluginsService(BaseService):
     # ── Helpers internos ──────────────────────────────────────────────
 
     async def _get_plugin_or_404(self, plugin_id: uuid.UUID) -> Plugin:
-        result = await self.db.execute(
-            select(Plugin).where(Plugin.id == plugin_id)
-        )
+        result = await self.db.execute(select(Plugin).where(Plugin.id == plugin_id))
         plugin = result.scalar_one_or_none()
         if not plugin:
             raise HTTPException(status_code=404, detail="Plugin not found")
@@ -195,7 +188,5 @@ class PluginsService(BaseService):
         )
         row = result.one_or_none()
         if not row:
-            raise HTTPException(
-                status_code=404, detail="Plugin install not found"
-            )
+            raise HTTPException(status_code=404, detail="Plugin install not found")
         return row[0], row[1]

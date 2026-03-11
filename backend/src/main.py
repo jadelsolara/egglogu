@@ -13,6 +13,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
+
+from src.api.versioning import APIVersionMiddleware
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 import src.models  # noqa: F401, E402
@@ -147,8 +149,7 @@ class RequestLoggingMiddleware:
 
         headers = dict(scope.get("headers", []))
         request_id = (
-            headers.get(b"x-request-id", b"").decode()
-            or str(_uuid.uuid4())[:8]
+            headers.get(b"x-request-id", b"").decode() or str(_uuid.uuid4())[:8]
         )
         scope.setdefault("state", {})["request_id"] = request_id
 
@@ -178,7 +179,10 @@ class RequestLoggingMiddleware:
                 _metrics["error_count"] += 1
             logger.info(
                 "%s %s → %d (%dms)",
-                method, path, status_code, duration_ms,
+                method,
+                path,
+                status_code,
+                duration_ms,
                 extra={"request_id": request_id},
             )
 
@@ -231,7 +235,10 @@ class SecurityHeadersMiddleware:
         (b"x-content-type-options", b"nosniff"),
         (b"x-frame-options", b"DENY"),
         (b"referrer-policy", b"strict-origin-when-cross-origin"),
-        (b"permissions-policy", b"camera=(), microphone=(), geolocation=(), payment=(self)"),
+        (
+            b"permissions-policy",
+            b"camera=(), microphone=(), geolocation=(), payment=(self)",
+        ),
     ]
 
     def __init__(self, app: ASGIApp) -> None:
@@ -349,7 +356,6 @@ app = FastAPI(
 # ── Pure ASGI Middleware Stack ──────────────────────────────────────
 # All middleware are pure ASGI (not BaseHTTPMiddleware) to prevent
 # asyncpg task boundary conflicts. Order: outermost runs first.
-from src.api.versioning import APIVersionMiddleware
 
 # 1) Request ID + structured logging (outermost — captures everything)
 app.add_middleware(RequestLoggingMiddleware)

@@ -27,8 +27,8 @@ from src.models.farm import Farm
 from src.models.flock import Flock
 from src.models.production import DailyProduction
 from src.models.client import Client
-from src.models.finance import Income, Expense, Receivable
-from src.models.health import Vaccine, Medication
+from src.models.finance import Income, Expense
+from src.models.health import Vaccine
 from src.models.feed import FeedPurchase, FeedConsumption
 from src.models.environment import EnvironmentReading
 
@@ -38,14 +38,8 @@ ORG_ID = uuid.UUID("00000000-0000-4000-a000-000000000001")
 USER_ID = uuid.UUID("00000000-0000-4000-a000-000000000002")
 FARM1_ID = uuid.UUID("00000000-0000-4000-a000-000000000010")
 FARM2_ID = uuid.UUID("00000000-0000-4000-a000-000000000011")
-FLOCK_IDS = [
-    uuid.UUID(f"00000000-0000-4000-a000-0000000001{i:02d}")
-    for i in range(4)
-]
-CLIENT_IDS = [
-    uuid.UUID(f"00000000-0000-4000-a000-0000000002{i:02d}")
-    for i in range(5)
-]
+FLOCK_IDS = [uuid.UUID(f"00000000-0000-4000-a000-0000000001{i:02d}") for i in range(4)]
+CLIENT_IDS = [uuid.UUID(f"00000000-0000-4000-a000-0000000002{i:02d}") for i in range(5)]
 
 
 def _hash_password(password: str) -> str:
@@ -169,19 +163,21 @@ async def seed_demo_data(db: AsyncSession) -> dict:
 
             deaths = 1 if random.random() < 0.03 else 0
 
-            productions.append(DailyProduction(
-                organization_id=ORG_ID,
-                flock_id=flock.id,
-                date=d,
-                total_eggs=total,
-                broken=broken,
-                small=small,
-                medium=medium,
-                large=large,
-                xl=xl,
-                deaths=deaths,
-                water_liters=flock.current_count * random.uniform(0.22, 0.30),
-            ))
+            productions.append(
+                DailyProduction(
+                    organization_id=ORG_ID,
+                    flock_id=flock.id,
+                    date=d,
+                    total_eggs=total,
+                    broken=broken,
+                    small=small,
+                    medium=medium,
+                    large=large,
+                    xl=xl,
+                    deaths=deaths,
+                    water_liters=flock.current_count * random.uniform(0.22, 0.30),
+                )
+            )
 
     db.add_all(productions)
     counts["daily_production"] = len(productions)
@@ -219,19 +215,25 @@ async def seed_demo_data(db: AsyncSession) -> dict:
         dozens = random.randint(10, 200)
         sizes = ["small", "medium", "large", "xl"]
         size = random.choice(sizes)
-        price_map = {"small": client.price_small, "medium": client.price_medium,
-                     "large": client.price_large, "xl": client.price_xl}
+        price_map = {
+            "small": client.price_small,
+            "medium": client.price_medium,
+            "large": client.price_large,
+            "xl": client.price_xl,
+        }
         unit_price = price_map[size] or 2.0
-        incomes.append(Income(
-            organization_id=ORG_ID,
-            client_id=client.id,
-            date=d,
-            dozens=dozens,
-            egg_size=size,
-            unit_price=unit_price,
-            total=dozens * unit_price,
-            payment_method=random.choice(["cash", "transfer", "credit"]),
-        ))
+        incomes.append(
+            Income(
+                organization_id=ORG_ID,
+                client_id=client.id,
+                date=d,
+                dozens=dozens,
+                egg_size=size,
+                unit_price=unit_price,
+                total=dozens * unit_price,
+                payment_method=random.choice(["cash", "transfer", "credit"]),
+            )
+        )
     db.add_all(incomes)
     counts["incomes"] = 30
 
@@ -249,14 +251,18 @@ async def seed_demo_data(db: AsyncSession) -> dict:
     for i in range(20):
         cat, lo, hi = random.choice(expense_categories)
         d = today - timedelta(days=random.randint(1, 85))
-        expenses.append(Expense(
-            organization_id=ORG_ID,
-            date=d,
-            category=cat,
-            description=f"Gasto {cat} #{i+1}",
-            amount=round(random.uniform(lo, hi), 2),
-            flock_id=random.choice(FLOCK_IDS) if cat in ("feed", "veterinary") else None,
-        ))
+        expenses.append(
+            Expense(
+                organization_id=ORG_ID,
+                date=d,
+                category=cat,
+                description=f"Gasto {cat} #{i + 1}",
+                amount=round(random.uniform(lo, hi), 2),
+                flock_id=random.choice(FLOCK_IDS)
+                if cat in ("feed", "veterinary")
+                else None,
+            )
+        )
     db.add_all(expenses)
     counts["expenses"] = 20
 
@@ -276,14 +282,16 @@ async def seed_demo_data(db: AsyncSession) -> dict:
         vname, method = random.choice(vaccine_names)
         flock = random.choice(flocks)
         d = flock.start_date + timedelta(days=random.randint(1, 60))
-        vaccines.append(Vaccine(
-            organization_id=ORG_ID,
-            flock_id=flock.id,
-            date=d,
-            name=vname,
-            method=method,
-            cost=round(random.uniform(20, 200), 2),
-        ))
+        vaccines.append(
+            Vaccine(
+                organization_id=ORG_ID,
+                flock_id=flock.id,
+                date=d,
+                name=vname,
+                method=method,
+                cost=round(random.uniform(20, 200), 2),
+            )
+        )
     db.add_all(vaccines)
     counts["vaccines"] = 10
 
@@ -293,15 +301,17 @@ async def seed_demo_data(db: AsyncSession) -> dict:
         d = today - timedelta(days=random.randint(5, 80))
         kg = random.randint(500, 5000)
         ppk = round(random.uniform(0.35, 0.65), 2)
-        feed_purchases.append(FeedPurchase(
-            organization_id=ORG_ID,
-            date=d,
-            type=random.choice(["starter", "grower", "layer", "finisher"]),
-            brand=random.choice(["Purina", "Cargill", "ADM", "Nutreco"]),
-            kg=kg,
-            price_per_kg=ppk,
-            total_cost=round(kg * ppk, 2),
-        ))
+        feed_purchases.append(
+            FeedPurchase(
+                organization_id=ORG_ID,
+                date=d,
+                type=random.choice(["starter", "grower", "layer", "finisher"]),
+                brand=random.choice(["Purina", "Cargill", "ADM", "Nutreco"]),
+                kg=kg,
+                price_per_kg=ppk,
+                total_cost=round(kg * ppk, 2),
+            )
+        )
     db.add_all(feed_purchases)
     counts["feed_purchases"] = 5
 
@@ -311,12 +321,14 @@ async def seed_demo_data(db: AsyncSession) -> dict:
         flock = random.choice(flocks)
         d = today - timedelta(days=random.randint(1, 60))
         grams = flock.current_count * random.uniform(105, 125)
-        consumptions.append(FeedConsumption(
-            organization_id=ORG_ID,
-            flock_id=flock.id,
-            date=d,
-            feed_kg=round(grams / 1000, 1),
-        ))
+        consumptions.append(
+            FeedConsumption(
+                organization_id=ORG_ID,
+                flock_id=flock.id,
+                date=d,
+                feed_kg=round(grams / 1000, 1),
+            )
+        )
     db.add_all(consumptions)
     counts["feed_consumption"] = 10
 
@@ -324,13 +336,15 @@ async def seed_demo_data(db: AsyncSession) -> dict:
     env_readings = []
     for i in range(5):
         d = today - timedelta(days=i * 7)
-        env_readings.append(EnvironmentReading(
-            organization_id=ORG_ID,
-            date=d,
-            temp_c=round(random.uniform(18, 32), 1),
-            humidity_pct=round(random.uniform(40, 80), 1),
-            light_lux=round(random.uniform(200, 800), 0),
-        ))
+        env_readings.append(
+            EnvironmentReading(
+                organization_id=ORG_ID,
+                date=d,
+                temp_c=round(random.uniform(18, 32), 1),
+                humidity_pct=round(random.uniform(40, 80), 1),
+                light_lux=round(random.uniform(200, 800), 0),
+            )
+        )
     db.add_all(env_readings)
     counts["environment_readings"] = 5
 

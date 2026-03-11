@@ -43,9 +43,8 @@ class TenantService:
         error_msg: str | None = None,
     ) -> Any:
         """Fetch a single tenant-scoped record by ID. Raises NotFoundError."""
-        stmt = (
-            select(model)
-            .where(model.id == record_id, model.organization_id == org_id)
+        stmt = select(model).where(
+            model.id == record_id, model.organization_id == org_id
         )
         if hasattr(model, "deleted_at"):
             stmt = stmt.where(model.deleted_at.is_(None))

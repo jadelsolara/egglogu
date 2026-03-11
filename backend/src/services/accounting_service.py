@@ -10,7 +10,6 @@ from decimal import Decimal
 
 from fastapi import HTTPException
 from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.core.cache import invalidate_prefix
@@ -85,10 +84,7 @@ class AccountingService(BaseService):
     # ══════════════════════════════════════════════════════════════════
 
     async def list_periods(self) -> list:
-        stmt = (
-            self._scoped(FiscalPeriod)
-            .order_by(FiscalPeriod.start_date.desc())
-        )
+        stmt = self._scoped(FiscalPeriod).order_by(FiscalPeriod.start_date.desc())
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
 
@@ -140,9 +136,7 @@ class AccountingService(BaseService):
             stmt = stmt.where(JournalEntry.date >= date_from)
         if date_to:
             stmt = stmt.where(JournalEntry.date <= date_to)
-        stmt = stmt.order_by(
-            JournalEntry.date.desc(), JournalEntry.entry_number.desc()
-        )
+        stmt = stmt.order_by(JournalEntry.date.desc(), JournalEntry.entry_number.desc())
         stmt = stmt.offset((page - 1) * size).limit(size)
         result = await self.db.execute(stmt)
         return list(result.scalars().unique().all())
@@ -165,8 +159,8 @@ class AccountingService(BaseService):
 
     async def create_journal_entry(self, data) -> JournalEntry:
         entry_number = await self._next_entry_number()
-        total_debit = sum(l.debit for l in data.lines)
-        total_credit = sum(l.credit for l in data.lines)
+        total_debit = sum(line.debit for line in data.lines)
+        total_credit = sum(line.credit for line in data.lines)
 
         entry = JournalEntry(
             organization_id=self.org_id,
@@ -375,9 +369,7 @@ class AccountingService(BaseService):
                 JournalEntry.organization_id == self.org_id,
                 JournalEntry.status == JournalEntryStatus.POSTED,
                 JournalEntry.date <= report_date,
-                Account.account_type.in_(
-                    [AccountType.REVENUE, AccountType.EXPENSE]
-                ),
+                Account.account_type.in_([AccountType.REVENUE, AccountType.EXPENSE]),
             )
         )
         ni_result = await self.db.execute(net_income_stmt)
@@ -464,9 +456,7 @@ class AccountingService(BaseService):
                 JournalEntry.status == JournalEntryStatus.POSTED,
                 JournalEntry.date >= start,
                 JournalEntry.date <= end,
-                Account.account_type.in_(
-                    [AccountType.REVENUE, AccountType.EXPENSE]
-                ),
+                Account.account_type.in_([AccountType.REVENUE, AccountType.EXPENSE]),
             )
             .group_by(
                 JournalEntryLine.account_id,
@@ -702,49 +692,261 @@ class AccountingService(BaseService):
 
     CORE_COA = [
         ("1000", "Cash", AccountType.ASSET, AccountSubType.CASH, NormalBalance.DEBIT),
-        ("1010", "Bank Account", AccountType.ASSET, AccountSubType.CASH, NormalBalance.DEBIT),
-        ("1100", "Accounts Receivable", AccountType.ASSET, AccountSubType.ACCOUNTS_RECEIVABLE, NormalBalance.DEBIT),
-        ("1200", "Product Inventory", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-        ("1210", "Feed & Supplies Inventory", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-        ("1220", "Packaging Materials", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-        ("1300", "Prepaid Expenses", AccountType.ASSET, AccountSubType.PREPAID, NormalBalance.DEBIT),
-        ("1500", "Biological Assets (IAS 41)", AccountType.ASSET, AccountSubType.BIOLOGICAL_ASSET, NormalBalance.DEBIT),
-        ("1600", "Buildings & Equipment", AccountType.ASSET, AccountSubType.FIXED_ASSET, NormalBalance.DEBIT),
-        ("1610", "Vehicles", AccountType.ASSET, AccountSubType.FIXED_ASSET, NormalBalance.DEBIT),
-        ("1650", "Accumulated Depreciation", AccountType.ASSET, AccountSubType.ACCUMULATED_DEPRECIATION, NormalBalance.CREDIT),
-        ("2000", "Accounts Payable", AccountType.LIABILITY, AccountSubType.ACCOUNTS_PAYABLE, NormalBalance.CREDIT),
-        ("2100", "Taxes Payable", AccountType.LIABILITY, AccountSubType.TAX_PAYABLE, NormalBalance.CREDIT),
-        ("2200", "Short-term Loans", AccountType.LIABILITY, AccountSubType.CURRENT_LIABILITY, NormalBalance.CREDIT),
-        ("2500", "Long-term Debt", AccountType.LIABILITY, AccountSubType.LONG_TERM_LIABILITY, NormalBalance.CREDIT),
-        ("3000", "Owner's Capital", AccountType.EQUITY, AccountSubType.OWNERS_EQUITY, NormalBalance.CREDIT),
-        ("3100", "Retained Earnings", AccountType.EQUITY, AccountSubType.RETAINED_EARNINGS, NormalBalance.CREDIT),
-        ("4000", "Product Sales", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-        ("4900", "Other Revenue", AccountType.REVENUE, AccountSubType.OTHER_REVENUE, NormalBalance.CREDIT),
-        ("5000", "Cost of Goods Sold", AccountType.EXPENSE, AccountSubType.COGS, NormalBalance.DEBIT),
-        ("5100", "Cost of Goods Sold — Feed/Supplies", AccountType.EXPENSE, AccountSubType.COGS, NormalBalance.DEBIT),
-        ("6000", "Feed & Nutrition", AccountType.EXPENSE, AccountSubType.FEED_EXPENSE, NormalBalance.DEBIT),
-        ("6100", "Veterinary & Health", AccountType.EXPENSE, AccountSubType.HEALTH_EXPENSE, NormalBalance.DEBIT),
-        ("6200", "Labor & Payroll", AccountType.EXPENSE, AccountSubType.LABOR_EXPENSE, NormalBalance.DEBIT),
-        ("6300", "Utilities (Electric, Water, Gas)", AccountType.EXPENSE, AccountSubType.UTILITY_EXPENSE, NormalBalance.DEBIT),
-        ("6400", "Depreciation Expense", AccountType.EXPENSE, AccountSubType.DEPRECIATION_EXPENSE, NormalBalance.DEBIT),
-        ("6500", "Packaging & Supplies", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-        ("6600", "Transport & Delivery", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-        ("6700", "Insurance", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-        ("6800", "Maintenance & Repairs", AccountType.EXPENSE, AccountSubType.OPERATING_EXPENSE, NormalBalance.DEBIT),
-        ("6900", "Other Operating Expenses", AccountType.EXPENSE, AccountSubType.OTHER_EXPENSE, NormalBalance.DEBIT),
+        (
+            "1010",
+            "Bank Account",
+            AccountType.ASSET,
+            AccountSubType.CASH,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1100",
+            "Accounts Receivable",
+            AccountType.ASSET,
+            AccountSubType.ACCOUNTS_RECEIVABLE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1200",
+            "Product Inventory",
+            AccountType.ASSET,
+            AccountSubType.INVENTORY,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1210",
+            "Feed & Supplies Inventory",
+            AccountType.ASSET,
+            AccountSubType.INVENTORY,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1220",
+            "Packaging Materials",
+            AccountType.ASSET,
+            AccountSubType.INVENTORY,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1300",
+            "Prepaid Expenses",
+            AccountType.ASSET,
+            AccountSubType.PREPAID,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1500",
+            "Biological Assets (IAS 41)",
+            AccountType.ASSET,
+            AccountSubType.BIOLOGICAL_ASSET,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1600",
+            "Buildings & Equipment",
+            AccountType.ASSET,
+            AccountSubType.FIXED_ASSET,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1610",
+            "Vehicles",
+            AccountType.ASSET,
+            AccountSubType.FIXED_ASSET,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "1650",
+            "Accumulated Depreciation",
+            AccountType.ASSET,
+            AccountSubType.ACCUMULATED_DEPRECIATION,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "2000",
+            "Accounts Payable",
+            AccountType.LIABILITY,
+            AccountSubType.ACCOUNTS_PAYABLE,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "2100",
+            "Taxes Payable",
+            AccountType.LIABILITY,
+            AccountSubType.TAX_PAYABLE,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "2200",
+            "Short-term Loans",
+            AccountType.LIABILITY,
+            AccountSubType.CURRENT_LIABILITY,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "2500",
+            "Long-term Debt",
+            AccountType.LIABILITY,
+            AccountSubType.LONG_TERM_LIABILITY,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "3000",
+            "Owner's Capital",
+            AccountType.EQUITY,
+            AccountSubType.OWNERS_EQUITY,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "3100",
+            "Retained Earnings",
+            AccountType.EQUITY,
+            AccountSubType.RETAINED_EARNINGS,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "4000",
+            "Product Sales",
+            AccountType.REVENUE,
+            AccountSubType.SALES_REVENUE,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "4900",
+            "Other Revenue",
+            AccountType.REVENUE,
+            AccountSubType.OTHER_REVENUE,
+            NormalBalance.CREDIT,
+        ),
+        (
+            "5000",
+            "Cost of Goods Sold",
+            AccountType.EXPENSE,
+            AccountSubType.COGS,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "5100",
+            "Cost of Goods Sold — Feed/Supplies",
+            AccountType.EXPENSE,
+            AccountSubType.COGS,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6000",
+            "Feed & Nutrition",
+            AccountType.EXPENSE,
+            AccountSubType.FEED_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6100",
+            "Veterinary & Health",
+            AccountType.EXPENSE,
+            AccountSubType.HEALTH_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6200",
+            "Labor & Payroll",
+            AccountType.EXPENSE,
+            AccountSubType.LABOR_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6300",
+            "Utilities (Electric, Water, Gas)",
+            AccountType.EXPENSE,
+            AccountSubType.UTILITY_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6400",
+            "Depreciation Expense",
+            AccountType.EXPENSE,
+            AccountSubType.DEPRECIATION_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6500",
+            "Packaging & Supplies",
+            AccountType.EXPENSE,
+            AccountSubType.OPERATING_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6600",
+            "Transport & Delivery",
+            AccountType.EXPENSE,
+            AccountSubType.OPERATING_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6700",
+            "Insurance",
+            AccountType.EXPENSE,
+            AccountSubType.OPERATING_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6800",
+            "Maintenance & Repairs",
+            AccountType.EXPENSE,
+            AccountSubType.OPERATING_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
+        (
+            "6900",
+            "Other Operating Expenses",
+            AccountType.EXPENSE,
+            AccountSubType.OTHER_EXPENSE,
+            NormalBalance.DEBIT,
+        ),
     ]
 
     VERTICAL_COA: dict[str, list[tuple]] = {
         "egglogu": [
-            ("4010", "Egg Sales — Table", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-            ("4020", "Spent Hen Sales", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-            ("4030", "Manure / Fertilizer Sales", AccountType.REVENUE, AccountSubType.SALES_REVENUE, NormalBalance.CREDIT),
-            ("1201", "Egg Inventory — Graded", AccountType.ASSET, AccountSubType.INVENTORY, NormalBalance.DEBIT),
-            ("5010", "COGS — Eggs", AccountType.EXPENSE, AccountSubType.COGS, NormalBalance.DEBIT),
+            (
+                "4010",
+                "Egg Sales — Table",
+                AccountType.REVENUE,
+                AccountSubType.SALES_REVENUE,
+                NormalBalance.CREDIT,
+            ),
+            (
+                "4020",
+                "Spent Hen Sales",
+                AccountType.REVENUE,
+                AccountSubType.SALES_REVENUE,
+                NormalBalance.CREDIT,
+            ),
+            (
+                "4030",
+                "Manure / Fertilizer Sales",
+                AccountType.REVENUE,
+                AccountSubType.SALES_REVENUE,
+                NormalBalance.CREDIT,
+            ),
+            (
+                "1201",
+                "Egg Inventory — Graded",
+                AccountType.ASSET,
+                AccountSubType.INVENTORY,
+                NormalBalance.DEBIT,
+            ),
+            (
+                "5010",
+                "COGS — Eggs",
+                AccountType.EXPENSE,
+                AccountSubType.COGS,
+                NormalBalance.DEBIT,
+            ),
         ],
     }
 
     @staticmethod
     def get_full_coa(vertical: str = "egglogu") -> list[tuple]:
         """Return CORE_COA + vertical-specific accounts."""
-        return AccountingService.CORE_COA + AccountingService.VERTICAL_COA.get(vertical, [])
+        return AccountingService.CORE_COA + AccountingService.VERTICAL_COA.get(
+            vertical, []
+        )

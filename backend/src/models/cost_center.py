@@ -23,8 +23,8 @@ from src.models.base import TimestampMixin, TenantMixin
 class CostCenterType(str, enum.Enum):
     farm = "farm"
     flock = "flock"
-    herd = "herd"              # PigLogu / CowLogu
-    field = "field"            # CropLogu
+    herd = "herd"  # PigLogu / CowLogu
+    field = "field"  # CropLogu
     warehouse = "warehouse"
     transport = "transport"
     processing = "processing"  # Slaughter, packing plant, etc.
@@ -33,12 +33,14 @@ class CostCenterType(str, enum.Enum):
 
 
 class AllocationMethod(str, enum.Enum):
-    direct = "direct"                            # 100% to one center
-    proportional_units = "proportional_units"    # Split by unit count (hens, pigs, cows, hectares)
+    direct = "direct"  # 100% to one center
+    proportional_units = (
+        "proportional_units"  # Split by unit count (hens, pigs, cows, hectares)
+    )
     proportional_production = "proportional_production"  # Split by output
     proportional_revenue = "proportional_revenue"  # Split by revenue
-    equal_split = "equal_split"                  # Split equally
-    manual = "manual"                            # User-defined %
+    equal_split = "equal_split"  # Split equally
+    manual = "manual"  # User-defined %
     # Legacy alias — DB may still have this value from existing EGGlogU data
     proportional_birds = "proportional_birds"
 
@@ -148,7 +150,9 @@ class ProfitLossSnapshot(TimestampMixin, TenantMixin, Base):
     revenue_breakdown: Mapped[Optional[dict]] = mapped_column(JSON, default=None)
     # ── Generic production metrics (work for any vertical) ──
     units_produced: Mapped[Optional[int]] = mapped_column(
-        "eggs_produced", Integer, default=None  # keep DB column for backward compat
+        "eggs_produced",
+        Integer,
+        default=None,  # keep DB column for backward compat
     )
     units_sold: Mapped[Optional[int]] = mapped_column(
         "eggs_sold", Integer, default=None
@@ -157,7 +161,9 @@ class ProfitLossSnapshot(TimestampMixin, TenantMixin, Base):
         "cost_per_egg", Float, default=None
     )
     cost_per_standard_unit: Mapped[Optional[float]] = mapped_column(
-        "cost_per_dozen", Float, default=None  # dozen for eggs, kg for meat, liter for milk
+        "cost_per_dozen",
+        Float,
+        default=None,  # dozen for eggs, kg for meat, liter for milk
     )
     unit_of_measure: Mapped[Optional[str]] = mapped_column(String(20), default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)

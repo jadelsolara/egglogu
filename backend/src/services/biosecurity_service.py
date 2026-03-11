@@ -12,7 +12,6 @@ from src.services.base import BaseService
 
 
 class BiosecurityService(BaseService):
-
     # ── Visitantes ───────────────────────────────────────────────────
 
     async def list_visitors(self, *, page: int = 1, size: int = 50) -> list:
@@ -75,6 +74,4 @@ class BiosecurityService(BaseService):
         )
 
     async def delete_protocol(self, item_id: uuid.UUID) -> None:
-        await self._delete(
-            BiosecurityProtocol, item_id, error_msg="Protocol not found"
-        )
+        await self._delete(BiosecurityProtocol, item_id, error_msg="Protocol not found")

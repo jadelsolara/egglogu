@@ -89,12 +89,9 @@ class WorkflowsService(BaseService):
 
     async def evaluate_all(self, farm_id: uuid.UUID) -> dict:
         """Evalúa todas las reglas activas de una granja."""
-        stmt = (
-            self._scoped(WorkflowRule)
-            .where(
-                WorkflowRule.farm_id == farm_id,
-                WorkflowRule.is_active == True,  # noqa: E712
-            )
+        stmt = self._scoped(WorkflowRule).where(
+            WorkflowRule.farm_id == farm_id,
+            WorkflowRule.is_active == True,  # noqa: E712
         )
         result = await self.db.execute(stmt)
         rules = result.scalars().all()

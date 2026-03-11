@@ -19,9 +19,17 @@ from decimal import Decimal
 from typing import Optional
 
 from sqlalchemy import (
-    String, Text, Date, DateTime, Boolean, ForeignKey, Index,
-    Numeric, Enum as SAEnum, UniqueConstraint, CheckConstraint,
-    func,
+    String,
+    Text,
+    Date,
+    DateTime,
+    Boolean,
+    ForeignKey,
+    Index,
+    Numeric,
+    Enum as SAEnum,
+    UniqueConstraint,
+    CheckConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -31,8 +39,10 @@ from src.models.base import TimestampMixin, TenantMixin
 
 # ── Enums ────────────────────────────────────────────────────────────────
 
+
 class AccountType(str, enum.Enum):
     """Top-level account classification (IFRS)."""
+
     ASSET = "asset"
     LIABILITY = "liability"
     EQUITY = "equity"
@@ -42,6 +52,7 @@ class AccountType(str, enum.Enum):
 
 class AccountSubType(str, enum.Enum):
     """Sub-classification for financial statement presentation."""
+
     # Assets
     CURRENT_ASSET = "current_asset"
     INVENTORY = "inventory"
@@ -75,12 +86,14 @@ class AccountSubType(str, enum.Enum):
 
 class NormalBalance(str, enum.Enum):
     """Accounting normal balance side."""
+
     DEBIT = "debit"
     CREDIT = "credit"
 
 
 class JournalEntryStatus(str, enum.Enum):
     """Journal entry lifecycle."""
+
     DRAFT = "draft"
     POSTED = "posted"
     REVERSED = "reversed"
@@ -88,6 +101,7 @@ class JournalEntryStatus(str, enum.Enum):
 
 class JournalEntrySource(str, enum.Enum):
     """What generated this journal entry."""
+
     MANUAL = "manual"
     INCOME = "income"
     EXPENSE = "expense"
@@ -105,12 +119,14 @@ class JournalEntrySource(str, enum.Enum):
 
 class PeriodStatus(str, enum.Enum):
     """Fiscal period state."""
+
     OPEN = "open"
     CLOSED = "closed"
     LOCKED = "locked"  # Permanently closed (audited)
 
 
 # ── Chart of Accounts ────────────────────────────────────────────────────
+
 
 class Account(TimestampMixin, TenantMixin, Base):
     """General Ledger account in the Chart of Accounts.
@@ -119,6 +135,7 @@ class Account(TimestampMixin, TenantMixin, Base):
     1xxx = Assets, 2xxx = Liabilities, 3xxx = Equity,
     4xxx = Revenue, 5xxx = COGS, 6xxx = Operating Expenses
     """
+
     __tablename__ = "gl_accounts"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -153,8 +170,10 @@ class Account(TimestampMixin, TenantMixin, Base):
 
 # ── Fiscal Period ────────────────────────────────────────────────────────
 
+
 class FiscalPeriod(TimestampMixin, TenantMixin, Base):
     """Accounting period (month or custom). Entries can only post to open periods."""
+
     __tablename__ = "fiscal_periods"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -170,8 +189,12 @@ class FiscalPeriod(TimestampMixin, TenantMixin, Base):
     closed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, default=None)
 
     # Relationships
-    journal_entries: Mapped[list["JournalEntry"]] = relationship(back_populates="period")
-    account_balances: Mapped[list["AccountBalance"]] = relationship(back_populates="period")
+    journal_entries: Mapped[list["JournalEntry"]] = relationship(
+        back_populates="period"
+    )
+    account_balances: Mapped[list["AccountBalance"]] = relationship(
+        back_populates="period"
+    )
 
     __table_args__ = (
         UniqueConstraint("organization_id", "name", name="uq_period_org_name"),
@@ -181,8 +204,10 @@ class FiscalPeriod(TimestampMixin, TenantMixin, Base):
 
 # ── Journal Entry (Header) ──────────────────────────────────────────────
 
+
 class JournalEntry(TimestampMixin, TenantMixin, Base):
     """Double-entry journal entry header. Sum of debits MUST equal sum of credits."""
+
     __tablename__ = "journal_entries"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -218,16 +243,15 @@ class JournalEntry(TimestampMixin, TenantMixin, Base):
     lines: Mapped[list["JournalEntryLine"]] = relationship(
         back_populates="journal_entry", cascade="all, delete-orphan"
     )
-    period: Mapped[Optional["FiscalPeriod"]] = relationship(back_populates="journal_entries")
+    period: Mapped[Optional["FiscalPeriod"]] = relationship(
+        back_populates="journal_entries"
+    )
 
     __table_args__ = (
         UniqueConstraint(
             "organization_id", "entry_number", name="uq_journal_org_number"
         ),
-        CheckConstraint(
-            "total_debit = total_credit",
-            name="ck_journal_balanced"
-        ),
+        CheckConstraint("total_debit = total_credit", name="ck_journal_balanced"),
         Index("ix_journal_org_date", "organization_id", "date"),
         Index("ix_journal_source", "organization_id", "source", "source_id"),
     )
@@ -235,9 +259,11 @@ class JournalEntry(TimestampMixin, TenantMixin, Base):
 
 # ── Journal Entry Line (Detail) ─────────────────────────────────────────
 
+
 class JournalEntryLine(TimestampMixin, TenantMixin, Base):
     """Single debit or credit line in a journal entry.
     Each line touches exactly one GL account."""
+
     __tablename__ = "journal_entry_lines"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -261,7 +287,7 @@ class JournalEntryLine(TimestampMixin, TenantMixin, Base):
     __table_args__ = (
         CheckConstraint(
             "(debit > 0 AND credit = 0) OR (credit > 0 AND debit = 0)",
-            name="ck_line_one_side"
+            name="ck_line_one_side",
         ),
         Index("ix_jel_account_date", "account_id", "journal_entry_id"),
     )
@@ -269,9 +295,11 @@ class JournalEntryLine(TimestampMixin, TenantMixin, Base):
 
 # ── Account Balance (Materialized) ──────────────────────────────────────
 
+
 class AccountBalance(TimestampMixin, TenantMixin, Base):
     """Materialized balance per account per period.
     Updated when journal entries are posted. Enables fast financial statements."""
+
     __tablename__ = "account_balances"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -287,9 +315,7 @@ class AccountBalance(TimestampMixin, TenantMixin, Base):
     credit_total: Mapped[Decimal] = mapped_column(
         Numeric(14, 2), default=Decimal("0.00")
     )
-    balance: Mapped[Decimal] = mapped_column(
-        Numeric(14, 2), default=Decimal("0.00")
-    )
+    balance: Mapped[Decimal] = mapped_column(Numeric(14, 2), default=Decimal("0.00"))
 
     # Relationships
     account: Mapped["Account"] = relationship(back_populates="balances")
@@ -297,7 +323,9 @@ class AccountBalance(TimestampMixin, TenantMixin, Base):
 
     __table_args__ = (
         UniqueConstraint(
-            "organization_id", "account_id", "period_id",
-            name="uq_balance_account_period"
+            "organization_id",
+            "account_id",
+            "period_id",
+            name="uq_balance_account_period",
         ),
     )

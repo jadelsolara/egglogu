@@ -18,7 +18,9 @@ from src.database import get_db
 from src.models.auth import User
 from src.api.deps import get_current_user
 from src.core.verticals import (
-    Vertical, get_vertical, all_verticals,
+    Vertical,
+    get_vertical,
+    all_verticals,
 )
 from src.services.farmlogu_service import FarmLogUService
 
@@ -26,6 +28,7 @@ router = APIRouter(prefix="/farmlogu", tags=["farmlogu"])
 
 
 # ── Schemas ──
+
 
 class VerticalInfo(BaseModel):
     code: str
@@ -63,21 +66,24 @@ class ConsolidatedView(BaseModel):
 
 # ── Endpoints ──
 
+
 @router.get("/verticals", response_model=list[VerticalInfo])
 async def list_verticals():
     """Retorna todas las verticales disponibles y sus features."""
     result = []
     for v in all_verticals():
-        result.append(VerticalInfo(
-            code=v.code.value,
-            name=v.name,
-            product_name=v.product_name,
-            unit_name=v.unit_name,
-            primary_unit_of_measure=v.primary_unit_of_measure,
-            icon=v.icon,
-            features=[f.value for f in v.features],
-            kpi_metrics=list(v.kpi_metrics),
-        ))
+        result.append(
+            VerticalInfo(
+                code=v.code.value,
+                name=v.name,
+                product_name=v.product_name,
+                unit_name=v.unit_name,
+                primary_unit_of_measure=v.primary_unit_of_measure,
+                icon=v.icon,
+                features=[f.value for f in v.features],
+                kpi_metrics=list(v.kpi_metrics),
+            )
+        )
     return result
 
 

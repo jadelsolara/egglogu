@@ -9,13 +9,12 @@ No PII is ever included in intelligence responses.
 All queries exclude superadmin user data.
 """
 
-import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel, Field
-from sqlalchemy import case, cast, distinct, extract, func, select, Float as SAFloat
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
+from sqlalchemy import cast, distinct, extract, func, select, Float as SAFloat
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.deps import require_superadmin
@@ -23,9 +22,9 @@ from src.database import get_db
 from src.models.auth import Organization, Role, User
 from src.models.farm import Farm
 from src.models.flock import Flock
-from src.models.production import DailyProduction, EggType, MarketChannel
-from src.models.health import Vaccine, Medication, Outbreak
-from src.models.feed import FeedPurchase, FeedConsumption
+from src.models.production import DailyProduction
+from src.models.health import Vaccine, Outbreak
+from src.models.feed import FeedPurchase
 from src.models.finance import Income
 from src.models.subscription import Subscription, SubscriptionStatus, PlanTier
 from src.models.support import SupportTicket
@@ -153,8 +152,18 @@ class IntelligenceResponse(BaseModel):
 
 
 MONTH_NAMES = {
-    1: "Ene", 2: "Feb", 3: "Mar", 4: "Abr", 5: "May", 6: "Jun",
-    7: "Jul", 8: "Ago", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dic",
+    1: "Ene",
+    2: "Feb",
+    3: "Mar",
+    4: "Abr",
+    5: "May",
+    6: "Jun",
+    7: "Jul",
+    8: "Ago",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dic",
 }
 
 PRICE_MAP = {"hobby": 0, "starter": 49, "pro": 99, "enterprise": 199}
@@ -228,7 +237,9 @@ async def get_intelligence(
     # ── 2. Revenue Metrics ────────────────────────────────────────
     subs = (
         await db.execute(
-            select(Subscription.plan, Subscription.is_trial, func.count(Subscription.id))
+            select(
+                Subscription.plan, Subscription.is_trial, func.count(Subscription.id)
+            )
             .where(Subscription.status == SubscriptionStatus.active)
             .group_by(Subscription.plan, Subscription.is_trial)
         )
@@ -470,16 +481,12 @@ async def get_intelligence(
         )
     ).all()
     disease_prevalence = [
-        DiseasePrevance(
-            disease=row[0], occurrence_count=row[1], farm_count=row[2]
-        )
+        DiseasePrevance(disease=row[0], occurrence_count=row[1], farm_count=row[2])
         for row in disease_q
     ]
 
     # ── 10. Module Adoption ───────────────────────────────────────
-    total_orgs = (
-        await db.execute(select(func.count(Organization.id)))
-    ).scalar() or 1
+    total_orgs = (await db.execute(select(func.count(Organization.id)))).scalar() or 1
 
     # Check which orgs have data in each module table
     module_tables = {
@@ -501,7 +508,9 @@ async def get_intelligence(
             ModuleAdoption(
                 module=mod_name,
                 orgs_using=count,
-                adoption_pct=round(count / total_orgs * 100, 1) if total_orgs > 0 else 0.0,
+                adoption_pct=round(count / total_orgs * 100, 1)
+                if total_orgs > 0
+                else 0.0,
             )
         )
 
@@ -527,8 +536,7 @@ async def get_intelligence(
         # Count how many from this source ended up paying
         paid_from_source = (
             await db.execute(
-                select(func.count(distinct(User.id)))
-                .where(
+                select(func.count(distinct(User.id))).where(
                     User.utm_source == row[0],
                     User.organization_id.in_(
                         select(Subscription.organization_id).where(

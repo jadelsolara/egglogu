@@ -16,7 +16,9 @@ class TraceabilityBatchCreate(BaseModel):
     product_type: Optional[str] = Field(default=None, max_length=50)
     farm_id: Optional[uuid.UUID] = None
     source_id: Optional[uuid.UUID] = None  # flock_id, herd_id, field_id
-    source_type: Optional[str] = Field(default=None, max_length=50)  # "flock", "herd", "field"
+    source_type: Optional[str] = Field(
+        default=None, max_length=50
+    )  # "flock", "herd", "field"
     origin_location: Optional[str] = Field(default=None, max_length=100)
     quantity: int = Field(default=0, ge=0, le=10_000_000)
     unit_of_measure: str = Field(default="units", max_length=20)
@@ -89,6 +91,7 @@ class TraceFarmInfo(BaseModel):
 
 class TraceOriginInfo(BaseModel):
     """Generic origin info — works for flock, herd, field, etc."""
+
     name: Optional[str] = None
     type: Optional[str] = None  # "flock", "herd", "field"
     start_date: Optional[date] = None
@@ -97,6 +100,7 @@ class TraceOriginInfo(BaseModel):
 
 class TracePublicResponse(BaseModel):
     """What a client/inspector sees when scanning the QR code."""
+
     batch_code: str
     date: date
     product_category: str

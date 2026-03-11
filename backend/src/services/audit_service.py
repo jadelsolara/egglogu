@@ -4,11 +4,9 @@ Proporciona listado paginado, estadísticas y verificación de integridad
 del hash-chain de auditoría por organización.
 """
 
-import uuid
 from typing import Any
 
 from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.base import BaseService
 from src.models.audit import AuditLog
@@ -47,8 +45,9 @@ class AuditService(BaseService):
             .where(AuditLog.organization_id == org_id)
             .order_by(AuditLog.timestamp.desc())
         )
-        stmt = self._apply_filters(stmt, resource=resource, action=action,
-                                    table_name=table_name)
+        stmt = self._apply_filters(
+            stmt, resource=resource, action=action, table_name=table_name
+        )
         stmt = stmt.offset((page - 1) * size).limit(size)
         result = await self.db.execute(stmt)
         logs = result.scalars().all()
@@ -57,8 +56,9 @@ class AuditService(BaseService):
         count_stmt = select(func.count(AuditLog.id)).where(
             AuditLog.organization_id == org_id
         )
-        count_stmt = self._apply_filters(count_stmt, resource=resource,
-                                          action=action, table_name=table_name)
+        count_stmt = self._apply_filters(
+            count_stmt, resource=resource, action=action, table_name=table_name
+        )
         total = (await self.db.execute(count_stmt)).scalar()
 
         return {

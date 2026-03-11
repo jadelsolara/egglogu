@@ -80,7 +80,9 @@ async def list_allocations(
     user: User = Depends(require_feature("finance")),
 ):
     svc = _svc(db, user)
-    return await svc.list_allocations(center_id, category=category, page=page, size=size)
+    return await svc.list_allocations(
+        center_id, category=category, page=page, size=size
+    )
 
 
 @router.post(

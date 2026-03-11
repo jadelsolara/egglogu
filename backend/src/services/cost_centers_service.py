@@ -28,9 +28,7 @@ class CostCentersService(BaseService):
         page: int = 1,
         size: int = 50,
     ) -> list:
-        stmt = select(CostCenter).where(
-            CostCenter.organization_id == self.org_id
-        )
+        stmt = select(CostCenter).where(CostCenter.organization_id == self.org_id)
         if center_type:
             stmt = stmt.where(CostCenter.center_type == center_type)
         stmt = stmt.order_by(CostCenter.id).offset((page - 1) * size).limit(size)
@@ -138,9 +136,7 @@ class CostCentersService(BaseService):
     ) -> ProfitLossSnapshot:
         gross_profit = data.total_revenue - data.total_cost
         margin_pct = (
-            (gross_profit / data.total_revenue * 100)
-            if data.total_revenue > 0
-            else 0.0
+            (gross_profit / data.total_revenue * 100) if data.total_revenue > 0 else 0.0
         )
         cost_per_unit = (
             (data.total_cost / data.units_produced) if data.units_produced else None

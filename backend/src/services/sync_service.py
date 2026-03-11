@@ -12,16 +12,34 @@ from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.base import BaseService
 from src.models import (
-    Farm, Flock, DailyProduction, Vaccine, Medication, Outbreak,
-    StressEvent, FeedPurchase, FeedConsumption, Client, Income, Expense,
-    Receivable, EnvironmentReading, IoTReading, WeatherCache,
-    ChecklistItem, LogbookEntry, Personnel, BiosecurityVisitor,
-    BiosecurityZone, PestSighting, BiosecurityProtocol,
-    TraceabilityBatch, ProductionPlan,
+    Farm,
+    Flock,
+    DailyProduction,
+    Vaccine,
+    Medication,
+    Outbreak,
+    StressEvent,
+    FeedPurchase,
+    FeedConsumption,
+    Client,
+    Income,
+    Expense,
+    Receivable,
+    EnvironmentReading,
+    IoTReading,
+    WeatherCache,
+    ChecklistItem,
+    LogbookEntry,
+    Personnel,
+    BiosecurityVisitor,
+    BiosecurityZone,
+    PestSighting,
+    BiosecurityProtocol,
+    TraceabilityBatch,
+    ProductionPlan,
 )
 
 logger = logging.getLogger("egglogu.sync")
@@ -78,7 +96,10 @@ class SyncService(BaseService):
 
         logger.info(
             "Sync request from user=%s org=%s entities=%d last_synced=%s",
-            self.user_id, self.org_id, len(data), last_synced_at,
+            self.user_id,
+            self.org_id,
+            len(data),
+            last_synced_at,
         )
 
         # ── Fase 1: Upsert de cambios del cliente ──
@@ -98,7 +119,8 @@ class SyncService(BaseService):
 
         logger.info(
             "Sync complete: synced=%d conflicts=%d changes_returned=%d cursor=%s",
-            synced, len(conflicts),
+            synced,
+            len(conflicts),
             sum(len(v) for v in server_changes.values()),
             max_cursor,
         )
@@ -182,9 +204,7 @@ class SyncService(BaseService):
                         data.pop("id", None)
                         inserts.append(data)
             except Exception as e:
-                result["conflicts"].append(
-                    f"{entity_key}: batch update error — {e}"
-                )
+                result["conflicts"].append(f"{entity_key}: batch update error — {e}")
                 logger.error("Sync batch update error on %s: %s", entity_key, e)
 
         # Inserts nuevos en batch
@@ -195,9 +215,7 @@ class SyncService(BaseService):
                 result["synced"] += 1
             except IntegrityError as e:
                 await self.db.rollback()
-                result["conflicts"].append(
-                    f"{entity_key}: FK violation — {e.orig}"
-                )
+                result["conflicts"].append(f"{entity_key}: FK violation — {e.orig}")
                 logger.error("Sync IntegrityError on %s: %s", entity_key, e.orig)
             except Exception as e:
                 result["conflicts"].append(f"{entity_key}: {e}")
@@ -244,7 +262,7 @@ class SyncService(BaseService):
 
     @staticmethod
     def _compute_cursor(
-        server_changes: dict[str, list[dict[str, Any]]]
+        server_changes: dict[str, list[dict[str, Any]]],
     ) -> datetime | None:
         """Calcula el cursor de sincronización (máximo updated_at)."""
         max_cursor: datetime | None = None

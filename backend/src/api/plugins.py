@@ -107,8 +107,7 @@ async def list_installed(
     result = await svc.list_installed(page=page, size=size)
     return {
         "items": [
-            _install_to_response(install, plugin)
-            for install, plugin in result["rows"]
+            _install_to_response(install, plugin) for install, plugin in result["rows"]
         ],
         "total": result["total"],
         "page": result["page"],

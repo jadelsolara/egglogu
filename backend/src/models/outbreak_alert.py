@@ -5,7 +5,7 @@ import uuid
 from datetime import date, datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, Date, Enum as SAEnum, Float, Integer, String, Text, func
+from sqlalchemy import Boolean, Date, Enum as SAEnum, Float, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
@@ -22,9 +22,9 @@ class OutbreakSeverity(str, enum.Enum):
 class TransmissionType(str, enum.Enum):
     airborne = "airborne"
     contact = "contact"
-    vector = "vector"          # mosquitoes, ticks, etc.
+    vector = "vector"  # mosquitoes, ticks, etc.
     waterborne = "waterborne"
-    fomite = "fomite"          # contaminated objects/surfaces
+    fomite = "fomite"  # contaminated objects/surfaces
     unknown = "unknown"
 
 
@@ -56,7 +56,9 @@ class OutbreakAlert(TimestampMixin, Base):
     epicenter_lat: Mapped[float] = mapped_column(Float)
     epicenter_lng: Mapped[float] = mapped_column(Float)
     radius_km: Mapped[float] = mapped_column(Float, default=100.0)
-    region_name: Mapped[str] = mapped_column(String(200))  # human-readable: "Central Chile", "Iowa, USA"
+    region_name: Mapped[str] = mapped_column(
+        String(200)
+    )  # human-readable: "Central Chile", "Iowa, USA"
 
     # When
     detected_date: Mapped[date] = mapped_column(Date)

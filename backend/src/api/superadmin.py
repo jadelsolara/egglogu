@@ -1099,17 +1099,31 @@ async def create_outbreak_alert(
     await db.flush()
 
     await _audit(
-        db, user, "CREATE", "outbreak_alert", str(alert.id), request,
-        changes={"disease": data.disease, "region": data.region_name,
-                 "severity": data.severity, "radius_km": data.radius_km},
+        db,
+        user,
+        "CREATE",
+        "outbreak_alert",
+        str(alert.id),
+        request,
+        changes={
+            "disease": data.disease,
+            "region": data.region_name,
+            "severity": data.severity,
+            "radius_km": data.radius_km,
+        },
     )
 
     # Publish event to global channel via Redis
     from src.core.events import EventType, publish_event
+
     await publish_event(
         EventType.OUTBREAK_ALERT,
-        data={"alert_id": str(alert.id), "disease": data.disease,
-              "severity": data.severity, "region": data.region_name},
+        data={
+            "alert_id": str(alert.id),
+            "disease": data.disease,
+            "severity": data.severity,
+            "region": data.region_name,
+        },
     )
 
     return OutbreakAlertRead.model_validate(alert)
@@ -1144,7 +1158,12 @@ async def update_outbreak_alert(
 
     if changes:
         await _audit(
-            db, user, "UPDATE", "outbreak_alert", str(alert_id), request,
+            db,
+            user,
+            "UPDATE",
+            "outbreak_alert",
+            str(alert_id),
+            request,
             changes=changes,
         )
 
@@ -1166,7 +1185,12 @@ async def delete_outbreak_alert(
         raise NotFoundError("Outbreak alert not found")
 
     await _audit(
-        db, user, "DELETE", "outbreak_alert", str(alert_id), request,
+        db,
+        user,
+        "DELETE",
+        "outbreak_alert",
+        str(alert_id),
+        request,
         changes={"disease": alert.disease, "region": alert.region_name},
     )
     await db.delete(alert)

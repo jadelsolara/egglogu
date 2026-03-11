@@ -23,8 +23,17 @@ from datetime import datetime, date
 from typing import Optional
 
 from sqlalchemy import (
-    DateTime, Date, Enum, ForeignKey, Integer, Float, String, Text, JSON,
-    Index, UniqueConstraint,
+    DateTime,
+    Date,
+    Enum,
+    ForeignKey,
+    Integer,
+    Float,
+    String,
+    Text,
+    JSON,
+    Index,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -34,42 +43,48 @@ from src.models.base import TimestampMixin, TenantMixin
 
 # ── EPCIS 2.0 Event Types ──
 
+
 class TraceEventType(str, enum.Enum):
     """GS1 EPCIS 2.0 event types."""
-    OBJECT = "object"                    # Observe/create/delete objects at location
-    AGGREGATION = "aggregation"          # Pack/unpack items into containers
-    TRANSFORMATION = "transformation"    # Inputs consumed → outputs produced
-    TRANSACTION = "transaction"          # Link to business documents
+
+    OBJECT = "object"  # Observe/create/delete objects at location
+    AGGREGATION = "aggregation"  # Pack/unpack items into containers
+    TRANSFORMATION = "transformation"  # Inputs consumed → outputs produced
+    TRANSACTION = "transaction"  # Link to business documents
 
 
 class TraceEventAction(str, enum.Enum):
     """EPCIS action within an event."""
-    ADD = "add"          # Object enters the system / is added
+
+    ADD = "add"  # Object enters the system / is added
     OBSERVE = "observe"  # Object observed at location (no state change)
-    DELETE = "delete"    # Object leaves the system / destroyed
+    DELETE = "delete"  # Object leaves the system / destroyed
 
 
 # ── FSMA 204 Critical Tracking Events ──
 
+
 class CriticalTrackingEvent(str, enum.Enum):
     """FSMA 204 CTEs — what happened to the product."""
-    GROWING = "growing"              # Farm-level: planting, raising
-    HARVESTING = "harvesting"        # Collection from farm/field/flock
-    COOLING = "cooling"              # Cold chain initiation
+
+    GROWING = "growing"  # Farm-level: planting, raising
+    HARVESTING = "harvesting"  # Collection from farm/field/flock
+    COOLING = "cooling"  # Cold chain initiation
     INITIAL_PACKING = "initial_packing"  # First packing of raw product
-    SHIPPING = "shipping"            # Product leaves a location
-    RECEIVING = "receiving"          # Product arrives at a location
+    SHIPPING = "shipping"  # Product leaves a location
+    RECEIVING = "receiving"  # Product arrives at a location
     TRANSFORMATION = "transformation"  # Processing, mixing, grading
-    STORING = "storing"              # Placed in storage
-    SELLING = "selling"              # Sale to customer
-    RECALLING = "recalling"          # Product recall event
+    STORING = "storing"  # Placed in storage
+    SELLING = "selling"  # Sale to customer
+    RECALLING = "recalling"  # Product recall event
 
 
 class TraceLocationType(str, enum.Enum):
     """Type of location in the supply chain."""
+
     FARM = "farm"
     FIELD = "field"
-    HOUSE = "house"             # poultry house, barn
+    HOUSE = "house"  # poultry house, barn
     PACKING_SHED = "packing_shed"
     WAREHOUSE = "warehouse"
     COLD_STORAGE = "cold_storage"
@@ -83,6 +98,7 @@ class TraceLocationType(str, enum.Enum):
 # GS1 Location Registry — GLN-based location identification
 # ═══════════════════════════════════════════════════════════════════
 
+
 class TraceLocation(TimestampMixin, TenantMixin, Base):
     """Physical or logical location in the supply chain (GS1 GLN).
 
@@ -90,18 +106,23 @@ class TraceLocation(TimestampMixin, TenantMixin, Base):
     Supports the EU 178/2002 "one step back, one step forward" principle
     by identifying WHERE things happen.
     """
+
     __tablename__ = "trace_locations"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(200))
-    gln: Mapped[Optional[str]] = mapped_column(String(13), unique=True, default=None)  # GS1 Global Location Number
+    gln: Mapped[Optional[str]] = mapped_column(
+        String(13), unique=True, default=None
+    )  # GS1 Global Location Number
     location_type: Mapped[TraceLocationType] = mapped_column(Enum(TraceLocationType))
 
     # Address
     address: Mapped[Optional[str]] = mapped_column(String(500), default=None)
     city: Mapped[Optional[str]] = mapped_column(String(100), default=None)
     region: Mapped[Optional[str]] = mapped_column(String(100), default=None)
-    country: Mapped[Optional[str]] = mapped_column(String(3), default=None)  # ISO 3166-1 alpha-3
+    country: Mapped[Optional[str]] = mapped_column(
+        String(3), default=None
+    )  # ISO 3166-1 alpha-3
     latitude: Mapped[Optional[float]] = mapped_column(Float, default=None)
     longitude: Mapped[Optional[float]] = mapped_column(Float, default=None)
 
@@ -119,7 +140,9 @@ class TraceLocation(TimestampMixin, TenantMixin, Base):
     contact_email: Mapped[Optional[str]] = mapped_column(String(200), default=None)
 
     # Certifications (GAP, organic, HACCP, etc.)
-    certifications: Mapped[Optional[dict]] = mapped_column("certifications_data", JSON, default=None)
+    certifications: Mapped[Optional[dict]] = mapped_column(
+        "certifications_data", JSON, default=None
+    )
 
     is_active: Mapped[bool] = mapped_column(default=True)
 
@@ -131,7 +154,8 @@ class TraceLocation(TimestampMixin, TenantMixin, Base):
         back_populates="source_location", foreign_keys="[TraceEvent.source_location_id]"
     )
     destination_events: Mapped[list["TraceEvent"]] = relationship(
-        back_populates="destination_location", foreign_keys="[TraceEvent.destination_location_id]"
+        back_populates="destination_location",
+        foreign_keys="[TraceEvent.destination_location_id]",
     )
 
     __table_args__ = (
@@ -145,6 +169,7 @@ class TraceLocation(TimestampMixin, TenantMixin, Base):
 # EPCIS 2.0 Event Log — The heart of the traceability system
 # ═══════════════════════════════════════════════════════════════════
 
+
 class TraceEvent(TimestampMixin, TenantMixin, Base):
     """EPCIS 2.0 event — records WHAT happened, WHERE, WHEN, and WHY.
 
@@ -155,6 +180,7 @@ class TraceEvent(TimestampMixin, TenantMixin, Base):
     Supports forward trace (origin → consumer) and backward trace
     (consumer → origin) by linking events to batches.
     """
+
     __tablename__ = "trace_events"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -168,14 +194,20 @@ class TraceEvent(TimestampMixin, TenantMixin, Base):
 
     # ── WHEN ──
     event_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
-    event_timezone: Mapped[Optional[str]] = mapped_column(String(50), default=None)  # e.g., "America/Santiago"
-    record_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default="now()")
+    event_timezone: Mapped[Optional[str]] = mapped_column(
+        String(50), default=None
+    )  # e.g., "America/Santiago"
+    record_time: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default="now()"
+    )
 
     # ── WHERE ── (GS1 location)
     location_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("trace_locations.id", ondelete="SET NULL"), default=None
     )
-    read_point: Mapped[Optional[str]] = mapped_column(String(200), default=None)  # Specific point (dock 3, line 2)
+    read_point: Mapped[Optional[str]] = mapped_column(
+        String(200), default=None
+    )  # Specific point (dock 3, line 2)
 
     # ── Source & Destination (for shipping/receiving) ──
     source_location_id: Mapped[Optional[uuid.UUID]] = mapped_column(
@@ -192,21 +224,31 @@ class TraceEvent(TimestampMixin, TenantMixin, Base):
 
     # ── WHAT ── (primary batch this event relates to)
     batch_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        ForeignKey("traceability_batches.id", ondelete="CASCADE"), index=True, default=None
+        ForeignKey("traceability_batches.id", ondelete="CASCADE"),
+        index=True,
+        default=None,
     )
 
     # ── Business context ──
     description: Mapped[Optional[str]] = mapped_column(String(500), default=None)
-    disposition: Mapped[Optional[str]] = mapped_column(String(100), default=None)  # EPCIS disposition: in_transit, in_progress, active, recalled
+    disposition: Mapped[Optional[str]] = mapped_column(
+        String(100), default=None
+    )  # EPCIS disposition: in_transit, in_progress, active, recalled
 
     # ── Business document references ──
-    biz_transaction_type: Mapped[Optional[str]] = mapped_column(String(50), default=None)  # po, invoice, bol, desadv
-    biz_transaction_id: Mapped[Optional[str]] = mapped_column(String(100), default=None)  # PO-2026-001
+    biz_transaction_type: Mapped[Optional[str]] = mapped_column(
+        String(50), default=None
+    )  # po, invoice, bol, desadv
+    biz_transaction_id: Mapped[Optional[str]] = mapped_column(
+        String(100), default=None
+    )  # PO-2026-001
 
     # ── Shipping / logistics ──
     carrier: Mapped[Optional[str]] = mapped_column(String(200), default=None)
     vehicle_id: Mapped[Optional[str]] = mapped_column(String(100), default=None)
-    sscc: Mapped[Optional[str]] = mapped_column(String(18), default=None)  # GS1 Serial Shipping Container Code
+    sscc: Mapped[Optional[str]] = mapped_column(
+        String(18), default=None
+    )  # GS1 Serial Shipping Container Code
 
     # ── Sensor data (EPCIS 2.0 SensorElement) ──
     temperature_c: Mapped[Optional[float]] = mapped_column(Float, default=None)
@@ -220,13 +262,32 @@ class TraceEvent(TimestampMixin, TenantMixin, Base):
     kde_data: Mapped[Optional[dict]] = mapped_column("kde_data", JSON, default=None)
 
     # ── Integrity ──
-    event_hash: Mapped[Optional[str]] = mapped_column(String(64), default=None)  # SHA-256 for tamper detection
-    prev_event_hash: Mapped[Optional[str]] = mapped_column(String(64), default=None)  # Chain to previous event
+    event_hash: Mapped[Optional[str]] = mapped_column(
+        String(64), default=None
+    )  # SHA-256 for tamper detection
+    prev_event_hash: Mapped[Optional[str]] = mapped_column(
+        String(64), default=None
+    )  # Chain to previous event
 
     # Relationships
-    location = relationship("TraceLocation", foreign_keys=[location_id], back_populates="events", lazy="selectin")
-    source_location = relationship("TraceLocation", foreign_keys=[source_location_id], back_populates="source_events", lazy="selectin")
-    destination_location = relationship("TraceLocation", foreign_keys=[destination_location_id], back_populates="destination_events", lazy="selectin")
+    location = relationship(
+        "TraceLocation",
+        foreign_keys=[location_id],
+        back_populates="events",
+        lazy="selectin",
+    )
+    source_location = relationship(
+        "TraceLocation",
+        foreign_keys=[source_location_id],
+        back_populates="source_events",
+        lazy="selectin",
+    )
+    destination_location = relationship(
+        "TraceLocation",
+        foreign_keys=[destination_location_id],
+        back_populates="destination_events",
+        lazy="selectin",
+    )
     batch = relationship("TraceabilityBatch", back_populates="events", lazy="selectin")
     items = relationship("TraceEventItem", back_populates="event", lazy="selectin")
 
@@ -245,6 +306,7 @@ class TraceEventItem(TimestampMixin, TenantMixin, Base):
     An event can reference multiple batches (e.g., aggregation packs
     3 batches into 1 pallet, transformation consumes 2 inputs).
     """
+
     __tablename__ = "trace_event_items"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -254,18 +316,23 @@ class TraceEventItem(TimestampMixin, TenantMixin, Base):
     batch_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("traceability_batches.id", ondelete="CASCADE"), index=True
     )
-    role: Mapped[str] = mapped_column(String(20))  # "input", "output", "observed", "parent", "child"
+    role: Mapped[str] = mapped_column(
+        String(20)
+    )  # "input", "output", "observed", "parent", "child"
     quantity: Mapped[Optional[int]] = mapped_column(Integer, default=None)
     unit_of_measure: Mapped[Optional[str]] = mapped_column(String(20), default=None)
     gtin: Mapped[Optional[str]] = mapped_column(String(14), default=None)  # GS1 GTIN
 
     event = relationship("TraceEvent", back_populates="items")
-    batch = relationship("TraceabilityBatch", back_populates="event_items", lazy="selectin")
+    batch = relationship(
+        "TraceabilityBatch", back_populates="event_items", lazy="selectin"
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════
 # Batch Lineage — Parent/Child relationships (transformation chain)
 # ═══════════════════════════════════════════════════════════════════
+
 
 class BatchLineage(TimestampMixin, Base):
     """Links parent → child batches for transformation traceability.
@@ -279,6 +346,7 @@ class BatchLineage(TimestampMixin, Base):
     Enables forward trace: "which products came from this input?"
     Enables backward trace: "what inputs went into this product?"
     """
+
     __tablename__ = "batch_lineage"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -296,11 +364,23 @@ class BatchLineage(TimestampMixin, Base):
     quantity_consumed: Mapped[Optional[float]] = mapped_column(Float, default=None)
     unit_of_measure: Mapped[Optional[str]] = mapped_column(String(20), default=None)
 
-    parent_batch = relationship("TraceabilityBatch", foreign_keys=[parent_batch_id], back_populates="parent_lineages", lazy="selectin")
-    child_batch = relationship("TraceabilityBatch", foreign_keys=[child_batch_id], back_populates="child_lineages", lazy="selectin")
+    parent_batch = relationship(
+        "TraceabilityBatch",
+        foreign_keys=[parent_batch_id],
+        back_populates="parent_lineages",
+        lazy="selectin",
+    )
+    child_batch = relationship(
+        "TraceabilityBatch",
+        foreign_keys=[child_batch_id],
+        back_populates="child_lineages",
+        lazy="selectin",
+    )
 
     __table_args__ = (
-        UniqueConstraint("parent_batch_id", "child_batch_id", name="uq_lineage_parent_child"),
+        UniqueConstraint(
+            "parent_batch_id", "child_batch_id", name="uq_lineage_parent_child"
+        ),
         Index("ix_lineage_parent", "parent_batch_id"),
         Index("ix_lineage_child", "child_batch_id"),
     )
@@ -309,6 +389,7 @@ class BatchLineage(TimestampMixin, Base):
 # ═══════════════════════════════════════════════════════════════════
 # Recall Management — Mock recall + real recall execution
 # ═══════════════════════════════════════════════════════════════════
+
 
 class RecallStatus(str, enum.Enum):
     DRAFT = "draft"
@@ -319,10 +400,10 @@ class RecallStatus(str, enum.Enum):
 
 
 class RecallScope(str, enum.Enum):
-    BATCH = "batch"           # Single batch
-    PRODUCT = "product"       # All batches of a product
-    LOCATION = "location"     # All batches from a location
-    SUPPLIER = "supplier"     # All batches from a supplier
+    BATCH = "batch"  # Single batch
+    PRODUCT = "product"  # All batches of a product
+    LOCATION = "location"  # All batches from a location
+    SUPPLIER = "supplier"  # All batches from a supplier
     DATE_RANGE = "date_range"  # All batches in a date range
 
 
@@ -332,16 +413,21 @@ class TraceRecall(TimestampMixin, TenantMixin, Base):
     Supports both mock recalls (drills) and real recalls.
     Links to affected batches and tracks notification status.
     """
+
     __tablename__ = "trace_recalls"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     recall_number: Mapped[str] = mapped_column(String(50), unique=True)
-    status: Mapped[RecallStatus] = mapped_column(Enum(RecallStatus), default=RecallStatus.DRAFT)
+    status: Mapped[RecallStatus] = mapped_column(
+        Enum(RecallStatus), default=RecallStatus.DRAFT
+    )
     scope: Mapped[RecallScope] = mapped_column(Enum(RecallScope))
 
     # What triggered the recall
     reason: Mapped[str] = mapped_column(Text)
-    severity: Mapped[str] = mapped_column(String(20))  # "class_i" (dangerous), "class_ii" (remote danger), "class_iii" (no danger)
+    severity: Mapped[str] = mapped_column(
+        String(20)
+    )  # "class_i" (dangerous), "class_ii" (remote danger), "class_iii" (no danger)
 
     # Scope parameters
     trigger_batch_id: Mapped[Optional[uuid.UUID]] = mapped_column(
@@ -355,8 +441,12 @@ class TraceRecall(TimestampMixin, TenantMixin, Base):
     initiated_by: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"), default=None
     )
-    initiated_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
-    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    initiated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
+    completed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
 
     # Results
     batches_affected: Mapped[int] = mapped_column(Integer, default=0)
@@ -365,8 +455,12 @@ class TraceRecall(TimestampMixin, TenantMixin, Base):
     clients_notified: Mapped[int] = mapped_column(Integer, default=0)
 
     # Trace timing (FSMA requires trace within 24 hours)
-    trace_started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
-    trace_completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    trace_started_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
+    trace_completed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
 
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
@@ -378,6 +472,7 @@ class TraceRecall(TimestampMixin, TenantMixin, Base):
 
 class RecallBatch(TimestampMixin, TenantMixin, Base):
     """Batches affected by a recall."""
+
     __tablename__ = "recall_batches"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -393,11 +488,15 @@ class RecallBatch(TimestampMixin, TenantMixin, Base):
 
     # Status of this specific batch in the recall
     notification_sent: Mapped[bool] = mapped_column(default=False)
-    notification_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    notification_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), default=None
+    )
     units_in_batch: Mapped[int] = mapped_column(Integer, default=0)
     units_recovered: Mapped[int] = mapped_column(Integer, default=0)
     recovery_date: Mapped[Optional[date]] = mapped_column(Date, default=None)
-    disposition: Mapped[Optional[str]] = mapped_column(String(50), default=None)  # destroyed, returned, quarantined
+    disposition: Mapped[Optional[str]] = mapped_column(
+        String(50), default=None
+    )  # destroyed, returned, quarantined
 
     __table_args__ = (
         UniqueConstraint("recall_id", "batch_id", name="uq_recall_batch"),

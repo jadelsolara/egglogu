@@ -8,7 +8,6 @@ from src.services.base import BaseService
 
 
 class FeedService(BaseService):
-
     async def _invalidate(self) -> None:
         await invalidate_prefix(f"economics:{self.org_id}")
 

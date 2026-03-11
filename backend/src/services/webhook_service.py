@@ -4,7 +4,6 @@ import secrets
 import uuid
 
 from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.webhook import Webhook, WebhookDelivery
 from src.services.base import BaseService
@@ -57,9 +56,7 @@ class WebhookService(BaseService):
         webhooks = result.scalars().all()
 
         count_result = await self.db.execute(
-            select(func.count(Webhook.id)).where(
-                Webhook.organization_id == self.org_id
-            )
+            select(func.count(Webhook.id)).where(Webhook.organization_id == self.org_id)
         )
         total = count_result.scalar()
 

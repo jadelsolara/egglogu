@@ -82,7 +82,9 @@ async def get_account(
     return await _svc(db, user).get_account(account_id)
 
 
-@router.post("/accounts", response_model=AccountRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/accounts", response_model=AccountRead, status_code=status.HTTP_201_CREATED
+)
 async def create_account(
     data: AccountCreate,
     db: AsyncSession = Depends(get_db),
@@ -114,7 +116,9 @@ async def list_periods(
     return await _svc(db, user).list_periods()
 
 
-@router.post("/periods", response_model=FiscalPeriodRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/periods", response_model=FiscalPeriodRead, status_code=status.HTTP_201_CREATED
+)
 async def create_period(
     data: FiscalPeriodCreate,
     db: AsyncSession = Depends(get_db),
@@ -250,9 +254,13 @@ async def get_income_statement(
 # ══════════════════════════════════════════════════════════════════════
 
 
-@router.post("/seed-coa", response_model=list[AccountRead], status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/seed-coa", response_model=list[AccountRead], status_code=status.HTTP_201_CREATED
+)
 async def seed_chart_of_accounts(
-    vertical: str = Query(default="egglogu", description="Vertical to seed accounts for"),
+    vertical: str = Query(
+        default="egglogu", description="Vertical to seed accounts for"
+    ),
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user),
 ):

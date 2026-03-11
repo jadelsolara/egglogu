@@ -25,6 +25,7 @@ from src.models.base import TimestampMixin, TenantMixin
 
 class ProductCategory(str, enum.Enum):
     """What kind of product this batch contains."""
+
     EGGS = "eggs"
     POULTRY_MEAT = "poultry_meat"
     PORK = "pork"
@@ -38,6 +39,7 @@ class ProductCategory(str, enum.Enum):
 
 class BatchStatus(str, enum.Enum):
     """Lifecycle of a product batch."""
+
     CREATED = "created"
     IN_STORAGE = "in_storage"
     IN_TRANSIT = "in_transit"
@@ -52,6 +54,7 @@ class TraceabilityBatch(TimestampMixin, TenantMixin, Base):
     Vertical-specific fields go in `metadata` (JSON) so the core model
     stays generic while each vertical can store its own data.
     """
+
     __tablename__ = "traceability_batches"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -63,30 +66,50 @@ class TraceabilityBatch(TimestampMixin, TenantMixin, Base):
         Enum(ProductCategory), default=ProductCategory.EGGS
     )
     product_name: Mapped[Optional[str]] = mapped_column(String(200), default=None)
-    product_type: Mapped[Optional[str]] = mapped_column(String(50), default=None)  # egg_type, cut_type, milk_grade, crop_variety
+    product_type: Mapped[Optional[str]] = mapped_column(
+        String(50), default=None
+    )  # egg_type, cut_type, milk_grade, crop_variety
 
     # ── Origin (generic — works for any vertical) ──
     farm_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("farms.id", ondelete="SET NULL"), index=True, default=None
     )
-    source_id: Mapped[Optional[uuid.UUID]] = mapped_column(default=None, index=True)  # flock_id, herd_id, field_id — vertical resolves
-    source_type: Mapped[Optional[str]] = mapped_column(String(50), default=None)  # "flock", "herd", "field"
-    origin_location: Mapped[Optional[str]] = mapped_column(String(100), default=None)  # house, barn, paddock, field name
+    source_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        default=None, index=True
+    )  # flock_id, herd_id, field_id — vertical resolves
+    source_type: Mapped[Optional[str]] = mapped_column(
+        String(50), default=None
+    )  # "flock", "herd", "field"
+    origin_location: Mapped[Optional[str]] = mapped_column(
+        String(100), default=None
+    )  # house, barn, paddock, field name
 
     # ── Quantity ──
     quantity: Mapped[int] = mapped_column(Integer, default=0)  # total units
-    unit_of_measure: Mapped[str] = mapped_column(String(20), default="units")  # units, kg, liters, dozens
-    container_count: Mapped[int] = mapped_column(Integer, default=0)  # boxes, crates, pallets
+    unit_of_measure: Mapped[str] = mapped_column(
+        String(20), default="units"
+    )  # units, kg, liters, dozens
+    container_count: Mapped[int] = mapped_column(
+        Integer, default=0
+    )  # boxes, crates, pallets
     units_per_container: Mapped[int] = mapped_column(Integer, default=1)
 
     # ── Quality ──
-    quality_grade: Mapped[Optional[str]] = mapped_column(String(20), default=None)  # A, B, C, organic, free-range
+    quality_grade: Mapped[Optional[str]] = mapped_column(
+        String(20), default=None
+    )  # A, B, C, organic, free-range
     weight_kg: Mapped[Optional[float]] = mapped_column(Float, default=None)
 
     # ── GS1 Identifiers ──
-    gtin: Mapped[Optional[str]] = mapped_column(String(14), default=None)  # Global Trade Item Number
-    sscc: Mapped[Optional[str]] = mapped_column(String(18), default=None)  # Serial Shipping Container Code
-    tlc: Mapped[Optional[str]] = mapped_column(String(100), default=None)  # Traceability Lot Code (FSMA 204)
+    gtin: Mapped[Optional[str]] = mapped_column(
+        String(14), default=None
+    )  # Global Trade Item Number
+    sscc: Mapped[Optional[str]] = mapped_column(
+        String(18), default=None
+    )  # Serial Shipping Container Code
+    tlc: Mapped[Optional[str]] = mapped_column(
+        String(100), default=None
+    )  # Traceability Lot Code (FSMA 204)
 
     # ── Status & tracing ──
     status: Mapped[BatchStatus] = mapped_column(

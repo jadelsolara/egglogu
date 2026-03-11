@@ -7,12 +7,17 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 from src.models.trace_events import (
-    TraceEventType, TraceEventAction, CriticalTrackingEvent,
-    TraceLocationType, RecallStatus, RecallScope,
+    TraceEventType,
+    TraceEventAction,
+    CriticalTrackingEvent,
+    TraceLocationType,
+    RecallStatus,
+    RecallScope,
 )
 
 
 # ── Location schemas ──
+
 
 class TraceLocationCreate(BaseModel):
     name: str = Field(max_length=200)
@@ -74,6 +79,7 @@ class TraceLocationRead(BaseModel):
 
 # ── Event Item schemas ──
 
+
 class TraceEventItemCreate(BaseModel):
     batch_id: uuid.UUID
     role: str = Field(max_length=20)  # input, output, observed, parent, child
@@ -93,6 +99,7 @@ class TraceEventItemRead(BaseModel):
 
 
 # ── Event schemas ──
+
 
 class TraceEventCreate(BaseModel):
     event_type: TraceEventType
@@ -151,6 +158,7 @@ class TraceEventRead(BaseModel):
 
 # ── Batch Lineage schemas ──
 
+
 class BatchLineageCreate(BaseModel):
     parent_batch_id: uuid.UUID
     child_batch_id: uuid.UUID
@@ -171,6 +179,7 @@ class BatchLineageRead(BaseModel):
 
 
 # ── Recall schemas ──
+
 
 class RecallCreate(BaseModel):
     scope: RecallScope
@@ -211,8 +220,10 @@ class RecallRead(BaseModel):
 
 # ── Trace query responses ──
 
+
 class TraceChainNode(BaseModel):
     """A node in the forward/backward trace chain."""
+
     batch_id: uuid.UUID
     batch_code: str
     product_category: str
@@ -228,6 +239,7 @@ class TraceChainNode(BaseModel):
 
 class TraceChainEvent(BaseModel):
     """An event in the trace chain timeline."""
+
     event_id: uuid.UUID
     event_type: str
     cte: str
@@ -240,8 +252,9 @@ class TraceChainEvent(BaseModel):
 
 class FullTraceResponse(BaseModel):
     """Complete forward + backward trace for a batch."""
+
     origin_batch: TraceChainNode
     backward_chain: list[TraceChainNode] = []  # Inputs that went into this batch
-    forward_chain: list[TraceChainNode] = []   # Products that came from this batch
-    events: list[TraceChainEvent] = []          # Timeline of all events
+    forward_chain: list[TraceChainNode] = []  # Products that came from this batch
+    events: list[TraceChainEvent] = []  # Timeline of all events
     trace_time_ms: int  # How long the trace took (FSMA: must be < 24 hours)

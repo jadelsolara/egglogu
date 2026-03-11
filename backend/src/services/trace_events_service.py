@@ -40,6 +40,7 @@ from src.services.base import BaseService
 
 # ── Pure helper (no DB) ───────────────────────────────────────────
 
+
 def _compute_event_hash(event_data: dict, prev_hash: str | None = None) -> str:
     """SHA-256 hash for tamper detection (hash-chain)."""
     payload = json.dumps(event_data, sort_keys=True, default=str)
@@ -92,9 +93,7 @@ class TraceEventsService(BaseService):
         page: int = 1,
         size: int = 50,
     ) -> list:
-        stmt = select(TraceLocation).where(
-            TraceLocation.organization_id == self.org_id
-        )
+        stmt = select(TraceLocation).where(TraceLocation.organization_id == self.org_id)
         if location_type:
             stmt = stmt.where(TraceLocation.location_type == location_type)
         stmt = stmt.order_by(TraceLocation.name).offset((page - 1) * size).limit(size)
@@ -388,9 +387,9 @@ class TraceEventsService(BaseService):
 
         # Generate recall number
         count_result = await self.db.execute(
-            select(func.count()).select_from(TraceRecall).where(
-                TraceRecall.organization_id == self.org_id
-            )
+            select(func.count())
+            .select_from(TraceRecall)
+            .where(TraceRecall.organization_id == self.org_id)
         )
         seq = (count_result.scalar() or 0) + 1
         recall_number = f"RCL-{datetime.now().strftime('%Y%m%d')}-{seq:04d}"
@@ -486,9 +485,7 @@ class TraceEventsService(BaseService):
         page: int = 1,
         size: int = 50,
     ) -> list:
-        stmt = select(TraceRecall).where(
-            TraceRecall.organization_id == self.org_id
-        )
+        stmt = select(TraceRecall).where(TraceRecall.organization_id == self.org_id)
         if status_filter:
             stmt = stmt.where(TraceRecall.status == status_filter)
         stmt = (

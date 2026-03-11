@@ -6,7 +6,6 @@ Extracted from src/api/auth.py to keep routes thin.
 import logging
 import re
 import secrets
-import uuid
 from datetime import datetime, timedelta, timezone
 
 from fastapi import Request
@@ -26,7 +25,6 @@ from src.core.email import (
     send_welcome,
 )
 from src.core.security import (
-    WeakPasswordError,
     create_access_token,
     create_refresh_token,
     hash_password,
@@ -106,9 +104,7 @@ class AuthService:
     # ── Post-login security checks ──────────────────────────────────
 
     @staticmethod
-    async def post_login_checks(
-        user: User, request: Request, db: AsyncSession
-    ) -> None:
+    async def post_login_checks(user: User, request: Request, db: AsyncSession) -> None:
         """Run post-login security checks: known device, impossible travel, alerts."""
         ip = AuthService.client_ip(request)
         ua = AuthService.user_agent(request)

@@ -50,9 +50,8 @@ class BaseService:
     async def _get(
         self, model: type, record_id: uuid.UUID, *, error_msg: str | None = None
     ) -> Any:
-        stmt = (
-            select(model)
-            .where(model.id == record_id, model.organization_id == self.org_id)
+        stmt = select(model).where(
+            model.id == record_id, model.organization_id == self.org_id
         )
         if hasattr(model, "deleted_at"):
             stmt = stmt.where(model.deleted_at.is_(None))

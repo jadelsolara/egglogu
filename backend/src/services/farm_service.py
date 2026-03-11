@@ -7,7 +7,6 @@ from src.services.base import BaseService
 
 
 class FarmService(BaseService):
-
     async def list_farms(self, *, page: int = 1, size: int = 50) -> list:
         return await self._list(Farm, page=page, size=size)
 

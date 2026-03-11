@@ -14,6 +14,7 @@ class AuditLog(Base):
     support system-level entries ("system", "platform") and survive even
     if the referenced user/org is deleted.
     """
+
     __tablename__ = "audit_logs"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -43,6 +44,4 @@ class AuditLog(Base):
         String(64), default="0" * 64
     )  # genesis = all zeros
 
-    __table_args__ = (
-        Index("ix_audit_org_timestamp", "organization_id", "timestamp"),
-    )
+    __table_args__ = (Index("ix_audit_org_timestamp", "organization_id", "timestamp"),)

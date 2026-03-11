@@ -78,9 +78,7 @@ class TraceabilityService(BaseService):
 
     async def get_batch(self, batch_id: uuid.UUID) -> TraceabilityBatch:
         """Obtiene un lote por ID (scoped a la organización)."""
-        return await self._get(
-            TraceabilityBatch, batch_id, error_msg="Batch not found"
-        )
+        return await self._get(TraceabilityBatch, batch_id, error_msg="Batch not found")
 
     async def create_batch(self, data: TraceabilityBatchCreate) -> TraceabilityBatch:
         """Crea un nuevo lote con código y QR generados automáticamente."""

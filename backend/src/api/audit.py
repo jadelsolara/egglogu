@@ -22,8 +22,11 @@ async def list_audit_logs(
     """Lista paginada de registros de auditoría con filtros opcionales."""
     svc = AuditService(db, user.organization_id, user.id)
     return await svc.list_logs(
-        page=page, size=size, resource=resource,
-        action=action, table_name=table_name,
+        page=page,
+        size=size,
+        resource=resource,
+        action=action,
+        table_name=table_name,
     )
 
 

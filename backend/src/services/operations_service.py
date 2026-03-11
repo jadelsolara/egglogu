@@ -7,7 +7,6 @@ from src.services.base import BaseService
 
 
 class OperationsService(BaseService):
-
     # ── Checklist ────────────────────────────────────────────────────
 
     async def list_checklist(self, *, page: int = 1, size: int = 50) -> list:

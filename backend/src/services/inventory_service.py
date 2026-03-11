@@ -14,7 +14,6 @@ from src.services.base import BaseService
 
 
 class InventoryService(BaseService):
-
     # ── Ubicaciones ──────────────────────────────────────────────────
 
     async def list_locations(self, *, page: int = 1, size: int = 50) -> list:
@@ -23,9 +22,7 @@ class InventoryService(BaseService):
     async def create_location(self, data) -> WarehouseLocation:
         return await self._create(WarehouseLocation, data)
 
-    async def update_location(
-        self, location_id: uuid.UUID, data
-    ) -> WarehouseLocation:
+    async def update_location(self, location_id: uuid.UUID, data) -> WarehouseLocation:
         return await self._update(
             WarehouseLocation, location_id, data, error_msg="Location not found"
         )
@@ -78,6 +75,8 @@ class InventoryService(BaseService):
 
     async def update_packaging(self, item_id: uuid.UUID, data) -> PackagingMaterial:
         return await self._update(
-            PackagingMaterial, item_id, data,
+            PackagingMaterial,
+            item_id,
+            data,
             error_msg="Packaging material not found",
         )

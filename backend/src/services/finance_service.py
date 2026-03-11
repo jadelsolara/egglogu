@@ -5,7 +5,6 @@ Inherits BaseService for tenant-scoped CRUD.
 
 import uuid
 
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.cache import invalidate_prefix
 from src.models.finance import Expense, Income, Receivable

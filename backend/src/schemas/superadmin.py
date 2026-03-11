@@ -340,7 +340,10 @@ class OutbreakAlertCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=300)
     disease: str = Field(..., min_length=1, max_length=200)
     severity: str = Field(default="moderate", pattern="^(low|moderate|high|critical)$")
-    transmission: str = Field(default="unknown", pattern="^(airborne|contact|vector|waterborne|fomite|unknown)$")
+    transmission: str = Field(
+        default="unknown",
+        pattern="^(airborne|contact|vector|waterborne|fomite|unknown)$",
+    )
     species_affected: str = Field(default="poultry", max_length=300)
     epicenter_lat: float = Field(..., ge=-90, le=90)
     epicenter_lng: float = Field(..., ge=-180, le=180)

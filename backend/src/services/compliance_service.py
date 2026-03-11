@@ -49,9 +49,7 @@ class ComplianceService(BaseService):
         """Crea una nueva inspección."""
         return await self._create(ComplianceInspection, data)
 
-    async def update_inspection(
-        self, insp_id: uuid.UUID, data
-    ) -> ComplianceInspection:
+    async def update_inspection(self, insp_id: uuid.UUID, data) -> ComplianceInspection:
         """Actualiza una inspección existente."""
         return await self._update(
             ComplianceInspection,
@@ -75,9 +73,7 @@ class ComplianceService(BaseService):
         """Crea un nuevo test de salmonella."""
         return await self._create(SalmonellaTest, data)
 
-    async def update_salmonella_test(
-        self, test_id: uuid.UUID, data
-    ) -> SalmonellaTest:
+    async def update_salmonella_test(self, test_id: uuid.UUID, data) -> SalmonellaTest:
         """Actualiza un test de salmonella existente."""
         return await self._update(
             SalmonellaTest,

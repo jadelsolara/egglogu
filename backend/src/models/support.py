@@ -229,7 +229,9 @@ class FAQArticle(TimestampMixin, Base):
     __tablename__ = "faq_articles"
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    category: Mapped[TicketCategory] = mapped_column(default=TicketCategory.general, index=True)
+    category: Mapped[TicketCategory] = mapped_column(
+        default=TicketCategory.general, index=True
+    )
     title_es: Mapped[str] = mapped_column(String(300))
     title_en: Mapped[str] = mapped_column(String(300))
     content_es: Mapped[str] = mapped_column(Text)

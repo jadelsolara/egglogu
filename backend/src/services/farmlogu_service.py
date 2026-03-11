@@ -4,18 +4,19 @@ Proporciona analíticas cross-organización para holdings que operan
 múltiples verticales, y gestión del registro de verticales.
 """
 
-import uuid
 from typing import Any
 
 from sqlalchemy import select, func
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.base import BaseService
 from src.models.auth import Organization
 from src.models.finance import Income, Expense
 from src.models.farm import Farm
 from src.core.verticals import (
-    Vertical, Feature, get_vertical, has_feature,
+    Vertical,
+    Feature,
+    get_vertical,
+    has_feature,
 )
 
 
@@ -63,9 +64,7 @@ class FarmLogUService(BaseService):
         if org.holding_id:
             holding = await self.db.get(Organization, org.holding_id)
             holding_name = holding.name if holding else org.name
-            stmt = select(Organization).where(
-                Organization.holding_id == org.holding_id
-            )
+            stmt = select(Organization).where(Organization.holding_id == org.holding_id)
         else:
             child_check = await self.db.execute(
                 select(Organization.id)
@@ -74,9 +73,7 @@ class FarmLogUService(BaseService):
             )
             if child_check.scalar_one_or_none():
                 holding_name = org.name
-                stmt = select(Organization).where(
-                    Organization.holding_id == org.id
-                )
+                stmt = select(Organization).where(Organization.holding_id == org.id)
             else:
                 holding_name = org.name
                 stmt = select(Organization).where(Organization.id == org.id)

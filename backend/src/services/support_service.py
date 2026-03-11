@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select, func, and_, or_
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.email_archive import archive_ticket, archive_ticket_reply
 from src.core.exceptions import ForbiddenError, NotFoundError
@@ -42,7 +41,6 @@ _SUPPORTED_LANGS = {"es", "en"}
 
 
 class SupportService(BaseService):
-
     # ── Helpers ───────────────────────────────────────────────────
 
     async def _gen_ticket_number(self) -> str:
@@ -76,7 +74,9 @@ class SupportService(BaseService):
         result = await self.db.execute(
             select(AutoResponse)
             .where(
-                and_(AutoResponse.category == category, AutoResponse.is_active.is_(True))
+                and_(
+                    AutoResponse.category == category, AutoResponse.is_active.is_(True)
+                )
             )
             .order_by(AutoResponse.sort_order)
         )
@@ -182,7 +182,9 @@ class SupportService(BaseService):
                 select(func.count()).where(
                     and_(
                         SupportTicket.user_id == self.user_id,
-                        SupportTicket.status.in_(["open", "in_progress", "waiting_user"]),
+                        SupportTicket.status.in_(
+                            ["open", "in_progress", "waiting_user"]
+                        ),
                     )
                 )
             )
@@ -250,7 +252,9 @@ class SupportService(BaseService):
     async def get_ticket(self, ticket_id: uuid.UUID) -> TicketDetailRead:
         result = await self.db.execute(
             select(SupportTicket).where(
-                and_(SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id)
+                and_(
+                    SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id
+                )
             )
         )
         ticket = result.scalar_one_or_none()
@@ -291,7 +295,9 @@ class SupportService(BaseService):
     ) -> TicketMessage:
         result = await self.db.execute(
             select(SupportTicket).where(
-                and_(SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id)
+                and_(
+                    SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id
+                )
             )
         )
         ticket = result.scalar_one_or_none()
@@ -325,7 +331,9 @@ class SupportService(BaseService):
     async def close_ticket(self, ticket_id: uuid.UUID) -> dict:
         result = await self.db.execute(
             select(SupportTicket).where(
-                and_(SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id)
+                and_(
+                    SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id
+                )
             )
         )
         ticket = result.scalar_one_or_none()
@@ -342,7 +350,9 @@ class SupportService(BaseService):
     ) -> SupportRating:
         result = await self.db.execute(
             select(SupportTicket).where(
-                and_(SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id)
+                and_(
+                    SupportTicket.id == ticket_id, SupportTicket.user_id == self.user_id
+                )
             )
         )
         ticket = result.scalar_one_or_none()
@@ -396,7 +406,9 @@ class SupportService(BaseService):
                 user_email=user_email,
                 subject=t.subject,
                 description=t.description,
-                category=category.value if hasattr(category, "value") else str(category),
+                category=category.value
+                if hasattr(category, "value")
+                else str(category),
                 priority=ticket.priority.value
                 if hasattr(ticket.priority, "value")
                 else str(ticket.priority),
@@ -417,9 +429,7 @@ class SupportService(BaseService):
         page: int = 1,
         size: int = 50,
     ) -> list:
-        stmt = select(SupportTicket).where(
-            SupportTicket.organization_id == self.org_id
-        )
+        stmt = select(SupportTicket).where(SupportTicket.organization_id == self.org_id)
         if status:
             stmt = stmt.where(SupportTicket.status == status)
         if category:
@@ -637,7 +647,9 @@ class SupportService(BaseService):
 
     async def list_auto_responses(self) -> list:
         result = await self.db.execute(
-            select(AutoResponse).order_by(AutoResponse.category, AutoResponse.sort_order)
+            select(AutoResponse).order_by(
+                AutoResponse.category, AutoResponse.sort_order
+            )
         )
         return list(result.scalars().all())
 

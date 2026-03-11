@@ -163,7 +163,10 @@ async def send_message(
 ):
     svc = _svc(db, user)
     return await svc.send_message(
-        room_id, data.content, plan, user.full_name,
+        room_id,
+        data.content,
+        plan,
+        user.full_name,
         getattr(user, "country", None),
     )
 

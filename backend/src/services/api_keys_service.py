@@ -73,9 +73,7 @@ class APIKeyService(BaseService):
         keys = result.scalars().all()
 
         count_result = await self.db.execute(
-            select(func.count(APIKey.id)).where(
-                APIKey.organization_id == self.org_id
-            )
+            select(func.count(APIKey.id)).where(APIKey.organization_id == self.org_id)
         )
         total = count_result.scalar()
 

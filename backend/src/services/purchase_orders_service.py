@@ -32,9 +32,7 @@ class PurchaseOrdersService(BaseService):
 
     async def _generate_po_number(self) -> str:
         """Generar número secuencial de orden de compra."""
-        result = await self.db.execute(
-            select(func.count()).select_from(PurchaseOrder)
-        )
+        result = await self.db.execute(select(func.count()).select_from(PurchaseOrder))
         seq = (result.scalar() or 0) + 1
         return f"PO-{seq:06d}"
 

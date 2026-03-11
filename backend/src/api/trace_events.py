@@ -19,10 +19,15 @@ from src.api.deps import require_feature
 from src.database import get_db
 from src.models.auth import User
 from src.schemas.trace_events import (
-    TraceLocationCreate, TraceLocationUpdate, TraceLocationRead,
-    TraceEventCreate, TraceEventRead,
-    BatchLineageCreate, BatchLineageRead,
-    RecallCreate, RecallRead,
+    TraceLocationCreate,
+    TraceLocationUpdate,
+    TraceLocationRead,
+    TraceEventCreate,
+    TraceEventRead,
+    BatchLineageCreate,
+    BatchLineageRead,
+    RecallCreate,
+    RecallRead,
     FullTraceResponse,
 )
 from src.services.trace_events_service import TraceEventsService
@@ -38,6 +43,7 @@ def _svc(db: AsyncSession, user: User) -> TraceEventsService:
 # LOCATIONS (GS1 GLN registry)
 # ═══════════════════════════════════════════════════════════════════
 
+
 @router.get("/locations", response_model=list[TraceLocationRead])
 async def list_locations(
     location_type: str | None = None,
@@ -50,7 +56,9 @@ async def list_locations(
     return await svc.list_locations(location_type=location_type, page=page, size=size)
 
 
-@router.post("/locations", response_model=TraceLocationRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/locations", response_model=TraceLocationRead, status_code=status.HTTP_201_CREATED
+)
 async def create_location(
     data: TraceLocationCreate,
     db: AsyncSession = Depends(get_db),
@@ -74,6 +82,7 @@ async def update_location(
 # ═══════════════════════════════════════════════════════════════════
 # EVENTS (EPCIS 2.0 CTE/KDE logging)
 # ═══════════════════════════════════════════════════════════════════
+
 
 @router.get("/events", response_model=list[TraceEventRead])
 async def list_events(
@@ -99,7 +108,9 @@ async def list_events(
     )
 
 
-@router.post("/events", response_model=TraceEventRead, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/events", response_model=TraceEventRead, status_code=status.HTTP_201_CREATED
+)
 async def create_event(
     data: TraceEventCreate,
     db: AsyncSession = Depends(get_db),
@@ -113,7 +124,10 @@ async def create_event(
 # BATCH LINEAGE (transformation chains)
 # ═══════════════════════════════════════════════════════════════════
 
-@router.post("/lineage", response_model=BatchLineageRead, status_code=status.HTTP_201_CREATED)
+
+@router.post(
+    "/lineage", response_model=BatchLineageRead, status_code=status.HTTP_201_CREATED
+)
 async def create_lineage(
     data: BatchLineageCreate,
     db: AsyncSession = Depends(get_db),
@@ -147,6 +161,7 @@ async def get_child_batches(
 # FORWARD & BACKWARD TRACE — The killer feature
 # ═══════════════════════════════════════════════════════════════════
 
+
 @router.get("/trace/{batch_id}/full", response_model=FullTraceResponse)
 async def full_trace(
     batch_id: uuid.UUID,
@@ -161,6 +176,7 @@ async def full_trace(
 # ═══════════════════════════════════════════════════════════════════
 # RECALL MANAGEMENT — Mock recall + real recall execution
 # ═══════════════════════════════════════════════════════════════════
+
 
 @router.post("/recalls", response_model=RecallRead, status_code=status.HTTP_201_CREATED)
 async def create_recall(

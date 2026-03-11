@@ -23,9 +23,7 @@ class EnvironmentReading(TimestampMixin, TenantMixin, Base):
     heat_stress_idx: Mapped[Optional[float]] = mapped_column(Float, default=None)
     notes: Mapped[Optional[str]] = mapped_column(Text, default=None)
 
-    __table_args__ = (
-        Index("ix_env_reading_org_date", "organization_id", "date"),
-    )
+    __table_args__ = (Index("ix_env_reading_org_date", "organization_id", "date"),)
 
 
 class IoTReading(TimestampMixin, TenantMixin, Base):

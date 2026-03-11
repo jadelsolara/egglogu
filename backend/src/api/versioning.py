@@ -89,7 +89,10 @@ class APIVersionMiddleware:
             if sunset:
                 extra_headers.append((b"sunset", sunset.encode()))
             extra_headers.append(
-                (b"link", f'</api/{CURRENT_VERSION}/>; rel="successor-version"'.encode())
+                (
+                    b"link",
+                    f'</api/{CURRENT_VERSION}/>; rel="successor-version"'.encode(),
+                )
             )
             method = scope.get("method", "?")
             logger.debug("Deprecated API %s used: %s %s", version, method, path)

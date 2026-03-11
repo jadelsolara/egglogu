@@ -1,10 +1,7 @@
 import logging
 import os
-import re
 import uuid
 from datetime import datetime, timedelta, timezone
-
-logger = logging.getLogger("egglogu.auth")
 
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy import select
@@ -14,8 +11,6 @@ from src.api.deps import get_current_user
 from src.core.auth_security import (
     blacklist_all_user_tokens,
     blacklist_token,
-    check_impossible_travel,
-    check_known_device,
     check_pwned,
     clear_failed_logins,
     create_oauth_state,
@@ -27,7 +22,6 @@ from src.core.auth_security import (
     record_failed_login,
     revoke_session,
     rotate_refresh_session,
-    send_new_login_alert,
 )
 from src.core.email import (
     generate_token,
@@ -35,7 +29,6 @@ from src.core.email import (
     send_reassignment_notification,
     send_team_invite,
     send_verification_email,
-    send_welcome,
 )
 from src.core.exceptions import (
     ConflictError,
@@ -86,6 +79,8 @@ from src.schemas.security import (
     TOTPSetupResponse,
     TOTPVerifyRequest,
 )
+
+logger = logging.getLogger("egglogu.auth")
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -631,12 +626,22 @@ async def google_auth(
         raise UnauthorizedError("Invalid Google token payload")
 
     user = await AuthService.oauth_find_or_create(
-        email=email, name=name, oauth_sub=sub, provider="google",
-        organization_name=data.organization_name, db=db,
+        email=email,
+        name=name,
+        oauth_sub=sub,
+        provider="google",
+        organization_name=data.organization_name,
+        db=db,
     )
     if not user.is_active:
         await log_login_attempt(
-            db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="google",
+            db,
+            email,
+            LoginResult.disabled,
+            ip,
+            ua,
+            user_id=user.id,
+            method="google",
         )
         raise UnauthorizedError("Account is disabled")
 
@@ -702,12 +707,22 @@ async def apple_auth(
     name = data.full_name or email.split("@")[0]
 
     user = await AuthService.oauth_find_or_create(
-        email=email, name=name, oauth_sub=sub, provider="apple",
-        organization_name=data.organization_name, db=db,
+        email=email,
+        name=name,
+        oauth_sub=sub,
+        provider="apple",
+        organization_name=data.organization_name,
+        db=db,
     )
     if not user.is_active:
         await log_login_attempt(
-            db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="apple",
+            db,
+            email,
+            LoginResult.disabled,
+            ip,
+            ua,
+            user_id=user.id,
+            method="apple",
         )
         raise UnauthorizedError("Account is disabled")
 
@@ -761,12 +776,22 @@ async def microsoft_auth(
         raise UnauthorizedError("Invalid Microsoft profile — missing email")
 
     user = await AuthService.oauth_find_or_create(
-        email=email, name=name, oauth_sub=sub, provider="microsoft",
-        organization_name=data.organization_name, db=db,
+        email=email,
+        name=name,
+        oauth_sub=sub,
+        provider="microsoft",
+        organization_name=data.organization_name,
+        db=db,
     )
     if not user.is_active:
         await log_login_attempt(
-            db, email, LoginResult.disabled, ip, ua, user_id=user.id, method="microsoft",
+            db,
+            email,
+            LoginResult.disabled,
+            ip,
+            ua,
+            user_id=user.id,
+            method="microsoft",
         )
         raise UnauthorizedError("Account is disabled")
 

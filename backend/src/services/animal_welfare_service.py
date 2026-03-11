@@ -1,7 +1,6 @@
 """AnimalWelfareService — Evaluaciones de bienestar animal."""
 
 import uuid
-from typing import Any
 
 from sqlalchemy import select, func, case
 
@@ -42,9 +41,7 @@ class AnimalWelfareService(BaseService):
         """Crear una nueva evaluación de bienestar."""
         return await self._create(WelfareAssessment, data)
 
-    async def update_assessment(
-        self, item_id: uuid.UUID, data
-    ) -> WelfareAssessment:
+    async def update_assessment(self, item_id: uuid.UUID, data) -> WelfareAssessment:
         """Actualizar una evaluación y recalcular puntaje general si corresponde."""
         item = await self._get(
             WelfareAssessment, item_id, error_msg="Welfare assessment not found"
@@ -64,9 +61,7 @@ class AnimalWelfareService(BaseService):
             WelfareAssessment, item_id, error_msg="Welfare assessment not found"
         )
 
-    async def get_stats(
-        self, *, flock_id: uuid.UUID | None = None
-    ) -> WelfareStats:
+    async def get_stats(self, *, flock_id: uuid.UUID | None = None) -> WelfareStats:
         """Calcular estadísticas agregadas de bienestar animal."""
         stmt = select(
             func.count(WelfareAssessment.id).label("total"),
@@ -93,6 +88,8 @@ class AnimalWelfareService(BaseService):
             avg_plumage=round(row.avg_plumage, 2) if row.avg_plumage else None,
             avg_mobility=round(row.avg_mobility, 2) if row.avg_mobility else None,
             avg_behavior=round(row.avg_behavior, 2) if row.avg_behavior else None,
-            feather_pecking_rate=round(row.pecking_rate, 4) if row.pecking_rate else None,
+            feather_pecking_rate=round(row.pecking_rate, 4)
+            if row.pecking_rate
+            else None,
             latest_date=row.latest,
         )

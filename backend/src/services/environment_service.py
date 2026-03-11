@@ -7,7 +7,6 @@ from src.services.base import BaseService
 
 
 class EnvironmentService(BaseService):
-
     # ── Lecturas ambientales ─────────────────────────────────────────
 
     async def list_environment(self, *, page: int = 1, size: int = 50) -> list:
@@ -21,11 +20,11 @@ class EnvironmentService(BaseService):
     async def create_environment(self, data) -> EnvironmentReading:
         return await self._create(EnvironmentReading, data)
 
-    async def update_environment(
-        self, item_id: uuid.UUID, data
-    ) -> EnvironmentReading:
+    async def update_environment(self, item_id: uuid.UUID, data) -> EnvironmentReading:
         return await self._update(
-            EnvironmentReading, item_id, data,
+            EnvironmentReading,
+            item_id,
+            data,
             error_msg="Environment reading not found",
         )
 

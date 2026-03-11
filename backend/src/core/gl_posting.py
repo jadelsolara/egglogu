@@ -277,7 +277,7 @@ class GLPostingService:
             source_id=purchase_id,
             lines=[
                 (inventory_account, amount, Decimal("0.00")),
-                ("2000", Decimal("0.00"), amount),   # CR Accounts Payable
+                ("2000", Decimal("0.00"), amount),  # CR Accounts Payable
             ],
         )
 

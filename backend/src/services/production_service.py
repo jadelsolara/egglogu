@@ -8,7 +8,6 @@ from src.services.base import BaseService
 
 
 class ProductionService(BaseService):
-
     async def _invalidate(self) -> None:
         await invalidate_prefix(f"economics:{self.org_id}")
 
@@ -27,7 +26,9 @@ class ProductionService(BaseService):
 
     async def update_production(self, record_id: uuid.UUID, data) -> DailyProduction:
         record = await self._update(
-            DailyProduction, record_id, data,
+            DailyProduction,
+            record_id,
+            data,
             error_msg="Production record not found",
         )
         await self._invalidate()

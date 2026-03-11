@@ -14,7 +14,6 @@ from src.services.base import BaseService
 
 
 class HealthService(BaseService):
-
     async def _invalidate(self) -> None:
         await invalidate_prefix(f"economics:{self.org_id}")
 
@@ -32,9 +31,7 @@ class HealthService(BaseService):
         return item
 
     async def update_vaccine(self, item_id: uuid.UUID, data) -> Vaccine:
-        item = await self._update(
-            Vaccine, item_id, data, error_msg="Vaccine not found"
-        )
+        item = await self._update(Vaccine, item_id, data, error_msg="Vaccine not found")
         await self._invalidate()
         return item
 
@@ -91,9 +88,7 @@ class HealthService(BaseService):
         return await self._list(StressEvent, page=page, size=size)
 
     async def get_stress_event(self, item_id: uuid.UUID) -> StressEvent:
-        return await self._get(
-            StressEvent, item_id, error_msg="Stress event not found"
-        )
+        return await self._get(StressEvent, item_id, error_msg="Stress event not found")
 
     async def create_stress_event(self, data) -> StressEvent:
         return await self._create(StressEvent, data)
@@ -109,9 +104,7 @@ class HealthService(BaseService):
     # ── Alertas de brotes (lógica de negocio: geolocalización) ──────
 
     @staticmethod
-    def _haversine_km(
-        lat1: float, lng1: float, lat2: float, lng2: float
-    ) -> float:
+    def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
         """Distancia Haversine en km entre dos puntos lat/lng."""
         R = 6371.0
         dlat = math.radians(lat2 - lat1)
@@ -151,35 +144,39 @@ class HealthService(BaseService):
             min_dist = float("inf")
             for farm in farms:
                 dist = self._haversine_km(
-                    alert.epicenter_lat, alert.epicenter_lng,
-                    farm.lat, farm.lng,
+                    alert.epicenter_lat,
+                    alert.epicenter_lng,
+                    farm.lat,
+                    farm.lng,
                 )
                 if dist < min_dist:
                     min_dist = dist
 
             if min_dist <= alert.radius_km:
-                result.append({
-                    "id": str(alert.id),
-                    "title": alert.title,
-                    "disease": alert.disease,
-                    "severity": alert.severity.value,
-                    "transmission": alert.transmission.value,
-                    "species_affected": alert.species_affected,
-                    "epicenter_lat": alert.epicenter_lat,
-                    "epicenter_lng": alert.epicenter_lng,
-                    "radius_km": alert.radius_km,
-                    "region_name": alert.region_name,
-                    "detected_date": alert.detected_date.isoformat(),
-                    "description": alert.description,
-                    "contingency_protocol": alert.contingency_protocol,
-                    "source_url": alert.source_url,
-                    "confirmed_cases": alert.confirmed_cases,
-                    "deaths_reported": alert.deaths_reported,
-                    "spread_speed_km_day": alert.spread_speed_km_day,
-                    "spread_direction": alert.spread_direction,
-                    "distance_km": round(min_dist, 1),
-                    "created_at": alert.created_at.isoformat(),
-                })
+                result.append(
+                    {
+                        "id": str(alert.id),
+                        "title": alert.title,
+                        "disease": alert.disease,
+                        "severity": alert.severity.value,
+                        "transmission": alert.transmission.value,
+                        "species_affected": alert.species_affected,
+                        "epicenter_lat": alert.epicenter_lat,
+                        "epicenter_lng": alert.epicenter_lng,
+                        "radius_km": alert.radius_km,
+                        "region_name": alert.region_name,
+                        "detected_date": alert.detected_date.isoformat(),
+                        "description": alert.description,
+                        "contingency_protocol": alert.contingency_protocol,
+                        "source_url": alert.source_url,
+                        "confirmed_cases": alert.confirmed_cases,
+                        "deaths_reported": alert.deaths_reported,
+                        "spread_speed_km_day": alert.spread_speed_km_day,
+                        "spread_direction": alert.spread_direction,
+                        "distance_km": round(min_dist, 1),
+                        "created_at": alert.created_at.isoformat(),
+                    }
+                )
 
         severity_order = {"critical": 0, "high": 1, "moderate": 2, "low": 3}
         result.sort(

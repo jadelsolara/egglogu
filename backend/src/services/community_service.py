@@ -5,7 +5,6 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import func, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exceptions import ForbiddenError, NotFoundError
 from src.models.auth import User
@@ -20,7 +19,6 @@ from src.models.community import (
     PostLike,
 )
 from src.schemas.community import (
-    AIInsightRead,
     ChatMessageRead,
     ChatRoomRead,
     CommunityStats,
@@ -123,40 +121,78 @@ def _extract_ai_tags(title: str, content: str) -> str | None:
     combined = (title + " " + content).lower()
     tag_keywords = {
         "nutrition": [
-            "feed", "nutrition", "protein", "calcium", "diet",
-            "nutricion", "alimento",
+            "feed",
+            "nutrition",
+            "protein",
+            "calcium",
+            "diet",
+            "nutricion",
+            "alimento",
         ],
         "health": [
-            "disease", "vaccine", "mortality", "sick",
-            "enfermedad", "vacuna", "mortalidad",
+            "disease",
+            "vaccine",
+            "mortality",
+            "sick",
+            "enfermedad",
+            "vacuna",
+            "mortalidad",
         ],
         "genetics": ["breed", "genetics", "strain", "raza", "genetica", "linea"],
         "welfare": [
-            "welfare", "stress", "behavior",
-            "bienestar", "estres", "comportamiento",
+            "welfare",
+            "stress",
+            "behavior",
+            "bienestar",
+            "estres",
+            "comportamiento",
         ],
         "market": ["price", "market", "sell", "buyer", "precio", "mercado", "venta"],
         "eggs": ["egg", "production", "laying", "huevo", "produccion", "postura"],
         "housing": [
-            "housing", "ventilation", "lighting",
-            "galpon", "ventilacion", "iluminacion",
+            "housing",
+            "ventilation",
+            "lighting",
+            "galpon",
+            "ventilacion",
+            "iluminacion",
         ],
         "biosecurity": [
-            "biosecurity", "disinfect", "quarantine",
-            "bioseguridad", "desinfeccion",
+            "biosecurity",
+            "disinfect",
+            "quarantine",
+            "bioseguridad",
+            "desinfeccion",
         ],
         "pork": ["pig", "swine", "pork", "cerdo", "porcino", "chancho", "lechon"],
         "cattle": [
-            "cow", "cattle", "beef", "dairy",
-            "bovino", "vaca", "ganado", "lecheria",
+            "cow",
+            "cattle",
+            "beef",
+            "dairy",
+            "bovino",
+            "vaca",
+            "ganado",
+            "lecheria",
         ],
         "crops": [
-            "crop", "harvest", "irrigation", "soil",
-            "cultivo", "cosecha", "riego", "suelo",
+            "crop",
+            "harvest",
+            "irrigation",
+            "soil",
+            "cultivo",
+            "cosecha",
+            "riego",
+            "suelo",
         ],
         "suggestion": [
-            "suggest", "idea", "feature", "request",
-            "sugerencia", "idea", "solicitud",
+            "suggest",
+            "idea",
+            "feature",
+            "request",
+            "sugerencia",
+            "idea",
+            "solicitud",
         ],
     }
     for tag, keywords in tag_keywords.items():
@@ -166,7 +202,6 @@ def _extract_ai_tags(title: str, content: str) -> str | None:
 
 
 class CommunityService(BaseService):
-
     # ── Forum Categories ──────────────────────────────────────────
 
     async def list_categories(self, plan: str) -> list[ForumCategoryRead]:
@@ -395,7 +430,9 @@ class CommunityService(BaseService):
             post.likes_count = max(0, post.likes_count - 1)
             action = "unliked"
         else:
-            self.db.add(PostLike(id=uuid.uuid4(), post_id=post_id, user_id=self.user_id))
+            self.db.add(
+                PostLike(id=uuid.uuid4(), post_id=post_id, user_id=self.user_id)
+            )
             post.likes_count += 1
             action = "liked"
 
