@@ -9,7 +9,7 @@ import { voidRecord, voidRecords, activeOnly, createReversalEntry } from '../cor
 import { getModalBody, modalVal, modalQuery } from './egg-modal.js';
 import { showVoidDialog } from './egg-confirm.js';
 import { renderCashFlow, renderBudget, renderAging } from './egg-fin-analysis.js';
-import { renderPnL } from './egg-fin-statements.js';
+import { renderPnL, renderBalanceSheet, renderEERR } from './egg-fin-statements.js';
 
 // ─── Local helper: VENG validation panel inside modal ───
 function showVengPanel(errors, warnings) {
@@ -40,6 +40,8 @@ class EggFinances extends HTMLElement {
     this._unsubs = [];
     this._vengWarningsShown = false;
     this._pnlPeriod = 'thisMonth';
+    this._balancePeriod = 'ytd';
+    this._eerrPeriod = 'thisMonth';
   }
 
   connectedCallback() {
@@ -81,6 +83,8 @@ class EggFinances extends HTMLElement {
       <div class="tab${this._currentTab === 'budget' ? ' active' : ''}" data-action="tab-budget">\u{1F4CB} ${t('fin_budget') || 'Budget'}</div>
       <div class="tab${this._currentTab === 'aging' ? ' active' : ''}" data-action="tab-aging">\u{23F3} ${t('fin_aging') || 'Aging'}</div>
       <div class="tab${this._currentTab === 'pnl' ? ' active' : ''}" data-action="tab-pnl">\u{1F4CA} ${t('fin_pnl') || 'P&L'}</div>
+      <div class="tab${this._currentTab === 'balance' ? ' active' : ''}" data-action="tab-balance">\u{1F3E6} ${t('bal_title') || 'Balance Sheet'}</div>
+      <div class="tab${this._currentTab === 'eerr' ? ' active' : ''}" data-action="tab-eerr">\u{1F4D1} ${t('eerr_title') || 'Income Statement'}</div>
       <div class="tab${this._currentTab === 'summary' ? ' active' : ''}" data-action="tab-summary">\u{1F4CA} ${t('fin_summary')}</div>
     </div>`;
 
@@ -93,6 +97,8 @@ class EggFinances extends HTMLElement {
     else if (this._currentTab === 'budget') h += renderBudget(D);
     else if (this._currentTab === 'aging') h += renderAging(D);
     else if (this._currentTab === 'pnl') h += renderPnL(D, this._pnlPeriod);
+    else if (this._currentTab === 'balance') h += renderBalanceSheet(D, this._balancePeriod);
+    else if (this._currentTab === 'eerr') h += renderEERR(D, this._eerrPeriod);
     else h += this._renderSummary(D);
 
     this.shadowRoot.innerHTML = h;
@@ -224,6 +230,9 @@ class EggFinances extends HTMLElement {
             { value: 'eggs', label: t('fin_type_eggs') },
             { value: 'birds', label: t('fin_type_birds') },
             { value: 'manure', label: t('fin_type_manure') },
+            { value: 'processed', label: t('fin_type_processed') || 'Processed' },
+            { value: 'byproducts', label: t('fin_type_byproducts') || 'Byproducts' },
+            { value: 'services', label: t('fin_type_services') || 'Services' },
             { value: 'other', label: t('fin_type_other') }
           ],
           render: r => t('fin_type_' + r.type) || sanitizeHTML(r.type || '-')
@@ -281,6 +290,11 @@ class EggFinances extends HTMLElement {
             { value: 'labor', label: t('fin_cat_labor') },
             { value: 'infrastructure', label: t('fin_cat_infrastructure') },
             { value: 'bird_purchase', label: t('fin_cat_bird_purchase') },
+            { value: 'utilities', label: t('fin_cat_utilities') || 'Utilities' },
+            { value: 'packaging', label: t('fin_cat_packaging') || 'Packaging' },
+            { value: 'insurance', label: t('fin_cat_insurance') || 'Insurance' },
+            { value: 'marketing', label: t('fin_cat_marketing') || 'Marketing' },
+            { value: 'equipment', label: t('fin_cat_equipment') || 'Equipment' },
             { value: 'other', label: t('fin_cat_other') }
           ],
           render: r => t('fin_cat_' + r.category) || sanitizeHTML(r.category || '-')
@@ -648,12 +662,20 @@ class EggFinances extends HTMLElement {
           this._currentTab = 'aging'; this.render(); break;
         case 'tab-pnl':
           this._currentTab = 'pnl'; this.render(); break;
+        case 'tab-balance':
+          this._currentTab = 'balance'; this.render(); break;
+        case 'tab-eerr':
+          this._currentTab = 'eerr'; this.render(); break;
         case 'tab-summary':
           this._currentTab = 'summary'; this.render(); break;
 
         // P&L period selector
         case 'pnl-period':
           this._pnlPeriod = btn.dataset.period || 'thisMonth'; this.render(); break;
+        case 'balance-period':
+          this._balancePeriod = btn.dataset.period || 'ytd'; this.render(); break;
+        case 'eerr-period':
+          this._eerrPeriod = btn.dataset.period || 'thisMonth'; this.render(); break;
 
         // Budget actions
         case 'set-budget':
@@ -742,6 +764,9 @@ class EggFinances extends HTMLElement {
           <option value="eggs"${i && i.type === 'eggs' ? ' selected' : ''}>${t('fin_type_eggs')}</option>
           <option value="birds"${i && i.type === 'birds' ? ' selected' : ''}>${t('fin_type_birds')}</option>
           <option value="manure"${i && i.type === 'manure' ? ' selected' : ''}>${t('fin_type_manure')}</option>
+          <option value="processed"${i && i.type === 'processed' ? ' selected' : ''}>${t('fin_type_processed') || 'Processed Products'}</option>
+          <option value="byproducts"${i && i.type === 'byproducts' ? ' selected' : ''}>${t('fin_type_byproducts') || 'Byproducts'}</option>
+          <option value="services"${i && i.type === 'services' ? ' selected' : ''}>${t('fin_type_services') || 'Services'}</option>
           <option value="other"${i && i.type === 'other' ? ' selected' : ''}>${t('fin_type_other')}</option>
         </select></div>
       </div>
@@ -905,7 +930,7 @@ class EggFinances extends HTMLElement {
     const e = id ? D.finances.expenses.find(x => x.id === id) : null;
     this._editId = id || null;
 
-    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'other'];
+    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'utilities', 'packaging', 'insurance', 'marketing', 'equipment', 'other'];
     const catOptions = cats.map(c => `<option value="${c}"${e && e.category === c ? ' selected' : ''}>${t('fin_cat_' + c)}</option>`).join('');
     const descItems = CATALOGS.expenseDescriptions[e ? e.category : 'feed'] || CATALOGS.expenseDescriptions.feed;
 
@@ -1138,7 +1163,7 @@ class EggFinances extends HTMLElement {
   _showBudgetForm() {
     const D = Store.get();
     const curMonth = todayStr().substring(0, 7);
-    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'other'];
+    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'utilities', 'packaging', 'insurance', 'marketing', 'equipment', 'other'];
     if (!D.finances.budgets) D.finances.budgets = [];
     const existing = D.finances.budgets.filter(b => b.month === curMonth);
 
@@ -1172,7 +1197,7 @@ class EggFinances extends HTMLElement {
     const month = modalVal('fb-month');
     if (!month) return;
 
-    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'other'];
+    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'utilities', 'packaging', 'insurance', 'marketing', 'equipment', 'other'];
     cats.forEach(c => {
       const val = parseFloat(modalVal('fb-' + c)) || 0;
       const existing = D.finances.budgets.find(b => b.month === month && b.category === c);
