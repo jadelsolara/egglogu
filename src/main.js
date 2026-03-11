@@ -93,6 +93,7 @@ document.addEventListener('click', function(e) {
       showSignUpFromLogin: window.showSignUpFromLogin,
       showForgotPassword: window.showForgotPassword,
       doLogout: window.doLogout,
+      toggleSidebar: function() { Bus.emit('sidebar:toggle'); },
       closeModal: function() { Bus.emit('modal:close'); },
       confirmNo: function() { Bus.emit('confirm:result', { value: false }); },
       confirmYes: function() { Bus.emit('confirm:result', { value: true }); },

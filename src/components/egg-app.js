@@ -61,8 +61,14 @@ class EggApp extends HTMLElement {
           animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 1024px) {
+          .main-content { padding: 20px 20px; }
+        }
         @media (max-width: 768px) {
-          .main-content { margin-left: 0; width: 100vw; padding: 60px 15px 20px; }
+          .main-content { margin-left: 0; width: 100vw; max-width: 100vw; padding: 60px 12px 20px; }
+        }
+        @media (max-width: 480px) {
+          .main-content { padding: 56px 8px 16px; }
         }
       </style>
       <div class="app-layout">
@@ -98,6 +104,22 @@ class EggApp extends HTMLElement {
 
     // Keyboard handlers
     this._setupKeyboard();
+
+    // Swipe from left edge to open sidebar on mobile
+    let _edgeX = 0;
+    this._contentArea.addEventListener('touchstart', (e) => {
+      _edgeX = e.touches[0].clientX;
+    }, { passive: true });
+    this._contentArea.addEventListener('touchend', (e) => {
+      if (_edgeX < 30 && e.changedTouches[0].clientX - _edgeX > 80) {
+        Bus.emit('sidebar:toggle');
+      }
+    }, { passive: true });
+
+    // Auto-close sidebar when window resizes to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) Bus.emit('sidebar:close');
+    });
   }
 
   navigate(section) {

@@ -66,7 +66,9 @@ class EggSidebar extends HTMLElement {
     this._unsubs.push(
       Bus.on('nav:changed', ({ section }) => this._setActive(section)),
       Bus.on('lang:changed', () => this._render()),
-      Bus.on('auth:ready', () => this._render())
+      Bus.on('auth:ready', () => this._render()),
+      Bus.on('sidebar:toggle', () => this.toggle()),
+      Bus.on('sidebar:close', () => this.close())
     );
   }
 
@@ -79,6 +81,7 @@ class EggSidebar extends HTMLElement {
     const lang = getLang();
     this.shadowRoot.innerHTML = `
       <style>${this._styles()}</style>
+      <div class="sidebar-overlay" aria-hidden="true"></div>
       <aside class="sidebar" role="navigation" aria-label="Main Navigation">
         <div class="sidebar-logo" aria-label="EGGlogU 360">
           <slot name="logo"></slot>
@@ -178,6 +181,19 @@ class EggSidebar extends HTMLElement {
   _bindEvents() {
     const shadow = this.shadowRoot;
 
+    // Overlay click closes sidebar on mobile
+    shadow.querySelector('.sidebar-overlay')?.addEventListener('click', () => this.close());
+
+    // Swipe gesture to close sidebar on mobile
+    let _touchStartX = 0;
+    shadow.querySelector('.sidebar')?.addEventListener('touchstart', (e) => {
+      _touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    shadow.querySelector('.sidebar')?.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - _touchStartX;
+      if (dx < -80) this.close(); // swipe left to close
+    }, { passive: true });
+
     // Nav link clicks
     shadow.addEventListener('click', (e) => {
       const link = e.target.closest('a[data-section]');
@@ -226,11 +242,15 @@ class EggSidebar extends HTMLElement {
 
   /** Toggle open/close (for mobile hamburger) */
   toggle() {
-    this.shadowRoot.querySelector('.sidebar')?.classList.toggle('open');
+    const sidebar = this.shadowRoot.querySelector('.sidebar');
+    const overlay = this.shadowRoot.querySelector('.sidebar-overlay');
+    sidebar?.classList.toggle('open');
+    overlay?.classList.toggle('open');
   }
 
   close() {
     this.shadowRoot.querySelector('.sidebar')?.classList.remove('open');
+    this.shadowRoot.querySelector('.sidebar-overlay')?.classList.remove('open');
   }
 
   _styles() {
@@ -320,9 +340,22 @@ nav a.active i { background: rgba(255,143,0,.2); }
 }
 .lang-grid-inner button:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.7); }
 .lang-grid-inner button.active { background: #fff; color: #0E2240; font-weight: 700; border-color: #fff; }
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5);
+  z-index: 99; opacity: 0; transition: opacity .3s;
+}
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay { display: block; pointer-events: none; }
+  .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+}
+@media (max-width: 480px) {
+  .sidebar { width: 85vw; max-width: 280px; }
+  nav a { padding: 11px 16px 11px 18px; font-size: 14px; }
+  nav a i { width: 32px; height: 32px; font-size: 19px; }
+  .mode-toggles { padding: 10px 12px; }
+  .mode-btn { padding: 8px 10px; font-size: 13px; }
 }
     `;
   }
