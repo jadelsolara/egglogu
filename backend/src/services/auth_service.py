@@ -90,7 +90,7 @@ class AuthService:
         """Create access + refresh tokens and register a session."""
         refresh_token, refresh_jti = create_refresh_token(user.id)
         access_token = create_access_token(
-            user.id, user.organization_id, user.role.value
+            user.id, user.organization_id, user.role.value, email=user.email
         )
         await create_session(
             db=db,

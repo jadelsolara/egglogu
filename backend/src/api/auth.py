@@ -836,7 +836,7 @@ async def refresh(
 
     # Rotate refresh token
     new_refresh, new_jti = create_refresh_token(user.id)
-    new_access = create_access_token(user.id, user.organization_id, user.role.value)
+    new_access = create_access_token(user.id, user.organization_id, user.role.value, email=user.email)
 
     if old_jti:
         rotated = await rotate_refresh_session(
