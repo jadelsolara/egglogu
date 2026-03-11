@@ -96,6 +96,64 @@ export function validateForm(fields, tFn) {
 }
 
 /**
+ * ERP Void Record — SAP/Oracle/Dynamics style.
+ * Never physically delete; mark as voided with reason, timestamp, reversal entry.
+ * @param {Array} arr - The data array (e.g., D.finances.expenses)
+ * @param {string} id - Record ID to void
+ * @param {string} reason - Mandatory void reason
+ * @param {string} [user] - User who performed the void
+ * @returns {object|null} The voided record, or null if not found
+ */
+export function voidRecord(arr, id, reason, user) {
+  const rec = arr.find(r => r.id === id);
+  if (!rec) return null;
+  rec.status = 'voided';
+  rec.voidedAt = new Date().toISOString();
+  rec.voidedReason = reason;
+  rec.voidedBy = user || 'system';
+  return rec;
+}
+
+/**
+ * Void multiple records at once.
+ */
+export function voidRecords(arr, ids, reason, user) {
+  return ids.map(id => voidRecord(arr, id, reason, user)).filter(Boolean);
+}
+
+/**
+ * Filter active (non-voided) records from an array.
+ * Use in all .reduce() and display logic.
+ */
+export function activeOnly(arr) {
+  if (!arr) return [];
+  return arr.filter(r => r.status !== 'voided');
+}
+
+/**
+ * Create a reversal entry (accounting contra-entry).
+ * For financial records: creates a mirror record with negated amount.
+ */
+export function createReversalEntry(arr, id, reason, user) {
+  const original = arr.find(r => r.id === id);
+  if (!original) return null;
+  const reversal = {
+    ...original,
+    id: genId(),
+    amount: -(original.amount || 0),
+    cost: -(original.cost || 0),
+    status: 'reversal',
+    reversalOf: id,
+    reversalReason: reason,
+    reversalAt: new Date().toISOString(),
+    reversalBy: user || 'system',
+    date: todayStr()
+  };
+  arr.push(reversal);
+  return reversal;
+}
+
+/**
  * Empty state HTML block.
  */
 export function emptyState(icon, msg, btn, act) {
