@@ -14,6 +14,29 @@ import { kpi, flockSelect, supplierSelect, handleSupplierChange, resolveSupplier
 import { modalVal, getModalBody } from './egg-modal.js';
 import { showConfirm } from './egg-confirm.js';
 
+/* ── Auto-sync feed purchase → finance expense ────────── */
+function _syncFeedExpense(D, purchaseId, purchase) {
+  if (!D.finances) D.finances = {};
+  if (!D.finances.expenses) D.finances.expenses = [];
+  const desc = purchase.type ? `${t('feed_purchases')}: ${purchase.type}` : t('feed_purchases');
+  const expenseData = {
+    date: purchase.date,
+    category: 'feed',
+    description: desc + (purchase.supplier ? ` (${purchase.supplier})` : ''),
+    amount: purchase.cost || 0,
+    flockId: null,
+    notes: `${purchase.quantityKg || 0} kg`,
+    feedPurchaseId: purchaseId
+  };
+  const idx = D.finances.expenses.findIndex(e => e.feedPurchaseId === purchaseId);
+  if (idx >= 0) {
+    D.finances.expenses[idx] = { ...D.finances.expenses[idx], ...expenseData };
+  } else {
+    expenseData.id = genId();
+    D.finances.expenses.push(expenseData);
+  }
+}
+
 /* ── showVengPanel helper ─────────────────────────────── */
 function showVengPanel(errors, warnings) {
   const body = getModalBody();
@@ -137,6 +160,10 @@ class EggFeed extends HTMLElement {
           if (!await showConfirm(t('confirm_delete'))) return;
           const D = Store.get();
           D.feed.purchases = D.feed.purchases.filter(p => !ids.includes(p.id));
+          // Auto-remove linked finance expenses
+          if (D.finances && D.finances.expenses) {
+            D.finances.expenses = D.finances.expenses.filter(e => !ids.includes(e.feedPurchaseId));
+          }
           Store.save(D);
           this.render();
         }
@@ -300,6 +327,10 @@ class EggFeed extends HTMLElement {
       D.feed.purchases.push(o);
     }
     logAudit(id ? 'update' : 'create', 'feed', (id ? 'Edit' : 'New') + ' purchase: ' + o.quantityKg + 'kg', id || o.id, o);
+
+    // ── Auto-sync to finances ──
+    _syncFeedExpense(D, id || o.id, o);
+
     Store.save(D);
     Bus.emit('modal:close');
     Bus.emit('toast', { msg: t('cfg_saved') });
@@ -311,6 +342,10 @@ class EggFeed extends HTMLElement {
     if (!await showConfirm(t('confirm_delete'))) return;
     const D = Store.get();
     D.feed.purchases = D.feed.purchases.filter(p => p.id !== id);
+    // ── Auto-remove linked finance expense ──
+    if (D.finances && D.finances.expenses) {
+      D.finances.expenses = D.finances.expenses.filter(e => e.feedPurchaseId !== id);
+    }
     logAudit('delete', 'feed', 'Delete purchase', id, null);
     Store.save(D);
     Bus.emit('toast', { msg: t('cfg_saved') });
