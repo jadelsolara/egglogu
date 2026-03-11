@@ -61,17 +61,32 @@ class EggApp extends HTMLElement {
           animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .hamburger {
+          display: none; position: fixed; top: 10px; left: 10px; z-index: 101;
+          background: rgba(14,34,64,.92); backdrop-filter: blur(8px);
+          border: 1px solid rgba(255,255,255,.15); border-radius: 8px;
+          width: 44px; height: 44px; cursor: pointer;
+          align-items: center; justify-content: center;
+          box-shadow: 0 2px 12px rgba(0,0,0,.3);
+        }
+        .hamburger span {
+          display: block; width: 22px; height: 2px; background: #fff;
+          margin: 4px auto; border-radius: 2px; transition: .3s;
+        }
         @media (max-width: 1024px) {
           .main-content { padding: 20px 20px; }
         }
         @media (max-width: 768px) {
+          .hamburger { display: flex; }
           .main-content { margin-left: 0; width: 100vw; max-width: 100vw; padding: 60px 12px 20px; }
         }
         @media (max-width: 480px) {
           .main-content { padding: 56px 8px 16px; }
+          .hamburger { top: 8px; left: 8px; width: 40px; height: 40px; }
         }
       </style>
       <div class="app-layout">
+        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
         <egg-sidebar><img slot="logo" src="icons/icon-192.png" alt="EGGlogU" width="40" height="48" style="border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,.25)"></egg-sidebar>
         <main class="main-content" id="content-area"></main>
       </div>
@@ -101,6 +116,12 @@ class EggApp extends HTMLElement {
     // Re-emit auth:ready so sidebar renders with correct user role
     // (original auth:ready fires before sidebar exists in DOM)
     setTimeout(() => Bus.emit('auth:ready'), 100);
+
+    // Hamburger button
+    const hamburger = this.shadowRoot.querySelector('.hamburger');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => Bus.emit('sidebar:toggle'));
+    }
 
     // Keyboard handlers
     this._setupKeyboard();

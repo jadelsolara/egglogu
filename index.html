@@ -34,7 +34,7 @@
   --white:#FFFFFF;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;
   --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.12);
 }
-html{scroll-behavior:smooth;font-size:16px}
+html{scroll-behavior:smooth;font-size:16px;overflow-x:hidden}
 body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--white);line-height:1.6;overflow-x:hidden;background:var(--navy-deep)}
 a{color:inherit;text-decoration:none}
 img,svg{max-width:100%;display:block}
@@ -310,6 +310,9 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   .hero-logo{width:140px;height:140px}
   .hero-logo img{width:140px;height:140px}
   .hero-stats{gap:1.5rem}
+  .hero::before,.hero::after{display:none}
+  .cta-section::before{width:300px;height:300px}
+  .launch-promo::before{width:150px;height:150px}
   .curtain-topbar{position:relative;top:auto;left:auto;right:auto;margin-bottom:1.5rem;justify-content:flex-end}
   .curtain-access{justify-content:center}
   .curtain{padding-top:1.5rem}
@@ -317,6 +320,9 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,.5);padding:3rem 1.5re
   .curtain .question-mark{font-size:80px}
   .footer-grid{grid-template-columns:1fr}
   section{padding:3.5rem 1.5rem}
+  .pricing-included-grid{grid-template-columns:1fr}
+  .launch-promo-price .big-price{font-size:2.5rem}
+  .compare-table{min-width:500px}
 }
 </style>
 <script type="application/ld+json">
