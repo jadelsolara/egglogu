@@ -164,14 +164,30 @@ async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
         stack.enter_context(
             patch("src.api.auth.send_verification_email", new_callable=AsyncMock)
         )
-        stack.enter_context(patch("src.api.auth.send_welcome", new_callable=AsyncMock))
+        stack.enter_context(
+            patch("src.services.auth_service.send_welcome", new_callable=AsyncMock)
+        )
         stack.enter_context(
             patch("src.api.auth.send_password_reset", new_callable=AsyncMock)
+        )
+        # Also patch email functions in auth_service (used during registration)
+        stack.enter_context(
+            patch(
+                "src.services.auth_service.send_verification_email",
+                new_callable=AsyncMock,
+            )
         )
         # HIBP check — always safe
         stack.enter_context(
             patch(
                 "src.api.auth.check_pwned",
+                new_callable=AsyncMock,
+                return_value=0,
+            )
+        )
+        stack.enter_context(
+            patch(
+                "src.services.auth_service.check_pwned",
                 new_callable=AsyncMock,
                 return_value=0,
             )
