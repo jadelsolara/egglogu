@@ -12,7 +12,7 @@ const DEFAULT_DATA = {
   farm: { name: 'Mi Granja', location: '', capacity: 500, currency: '$', lat: null, lng: null, owmApiKey: '', mqttBroker: '', mqttUser: '', mqttPass: '', mqttTopicPrefix: 'egglogu/', houses: [], routes: [], suppliers: [] },
   flocks: [], dailyProduction: [], vaccines: [], medications: [], outbreaks: [],
   feed: { purchases: [], consumption: [] }, clients: [], clientClaims: [], orders: [],
-  finances: { income: [], expenses: [], receivables: [], payables: [] },
+  finances: { income: [], expenses: [], receivables: [], payables: [], budgets: [] },
   inventory: [], storageLocations: [], reservations: [],
   environment: [], checklist: [], logbook: [], personnel: [],
   kpiSnapshots: [], weatherCache: [], stressEvents: [], iotReadings: [], predictions: [],
@@ -67,6 +67,8 @@ function migrateData(D) {
   if (!D.feed.purchases) D.feed.purchases = [];
   if (!D.feed.consumption) D.feed.consumption = [];
   if (!D.finances.receivables) D.finances.receivables = [];
+  if (!D.finances.payables) D.finances.payables = [];
+  if (!D.finances.budgets) D.finances.budgets = [];
   ['medications', 'outbreaks', 'clients', 'checklist', 'logbook', 'personnel', 'kpiSnapshots', 'weatherCache', 'stressEvents', 'iotReadings', 'predictions'].forEach(k => { if (!D[k]) D[k] = []; });
   // v2 farm fields
   if (D.farm.lat === undefined) D.farm.lat = null;

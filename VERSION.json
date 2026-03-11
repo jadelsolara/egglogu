@@ -31,9 +31,9 @@
     }
   },
   "build": {
-    "number": 47,
-    "lastBuildTime": "2026-03-11T20:02:18Z",
-    "jsBundle": "dist/egglogu-app.2a8bea19.js",
-    "changedPillars": "HTML-ESTRUCTURA"
+    "number": 48,
+    "lastBuildTime": "2026-03-11T21:50:38Z",
+    "jsBundle": "dist/egglogu-app.5d75b9b7.js",
+    "changedPillars": "FUNCIONAL,HTML-ESTRUCTURA"
   }
 }

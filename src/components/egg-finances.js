@@ -8,6 +8,8 @@ import { Store, Bus, t, sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, tod
 import { voidRecord, voidRecords, activeOnly, createReversalEntry } from '../core/utils.js';
 import { getModalBody, modalVal, modalQuery } from './egg-modal.js';
 import { showVoidDialog } from './egg-confirm.js';
+import { renderCashFlow, renderBudget, renderAging } from './egg-fin-analysis.js';
+import { renderPnL } from './egg-fin-statements.js';
 
 // ─── Local helper: VENG validation panel inside modal ───
 function showVengPanel(errors, warnings) {
@@ -37,6 +39,7 @@ class EggFinances extends HTMLElement {
     this._editId = null;
     this._unsubs = [];
     this._vengWarningsShown = false;
+    this._pnlPeriod = 'thisMonth';
   }
 
   connectedCallback() {
@@ -74,6 +77,10 @@ class EggFinances extends HTMLElement {
       <div class="tab${this._currentTab === 'expenses' ? ' active' : ''}" data-action="tab-expenses">\u{1F4C9} ${t('fin_expenses')}</div>
       <div class="tab${this._currentTab === 'payables' ? ' active' : ''}" data-action="tab-payables">\u{1F4CB} ${t('fin_payables')}</div>
       <div class="tab${this._currentTab === 'receivables' ? ' active' : ''}" data-action="tab-receivables">\u{1F4CB} ${t('fin_receivables')}</div>
+      <div class="tab${this._currentTab === 'cashflow' ? ' active' : ''}" data-action="tab-cashflow">\u{1F4B0} ${t('fin_cashflow') || 'Cash Flow'}</div>
+      <div class="tab${this._currentTab === 'budget' ? ' active' : ''}" data-action="tab-budget">\u{1F4CB} ${t('fin_budget') || 'Budget'}</div>
+      <div class="tab${this._currentTab === 'aging' ? ' active' : ''}" data-action="tab-aging">\u{23F3} ${t('fin_aging') || 'Aging'}</div>
+      <div class="tab${this._currentTab === 'pnl' ? ' active' : ''}" data-action="tab-pnl">\u{1F4CA} ${t('fin_pnl') || 'P&L'}</div>
       <div class="tab${this._currentTab === 'summary' ? ' active' : ''}" data-action="tab-summary">\u{1F4CA} ${t('fin_summary')}</div>
     </div>`;
 
@@ -82,6 +89,10 @@ class EggFinances extends HTMLElement {
     else if (this._currentTab === 'expenses') h += this._renderExpenses(D);
     else if (this._currentTab === 'payables') h += this._renderPayables(D);
     else if (this._currentTab === 'receivables') h += this._renderReceivables(D);
+    else if (this._currentTab === 'cashflow') h += renderCashFlow(D);
+    else if (this._currentTab === 'budget') h += renderBudget(D);
+    else if (this._currentTab === 'aging') h += renderAging(D);
+    else if (this._currentTab === 'pnl') h += renderPnL(D, this._pnlPeriod);
     else h += this._renderSummary(D);
 
     this.shadowRoot.innerHTML = h;
@@ -106,7 +117,7 @@ class EggFinances extends HTMLElement {
       .kpi-sub { font-size: 12px; color: var(--text-light, #888); margin-top: 4px; }
       .kpi-info-btn { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border, #ccc); background: var(--bg, #fff); font-size: 11px; cursor: pointer; color: var(--text-light, #888); }
       .kpi-tooltip { position: absolute; top: 36px; right: 8px; background: var(--text, #333); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; z-index: 10; max-width: 250px; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
-      .tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border, #e0e0e0); }
+      .tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border, #e0e0e0); overflow-x: auto; -webkit-overflow-scrolling: touch; }
       .tab { padding: 10px 20px; cursor: pointer; font-weight: 600; color: var(--text-light, #888); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; user-select: none; }
       .tab:hover { color: var(--primary, #1A3C6E); }
       .tab.active { color: var(--primary, #1A3C6E); border-bottom-color: var(--primary, #1A3C6E); }
@@ -137,6 +148,16 @@ class EggFinances extends HTMLElement {
       .dm-badge-success { display: inline-block; padding: 6px 12px; border-radius: 6px; font-size: 13px; background: #e8f5e9; color: #2e7d32; }
       .dm-badge-critical { display: inline-block; padding: 6px 12px; border-radius: 6px; font-size: 13px; background: #fce4ec; color: #c62828; }
       .dm-warn-box { margin: 4px 0; padding: 6px; background: #fff3e0; border-radius: 4px; font-size: 12px; }
+      .progress-bar { height: 8px; background: var(--border, #e0e0e0); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+      .progress-fill { height: 100%; border-radius: 4px; transition: width .3s; }
+      .section-divider { border: none; border-top: 2px solid var(--border, #e0e0e0); margin: 16px 0; }
+      .fin-statement .stat-row { padding: 6px 12px; }
+      .fin-statement .stat-row.total { font-weight: 700; font-size: 15px; border-top: 2px solid var(--text, #333); border-bottom: 2px solid var(--text, #333); margin: 4px 0; }
+      .fin-statement .stat-row.subtotal { font-weight: 600; border-top: 1px solid var(--border, #ccc); }
+      .fin-statement .stat-row.indent { padding-left: 32px; }
+      .period-selector { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+      .period-btn { padding: 6px 14px; border: 1px solid var(--border, #ddd); border-radius: 6px; cursor: pointer; font-size: 13px; background: var(--bg, #fff); }
+      .period-btn.active { background: var(--primary, #1A3C6E); color: #fff; border-color: var(--primary, #1A3C6E); }
       /* DataTable overrides */
       .dt-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
       .dt-toolbar-right { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
@@ -213,6 +234,18 @@ class EggFinances extends HTMLElement {
         {
           key: 'clientId', label: t('fin_client'), type: 'text',
           render: r => { const cl = D.clients.find(c => c.id === r.clientId); return cl ? sanitizeHTML(cl.name) : sanitizeHTML(r.clientName || '-'); }
+        },
+        { key: 'docNo', label: t('fin_doc_number') || 'Doc #', type: 'text', sortable: true, hidden: true },
+        {
+          key: 'paymentMethod', label: t('fin_payment_method') || 'Payment', type: 'text', sortable: true, filterable: true, filterType: 'select',
+          filterOptions: [
+            { value: 'cash', label: t('fin_pay_cash') || 'Cash' },
+            { value: 'transfer', label: t('fin_pay_transfer') || 'Transfer' },
+            { value: 'check', label: t('fin_pay_check') || 'Check' },
+            { value: 'card', label: t('fin_pay_card') || 'Card' },
+            { value: 'credit', label: t('fin_pay_credit') || 'Credit' }
+          ],
+          render: r => r.paymentMethod ? (t('fin_pay_' + r.paymentMethod) || r.paymentMethod) : '-'
         }
       ],
       actions: r => `<div class="btn-group">
@@ -253,7 +286,18 @@ class EggFinances extends HTMLElement {
           render: r => t('fin_cat_' + r.category) || sanitizeHTML(r.category || '-')
         },
         { key: 'description', label: t('fin_description'), type: 'text', sortable: true },
-        { key: 'amount', label: t('fin_amount'), type: 'money', sortable: true }
+        { key: 'amount', label: t('fin_amount'), type: 'money', sortable: true },
+        {
+          key: 'paymentMethod', label: t('fin_payment_method') || 'Payment', type: 'text', sortable: true, filterable: true, filterType: 'select',
+          filterOptions: [
+            { value: 'cash', label: t('fin_pay_cash') || 'Cash' },
+            { value: 'transfer', label: t('fin_pay_transfer') || 'Transfer' },
+            { value: 'check', label: t('fin_pay_check') || 'Check' },
+            { value: 'card', label: t('fin_pay_card') || 'Card' }
+          ],
+          render: r => r.paymentMethod ? (t('fin_pay_' + r.paymentMethod) || r.paymentMethod) : '-'
+        },
+        { key: 'docNo', label: t('fin_doc_number') || 'Doc #', type: 'text', sortable: true, hidden: true }
       ],
       actions: r => `<div class="btn-group">
         <button class="btn btn-secondary btn-sm" data-action="edit-expense" data-id="${escapeAttr(r.id)}">${t('edit')}</button>
@@ -596,8 +640,27 @@ class EggFinances extends HTMLElement {
           this._currentTab = 'payables'; this.render(); break;
         case 'tab-receivables':
           this._currentTab = 'receivables'; this.render(); break;
+        case 'tab-cashflow':
+          this._currentTab = 'cashflow'; this.render(); break;
+        case 'tab-budget':
+          this._currentTab = 'budget'; this.render(); break;
+        case 'tab-aging':
+          this._currentTab = 'aging'; this.render(); break;
+        case 'tab-pnl':
+          this._currentTab = 'pnl'; this.render(); break;
         case 'tab-summary':
           this._currentTab = 'summary'; this.render(); break;
+
+        // P&L period selector
+        case 'pnl-period':
+          this._pnlPeriod = btn.dataset.period || 'thisMonth'; this.render(); break;
+
+        // Budget actions
+        case 'set-budget':
+          this._showBudgetForm(); break;
+        case 'save-budget':
+          // handled by modal action
+          break;
 
         // Payables
         case 'generate-payroll':
@@ -655,6 +718,8 @@ class EggFinances extends HTMLElement {
         this._saveExpense(); break;
       case 'save-receivable':
         this._saveReceivable(); break;
+      case 'save-budget':
+        this._saveBudget(); break;
     }
   }
 
@@ -702,7 +767,21 @@ class EggFinances extends HTMLElement {
           <option value="export"${i && i.marketChannel === 'export' ? ' selected' : ''}>${t('ch_export') || 'Export'}</option>
         </select></div>
       </div>
-      <div class="form-group"><label>${t('fin_client')}</label><select id="fi-client">${clientSelect(i ? i.clientId : '')}</select></div>
+      <div class="form-row">
+        <div class="form-group"><label>${t('fin_client')}</label><select id="fi-client">${clientSelect(i ? i.clientId : '')}</select></div>
+        <div class="form-group"><label>${t('fin_invoice_number') || 'Invoice #'}</label><input id="fi-docno" value="${i ? escapeAttr(i.docNo || '') : ''}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>${t('fin_payment_method') || 'Payment Method'}</label><select id="fi-paymethod">
+          <option value=""${!i || !i.paymentMethod ? ' selected' : ''}>--</option>
+          <option value="cash"${i && i.paymentMethod === 'cash' ? ' selected' : ''}>${t('fin_pay_cash') || 'Cash'}</option>
+          <option value="transfer"${i && i.paymentMethod === 'transfer' ? ' selected' : ''}>${t('fin_pay_transfer') || 'Transfer'}</option>
+          <option value="check"${i && i.paymentMethod === 'check' ? ' selected' : ''}>${t('fin_pay_check') || 'Check'}</option>
+          <option value="card"${i && i.paymentMethod === 'card' ? ' selected' : ''}>${t('fin_pay_card') || 'Card'}</option>
+          <option value="credit"${i && i.paymentMethod === 'credit' ? ' selected' : ''}>${t('fin_pay_credit') || 'Credit'}</option>
+        </select></div>
+        <div class="form-group"><label>${t('fin_due_date')}</label><input type="date" id="fi-due" value="${i ? i.dueDate || '' : ''}"></div>
+      </div>
       <div class="form-group"><label>${t('notes')}</label><textarea id="fi-notes">${i ? escapeAttr(i.notes || '') : ''}</textarea></div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-action="cancel">${t('cancel')}</button>
@@ -726,6 +805,9 @@ class EggFinances extends HTMLElement {
       eggType: modalVal('fi-eggtype') || '',
       marketChannel: modalVal('fi-channel') || '',
       clientId: modalVal('fi-client'),
+      docNo: modalVal('fi-docno') || '',
+      paymentMethod: modalVal('fi-paymethod') || '',
+      dueDate: modalVal('fi-due') || '',
       notes: modalVal('fi-notes')
     };
 
@@ -771,6 +853,19 @@ class EggFinances extends HTMLElement {
           id: genId(), date: o.date, flockId: '', eggType: o.eggType || 'M',
           qtyIn: 0, qtyOut: o.quantity, source: 'sale', ref: o.id
         });
+      }
+      // Auto-create receivable for credit sales
+      if (o.paymentMethod === 'credit' && o.clientId) {
+        const totalAmt = (o.quantity || 0) * (o.unitPrice || 0) || 0;
+        if (totalAmt > 0) {
+          if (!D.finances.receivables) D.finances.receivables = [];
+          D.finances.receivables.push({
+            id: genId(), date: o.date, clientId: o.clientId,
+            amount: totalAmt, dueDate: o.dueDate || '',
+            description: (t('fin_type_' + o.type) || o.type) + ' - ' + (o.docNo || o.id),
+            paid: false, incomeId: o.id
+          });
+        }
       }
     }
 
@@ -825,6 +920,16 @@ class EggFinances extends HTMLElement {
       </div>
       <div class="form-row">
         <div class="form-group"><label>${t('exp_flock')}</label><select id="fe-flock"><option value="">${t('all')}</option>${D.flocks.filter(f => f.status !== 'descarte').map(f => `<option value="${f.id}"${e && e.flockId === f.id ? ' selected' : ''}>${sanitizeHTML(f.name)}</option>`).join('')}</select></div>
+        <div class="form-group"><label>${t('fin_doc_number') || 'Doc #'}</label><input id="fe-docno" value="${e ? escapeAttr(e.docNo || '') : ''}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>${t('fin_payment_method') || 'Payment Method'}</label><select id="fe-paymethod">
+          <option value=""${!e || !e.paymentMethod ? ' selected' : ''}>--</option>
+          <option value="cash"${e && e.paymentMethod === 'cash' ? ' selected' : ''}>${t('fin_pay_cash') || 'Cash'}</option>
+          <option value="transfer"${e && e.paymentMethod === 'transfer' ? ' selected' : ''}>${t('fin_pay_transfer') || 'Transfer'}</option>
+          <option value="check"${e && e.paymentMethod === 'check' ? ' selected' : ''}>${t('fin_pay_check') || 'Check'}</option>
+          <option value="card"${e && e.paymentMethod === 'card' ? ' selected' : ''}>${t('fin_pay_card') || 'Card'}</option>
+        </select></div>
         <div class="form-group"></div>
       </div>
       <div class="form-group"><label>${t('notes')}</label><textarea id="fe-notes">${e ? escapeAttr(e.notes || '') : ''}</textarea></div>
@@ -858,6 +963,8 @@ class EggFinances extends HTMLElement {
       description: modalVal('fe-desc'),
       amount: parseFloat(modalVal('fe-amt')) || 0,
       flockId: modalVal('fe-flock') || null,
+      docNo: modalVal('fe-docno') || '',
+      paymentMethod: modalVal('fe-paymethod') || '',
       notes: modalVal('fe-notes')
     };
 
@@ -1024,6 +1131,62 @@ class EggFinances extends HTMLElement {
     voidRecords(D.finances.receivables, ids, reason);
     logAudit('void', 'receivables', 'Bulk void receivables: ' + reason, ids, null);
     Store.save(D);
+    this.render();
+  }
+
+  // ── Budget Form & CRUD ─────────────────────────────────
+  _showBudgetForm() {
+    const D = Store.get();
+    const curMonth = todayStr().substring(0, 7);
+    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'other'];
+    if (!D.finances.budgets) D.finances.budgets = [];
+    const existing = D.finances.budgets.filter(b => b.month === curMonth);
+
+    let rows = '';
+    cats.forEach(c => {
+      const b = existing.find(x => x.category === c);
+      rows += `<div class="form-row">
+        <div class="form-group" style="flex:2"><label>${t('fin_cat_' + c)}</label></div>
+        <div class="form-group" style="flex:1"><input type="number" min="0" step="0.01" id="fb-${c}" value="${b ? b.amount : ''}"></div>
+      </div>`;
+    });
+
+    const body = `
+      <div class="form-group"><label>${t('fin_month')}</label><input type="month" id="fb-month" value="${curMonth}"></div>
+      <hr style="margin:12px 0;border:none;border-top:1px solid var(--border,#eee)">
+      <p style="font-size:13px;color:var(--text-light,#888);margin:0 0 12px">${t('fin_budget_amount') || 'Budget Amount'} ${t('fin_per_category') || 'per category'}:</p>
+      ${rows}
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-action="cancel">${t('cancel')}</button>
+        <button class="btn btn-primary" data-action="save-budget">${t('save')}</button>
+      </div>`;
+
+    Bus.emit('modal:open', { title: t('fin_set_budget') || 'Set Budget', body });
+  }
+
+  _saveBudget() {
+    const body = getModalBody();
+    if (!body) return;
+    const D = Store.get();
+    if (!D.finances.budgets) D.finances.budgets = [];
+    const month = modalVal('fb-month');
+    if (!month) return;
+
+    const cats = ['feed', 'bird_purchase', 'vaccines', 'transport', 'labor', 'infrastructure', 'other'];
+    cats.forEach(c => {
+      const val = parseFloat(modalVal('fb-' + c)) || 0;
+      const existing = D.finances.budgets.find(b => b.month === month && b.category === c);
+      if (existing) {
+        existing.amount = val;
+      } else if (val > 0) {
+        D.finances.budgets.push({ id: genId(), month, category: c, amount: val });
+      }
+    });
+
+    logAudit('update', 'finances', 'Set budget for ' + month, null, null);
+    Store.save(D);
+    Bus.emit('modal:close');
+    Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 

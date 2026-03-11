@@ -7,6 +7,31 @@ import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
 import { showConfirm, showVoidDialog } from './egg-confirm.js';
 import { voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 
+function syncHealthExpense(D, record, linkField, linkId) {
+  if (!D.finances) D.finances = {};
+  if (!D.finances.expenses) D.finances.expenses = [];
+  const existing = D.finances.expenses.find(e => e[linkField] === linkId && e.status !== 'voided');
+  if (record.cost > 0) {
+    if (existing) {
+      existing.amount = record.cost;
+      existing.description = record.description;
+      existing.date = record.date;
+    } else {
+      D.finances.expenses.push({
+        id: genId(),
+        date: record.date,
+        category: 'vaccines',
+        description: record.description,
+        amount: record.cost,
+        notes: record.notes || '',
+        [linkField]: linkId
+      });
+    }
+  } else if (existing) {
+    voidRecord(D.finances.expenses, existing.id, 'Cost removed from health record');
+  }
+}
+
 class EggSanidad extends HTMLElement {
   constructor() {
     super();
@@ -285,6 +310,9 @@ class EggSanidad extends HTMLElement {
       o.id = genId();
       D.vaccines.push(o);
     }
+    const vaccId = id || o.id;
+    syncHealthExpense(D, { cost: o.cost, description: o.vaccineName, date: o.appliedDate || o.scheduledDate || todayStr(), notes: o.notes || '' }, 'vaccineId', vaccId);
+    if (o.cost > 0) logAudit('auto-expense', 'sanidad', 'Sync vaccine expense: ' + o.vaccineName, vaccId, null);
     Store.save(D, 'save-vaccine');
     Bus.emit('modal:close');
     Bus.emit('toast', { msg: t('cfg_saved') });
@@ -307,6 +335,11 @@ class EggSanidad extends HTMLElement {
     if (!reason) return;
     const D = Store.get();
     voidRecord(D.vaccines, id, reason);
+    // Void linked expense
+    if (D.finances && D.finances.expenses) {
+      const linked = D.finances.expenses.find(e => e.vaccineId === id && e.status !== 'voided');
+      if (linked) voidRecord(D.finances.expenses, linked.id, 'Vaccine voided: ' + reason);
+    }
     logAudit('void', 'sanidad', 'Void vaccine: ' + reason, id, null);
     Store.save(D, 'void-vaccine');
     Bus.emit('toast', { msg: t('cfg_saved') });
@@ -456,6 +489,9 @@ class EggSanidad extends HTMLElement {
       o.id = genId();
       D.medications.push(o);
     }
+    const medId = id || o.id;
+    syncHealthExpense(D, { cost: o.cost, description: o.name + (o.reason ? ' (' + o.reason + ')' : ''), date: o.startDate || todayStr(), notes: o.dosage || '' }, 'medicationId', medId);
+    if (o.cost > 0) logAudit('auto-expense', 'sanidad', 'Sync medication expense: ' + o.name, medId, null);
     Store.save(D, 'save-medication');
     Bus.emit('modal:close');
     Bus.emit('toast', { msg: t('cfg_saved') });
@@ -467,6 +503,11 @@ class EggSanidad extends HTMLElement {
     if (!reason) return;
     const D = Store.get();
     voidRecord(D.medications, id, reason);
+    // Void linked expense
+    if (D.finances && D.finances.expenses) {
+      const linked = D.finances.expenses.find(e => e.medicationId === id && e.status !== 'voided');
+      if (linked) voidRecord(D.finances.expenses, linked.id, 'Medication voided: ' + reason);
+    }
     logAudit('void', 'sanidad', 'Void medication: ' + reason, id, null);
     Store.save(D, 'void-medication');
     Bus.emit('toast', { msg: t('cfg_saved') });
