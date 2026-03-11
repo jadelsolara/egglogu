@@ -40,11 +40,11 @@ function _agingBucket(daysDiff) {
 
 function _agingBucketLabel(bucket) {
   const labels = {
-    'current': t('aging_current') || 'Current',
-    '1-30': '1-30 ' + (t('days') || 'days'),
-    '31-60': '31-60 ' + (t('days') || 'days'),
-    '61-90': '61-90 ' + (t('days') || 'days'),
-    '90+': '90+ ' + (t('days') || 'days')
+    'current': t('fin_aging_current'),
+    '1-30': t('fin_aging_30'),
+    '31-60': t('fin_aging_60'),
+    '61-90': t('fin_aging_90'),
+    '90+': t('fin_aging_90plus')
   };
   return labels[bucket] || bucket;
 }
@@ -100,15 +100,15 @@ export function renderCashFlow(D) {
 
   // KPI cards
   h += '<div class="kpi-grid">';
-  h += kpi(t('cash_position') || 'Cash Position', fmtMoney(cashPosition, c), '', cashPosition >= 0 ? '' : 'danger');
-  h += kpi(t('pending_receivables') || 'Pending Receivables', fmtMoney(pendingReceivables, c), '', 'accent');
-  h += kpi(t('pending_payables') || 'Pending Payables', fmtMoney(pendingPayables, c), '', 'warning');
-  h += kpi(t('projected_net') || 'Projected Net', fmtMoney(projectedNet, c), '', projectedNet >= 0 ? '' : 'danger');
+  h += kpi(t('fin_cash_position'), fmtMoney(cashPosition, c), '', cashPosition >= 0 ? '' : 'danger');
+  h += kpi(t('fin_pending_receivables'), fmtMoney(pendingReceivables, c), '', 'accent');
+  h += kpi(t('fin_pending_payables'), fmtMoney(pendingPayables, c), '', 'warning');
+  h += kpi(t('fin_projected_net'), fmtMoney(projectedNet, c), '', projectedNet >= 0 ? '' : 'danger');
   h += '</div>';
 
   // Monthly Cash Flow table — last 12 months
   h += '<div class="card">';
-  h += '<h3>' + sanitizeHTML(t('monthly_cash_flow') || 'Monthly Cash Flow') + '</h3>';
+  h += '<h3>' + sanitizeHTML(t('fin_monthly_cash_flow')) + '</h3>';
 
   // Build month map for last 12 months
   const today = _today();
@@ -131,11 +131,11 @@ export function renderCashFlow(D) {
   });
 
   h += '<div class="table-wrap"><table>';
-  h += '<thead><tr><th>' + sanitizeHTML(t('month') || 'Month') + '</th>';
-  h += '<th>' + sanitizeHTML(t('cash_in') || 'Cash In') + '</th>';
-  h += '<th>' + sanitizeHTML(t('cash_out') || 'Cash Out') + '</th>';
-  h += '<th>' + sanitizeHTML(t('net') || 'Net') + '</th>';
-  h += '<th>' + sanitizeHTML(t('running_balance') || 'Running Balance') + '</th>';
+  h += '<thead><tr><th>' + sanitizeHTML(t('fin_month')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_cash_in')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_cash_out')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_net')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_running_balance')) + '</th>';
   h += '</tr></thead><tbody>';
 
   let runningBalance = 0;
@@ -160,7 +160,7 @@ export function renderCashFlow(D) {
 
   // Upcoming Due — next 30 days
   h += '<div class="card">';
-  h += '<h3>' + sanitizeHTML(t('upcoming_due') || 'Upcoming Due (Next 30 Days)') + '</h3>';
+  h += '<h3>' + sanitizeHTML(t('fin_upcoming_due')) + '</h3>';
 
   const now = _today();
   const in30 = new Date(now.getTime() + 30 * 86400000);
@@ -197,24 +197,24 @@ export function renderCashFlow(D) {
   upcomingItems.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
   if (upcomingItems.length === 0) {
-    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('no_upcoming_due') || 'No items due in the next 30 days') + '</p></div>';
+    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('fin_no_upcoming_due')) + '</p></div>';
   } else {
     h += '<div class="table-wrap"><table>';
     h += '<thead><tr>';
-    h += '<th>' + sanitizeHTML(t('due_date') || 'Due Date') + '</th>';
-    h += '<th>' + sanitizeHTML(t('description') || 'Description') + '</th>';
-    h += '<th>' + sanitizeHTML(t('amount') || 'Amount') + '</th>';
-    h += '<th>' + sanitizeHTML(t('type') || 'Type') + '</th>';
-    h += '<th>' + sanitizeHTML(t('status') || 'Status') + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_due_date')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_description')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_amount')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_type')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('status')) + '</th>';
     h += '</tr></thead><tbody>';
 
     upcomingItems.forEach(item => {
       const typeBadge = item.type === 'receivable'
-        ? '<span class="badge badge-info">' + sanitizeHTML(t('receivable') || 'Receivable') + '</span>'
-        : '<span class="badge badge-warning">' + sanitizeHTML(t('payable') || 'Payable') + '</span>';
+        ? '<span class="badge badge-info">' + sanitizeHTML(t('fin_receivable')) + '</span>'
+        : '<span class="badge badge-warning">' + sanitizeHTML(t('fin_payable')) + '</span>';
       const statusBadge = item.overdue
-        ? '<span class="badge badge-danger">' + sanitizeHTML(t('overdue') || 'Overdue') + '</span>'
-        : '<span class="badge badge-success">' + sanitizeHTML(t('on_time') || 'On Time') + '</span>';
+        ? '<span class="badge badge-danger">' + sanitizeHTML(t('fin_overdue')) + '</span>'
+        : '<span class="badge badge-success">' + sanitizeHTML(t('fin_on_time')) + '</span>';
 
       h += '<tr>';
       h += '<td>' + fmtDate(item.date) + '</td>';
@@ -246,14 +246,14 @@ export function renderBudget(D) {
   let h = '';
 
   // Header with button
-  h += '<div class="page-header"><h3>' + sanitizeHTML(t('budget_vs_actual') || 'Budget vs Actual') + '</h3>';
-  h += '<button class="btn btn-primary btn-sm" data-action="set-budget">' + sanitizeHTML(t('set_budget') || 'Set Budget') + '</button></div>';
+  h += '<div class="page-header"><h3>' + sanitizeHTML(t('fin_budget_vs_actual')) + '</h3>';
+  h += '<button class="btn btn-primary btn-sm" data-action="set-budget">' + sanitizeHTML(t('fin_set_budget')) + '</button></div>';
 
   // Filter budgets to current month
   const monthBudgets = budgets.filter(b => _monthKey(b.month || b.date || '') === curMonth || b.month === curMonth);
 
   if (monthBudgets.length === 0) {
-    h += emptyState('\uD83D\uDCCA', t('no_budgets_msg') || 'Configure your monthly budgets to track spending', t('set_budget') || 'Set Budget', "this.dispatchEvent(new CustomEvent('action',{detail:'set-budget',bubbles:true}))");
+    h += emptyState('\uD83D\uDCCA', t('fin_no_budget'), t('fin_set_budget'), "this.dispatchEvent(new CustomEvent('action',{detail:'set-budget',bubbles:true}))");
     return h;
   }
 
@@ -270,11 +270,11 @@ export function renderBudget(D) {
   h += '<h3>' + sanitizeHTML(_monthLabel(curMonth)) + '</h3>';
   h += '<div class="table-wrap"><table>';
   h += '<thead><tr>';
-  h += '<th>' + sanitizeHTML(t('category') || 'Category') + '</th>';
-  h += '<th>' + sanitizeHTML(t('budget') || 'Budget') + '</th>';
-  h += '<th>' + sanitizeHTML(t('actual') || 'Actual') + '</th>';
-  h += '<th>' + sanitizeHTML(t('variance') || 'Variance') + '</th>';
-  h += '<th>' + sanitizeHTML(t('pct_used') || '% Used') + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_category')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_budget')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_actual')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_variance')) + '</th>';
+  h += '<th>' + sanitizeHTML(t('fin_pct_used')) + '</th>';
   h += '</tr></thead><tbody>';
 
   // Build lookup of budget amounts by category
@@ -345,7 +345,7 @@ export function renderBudget(D) {
   const totVarColor = totalVariance >= 0 ? 'color:#2e7d32' : 'color:#c62828';
 
   h += '<tr style="font-weight:700;border-top:2px solid var(--border,#ccc)">';
-  h += '<td>' + sanitizeHTML(t('total') || 'Total') + '</td>';
+  h += '<td>' + sanitizeHTML(t('total')) + '</td>';
   h += '<td>' + fmtMoney(totalBudget, c) + '</td>';
   h += '<td>' + fmtMoney(totalActual, c) + '</td>';
   h += '<td style="' + totVarColor + '">' + fmtMoney(totalVariance, c) + '</td>';
@@ -371,7 +371,7 @@ export function renderAging(D) {
 
   // ── Receivables Aging ──
   h += '<div class="card">';
-  h += '<h3>' + sanitizeHTML(t('receivables_aging') || 'Receivables Aging') + '</h3>';
+  h += '<h3>' + sanitizeHTML(t('fin_aging_receivables')) + '</h3>';
 
   const recBuckets = { 'current': 0, '1-30': 0, '31-60': 0, '61-90': 0, '90+': 0 };
   const recItems = receivablesActive.map(r => {
@@ -390,19 +390,19 @@ export function renderAging(D) {
   h += '</div>';
 
   if (recItems.length === 0) {
-    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('no_outstanding_receivables') || 'No outstanding receivables') + '</p></div>';
+    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('fin_no_outstanding_receivables')) + '</p></div>';
   } else {
     // Sort by days overdue descending
     recItems.sort((a, b) => b.daysDiff - a.daysDiff);
 
     h += '<div class="table-wrap"><table>';
     h += '<thead><tr>';
-    h += '<th>' + sanitizeHTML(t('client') || 'Client') + '</th>';
-    h += '<th>' + sanitizeHTML(t('invoice') || 'Invoice') + '</th>';
-    h += '<th>' + sanitizeHTML(t('amount') || 'Amount') + '</th>';
-    h += '<th>' + sanitizeHTML(t('due_date') || 'Due Date') + '</th>';
-    h += '<th>' + sanitizeHTML(t('days_overdue') || 'Days Overdue') + '</th>';
-    h += '<th>' + sanitizeHTML(t('bucket') || 'Bucket') + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_client')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_invoice')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_amount')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_due_date')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_days_overdue')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_aging_bucket')) + '</th>';
     h += '</tr></thead><tbody>';
 
     recItems.forEach(item => {
@@ -424,7 +424,7 @@ export function renderAging(D) {
 
   // ── Payables Aging ──
   h += '<div class="card">';
-  h += '<h3>' + sanitizeHTML(t('payables_aging') || 'Payables Aging') + '</h3>';
+  h += '<h3>' + sanitizeHTML(t('fin_aging_payables')) + '</h3>';
 
   const payBuckets = { 'current': 0, '1-30': 0, '31-60': 0, '61-90': 0, '90+': 0 };
   const payItems = payablesActive.map(p => {
@@ -443,17 +443,17 @@ export function renderAging(D) {
   h += '</div>';
 
   if (payItems.length === 0) {
-    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('no_outstanding_payables') || 'No outstanding payables') + '</p></div>';
+    h += '<div class="empty-state"><div class="empty-icon">\u2705</div><p>' + sanitizeHTML(t('fin_no_outstanding_payables')) + '</p></div>';
   } else {
     payItems.sort((a, b) => b.daysDiff - a.daysDiff);
 
     h += '<div class="table-wrap"><table>';
     h += '<thead><tr>';
-    h += '<th>' + sanitizeHTML(t('employee') || 'Employee') + ' / ' + sanitizeHTML(t('description') || 'Description') + '</th>';
-    h += '<th>' + sanitizeHTML(t('amount') || 'Amount') + '</th>';
-    h += '<th>' + sanitizeHTML(t('due_date') || 'Due Date') + '</th>';
-    h += '<th>' + sanitizeHTML(t('days_overdue') || 'Days Overdue') + '</th>';
-    h += '<th>' + sanitizeHTML(t('bucket') || 'Bucket') + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_employee')) + ' / ' + sanitizeHTML(t('fin_description')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_amount')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_due_date')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_days_overdue')) + '</th>';
+    h += '<th>' + sanitizeHTML(t('fin_aging_bucket')) + '</th>';
     h += '</tr></thead><tbody>';
 
     payItems.forEach(item => {

@@ -123,7 +123,7 @@ export function renderPnL(D, period) {
   // Period selector tabs
   h += '<div class="card">';
   h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px">';
-  h += '<h3 style="margin:0;color:var(--primary-dark,#0E2240)">' + sanitizeHTML(t('profit_loss') || 'Profit & Loss Statement') + '</h3>';
+  h += '<h3 style="margin:0;color:var(--primary-dark,#0E2240)">' + sanitizeHTML(t('fin_pnl') || 'Profit & Loss Statement') + '</h3>';
   h += '<div style="display:flex;gap:4px;flex-wrap:wrap">';
 
   const periods = ['thisMonth', 'lastMonth', 'thisQuarter', 'ytd', 'all'];
@@ -136,7 +136,7 @@ export function renderPnL(D, period) {
   h += '</div></div>';
 
   // ─── Revenue ──────────────────────────────────────────
-  h += _sectionHeader(t('revenue') || 'Revenue');
+  h += _sectionHeader(t('fin_revenue') || 'Revenue');
 
   // Group income by type
   const incomeByType = {};
@@ -172,10 +172,10 @@ export function renderPnL(D, period) {
     }
   });
 
-  h += _subtotalRow(t('total_revenue') || 'Total Revenue', totalRevenue, c);
+  h += _subtotalRow(t('fin_total_revenue') || 'Total Revenue', totalRevenue, c);
 
   // ─── COGS ─────────────────────────────────────────────
-  h += _sectionHeader(t('cogs') || 'Cost of Goods Sold');
+  h += _sectionHeader(t('fin_cogs') || 'Cost of Goods Sold');
 
   const expByCat = {};
   expensesActive.forEach(e => {
@@ -195,17 +195,17 @@ export function renderPnL(D, period) {
     h += _statRow(cc.label, amt, c, { indent: 1 });
   });
 
-  h += _subtotalRow(t('total_cogs') || 'Total COGS', totalCOGS, c);
+  h += _subtotalRow(t('fin_total_cogs') || 'Total COGS', totalCOGS, c);
 
   // ─── Gross Profit ─────────────────────────────────────
   h += _dividerRow();
   const grossProfit = totalRevenue - totalCOGS;
-  h += _subtotalRow(t('gross_profit') || '= Gross Profit', grossProfit, c);
+  h += _subtotalRow(t('fin_gross_profit') || '= Gross Profit', grossProfit, c);
   const grossMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
-  h += _marginRow(t('gross_margin') || 'Gross Margin %', grossMargin);
+  h += _marginRow(t('fin_gross_margin') || 'Gross Margin %', grossMargin);
 
   // ─── Operating Expenses ───────────────────────────────
-  h += _sectionHeader(t('operating_expenses') || 'Operating Expenses');
+  h += _sectionHeader(t('fin_opex') || 'Operating Expenses');
 
   const opexCats = [
     { key: 'vaccines', label: t('fin_cat_vaccines') || 'Vaccines & Medicine' },
@@ -237,20 +237,20 @@ export function renderPnL(D, period) {
     }
   });
 
-  h += _subtotalRow(t('total_opex') || 'Total Operating Expenses', totalOpEx, c);
+  h += _subtotalRow(t('fin_total_opex') || 'Total Operating Expenses', totalOpEx, c);
 
   // ─── Operating Profit (EBIT) ──────────────────────────
   h += _dividerRow();
   const ebit = grossProfit - totalOpEx;
-  h += _subtotalRow(t('operating_profit') || '= Operating Profit (EBIT)', ebit, c);
+  h += _subtotalRow(t('fin_operating_profit') || '= Operating Profit (EBIT)', ebit, c);
 
   // ─── EBITDA ───────────────────────────────────────────
   const depreciation = Number(settings.depreciation || settings.monthlyDepreciation || 0);
   if (depreciation > 0) {
-    h += _statRow(t('depreciation') || 'Depreciation', depreciation, c, { indent: 1 });
+    h += _statRow(t('fin_depreciation') || 'Depreciation', depreciation, c, { indent: 1 });
   }
   const ebitda = ebit + depreciation;
-  h += _subtotalRow(t('ebitda') || '= EBITDA', ebitda, c);
+  h += _subtotalRow(t('fin_ebitda') || '= EBITDA', ebitda, c);
 
   // ─── Tax ──────────────────────────────────────────────
   const taxRate = Number(settings.taxRate || 0) / 100;
@@ -258,8 +258,8 @@ export function renderPnL(D, period) {
   const tax = taxableIncome * taxRate;
 
   if (taxRate > 0) {
-    h += _sectionHeader(t('taxes') || 'Taxes');
-    h += _statRow((t('tax') || 'Tax') + ' (' + fmtNum(taxRate * 100, 1) + '%)', tax, c, { indent: 1 });
+    h += _sectionHeader(t('fin_taxes') || 'Taxes');
+    h += _statRow((t('eerr_tax') || 'Tax') + ' (' + fmtNum(taxRate * 100, 1) + '%)', tax, c, { indent: 1 });
   }
 
   // ─── Net Profit ───────────────────────────────────────
@@ -267,12 +267,12 @@ export function renderPnL(D, period) {
   const netProfit = ebit - tax;
   h += '<div class="stat-row" style="font-weight:700;font-size:16px;padding:12px 0;'
     + (netProfit >= 0 ? 'color:#2e7d32' : 'color:#c62828') + '">'
-    + '<span class="stat-label">' + sanitizeHTML(t('net_profit') || '= Net Profit') + '</span>'
+    + '<span class="stat-label">' + sanitizeHTML(t('fin_net_profit') || '= Net Profit') + '</span>'
     + '<span class="stat-value">' + fmtMoney(netProfit, c) + '</span>'
     + '</div>';
 
   const netMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
-  h += _marginRow(t('net_margin') || 'Net Margin %', netMargin);
+  h += _marginRow(t('fin_net_margin') || 'Net Margin %', netMargin);
 
   h += '</div>'; // close .card
   return h;
