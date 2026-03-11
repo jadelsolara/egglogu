@@ -216,36 +216,41 @@ def check_f1(report: LevelReport):
             message="alembic/versions/ not found",
         ))
 
-    # 1.3 Alembic chain integrity (1 head, 1 base)
+    # 1.3 Alembic chain integrity (1 head, 1 base) — file-based parsing (no alembic import needed)
     try:
-        result = subprocess.run(
-            [sys.executable, "-c", """
-from alembic.config import Config
-from alembic.script import ScriptDirectory
-c = Config('alembic.ini')
-s = ScriptDirectory.from_config(c)
-heads = list(s.get_heads())
-bases = list(s.get_bases())
-revs = list(s.walk_revisions())
-print(f'{len(heads)}|{len(bases)}|{len(revs)}')
-"""],
-            capture_output=True, text=True, cwd=str(PROJECT_ROOT), timeout=15
-        )
-        if result.returncode == 0:
-            parts = result.stdout.strip().split("|")
-            n_heads, n_bases, n_revs = int(parts[0]), int(parts[1]), int(parts[2])
-            report.checks.append(Check(
-                name="alembic_chain_integrity",
-                level=1,
-                passed=n_heads == 1 and n_bases == 1,
-                message=f"heads={n_heads}, bases={n_bases}, revisions={n_revs}",
-                fix_hint="Fix broken chain: alembic merge heads" if n_heads > 1 else None,
-            ))
-        else:
-            report.checks.append(Check(
-                name="alembic_chain_integrity", level=1, passed=False,
-                message=f"Alembic error: {result.stderr[:200]}",
-            ))
+        import re as _re
+        versions_dir = PROJECT_ROOT / "alembic" / "versions"
+        revision_map = {}  # revision -> down_revision
+        for mig_file in versions_dir.glob("*.py"):
+            content = mig_file.read_text()
+            rev_match = _re.search(r'^revision(?:\s*:\s*\w+)?\s*=\s*["\']([^"\']+)["\']', content, _re.MULTILINE)
+            down_match = _re.search(r'^down_revision(?:\s*:\s*[^\n=]+)?\s*=\s*["\']([^"\']*)["\']', content, _re.MULTILINE)
+            down_none = _re.search(r'^down_revision(?:\s*:\s*[^\n=]+)?\s*=\s*None', content, _re.MULTILINE)
+            if rev_match:
+                rev_id = rev_match.group(1)
+                if down_none:
+                    down_id = None
+                elif down_match:
+                    down_id = down_match.group(1) or None
+                else:
+                    down_id = None
+                revision_map[rev_id] = down_id
+
+        n_revs = len(revision_map)
+        # Bases = revisions whose down_revision is None
+        bases = [r for r, d in revision_map.items() if d is None]
+        # Heads = revisions that no other revision points to as down_revision
+        all_down = set(d for d in revision_map.values() if d is not None)
+        heads = [r for r in revision_map if r not in all_down]
+        n_heads, n_bases = len(heads), len(bases)
+
+        report.checks.append(Check(
+            name="alembic_chain_integrity",
+            level=1,
+            passed=n_heads == 1 and n_bases == 1,
+            message=f"heads={n_heads}, bases={n_bases}, revisions={n_revs}",
+            fix_hint="Fix broken chain: alembic merge heads" if n_heads > 1 else None,
+        ))
     except Exception as e:
         report.checks.append(Check(
             name="alembic_chain_integrity", level=1, passed=False,
