@@ -641,12 +641,26 @@ class EggClients extends HTMLElement {
       `<option value="${escapeAttr(f.id)}">${sanitizeHTML(f.name || f.breed || f.id.substring(0, 8))}</option>`
     ).join('');
 
-    let itemsHtml = '';
-    if (order && order.items && order.items.length) {
-      order.items.forEach((it, idx) => {
-        itemsHtml += this._orderItemRow(it, idx, D);
+    // Pre-populate quantities from existing order items
+    const existingQty = {};
+    const existingPrice = {};
+    if (order && order.items) {
+      order.items.forEach(it => {
+        existingQty[it.eggType] = (existingQty[it.eggType] || 0) + (it.qty || 0);
+        if (!existingPrice[it.eggType]) existingPrice[it.eggType] = it.unitPrice || 0;
       });
     }
+
+    const eggRows = EGG_TYPES.map(et => {
+      const q = existingQty[et] || '';
+      const p = existingPrice[et] || '';
+      return `<div class="form-row" style="align-items:center;gap:8px;margin-bottom:4px">
+        <span style="flex:0 0 50px;font-weight:600;font-size:14px">${et}</span>
+        <input type="number" id="ord-qty-${et}" class="ord-qty-input" data-egg="${et}" placeholder="0" min="0" value="${q}" style="flex:1;text-align:center">
+        <input type="number" id="ord-price-${et}" class="ord-price-input" data-egg="${et}" placeholder="$/u" min="0" step="0.01" value="${p}" style="flex:1;text-align:right">
+        <span id="ord-line-${et}" style="flex:0 0 90px;text-align:right;font-size:13px;color:var(--text-muted,#888)">-</span>
+      </div>`;
+    }).join('');
 
     const body = `
       <div class="form-row">
@@ -658,15 +672,17 @@ class EggClients extends HTMLElement {
         <div class="form-group"><label>${t('ord_number')}</label><input id="ord-number" value="${order ? escapeAttr(order.orderNumber || '') : ''}" placeholder="${t('ord_number_ph')}"></div>
       </div>
       <h4 style="margin:12px 0 8px">${t('ord_items')}</h4>
-      <div id="ord-items-wrap">${itemsHtml}</div>
-      <div class="form-row" style="margin-top:8px;align-items:end">
-        <div class="form-group" style="flex:1"><select id="ord-new-type">${EGG_TYPES.map(et => `<option value="${et}">${et}</option>`).join('')}</select></div>
-        <div class="form-group" style="flex:1"><input type="number" id="ord-new-qty" placeholder="${t('ord_qty')}" min="1"></div>
-        <div class="form-group" style="flex:1"><input type="number" id="ord-new-price" placeholder="$/u" min="0" step="0.01"></div>
+      <div style="margin-bottom:4px;display:flex;gap:8px;font-size:12px;color:var(--text-muted,#888);padding:0 0 4px;border-bottom:1px solid var(--border,#ddd)">
+        <span style="flex:0 0 50px">${t('prod_type') || 'Tipo'}</span>
+        <span style="flex:1;text-align:center">${t('ord_qty')}</span>
+        <span style="flex:1;text-align:right">$/u</span>
+        <span style="flex:0 0 90px;text-align:right">${t('total')}</span>
+      </div>
+      ${eggRows}
+      <div class="form-row" style="margin-top:6px;gap:8px">
+        <div class="form-group" style="flex:1"><label style="font-size:.75rem">${t('flock') || 'Lote'}</label><select id="ord-new-flock">${flockOpts}</select></div>
+        <div class="form-group" style="flex:1"><label style="font-size:.75rem">${t('inv_location') || 'Ubicación'}</label><select id="ord-new-loc">${locOpts}</select></div>
         <div class="form-group" style="flex:0 0 auto"><label style="font-size:.75rem;display:flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer"><input type="checkbox" id="ord-override"> ${t('ord_override')}</label></div>
-        <div class="form-group" style="flex:1"><select id="ord-new-flock">${flockOpts}</select></div>
-        <div class="form-group" style="flex:1"><select id="ord-new-loc">${locOpts}</select></div>
-        <div class="form-group"><button class="btn btn-secondary btn-sm" data-action="add-order-item">+</button></div>
       </div>
       <div id="ord-below-cost-warn" style="display:none;background:#FFF3E0;border-left:3px solid #FF9800;padding:6px 10px;margin:4px 0;font-size:.8rem;color:#E65100;border-radius:4px"></div>
       <div id="ord-total-display" style="text-align:right;font-weight:700;font-size:16px;margin:8px 0"></div>
@@ -678,22 +694,18 @@ class EggClients extends HTMLElement {
 
     Bus.emit('modal:open', { title: order ? t('edit') + ' ' + t('ord_tab') : t('ord_new'), body, wide: true });
 
-    // Store items temporarily
-    this._orderItems = order ? [...(order.items || [])] : [];
     this._clientPrices = {};
-    this._updateOrderTotal();
+    this._orderItems = order ? [...(order.items || [])] : [];
 
-    // Wire up auto-fill: client change, type change, override toggle
+    // Wire up grid-based order form
     setTimeout(() => {
       const body = getModalBody();
       if (!body) return;
       const clientSel = body.querySelector('#ord-client');
-      const typeSel = body.querySelector('#ord-new-type');
-      const priceIn = body.querySelector('#ord-new-price');
       const overrideCb = body.querySelector('#ord-override');
-      if (!clientSel || !typeSel || !priceIn || !overrideCb) return;
+      if (!clientSel) return;
 
-      const autoFill = () => {
+      const loadClientPrices = () => {
         const cid = clientSel.value;
         if (cid) {
           const freshD = Store.get();
@@ -702,42 +714,44 @@ class EggClients extends HTMLElement {
         } else {
           this._clientPrices = {};
         }
-        if (!overrideCb.checked) {
-          const agreedPrice = this._clientPrices[typeSel.value] || 0;
-          priceIn.value = agreedPrice > 0 ? agreedPrice : '';
-          priceIn.readOnly = agreedPrice > 0;
-          priceIn.placeholder = agreedPrice > 0 ? fmtMoney(agreedPrice) : t('cli_price');
-          this._checkBelowCost(body, agreedPrice);
-        }
-        this._updateOrderLinePreview(body);
       };
 
-      clientSel.addEventListener('change', autoFill);
-      typeSel.addEventListener('change', autoFill);
-      overrideCb.addEventListener('change', () => {
-        if (overrideCb.checked) {
-          priceIn.readOnly = false;
-          priceIn.value = '';
-          priceIn.focus();
-        } else {
-          autoFill();
-        }
-      });
-      priceIn.addEventListener('input', () => {
-        if (overrideCb.checked) {
-          this._checkBelowCost(body, parseFloat(priceIn.value) || 0);
-        }
-        this._updateOrderLinePreview(body);
-      });
+      const fillPrices = () => {
+        const isOverride = overrideCb?.checked;
+        EGG_TYPES.forEach(et => {
+          const priceIn = body.querySelector(`#ord-price-${et}`);
+          if (!priceIn) return;
+          const agreed = this._clientPrices[et] || 0;
+          if (!isOverride && agreed > 0) {
+            priceIn.value = agreed;
+            priceIn.readOnly = true;
+          } else {
+            priceIn.readOnly = false;
+            if (!isOverride && !priceIn.value) priceIn.value = '';
+          }
+        });
+        this._updateOrderGridTotals(body);
+      };
 
-      // Live preview when qty changes
-      const qtyIn = body.querySelector('#ord-new-qty');
-      if (qtyIn) {
-        qtyIn.addEventListener('input', () => this._updateOrderLinePreview(body));
+      clientSel.addEventListener('change', () => { loadClientPrices(); fillPrices(); });
+      if (overrideCb) {
+        overrideCb.addEventListener('change', () => {
+          if (overrideCb.checked) {
+            body.querySelectorAll('.ord-price-input').forEach(el => { el.readOnly = false; });
+          } else {
+            fillPrices();
+          }
+        });
       }
 
+      // Live totals on qty/price input
+      body.querySelectorAll('.ord-qty-input, .ord-price-input').forEach(el => {
+        el.addEventListener('input', () => this._updateOrderGridTotals(body));
+      });
+
       // Auto-fill if editing existing order with client already selected
-      if (clientSel.value) autoFill();
+      if (clientSel.value) { loadClientPrices(); fillPrices(); }
+      this._updateOrderGridTotals(body);
     }, 50);
   }
 
@@ -758,134 +772,40 @@ class EggClients extends HTMLElement {
     }
   }
 
-  _orderItemRow(it, idx, D) {
-    const flock = it.flockId ? D.flocks.find(f => f.id === it.flockId) : null;
-    const loc = it.locationId ? (D.storageLocations || []).find(l => l.id === it.locationId) : null;
-    return `<div class="ord-item" style="display:flex;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border,#eee)">
-      <span style="flex:1"><strong>${sanitizeHTML(it.eggType)}</strong></span>
-      <span style="flex:1">${fmtNum(it.qty)}</span>
-      <span style="flex:1">${fmtMoney(it.unitPrice || 0)}/u</span>
-      <span style="flex:1">${flock ? sanitizeHTML(flock.name || flock.breed || '') : '-'}</span>
-      <span style="flex:1">${loc ? sanitizeHTML(loc.name) : '-'}</span>
-      <span style="flex:0.5;font-weight:600">${fmtMoney((it.qty || 0) * (it.unitPrice || 0))}</span>
-      <button class="btn btn-danger btn-sm" onclick="this.closest('egg-clients')._removeOrderItem(${idx})">\u2716</button>
-    </div>`;
-  }
-
-  _addOrderItem() {
-    const body = getModalBody();
-    if (!body) return;
-    const eggType = modalVal('ord-new-type');
-    const qty = parseInt(modalVal('ord-new-qty')) || 0;
-    const flockId = modalVal('ord-new-flock');
-    const locationId = modalVal('ord-new-loc');
-    const overrideCb = body.querySelector('#ord-override');
-
-    // Resolve price: use agreed price from client if override not checked
-    let unitPrice = parseFloat(modalVal('ord-new-price')) || 0;
-    if (!overrideCb?.checked && this._clientPrices && this._clientPrices[eggType] > 0) {
-      unitPrice = this._clientPrices[eggType];
-    }
-
-    if (!qty || qty <= 0) { Bus.emit('toast', { msg: t('ord_qty') + ' > 0', type: 'error' }); return; }
-
-    // Below-cost warning (non-blocking, just alert)
-    try {
-      const snap = computeKpiSnapshot();
-      const cpe = snap.costPerEgg || 0;
-      if (cpe > 0 && unitPrice > 0 && unitPrice < cpe) {
-        if (!confirm(t('ord_below_cost_confirm') + ` (${t('fin_cost_per_egg')}: ${fmtMoney(cpe)}, ${t('cli_price')}: ${fmtMoney(unitPrice)})`)) return;
-      }
-    } catch (_) { /* no cost data, skip */ }
-
-    // Stock validation
-    const D = Store.get();
-    const stockAvail = this._getAvailableStock(D, eggType, locationId);
-    // Sum qty already added for same type+location in this order
-    const alreadyInOrder = (this._orderItems || [])
-      .filter(it => it.eggType === eggType && (it.locationId || '') === (locationId || ''))
-      .reduce((s, it) => s + (it.qty || 0), 0);
-    if (qty + alreadyInOrder > stockAvail) {
-      Bus.emit('toast', { msg: t('ord_stock_insufficient') + ` (${eggType}: ${fmtNum(stockAvail)} ${t('ord_stock_available')})`, type: 'error' });
-      return;
-    }
-
-    if (!this._orderItems) this._orderItems = [];
-    this._orderItems.push({ eggType, qty, unitPrice, flockId, locationId });
-
-    const wrap = body.querySelector('#ord-items-wrap');
-    if (wrap) {
-      wrap.innerHTML = this._orderItems.map((it, i) => this._orderItemRow(it, i, D)).join('');
-    }
-    this._updateOrderTotal();
-
-    // Clear inputs and reset override
-    const qtyEl = body.querySelector('#ord-new-qty');
-    if (qtyEl) qtyEl.value = '';
-    if (overrideCb) overrideCb.checked = false;
-    const priceEl = body.querySelector('#ord-new-price');
-    const typeSel = body.querySelector('#ord-new-type');
-    if (priceEl && typeSel && this._clientPrices) {
-      const agreedPrice = this._clientPrices[typeSel.value] || 0;
-      priceEl.value = agreedPrice || '';
-      priceEl.readOnly = agreedPrice > 0;
-    } else if (priceEl) {
-      priceEl.value = '';
-    }
-    const warn = body.querySelector('#ord-below-cost-warn');
-    if (warn) warn.style.display = 'none';
-  }
-
-  _removeOrderItem(idx) {
-    if (!this._orderItems) return;
-    this._orderItems.splice(idx, 1);
-    const body = getModalBody();
-    if (!body) return;
-    const D = Store.get();
-    const wrap = body.querySelector('#ord-items-wrap');
-    if (wrap) {
-      wrap.innerHTML = this._orderItems.map((it, i) => this._orderItemRow(it, i, D)).join('');
-    }
-    this._updateOrderTotal();
-  }
-
-  _updateOrderTotal() {
-    const body = getModalBody();
-    if (!body) return;
-    const total = (this._orderItems || []).reduce((s, it) => s + (it.qty || 0) * (it.unitPrice || 0), 0);
-    const el = body.querySelector('#ord-total-display');
-    if (el) el.textContent = t('total') + ': ' + fmtMoney(total);
-  }
-
-  /** Show live price preview while user fills qty — before clicking '+' */
-  _updateOrderLinePreview(body) {
+  /** Update live line totals and grand total for the grid-based order form */
+  _updateOrderGridTotals(body) {
     if (!body) body = getModalBody();
     if (!body) return;
-    const typeSel = body.querySelector('#ord-new-type');
-    const qtyIn = body.querySelector('#ord-new-qty');
-    const priceIn = body.querySelector('#ord-new-price');
-    const overrideCb = body.querySelector('#ord-override');
-    if (!typeSel || !qtyIn || !priceIn) return;
-
-    const qty = parseInt(qtyIn.value) || 0;
-    let price = parseFloat(priceIn.value) || 0;
-    // If no override and client has agreed price, use that
-    if (!overrideCb?.checked && this._clientPrices && this._clientPrices[typeSel.value] > 0) {
-      price = this._clientPrices[typeSel.value];
-    }
-
-    const lineTotal = qty * price;
-    const existingTotal = (this._orderItems || []).reduce((s, it) => s + (it.qty || 0) * (it.unitPrice || 0), 0);
-    const grandTotal = existingTotal + lineTotal;
-
+    let grandTotal = 0;
+    EGG_TYPES.forEach(et => {
+      const qtyIn = body.querySelector(`#ord-qty-${et}`);
+      const priceIn = body.querySelector(`#ord-price-${et}`);
+      const lineEl = body.querySelector(`#ord-line-${et}`);
+      if (!qtyIn || !priceIn || !lineEl) return;
+      const qty = parseInt(qtyIn.value) || 0;
+      const price = parseFloat(priceIn.value) || 0;
+      const lineTotal = qty * price;
+      grandTotal += lineTotal;
+      lineEl.textContent = qty > 0 ? fmtMoney(lineTotal) : '-';
+      lineEl.style.fontWeight = qty > 0 ? '600' : '400';
+    });
     const el = body.querySelector('#ord-total-display');
-    if (el) {
-      if (qty > 0 && price > 0) {
-        el.innerHTML = `<span style="color:var(--text-muted,#888);font-size:13px">${typeSel.value} ${fmtNum(qty)} × ${fmtMoney(price)} = ${fmtMoney(lineTotal)}</span><br>${t('total')}: ${fmtMoney(grandTotal)}`;
-      } else {
-        el.textContent = t('total') + ': ' + fmtMoney(existingTotal);
-      }
-    }
+    if (el) el.textContent = t('total') + ': ' + fmtMoney(grandTotal);
+  }
+
+  /** Collect items from the grid — only rows with qty > 0 */
+  _collectOrderGridItems(body) {
+    if (!body) body = getModalBody();
+    if (!body) return [];
+    const flockId = modalVal('ord-new-flock');
+    const locationId = modalVal('ord-new-loc');
+    const items = [];
+    EGG_TYPES.forEach(et => {
+      const qty = parseInt(body.querySelector(`#ord-qty-${et}`)?.value) || 0;
+      const unitPrice = parseFloat(body.querySelector(`#ord-price-${et}`)?.value) || 0;
+      if (qty > 0) items.push({ eggType: et, qty, unitPrice, flockId, locationId });
+    });
+    return items;
   }
 
   _saveOrder() {
@@ -901,7 +821,7 @@ class EggClients extends HTMLElement {
     const dueDate = modalVal('ord-due');
     const orderNumber = modalVal('ord-number');
     const notes = modalVal('ord-notes');
-    const items = this._orderItems || [];
+    const items = this._collectOrderGridItems(body);
 
     const v = validateForm({
       'ord-client': { value: clientId, rules: { required: true } },
