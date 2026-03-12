@@ -630,7 +630,9 @@ ${u.status === 'inactive' || u.status === 'expired' ? '<button class="btn btn-pr
 <button class="btn btn-secondary" data-action="export-data">⬇ ${t('cfg_export')}</button>
 <button class="btn btn-secondary" data-action="import-trigger">⬆ ${t('cfg_import')}</button>
 <input type="file" id="cfg-import-file" accept=".json" style="display:none">
-<button class="btn btn-danger" data-action="reset-data">${t('cfg_reset')}</button></div>
+<button class="btn btn-danger" data-action="reset-data">${t('cfg_reset')}</button>
+</div>
+<div style="margin-top:12px"><button class="btn btn-primary" data-action="smart-import" style="width:100%;padding:10px">📥 ${t('imp_trigger_btn')}</button></div>
 <div id="import-preview" style="display:none;margin-top:16px;padding:12px;background:var(--bg-alt,#f8f9fa);border-radius:var(--radius);border:1px solid var(--border)"></div></div>`;
   }
 
@@ -695,6 +697,8 @@ ${u.status === 'inactive' || u.status === 'expired' ? '<button class="btn btn-pr
         case 'toggle-perm': this._toggleRolePerm(btn); break;
         case 'reset-perms': this._resetPermsToDefault(); break;
         case 'export-data': this._exportData(); break;
+        case 'smart-import': Bus.emit('show:data-import'); break;
+        case 'full-backup': this._fullBackup(); break;
         case 'import-trigger': { const f = this._q('cfg-import-file'); if (f) f.click(); break; }
         case 'reset-data': this._resetData(); break;
       }
@@ -1608,6 +1612,49 @@ ${costLine}</div>
     a.click();
     logAudit('export', 'data', null, 'Full data export');
     this._toast(t('cfg_exported'));
+  }
+
+  _fullBackup() {
+    const D = this._load();
+    // Count internal vs external records per module
+    const countBySource = (arr) => {
+      const ext = (arr||[]).filter(r => r._imported).length;
+      return { total: (arr||[]).length, internal: (arr||[]).length - ext, external: ext };
+    };
+    const stats = {
+      flocks: countBySource(D.flocks),
+      production: countBySource(D.dailyProduction),
+      vaccines: countBySource(D.vaccines),
+      medications: countBySource(D.medications),
+      clients: countBySource(D.clients),
+      feedPurchases: countBySource(D.feed?.purchases),
+      feedConsumption: countBySource(D.feed?.consumption),
+      income: countBySource(D.finances?.income),
+      expenses: countBySource(D.finances?.expenses),
+      orders: countBySource(D.orders),
+      inventory: countBySource(D.inventory),
+      environment: countBySource(D.environment),
+      logbook: countBySource(D.logbook),
+      personnel: countBySource(D.personnel),
+    };
+    const payload = {
+      _meta: {
+        app: 'EGGlogU',
+        version: '2.0',
+        backupType: 'full',
+        exportDate: new Date().toISOString(),
+        farmName: D.farm?.name || '',
+        stats
+      },
+      data: D
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'egglogu_FULL_BACKUP_' + todayStr() + '.json';
+    a.click();
+    logAudit('export', 'data', null, 'Full system backup (internal + external)');
+    this._toast(t('imp_backup_done'));
   }
 
   _importData(e) {

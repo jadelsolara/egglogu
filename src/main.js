@@ -40,6 +40,7 @@ import './components/egg-planning.js';
 import './components/egg-superadmin.js';
 import './components/egg-admin.js';
 import './components/egg-config.js';
+import './components/egg-data-import.js';
 
 // 4. Import auth boot module
 import { bootAuth, syncToServer, applyDarkMode } from './boot/auth.js';

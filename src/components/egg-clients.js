@@ -202,7 +202,9 @@ class EggClients extends HTMLElement {
       emptyText: t('no_data'),
       headerHtml: `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-client">${t('cli_add')}</button></div>`,
       columns: [
+        { key: 'clientCode', label: t('cli_code'), type: 'text', sortable: true, render: r => `<span style="font-weight:600;color:#1565C0">${sanitizeHTML(r.clientCode || '-')}</span>` },
         { key: 'name', label: t('name'), type: 'text', sortable: true, filterable: true, render: r => '<strong>' + sanitizeHTML(r.name) + '</strong>' },
+        { key: 'rut', label: t('cli_rut'), type: 'text', sortable: true, render: r => sanitizeHTML(r.rut || '-') },
         { key: 'phone', label: t('phone'), type: 'text', sortable: true, render: r => sanitizeHTML(r.phone || '-') },
         { key: 'email', label: t('email'), type: 'text', sortable: true, render: r => sanitizeHTML(r.email || '-') },
         {
@@ -374,6 +376,10 @@ class EggClients extends HTMLElement {
       case 'save-client':
         this._saveClient();
         break;
+      case 'force-save-client':
+        this._dupNameConfirmed = true;
+        this._saveClient();
+        break;
       case 'save-order':
         this._saveOrder();
         break;
@@ -416,7 +422,17 @@ class EggClients extends HTMLElement {
     const c = id ? D.clients.find(x => x.id === id) : null;
     this._editId = id || null;
 
+    // Auto-generate client code for new clients
+    const nextCode = c ? (c.clientCode || '') : (() => {
+      const seq = (D._clientCodeSeq || D.clients.length || 0) + 1;
+      return 'CLI-' + String(seq).padStart(5, '0');
+    })();
+
     const body = `
+      <div class="form-row">
+        <div class="form-group"><label>${t('cli_code')}</label><input id="cl-code" value="${escapeAttr(nextCode)}" readonly style="background:#f5f5f5;font-weight:600;color:#1565C0"></div>
+        <div class="form-group"><label>${t('cli_rut')}</label><input id="cl-rut" value="${c ? escapeAttr(c.rut || '') : ''}" placeholder="${t('cli_rut_ph')}"></div>
+      </div>
       <div class="form-row">
         <div class="form-group"><label>${t('name')}</label><input id="cl-name" value="${c ? escapeAttr(c.name) : ''}"></div>
         <div class="form-group"><label>${t('phone')}</label><input id="cl-phone" value="${c ? escapeAttr(c.phone || '') : ''}"></div>
@@ -426,6 +442,7 @@ class EggClients extends HTMLElement {
         <div class="form-group"><label>${t('cli_route')}</label><select id="cl-route">${routeSelect(c ? c.route || '' : '')}</select></div>
       </div>
       <div class="form-group"><label>${t('address')}</label><input id="cl-addr" value="${c ? escapeAttr(c.address || '') : ''}"></div>
+      <div id="cl-dup-warning" style="display:none;padding:8px 12px;background:#FFF3E0;border-left:3px solid #FF9800;border-radius:4px;margin-bottom:8px;font-size:13px"></div>
       <p style="font-weight:600;margin:12px 0 8px">${t('cli_price')} (${currency()}/huevo)</p>
       <div class="form-row-3">
         <div class="form-group"><label>S</label><input type="number" id="cl-ps" value="${c ? c.priceS || '' : ''}" step="1" min="0"></div>
@@ -452,6 +469,8 @@ class EggClients extends HTMLElement {
 
     const D = Store.get();
     const o = {
+      clientCode: modalVal('cl-code'),
+      rut: (modalVal('cl-rut') || '').trim(),
       name: modalVal('cl-name'),
       phone: modalVal('cl-phone'),
       email: modalVal('cl-email'),
@@ -476,6 +495,34 @@ class EggClients extends HTMLElement {
       return;
     }
 
+    // Duplicate detection by RUT/ID
+    const existingClients = activeOnly(D.clients || []);
+    if (o.rut) {
+      const dupByRut = existingClients.find(c => c.rut && c.rut.replace(/[.\-]/g, '') === o.rut.replace(/[.\-]/g, '') && c.id !== this._editId);
+      if (dupByRut) {
+        const warn = body.querySelector('#cl-dup-warning');
+        if (warn) {
+          warn.style.display = 'block';
+          warn.innerHTML = `<strong>${t('cli_dup_warning')}</strong><br>${t('cli_dup_exists')}: <strong>${sanitizeHTML(dupByRut.name)}</strong> (${sanitizeHTML(dupByRut.clientCode || dupByRut.id.substring(0, 8))})`;
+        }
+        showFieldError(body, 'cl-rut', t('cli_dup_rut'));
+        return;
+      }
+    }
+
+    // Duplicate detection by name (warning only, not blocking)
+    const dupByName = existingClients.find(c => c.name.toLowerCase().trim() === o.name.toLowerCase().trim() && c.id !== this._editId);
+    if (dupByName && !this._dupNameConfirmed) {
+      const warn = body.querySelector('#cl-dup-warning');
+      if (warn) {
+        warn.style.display = 'block';
+        warn.innerHTML = `<strong>${t('cli_dup_name_warn')}</strong><br>${sanitizeHTML(dupByName.name)} (${sanitizeHTML(dupByName.clientCode || dupByName.rut || '')}) — <button class="btn btn-secondary btn-sm" style="margin-top:4px" data-action="force-save-client">${t('cli_dup_continue')}</button>`;
+      }
+      this._dupNameConfirmed = true;
+      return;
+    }
+    this._dupNameConfirmed = false;
+
     if (this._editId) {
       const i = D.clients.findIndex(c => c.id === this._editId);
       if (i >= 0) {
@@ -485,8 +532,11 @@ class EggClients extends HTMLElement {
     } else {
       o.id = genId();
       o.createdAt = new Date().toISOString();
+      // Persist client code sequence
+      const seq = (D._clientCodeSeq || D.clients.length || 0) + 1;
+      D._clientCodeSeq = seq;
       D.clients.push(o);
-      logAudit('create', 'clients', 'New client: ' + o.name, null, o);
+      logAudit('create', 'clients', 'New client: ' + o.clientCode + ' ' + o.name, null, o);
     }
 
     Store.save(D);
