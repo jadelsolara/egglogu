@@ -46,11 +46,19 @@ class EggEnvironment extends HTMLElement {
     this._charts = {};
     this._mqttClient = null;
     this._mqttConnected = false;
+    this._weather = null;
+    this._weatherLoading = false;
+    this._weatherError = null;
+    this._weatherTimer = null;
+    this._showLocationSetup = false;
   }
 
   connectedCallback() {
     this.render();
     this._setupBus();
+    this._fetchWeather();
+    // Refresh every 30 min
+    this._weatherTimer = setInterval(() => this._fetchWeather(), 30 * 60 * 1000);
   }
 
   disconnectedCallback() {
@@ -62,6 +70,179 @@ class EggEnvironment extends HTMLElement {
     this._unsubs = [];
     this._destroyCharts();
     this._disconnectMQTT();
+    if (this._weatherTimer) { clearInterval(this._weatherTimer); this._weatherTimer = null; }
+  }
+
+  // ──────────────────────── Weather Auto-Fetch ────────────────────────
+  async _fetchWeather() {
+    const D = Store.get();
+    const lat = D.farm.lat;
+    const lng = D.farm.lng;
+    if (!lat || !lng) return;
+    this._weatherLoading = true;
+    this._weatherError = null;
+    try {
+      const owmKey = D.farm.owmApiKey;
+      let w;
+      if (owmKey) {
+        const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&appid=${encodeURIComponent(owmKey)}&units=metric`);
+        if (!r.ok) throw new Error('OWM HTTP ' + r.status);
+        const d = await r.json();
+        w = { temp: d.main.temp, humidity: d.main.humidity, wind: d.wind?.speed || 0, feels: d.main.feels_like, desc: d.weather?.[0]?.description || '', ts: Date.now(), source: 'OWM' };
+      } else {
+        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lng)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,apparent_temperature,weather_code&timezone=auto`);
+        if (!r.ok) throw new Error('Open-Meteo HTTP ' + r.status);
+        const d = await r.json();
+        const c = d.current;
+        w = { temp: c.temperature_2m, humidity: c.relative_humidity_2m, wind: c.wind_speed_10m, feels: c.apparent_temperature, desc: this._weatherCodeToDesc(c.weather_code), ts: Date.now(), source: 'Open-Meteo' };
+      }
+      this._weather = w;
+      // Cache in store
+      const Ds = Store.get();
+      Ds.weatherCache.push({ ...w, date: todayStr() });
+      if (Ds.weatherCache.length > 100) Ds.weatherCache = Ds.weatherCache.slice(-50);
+      Store.save(Ds);
+    } catch (e) {
+      this._weatherError = e.message;
+    }
+    this._weatherLoading = false;
+    // Re-render weather card only if on manual tab
+    if (this._currentTab === 'manual') {
+      const el = this.shadowRoot.getElementById('weather-live');
+      if (el) el.innerHTML = this._renderWeatherCard();
+    }
+  }
+
+  _weatherCodeToDesc(code) {
+    const map = { 0: 'Clear', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast', 45: 'Fog', 48: 'Fog',
+      51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle', 61: 'Light rain', 63: 'Rain', 65: 'Heavy rain',
+      71: 'Light snow', 73: 'Snow', 75: 'Heavy snow', 80: 'Rain showers', 81: 'Rain showers', 82: 'Heavy showers',
+      95: 'Thunderstorm', 96: 'Thunderstorm + hail', 99: 'Thunderstorm + hail' };
+    return map[code] || '';
+  }
+
+  async _useGPS() {
+    if (!navigator.geolocation) {
+      Bus.emit('toast', { msg: 'GPS not available', type: 'error' });
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const D = Store.get();
+        D.farm.lat = parseFloat(pos.coords.latitude.toFixed(6));
+        D.farm.lng = parseFloat(pos.coords.longitude.toFixed(6));
+        Store.save(D);
+        Bus.emit('toast', { msg: t('geo_saved') });
+        this._showLocationSetup = false;
+        this._fetchWeather();
+        this.render();
+      },
+      (err) => {
+        Bus.emit('toast', { msg: 'GPS: ' + err.message, type: 'error' });
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  _saveManualLocation() {
+    const latEl = this.shadowRoot.getElementById('env-lat');
+    const lngEl = this.shadowRoot.getElementById('env-lng');
+    if (!latEl || !lngEl) return;
+    const lat = parseFloat(latEl.value);
+    const lng = parseFloat(lngEl.value);
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      Bus.emit('toast', { msg: t('error_validation') || 'Invalid coordinates', type: 'error' });
+      return;
+    }
+    const D = Store.get();
+    D.farm.lat = lat;
+    D.farm.lng = lng;
+    Store.save(D);
+    Bus.emit('toast', { msg: t('geo_saved') });
+    this._showLocationSetup = false;
+    this._fetchWeather();
+    this.render();
+  }
+
+  _renderWeatherCard() {
+    const D = Store.get();
+    const hasLoc = D.farm.lat && D.farm.lng;
+
+    // No location set — show setup
+    if (!hasLoc || this._showLocationSetup) {
+      return `<div class="card" style="border-left:4px solid var(--warning, #ffc107)">
+        <h3>${t('weather_title')}</h3>
+        <p style="margin-bottom:12px;color:var(--text-secondary, #666)">${t('weather_no_key')}</p>
+        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" data-action="use-gps">${t('geo_use_gps')}</button>
+          <span style="color:var(--text-light);font-size:13px">${t('or') || 'o'}</span>
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <div><label style="font-size:11px;font-weight:600;display:block">${t('geo_lat')}</label>
+              <input id="env-lat" type="number" step="any" value="${D.farm.lat || ''}" style="width:120px;padding:6px 8px;border:1px solid var(--border, #ddd);border-radius:6px;font-size:13px"></div>
+            <div><label style="font-size:11px;font-weight:600;display:block">${t('geo_lng')}</label>
+              <input id="env-lng" type="number" step="any" value="${D.farm.lng || ''}" style="width:120px;padding:6px 8px;border:1px solid var(--border, #ddd);border-radius:6px;font-size:13px"></div>
+            <button class="btn btn-secondary btn-sm" data-action="save-location">${t('save')}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // Loading
+    if (this._weatherLoading && !this._weather) {
+      return `<div class="card"><h3>${t('weather_title')}</h3><p style="color:var(--text-light)">${t('loading') || 'Loading...'}</p></div>`;
+    }
+
+    // Error
+    if (this._weatherError && !this._weather) {
+      return `<div class="card" style="border-left:4px solid var(--danger, #dc3545)">
+        <h3>${t('weather_title')}</h3>
+        <p style="color:var(--danger, #dc3545)">${t('error_network')}: ${sanitizeHTML(this._weatherError)}</p>
+        <button class="btn btn-secondary btn-sm" data-action="retry-weather">${t('weather_test')}</button>
+      </div>`;
+    }
+
+    // Weather data available
+    if (!this._weather) return '';
+    const w = this._weather;
+    const thi = calcTHI(w.temp, w.humidity);
+    const tempOk = w.temp >= 18 && w.temp <= 24;
+    const humOk = w.humidity >= 40 && w.humidity <= 70;
+    const thiOk = thi <= 25;
+    const thiWarn = thi > 25 && thi <= 28;
+
+    let h = `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        <h3 style="margin:0">${t('weather_title')} — ${sanitizeHTML(D.farm.location || D.farm.name || '')}</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:11px;color:var(--text-light)">${t('weather_last_update')}: ${new Date(w.ts).toLocaleTimeString()} (${sanitizeHTML(w.source)})</span>
+          <button class="btn btn-secondary btn-xs" data-action="retry-weather" style="padding:2px 8px;font-size:11px">\u21BB</button>
+          <button class="btn btn-secondary btn-xs" data-action="change-location" style="padding:2px 8px;font-size:11px">${t('geo_set_location')}</button>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card ${tempOk ? '' : 'danger'}">
+          <div class="kpi-label">${t('weather_temp')}</div>
+          <div class="kpi-value">${w.temp.toFixed(1)}\u00B0C</div>
+          <div class="kpi-sub">${t('weather_feels')}: ${w.feels != null ? w.feels.toFixed(1) + '\u00B0C' : '-'}${!tempOk ? ' \u2014 ' + t('env_out_of_range') : ''}</div>
+        </div>
+        <div class="kpi-card ${humOk ? '' : 'warning'}">
+          <div class="kpi-label">${t('weather_humidity')}</div>
+          <div class="kpi-value">${w.humidity}%</div>
+          <div class="kpi-sub">${humOk ? '\u2713 ' + t('env_ok') : '\u2717 ' + t('env_out_of_range')}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">${t('weather_wind')}</div>
+          <div class="kpi-value">${w.wind.toFixed(1)} km/h</div>
+          <div class="kpi-sub">${sanitizeHTML(w.desc)}</div>
+        </div>
+        <div class="kpi-card ${!thiOk ? (thiWarn ? 'warning' : 'danger') : ''}">
+          <div class="kpi-label">${t('env_thi')}</div>
+          <div class="kpi-value">${thi.toFixed(1)}</div>
+          <div class="kpi-sub">${thi > 28 ? t('weather_heat_alert') : thi > 25 ? t('env_out_of_range') : 'OK'}</div>
+        </div>
+      </div>
+    </div>`;
+    return h;
   }
 
   // ──────────────────────── Bus ────────────────────────
@@ -139,6 +320,10 @@ class EggEnvironment extends HTMLElement {
         case 'disconnect-mqtt': this._disconnectMQTT(); break;
         case 'save-iot-to-env': this._saveIoTToEnv(); break;
         case 'go-config': Bus.emit('nav:request', { section: 'config' }); break;
+        case 'use-gps': this._useGPS(); break;
+        case 'save-location': this._saveManualLocation(); break;
+        case 'retry-weather': this._fetchWeather(); break;
+        case 'change-location': this._showLocationSetup = true; this.render(); break;
         case 'show-stress-form': this._showStressForm(btn.dataset.id || ''); break;
         case 'delete-stress': this._deleteStress(btn.dataset.id); break;
         case 'set-forecast-days':
@@ -166,6 +351,9 @@ class EggEnvironment extends HTMLElement {
   // ══════════════════════════════════════════════════════════════
   _renderManual(D) {
     let h = `<div style="text-align:right;margin-bottom:8px"><button class="btn btn-primary" data-action="show-env-form">${t('env_add')}</button></div>`;
+
+    // Live weather card
+    h += `<div id="weather-live">${this._renderWeatherCard()}</div>`;
 
     // Optimal ranges card
     h += `<div class="card"><h3>${t('env_optimal')}</h3><div class="kpi-grid">
