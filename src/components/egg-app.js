@@ -94,6 +94,7 @@ class EggApp extends HTMLElement {
       <egg-confirm></egg-confirm>
       <egg-void-dialog></egg-void-dialog>
       <egg-modal></egg-modal>
+      <egg-data-import></egg-data-import>
     `;
 
     this._contentArea = this.shadowRoot.getElementById('content-area');

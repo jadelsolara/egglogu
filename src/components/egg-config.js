@@ -633,6 +633,7 @@ ${u.status === 'inactive' || u.status === 'expired' ? '<button class="btn btn-pr
 <button class="btn btn-danger" data-action="reset-data">${t('cfg_reset')}</button>
 </div>
 <div style="margin-top:12px"><button class="btn btn-primary" data-action="smart-import" style="width:100%;padding:10px">📥 ${t('imp_trigger_btn')}</button></div>
+<div style="margin-top:8px"><button class="btn btn-secondary" data-action="full-backup" style="width:100%;padding:10px">💾 ${t('imp_full_backup')}</button></div>
 <div id="import-preview" style="display:none;margin-top:16px;padding:12px;background:var(--bg-alt,#f8f9fa);border-radius:var(--radius);border:1px solid var(--border)"></div></div>`;
   }
 
