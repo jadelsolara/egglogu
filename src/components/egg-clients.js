@@ -549,7 +549,7 @@ class EggClients extends HTMLElement {
         const nextStatus = this._nextOrderStatus(o.status);
         h += `<tr>
           <td>${fmtDate(o.date)}</td>
-          <td><strong>${sanitizeHTML(o.orderNumber || o.id.substring(0, 8))}</strong></td>
+          <td><strong>${sanitizeHTML(o.orderNumber || o.id.substring(0, 8))}</strong>${o.folio ? `<br><span style="font-size:11px;color:#1565C0">${sanitizeHTML(o.folio)}</span>` : ''}</td>
           <td>${client ? sanitizeHTML(client.name) : '-'}</td>
           <td>${fmtNum(itemCount)} ${t('prod_eggs')}</td>
           <td>${fmtMoney(o.total || 0)}</td>
@@ -747,6 +747,32 @@ class EggClients extends HTMLElement {
     }
   }
 
+  /** Reserve stock for an order — eggs leave available stock, go to "reserve" */
+  _reserveOrderStock(D, order) {
+    if (!D.inventory) D.inventory = [];
+    (order.items || []).forEach(it => {
+      D.inventory.push({
+        id: genId(), date: todayStr(), flockId: it.flockId || '',
+        eggType: it.eggType, qtyIn: 0, qtyOut: it.qty,
+        locationId: it.locationId || '',
+        source: 'reserve', ref: order.id
+      });
+    });
+  }
+
+  /** Reverse reserved stock — return eggs to available */
+  _reverseOrderReserve(D, order) {
+    if (!D.inventory) D.inventory = [];
+    (order.items || []).forEach(it => {
+      D.inventory.push({
+        id: genId(), date: todayStr(), flockId: it.flockId || '',
+        eggType: it.eggType, qtyIn: it.qty, qtyOut: 0,
+        locationId: it.locationId || '',
+        source: 'reserve-cancel', ref: order.id
+      });
+    });
+  }
+
   /** Update live line totals and grand total for the grid-based order form */
   _updateOrderGridTotals(body) {
     if (!body) body = getModalBody();
@@ -832,19 +858,33 @@ class EggClients extends HTMLElement {
       const i = D.orders.findIndex(o => o.id === this._editId);
       if (i >= 0) {
         const old = D.orders[i];
+        // If editing draft, reverse old reservations and create new ones
+        if (old.status === 'draft') {
+          this._reverseOrderReserve(D, old);
+          this._reserveOrderStock(D, { ...old, items, clientId });
+        }
         D.orders[i] = { ...old, clientId, date, dueDate, orderNumber, items, total, notes };
         logAudit('update', 'orders', 'Edit order: ' + orderNumber, old, D.orders[i]);
       }
     } else {
+      // Generate auto-incremental folio
+      const folioSeq = (D._orderFolioSeq || 0) + 1;
+      D._orderFolioSeq = folioSeq;
+      const folio = 'OV-' + String(folioSeq).padStart(5, '0');
+
       const order = {
-        id: genId(), date, clientId, dueDate, orderNumber,
+        id: genId(), date, clientId, dueDate,
+        orderNumber: orderNumber || folio,
+        folio,
         items, total, notes,
         status: 'draft',
         statusHistory: [{ status: 'draft', date: new Date().toISOString(), note: t('ord_created') }],
         createdAt: new Date().toISOString()
       };
+      // Reserve stock immediately — eggs go to "transit/reserve"
+      this._reserveOrderStock(D, order);
       D.orders.push(order);
-      logAudit('create', 'orders', 'New order: ' + orderNumber, null, order);
+      logAudit('create', 'orders', 'New order: ' + folio, null, order);
     }
 
     Store.save(D);
@@ -879,7 +919,7 @@ class EggClients extends HTMLElement {
 
     const body = `
       <div style="margin-bottom:12px">
-        <p><strong>${t('ord_number')}:</strong> ${sanitizeHTML(o.orderNumber || o.id.substring(0, 8))}</p>
+        <p><strong>${t('ord_number')}:</strong> ${sanitizeHTML(o.orderNumber || o.id.substring(0, 8))}${o.folio ? ` <span style="background:#E3F2FD;color:#1565C0;padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600">${sanitizeHTML(o.folio)}</span>` : ''}</p>
         <p><strong>${t('clm_client')}:</strong> ${client ? sanitizeHTML(client.name) : '-'}</p>
         <p><strong>${t('date')}:</strong> ${fmtDate(o.date)} ${o.dueDate ? '| <strong>' + t('ord_due') + ':</strong> ' + fmtDate(o.dueDate) : ''}</p>
         <p><strong>${t('status')}:</strong> <span class="badge badge-${ORDER_STATUS_BADGES[o.status] || 'secondary'}">${ORDER_STATUS_ICONS[o.status] || ''} ${t('ord_st_' + o.status)}</span></p>
@@ -904,40 +944,26 @@ class EggClients extends HTMLElement {
     const next = this._nextOrderStatus(o.status);
     if (!next) return;
 
-    // When advancing to "preparing", create reservations for each item
-    if (next === 'preparing') {
-      (o.items || []).forEach(it => {
-        if (!D.reservations) D.reservations = [];
-        D.reservations.push({
-          id: genId(), date: todayStr(), clientId: o.clientId,
-          eggType: it.eggType, qty: it.qty, locationId: it.locationId || '',
-          dueDate: o.dueDate || '', notes: t('ord_auto_reserve') + ' ' + (o.orderNumber || o.id.substring(0, 8)),
-          status: 'active', orderId: o.id
-        });
-      });
-    }
+    // Stock already reserved on order creation — no need to deduct again
 
-    // When advancing to "delivered", fulfill reservations, deduct inventory, create income
+    // When advancing to "delivered", mark reserve as sold + create income record
     if (next === 'delivered') {
+      // Convert reserve → sale in inventory (reclassify for tracking)
+      if (!D.inventory) D.inventory = [];
+      (D.inventory || []).filter(r => r.ref === o.id && r.source === 'reserve').forEach(r => {
+        r.source = 'sale';
+      });
       // Fulfill associated reservations
       (D.reservations || []).filter(r => r.orderId === o.id && r.status === 'active').forEach(r => {
         r.status = 'fulfilled';
         r.resolvedDate = todayStr();
       });
-      // Deduct from inventory — one qtyOut record per item
-      if (!D.inventory) D.inventory = [];
-      (o.items || []).forEach(it => {
-        D.inventory.push({
-          id: genId(), date: todayStr(), flockId: it.flockId || '',
-          eggType: it.eggType, qtyIn: 0, qtyOut: it.qty,
-          locationId: it.locationId || '',
-          source: 'order', ref: o.id
-        });
-      });
       // Create income record
+      if (!D.finances) D.finances = { income: [], expenses: [] };
+      if (!D.finances.income) D.finances.income = [];
       D.finances.income.push({
         id: genId(), date: todayStr(), clientId: o.clientId,
-        description: t('ord_income_desc') + ' ' + (o.orderNumber || o.id.substring(0, 8)),
+        description: t('ord_income_desc') + ' ' + (o.folio || o.orderNumber || o.id.substring(0, 8)),
         amount: o.total || 0, quantity: (o.items || []).reduce((s, it) => s + (it.qty || 0), 0),
         unitPrice: 0, orderId: o.id
       });
@@ -964,6 +990,9 @@ class EggClients extends HTMLElement {
       r.status = 'cancelled';
       r.resolvedDate = todayStr();
     });
+
+    // Return reserved stock to available
+    this._reverseOrderReserve(D, o);
 
     o.status = 'cancelled';
     o.statusHistory = o.statusHistory || [];
@@ -1080,6 +1109,7 @@ class EggClients extends HTMLElement {
         <div>
           <h1>${t('ord_print_title')}</h1>
           <p style="font-size:14px;color:#666">${o.orderNumber || o.id.substring(0, 8)}</p>
+          ${o.folio ? `<p style="font-size:16px;font-weight:700;color:#0E2240;margin-top:4px">${o.folio}</p>` : ''}
         </div>
         <div class="farm-info">
           <strong style="font-size:14px">${farm.name || 'EGGlogU'}</strong><br>
