@@ -1,10 +1,10 @@
 {
   "aesthetic": "d231aa187a9fdb6b",
-  "functional": "3048c87a39e08d4f",
+  "functional": "b04d3096f04b9eb5",
   "operational": "e04c9c0fe42306fa",
-  "html_structure": "2683adbba25e50a1",
-  "js_bundle": "dist/egglogu-app.3048c87a.js",
-  "buildTime": "2026-03-12T16:39:43Z",
-  "buildNumber": 62,
+  "html_structure": "ae20426932d1aee2",
+  "js_bundle": "dist/egglogu-app.b04d3096.js",
+  "buildTime": "2026-03-12T17:14:51Z",
+  "buildNumber": 64,
   "changedPillars": "FUNCIONAL,HTML-ESTRUCTURA"
 }

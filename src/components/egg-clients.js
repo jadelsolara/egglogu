@@ -16,9 +16,9 @@ import { showConfirm, showVoidDialog } from './egg-confirm.js';
 const CAT_ICONS = { quality: '', delivery: '', quantity: '', price: '', packaging: '', other: '' };
 const CLAIM_CATS = ['quality', 'delivery', 'quantity', 'price', 'packaging', 'other'];
 const SEV_COLORS = ['', '#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#F44336'];
-const ORDER_STATUSES = ['draft', 'confirmed', 'preparing', 'dispatched', 'delivered', 'cancelled'];
-const ORDER_STATUS_ICONS = { draft: '', confirmed: '', preparing: '', dispatched: '', delivered: '', cancelled: '' };
-const ORDER_STATUS_BADGES = { draft: 'secondary', confirmed: 'info', preparing: 'warning', dispatched: 'info', delivered: 'success', cancelled: 'danger' };
+const ORDER_STATUSES = ['quotation', 'confirmed', 'preparing', 'dispatched', 'delivered', 'annulled', 'return_pending', 'returned'];
+const ORDER_STATUS_ICONS = { quotation: '', confirmed: '', preparing: '', dispatched: '', delivered: '', annulled: '', return_pending: '', returned: '' };
+const ORDER_STATUS_BADGES = { quotation: 'secondary', confirmed: 'info', preparing: 'warning', dispatched: 'info', delivered: 'success', annulled: 'danger', return_pending: 'warning', returned: 'secondary' };
 const EGG_TYPES = ['S', 'M', 'L', 'XL', 'Jumbo'];
 
 class EggClients extends HTMLElement {
@@ -336,17 +336,17 @@ class EggClients extends HTMLElement {
         case 'advance-order':
           this._advanceOrder(id);
           break;
-        case 'cancel-order':
-          this._cancelOrder(id);
+        case 'annul-order':
+          this._annulOrder(id);
+          break;
+        case 'confirm-return':
+          this._confirmReturn(id);
           break;
         case 'reserve-order':
           this._reserveOrder(id);
           break;
         case 'print-order':
           this._printOrder(id);
-          break;
-        case 'delete-order':
-          this._deleteOrder(id);
           break;
         case 'add-claim':
           this._showClaimForm();
@@ -383,7 +383,12 @@ class EggClients extends HTMLElement {
         this._reserveOrder(e.id || e.value);
         break;
       case 'print-order-modal':
-        this._printOrder(e.id || e.value);
+        Bus.emit('modal:close');
+        setTimeout(() => this._printOrder(e.id || e.value), 120);
+        break;
+      case 'confirm-return-modal':
+        Bus.emit('modal:close');
+        this._confirmReturn(e.id || e.value);
         break;
       case 'save-claim':
         this._saveClaim();
@@ -529,6 +534,14 @@ class EggClients extends HTMLElement {
   // ── Orders Tab ─────────────────────────────────────────────
 
   _renderOrdersList(D) {
+    // Migrate legacy statuses (draft→quotation, cancelled→annulled)
+    let migrated = false;
+    (D.orders || []).forEach(o => {
+      if (o.status === 'draft') { o.status = 'quotation'; migrated = true; }
+      if (o.status === 'cancelled') { o.status = 'annulled'; migrated = true; }
+    });
+    if (migrated) Store.save(D);
+
     const orders = activeOnly(D.orders || []);
     let h = `<div class="page-header" style="justify-content:flex-end"><button class="btn btn-primary" data-action="add-order">${t('ord_new')}</button></div>`;
 
@@ -537,8 +550,20 @@ class EggClients extends HTMLElement {
     }
 
     // Filter active vs history
-    const active = orders.filter(o => !['delivered', 'cancelled'].includes(o.status));
-    const history = orders.filter(o => ['delivered', 'cancelled'].includes(o.status));
+    const active = orders.filter(o => !['delivered', 'annulled', 'return_pending', 'returned'].includes(o.status));
+    const history = orders.filter(o => ['delivered', 'annulled', 'return_pending', 'returned'].includes(o.status));
+
+    // Conversion rate KPI
+    const totalQuotations = orders.length;
+    const converted = orders.filter(o => ['confirmed', 'preparing', 'dispatched', 'delivered'].includes(o.status)).length;
+    const conversionRate = totalQuotations > 0 ? Math.round((converted / totalQuotations) * 100) : 0;
+    const annulledCount = orders.filter(o => ['annulled', 'return_pending', 'returned'].includes(o.status)).length;
+    h += `<div class="kpi-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px">
+      <div class="card" style="padding:12px;text-align:center"><span style="font-size:24px;font-weight:700;color:#1565C0">${totalQuotations}</span><br><small>${t('ord_total_quotes')}</small></div>
+      <div class="card" style="padding:12px;text-align:center"><span style="font-size:24px;font-weight:700;color:#4CAF50">${conversionRate}%</span><br><small>${t('ord_conversion_rate')}</small></div>
+      <div class="card" style="padding:12px;text-align:center"><span style="font-size:24px;font-weight:700;color:#F44336">${annulledCount}</span><br><small>${t('ord_annulled_count')}</small></div>
+      <div class="card" style="padding:12px;text-align:center"><span style="font-size:24px;font-weight:700;color:#FFA726">${fmtMoney(orders.reduce((s, o) => s + (o.total || 0), 0))}</span><br><small>${t('ord_total_value')}</small></div>
+    </div>`;
 
     if (active.length) {
       h += `<div class="card"><h3>${t('ord_active')}</h3><div class="table-wrap"><table>
@@ -560,8 +585,8 @@ class EggClients extends HTMLElement {
             ${nextStatus ? `<button class="btn btn-primary btn-sm" data-action="advance-order" data-id="${escapeAttr(o.id)}">${ORDER_STATUS_ICONS[nextStatus] || ''} ${t('ord_st_' + nextStatus)}</button>` : ''}
             ${['confirmed', 'preparing'].includes(o.status) ? `<button class="btn btn-warning btn-sm" data-action="reserve-order" data-id="${escapeAttr(o.id)}">${t('ord_reserve')}</button>` : ''}
             <button class="btn btn-secondary btn-sm" data-action="print-order" data-id="${escapeAttr(o.id)}">${t('ord_print')}</button>
-            ${o.status === 'draft' ? `<button class="btn btn-secondary btn-sm" data-action="edit-order" data-id="${escapeAttr(o.id)}">${t('edit')}</button>` : ''}
-            ${o.status !== 'cancelled' ? `<button class="btn btn-danger btn-sm" data-action="cancel-order" data-id="${escapeAttr(o.id)}">${t('cancel')}</button>` : ''}
+            ${o.status === 'quotation' ? `<button class="btn btn-secondary btn-sm" data-action="edit-order" data-id="${escapeAttr(o.id)}">${t('edit')}</button>` : ''}
+            <button class="btn btn-danger btn-sm" data-action="annul-order" data-id="${escapeAttr(o.id)}">${t('ord_annul')}</button>
           </div></td>
         </tr>`;
       });
@@ -582,7 +607,7 @@ class EggClients extends HTMLElement {
           <td><div class="btn-group">
             <button class="btn btn-secondary btn-sm" data-action="view-order" data-id="${escapeAttr(o.id)}">${t('ord_view')}</button>
             <button class="btn btn-secondary btn-sm" data-action="print-order" data-id="${escapeAttr(o.id)}">${t('print') || 'Print'}</button>
-            <button class="btn btn-danger btn-sm" data-action="delete-order" data-id="${escapeAttr(o.id)}">${t('delete')}</button>
+            ${o.status === 'return_pending' ? `<button class="btn btn-success btn-sm" data-action="confirm-return" data-id="${escapeAttr(o.id)}">${t('ord_confirm_return')}</button>` : ''}
           </div></td>
         </tr>`;
       });
@@ -593,7 +618,7 @@ class EggClients extends HTMLElement {
   }
 
   _nextOrderStatus(current) {
-    const flow = { draft: 'confirmed', confirmed: 'preparing', preparing: 'dispatched', dispatched: 'delivered' };
+    const flow = { quotation: 'confirmed', confirmed: 'preparing', preparing: 'dispatched', dispatched: 'delivered' };
     return flow[current] || null;
   }
 
@@ -858,8 +883,8 @@ class EggClients extends HTMLElement {
       const i = D.orders.findIndex(o => o.id === this._editId);
       if (i >= 0) {
         const old = D.orders[i];
-        // If editing draft, reverse old reservations and create new ones
-        if (old.status === 'draft') {
+        // If editing quotation, reverse old reservations and create new ones
+        if (old.status === 'quotation') {
           this._reverseOrderReserve(D, old);
           this._reserveOrderStock(D, { ...old, items, clientId });
         }
@@ -877,8 +902,8 @@ class EggClients extends HTMLElement {
         orderNumber: orderNumber || folio,
         folio,
         items, total, notes,
-        status: 'draft',
-        statusHistory: [{ status: 'draft', date: new Date().toISOString(), note: t('ord_created') }],
+        status: 'quotation',
+        statusHistory: [{ status: 'quotation', date: new Date().toISOString(), note: t('ord_created') }],
         createdAt: new Date().toISOString()
       };
       // Reserve stock immediately — eggs go to "transit/reserve"
@@ -928,9 +953,11 @@ class EggClients extends HTMLElement {
       </div>
       ${itemsHtml}
       ${historyHtml}
+      ${o.annulReason ? `<div style="margin-top:12px;padding:10px;background:#FFF3E0;border-left:3px solid #F44336;border-radius:4px"><strong>${t('ord_annul_reason')}:</strong> ${sanitizeHTML(o.annulReason)}</div>` : ''}
       <div class="modal-footer">
         <button class="btn btn-secondary" data-action="cancel">${t('close')}</button>
         ${['confirmed', 'preparing'].includes(o.status) ? `<button class="btn btn-warning" data-action="reserve-order-modal" data-id="${escapeAttr(o.id)}">${t('ord_reserve')}</button>` : ''}
+        ${o.status === 'return_pending' ? `<button class="btn btn-success" data-action="confirm-return-modal" data-id="${escapeAttr(o.id)}">${t('ord_confirm_return')}</button>` : ''}
         <button class="btn btn-primary" data-action="print-order-modal" data-id="${escapeAttr(o.id)}">${t('ord_print')}</button>
       </div>`;
 
@@ -979,11 +1006,13 @@ class EggClients extends HTMLElement {
     this.render();
   }
 
-  async _cancelOrder(id) {
-    if (!await showConfirm(t('ord_confirm_cancel'))) return;
+  async _annulOrder(id) {
+    // Ask for annulment reason — required for traceability
+    const reason = await showVoidDialog(t('ord_annul_reason'));
+    if (!reason) return;
     const D = Store.get();
     const o = (D.orders || []).find(x => x.id === id);
-    if (!o) return;
+    if (!o || ['annulled', 'return_pending', 'returned'].includes(o.status)) return;
 
     // Cancel associated reservations
     (D.reservations || []).filter(r => r.orderId === o.id && r.status === 'active').forEach(r => {
@@ -991,27 +1020,48 @@ class EggClients extends HTMLElement {
       r.resolvedDate = todayStr();
     });
 
-    // Return reserved stock to available
-    this._reverseOrderReserve(D, o);
+    // Check if stock was already moved (preparing/dispatched) — needs physical return
+    const needsReturn = ['confirmed', 'preparing', 'dispatched'].includes(o.status);
 
-    o.status = 'cancelled';
-    o.statusHistory = o.statusHistory || [];
-    o.statusHistory.push({ status: 'cancelled', date: new Date().toISOString(), note: '' });
+    if (needsReturn) {
+      // Stock is in transit/packaging — don't reverse yet, wait for physical return
+      o.status = 'return_pending';
+      o.annulReason = reason;
+      o.statusHistory = o.statusHistory || [];
+      o.statusHistory.push({ status: 'annulled', date: new Date().toISOString(), note: reason });
+      o.statusHistory.push({ status: 'return_pending', date: new Date().toISOString(), note: t('ord_return_pending_note') });
+      Bus.emit('toast', { msg: t('ord_return_pending_toast'), type: 'warning' });
+    } else {
+      // Quotation stage — stock reserved but not moved, can reverse immediately
+      this._reverseOrderReserve(D, o);
+      o.status = 'annulled';
+      o.annulReason = reason;
+      o.statusHistory = o.statusHistory || [];
+      o.statusHistory.push({ status: 'annulled', date: new Date().toISOString(), note: reason });
+      Bus.emit('toast', { msg: t('ord_annulled_ok') });
+    }
 
-    logAudit('update', 'orders', 'Order cancelled: ' + (o.orderNumber || o.id.substring(0, 8)), null, { id });
+    logAudit('update', 'orders', 'Order annulled: ' + (o.folio || o.orderNumber || o.id.substring(0, 8)) + ' — ' + reason, null, { id, reason });
     Store.save(D);
-    Bus.emit('toast', { msg: t('cfg_saved') });
     this.render();
   }
 
-  async _deleteOrder(id) {
-    const reason = await showVoidDialog(t('confirm_delete'));
-    if (!reason) return;
+  async _confirmReturn(id) {
+    if (!await showConfirm(t('ord_confirm_return_msg'))) return;
     const D = Store.get();
-    voidRecord(D.orders || [], id, reason);
-    logAudit('void', 'orders', 'Void order: ' + reason, id, null);
+    const o = (D.orders || []).find(x => x.id === id);
+    if (!o || o.status !== 'return_pending') return;
+
+    // Now that eggs are confirmed back in warehouse, reverse the reserve
+    this._reverseOrderReserve(D, o);
+
+    o.status = 'returned';
+    o.statusHistory = o.statusHistory || [];
+    o.statusHistory.push({ status: 'returned', date: new Date().toISOString(), note: t('ord_returned_note') });
+
+    logAudit('update', 'orders', 'Return confirmed: ' + (o.folio || o.orderNumber || o.id.substring(0, 8)), null, { id });
     Store.save(D);
-    Bus.emit('toast', { msg: t('cfg_saved') });
+    Bus.emit('toast', { msg: t('ord_returned_ok') });
     this.render();
   }
 
@@ -1160,7 +1210,18 @@ class EggClients extends HTMLElement {
       w.document.write(html);
       w.document.close();
     } else {
-      Bus.emit('toast', { msg: 'Popup blocker — allow popups', type: 'error' });
+      // Fallback: print via hidden iframe
+      let iframe = document.getElementById('egg-print-frame');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'egg-print-frame';
+        iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:0;height:0;border:none';
+        document.body.appendChild(iframe);
+      }
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(html);
+      iframe.contentDocument.close();
+      setTimeout(() => iframe.contentWindow.print(), 200);
     }
   }
 
