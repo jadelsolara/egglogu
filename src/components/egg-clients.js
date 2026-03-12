@@ -408,11 +408,11 @@ class EggClients extends HTMLElement {
     const overrideCb = body.querySelector('#ord-override');
     if (!clientSel || !typeSel || !priceIn) return;
 
-    // Load client prices when client changes
+    // Load client prices when client changes — always fresh from Store
     const cid = clientSel.value;
     if (cid) {
-      const D = Store.get();
-      const cli = D.clients.find(c => c.id === cid);
+      const freshD = Store.get();
+      const cli = freshD.clients.find(c => c.id === cid);
       this._clientPrices = cli ? { S: cli.priceS || 0, M: cli.priceM || 0, L: cli.priceL || 0, XL: cli.priceXL || 0, Jumbo: cli.priceJumbo || 0 } : {};
     } else {
       this._clientPrices = {};
@@ -422,9 +422,11 @@ class EggClients extends HTMLElement {
     if (overrideCb && !overrideCb.checked && this._clientPrices) {
       const et = typeSel.value;
       const agreedPrice = this._clientPrices[et] || 0;
-      priceIn.value = agreedPrice || '';
+      priceIn.value = agreedPrice > 0 ? agreedPrice : '';
       priceIn.readOnly = agreedPrice > 0;
+      priceIn.placeholder = agreedPrice > 0 ? fmtMoney(agreedPrice) : t('cli_price');
     }
+    this._updateOrderLinePreview(body);
   }
 
   // ── Client Form ─────────────────────────────────────────────
@@ -660,7 +662,7 @@ class EggClients extends HTMLElement {
       <div class="form-row" style="margin-top:8px;align-items:end">
         <div class="form-group" style="flex:1"><select id="ord-new-type">${EGG_TYPES.map(et => `<option value="${et}">${et}</option>`).join('')}</select></div>
         <div class="form-group" style="flex:1"><input type="number" id="ord-new-qty" placeholder="${t('ord_qty')}" min="1"></div>
-        <div class="form-group" style="flex:1"><input type="number" id="ord-new-price" placeholder="${t('cli_price')}" min="0" step="0.01"></div>
+        <div class="form-group" style="flex:1"><input type="number" id="ord-new-price" placeholder="$/u" min="0" step="0.01"></div>
         <div class="form-group" style="flex:0 0 auto"><label style="font-size:.75rem;display:flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer"><input type="checkbox" id="ord-override"> ${t('ord_override')}</label></div>
         <div class="form-group" style="flex:1"><select id="ord-new-flock">${flockOpts}</select></div>
         <div class="form-group" style="flex:1"><select id="ord-new-loc">${locOpts}</select></div>
@@ -694,17 +696,20 @@ class EggClients extends HTMLElement {
       const autoFill = () => {
         const cid = clientSel.value;
         if (cid) {
-          const cli = D.clients.find(c => c.id === cid);
+          const freshD = Store.get();
+          const cli = freshD.clients.find(c => c.id === cid);
           this._clientPrices = cli ? { S: cli.priceS || 0, M: cli.priceM || 0, L: cli.priceL || 0, XL: cli.priceXL || 0, Jumbo: cli.priceJumbo || 0 } : {};
         } else {
           this._clientPrices = {};
         }
         if (!overrideCb.checked) {
           const agreedPrice = this._clientPrices[typeSel.value] || 0;
-          priceIn.value = agreedPrice || '';
+          priceIn.value = agreedPrice > 0 ? agreedPrice : '';
           priceIn.readOnly = agreedPrice > 0;
+          priceIn.placeholder = agreedPrice > 0 ? fmtMoney(agreedPrice) : t('cli_price');
           this._checkBelowCost(body, agreedPrice);
         }
+        this._updateOrderLinePreview(body);
       };
 
       clientSel.addEventListener('change', autoFill);
@@ -722,7 +727,14 @@ class EggClients extends HTMLElement {
         if (overrideCb.checked) {
           this._checkBelowCost(body, parseFloat(priceIn.value) || 0);
         }
+        this._updateOrderLinePreview(body);
       });
+
+      // Live preview when qty changes
+      const qtyIn = body.querySelector('#ord-new-qty');
+      if (qtyIn) {
+        qtyIn.addEventListener('input', () => this._updateOrderLinePreview(body));
+      }
 
       // Auto-fill if editing existing order with client already selected
       if (clientSel.value) autoFill();
@@ -765,9 +777,15 @@ class EggClients extends HTMLElement {
     if (!body) return;
     const eggType = modalVal('ord-new-type');
     const qty = parseInt(modalVal('ord-new-qty')) || 0;
-    const unitPrice = parseFloat(modalVal('ord-new-price')) || 0;
     const flockId = modalVal('ord-new-flock');
     const locationId = modalVal('ord-new-loc');
+    const overrideCb = body.querySelector('#ord-override');
+
+    // Resolve price: use agreed price from client if override not checked
+    let unitPrice = parseFloat(modalVal('ord-new-price')) || 0;
+    if (!overrideCb?.checked && this._clientPrices && this._clientPrices[eggType] > 0) {
+      unitPrice = this._clientPrices[eggType];
+    }
 
     if (!qty || qty <= 0) { Bus.emit('toast', { msg: t('ord_qty') + ' > 0', type: 'error' }); return; }
 
@@ -804,7 +822,6 @@ class EggClients extends HTMLElement {
     // Clear inputs and reset override
     const qtyEl = body.querySelector('#ord-new-qty');
     if (qtyEl) qtyEl.value = '';
-    const overrideCb = body.querySelector('#ord-override');
     if (overrideCb) overrideCb.checked = false;
     const priceEl = body.querySelector('#ord-new-price');
     const typeSel = body.querySelector('#ord-new-type');
@@ -838,6 +855,37 @@ class EggClients extends HTMLElement {
     const total = (this._orderItems || []).reduce((s, it) => s + (it.qty || 0) * (it.unitPrice || 0), 0);
     const el = body.querySelector('#ord-total-display');
     if (el) el.textContent = t('total') + ': ' + fmtMoney(total);
+  }
+
+  /** Show live price preview while user fills qty — before clicking '+' */
+  _updateOrderLinePreview(body) {
+    if (!body) body = getModalBody();
+    if (!body) return;
+    const typeSel = body.querySelector('#ord-new-type');
+    const qtyIn = body.querySelector('#ord-new-qty');
+    const priceIn = body.querySelector('#ord-new-price');
+    const overrideCb = body.querySelector('#ord-override');
+    if (!typeSel || !qtyIn || !priceIn) return;
+
+    const qty = parseInt(qtyIn.value) || 0;
+    let price = parseFloat(priceIn.value) || 0;
+    // If no override and client has agreed price, use that
+    if (!overrideCb?.checked && this._clientPrices && this._clientPrices[typeSel.value] > 0) {
+      price = this._clientPrices[typeSel.value];
+    }
+
+    const lineTotal = qty * price;
+    const existingTotal = (this._orderItems || []).reduce((s, it) => s + (it.qty || 0) * (it.unitPrice || 0), 0);
+    const grandTotal = existingTotal + lineTotal;
+
+    const el = body.querySelector('#ord-total-display');
+    if (el) {
+      if (qty > 0 && price > 0) {
+        el.innerHTML = `<span style="color:var(--text-muted,#888);font-size:13px">${typeSel.value} ${fmtNum(qty)} × ${fmtMoney(price)} = ${fmtMoney(lineTotal)}</span><br>${t('total')}: ${fmtMoney(grandTotal)}`;
+      } else {
+        el.textContent = t('total') + ': ' + fmtMoney(existingTotal);
+      }
+    }
   }
 
   _saveOrder() {
