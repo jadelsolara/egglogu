@@ -9,6 +9,7 @@ import { t } from '../core/i18n.js';
 import { sanitizeHTML, escapeAttr, fmtNum, fmtMoney, fmtDate, todayStr, genId, validateForm, emptyState, voidRecord, voidRecords, activeOnly } from '../core/utils.js';
 import { DataTable } from '../core/datatable.js';
 import { kpi, statusBadge, clientSelect, routeSelect, flockSelect, showFieldError, clearFieldErrors, logAudit, currency } from '../core/helpers.js';
+import { computeKpiSnapshot } from '../core/kpi.js';
 import { modalVal, getModalBody, modalQuery } from './egg-modal.js';
 import { showConfirm, showVoidDialog } from './egg-confirm.js';
 
@@ -399,7 +400,31 @@ class EggClients extends HTMLElement {
   }
 
   _onModalChange(/* e */) {
-    // Reserved for future dynamic form updates
+    const body = getModalBody();
+    if (!body) return;
+    const clientSel = body.querySelector('#ord-client');
+    const typeSel = body.querySelector('#ord-new-type');
+    const priceIn = body.querySelector('#ord-new-price');
+    const overrideCb = body.querySelector('#ord-override');
+    if (!clientSel || !typeSel || !priceIn) return;
+
+    // Load client prices when client changes
+    const cid = clientSel.value;
+    if (cid) {
+      const D = Store.get();
+      const cli = D.clients.find(c => c.id === cid);
+      this._clientPrices = cli ? { S: cli.priceS || 0, M: cli.priceM || 0, L: cli.priceL || 0, XL: cli.priceXL || 0, Jumbo: cli.priceJumbo || 0 } : {};
+    } else {
+      this._clientPrices = {};
+    }
+
+    // Auto-fill price if override not checked
+    if (overrideCb && !overrideCb.checked && this._clientPrices) {
+      const et = typeSel.value;
+      const agreedPrice = this._clientPrices[et] || 0;
+      priceIn.value = agreedPrice || '';
+      priceIn.readOnly = agreedPrice > 0;
+    }
   }
 
   // ── Client Form ─────────────────────────────────────────────
@@ -632,14 +657,16 @@ class EggClients extends HTMLElement {
       </div>
       <h4 style="margin:12px 0 8px">${t('ord_items')}</h4>
       <div id="ord-items-wrap">${itemsHtml}</div>
-      <div class="form-row" style="margin-top:8px">
+      <div class="form-row" style="margin-top:8px;align-items:end">
         <div class="form-group" style="flex:1"><select id="ord-new-type">${EGG_TYPES.map(et => `<option value="${et}">${et}</option>`).join('')}</select></div>
         <div class="form-group" style="flex:1"><input type="number" id="ord-new-qty" placeholder="${t('ord_qty')}" min="1"></div>
         <div class="form-group" style="flex:1"><input type="number" id="ord-new-price" placeholder="${t('cli_price')}" min="0" step="0.01"></div>
+        <div class="form-group" style="flex:0 0 auto"><label style="font-size:.75rem;display:flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer"><input type="checkbox" id="ord-override"> ${t('ord_override')}</label></div>
         <div class="form-group" style="flex:1"><select id="ord-new-flock">${flockOpts}</select></div>
         <div class="form-group" style="flex:1"><select id="ord-new-loc">${locOpts}</select></div>
         <div class="form-group"><button class="btn btn-secondary btn-sm" data-action="add-order-item">+</button></div>
       </div>
+      <div id="ord-below-cost-warn" style="display:none;background:#FFF3E0;border-left:3px solid #FF9800;padding:6px 10px;margin:4px 0;font-size:.8rem;color:#E65100;border-radius:4px"></div>
       <div id="ord-total-display" style="text-align:right;font-weight:700;font-size:16px;margin:8px 0"></div>
       <div class="form-group"><label>${t('notes')}</label><textarea id="ord-notes">${order ? escapeAttr(order.notes || '') : ''}</textarea></div>
       <div class="modal-footer">
@@ -651,7 +678,72 @@ class EggClients extends HTMLElement {
 
     // Store items temporarily
     this._orderItems = order ? [...(order.items || [])] : [];
+    this._clientPrices = {};
     this._updateOrderTotal();
+
+    // Wire up auto-fill: client change, type change, override toggle
+    setTimeout(() => {
+      const body = getModalBody();
+      if (!body) return;
+      const clientSel = body.querySelector('#ord-client');
+      const typeSel = body.querySelector('#ord-new-type');
+      const priceIn = body.querySelector('#ord-new-price');
+      const overrideCb = body.querySelector('#ord-override');
+      if (!clientSel || !typeSel || !priceIn || !overrideCb) return;
+
+      const autoFill = () => {
+        const cid = clientSel.value;
+        if (cid) {
+          const cli = D.clients.find(c => c.id === cid);
+          this._clientPrices = cli ? { S: cli.priceS || 0, M: cli.priceM || 0, L: cli.priceL || 0, XL: cli.priceXL || 0, Jumbo: cli.priceJumbo || 0 } : {};
+        } else {
+          this._clientPrices = {};
+        }
+        if (!overrideCb.checked) {
+          const agreedPrice = this._clientPrices[typeSel.value] || 0;
+          priceIn.value = agreedPrice || '';
+          priceIn.readOnly = agreedPrice > 0;
+          this._checkBelowCost(body, agreedPrice);
+        }
+      };
+
+      clientSel.addEventListener('change', autoFill);
+      typeSel.addEventListener('change', autoFill);
+      overrideCb.addEventListener('change', () => {
+        if (overrideCb.checked) {
+          priceIn.readOnly = false;
+          priceIn.value = '';
+          priceIn.focus();
+        } else {
+          autoFill();
+        }
+      });
+      priceIn.addEventListener('input', () => {
+        if (overrideCb.checked) {
+          this._checkBelowCost(body, parseFloat(priceIn.value) || 0);
+        }
+      });
+
+      // Auto-fill if editing existing order with client already selected
+      if (clientSel.value) autoFill();
+    }, 50);
+  }
+
+  _checkBelowCost(body, price) {
+    const warn = body.querySelector('#ord-below-cost-warn');
+    if (!warn) return;
+    try {
+      const snap = computeKpiSnapshot();
+      const cpe = snap.costPerEgg || 0;
+      if (cpe > 0 && price > 0 && price < cpe) {
+        warn.style.display = 'block';
+        warn.textContent = t('ord_below_cost') + ` (${t('fin_cost_per_egg')}: ${fmtMoney(cpe)})`;
+      } else {
+        warn.style.display = 'none';
+      }
+    } catch (_) {
+      warn.style.display = 'none';
+    }
   }
 
   _orderItemRow(it, idx, D) {
@@ -679,6 +771,15 @@ class EggClients extends HTMLElement {
 
     if (!qty || qty <= 0) { Bus.emit('toast', { msg: t('ord_qty') + ' > 0', type: 'error' }); return; }
 
+    // Below-cost warning (non-blocking, just alert)
+    try {
+      const snap = computeKpiSnapshot();
+      const cpe = snap.costPerEgg || 0;
+      if (cpe > 0 && unitPrice > 0 && unitPrice < cpe) {
+        if (!confirm(t('ord_below_cost_confirm') + ` (${t('fin_cost_per_egg')}: ${fmtMoney(cpe)}, ${t('cli_price')}: ${fmtMoney(unitPrice)})`)) return;
+      }
+    } catch (_) { /* no cost data, skip */ }
+
     // Stock validation
     const D = Store.get();
     const stockAvail = this._getAvailableStock(D, eggType, locationId);
@@ -700,11 +801,22 @@ class EggClients extends HTMLElement {
     }
     this._updateOrderTotal();
 
-    // Clear inputs
+    // Clear inputs and reset override
     const qtyEl = body.querySelector('#ord-new-qty');
     if (qtyEl) qtyEl.value = '';
+    const overrideCb = body.querySelector('#ord-override');
+    if (overrideCb) overrideCb.checked = false;
     const priceEl = body.querySelector('#ord-new-price');
-    if (priceEl) priceEl.value = '';
+    const typeSel = body.querySelector('#ord-new-type');
+    if (priceEl && typeSel && this._clientPrices) {
+      const agreedPrice = this._clientPrices[typeSel.value] || 0;
+      priceEl.value = agreedPrice || '';
+      priceEl.readOnly = agreedPrice > 0;
+    } else if (priceEl) {
+      priceEl.value = '';
+    }
+    const warn = body.querySelector('#ord-below-cost-warn');
+    if (warn) warn.style.display = 'none';
   }
 
   _removeOrderItem(idx) {
