@@ -28,7 +28,7 @@ function computeOutbreakRisk(D) {
   const factors = [];
 
   // 1. Mortality spike (0.25)
-  const l7prod = D.dailyProduction.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7);
+  const l7prod = (D.dailyProduction || []).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7);
   const l7deaths = l7prod.reduce((s, p) => s + (p.deaths || 0), 0);
   const deathRate = hens > 0 ? (l7deaths / hens * 100) : 0;
   const mortFactor = Math.min(1, deathRate / 10);
@@ -36,8 +36,8 @@ function computeOutbreakRisk(D) {
 
   // 2. FCR deterioration (0.15)
   const d30 = new Date(); d30.setDate(d30.getDate() - 30); const d30s = d30.toISOString().substring(0, 10);
-  const f30 = D.feed.consumption.filter(c => c.date >= d30s);
-  const e30 = D.dailyProduction.filter(p => p.date >= d30s);
+  const f30 = ((D.feed || {}).consumption || []).filter(c => c.date >= d30s);
+  const e30 = (D.dailyProduction || []).filter(p => p.date >= d30s);
   const tfkg = f30.reduce((s, c) => s + (c.quantityKg || 0), 0);
   const tekg = e30.reduce((s, p) => s + (p.eggsCollected || 0), 0) * 0.06;
   const fcr = tekg > 0 ? tfkg / tekg : 0;
@@ -100,7 +100,7 @@ function computeOutbreakRisk(D) {
 /* ── Multi-step Forecast (ensemble) ── */
 function computeForecast(D, days = 7) {
   if (typeof ss === 'undefined') return { dates: [], actual: [], forecast: [], upper: [], lower: [] };
-  const prod = D.dailyProduction.sort((a, b) => a.date.localeCompare(b.date));
+  const prod = (D.dailyProduction || []).sort((a, b) => a.date.localeCompare(b.date));
   if (prod.length < 7) return { dates: [], actual: [], forecast: [], upper: [], lower: [] };
   const last14 = prod.slice(-14);
   const values = last14.map(p => p.eggsCollected || 0);
@@ -348,20 +348,20 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: Comparison              */
   /* ──────────────────────────────────── */
   _renderComparison(D) {
-    if (!D.flocks.length) return emptyState('', t('no_data'));
+    if (!(D.flocks || []).length) return emptyState('', t('no_data'));
 
     const stats = D.flocks.map(f => {
       const cur = activeHensByFlock(f.id);
-      const l7 = D.dailyProduction.filter(p => p.flockId === f.id).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7);
+      const l7 = (D.dailyProduction || []).filter(p => p.flockId === f.id).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7);
       const avgE = l7.length > 0 ? l7.reduce((s, p) => s + (p.eggsCollected || 0), 0) / l7.length : 0;
       const hd = cur > 0 ? (avgE / cur * 100) : 0;
       const d30 = new Date(); d30.setDate(d30.getDate() - 30); const d30s = d30.toISOString().substring(0, 10);
-      const f30 = D.feed.consumption.filter(c => c.flockId === f.id && c.date >= d30s);
-      const e30 = D.dailyProduction.filter(p => p.flockId === f.id && p.date >= d30s);
+      const f30 = ((D.feed || {}).consumption || []).filter(c => c.flockId === f.id && c.date >= d30s);
+      const e30 = (D.dailyProduction || []).filter(p => p.flockId === f.id && p.date >= d30s);
       const tfkg = f30.reduce((s, c) => s + (c.quantityKg || 0), 0);
       const tekg = e30.reduce((s, p) => s + (p.eggsCollected || 0), 0) * 0.06;
       const fcrVal = tekg > 0 ? tfkg / tekg : 0;
-      const deaths = D.dailyProduction.filter(p => p.flockId === f.id).reduce((s, p) => s + (p.deaths || 0), 0);
+      const deaths = (D.dailyProduction || []).filter(p => p.flockId === f.id).reduce((s, p) => s + (p.deaths || 0), 0);
       const mort = f.count > 0 ? (deaths / f.count * 100) : 0;
       const hs = healthScore(f.id);
       return { id: f.id, name: f.name, count: f.count, cur, hd, fcr: fcrVal, mort, hs };
@@ -407,7 +407,7 @@ class EggAnalysis extends HTMLElement {
   /* ──────────────────────────────────── */
   _renderSeasonality(D) {
     const months = {};
-    D.dailyProduction.forEach(p => {
+    (D.dailyProduction || []).forEach(p => {
       const m = p.date?.substring(5, 7);
       if (!m) return;
       if (!months[m]) months[m] = { eggs: 0, days: new Set() };
@@ -456,21 +456,23 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: Profitability           */
   /* ──────────────────────────────────── */
   _renderProfitability(D) {
-    if (!D.flocks.length) return emptyState('', t('no_data'));
+    if (!(D.flocks || []).length) return emptyState('', t('no_data'));
 
     let h = `<div class="card"><h3>${t('ana_profitability')} / ${t('per_flock')}</h3><div class="table-wrap"><table><thead><tr>`;
     h += `<th>${t('flock_name')}</th><th>${t('prod_eggs')}</th><th>${t('fin_income')}</th><th>${t('fin_expenses')}</th><th>${t('fin_net')}</th><th>${t('fin_cost_per_egg')}</th></tr></thead><tbody>`;
 
-    const _totalFeedCost = D.feed.purchases.reduce((s, p) => s + (p.cost || 0), 0);
-    const _totalFeedKg = D.feed.purchases.reduce((s, p) => s + (p.quantityKg || 0), 0);
+    const _purchases = ((D.feed || {}).purchases || []);
+    const _totalFeedCost = _purchases.reduce((s, p) => s + (p.cost || 0), 0);
+    const _totalFeedKg = _purchases.reduce((s, p) => s + (p.quantityKg || 0), 0);
     const _feedPricePerKg = _totalFeedKg > 0 ? _totalFeedCost / _totalFeedKg : 0;
-    const _totalIncAmt = D.finances.income.reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
-    const _totalIncQty = D.finances.income.reduce((s, i) => s + (i.quantity || 0), 0);
+    const _incomeArr = ((D.finances || {}).income || []);
+    const _totalIncAmt = _incomeArr.reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
+    const _totalIncQty = _incomeArr.reduce((s, i) => s + (i.quantity || 0), 0);
     const _weightedAvgPrice = _totalIncQty > 0 ? _totalIncAmt / _totalIncQty : 0;
 
-    D.flocks.forEach(f => {
-      const eggs = D.dailyProduction.filter(p => p.flockId === f.id).reduce((s, p) => s + (p.eggsCollected || 0), 0);
-      const feedCost = D.feed.consumption.filter(c => c.flockId === f.id).reduce((s, c) => s + (c.quantityKg || 0) * _feedPricePerKg, 0);
+    (D.flocks || []).forEach(f => {
+      const eggs = (D.dailyProduction || []).filter(p => p.flockId === f.id).reduce((s, p) => s + (p.eggsCollected || 0), 0);
+      const feedCost = ((D.feed || {}).consumption || []).filter(c => c.flockId === f.id).reduce((s, c) => s + (c.quantityKg || 0) * _feedPricePerKg, 0);
       const inc = eggs * _weightedAvgPrice;
       const net = inc - feedCost - (f.cost || 0);
       const cpe = eggs > 0 ? (feedCost + (f.cost || 0)) / eggs : 0;
@@ -485,7 +487,7 @@ class EggAnalysis extends HTMLElement {
     // Per-Channel Weighted Average Pricing
     const chPricing = {};
     const typePricing = {};
-    D.finances.income.filter(i => i.type === 'eggs' && i.quantity > 0).forEach(i => {
+    ((D.finances || {}).income || []).filter(i => i.type === 'eggs' && i.quantity > 0).forEach(i => {
       const ch = i.marketChannel || 'other';
       const et = i.eggType || 'M';
       const amt = (i.quantity || 0) * (i.unitPrice || 0);
@@ -537,13 +539,13 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: KPI Evolution           */
   /* ──────────────────────────────────── */
   _renderKpiEvo(D) {
-    if (!D.kpiSnapshots.length) return emptyState('', t('ana_no_snapshots'));
+    if (!(D.kpiSnapshots || []).length) return emptyState('', t('ana_no_snapshots'));
 
     let h = `<div class="card"><h3>${t('ana_kpi_evolution')}</h3><div class="chart-container"><canvas id="chart-kpi-evo"></canvas></div></div>`;
     h += '<div class="card"><div class="table-wrap"><table><thead><tr>';
     h += `<th>${t('date')}</th><th>${t('kpi_active_hens')}</th><th>Hen-Day %</th><th>FCR</th><th>${t('kpi_mortality')} %</th><th>${t('kpi_cost_egg')}</th><th>${t('kpi_income_net')}</th></tr></thead><tbody>`;
 
-    D.kpiSnapshots.slice(-20).reverse().forEach(s => {
+    (D.kpiSnapshots || []).slice(-20).reverse().forEach(s => {
       h += `<tr><td>${fmtDate(s.date)}</td><td>${fmtNum(s.activeHens)}</td><td>${fmtNum(s.henDay, 1)}%</td>
         <td>${fmtNum(s.fcr, 2)}</td><td>${fmtNum(s.mortality, 1)}%</td><td>${fmtMoney(s.costPerEgg)}</td><td>${fmtMoney(s.netIncome)}</td></tr>`;
     });
@@ -554,7 +556,7 @@ class EggAnalysis extends HTMLElement {
   _renderKpiEvoChart(D) {
     const c = this.shadowRoot.querySelector('#chart-kpi-evo');
     if (!c) return;
-    const snaps = D.kpiSnapshots.slice(-30);
+    const snaps = (D.kpiSnapshots || []).slice(-30);
     this._charts.kpiEvo = new Chart(c, {
       type: 'line',
       data: {
@@ -577,10 +579,10 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: Predictions             */
   /* ──────────────────────────────────── */
   _renderPredictions(D) {
-    if (!D.dailyProduction.length) return emptyState('', t('no_data'));
+    if (!(D.dailyProduction || []).length) return emptyState('', t('no_data'));
     let h = '';
 
-    const sorted = [...D.dailyProduction].sort((a, b) => a.date.localeCompare(b.date));
+    const sorted = [...(D.dailyProduction || [])].sort((a, b) => a.date.localeCompare(b.date));
     const last30 = sorted.slice(-30);
 
     // === Outbreak Risk Classifier (traffic light) ===
@@ -650,7 +652,7 @@ class EggAnalysis extends HTMLElement {
     }
 
     // === Breed Benchmark ===
-    const activeFlocks = D.flocks.filter(f => f.status !== 'descarte' && f.birthDate);
+    const activeFlocks = (D.flocks || []).filter(f => f.status !== 'descarte' && f.birthDate);
     if (activeFlocks.length) {
       h += `<div class="card"><h3>${t('pred_breed_curve')}</h3>`;
       activeFlocks.forEach(f => {
@@ -660,7 +662,7 @@ class EggAnalysis extends HTMLElement {
         const weekIdx = Math.max(0, age.weeks - 18);
         const expected = weekIdx < curve.length ? curve[weekIdx] : curve[curve.length - 1];
         const hens = activeHensByFlock(f.id);
-        const l7 = D.dailyProduction.filter(p => p.flockId === f.id).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7);
+        const l7 = (D.dailyProduction || []).filter(p => p.flockId === f.id).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 7);
         const avgE = l7.length > 0 ? l7.reduce((s, p) => s + (p.eggsCollected || 0), 0) / l7.length : 0;
         const actual = hens > 0 ? (avgE / hens * 100) : 0;
         const gap = actual - expected;
@@ -712,16 +714,16 @@ class EggAnalysis extends HTMLElement {
   /*        TAB: Economics               */
   /* ──────────────────────────────────── */
   _renderEconomics(D) {
-    const flocks = D.flocks.filter(f => f.status !== 'descarte');
+    const flocks = (D.flocks || []).filter(f => f.status !== 'descarte');
     if (!flocks.length) return emptyState('', t('econ_no_data_guide'));
 
     // Weighted avg feed price
     let totalFeedCost = 0, totalFeedKg = 0;
-    (D.feed.purchases || []).forEach(p => { totalFeedCost += (p.totalCost || 0); totalFeedKg += (p.kg || 0); });
+    ((D.feed || {}).purchases || []).forEach(p => { totalFeedCost += (p.totalCost || 0); totalFeedKg += (p.kg || 0); });
     const avgFeedPrice = totalFeedKg > 0 ? totalFeedCost / totalFeedKg : null;
 
     // Total revenue
-    const totalRevenue = D.finances.income.reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
+    const totalRevenue = ((D.finances || {}).income || []).reduce((s, i) => s + ((i.quantity || 0) * (i.unitPrice || 0) || (i.amount || 0)), 0);
     const today = new Date();
 
     let orgTotalEggs = 0, orgTotalCosts = 0, orgTotalInvestment = 0, orgHasEggs = false, orgHasCosts = false;
@@ -734,21 +736,21 @@ class EggAnalysis extends HTMLElement {
       if (f.purchaseCostPerBird != null) { acquisition = f.purchaseCostPerBird * f.initialCount; orgTotalInvestment += acquisition; }
 
       // Feed
-      const feedKg = (D.feed.consumption || []).filter(c => c.flockId === f.id).reduce((s, c) => s + (c.quantityKg || 0), 0);
+      const feedKg = ((D.feed || {}).consumption || []).filter(c => c.flockId === f.id).reduce((s, c) => s + (c.quantityKg || 0), 0);
       const feedCost = (feedKg > 0 && avgFeedPrice != null) ? Math.round(feedKg * avgFeedPrice * 100) / 100 : null;
 
       // Health
       let vaxCost = null, medCost = null;
-      (D.health.vaccines || []).filter(v => v.flockId === f.id && v.cost != null).forEach(v => { vaxCost = (vaxCost || 0) + v.cost; });
-      (D.health.medications || []).filter(m => m.flockId === f.id && m.cost != null).forEach(m => { medCost = (medCost || 0) + m.cost; });
+      ((D.health || {}).vaccines || []).filter(v => v.flockId === f.id && v.cost != null).forEach(v => { vaxCost = (vaxCost || 0) + v.cost; });
+      ((D.health || {}).medications || []).filter(m => m.flockId === f.id && m.cost != null).forEach(m => { medCost = (medCost || 0) + m.cost; });
       const healthCostVal = (vaxCost != null || medCost != null) ? Math.round(((vaxCost || 0) + (medCost || 0)) * 100) / 100 : null;
 
       // Direct expenses
-      const directExp = D.finances.expenses.filter(e => e.flockId === f.id);
+      const directExp = ((D.finances || {}).expenses || []).filter(e => e.flockId === f.id);
       const directExpTotal = directExp.length ? Math.round(directExp.reduce((s, e) => s + (e.amount || 0), 0) * 100) / 100 : null;
 
       // Eggs
-      const prods = D.production.filter(p => p.flockId === f.id);
+      const prods = (D.production || []).filter(p => p.flockId === f.id);
       const totalEggs = prods.reduce((s, p) => s + (p.totalEggs || 0), 0);
       if (totalEggs > 0) { orgTotalEggs += totalEggs; orgHasEggs = true; }
 
@@ -808,7 +810,7 @@ class EggAnalysis extends HTMLElement {
 
     // Per-flock table
     h += `<div class="card"><h3>${t('econ_cost_breakdown')}</h3><div class="table-wrap"><table><thead><tr>`;
-    h += `<th>${t('flock_name')}</th><th>Count</th><th>Count</th><th>${t('econ_days_active')}</th>`;
+    h += `<th>${t('flock_name')}</th><th>${t('flock_count') || 'Hens'}</th><th>${t('prod_eggs') || 'Eggs'}</th><th>${t('econ_days_active')}</th>`;
     if (anyFeed) h += `<th>${t('econ_feed_cost')}</th>`;
     if (anyHealth) h += `<th>${t('econ_health_cost')}</th>`;
     if (anyDirect) h += `<th>${t('econ_direct_expenses')}</th>`;
