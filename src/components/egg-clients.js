@@ -377,9 +377,7 @@ class EggClients extends HTMLElement {
       case 'save-order':
         this._saveOrder();
         break;
-      case 'add-order-item':
-        this._addOrderItem();
-        break;
+      case 'add-order-item': break; // legacy — grid-based form now
       case 'reserve-order-modal':
         Bus.emit('modal:close');
         this._reserveOrder(e.id || e.value);
@@ -402,31 +400,8 @@ class EggClients extends HTMLElement {
   _onModalChange(/* e */) {
     const body = getModalBody();
     if (!body) return;
-    const clientSel = body.querySelector('#ord-client');
-    const typeSel = body.querySelector('#ord-new-type');
-    const priceIn = body.querySelector('#ord-new-price');
-    const overrideCb = body.querySelector('#ord-override');
-    if (!clientSel || !typeSel || !priceIn) return;
-
-    // Load client prices when client changes — always fresh from Store
-    const cid = clientSel.value;
-    if (cid) {
-      const freshD = Store.get();
-      const cli = freshD.clients.find(c => c.id === cid);
-      this._clientPrices = cli ? { S: cli.priceS || 0, M: cli.priceM || 0, L: cli.priceL || 0, XL: cli.priceXL || 0, Jumbo: cli.priceJumbo || 0 } : {};
-    } else {
-      this._clientPrices = {};
-    }
-
-    // Auto-fill price if override not checked
-    if (overrideCb && !overrideCb.checked && this._clientPrices) {
-      const et = typeSel.value;
-      const agreedPrice = this._clientPrices[et] || 0;
-      priceIn.value = agreedPrice > 0 ? agreedPrice : '';
-      priceIn.readOnly = agreedPrice > 0;
-      priceIn.placeholder = agreedPrice > 0 ? fmtMoney(agreedPrice) : t('cli_price');
-    }
-    this._updateOrderLinePreview(body);
+    // Update grid totals on any modal change
+    this._updateOrderGridTotals(body);
   }
 
   // ── Client Form ─────────────────────────────────────────────
@@ -942,12 +917,22 @@ class EggClients extends HTMLElement {
       });
     }
 
-    // When advancing to "delivered", fulfill reservations and create income record
+    // When advancing to "delivered", fulfill reservations, deduct inventory, create income
     if (next === 'delivered') {
       // Fulfill associated reservations
       (D.reservations || []).filter(r => r.orderId === o.id && r.status === 'active').forEach(r => {
         r.status = 'fulfilled';
         r.resolvedDate = todayStr();
+      });
+      // Deduct from inventory — one qtyOut record per item
+      if (!D.inventory) D.inventory = [];
+      (o.items || []).forEach(it => {
+        D.inventory.push({
+          id: genId(), date: todayStr(), flockId: it.flockId || '',
+          eggType: it.eggType, qtyIn: 0, qtyOut: it.qty,
+          locationId: it.locationId || '',
+          source: 'order', ref: o.id
+        });
       });
       // Create income record
       D.finances.income.push({
