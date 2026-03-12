@@ -750,8 +750,8 @@ class EggAnalysis extends HTMLElement {
       const directExpTotal = directExp.length ? Math.round(directExp.reduce((s, e) => s + (e.amount || 0), 0) * 100) / 100 : null;
 
       // Eggs
-      const prods = (D.production || []).filter(p => p.flockId === f.id);
-      const totalEggs = prods.reduce((s, p) => s + (p.totalEggs || 0), 0);
+      const prods = (D.dailyProduction || []).filter(p => p.flockId === f.id);
+      const totalEggs = prods.reduce((s, p) => s + (p.eggsCollected || 0), 0);
       if (totalEggs > 0) { orgTotalEggs += totalEggs; orgHasEggs = true; }
 
       // Total cost
