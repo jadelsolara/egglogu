@@ -118,7 +118,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (savedLang) switchLang(savedLang);
 
   // Listen for auth:ready from any login path (PIN, email, OAuth, signup)
-  Bus.on('auth:ready', () => mountApp());
+  Bus.on('auth:ready', () => {
+    Store.invalidate(); // reload store with per-user key
+    mountApp();
+  });
 
   // Run auth flow (handles login screen, PIN, token refresh)
   const authResult = await bootAuth();

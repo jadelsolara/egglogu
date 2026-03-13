@@ -4,9 +4,17 @@
 import { Bus } from './bus.js';
 import { genId, todayStr } from './utils.js';
 
-const STORAGE_KEY = 'egglogu_data';
+const STORAGE_KEY_BASE = 'egglogu_data';
 const STORAGE_QUOTA = 5 * 1024 * 1024;
 const EVICTION_ORDER = ['egglogu_sync_snapshot', 'egglogu_bugs', 'egglogu_suggestions', 'egglogu_offline_tickets'];
+
+function _storageKey() {
+  try {
+    const u = JSON.parse(localStorage.getItem('egglogu_current_user') || '{}');
+    if (u.email) return STORAGE_KEY_BASE + '_' + u.email.toLowerCase();
+  } catch (e) { /* ignore */ }
+  return STORAGE_KEY_BASE;
+}
 
 const DEFAULT_DATA = {
   farm: { name: 'Mi Granja', location: '', capacity: 500, currency: '$', lat: null, lng: null, owmApiKey: '', mqttBroker: '', mqttUser: '', mqttPass: '', mqttTopicPrefix: 'egglogu/', houses: [], routes: [], suppliers: [] },
@@ -116,7 +124,16 @@ export const Store = {
   load() {
     if (_data) return _data;
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const key = _storageKey();
+      let raw = localStorage.getItem(key);
+      // Migrate: if per-user key is empty but legacy key has data, copy it over
+      if (!raw && key !== STORAGE_KEY_BASE) {
+        const legacy = localStorage.getItem(STORAGE_KEY_BASE);
+        if (legacy) {
+          raw = legacy;
+          safeSetItem(key, legacy);
+        }
+      }
       if (raw) {
         _data = migrateData(JSON.parse(raw));
       } else {
@@ -142,7 +159,7 @@ export const Store = {
    */
   save(d, source = '') {
     _data = d || _data;
-    safeSetItem(STORAGE_KEY, JSON.stringify(_data));
+    safeSetItem(_storageKey(), JSON.stringify(_data));
     Bus.emit('data:changed', { source });
     Bus.emit('data:sync-needed');
   },
