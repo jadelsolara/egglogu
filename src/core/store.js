@@ -1,5 +1,6 @@
 // EGGlogU Reactive Store — wraps loadData/saveData with events
 // Single source of truth for application state
+// Per-user isolation + AES-256-GCM encryption at rest
 
 import { Bus } from './bus.js';
 import { genId, todayStr } from './utils.js';
@@ -7,13 +8,79 @@ import { genId, todayStr } from './utils.js';
 const STORAGE_KEY_BASE = 'egglogu_data';
 const STORAGE_QUOTA = 5 * 1024 * 1024;
 const EVICTION_ORDER = ['egglogu_sync_snapshot', 'egglogu_bugs', 'egglogu_suggestions', 'egglogu_offline_tickets'];
+const CRYPTO_KEY_NAME = 'egglogu_ek'; // encryption key stored in localStorage per-user
 
-function _storageKey() {
+/* ── Per-user storage key ── */
+function _currentEmail() {
   try {
     const u = JSON.parse(localStorage.getItem('egglogu_current_user') || '{}');
-    if (u.email) return STORAGE_KEY_BASE + '_' + u.email.toLowerCase();
+    if (u.email) return u.email.toLowerCase();
   } catch (e) { /* ignore */ }
-  return STORAGE_KEY_BASE;
+  return null;
+}
+
+function _storageKey() {
+  const email = _currentEmail();
+  return email ? STORAGE_KEY_BASE + '_' + email : STORAGE_KEY_BASE;
+}
+
+/* ── Per-user scoped key helper (for other modules) ── */
+function scopedKey(base) {
+  const email = _currentEmail();
+  return email ? base + '_' + email : base;
+}
+
+/* ── AES-256-GCM Encryption ── */
+const _cryptoAvailable = typeof crypto !== 'undefined' && crypto.subtle;
+
+async function _getOrCreateKey() {
+  const email = _currentEmail();
+  const keyName = email ? CRYPTO_KEY_NAME + '_' + email : CRYPTO_KEY_NAME;
+  const stored = localStorage.getItem(keyName);
+  if (stored) {
+    try {
+      const raw = Uint8Array.from(atob(stored), c => c.charCodeAt(0));
+      return crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt', 'decrypt']);
+    } catch (e) { /* regenerate */ }
+  }
+  // Generate new key
+  const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt', 'decrypt']);
+  const exported = await crypto.subtle.exportKey('raw', key);
+  localStorage.setItem(keyName, btoa(String.fromCharCode(...new Uint8Array(exported))));
+  return key;
+}
+
+async function _encrypt(plaintext) {
+  if (!_cryptoAvailable) return plaintext;
+  try {
+    const key = await _getOrCreateKey();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoded = new TextEncoder().encode(plaintext);
+    const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+    // Pack: iv (12 bytes) + ciphertext → base64
+    const packed = new Uint8Array(iv.length + ciphertext.byteLength);
+    packed.set(iv);
+    packed.set(new Uint8Array(ciphertext), iv.length);
+    return 'ENC1:' + btoa(String.fromCharCode(...packed));
+  } catch (e) {
+    console.warn('[Store] Encryption failed, storing plaintext:', e.message);
+    return plaintext;
+  }
+}
+
+async function _decrypt(data) {
+  if (!_cryptoAvailable || !data.startsWith('ENC1:')) return data;
+  try {
+    const key = await _getOrCreateKey();
+    const packed = Uint8Array.from(atob(data.slice(5)), c => c.charCodeAt(0));
+    const iv = packed.slice(0, 12);
+    const ciphertext = packed.slice(12);
+    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+    return new TextDecoder().decode(decrypted);
+  } catch (e) {
+    console.warn('[Store] Decryption failed:', e.message);
+    return null;
+  }
 }
 
 const DEFAULT_DATA = {
@@ -42,6 +109,7 @@ const DEFAULT_DATA = {
 let _data = null;
 let _autoBackupTimer = null;
 let _syncTimer = null;
+let _saving = false; // prevent concurrent saves
 
 /**
  * Safe localStorage.setItem with quota management and eviction.
@@ -52,9 +120,10 @@ function safeSetItem(key, value) {
     return true;
   } catch (e) {
     if (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014) {
-      for (const evictKey of EVICTION_ORDER) {
-        if (localStorage.getItem(evictKey)) {
-          localStorage.removeItem(evictKey);
+      for (const evictBase of EVICTION_ORDER) {
+        const ek = scopedKey(evictBase);
+        if (localStorage.getItem(ek)) {
+          localStorage.removeItem(ek);
           try { localStorage.setItem(key, value); return true; } catch (_) { /* continue */ }
         }
       }
@@ -120,6 +189,7 @@ function migrateData(D) {
 export const Store = {
   /**
    * Load data from localStorage (cached after first call).
+   * Handles decryption transparently.
    */
   load() {
     if (_data) return _data;
@@ -135,11 +205,78 @@ export const Store = {
         }
       }
       if (raw) {
-        _data = migrateData(JSON.parse(raw));
+        // If encrypted, we need async — but load() is sync for compat.
+        // Encrypted data starts with ENC1: — handle inline
+        if (raw.startsWith('ENC1:')) {
+          // Return defaults now, loadAsync will replace
+          _data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+          this._loadAsync(key, raw);
+        } else {
+          _data = migrateData(JSON.parse(raw));
+          // Schedule async encryption of plaintext legacy data
+          this._encryptAndSave();
+        }
       } else {
         _data = JSON.parse(JSON.stringify(DEFAULT_DATA));
       }
     } catch (e) {
+      _data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    }
+    return _data;
+  },
+
+  /**
+   * Async load — decrypts and replaces data, then emits refresh.
+   */
+  async _loadAsync(key, raw) {
+    const decrypted = await _decrypt(raw);
+    if (decrypted) {
+      _data = migrateData(JSON.parse(decrypted));
+      Bus.emit('data:changed', { source: 'decrypt' });
+    }
+  },
+
+  /**
+   * Encrypt current plaintext data and re-save.
+   */
+  async _encryptAndSave() {
+    if (!_data || _saving) return;
+    _saving = true;
+    try {
+      const encrypted = await _encrypt(JSON.stringify(_data));
+      safeSetItem(_storageKey(), encrypted);
+    } catch (e) { /* keep plaintext */ }
+    _saving = false;
+  },
+
+  /**
+   * Async load — use this when you can await (e.g. app boot).
+   */
+  async loadAsync() {
+    const key = _storageKey();
+    let raw = localStorage.getItem(key);
+    // Migration from legacy key
+    if (!raw && key !== STORAGE_KEY_BASE) {
+      const legacy = localStorage.getItem(STORAGE_KEY_BASE);
+      if (legacy) {
+        raw = legacy;
+      }
+    }
+    if (raw) {
+      if (raw.startsWith('ENC1:')) {
+        const decrypted = await _decrypt(raw);
+        if (decrypted) {
+          _data = migrateData(JSON.parse(decrypted));
+        } else {
+          _data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
+      } else {
+        _data = migrateData(JSON.parse(raw));
+      }
+      // Always save encrypted
+      const encrypted = await _encrypt(JSON.stringify(_data));
+      safeSetItem(key, encrypted);
+    } else {
       _data = JSON.parse(JSON.stringify(DEFAULT_DATA));
     }
     return _data;
@@ -153,13 +290,27 @@ export const Store = {
   },
 
   /**
-   * Save data to localStorage and emit change event.
+   * Save data to localStorage (encrypted) and emit change event.
    * @param {Object} [d] - Data to save. If omitted, saves current cached data.
    * @param {string} [source] - What triggered the save (for debugging).
    */
   save(d, source = '') {
     _data = d || _data;
-    safeSetItem(_storageKey(), JSON.stringify(_data));
+    // Sync save plaintext first for immediate persistence, then encrypt async
+    const json = JSON.stringify(_data);
+    // Attempt async encrypted save
+    if (_cryptoAvailable && !_saving) {
+      _saving = true;
+      _encrypt(json).then(encrypted => {
+        safeSetItem(_storageKey(), encrypted);
+        _saving = false;
+      }).catch(() => {
+        safeSetItem(_storageKey(), json);
+        _saving = false;
+      });
+    } else {
+      safeSetItem(_storageKey(), json);
+    }
     Bus.emit('data:changed', { source });
     Bus.emit('data:sync-needed');
   },
@@ -213,5 +364,11 @@ export const Store = {
   /**
    * Safe localStorage setter (with quota management).
    */
-  safeSet: safeSetItem
+  safeSet: safeSetItem,
+
+  /**
+   * Get a per-user scoped localStorage key.
+   * Use this for any key that should be isolated per account.
+   */
+  scopedKey
 };

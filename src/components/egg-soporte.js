@@ -56,7 +56,7 @@ class EggSoporte extends HTMLElement {
     this._faqCategory = '';
     this._adminFilter = { status: '', category: '', priority: '' };
     this._pendingRating = 0;
-    this._offlineQueue = JSON.parse(localStorage.getItem('egglogu_offline_tickets') || '[]');
+    this._offlineQueue = JSON.parse(localStorage.getItem(Store.scopedKey('egglogu_offline_tickets')) || '[]');
   }
 
   connectedCallback() {
@@ -533,7 +533,7 @@ class EggSoporte extends HTMLElement {
 
     if (!navigator.onLine) {
       this._offlineQueue.push({ subject, description: desc, priority, created_offline: new Date().toISOString() });
-      safeSetItem('egglogu_offline_tickets', JSON.stringify(this._offlineQueue));
+      safeSetItem(Store.scopedKey('egglogu_offline_tickets'), JSON.stringify(this._offlineQueue));
       Bus.emit('toast', { msg: L.ticket_offline, type: 'info' });
       root.querySelector('#sup-subject').value = '';
       root.querySelector('#sup-desc').value = '';
@@ -601,7 +601,7 @@ class EggSoporte extends HTMLElement {
         this._offlineQueue.map(t => ({ subject: t.subject, description: t.description, priority: t.priority }))
       );
       this._offlineQueue.length = 0;
-      localStorage.removeItem('egglogu_offline_tickets');
+      localStorage.removeItem(Store.scopedKey('egglogu_offline_tickets'));
       Bus.emit('toast', { msg: L.ticket_synced + ': ' + res.synced, type: 'info' });
       this._tickets = [];
       this._loadMyTickets();

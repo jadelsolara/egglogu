@@ -22,7 +22,7 @@ window._GOOGLE_CLIENT_ID = _GOOGLE_CLIENT_ID;
 let _pinLockCountdownTimer = null;
 
 // ─── Sync state ───
-let _lastSyncTime = localStorage.getItem('egglogu_last_sync') || null;
+let _lastSyncTime = localStorage.getItem(Store.scopedKey('egglogu_last_sync')) || null;
 let _isSyncing = false;
 
 const ENTITY_MAP = {
@@ -188,7 +188,7 @@ function _saveSyncSnapshot(D) {
     }
     snap[key] = m;
   }
-  try { safeSetItem('egglogu_sync_snapshot', JSON.stringify(snap)); } catch (e) { console.warn('[Sync] Snapshot save failed:', e.message); }
+  try { safeSetItem(Store.scopedKey('egglogu_sync_snapshot'), JSON.stringify(snap)); } catch (e) { console.warn('[Sync] Snapshot save failed:', e.message); }
 }
 
 function _mergeServerChanges(D, changes) {
@@ -238,7 +238,7 @@ async function loadFromServer() {
     if (syncResp && syncResp.server_changes) _mergeServerChanges(D, syncResp.server_changes);
     if (syncResp && syncResp.server_now) {
       _lastSyncTime = syncResp.server_now;
-      safeSetItem('egglogu_last_sync', _lastSyncTime);
+      safeSetItem(Store.scopedKey('egglogu_last_sync'), _lastSyncTime);
     }
     if (billing) {
       D.settings.plan = D.settings.plan || {};
@@ -278,7 +278,7 @@ async function syncToServer() {
       deltaCount = Object.values(delta).reduce((s, a) => s + a.length, 0);
     } else {
       let snap = {};
-      try { snap = JSON.parse(localStorage.getItem('egglogu_sync_snapshot') || '{}'); } catch (e) { snap = {}; }
+      try { snap = JSON.parse(localStorage.getItem(Store.scopedKey('egglogu_sync_snapshot')) || '{}'); } catch (e) { snap = {}; }
       for (const [key, fn] of Object.entries(ENTITY_MAP)) {
         const records = fn(D);
         const snapEntity = snap[key] || {};
@@ -299,7 +299,7 @@ async function syncToServer() {
     }
     if (resp && resp.server_changes) _mergeServerChanges(D, resp.server_changes);
     _lastSyncTime = resp && resp.server_now ? resp.server_now : new Date().toISOString();
-    safeSetItem('egglogu_last_sync', _lastSyncTime);
+    safeSetItem(Store.scopedKey('egglogu_last_sync'), _lastSyncTime);
     _saveSyncSnapshot(D);
     Store.save(D, 'sync');
   } catch (e) {

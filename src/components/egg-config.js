@@ -1796,7 +1796,7 @@ ${costLine}</div>
   async _resetData() {
     if (!await showConfirm(t('cfg_reset_confirm'))) return;
     if (!await showConfirm(t('final_warning'))) return;
-    localStorage.removeItem('egglogu_data');
+    localStorage.removeItem(Store.scopedKey('egglogu_data'));
     this._toast(t('cfg_reset_done'));
     this._nav('dashboard');
   }

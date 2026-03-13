@@ -221,7 +221,7 @@ export async function autoBackup() {
     const backupKeys = keys.filter(k => k.url.includes('egglogu-backup-')).sort((a, b) => a.url.localeCompare(b.url));
     while (backupKeys.length >= 5) { await cache.delete(backupKeys.shift()); }
     const ts = new Date().toISOString().replace(/[:.]/g, '-');
-    const data = localStorage.getItem('egglogu_data') || '{}';
+    const data = localStorage.getItem(Store.scopedKey('egglogu_data')) || '{}';
     await cache.put(new Request('/egglogu-backup-' + ts), new Response(data, { headers: { 'Content-Type': 'application/json', 'X-Backup-Date': new Date().toISOString(), 'X-Backup-Size': String(data.length) } }));
   } catch (e) { console.warn('Auto-backup failed:', e.message); }
 }
@@ -286,7 +286,8 @@ export function safeSetItem(key, value) {
     return true;
   } catch (e) {
     if (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014) {
-      for (const evictKey of _STORAGE_EVICTION_ORDER) {
+      for (const evictBase of _STORAGE_EVICTION_ORDER) {
+        const evictKey = Store.scopedKey(evictBase);
         if (localStorage.getItem(evictKey)) {
           localStorage.removeItem(evictKey);
           try { localStorage.setItem(key, value); return true; } catch (_) {}
