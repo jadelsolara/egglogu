@@ -151,6 +151,7 @@ class EggAnalysis extends HTMLElement {
     this._currentTab = 'comparison';
     this._forecastDays = 7;
     this._unsubs = [];
+    this._eventsBound = false;
   }
 
   connectedCallback() {
@@ -307,13 +308,16 @@ class EggAnalysis extends HTMLElement {
       default:              h += this._renderComparison(D); break;
     }
 
+    this._destroyCharts();
     this.shadowRoot.innerHTML = h;
     this._bindEvents();
     this._renderCharts(D);
   }
 
-  /* ── Event delegation ── */
+  /* ── Event delegation (bind once) ── */
   _bindEvents() {
+    if (this._eventsBound) return;
+    this._eventsBound = true;
     const root = this.shadowRoot;
 
     root.addEventListener('click', (e) => {
